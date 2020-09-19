@@ -29,6 +29,9 @@ ReactDOM.render(
         <Route path="/stofna-krofu/lagaakvaedi">
           <StepTwo />
         </Route>
+        <Route path="/krafa/:id">
+          <StepOne />
+        </Route>
         <Route path="/stofna-krofu/grunnupplysingar">
           <StepOne />
         </Route>

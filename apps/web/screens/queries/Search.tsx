@@ -7,9 +7,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
       items {
         ... on Article {
           id
-          contentStatus
           title
           slug
+          containsApplicationForm
+          group {
+            title
+          }
           category {
             slug
             title
@@ -59,9 +62,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
       items {
         ... on Article {
           id
-          contentStatus
           title
           slug
+          containsApplicationForm
+          group {
+            title
+          }
           category {
             slug
             title

@@ -30,6 +30,6 @@ export const mapSectionWithImage = ({
   new SectionWithImage({
     id: sys.id,
     title: fields.title ?? '',
-    image: fields.image && mapImage(fields.image),
+    image: fields.image?.fields?.file ? mapImage(fields.image) : null,
     html: mapHtml(fields.body, sys.id + ':html'),
   })

@@ -176,15 +176,21 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                     }
 
                     return (
-                      <span onClick={handleClose} key={index}>
-                        <Typography
-                          variant="sideMenu"
-                          color="blue400"
-                          paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+                      <Typography
+                        key={index}
+                        variant="sideMenu"
+                        color="blue400"
+                        paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+                      >
+                        <Box
+                          component="span"
+                          display="inlineBlock"
+                          width="full"
+                          onClick={handleClose}
                         >
                           <FocusableBox {...props}>{link.title}</FocusableBox>
-                        </Typography>
-                      </span>
+                        </Box>
+                      </Typography>
                     )
                   })}
                 </div>

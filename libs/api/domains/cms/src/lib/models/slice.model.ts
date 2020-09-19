@@ -115,7 +115,7 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
 }
 
 const isEmptyNode = (node: Block): boolean => {
-  return node.content.every((child) => {
+  return (node?.content ?? []).every((child) => {
     return child.nodeType === 'text' && child.value === ''
   })
 }
@@ -125,8 +125,9 @@ export const mapDocument = (
   idPrefix: string,
 ): Array<typeof Slice> => {
   const slices: Array<typeof Slice> = []
+  const docs = document?.content ?? []
 
-  document.content.forEach((block, index) => {
+  docs.forEach((block, index) => {
     switch (block.nodeType) {
       case BLOCKS.EMBEDDED_ENTRY:
         slices.push(mapSlice(block.data.target))

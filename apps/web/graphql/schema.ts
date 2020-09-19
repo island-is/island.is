@@ -131,7 +131,7 @@ export type ArticleGroup = {
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
-  importance?: Maybe<Scalars['Int']>
+  importance?: Maybe<Scalars['Float']>
   slug: Scalars['String']
 }
 
@@ -300,10 +300,10 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
-  importance?: Maybe<Scalars['Int']>
+  importance?: Maybe<Scalars['Float']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -487,7 +487,7 @@ export type LifeEventPage = {
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
-  image: Image
+  image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
   category?: Maybe<ArticleCategory>
@@ -532,7 +532,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
-  importance?: Maybe<Scalars['Int']>
+  importance?: Maybe<Scalars['Float']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -1357,7 +1357,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
       LifeEventPage,
       'title' | 'slug' | 'intro'
     > & {
-        image: { __typename?: 'Image' } & ImageFieldsFragment
+        image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
         content: Array<
           | ({
               __typename?: 'PageHeaderSlice'
@@ -1401,7 +1401,7 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
       'title' | 'slug' | 'intro'
     > & {
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
-        image: { __typename?: 'Image' } & Pick<Image, 'url'>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
       }
   >
 }
@@ -1423,7 +1423,7 @@ export type GetLifeEventsInCategoryQuery = { __typename?: 'Query' } & {
           >
         >
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
-        image: { __typename?: 'Image' } & Pick<Image, 'url'>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
       }
   >
 }
@@ -1569,8 +1569,11 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1600,7 +1603,7 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
-          > & { image: { __typename?: 'Image' } & Pick<Image, 'id'> })
+          > & { image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>> })
       >
     }
 }
@@ -1628,8 +1631,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1660,9 +1666,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
-              image: { __typename?: 'Image' } & Pick<
-                Image,
-                'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+              image?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
               >
               thumbnail?: Maybe<
                 { __typename?: 'Image' } & Pick<

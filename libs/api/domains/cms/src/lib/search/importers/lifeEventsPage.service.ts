@@ -6,7 +6,7 @@ import {
   LifeEventPage,
   mapLifeEventPage,
 } from '../../models/lifeEventPage.model'
-import { createTerms } from './utils'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService {
@@ -22,14 +22,13 @@ export class LifeEventsPageSyncService {
     logger.info('Mapping life event pages', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
-        let mapped: LifeEventPage
         try {
-          mapped = mapLifeEventPage(entry)
+          const mapped: LifeEventPage = mapLifeEventPage(entry)
 
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
+            content: extractStringsFromObject(mapped.content),
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify(mapped),

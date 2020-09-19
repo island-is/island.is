@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {
   GridContainer,
   GridColumn,
@@ -12,7 +12,9 @@ import {
 import { NewsCard } from '../NewsCard'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
-import { GetNewsListQuery } from '../../graphql/schema'
+import { GetNewsListQuery } from '@island.is/web/graphql/schema'
+import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { useNamespace } from '@island.is/web/hooks'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -28,6 +30,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
 }) => {
   const newsItems = items.slice(0, 3)
   const { activeLocale } = useI18n()
+  const { globalNamespace } = useContext(GlobalNamespaceContext)
+  const n = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
 
   return (
@@ -42,13 +46,13 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
           <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
             <Typography variant="h3" as="p" paddingBottom={4}>
               <ArrowLink href="/frett" arrowHeight={16}>
-                Sjá fleiri
+                {n('seeMore')}
               </ArrowLink>
             </Typography>
           </Box>
         </GridColumn>
       </GridRow>
-      <Hidden below="md">
+      <Hidden below="lg">
         <GridRow>
           {newsItems.map((newsItem) => (
             <GridColumn

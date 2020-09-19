@@ -17,7 +17,7 @@ export class ArticleCategory {
 export const mapArticleCategory = ({
   fields,
 }: IArticleCategory): ArticleCategory => ({
-  title: fields.title,
-  slug: fields.slug,
-  description: fields.description ?? '',
+  title: fields?.title ?? '',
+  slug: fields?.slug ?? '',
+  description: fields?.description ?? '',
 })

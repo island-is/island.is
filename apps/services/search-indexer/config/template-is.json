@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 5,
+  "version": 6,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -22,6 +22,13 @@
           "type": "synonym",
           "lenient": true,
           "synonyms_path": "analyzers/{SYNONYMS}"
+        },
+        "icelandicDeCompounded": {
+          "type": "hyphenation_decompounder",
+          "word_list_path": "analyzers/{HYPHENATION_DECOMPOUND_WHITELIST}",
+          "hyphenation_patterns_path": "analyzers/{HYPHENATION_DECOMPOUND_IS}",
+          "max_subword_size": 18,
+          "min_subword_size": 4
         }
       },
       "analyzer": {
@@ -33,6 +40,7 @@
             "icelandicSynonym",
             "icelandicStop",
             "icelandicKeyword",
+            "icelandicDeCompounded",
             "icelandicStemmer"
           ]
         },

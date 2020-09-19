@@ -242,8 +242,8 @@ type Article {
   contentStatus: String!
   title: String!
   slug: String!
-  shortTitle: String!
-  intro: String!
+  shortTitle: String
+  intro: String
   containsApplicationForm: Boolean
   importance: Float
   body: [Slice!]!
@@ -408,7 +408,7 @@ type LifeEventPage {
   title: String!
   slug: String!
   intro: String!
-  image: Image!
+  image: Image
   thumbnail: Image
   content: [Slice!]!
   category: ArticleCategory

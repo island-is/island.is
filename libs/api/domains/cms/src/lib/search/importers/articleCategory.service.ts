@@ -23,10 +23,8 @@ export class ArticleCategorySyncService {
 
     return entries
       .map<MappedData | boolean>((entry) => {
-        let mapped: ArticleCategory
-
         try {
-          mapped = mapArticleCategory(entry)
+          const mapped: ArticleCategory = mapArticleCategory(entry)
 
           return {
             _id: mapped.slug,
