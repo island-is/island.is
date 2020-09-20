@@ -338,7 +338,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const contentOverviewOptions = useMemo(() => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
-  console.log('article.category', article.category)
+
   return (
     <>
       <Head>
