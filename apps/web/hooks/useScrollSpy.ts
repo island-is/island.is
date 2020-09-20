@@ -2,9 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { throttle, debounce } from 'lodash'
 import { useEvent } from 'react-use'
 
-const TOP_MARGIN = 100
-
-const guessVisibleSection = (ids: string[]): string | null => {
+const guessVisibleSection = (ids: string[], marginTop: number): string | null => {
   if (ids.length === 0) return null
 
   // top of the page is a special case because otherwise we might match the
@@ -14,12 +12,13 @@ const guessVisibleSection = (ids: string[]): string | null => {
   return ids.reduce((match, id) => {
     const el = document.getElementById(id)
     const elPosY = el.getBoundingClientRect().top + window.scrollY
-    return window.scrollY + TOP_MARGIN >= elPosY ? id : match
+    return window.scrollY + marginTop >= elPosY ? id : match
   }, ids[0])
 }
 
 const useScrollSpy = (
   ids: string[],
+  { marginTop = 100 }: { marginTop?: number } = {},
 ): [string | undefined, (id: string) => void] => {
   const [current, setCurrent] = useState(ids[0])
 
@@ -39,7 +38,7 @@ const useScrollSpy = (
       setCurrent(id)
       setIgnore(true)
       const rect = document.getElementById(id).getBoundingClientRect()
-      window.scrollTo(0, rect.top + window.scrollY - TOP_MARGIN)
+      window.scrollTo(0, rect.top + window.scrollY - marginTop)
     },
     [setCurrent, setIgnore],
   )
@@ -48,7 +47,7 @@ const useScrollSpy = (
   const updateCurrent = useCallback(
     throttle(() => {
       if (!ignore) {
-        setCurrent(guessVisibleSection(ids))
+        setCurrent(guessVisibleSection(ids, marginTop))
       }
     }, 100),
     [ids, ignore, setCurrent],

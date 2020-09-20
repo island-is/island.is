@@ -1,15 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-  FC,
-  ReactNode,
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  Ref,
-  forwardRef,
-  useCallback,
-} from 'react'
+import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import { fromPairs, minBy } from 'lodash'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
@@ -52,61 +42,14 @@ import {
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
 } from '@island.is/web/graphql/schema'
-import useViewport from '@island.is/web/hooks/useViewport'
 import { renderSlices } from '@island.is/island-ui/contentful'
+import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import { createNavigation } from '@island.is/web/utils/navigation'
 
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
 const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
 const mainContentIndent: SpanType = [null, null, null, '1/12']
 const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
-
-const useScrollSpy = ({
-  margin = 0,
-  initialId = '',
-}: {
-  margin?: number
-  initialId?: string
-}): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
-  const elements = useRef<{ [key: string]: HTMLElement }>({})
-  const [currentId, setCurrentId] = useState(initialId)
-
-  // re-render on scroll or resize
-  useViewport()
-
-  // Elements are cleared on each render. After the component that calls this
-  // hook has finished rendering, the useEffect hook below runs with
-  // elements.current populated by the component using this hook.
-  elements.current = {}
-
-  const spy = useCallback(
-    (key: string) => {
-      return (e: HTMLElement) => {
-        elements.current[key] = e
-      }
-    },
-    [elements],
-  )
-
-  useEffect(() => {
-    const candidates = Array.from(
-      Object.entries(elements.current),
-    ).map(([name, elem]) => ({ name, elem }))
-
-    const best = minBy(candidates, (c) => {
-      const { top, height } = c.elem.getBoundingClientRect()
-      return Math.min(
-        Math.abs(top - margin),
-        Math.abs(top + height - margin - 1),
-      )
-    })
-
-    if (best && best.name !== currentId) {
-      setCurrentId(best.name)
-    }
-  })
-
-  return [spy, currentId]
-}
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -214,17 +157,16 @@ interface SectionProps {
   slice: AvailableSlices
   page: GetAboutPageQuery['getAboutPage']
   currentSliceId: string
-  setRef: (k: string) => (e: HTMLDivElement) => void
 }
 
-const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
+const Section: FC<SectionProps> = ({ slice, page, currentSliceId }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return (
-        <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
+        <Background id={slice.id} theme={page.theme}>
           <GridContainer position="none">
             <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
               <Box marginBottom={[8, 8, 8, 15]}>
@@ -256,7 +198,6 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                     slice={slice}
                     page={page}
                     currentSliceId={currentSliceId}
-                    setRef={setRef}
                   />
                 ))}
               </GridColumn>
@@ -320,17 +261,19 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'TimelineSlice':
       return (
-        <Timeline
-          {...slice}
-          events={slice.events.map((event) => ({
-            ...event,
-            body: event.body && renderSlices(event.body),
-          }))}
-        />
+        <div id={slice.id}>
+          <Timeline
+            {...slice}
+            events={slice.events.map((event) => ({
+              ...event,
+              body: event.body && renderSlices(event.body),
+            }))}
+          />
+        </div>
       )
     case 'HeadingSlice':
       return (
-        <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
+        <div key={slice.id} id={slice.id}>
           <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
             <Box paddingTop={15} paddingBottom={10}>
               <Heading {...slice} />
@@ -340,12 +283,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'LinkCardSlice':
       return (
-        <Box
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          background="dotted"
-        >
+        <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
             <Box paddingTop={8} paddingBottom={10}>
               <LinkCardList {...slice} />
@@ -355,12 +293,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'MailingListSignupSlice':
       return (
-        <Box
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          background="blue100"
-        >
+        <Box key={slice.id} id={slice.id} background="blue100">
           <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
             <Box paddingTop={10} paddingBottom={7}>
               <EmailSignup {...slice} />
@@ -370,12 +303,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'StorySlice':
       return (
-        <div
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          className={styles.gradient}
-        >
+        <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
             <Box paddingTop={12} paddingBottom={10}>
               <StoryList
@@ -391,7 +319,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'LatestNewsSlice':
       return (
-        <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
+        <div key={slice.id} id={slice.id}>
           <Layout width={mainContentSpan}>
             <Box paddingTop={15} paddingBottom={12}>
               <AboutLatestNews {...slice} />
@@ -401,12 +329,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'LogoListSlice':
       return (
-        <div
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          className={styles.gradient}
-        >
+        <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
             <Box paddingTop={12} paddingBottom={5}>
               <LogoList
@@ -419,7 +342,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'BulletListSlice':
       return (
-        <div key={slice.id} ref={setRef(slice.id)}>
+        <div id={slice.id} key={slice.id}>
           <Layout width={mainContentSpan}>
             <Box paddingBottom={10}>
               <BulletList
@@ -490,19 +413,13 @@ export interface AboutPageProps {
 }
 
 const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
-  const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
-  const [spy, sliceId] = useScrollSpy({ margin: 200 })
+  const navigation = useMemo(() => createNavigation(page.slices), [page.slices])
+  const ids = useMemo(() => navigation.map((x) => x.id), navigation)
+  const [sliceId, navigate] = useScrollSpy(ids, { marginTop: 220 })
   const sliceMap = useMemo(
     () => connectSlices(page.slices as AvailableSlices[]),
     [page.slices],
   )
-
-  const setRef = (id: string) => {
-    return (e: HTMLDivElement) => {
-      refs.current[id] = e
-      spy(id)(e)
-    }
-  }
 
   return (
     <>
@@ -517,7 +434,6 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
             slice={slice}
             page={page}
             currentSliceId={sliceMap[sliceId]}
-            setRef={setRef}
           />
         ))}
       </Box>
