@@ -33,13 +33,10 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
-  async find({ types, ...query }: SearcherInput): Promise<SearchResult> {
+  async find(query: SearcherInput): Promise<SearchResult> {
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
-      {
-        types,
-        ...query,
-      },
+      query,
     )
 
     return {
