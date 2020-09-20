@@ -365,7 +365,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   {article.category.title}
                 </Link>
               )}
-              {article.group && (
+              {!!article.group && (
                 <Link
                   as={makePath(
                     'ArticleCategory',
