@@ -16,7 +16,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  Divider,
   Option,
   SidebarAccordion,
   Pagination,
@@ -40,6 +39,7 @@ import {
   GetNamespaceQuery,
   Article,
   LifeEventPage,
+  SearchableContentTypes,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 
@@ -338,7 +338,10 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: ['webArticle', 'webLifeEventPage'],
+          types: [
+            SearchableContentTypes['WebArticle'],
+            SearchableContentTypes['WebLifeEventPage'],
+          ],
           size: PerPage,
           page,
         },

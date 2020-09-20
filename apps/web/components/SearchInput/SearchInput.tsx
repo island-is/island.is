@@ -35,10 +35,11 @@ import {
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
+  SearchableContentTypes,
 } from '@island.is/web/graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context'
 
-const DEBOUNCE_TIMER = 300
+const DEBOUNCE_TIMER = 100
 const STACK_WIDTH = 400
 
 type SearchState = {
@@ -84,43 +85,50 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
 
     setState({ ...state, isLoading: true })
 
+    // the api only completes single terms get only single terms
+    const indexOfLastSpace = term.lastIndexOf(' ')
+    const hasSpace = indexOfLastSpace !== -1
+    const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+    const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+
     const thisTimerId = (timer.current = setTimeout(async () => {
-      const {
-        data: { searchResults: results },
-      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
-        query: GET_SEARCH_RESULTS_QUERY,
-        variables: {
-          query: {
-            queryString: term.trim(),
-            language: locale as ContentLanguage,
-            types: ['webArticle', 'webLifeEventPage'],
+      const [
+        {
+          data: { searchResults: results },
+        },
+        {
+          data: {
+            webSearchAutocomplete: { completions: suggestions },
           },
         },
-      })
-
-      // the api only completes single terms get only single terms
-      const indexOfLastSpace = term.lastIndexOf(' ')
-      const hasSpace = indexOfLastSpace !== -1
-      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-
-      const {
-        data: {
-          webSearchAutocomplete: { completions: suggestions },
-        },
-      } = await client.query<
-        AutocompleteTermResultsQuery,
-        QueryWebSearchAutocompleteArgs
-      >({
-        query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-        variables: {
-          input: {
-            singleTerm: queryString.trim(),
-            language: locale as ContentLanguage,
-            size: 10, // only show top X completions to prevent long list
+      ] = await Promise.all([
+        client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+          query: GET_SEARCH_RESULTS_QUERY,
+          variables: {
+            query: {
+              queryString: term.trim(),
+              language: locale as ContentLanguage,
+              types: [
+                SearchableContentTypes['WebArticle'],
+                SearchableContentTypes['WebLifeEventPage'],
+              ],
+            },
           },
-        },
-      })
+        }),
+        client.query<
+          AutocompleteTermResultsQuery,
+          QueryWebSearchAutocompleteArgs
+        >({
+          query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+          variables: {
+            input: {
+              singleTerm: queryString.trim(),
+              language: locale as ContentLanguage,
+              size: 10, // only show top X completions to prevent long list
+            },
+          },
+        }),
+      ])
 
       if (thisTimerId === timer.current) {
         setState({

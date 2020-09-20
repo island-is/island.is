@@ -425,6 +425,7 @@ export type Namespace = {
 
 export type AboutPage = {
   __typename?: 'AboutPage'
+  id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
@@ -520,7 +521,7 @@ export type SearchResult = {
   items: Array<Items>
 }
 
-export type Items = Article | LifeEventPage
+export type Items = Article | LifeEventPage | News | AboutPage
 
 export type ContentItem = {
   __typename?: 'ContentItem'
@@ -913,10 +914,17 @@ export type GetUrlInput = {
 
 export type SearcherInput = {
   queryString: Scalars['String']
-  types?: Maybe<Array<Scalars['String']>>
+  types?: Maybe<Array<SearchableContentTypes>>
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+}
+
+export enum SearchableContentTypes {
+  WebAboutPage = 'webAboutPage',
+  WebArticle = 'webArticle',
+  WebLifeEventPage = 'webLifeEventPage',
+  WebNews = 'webNews',
 }
 
 export enum ContentLanguage {
@@ -1604,6 +1612,8 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & { image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>> })
+        | { __typename?: 'News' }
+        | { __typename?: 'AboutPage' }
       >
     }
 }
@@ -1679,6 +1689,8 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
                 >
               >
             })
+        | { __typename?: 'News' }
+        | { __typename?: 'AboutPage' }
       >
     }
 }
