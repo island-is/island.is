@@ -6,8 +6,8 @@ import React, {
   useCallback,
   useRef,
   forwardRef,
-  useContext,
   ReactElement,
+  useReducer,
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
@@ -37,9 +37,8 @@ import {
   Article,
   SearchableContentTypes,
 } from '@island.is/web/graphql/schema'
-import { GlobalNamespaceContext } from '@island.is/web/context'
 
-const DEBOUNCE_TIMER = 100
+const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
 
 type SearchState = {
@@ -50,59 +49,65 @@ type SearchState = {
   isLoading: boolean
 }
 
-const emptyState: Readonly<SearchState> = {
+const isEmpty = ({ results, suggestions }: SearchState): boolean =>
+  suggestions?.length === 0 && (results?.total ?? 0) === 0
+
+const initialSearchState: Readonly<SearchState> = {
   term: '',
   suggestions: [],
   prefix: '',
   isLoading: false,
 }
 
-const isEmpty = ({ results, suggestions }: SearchState): boolean =>
-  suggestions.length === 0 && (results?.total ?? 0) === 0
+const searchReducer = (state, action): SearchState => {
+  switch (action.type) {
+    case 'startLoading': {
+      return { ...state, isLoading: true }
+    }
+    case 'suggestions': {
+      return { ...state, suggestions: action.suggestions }
+    }
+    case 'searchResults': {
+      return { ...state, results: action.results, isLoading: false }
+    }
+    case 'searchString': {
+      return { ...state, term: action.term, prefix: action.prefix }
+    }
+    case 'reset': {
+      return initialSearchState
+    }
+  }
+}
 
-const useSearch = (locale: Locale, term?: string): SearchState => {
-  const { globalNamespace } = useContext(GlobalNamespaceContext)
-  const [state, setState] = useState<SearchState>(emptyState)
+const useSearch = (
+  locale: Locale,
+  term?: string,
+  autocomplete?: boolean,
+): SearchState => {
+  const [state, dispatch] = useReducer(searchReducer, initialSearchState)
   const client = useApolloClient()
   const timer = useRef(null)
 
   useEffect(() => {
-    if (term == null) {
-      setState(emptyState)
+    console.log('autocomplete', autocomplete)
+    if (!autocomplete) {
+      dispatch({
+        type: 'reset',
+      })
       return
     }
-
     if (term === '') {
-      setState({
-        isLoading: false,
-        term: '',
-        prefix: '',
-        // hardcoded while not supported by search
-        suggestions: globalNamespace.searchSuggestions ?? [],
+      dispatch({
+        type: 'reset',
       })
       return
     }
 
-    setState({ ...state, isLoading: true })
-
-    // the api only completes single terms get only single terms
-    const indexOfLastSpace = term.lastIndexOf(' ')
-    const hasSpace = indexOfLastSpace !== -1
-    const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-    const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+    dispatch({ type: 'startLoading' })
 
     const thisTimerId = (timer.current = setTimeout(async () => {
-      const [
-        {
-          data: { searchResults: results },
-        },
-        {
-          data: {
-            webSearchAutocomplete: { completions: suggestions },
-          },
-        },
-      ] = await Promise.all([
-        client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+      client
+        .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
           query: GET_SEARCH_RESULTS_QUERY,
           variables: {
             query: {
@@ -114,11 +119,22 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
               ],
             },
           },
-        }),
-        client.query<
-          AutocompleteTermResultsQuery,
-          QueryWebSearchAutocompleteArgs
-        >({
+        })
+        .then(({ data: { searchResults: results } }) => {
+          dispatch({
+            type: 'searchResults',
+            results,
+          })
+        })
+
+      // the api only completes single terms get only single terms
+      const indexOfLastSpace = term.lastIndexOf(' ')
+      const hasSpace = indexOfLastSpace !== -1
+      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+
+      client
+        .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
           query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
           variables: {
             input: {
@@ -127,23 +143,30 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
               size: 10, // only show top X completions to prevent long list
             },
           },
-        }),
-      ])
-
-      if (thisTimerId === timer.current) {
-        setState({
-          isLoading: false,
-          term,
-          results,
-          suggestions,
-          prefix,
         })
-      }
+        .then(
+          ({
+            data: {
+              webSearchAutocomplete: { completions: suggestions },
+            },
+          }) => {
+            dispatch({
+              type: 'suggestions',
+              suggestions,
+            })
+          },
+        )
+
+      dispatch({
+        type: 'searchString',
+        term,
+        prefix,
+      })
     }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, locale, term, setState])
+  }, [client, locale, term, dispatch])
 
   return state
 }
@@ -185,17 +208,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       placeholder = '',
       activeLocale: locale,
       initialInputValue = '',
-      autocomplete = true,
       openOnFocus = false,
       size = 'medium',
       white = false,
       colored = true,
+      autocomplete = true,
       id = 'downshift',
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
-    const search = useSearch(locale, autocomplete ? searchTerm : null)
+    const search = useSearch(locale, searchTerm, autocomplete)
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
     const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
@@ -326,27 +349,28 @@ const Results: FC<{
     >
       <div className={styles.menuRow}>
         <Stack space={1}>
-          {search.suggestions.map((suggestion, i) => {
-            const suggestionHasTerm = suggestion.startsWith(search.term)
-            const startOfString = suggestionHasTerm ? search.term : suggestion
-            const endOfString = suggestionHasTerm
-              ? suggestion.replace(search.term, '')
-              : ''
-            return (
-              <div key={suggestion} {...getItemProps({ item: suggestion })}>
-                <Typography
-                  links
-                  color={i === highlightedIndex ? 'blue400' : 'dark400'}
-                >
-                  {`${search.prefix} ${startOfString}`}
-                  <strong>{endOfString}</strong>
-                </Typography>
-              </div>
-            )
-          })}
+          {search.suggestions &&
+            search.suggestions.map((suggestion, i) => {
+              const suggestionHasTerm = suggestion.startsWith(search.term)
+              const startOfString = suggestionHasTerm ? search.term : suggestion
+              const endOfString = suggestionHasTerm
+                ? suggestion.replace(search.term, '')
+                : ''
+              return (
+                <div key={suggestion} {...getItemProps({ item: suggestion })}>
+                  <Typography
+                    links
+                    color={i === highlightedIndex ? 'blue400' : 'dark400'}
+                  >
+                    {`${search.prefix} ${startOfString}`}
+                    <strong>{endOfString}</strong>
+                  </Typography>
+                </div>
+              )
+            })}
         </Stack>
       </div>{' '}
-      {search.results.items.length > 0 && (
+      {search.results && search.results.items.length > 0 && (
         <>
           <div className={styles.separatorHorizontal} />
           <div className={styles.menuRow}>
