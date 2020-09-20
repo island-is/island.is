@@ -338,9 +338,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const contentOverviewOptions = useMemo(() => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
-
-  const hasValidCategory = !!article.category.slug
-  const hasValidGroup = !!article.group.slug
+  console.log('article.category', article.category)
   return (
     <>
       <Head>
@@ -359,7 +357,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
-              {hasValidCategory && (
+              {!!article.category && (
                 <Link
                   href={`${makePath('ArticleCategory')}/[slug]`}
                   as={makePath('ArticleCategory', article.category.slug)}
@@ -367,7 +365,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   {article.category.title}
                 </Link>
               )}
-              {hasValidGroup && (
+              {!!article.group && (
                 <Link
                   as={makePath(
                     'ArticleCategory',

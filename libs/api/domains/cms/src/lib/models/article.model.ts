@@ -68,8 +68,8 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   containsApplicationForm: fields.containsApplicationForm ?? false,
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-  category: mapArticleCategory(fields?.category),
-  group: mapArticleGroup(fields?.group),
+  category: fields?.category ? mapArticleCategory(fields.category) : null,
+  group: fields?.group ? mapArticleGroup(fields.group) : null,
   subgroup: fields.subgroup?.fields,
   organization: (fields?.organization ?? [])
     .filter((doc) => !isEmpty(doc))

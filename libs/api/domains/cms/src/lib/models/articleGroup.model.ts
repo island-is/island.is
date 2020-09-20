@@ -15,13 +15,8 @@ export class ArticleGroup {
 }
 
 // article group can be undefined we have to handle that there
-export const mapArticleGroup = (
-  entry: IArticleGroup | undefined,
-): ArticleGroup => {
-  const fields = entry?.fields
-  return {
-    title: fields?.title ?? '',
-    slug: fields?.slug ?? '',
-    description: fields?.description ?? '',
-  }
-}
+export const mapArticleGroup = ({ fields }: IArticleGroup): ArticleGroup => ({
+  title: fields?.title ?? '',
+  slug: fields?.slug ?? '',
+  description: fields?.description ?? '',
+})
