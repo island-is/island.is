@@ -127,6 +127,28 @@ const RelatedArticles: FC<{
   )
 }
 
+const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
+  content,
+  defaultText,
+}) => {
+  const processEntries = content.filter((slice): slice is ProcessEntry => {
+    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
+  })
+
+  // we'll only show the button if there is exactly one process entry on the page
+  if (processEntries.length !== 1) return null
+
+  const { buttonText, processLink } = processEntries[0]
+
+  return (
+    <SidebarBox>
+      <Button href={processLink} width="fluid">
+        {buttonText || defaultText}
+      </Button>
+    </SidebarBox>
+  )
+}
+
 const SubArticleNavigation: FC<{
   title: string
   article: Article
@@ -275,6 +297,10 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   return (
     <Stack space={3}>
+      <ActionButton
+        content={article.body}
+        defaultText={n('processLinkButtonText')}
+      />
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
       ) : (
