@@ -21,6 +21,7 @@ import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
 import ReactDOM from 'react-dom'
 import { Box } from '../Box'
+import Link from 'next/link'
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -391,16 +392,20 @@ const EventModal = forwardRef(
             {event.data?.labels && (
               <Inline space={2}>
                 {event.data.labels.map((label, index) => (
-                  <Tag key={index} label>
+                  <Tag key={index} label variant="purple" bordered>
                     {label}
                   </Tag>
                 ))}
               </Inline>
             )}
             {Boolean(event.data?.text) && event.data.text}
-            <Button variant="text" icon="arrowRight">
-              Lesa meira
-            </Button>
+            {event.data?.link && (
+              <Link href={event.data.link}>
+                <Button variant="text" icon="arrowRight">
+                  Lesa meira
+                </Button>
+              </Link>
+            )}
           </Stack>
         </Box>
       </div>
