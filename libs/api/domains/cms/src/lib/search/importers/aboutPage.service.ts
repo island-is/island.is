@@ -23,7 +23,7 @@ export class AboutPageSyncService {
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject(mapped.slices),
+            content: extractStringsFromObject({ ...mapped.slices }), // this function only accepts plain js objects
             type,
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, __typename: type }),
