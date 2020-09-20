@@ -339,10 +339,21 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
+  const metaTitle = `${article.title} | Ísland.is`
+  const metaDescription =
+    article.intro ||
+    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
+
   return (
     <>
       <Head>
-        <title>{article.title} | Ísland.is</title>
+        <title>{metaTitle}</title>
+        <meta name="title" property="og:title" content={metaTitle} />
+        <meta
+          name="description"
+          property="og:description"
+          content={metaDescription}
+        />
       </Head>
       <ArticleLayout
         sidebar={
@@ -351,8 +362,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       >
         <GridRow>
           <GridColumn
-            offset={['0', '0', '1/9']}
-            span={['0', '0', '7/9']}
+            offset={['0', '0', '0', '0', '1/9']}
+            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
             paddingBottom={2}
           >
             <Breadcrumbs>
@@ -380,19 +391,27 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
+        {!!contentOverviewOptions.length && (
+          <GridRow>
+            <GridColumn span="9/9" paddingBottom={4}>
+              <Hidden above="sm">
+                <DrawerMenu
+                  categories={[
+                    {
+                      title: n('categoryOverview', 'Efnisyfirlit'),
+                      items: contentOverviewOptions,
+                    },
+                  ]}
+                />
+              </Hidden>
+            </GridColumn>
+          </GridRow>
+        )}
         <GridRow>
-          <GridColumn span="9/9" paddingBottom={4}>
-            <Hidden above="sm">
-              <DrawerMenu
-                categories={[
-                  { title: 'Efnisyfirlit', items: contentOverviewOptions },
-                ]}
-              />
-            </Hidden>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn offset={['0', '0', '1/9']} span={['9/9', '9/9', '7/9']}>
+          <GridColumn
+            offset={['0', '0', '0', '0', '1/9']}
+            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+          >
             <Typography variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
             </Typography>

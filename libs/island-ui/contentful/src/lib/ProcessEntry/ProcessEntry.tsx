@@ -34,10 +34,20 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   const label = Titles[type]
 
   return (
-    <Box background="blue100" className={styles.container}>
-      <GridRow>
-        <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-          <Box display="flex" flexDirection={['column', 'column', 'row']}>
+    <Box width="full" background="blue100" borderRadius="large">
+      <GridRow className={styles.row}>
+        <GridColumn
+          className={styles.column}
+          span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+          offset={['0', '0', '0', '0', '1/9']}
+        >
+          <Box
+            paddingY={4}
+            paddingX={[3, 3, 3, 3, 0]}
+            display="flex"
+            flexGrow={1}
+            flexDirection={['column', 'column', 'column', 'column', 'row']}
+          >
             <Box flexGrow={1}>
               <Stack space={1}>
                 {Boolean(label) && (
@@ -52,10 +62,12 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
             </Box>
             <Box
               flexShrink={0}
-              paddingTop={[3, 3, 0]}
-              paddingLeft={[0, 0, 4, 8]}
+              paddingTop={[3, 3, 3, 3, 0]}
+              paddingLeft={[0, 0, 0, 0, 8]}
+              alignItems="flexStart"
+              justifyContent="flexStart"
             >
-              <Button noWrap href={processLink} icon="external">
+              <Button width="fixed" noWrap href={processLink} icon="external">
                 {buttonText}
               </Button>
             </Box>
