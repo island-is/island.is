@@ -326,7 +326,6 @@ type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
-  image: Image
   link: String
   animationJson: String
 }
