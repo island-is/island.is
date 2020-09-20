@@ -27,12 +27,12 @@ import {
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
-import { ArticleLayout } from './Layouts/Layouts'
-import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import { useI18n } from '../i18n'
-import routeNames from '../i18n/routeNames'
-import { CustomNextError } from '../units/errors'
+import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { Screen } from '@island.is/web/types'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -42,9 +42,9 @@ import {
   SubArticle,
   Slice,
   ProcessEntry,
-} from '../graphql/schema'
-import { createNavigation } from '../utils/navigation'
-import useScrollSpy from '../hooks/useScrollSpy'
+} from '@island.is/web/graphql/schema'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 
 const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
   condition ? <b>{content}</b> : content

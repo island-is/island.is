@@ -32,8 +32,8 @@ import {
   QueryGetLifeEventPageArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { createNavigation, makeId } from '@island.is/web/utils/navigation'
-import ArticleLayout from '../Layouts/Layouts'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import ArticleLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
 
 interface LifeEventProps {

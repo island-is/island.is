@@ -9,9 +9,9 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { GetLifeEventsQuery } from '../../graphql/schema'
+import { GetLifeEventsQuery } from '@island.is/web/graphql/schema'
 import { Sleeve } from '@island.is/island-ui/core'
-import { Card } from '..'
+import { Card } from '@island.is/web/components'
 
 interface LifeEventsSectionProps {
   title?: string
