@@ -11,9 +11,9 @@ import {
   Tag,
   Typography,
   Box,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Image } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import {
@@ -22,27 +22,41 @@ import {
   DrawerMenu,
   BackgroundImage,
 } from '@island.is/web/components'
-import { GET_LIFE_EVENT_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_LIFE_EVENT_QUERY,
+  GET_NAMESPACE_QUERY,
+} from '@island.is/web/screens/queries'
 import {
   GetLifeEventQuery,
+  GetNamespaceQuery,
   QueryGetLifeEventPageArgs,
+  QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation, makeId } from '@island.is/web/utils/navigation'
 import ArticleLayout from '../Layouts/Layouts'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
   lifeEvent: { image, title, intro, content },
+  namespace,
 }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
+  const n = useNamespace(namespace)
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
   }, [content, title])
+
+  const mobileNavigation = navigation.map((x) => ({
+    title: x.text,
+    url: '#' + x.id,
+  }))
 
   const metaTitle = `${title} | Ísland.is`
   const metaDescription =
@@ -92,6 +106,22 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               </Breadcrumbs>
             </GridColumn>
           </GridRow>
+          {!!mobileNavigation.length && (
+            <GridRow>
+              <GridColumn span="9/9" paddingBottom={4}>
+                <Hidden above="sm">
+                  <DrawerMenu
+                    categories={[
+                      {
+                        title: n('categoryOverview', 'Efnisyfirlit'),
+                        items: mobileNavigation,
+                      },
+                    ]}
+                  />
+                </Hidden>
+              </GridColumn>
+            </GridRow>
+          )}
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '0', '1/9']}
@@ -117,21 +147,40 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 }
 
 LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getLifeEventPage: lifeEvent },
-  } = await apolloClient.query<GetLifeEventQuery, QueryGetLifeEventPageArgs>({
-    query: GET_LIFE_EVENT_QUERY,
-    fetchPolicy: 'no-cache',
-    variables: {
-      input: { lang: locale, slug: String(query.slug) },
+  const [
+    {
+      data: { getLifeEventPage: lifeEvent },
     },
-  })
+    namespace,
+  ] = await Promise.all([
+    apolloClient.query<GetLifeEventQuery, QueryGetLifeEventPageArgs>({
+      query: GET_LIFE_EVENT_QUERY,
+      fetchPolicy: 'no-cache',
+      variables: {
+        input: { lang: locale, slug: String(query.slug) },
+      },
+    }),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Articles',
+            lang: locale,
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      }),
+  ])
 
   if (!lifeEvent) {
     throw new CustomNextError(404, 'Life Event not found')
   }
 
-  return { lifeEvent }
+  return { lifeEvent, namespace }
 }
 
 export default withMainLayout(LifeEvent)
