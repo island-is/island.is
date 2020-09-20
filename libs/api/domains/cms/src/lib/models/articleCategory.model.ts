@@ -14,7 +14,6 @@ export class ArticleCategory {
   description?: string
 }
 
-// article group can be undefined we have to handle that there
 export const mapArticleCategory = ({
   fields,
 }: IArticleCategory): ArticleCategory => ({
