@@ -89,7 +89,6 @@ const useSearch = (
   const timer = useRef(null)
 
   useEffect(() => {
-    console.log('autocomplete', autocomplete)
     if (!autocomplete) {
       dispatch({
         type: 'reset',
