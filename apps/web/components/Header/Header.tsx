@@ -103,7 +103,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <Button
                     variant="menu"
                     onClick={() => setSideMenuOpen(true)}
-                    icon="burger"
+                    leftIcon="burger"
                   >
                     Valmynd
                   </Button>

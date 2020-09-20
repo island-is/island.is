@@ -42,7 +42,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
+          <Typography variant="h3" as="h2" paddingBottom={4}>
             {title}
           </Typography>
         </GridColumn>

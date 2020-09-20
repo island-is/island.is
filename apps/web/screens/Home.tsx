@@ -110,7 +110,7 @@ const Home: Screen<HomeProps> = ({
           <Categories title={n('articlesTitle')} cards={cards} />
         </Section>
       </Box>
-      <Section paddingTop={[8, 8, 6]}>
+      <Section paddingTop={[8, 8, 5]}>
         <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
       </Section>
       <Section paddingY={[8, 8, 8, 10, 15]}>
