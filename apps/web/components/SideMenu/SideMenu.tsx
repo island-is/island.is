@@ -118,11 +118,14 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
               </GridRow>
               <GridRow>
                 <GridColumn span="8/12" paddingTop={3} paddingBottom={3}>
-                  <Link href="https://minarsidur.island.is/">
-                    <Button variant="menu" leftIcon="user" width="fluid">
-                      {t.login}
-                    </Button>
-                  </Link>
+                  <Button
+                    href="https://minarsidur.island.is/"
+                    variant="menu"
+                    leftIcon="user"
+                    width="fluid"
+                  >
+                    {t.login}
+                  </Button>
                 </GridColumn>
                 <GridColumn span="4/12" paddingTop={3} paddingBottom={3}>
                   <LanguageToggler />
