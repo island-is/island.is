@@ -43,6 +43,7 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -448,6 +449,14 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
+
+  const categoryExists = !!getArticleCategories.find(
+    (category) => category.slug === slug,
+  )
+  // if requested category si not in returned list of categories we assume it does not exist
+  if (!categoryExists) {
+    throw new CustomNextError(404, 'Category not found')
+  }
 
   return {
     articles,
