@@ -225,13 +225,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     <GridContainer className={styles.removeMobileSpacing}>
       <GridRow>
         <GridColumn span={[null, null, null, '1/12']}>
-          <Box
-            display="flex"
-            height="full"
-            width="full"
-            justifyContent="center"
-            alignItems="center"
-          >
+          <Box display="flex" height="full" width="full" alignItems="center">
             <Hidden below="lg">
               <button
                 onClick={() => goTo('prev')}
@@ -391,7 +385,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             display="flex"
             height="full"
             width="full"
-            justifyContent="center"
+            justifyContent="flexEnd"
             alignItems="center"
           >
             <Hidden below="lg">
