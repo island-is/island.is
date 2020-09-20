@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
+import { theme, Colors } from '@island.is/island-ui/theme'
 import { Image as ApiImage } from '@island.is/api/schema'
 import * as styles from './BackgroundImage.treat'
 
@@ -8,6 +9,7 @@ export type BackgroundImageProps = {
   image: ApiImage
   ratio?: string
   width?: number
+  background?: Colors
   boxProps?: BoxProps
 }
 
@@ -27,6 +29,7 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
   image = null,
   ratio = '16:9',
   width = 1000,
+  background = theme.color.dark100,
   boxProps = {
     alignItems: 'center',
     width: 'full',
@@ -55,7 +58,7 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
 
   return (
     <Box {...boxProps}>
-      <div className={styles.container} style={{ paddingTop }}>
+      <div className={styles.container} style={{ paddingTop, background }}>
         <div
           className={cn(styles.thumbnail, styles.bgImage, {
             [styles.thumbnailHide]: imageLoaded,

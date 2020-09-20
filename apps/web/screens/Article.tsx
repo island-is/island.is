@@ -290,20 +290,24 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
 interface ArticleSidebarProps {
   article: Article
   subArticle: SubArticle
+  showActionButton: boolean
   n: (s: string) => string
 }
 
 const ArticleSidebar: FC<ArticleSidebarProps> = ({
   article,
   subArticle,
+  showActionButton,
   n,
 }) => {
   return (
     <Stack space={3}>
-      <ActionButton
-        content={article.body}
-        defaultText={n('processLinkButtonText')}
-      />
+      {!!showActionButton && (
+        <ActionButton
+          content={article.body}
+          defaultText={n('processLinkButtonText')}
+        />
+      )}
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
       ) : (
@@ -365,7 +369,12 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       </Head>
       <ArticleLayout
         sidebar={
-          <ArticleSidebar article={article} subArticle={subArticle} n={n} />
+          <ArticleSidebar
+            showActionButton={Boolean(processEntry)}
+            article={article}
+            subArticle={subArticle}
+            n={n}
+          />
         }
       >
         <GridRow>

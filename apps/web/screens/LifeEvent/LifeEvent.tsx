@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react'
+import Head from 'next/head'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import slugify from '@sindresorhus/slugify'
 import {
-  GridContainer,
   GridRow,
   GridColumn,
   Breadcrumbs,
@@ -12,16 +13,22 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Image, ContentContainer } from '@island.is/island-ui/contentful'
+import { Image } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { Sticky, RichText, SidebarNavigation } from '@island.is/web/components'
+import {
+  RichText,
+  SidebarNavigation,
+  DrawerMenu,
+  BackgroundImage,
+} from '@island.is/web/components'
 import { GET_LIFE_EVENT_QUERY } from '@island.is/web/screens/queries'
 import {
   GetLifeEventQuery,
   QueryGetLifeEventPageArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation, makeId } from '@island.is/web/utils/navigation'
+import ArticleLayout from '../Layouts/Layouts'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -32,54 +39,80 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
+
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
   }, [content, title])
 
+  const metaTitle = `${title} | Ísland.is`
+  const metaDescription =
+    intro ||
+    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
+
   return (
-    <Box paddingBottom={10}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
-            <Box paddingX={[0, 0, 8]}>
-              <Image type="apiImage" image={image} />
-            </Box>
-            <ContentContainer>
+    <>
+      <Head>
+        <title>{metaTitle}</title>
+        <meta name="title" property="og:title" content={metaTitle} />
+        <meta
+          name="description"
+          property="og:description"
+          content={metaDescription}
+        />
+      </Head>
+      <ArticleLayout
+        sidebar={
+          <SidebarNavigation
+            title="Efnisyfirlit"
+            navigation={navigation}
+            position="right"
+          />
+        }
+      >
+        <>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '0', '1/9']}
+              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+              paddingBottom={2}
+            >
+              <Box marginBottom={2} display="inlineBlock" width="full">
+                <BackgroundImage
+                  ratio="12:4"
+                  background="transparent"
+                  boxProps={{ background: 'white' }}
+                  image={image}
+                />
+              </Box>
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
                 <Tag variant="blue" label>
                   Lífsviðburður
                 </Tag>
               </Breadcrumbs>
-              <Typography
-                id={makeId(title)}
-                variant="h1"
-                as="h1"
-                paddingTop={3}
-                paddingBottom={2}
-              >
-                {title}
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '0', '1/9']}
+              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+            >
+              <Typography variant="h1" as="h1">
+                <span id={slugify(title)}>{title}</span>
               </Typography>
-              <Typography variant="intro" as="p">
-                {intro}
-              </Typography>
-            </ContentContainer>
-            <Box paddingTop={12}>
-              <RichText body={content} config={{ defaultPadding: 12 }} />
-            </Box>
-          </GridColumn>
-          <GridColumn span={[null, null, null, '4/12', '3/12']} paddingTop={10}>
-            <Sticky>
-              <SidebarNavigation
-                title="Efnisyfirlit"
-                navigation={navigation}
-                position="right"
-              />
-            </Sticky>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
+              {intro && (
+                <Typography variant="intro" as="p" paddingTop={2}>
+                  <span id={slugify(intro)}>{intro}</span>
+                </Typography>
+              )}
+            </GridColumn>
+          </GridRow>
+          <Box paddingTop={12}>
+            <RichText body={content} config={{ defaultPadding: 12 }} />
+          </Box>
+        </>
+      </ArticleLayout>
+    </>
   )
 }
 

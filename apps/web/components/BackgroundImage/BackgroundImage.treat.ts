@@ -7,7 +7,6 @@ export const container = style({
   height: 'auto',
   width: '100%',
   overflow: 'hidden',
-  backgroundColor: theme.color.dark100,
 })
 
 export const srOnly = style({
