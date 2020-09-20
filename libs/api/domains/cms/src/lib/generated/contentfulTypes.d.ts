@@ -61,20 +61,17 @@ export interface IArticleFields {
   /** Short title */
   shortTitle?: string | undefined
 
-  /** Introduction */
+  /** Summary */
   intro?: string | undefined
-
-  /** Contains application form */
-  containsApplicationForm?: boolean | undefined
-
-  /** Importance */
-  importance?: number | undefined
 
   /** Slug */
   slug: string
 
   /** Content */
   content?: Document | undefined
+
+  /** Contains application form? */
+  containsApplicationForm?: boolean | undefined
 
   /** Category */
   category?: IArticleCategory | undefined
@@ -93,6 +90,9 @@ export interface IArticleFields {
 
   /** Baby Articles */
   subArticles?: ISubArticle[] | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -176,7 +176,7 @@ export interface IArticleSubgroupFields {
   slug: string
 
   /** Importance */
-  importance?: number
+  importance?: number | undefined
 }
 
 /** Used inside groups to further categorize articles by subject */
@@ -274,6 +274,28 @@ export interface ICardSection extends Entry<ICardSectionFields> {
     contentType: {
       sys: {
         id: 'cardSection'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IContactUsFields {
+  /** Title */
+  title?: string | undefined
+}
+
+export interface IContactUs extends Entry<IContactUsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'contactUs'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1423,7 +1445,7 @@ export interface IUrlFields {
   title?: string | undefined
 
   /** Page */
-  page: IArticle | IArticleCategory
+  page: IArticle | IArticleCategory | ILifeEventPage | INews
 
   /** Urls list */
   urlsList: string[]
@@ -1752,6 +1774,7 @@ export type CONTENT_TYPE =
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
+  | 'contactUs'
   | 'embeddedVideo'
   | 'faqList'
   | 'frontpageSlider'

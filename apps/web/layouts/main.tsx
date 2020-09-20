@@ -358,7 +358,7 @@ export const withMainLayout = <T,>(
   WithMainLayout.getInitialProps = async (ctx) => {
     const [layoutProps, componentProps] = await Promise.all([
       Layout.getInitialProps(ctx),
-      Component.getInitialProps(ctx),
+      Component.getInitialProps ? Component.getInitialProps(ctx) : null,
     ])
 
     return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }

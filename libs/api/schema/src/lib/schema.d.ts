@@ -186,6 +186,7 @@ export type Slice =
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
+  | ContactUs
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -303,6 +304,12 @@ export type SectionWithImage = {
   title: Scalars['String']
   image?: Maybe<Image>
   html: Html
+}
+
+export type ContactUs = {
+  __typename?: 'ContactUs'
+  id: Scalars['ID']
+  title: Scalars['String']
 }
 
 export type Article = {
@@ -1241,6 +1248,7 @@ export type ResolversTypes = {
     | ResolversTypes['FaqList']
     | ResolversTypes['EmbeddedVideo']
     | ResolversTypes['SectionWithImage']
+    | ResolversTypes['ContactUs']
   PageHeaderSlice: ResolverTypeWrapper<PageHeaderSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   StorySlice: ResolverTypeWrapper<StorySlice>
@@ -1263,6 +1271,7 @@ export type ResolversTypes = {
   FaqList: ResolverTypeWrapper<FaqList>
   EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
+  ContactUs: ResolverTypeWrapper<ContactUs>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1422,6 +1431,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['FaqList']
     | ResolversParentTypes['EmbeddedVideo']
     | ResolversParentTypes['SectionWithImage']
+    | ResolversParentTypes['ContactUs']
   PageHeaderSlice: PageHeaderSlice
   HeadingSlice: HeadingSlice
   StorySlice: StorySlice
@@ -1442,6 +1452,7 @@ export type ResolversParentTypes = {
   FaqList: FaqList
   EmbeddedVideo: EmbeddedVideo
   SectionWithImage: SectionWithImage
+  ContactUs: ContactUs
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1793,7 +1804,8 @@ export type SliceResolvers<
     | 'ProcessEntry'
     | 'FaqList'
     | 'EmbeddedVideo'
-    | 'SectionWithImage',
+    | 'SectionWithImage'
+    | 'ContactUs',
     ParentType,
     ContextType
   >
@@ -1992,6 +2004,15 @@ export type SectionWithImageResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   html?: Resolver<ResolversTypes['Html'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ContactUsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ContactUs'] = ResolversParentTypes['ContactUs']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2887,6 +2908,7 @@ export type Resolvers<ContextType = Context> = {
   FaqList?: FaqListResolvers<ContextType>
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   SectionWithImage?: SectionWithImageResolvers<ContextType>
+  ContactUs?: ContactUsResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -2999,6 +3021,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'SectionWithImage',
+          },
+          {
+            name: 'ContactUs',
           },
         ],
       },

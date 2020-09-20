@@ -78,10 +78,10 @@ export const Input = forwardRef(
     const {
       name,
       label,
-      hasError = false,
       value,
       defaultValue,
       errorMessage = '',
+      hasError = Boolean(errorMessage),
       id = name,
       disabled,
       required,

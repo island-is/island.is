@@ -204,6 +204,10 @@ export const slices = gql`
     }
   }
 
+  fragment ContactUsFields on ContactUs {
+    title
+  }
+
   fragment AllSlices on Slice {
     ...PageHeaderFields
     ...TimelineFields
@@ -221,5 +225,6 @@ export const slices = gql`
     ...ImageFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...ContactUsFields
   }
 `

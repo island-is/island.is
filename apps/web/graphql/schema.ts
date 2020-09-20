@@ -175,6 +175,7 @@ export type Slice =
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
+  | ContactUs
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -292,6 +293,12 @@ export type SectionWithImage = {
   title: Scalars['String']
   image?: Maybe<Image>
   html: Html
+}
+
+export type ContactUs = {
+  __typename?: 'ContactUs'
+  id: Scalars['ID']
+  title: Scalars['String']
 }
 
 export type Article = {
@@ -1109,6 +1116,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({
             __typename?: 'SectionWithImage'
           } & AllSlicesSectionWithImageFragment)
+        | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
       >
     }
 }
@@ -1174,6 +1182,7 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1231,6 +1240,7 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
                 | ({
                     __typename?: 'SectionWithImage'
                   } & AllSlicesSectionWithImageFragment)
+                | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
               >
             }
         >
@@ -1350,6 +1360,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
         >
       }
   >
@@ -1393,6 +1404,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
         >
       }
   >
@@ -1861,6 +1873,11 @@ export type SectionWithImageFieldsFragment = {
     html: { __typename?: 'Html' } & HtmlFieldsFragment
   }
 
+export type ContactUsFieldsFragment = { __typename?: 'ContactUs' } & Pick<
+  ContactUs,
+  'title'
+>
+
 export type AllSlicesPageHeaderSliceFragment = {
   __typename?: 'PageHeaderSlice'
 } & PageHeaderFieldsFragment
@@ -1923,6 +1940,10 @@ export type AllSlicesSectionWithImageFragment = {
   __typename?: 'SectionWithImage'
 } & SectionWithImageFieldsFragment
 
+export type AllSlicesContactUsFragment = {
+  __typename?: 'ContactUs'
+} & ContactUsFieldsFragment
+
 export type AllSlicesFragment =
   | AllSlicesPageHeaderSliceFragment
   | AllSlicesTimelineSliceFragment
@@ -1940,3 +1961,4 @@ export type AllSlicesFragment =
   | AllSlicesFaqListFragment
   | AllSlicesEmbeddedVideoFragment
   | AllSlicesSectionWithImageFragment
+  | AllSlicesContactUsFragment

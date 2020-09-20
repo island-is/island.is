@@ -6,14 +6,22 @@ import {
   RenderConfig,
 } from '@island.is/island-ui/contentful'
 import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { ContactUs } from '../ContactUs/ContactUs'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'ProcessEntry',
   'SectionWithImage',
+  'ContactUs',
 ]
 
 const renderComponent = (slice: Slice, config: RenderConfig) => {
-  let children = defaultRenderComponent(slice, config)
+  let children =
+    slice.__typename === 'ContactUs' ? (
+      // ContactUs wrapper to provide our own translations and submit logic
+      <ContactUs title={slice.title} />
+    ) : (
+      defaultRenderComponent(slice, config)
+    )
 
   if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.

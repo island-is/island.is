@@ -132,7 +132,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | ContactUs
 
 type PageHeaderSlice {
   id: ID!
@@ -235,6 +235,11 @@ type SectionWithImage {
   title: String!
   image: Image
   html: Html!
+}
+
+type ContactUs {
+  id: ID!
+  title: String!
 }
 
 type Article {
