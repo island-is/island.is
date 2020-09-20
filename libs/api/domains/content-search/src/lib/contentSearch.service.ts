@@ -4,14 +4,18 @@ import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
-import { SearcherService } from '@island.is/api/schema'
+import {
+  SearcherService,
+  WebSearchAutocompleteInput,
+} from '@island.is/api/schema'
 import { SearcherInput } from './dto/searcher.input'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class ContentSearchService implements SearcherService {
   constructor(private elasticService: ElasticService) {}
 
-  getIndex(lang: ContentLanguage) {
+  private getIndex(lang: ContentLanguage) {
     const languageCode = ContentLanguage[lang]
     return SearchIndexes[languageCode] ?? SearchIndexes.is
   }
@@ -55,11 +59,17 @@ export class ContentSearchService implements SearcherService {
     return this.fixCase(hit)
   }
 
-  async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
+  async fetchAutocompleteTerm(
+    input: WebSearchAutocompleteInput,
+  ): Promise<WebSearchAutocomplete> {
+    logger.info('search index', {
+      lang: input.language,
+      index: this.getIndex(ContentLanguage[input.language]),
+    })
     const {
       suggest: { searchSuggester },
     } = await this.elasticService.fetchAutocompleteTerm(
-      this.getIndex(input.language),
+      this.getIndex(ContentLanguage[input.language]),
       {
         ...input,
         singleTerm: input.singleTerm.trim(),

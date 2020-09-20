@@ -436,6 +436,7 @@ export type Namespace = {
 
 export type AboutPage = {
   __typename?: 'AboutPage'
+  id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
@@ -531,7 +532,7 @@ export type SearchResult = {
   items: Array<Items>
 }
 
-export type Items = Article | LifeEventPage
+export type Items = Article | LifeEventPage | News | AboutPage
 
 export type ContentItem = {
   __typename?: 'ContentItem'
@@ -924,10 +925,17 @@ export type GetUrlInput = {
 
 export type SearcherInput = {
   queryString: Scalars['String']
-  types?: Maybe<Array<Scalars['String']>>
+  types?: Maybe<Array<SearchableContentTypes>>
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+}
+
+export enum SearchableContentTypes {
+  webAboutPage = 'webAboutPage',
+  webArticle = 'webArticle',
+  webLifeEventPage = 'webLifeEventPage',
+  webNews = 'webNews',
 }
 
 export enum ContentLanguage {
@@ -1306,7 +1314,11 @@ export type ResolversTypes = {
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
-  Items: ResolversTypes['Article'] | ResolversTypes['LifeEventPage']
+  Items:
+    | ResolversTypes['Article']
+    | ResolversTypes['LifeEventPage']
+    | ResolversTypes['News']
+    | ResolversTypes['AboutPage']
   ContentItem: ResolverTypeWrapper<ContentItem>
   WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   Application: ResolverTypeWrapper<Application>
@@ -1344,6 +1356,7 @@ export type ResolversTypes = {
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
+  SearchableContentTypes: SearchableContentTypes
   ContentLanguage: ContentLanguage
   ItemInput: ItemInput
   ItemType: ItemType
@@ -1476,7 +1489,11 @@ export type ResolversParentTypes = {
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
-  Items: ResolversParentTypes['Article'] | ResolversParentTypes['LifeEventPage']
+  Items:
+    | ResolversParentTypes['Article']
+    | ResolversParentTypes['LifeEventPage']
+    | ResolversParentTypes['News']
+    | ResolversParentTypes['AboutPage']
   ContentItem: ContentItem
   WebSearchAutocomplete: WebSearchAutocomplete
   Application: Application
@@ -2250,6 +2267,7 @@ export type AboutPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AboutPage'] = ResolversParentTypes['AboutPage']
 > = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -2421,7 +2439,7 @@ export type ItemsResolvers<
   ParentType extends ResolversParentTypes['Items'] = ResolversParentTypes['Items']
 > = {
   __resolveType: TypeResolveFn<
-    'Article' | 'LifeEventPage',
+    'Article' | 'LifeEventPage' | 'News' | 'AboutPage',
     ParentType,
     ContextType
   >
@@ -3035,6 +3053,12 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'LifeEventPage',
+          },
+          {
+            name: 'News',
+          },
+          {
+            name: 'AboutPage',
           },
         ],
       },
