@@ -76,8 +76,8 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
       </Box>
     )}
     <Box component="ul" padding={3} position="relative">
-      {items.map((item) => (
-        <Box component="li">
+      {items.map((item, id) => (
+        <Box key={id} component="li">
           <Typography as="p" paddingBottom={2}>
             <Link href={item.url}>{item.title}</Link>
           </Typography>
