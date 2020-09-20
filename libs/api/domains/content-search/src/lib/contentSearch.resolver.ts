@@ -10,7 +10,7 @@ import { logger } from '@island.is/logging'
 
 @Resolver()
 export class ContentSearchResolver {
-  constructor(private contentSearchService: ContentSearchService) { }
+  constructor(private contentSearchService: ContentSearchService) {}
 
   @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
