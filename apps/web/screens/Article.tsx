@@ -15,6 +15,7 @@ import {
   Tag,
   Divider,
   Link,
+  Icon,
   Button,
 } from '@island.is/island-ui/core'
 import {
@@ -344,6 +345,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     article.intro ||
     'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
 
+  const processEntries = article?.body?.length
+    ? article.body.filter((x) => x.__typename === 'ProcessEntry')
+    : []
+
+  const processEntry =
+    processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
+
   return (
     <>
       <Head>
@@ -424,6 +432,29 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <Typography variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>
               </Typography>
+            )}
+            {!!processEntry && (
+              <Hidden above="sm">
+                <Box
+                  background="blue100"
+                  padding={3}
+                  marginY={3}
+                  borderRadius="large"
+                >
+                  <Typography variant="h4" as="span" color="blue400">
+                    <Link
+                      passHref
+                      href={processEntry.processLink}
+                      withUnderline
+                    >
+                      <span>{processEntry.processTitle}</span>
+                      <Box component="span" marginLeft={2}>
+                        <Icon type="external" width="15" />
+                      </Box>
+                    </Link>
+                  </Typography>
+                </Box>
+              </Hidden>
             )}
           </GridColumn>
         </GridRow>
