@@ -692,7 +692,7 @@ input GetUrlInput {
 input SearcherInput {
   queryString: String!
   types: [SearchableContentTypes!] = [webAboutPage, webArticle, webLifeEventPage, webNews]
-  language: ContentLanguage = en
+  language: ContentLanguage = is
   size: Int
   page: Int
 }
@@ -723,7 +723,7 @@ enum ItemType {
 
 input WebSearchAutocompleteInput {
   singleTerm: String!
-  language: ContentLanguage = en
+  language: ContentLanguage = is
   size: Int = 10
 }
 

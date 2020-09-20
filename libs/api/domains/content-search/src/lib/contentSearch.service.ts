@@ -13,7 +13,7 @@ import { logger } from '@island.is/logging'
 
 @Injectable()
 export class ContentSearchService implements SearcherService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) { }
 
   private getIndex(lang: ContentLanguage) {
     const languageCode = ContentLanguage[lang]
@@ -65,6 +65,7 @@ export class ContentSearchService implements SearcherService {
   async fetchAutocompleteTerm(
     input: WebSearchAutocompleteInput,
   ): Promise<WebSearchAutocomplete> {
+    logger.info('search index', { lang: input.language, index: this.getIndex(ContentLanguage[input.language]) })
     const {
       suggest: { searchSuggester },
     } = await this.elasticService.fetchAutocompleteTerm(

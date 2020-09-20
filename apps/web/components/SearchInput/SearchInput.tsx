@@ -103,7 +103,7 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-
+    console.log('locale', locale)
     const thisTimerId = (timer.current = setTimeout(async () => {
       client
         .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
