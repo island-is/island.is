@@ -339,6 +339,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
+  const hasValidCategory = !!article.category.slug
+  const hasValidGroup = !!article.group.slug
   return (
     <>
       <Head>
@@ -357,7 +359,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
-              {!!article.category && (
+              {hasValidCategory && (
                 <Link
                   href={`${makePath('ArticleCategory')}/[slug]`}
                   as={makePath('ArticleCategory', article.category.slug)}
@@ -365,7 +367,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   {article.category.title}
                 </Link>
               )}
-              {article.group && (
+              {hasValidGroup && (
                 <Link
                   as={makePath(
                     'ArticleCategory',

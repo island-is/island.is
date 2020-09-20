@@ -14,10 +14,14 @@ export class ArticleCategory {
   description?: string
 }
 
-export const mapArticleCategory = ({
-  fields,
-}: IArticleCategory): ArticleCategory => ({
-  title: fields?.title ?? '',
-  slug: fields?.slug ?? '',
-  description: fields?.description ?? '',
-})
+// article group can be undefined we have to handle that there
+export const mapArticleCategory = (
+  entry: IArticleCategory | undefined,
+): ArticleCategory => {
+  const fields = entry?.fields
+  return {
+    title: fields?.title ?? '',
+    slug: fields?.slug ?? '',
+    description: fields?.description ?? '',
+  }
+}

@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash'
 import { IArticle } from '../generated/contentfulTypes'
 import { Slice, mapDocument } from './slice.model'
 
-import { ArticleCategory } from './articleCategory.model'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
@@ -68,8 +68,8 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   containsApplicationForm: fields.containsApplicationForm ?? false,
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-  category: fields.category?.fields,
-  group: mapArticleGroup(fields.group),
+  category: mapArticleCategory(fields?.category),
+  group: mapArticleGroup(fields?.group),
   subgroup: fields.subgroup?.fields,
   organization: (fields?.organization ?? [])
     .filter((doc) => !isEmpty(doc))
