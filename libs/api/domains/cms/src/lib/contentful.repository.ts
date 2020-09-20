@@ -56,6 +56,7 @@ export class ContentfulRepository {
     languageCode: undefined | null | string,
     query: ContentfulQuery,
   ): Result<Fields> {
+    logger.info('languageCode', { languageCode, query })
     let code = languageCode ?? 'is-IS'
     if (localeMap[code]) {
       code = localeMap[code]
