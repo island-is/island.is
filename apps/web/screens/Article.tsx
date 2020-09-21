@@ -225,7 +225,6 @@ const SubArticleNavigation: FC<{
                         component="button"
                         type="button"
                         textAlign="left"
-                        outline="none"
                         onClick={() => navigate(id)}
                       >
                         <Typography variant="pSmall">
@@ -274,11 +273,10 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
             component="button"
             type="button"
             textAlign="left"
-            outline="none"
             onClick={() => navigate(id)}
           >
             <Typography variant="p">
-              {id === activeId ? <b>{text}</b> : text}
+              {id === activeId ? <strong>{text}</strong> : text}
             </Typography>
           </Box>
         ))}

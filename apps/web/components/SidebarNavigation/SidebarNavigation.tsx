@@ -45,7 +45,6 @@ export const SidebarNavigation: FC<SidebarNavigationProps> = ({
             component="button"
             type="button"
             textAlign="left"
-            outline="none"
             onClick={() => navigate(id)}
           >
             <Typography variant="p">
