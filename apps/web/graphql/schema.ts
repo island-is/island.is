@@ -393,7 +393,6 @@ export type FrontpageSlider = {
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
   animationJson?: Maybe<Scalars['String']>
 }
@@ -1291,14 +1290,7 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
         { __typename?: 'FrontpageSlider' } & Pick<
           FrontpageSlider,
           'subtitle' | 'title' | 'content' | 'link' | 'animationJson'
-        > & {
-            image?: Maybe<
-              { __typename?: 'Image' } & Pick<
-                Image,
-                'url' | 'title' | 'contentType' | 'width' | 'height'
-              >
-            >
-          }
+        >
       >
     }
   >
@@ -1611,7 +1603,15 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
-          > & { image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>> })
+          > & {
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'slug' | 'title'
+                >
+              >
+              image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>>
+            })
         | { __typename?: 'News' }
         | { __typename?: 'AboutPage' }
       >
@@ -1676,6 +1676,12 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'slug' | 'title'
+                >
+              >
               image?: Maybe<
                 { __typename?: 'Image' } & Pick<
                   Image,
