@@ -525,6 +525,9 @@ export const StepOne: React.FC = () => {
       </Box>
       {modalVisible && (
         <Modal
+          title="Viltu senda tilkynningu?"
+          text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+          primaryButtonText="Senda tilkynningu"
           handleClose={() => setModalVisible(false)}
           handleSecondaryButtonClick={() =>
             history.push(Constants.STEP_TWO_ROUTE)

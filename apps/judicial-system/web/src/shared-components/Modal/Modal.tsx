@@ -6,6 +6,9 @@ import ReactDOM from 'react-dom'
 import * as styles from './Modal.treat'
 
 interface ModalProps {
+  title: string
+  text: string | JSX.Element
+  primaryButtonText: string
   handleClose?: () => void
   handleSecondaryButtonClick?: () => void
   handlePrimaryButtonClick?: () => void
@@ -13,6 +16,9 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({
+  title,
+  text,
+  primaryButtonText,
   handleClose,
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
@@ -27,27 +33,25 @@ const Modal: React.FC<ModalProps> = ({
           </button>
         </Box>
         <Box marginBottom={4}>
-          <Typography variant="h1">Viltu senda tilkynningu?</Typography>
+          <Typography variant="h1">{title}</Typography>
         </Box>
         <Box marginBottom={6}>
-          <Typography>
-            Með því að senda tilkynningu á dómara á vakt um að krafa um
-            gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir
-            aðilar eru upplýstir um stöðu mála.
-          </Typography>
+          <Typography>{text}</Typography>
         </Box>
         <Box display="flex">
-          <Box marginRight={3}>
-            <Button onClick={handleSecondaryButtonClick} variant="ghost">
-              Halda áfram með kröfu
-            </Button>
-          </Box>
+          {handleSecondaryButtonClick && (
+            <Box marginRight={3}>
+              <Button onClick={handleSecondaryButtonClick} variant="ghost">
+                Halda áfram með kröfu
+              </Button>
+            </Box>
+          )}
           <Button
             onClick={handlePrimaryButtonClick}
             icon={isPrimaryButtonLoading ? 'loading' : null}
             loading={isPrimaryButtonLoading}
           >
-            Senda tilkynningu
+            {primaryButtonText}
           </Button>
         </Box>
       </div>
@@ -56,6 +60,9 @@ const Modal: React.FC<ModalProps> = ({
 }
 
 const ModalPortal = ({
+  title,
+  text,
+  primaryButtonText,
   handleClose,
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
@@ -63,6 +70,9 @@ const ModalPortal = ({
 }: ModalProps) => {
   return ReactDOM.createPortal(
     <Modal
+      title={title}
+      text={text}
+      primaryButtonText={primaryButtonText}
       handleClose={handleClose}
       handleSecondaryButtonClick={handleSecondaryButtonClick}
       handlePrimaryButtonClick={handlePrimaryButtonClick}
