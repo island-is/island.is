@@ -8,7 +8,9 @@ import {
 } from '../../utils/responsiveProp'
 import * as resetStyleRefs from '../../reset/reset.treat'
 import * as styleRefs from './useBoxStyles.treat'
+import { resolveResponsiveRangeProps } from '../../utils/responsiveRangeProps'
 export type Space = keyof typeof theme.spacing
+export type Breakpoint = keyof typeof theme['breakpoints']
 export type ResponsiveSpace = ResponsiveProp<Space>
 
 export interface UseBoxStylesProps {
@@ -65,6 +67,8 @@ export interface UseBoxStylesProps {
   outline?: keyof typeof styleRefs.outline
   opacity?: keyof typeof styleRefs.opacity
   className?: Parameters<typeof classnames>[0]
+  hiddenAbove?: Exclude<Breakpoint, 'xl'>
+  hiddenBelow?: Exclude<Breakpoint, 'xs'>
 }
 
 export const useBoxStyles = ({
@@ -83,7 +87,7 @@ export const useBoxStyles = ({
   marginBottom,
   marginLeft,
   marginRight,
-  display,
+  display = 'block',
   flexDirection,
   flexWrap,
   flexShrink,
@@ -121,6 +125,8 @@ export const useBoxStyles = ({
   outline,
   opacity,
   className,
+  hiddenAbove: above,
+  hiddenBelow: below,
 }: UseBoxStylesProps) => {
   const resetStyles = {
     ...resetStyleRefs,
@@ -138,6 +144,22 @@ export const useBoxStyles = ({
   const resolvedMarginBottom = marginBottom ?? marginY ?? margin
   const resolvedMarginLeft = marginLeft ?? marginX ?? margin
   const resolvedMarginRight = marginRight ?? marginX ?? margin
+
+  const [
+    hiddenOnXs,
+    hiddenOnSm,
+    hiddenOnMd,
+    hiddenOnLg,
+    hiddenOnXl,
+  ] = resolveResponsiveRangeProps({ above, below })
+
+  const resolvedDisplay = [
+    hiddenOnXs ? 'none' : display,
+    hiddenOnSm ? 'none' : display,
+    hiddenOnMd ? 'none' : display,
+    hiddenOnLg ? 'none' : display,
+    hiddenOnXl ? 'none' : display,
+  ] as ResponsiveProp<keyof typeof styleRefs.display>
 
   return classnames(
     component !== null && resetStyles.base,
@@ -241,9 +263,9 @@ export const useBoxStyles = ({
         styles.paddingLg.right,
         styles.paddingXl.right,
       ),
-    display !== undefined &&
+    resolvedDisplay !== undefined &&
       resolveResponsiveProp(
-        display,
+        resolvedDisplay,
         styles.display,
         styles.displaySm,
         styles.displayMd,

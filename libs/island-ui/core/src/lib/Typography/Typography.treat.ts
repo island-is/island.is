@@ -1,12 +1,8 @@
 import { styleMap, style, globalStyle } from 'treat'
 import * as CSS from 'csstype'
-import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 import { mapToStyleProperty } from '../../utils'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
-import mapValues from 'lodash/mapValues'
-
-type Spacing = Record<keyof typeof theme.spacing, string>
-type Breakpoint = keyof Theme['breakpoints']
 
 export type VariantTypes =
   | 'p'
@@ -42,35 +38,6 @@ type Variants = {
 
 type defaultFontWeights = {
   [Type in VariantTypes]: number
-}
-
-const makePaddingBottom = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingBottom: space } }),
-    ),
-    `paddingBottom_${breakpoint}`,
-  ) as Spacing
-
-const makePaddingTop = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingTop: space } }),
-    ),
-    `paddingTop_${breakpoint}`,
-  ) as Spacing
-
-export const spacing = {
-  paddingBottomXs: makePaddingBottom('xs'),
-  paddingBottomSm: makePaddingBottom('sm'),
-  paddingBottomMd: makePaddingBottom('md'),
-  paddingBottomLg: makePaddingBottom('lg'),
-  paddingBottomXl: makePaddingBottom('xl'),
-  paddingTopXs: makePaddingTop('xs'),
-  paddingTopSm: makePaddingTop('sm'),
-  paddingTopMd: makePaddingTop('md'),
-  paddingTopLg: makePaddingTop('lg'),
-  paddingTopXl: makePaddingTop('xl'),
 }
 
 export const truncate = style({

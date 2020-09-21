@@ -6,7 +6,7 @@ import { Box } from '../Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {
-  title: 'Core/InputFileUpload',
+  title: 'Components/InputFileUpload',
   component: InputFileUpload,
 }
 

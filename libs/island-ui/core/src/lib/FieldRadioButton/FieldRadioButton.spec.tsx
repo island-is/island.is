@@ -4,7 +4,7 @@ import { render } from '@testing-library/react'
 
 import FieldRadioButton from './FieldRadioButton'
 
-describe(' FieldRadioButton', () => {
+describe('FieldRadioButton', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <Formik

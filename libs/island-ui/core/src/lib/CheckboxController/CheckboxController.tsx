@@ -69,7 +69,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   name={`${id}[${index}]`}
                   label={option.label}
                   value={option.value}
-                  errorMessage={index === options.length - 1 && error}
+                  errorMessage={index === options.length - 1 ? error : ''}
                   hasError={error !== undefined}
                 />
                 {option.tooltip && (

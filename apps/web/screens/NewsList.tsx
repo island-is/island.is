@@ -154,7 +154,7 @@ const NewsList: Screen<NewsListProps> = ({
             </Hidden>
           )}
 
-          <GridColumn hideAbove="sm" paddingBottom={1}>
+          <GridColumn hiddenAbove="sm" paddingBottom={1}>
             <Select
               label={yearString}
               placeholder={yearString}
@@ -171,7 +171,7 @@ const NewsList: Screen<NewsListProps> = ({
             />
           </GridColumn>
           {selectedYear && (
-            <GridColumn hideAbove="sm">
+            <GridColumn hiddenAbove="sm">
               <Select
                 label={monthString}
                 placeholder={monthString}

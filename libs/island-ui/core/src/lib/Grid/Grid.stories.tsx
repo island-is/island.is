@@ -6,7 +6,7 @@ import { Box } from '../Box/Box'
 import * as styles from './demostyles.treat'
 
 export default {
-  title: 'Core/Grid',
+  title: 'Components/Grid',
   component: GridColumn,
 }
 

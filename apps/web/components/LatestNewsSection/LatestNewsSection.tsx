@@ -42,7 +42,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
             {label}
           </Typography>
         </GridColumn>
-        <GridColumn span="6/12" hideBelow="md">
+        <GridColumn span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
             <Typography variant="h3" as="p" paddingBottom={4}>
               <ArrowLink href="/frett" arrowHeight={16}>
