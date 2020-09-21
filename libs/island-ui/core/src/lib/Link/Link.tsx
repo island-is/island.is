@@ -9,7 +9,7 @@ const isLinkInternal = (href: string) => {
   return true
 }
 
-export type LinkColor = 'white' | 'blue400'
+export type LinkColor = 'white' | 'blue400' | 'blue600'
 
 interface Props extends LinkProps {
   color?: LinkColor
