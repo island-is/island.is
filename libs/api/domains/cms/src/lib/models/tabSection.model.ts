@@ -22,6 +22,6 @@ export class TabSection {
 export const mapTabSection = ({ fields, sys }: ITabSection): TabSection => ({
   typename: 'TabSection',
   id: sys.id,
-  title: fields.title ?? '',
-  tabs: (fields.tabs ?? []).map(mapTabContent),
+  title: fields?.title ?? '',
+  tabs: (fields?.tabs ?? []).map(mapTabContent),
 })
