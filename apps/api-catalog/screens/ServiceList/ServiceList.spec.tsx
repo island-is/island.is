@@ -4,8 +4,7 @@ import { render } from '@testing-library/react'
 
 import ServiceList from './ServiceList'
 import {  getAllPriceCategories, 
-          GetServicesParameters, 
-          SERVICE_SEARCH_METHOD  } from '../../components';
+          GetServicesParameters  } from '../../components';
 import ContentfulApi from '../../services/contentful';
 
 describe(' ServiceList ', () => {
@@ -20,7 +19,6 @@ describe(' ServiceList ', () => {
     data:[],
     access:[],
     type:[],
-    searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY
   };
 
     

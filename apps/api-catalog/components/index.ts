@@ -18,8 +18,7 @@ export {
     PRICING_CATEGORY, 
     DATA_CATEGORY, 
     TYPE_CATEGORY, 
-    ACCESS_CATEGORY, 
-    SERVICE_SEARCH_METHOD,
+    ACCESS_CATEGORY
         } from './ServiceRepository'
 
 export type {

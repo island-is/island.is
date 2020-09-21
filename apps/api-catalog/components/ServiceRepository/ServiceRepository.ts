@@ -37,11 +37,6 @@ export interface ServiceResult {
     result:ServiceDetails,
 }
 
-export enum SERVICE_SEARCH_METHOD {
-    MUST_CONTAIN_ONE_OF_CATEGORY,
-    MUST_CONTAIN_ONE_OF_EACH_CATEGORY
-}
-
 export interface GetServicesParameters {
     cursor:string
     limit:number
@@ -51,7 +46,6 @@ export interface GetServicesParameters {
     data:Array<string>
     type:Array<string>
     access:Array<string>,
-    searchMethod:SERVICE_SEARCH_METHOD
 }
 
 const enumToArray = (enumObject) => {
@@ -157,10 +151,6 @@ export const  getAllAccessCategories = ():Array<string> => {
     return enumToArray(ACCESS_CATEGORY)
 }
 
-export const  getAllSearchMethods = ():Array<string> => {
-    return enumToArray(SERVICE_SEARCH_METHOD)
-}
-
 const isValidNumber = (value:unknown):boolean => {
     return value !==null && !isNaN(Number(value));
 }
@@ -175,9 +165,10 @@ const isValidId = (value:unknown):boolean => {
 
 const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Array<string>):boolean => {
     
-    if (shouldContainOneOf === undefined || shouldContainOneOf === null){
-        return false;
+    if (shouldContainOneOf === undefined || shouldContainOneOf === null || shouldContainOneOf.length < 1 ) {
+        return true;
     }
+
     for(let i = 0; i<checkMe.length; i++) {
         if (shouldContainOneOf.includes(checkMe[i])) {
             return true;
@@ -188,18 +179,10 @@ const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Arra
 
 const ParameterArraysContainsOneOrMoreOf = (service:ServiceCardInformation, parameters:GetServicesParameters):boolean => {
 
-    if (parameters.searchMethod === SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY)
-    {
-        return ( ArrayContainsOneOrMoreOf(service.pricing, parameters.pricing) ||
-                 ArrayContainsOneOrMoreOf(service.data, parameters.data)       ||
-                 ArrayContainsOneOrMoreOf(service.type, parameters.type)       ||
-                 ArrayContainsOneOrMoreOf(service.access, parameters.access)    );
-    } else {
         return ( ArrayContainsOneOrMoreOf(service.pricing, parameters.pricing) &&
                  ArrayContainsOneOrMoreOf(service.data, parameters.data)       &&
                  ArrayContainsOneOrMoreOf(service.type, parameters.type)       &&
-                 ArrayContainsOneOrMoreOf(service.access, parameters.access)    )
-    }
+                 ArrayContainsOneOrMoreOf(service.access, parameters.access)    );
 }
 
 export async function getService(id: string):Promise<ServiceResult> {
@@ -227,7 +210,7 @@ export async function getService(id: string):Promise<ServiceResult> {
 }
 
 export async function getServices(parameters:GetServicesParameters):Promise<ServicesResult> {
-    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null, searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY};
+    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null};
     let filtered = OrgServices;
     if (isValidString(params.name)) {
         filtered = filtered.filter(e => e.name.includes(params.name));

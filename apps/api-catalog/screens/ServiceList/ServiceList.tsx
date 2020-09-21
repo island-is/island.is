@@ -10,14 +10,12 @@ import {  Box,
           Typography
 } from '@island.is/island-ui/core';
 
-
 import * as styles from './ServiceList.treat';
 import cn from 'classnames'
 import {  PRICING_CATEGORY, 
           DATA_CATEGORY, 
           TYPE_CATEGORY,
           ACCESS_CATEGORY, 
-          SERVICE_SEARCH_METHOD, 
           getAllPriceCategories, 
           getAllDataCategories, 
           getAllTypeCategories, 
@@ -28,6 +26,7 @@ import {  PRICING_CATEGORY,
           ServiceCard, 
           CategoryCheckBox
 } from '../../components';
+
 import ContentfulApi from '../../services/contentful'
 import { StaticPage } from '../../services/contentful.types'
 
@@ -76,34 +75,18 @@ export default function ServiceList(props:ServiceListProps) {
       limit:null, 
       owner:null, 
       name:null, 
-      pricing:null, 
-      data:null, 
-      type:null, 
-      access:null, 
-      searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY };
+      pricing:[], 
+      data:[], 
+      type:[], 
+      access:[]};
   }
  
-  const selectAllCheckboxes = (select:boolean) => {
-    props.parameters.cursor  = null;
-    props.parameters.pricing = select? getAllPriceCategories()  : [];
-    props.parameters.data    = select? getAllDataCategories()   : [];
-    props.parameters.type    = select? getAllTypeCategories()   : [];
-    props.parameters.access  = select? getAllAccessCategories() : [];
-    
-    setStatusQueryString(createStatusQueryString());
-    setFirstGet(true);
-  }
-
   const onPageMoreButtonClick = () => {
     props.parameters.cursor = nextCursor;
     setFirstGet(false);
     setNextFetch(nextCursor);
   }
-  const onCheckSettingsCheckAllClick = event => {
-    const selectAll = event.target.checked;
-    setCheckSettingsCheckAll(selectAll);
-    selectAllCheckboxes(selectAll);
-  }
+
   const updateCategoryCheckBox = (target) => {
     const categoryValue:string = target.value;
     const checked:boolean = target.checked;
@@ -153,8 +136,8 @@ export default function ServiceList(props:ServiceListProps) {
   }
 
   const createStatusQueryString = ():string => {
-    let str:string = props.parameters.cursor === null? 'null':props.parameters.cursor.toString();
-    str+= `|${props.parameters.searchMethod}|${props.parameters.pricing.sort().join()}|${props.parameters.data.sort().join()}|${props.parameters.type.sort().join()}|${props.parameters.access.sort().join()}`;
+    let str:string = props.parameters.cursor ===null? 'null':props.parameters.cursor.toString();
+    str+= `|${props.parameters.pricing.sort().join()}|${props.parameters.data.sort().join()}|${props.parameters.type.sort().join()}|${props.parameters.access.sort().join()}`;
     return str;  
   }
 
@@ -164,11 +147,6 @@ export default function ServiceList(props:ServiceListProps) {
   const [nextFetch,   setNextFetch] = useState<string>(null);
   const [firstGet,    setFirstGet] = useState<boolean>(true);
   const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
-
-  //settings
-  const [checkSettingsCheckAll,     setCheckSettingsCheckAll]     = useState<boolean>(false);
-  const [checkSettingsSearchMethod, setCheckSettingsSearchMethod] = useState<SERVICE_SEARCH_METHOD>(props.parameters.searchMethod !== null ? props.parameters.searchMethod : SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY);
-  const [radioSearchMethod,         setRadioSearchMethod]         = useState(checkSettingsSearchMethod === SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY? '1' : '2');
     
   useEffect(() => {
     
@@ -198,7 +176,7 @@ export default function ServiceList(props:ServiceListProps) {
       }
       if (firstGet)
         loadData();
-    }, [firstGet, checkSettingsSearchMethod, StatusQueryString, props.parameters]); 
+    }, [firstGet, StatusQueryString, props.parameters]); 
     
   return (   
       <ServiceLayout 
@@ -264,41 +242,6 @@ export default function ServiceList(props:ServiceListProps) {
                   <CategoryCheckBox label={ACCESS_CATEGORY.API_GW} value={ACCESS_CATEGORY.API_GW}  checked={props.parameters.access.includes(ACCESS_CATEGORY.API_GW)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
                 </SidebarAccordion>
               </div>
-              <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="filter_settings" label="Settings">
-                  <CategoryCheckBox label="Select all"   value="select-all" 
-                    checked={checkSettingsCheckAll}     onChange={onCheckSettingsCheckAllClick}
-                    tooltip="Check all or none of category checkboxes."/>
-                    <div className={cn(styles.filterItem)}>
-                      <SidebarAccordion id="searchMethod" label="Search method">
-                        <RadioButton name="RadioButtonSearchMethod" id="SearchMethod1" label="One" value="1"
-                          tooltip="One value in one category must match."
-                          onChange={({ target }) => {
-                          setRadioSearchMethod(target.value)
-                          props.parameters.searchMethod = target.value === '1'? SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY : SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_EACH_CATEGORY;
-                          setCheckSettingsSearchMethod(props.parameters.searchMethod);
-                          setStatusQueryString(createStatusQueryString());
-                          setFirstGet(true);
-                        }}
-                        checked={radioSearchMethod === '1'}
-                      />
-                        <div className={cn(styles.radioButton)}>
-                          <RadioButton name="RadioButtonSearchMethod" id="SearchMethod2" label="All" value="2"
-                            tooltip="At least one value must match in each category."
-                            onChange={({ target }) => {
-                              setRadioSearchMethod(target.value)
-                              props.parameters.searchMethod = target.value === '2'? SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_EACH_CATEGORY : SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY;
-                              setCheckSettingsSearchMethod(props.parameters.searchMethod)
-                              setStatusQueryString(createStatusQueryString());
-                              setFirstGet(true);
-                            }}
-                            checked={radioSearchMethod === '2'}
-                          />
-                        </div>
-                      </SidebarAccordion>
-                    </div>
-                </SidebarAccordion>
-              </div>
           </Box>
       } />
   )
@@ -316,11 +259,10 @@ ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
     limit:null, 
     owner:null,
     name:null, 
-    pricing:getAllPriceCategories(), 
-    data:getAllDataCategories(),
-    type:getAllTypeCategories(),    
-    access:getAllAccessCategories(),
-    searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY
+    pricing:[], 
+    data:[],
+    type:[],    
+    access:[]
   };
 return { 
   parameters:params, 
