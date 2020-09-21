@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { SubmitHandler } from 'react-hook-form'
+import CSVStringify from 'csv-stringify'
 
 import { NotFound } from '@island.is/air-discount-scheme-web/screens'
 import { Airlines } from '@island.is/air-discount-scheme/consts'
@@ -18,7 +19,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Filters, Panel, Summary } from './components'
-import { FilterInput } from './consts'
+import { FilterInput, financialStateOptions } from './consts'
 import { Screen } from '../../types'
 
 const FlightLegsQuery = gql`
@@ -92,6 +93,48 @@ const Admin: Screen = ({}) => {
     setFilters(data)
   }
 
+  const downloadCSV = () => {
+    Object.keys(Airlines)
+      .filter(
+        (airline) => !filters.airline || filters.airline?.value === airline,
+      )
+      .forEach((airline) => {
+        const header = [
+          'Flug',
+          'Dagsetning',
+          'Staða',
+          'Upphafsverð',
+          'Afsláttarverð',
+          'Afsláttur',
+        ]
+        const data = flightLegs
+          .filter((flightLeg) => flightLeg.airline === airline)
+          .map((flightLeg) => [
+            flightLeg.travel,
+            flightLeg.flight.bookingDate,
+            (
+              financialStateOptions.find(
+                (state) => state.value === flightLeg.financialState,
+              ) || { label: '-' }
+            ).label,
+            flightLeg.originalPrice,
+            flightLeg.discountPrice,
+            flightLeg.originalPrice - flightLeg.discountPrice,
+          ])
+        data.unshift(header)
+
+        CSVStringify(data, (err, output) => {
+          const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${output}`)
+          const link = document.createElement('a')
+          link.setAttribute('href', encodedUri)
+          link.setAttribute('download', `loftbru_${airline}_yfirlit.csv`)
+          document.body.appendChild(link)
+
+          link.click()
+        })
+      })
+  }
+
   return (
     <GridContainer>
       <GridRow>
@@ -131,7 +174,11 @@ const Admin: Screen = ({}) => {
                 <Typography variant="h4">Aðgerðir</Typography>
               </Box>
               <Box paddingTop={2}>
-                <Button width="fluid" variant="ghost">
+                <Button
+                  width="fluid"
+                  variant="ghost"
+                  onClick={() => downloadCSV()}
+                >
                   Prenta yfirlit
                 </Button>
               </Box>
@@ -176,7 +223,7 @@ const Admin: Screen = ({}) => {
                         </Typography>
                       </Box>
 
-                      <Panel filters={filters} flightLegs={flightLegs} />
+                      <Panel flightLegs={flightLegs} />
                     </Stack>
                   </Box>
                 </GridColumn>

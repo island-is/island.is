@@ -100,6 +100,7 @@
     "contentful-management": "6.0.5",
     "cookie-parser": "1.4.5",
     "crypto-js": "4.0.0",
+    "csv-stringify": "5.5.1",
     "curry": "1.2.0",
     "date-fns": "2.14.0",
     "dd-trace": "0.24.0",
