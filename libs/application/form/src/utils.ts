@@ -1,5 +1,4 @@
 import {
-  CallToAction,
   DataProviderItem,
   ExternalData,
   FieldTypes,

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { SelectField } from '@island.is/application/template'
-import { SelectController, Typography, Box } from '@island.is/island-ui/core'
+import { SelectController, Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 import { useLocale } from '@island.is/localization'
 

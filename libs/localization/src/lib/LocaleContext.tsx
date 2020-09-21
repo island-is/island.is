@@ -3,7 +3,6 @@ import { IntlProvider } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { difference, isEmpty, uniq } from 'lodash'
-import { parseMessageId } from './parseMessageId'
 import { polyfill } from './polyfills'
 
 export type Locale = 'is' | 'en'

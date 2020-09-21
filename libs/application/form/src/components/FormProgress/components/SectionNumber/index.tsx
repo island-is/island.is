@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import cn from 'classnames'
 
 import { Box, Icon } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
@@ -7,7 +6,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import SectionNumberColumn from '../SectionNumberColumn'
 
 import * as styles from './SectionNumber.treat'
-import { ProgressThemes } from 'libs/application/form/src/types'
+import { ProgressThemes } from '../../../../types'
 
 const bulletColors = {
   [ProgressThemes.PURPLE]: 'purple200',

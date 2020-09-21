@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { Header as UIHeader } from '@island.is/island-ui/core'
 import { useAuthState } from '../context/AuthProvider'
-import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 const Header: FC<{}> = () => {

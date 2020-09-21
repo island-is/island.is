@@ -30,7 +30,7 @@ export const Applications: FC<{}> = () => {
         },
       },
     })
-  }, [createApplication, type])
+  }, [createApplication, natreg, type])
 
   if (error) return <p>Error! {error.message}</p>
   return <p>Loading...</p>
