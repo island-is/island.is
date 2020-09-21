@@ -13,6 +13,7 @@ import styles, {
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
+import { Box } from '../Box'
 
 export interface TypographyProps {
   id?: string
@@ -35,13 +36,15 @@ export interface TypographyProps {
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
   paddingY?: ResponsiveSpace
+  marginTop?: ResponsiveSpace
+  marginBottom?: ResponsiveSpace
+  marginY?: ResponsiveSpace
   fontWeight?: keyof typeof fontWeightStyles
 }
 
 export const Typography = ({
   id,
   variant,
-  as: Cmp = 'p',
   children,
   color,
   truncate,
@@ -49,14 +52,21 @@ export const Typography = ({
   paddingTop,
   paddingBottom,
   paddingY,
+  marginTop,
+  marginBottom,
+  marginY,
   fontWeight,
+  as = 'p',
 }: TypographyProps) => {
   const resolvedPaddingTop = paddingTop ?? paddingY
   const resolvedPaddingBottom = paddingBottom ?? paddingY
+  const resolvedMarginTop = marginTop ?? marginY
+  const resolvedMarginBottom = marginBottom ?? marginY
 
   return (
-    <Cmp
+    <Box
       id={id}
+      component={as}
       className={cn(
         variant ? styles[variant] : null,
         color ? colors[color] : null,
@@ -69,25 +79,43 @@ export const Typography = ({
         resolvedPaddingBottom !== undefined &&
           resolveResponsiveProp(
             resolvedPaddingBottom,
-            spacing.paddingBottomXs,
-            spacing.paddingBottomSm,
-            spacing.paddingBottomMd,
-            spacing.paddingBottomLg,
-            spacing.paddingBottomXl,
+            spacing.padding.bottomXs,
+            spacing.padding.bottomSm,
+            spacing.padding.bottomMd,
+            spacing.padding.bottomLg,
+            spacing.padding.bottomXl,
           ),
         resolvedPaddingTop !== undefined &&
           resolveResponsiveProp(
             resolvedPaddingTop,
-            spacing.paddingTopXs,
-            spacing.paddingTopSm,
-            spacing.paddingTopMd,
-            spacing.paddingTopLg,
-            spacing.paddingTopXl,
+            spacing.padding.topXs,
+            spacing.padding.topSm,
+            spacing.padding.topMd,
+            spacing.padding.topLg,
+            spacing.padding.topXl,
+          ),
+        resolvedMarginBottom !== undefined &&
+          resolveResponsiveProp(
+            resolvedMarginBottom,
+            spacing.margin.bottomXs,
+            spacing.margin.bottomSm,
+            spacing.margin.bottomMd,
+            spacing.margin.bottomLg,
+            spacing.margin.bottomXl,
+          ),
+        resolvedMarginTop !== undefined &&
+          resolveResponsiveProp(
+            resolvedMarginTop,
+            spacing.margin.topXs,
+            spacing.margin.topSm,
+            spacing.margin.topMd,
+            spacing.margin.topLg,
+            spacing.margin.topXl,
           ),
       )}
     >
       {children}
-    </Cmp>
+    </Box>
   )
 }
 

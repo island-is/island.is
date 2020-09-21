@@ -44,33 +44,43 @@ type defaultFontWeights = {
   [Type in VariantTypes]: number
 }
 
-const makePaddingBottom = (breakpoint: Breakpoint) =>
+const makeSpacing = (property: string, breakpoint: Breakpoint) =>
   styleMap(
     mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingBottom: space } }),
+      themeUtils.responsiveStyle({
+        [breakpoint]: {
+          [property]: space,
+        },
+      }),
     ),
-    `paddingBottom_${breakpoint}`,
-  ) as Spacing
-
-const makePaddingTop = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingTop: space } }),
-    ),
-    `paddingTop_${breakpoint}`,
-  ) as Spacing
+    `${property}_${breakpoint}`,
+  )
 
 export const spacing = {
-  paddingBottomXs: makePaddingBottom('xs'),
-  paddingBottomSm: makePaddingBottom('sm'),
-  paddingBottomMd: makePaddingBottom('md'),
-  paddingBottomLg: makePaddingBottom('lg'),
-  paddingBottomXl: makePaddingBottom('xl'),
-  paddingTopXs: makePaddingTop('xs'),
-  paddingTopSm: makePaddingTop('sm'),
-  paddingTopMd: makePaddingTop('md'),
-  paddingTopLg: makePaddingTop('lg'),
-  paddingTopXl: makePaddingTop('xl'),
+  padding: {
+    bottomXs: makeSpacing('paddingBottom', 'xs'),
+    bottomSm: makeSpacing('paddingBottom', 'sm'),
+    bottomMd: makeSpacing('paddingBottom', 'md'),
+    bottomLg: makeSpacing('paddingBottom', 'lg'),
+    bottomXl: makeSpacing('paddingBottom', 'xl'),
+    topXs: makeSpacing('paddingTop', 'xs'),
+    topSm: makeSpacing('paddingTop', 'sm'),
+    topMd: makeSpacing('paddingTop', 'md'),
+    topLg: makeSpacing('paddingTop', 'lg'),
+    topXl: makeSpacing('paddingTop', 'xl'),
+  },
+  margin: {
+    bottomXs: makeSpacing('marginBottom', 'xs'),
+    bottomSm: makeSpacing('marginBottom', 'sm'),
+    bottomMd: makeSpacing('marginBottom', 'md'),
+    bottomLg: makeSpacing('marginBottom', 'lg'),
+    bottomXl: makeSpacing('marginBottom', 'xl'),
+    topXs: makeSpacing('marginTop', 'xs'),
+    topSm: makeSpacing('marginTop', 'sm'),
+    topMd: makeSpacing('marginTop', 'md'),
+    topLg: makeSpacing('marginTop', 'lg'),
+    topXl: makeSpacing('marginTop', 'xl'),
+  },
 }
 
 export const truncate = style({
