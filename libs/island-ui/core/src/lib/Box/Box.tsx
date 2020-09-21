@@ -68,8 +68,6 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       outline,
       opacity,
       className,
-      hiddenAbove,
-      hiddenBelow,
       ...restProps
     },
     ref,
@@ -128,8 +126,6 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       outline,
       opacity,
       className,
-      hiddenAbove,
-      hiddenBelow,
     })
 
     return createElement(component, {

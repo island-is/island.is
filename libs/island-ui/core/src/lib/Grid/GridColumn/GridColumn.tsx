@@ -9,6 +9,7 @@ import {
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
 import * as styles from './GridColumn.treat'
+import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
 type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute'
@@ -34,8 +35,8 @@ export const GridColumn: FC<GridColumnProps> = ({
   paddingBottom,
   paddingTop,
   className,
-  hiddenAbove,
-  hiddenBelow,
+  hiddenAbove: above,
+  hiddenBelow: below,
   position = 'relative',
 }) => {
   const pos: { position?: position } = {}
@@ -44,13 +45,26 @@ export const GridColumn: FC<GridColumnProps> = ({
     pos.position = position
   }
 
+  const [
+    hiddenOnXs,
+    hiddenOnSm,
+    hiddenOnMd,
+    hiddenOnLg,
+    hiddenOnXl,
+  ] = resolveResponsiveRangeProps({ above, below })
+
   return (
     <Box
       {...pos}
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
-      hiddenAbove={hiddenAbove}
-      hiddenBelow={hiddenBelow}
+      display={[
+        hiddenOnXs ? 'none' : 'block',
+        hiddenOnSm ? 'none' : 'block',
+        hiddenOnMd ? 'none' : 'block',
+        hiddenOnLg ? 'none' : 'block',
+        hiddenOnXl ? 'none' : 'block',
+      ]}
       className={cn(
         className,
         styles.base,
