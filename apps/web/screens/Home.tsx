@@ -71,6 +71,8 @@ const Home: Screen<HomeProps> = ({
     as: makePath('ArticleCategory', slug),
   }))
 
+  const featuredArticles = n('featuredArticles', [])
+
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
       <Stack space={[1, 1, 3]}>
@@ -85,11 +87,19 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }, index) => (
-            <Tag href={url} key={url} variant="darkerBlue">
-              {title}
-            </Tag>
-          ))}
+          {featuredArticles.map(({ title, url }, index) => {
+            const isLatest = index + 1 === featuredArticles.length
+            return (
+              <Tag
+                href={url}
+                key={url}
+                variant="darkerBlue"
+                attention={isLatest}
+              >
+                {title}
+              </Tag>
+            )
+          })}
         </Inline>
       </Stack>
     </Box>
