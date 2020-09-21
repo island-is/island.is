@@ -7,6 +7,7 @@ import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
 import { KeyValues } from '../'
 import { TSummary } from '../../types'
 import * as styles from './Summary.treat'
+import { getFilteredFlightLegs } from '../../utils'
 
 interface PropTypes {
   flightLegs: FlightLeg[]
@@ -18,8 +19,21 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
     arr.reduce((acc, item) => acc + item[key], 0)
 
   const airlines = Object.values(Airlines).filter(
-    (airline) => !filteredAirline || airline === filteredAirline,
+    (airline) =>
+      airline !== Airlines.norlandair &&
+      (!filteredAirline ||
+        airline ===
+          (filteredAirline === Airlines.norlandair
+            ? Airlines.icelandair
+            : filteredAirline)),
   )
+
+  const getAirline = (airline) => {
+    if (airline === Airlines.icelandair) {
+      return 'Icelandair + Norlandair'
+    }
+    return airline
+  }
 
   return (
     <Box marginBottom={6}>
@@ -32,8 +46,10 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
         </Typography>
         <Stack space={6}>
           {airlines.map((airline) => {
-            const legs = flightLegs.filter(
-              (flightLeg) => flightLeg.airline === airline,
+            const legs = getFilteredFlightLegs(
+              airline,
+              filteredAirline,
+              flightLegs,
             )
             const awaitingCredit = legs.filter(
               (leg) => leg.financialState === States.awaitingCredit,
@@ -66,7 +82,9 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
             return (
               <Stack space={2} key={airline}>
                 <Typography variant="h3">
-                  <span className={styles.capitalize}>{airline}</span>
+                  <span className={styles.capitalize}>
+                    {getAirline(airline)}
+                  </span>
                 </Typography>
                 <Stack space={1}>
                   <Box background="blue100" borderRadius="standard" padding={2}>

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Illustration } from './TempIllustration'
+import Illustration from './TempIllustration'
 import {
   GridContainer,
   GridRow,
@@ -54,7 +54,7 @@ export const IntroductionSection: FC<Props> = ({
             alignItems="center"
             justifyContent="center"
           >
-            <Illustration />
+            <Illustration width="100%" />
           </Box>
         </GridColumn>
         <GridColumn

@@ -33,11 +33,11 @@ export class News {
 
 export const mapNews = ({ fields, sys }: INews): News => ({
   id: sys.id,
-  slug: fields.slug,
-  title: fields.title,
-  subtitle: fields.subtitle,
-  intro: fields.intro,
-  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  date: fields.date,
+  slug: fields?.slug ?? '',
+  title: fields?.title ?? '',
+  subtitle: fields?.subtitle ?? '',
+  intro: fields?.intro ?? '',
+  image: mapImage(fields.image),
+  date: fields?.date ?? '',
   content: JSON.stringify(fields.content),
 })

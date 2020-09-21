@@ -45,7 +45,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
         <GridColumn paddingBottom={0} span="6/12" hideBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
             <Typography variant="h5" as="p" paddingBottom={2}>
-              <ArrowLink href="/frett" arrowHeight={16}>
+              <ArrowLink href={makePath('news')} arrowHeight={16}>
                 {n('seeMore')}
               </ArrowLink>
             </Typography>

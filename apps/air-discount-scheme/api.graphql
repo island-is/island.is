@@ -16,6 +16,16 @@ type Link {
   url: String!
 }
 
+type Html {
+  id: ID!
+  document: JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
 type TimelineEvent {
   id: ID!
   title: String!
@@ -23,7 +33,7 @@ type TimelineEvent {
   numerator: Int
   denominator: Int
   label: String!
-  body: String
+  body: Html
   tags: [String!]
   link: String!
 }
@@ -73,16 +83,6 @@ type Statistic {
   value: String!
   label: String!
 }
-
-type Html {
-  id: ID!
-  document: JSON!
-}
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type QuestionAndAnswer {
   id: ID!
@@ -238,8 +238,8 @@ type Article {
   contentStatus: String!
   title: String!
   slug: String!
-  shortTitle: String!
-  intro: String!
+  shortTitle: String
+  intro: String
   containsApplicationForm: Boolean
   importance: Float
   body: [Slice!]!
@@ -322,7 +322,6 @@ type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
-  image: Image
   link: String
   animationJson: String
 }
@@ -349,6 +348,7 @@ type Namespace {
 }
 
 type AboutPage {
+  id: ID!
   title: String!
   seoDescription: String!
   theme: String!
@@ -404,7 +404,7 @@ type LifeEventPage {
   title: String!
   slug: String!
   intro: String!
-  image: Image!
+  image: Image
   thumbnail: Image
   content: [Slice!]!
   category: ArticleCategory
@@ -451,6 +451,7 @@ type Flight {
 type FlightLeg {
   id: ID!
   airline: String!
+  cooperation: String
   financialState: String!
   travel: String!
   originalPrice: Float!
@@ -636,6 +637,7 @@ input GetUrlInput {
 
 input FlightLegsInput {
   airline: String
+  cooperation: String
   flightLeg: Travel
   period: Period
   state: [String!]

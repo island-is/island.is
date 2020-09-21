@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { TypographyProps, ExternalLink } from '@island.is/island-ui/core'
+import { TypographyProps, Link } from '@island.is/island-ui/core'
 
 interface HyperlinkProps {
   href?: string
@@ -9,9 +9,9 @@ interface HyperlinkProps {
 }
 
 export const Hyperlink: FC<HyperlinkProps> = ({ href, children }) => (
-  <ExternalLink href={href} color="blue400">
+  <Link withUnderline href={href} color="blue400">
     {children}
-  </ExternalLink>
+  </Link>
 )
 
 export default Hyperlink

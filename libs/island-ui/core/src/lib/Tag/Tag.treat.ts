@@ -2,7 +2,7 @@ import { styleMap, style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  borderRadius: '5px',
+  borderRadius: theme.border.radius.large,
   transition: 'color 150ms ease, background-color 150ms ease',
   outline: 0,
   display: 'inline-flex',

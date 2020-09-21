@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export enum UserRole {
-  PROCECUTOR = 'PROCECUTOR',
+  PROSECUTOR = 'PROSECUTOR',
   JUDGE = 'JUDGE',
 }
 

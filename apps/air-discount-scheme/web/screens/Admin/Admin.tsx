@@ -20,6 +20,7 @@ import {
 import { Filters, Panel, Summary } from './components'
 import { FilterInput } from './consts'
 import { Screen } from '../../types'
+import { downloadCSV } from './utils'
 
 const FlightLegsQuery = gql`
   query FlightLegsQuery($input: FlightLegsInput!) {
@@ -27,6 +28,7 @@ const FlightLegsQuery = gql`
       id
       travel
       airline
+      cooperation
       originalPrice
       discountPrice
       financialState
@@ -61,8 +63,12 @@ const Admin: Screen = ({}) => {
         ...filters,
         airline:
           filters.airline?.value === Airlines.norlandair
-            ? [Airlines.icelandair, Airlines.norlandair]
+            ? Airlines.icelandair
             : filters.airline?.value,
+        cooperation:
+          filters.airline?.value === Airlines.norlandair
+            ? Airlines.norlandair
+            : undefined,
         gender:
           filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
         age: {
@@ -126,7 +132,11 @@ const Admin: Screen = ({}) => {
                 <Typography variant="h4">Aðgerðir</Typography>
               </Box>
               <Box paddingTop={2}>
-                <Button width="fluid" variant="ghost">
+                <Button
+                  width="fluid"
+                  variant="ghost"
+                  onClick={() => downloadCSV(flightLegs, filters)}
+                >
                   Prenta yfirlit
                 </Button>
               </Box>
@@ -171,7 +181,7 @@ const Admin: Screen = ({}) => {
                         </Typography>
                       </Box>
 
-                      <Panel filters={filters} flightLegs={flightLegs} />
+                      <Panel flightLegs={flightLegs} />
                     </Stack>
                   </Box>
                 </GridColumn>

@@ -16,7 +16,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  Divider,
   Option,
   SidebarAccordion,
   Pagination,
@@ -40,6 +39,7 @@ import {
   GetNamespaceQuery,
   Article,
   LifeEventPage,
+  SearchableContentTypes,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 
@@ -117,6 +117,10 @@ const Search: Screen<CategoryProps> = ({
 
     if (item.group) {
       labels.push(item.group.title)
+    }
+
+    if (item.organization?.length) {
+      labels.push(item.organization[0].title)
     }
 
     return labels
@@ -202,6 +206,7 @@ const Search: Screen<CategoryProps> = ({
                 }}
               >
                 <Filter
+                  truncate
                   selected={!filters.category}
                   onClick={() => onSelectCategory(null)}
                   text={`${n('allCategories', 'Allir flokkar')} (${
@@ -215,6 +220,10 @@ const Search: Screen<CategoryProps> = ({
                   {sidebarCategories.map((c, index) => {
                     const selected = c.key === filters.category
                     const text = `${c.title} (${c.total})`
+
+                    if (c.key === 'uncategorized') {
+                      return null
+                    }
 
                     return (
                       <Filter
@@ -338,7 +347,10 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: ['webArticle', 'webLifeEventPage'],
+          types: [
+            SearchableContentTypes['WebArticle'],
+            SearchableContentTypes['WebLifeEventPage'],
+          ],
           size: PerPage,
           page,
         },
@@ -373,7 +385,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-const Filter = ({ selected, text, onClick, ...props }) => {
+const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
   return (
     <Box
       display="inlineBlock"
@@ -385,7 +397,7 @@ const Filter = ({ selected, text, onClick, ...props }) => {
       onClick={onClick}
       {...props}
     >
-      <Typography variant="p" as="div" truncate>
+      <Typography variant="p" as="div" truncate={truncate}>
         {selected ? <strong>{text}</strong> : text}
       </Typography>
     </Box>

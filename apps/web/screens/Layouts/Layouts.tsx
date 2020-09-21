@@ -20,7 +20,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
         <GridColumn
@@ -43,10 +43,10 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '9/12']}>
+        <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn hideBelow="md" span={['0', '0', '3/12']}>
+        <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>
@@ -62,7 +62,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={[2, 2, 6]} paddingBottom={[5, 5, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}

@@ -34,6 +34,12 @@ export type Link = {
   url: Scalars['String']
 }
 
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
 export type TimelineEvent = {
   __typename?: 'TimelineEvent'
   id: Scalars['ID']
@@ -42,8 +48,8 @@ export type TimelineEvent = {
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
-  body?: Maybe<Scalars['String']>
-  tags: Array<Scalars['String']>
+  body?: Maybe<Html>
+  tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
 
@@ -99,17 +105,11 @@ export type Statistic = {
   label: Scalars['String']
 }
 
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
-}
-
 export type QuestionAndAnswer = {
   __typename?: 'QuestionAndAnswer'
   id: Scalars['ID']
   question: Scalars['String']
-  answer: Html
+  answer?: Maybe<Html>
 }
 
 export type ArticleCategory = {
@@ -129,8 +129,8 @@ export type ArticleGroup = {
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
+  importance?: Maybe<Scalars['Float']>
   slug: Scalars['String']
-  importance?: Maybe<Scalars['Int']>
 }
 
 export type OrganizationTag = {
@@ -264,13 +264,8 @@ export type Statistics = {
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
   id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
   type: Scalars['String']
   processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
   processLink: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -303,15 +298,17 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Float']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
   subgroup?: Maybe<ArticleSubgroup>
-  organization: Array<Organization>
+  organization?: Maybe<Array<Organization>>
   subArticles: Array<SubArticle>
-  relatedArticles: Array<Article>
+  relatedArticles?: Maybe<Array<Article>>
 }
 
 export type AdgerdirTag = {
@@ -389,18 +386,18 @@ export type AdgerdirFeaturedNewsSlice = {
   featured: Array<AdgerdirNews>
 }
 
-export type FrontpageSlide = {
-  __typename?: 'FrontpageSlide'
+export type FrontpageSlider = {
+  __typename?: 'FrontpageSlider'
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
+  animationJson?: Maybe<Scalars['String']>
 }
 
 export type FrontpageSliderList = {
   __typename?: 'FrontpageSliderList'
-  items: Array<FrontpageSlide>
+  items: Array<FrontpageSlider>
 }
 
 export type Pagination = {
@@ -425,6 +422,7 @@ export type Namespace = {
 
 export type AboutPage = {
   __typename?: 'AboutPage'
+  id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
@@ -448,6 +446,18 @@ export type LandingPage = {
   content: Array<Slice>
 }
 
+export type AlertBanner = {
+  __typename?: 'AlertBanner'
+  id: Scalars['ID']
+  showAlertBanner: Scalars['Boolean']
+  bannerVariant: Scalars['String']
+  title?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+  link?: Maybe<Link>
+  isDismissable: Scalars['Boolean']
+  dismissedForDays: Scalars['Int']
+}
+
 export type GenericPage = {
   __typename?: 'GenericPage'
   title: Scalars['String']
@@ -464,19 +474,21 @@ export type Menu = {
   links: Array<Link>
 }
 
-export type LifeEventPage = {
-  __typename?: 'LifeEventPage'
-  title: Scalars['String']
-  slug: Scalars['String']
-  intro: Scalars['String']
-  image: Image
-  thumbnail?: Maybe<Image>
-  content: Array<Slice>
-}
-
 export type AdgerdirTags = {
   __typename?: 'AdgerdirTags'
   items: Array<AdgerdirTag>
+}
+
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  thumbnail?: Maybe<Image>
+  content: Array<Slice>
+  category?: Maybe<ArticleCategory>
 }
 
 export type PaginatedAdgerdirNews = {
@@ -489,6 +501,16 @@ export type OrganizationTags = {
   __typename?: 'OrganizationTags'
   items: Array<OrganizationTag>
 }
+
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 export type Fund = {
   __typename?: 'Fund'
@@ -517,6 +539,7 @@ export type FlightLeg = {
   __typename?: 'FlightLeg'
   id: Scalars['ID']
   airline: Scalars['String']
+  cooperation: Scalars['String']
   financialState: Scalars['String']
   travel: Scalars['String']
   originalPrice: Scalars['Float']
@@ -546,12 +569,12 @@ export type Discount = {
 export type Query = {
   __typename?: 'Query'
   getArticle?: Maybe<Article>
-  getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
+  getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getOrganization?: Maybe<Organization>
@@ -565,6 +588,11 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getLifeEventsInCategory: Array<LifeEventPage>
+  getArticleCategories: Array<ArticleCategory>
+  getArticles: Array<Article>
+  getSingleNews?: Maybe<News>
+  getUrl?: Maybe<Url>
   flightLegs: Array<FlightLeg>
   user?: Maybe<User>
   discounts?: Maybe<Array<Discount>>
@@ -572,10 +600,6 @@ export type Query = {
 
 export type QueryGetArticleArgs = {
   input: GetArticleInput
-}
-
-export type QueryGetNewsArgs = {
-  input: GetNewsInput
 }
 
 export type QueryGetNewsListArgs = {
@@ -596,6 +620,10 @@ export type QueryGetAboutPageArgs = {
 
 export type QueryGetLandingPageArgs = {
   input: GetLandingPageInput
+}
+
+export type QueryGetAlertBannerArgs = {
+  input: GetAlertBannerInput
 }
 
 export type QueryGetGenericPageArgs = {
@@ -650,6 +678,26 @@ export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
 }
 
+export type QueryGetLifeEventsInCategoryArgs = {
+  input: GetLifeEventsInCategoryInput
+}
+
+export type QueryGetArticleCategoriesArgs = {
+  input: GetArticleCategoriesInput
+}
+
+export type QueryGetArticlesArgs = {
+  input: GetArticlesInput
+}
+
+export type QueryGetSingleNewsArgs = {
+  input: GetSingleNewsInput
+}
+
+export type QueryGetUrlArgs = {
+  input: GetUrlInput
+}
+
 export type QueryFlightLegsArgs = {
   input: FlightLegsInput
 }
@@ -657,11 +705,6 @@ export type QueryFlightLegsArgs = {
 export type GetArticleInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
-}
-
-export type GetNewsInput = {
-  slug: Scalars['String']
-  lang?: Maybe<Scalars['String']>
 }
 
 export type GetNewsListInput = {
@@ -693,6 +736,11 @@ export type GetAboutPageInput = {
 
 export type GetLandingPageInput = {
   slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetAlertBannerInput = {
+  id: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -756,8 +804,35 @@ export type GetLifeEventsInput = {
   lang: Scalars['String']
 }
 
+export type GetLifeEventsInCategoryInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetArticleCategoriesInput = {
+  lang: Scalars['String']
+  size?: Maybe<Scalars['Int']>
+}
+
+export type GetArticlesInput = {
+  lang: Scalars['String']
+  category: Scalars['String']
+  size?: Maybe<Scalars['Int']>
+}
+
+export type GetSingleNewsInput = {
+  slug: Scalars['String']
+  lang?: Maybe<Scalars['String']>
+}
+
+export type GetUrlInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type FlightLegsInput = {
   airline?: Maybe<Scalars['String']>
+  cooperation?: Maybe<Scalars['String']>
   flightLeg?: Maybe<Travel>
   period?: Maybe<Period>
   state?: Maybe<Array<Scalars['String']>>
@@ -823,6 +898,7 @@ export type FlightLegsQueryQuery = { __typename?: 'Query' } & {
       | 'id'
       | 'travel'
       | 'airline'
+      | 'cooperation'
       | 'originalPrice'
       | 'discountPrice'
       | 'financialState'
@@ -1087,6 +1163,7 @@ export const FlightLegsQueryDocument = gql`
       id
       travel
       airline
+      cooperation
       originalPrice
       discountPrice
       financialState
