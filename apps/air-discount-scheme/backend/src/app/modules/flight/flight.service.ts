@@ -58,7 +58,8 @@ export class FlightService {
     return false
   }
 
-  private getAirline(
+  // TODO: get cooperation in POST flight body
+  private getCooperatingAirline(
     flightLeg: CreateFlightLegBody,
     airline: ValueOf<typeof Airlines>,
   ): ValueOf<typeof Airlines> {
@@ -71,7 +72,7 @@ export class FlightService {
       }
     }
 
-    return airline
+    return null
   }
 
   async countFlightLegsByNationalId(
@@ -114,6 +115,7 @@ export class FlightService {
     return this.flightLegModel.findAll({
       where: {
         ...(body.airline ? { airline: body.airline } : {}),
+        ...(body.cooperation ? { cooperation: body.cooperation } : {}),
         ...(body.state && body.state.length > 0
           ? { financialState: body.state }
           : {}),
@@ -171,7 +173,7 @@ export class FlightService {
   async create(
     flight: CreateFlightBody,
     user: NationalRegistryUser,
-    airline: string,
+    airline: ValueOf<typeof Airlines>,
   ): Promise<Flight> {
     const nationalId = user.nationalId
     return this.flightModel.create(
@@ -179,7 +181,8 @@ export class FlightService {
         ...flight,
         flightLegs: flight.flightLegs.map((flightLeg) => ({
           ...flightLeg,
-          airline: this.getAirline(flightLeg, airline),
+          airline,
+          cooperation: this.getCooperatingAirline(flightLeg, airline),
         })),
         nationalId,
         userInfo: {
@@ -192,7 +195,10 @@ export class FlightService {
     )
   }
 
-  async findOne(flightId: string, airline: string): Promise<Flight> {
+  async findOne(
+    flightId: string,
+    airline: ValueOf<typeof Airlines>,
+  ): Promise<Flight> {
     return this.flightModel.findOne({
       where: {
         id: flightId,
@@ -202,10 +208,7 @@ export class FlightService {
           model: this.flightLegModel,
           where: {
             financialState: availableFinancialStates,
-            airline:
-              airline === Airlines.icelandair
-                ? [Airlines.icelandair, Airlines.norlandair]
-                : airline,
+            airline,
           },
         },
       ],
