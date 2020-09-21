@@ -56,7 +56,7 @@ const Admin: Screen = ({}) => {
       to: TODAY,
     },
   } as any)
-  const { data, loading } = useQuery(FlightLegsQuery, {
+  const { data, loading, error } = useQuery(FlightLegsQuery, {
     ssr: false,
     variables: {
       input: {
@@ -85,7 +85,10 @@ const Admin: Screen = ({}) => {
 
   if (!user) {
     return null
-  } else if (!['admin', 'developer'].includes(user?.role)) {
+  } else if (
+    !['admin', 'developer'].includes(user?.role) ||
+    error?.graphQLErrors.find((err) => err.extensions.code === 'FORBIDDEN')
+  ) {
     return <NotFound />
   }
 
