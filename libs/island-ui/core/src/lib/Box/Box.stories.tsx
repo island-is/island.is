@@ -104,7 +104,8 @@ export const Hidden = () => (
       I'm hidden above `md` which means I'm hidden from `lg` and above
     </Box>
     <Box background="blueberry100" hiddenBelow="md">
-      I'm hidden below `md` which means I'm hidden on `xs` and `sm` (visible at `md`)
+      I'm hidden below `md` which means I'm hidden on `xs` and `sm` (visible at
+      `md`)
     </Box>
   </>
 )
