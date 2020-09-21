@@ -450,7 +450,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
-  const categoryExists = !!getArticleCategories.find(
+  const categoryExists = getArticleCategories.some(
     (category) => category.slug === slug,
   )
   // if requested category si not in returned list of categories we assume it does not exist
