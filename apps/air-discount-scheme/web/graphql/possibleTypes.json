@@ -19,6 +19,7 @@
       "SectionWithImage"
     ],
     "BulletEntry": ["IconBullet", "NumberBulletGroup"],
-    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"]
+    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"],
+    "UrlPage": ["Article", "ArticleCategory", "News", "LifeEventPage"]
   }
 }

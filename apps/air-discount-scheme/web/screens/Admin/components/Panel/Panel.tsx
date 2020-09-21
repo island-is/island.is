@@ -70,7 +70,10 @@ function Panel({ filters, flightLegs }: PropTypes) {
                   </Typography>
                   <Typography color="dark300" variant="pSmall">
                     <span className={styles.capitalize}>
-                      {flightLeg.airline}
+                      {flightLeg.airline}{' '}
+                      {flightLeg.cooperation
+                        ? `+ ${flightLeg.cooperation}`
+                        : ''}
                     </span>
                   </Typography>
                 </Box>

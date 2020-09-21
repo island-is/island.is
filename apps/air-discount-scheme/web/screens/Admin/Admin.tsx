@@ -27,6 +27,7 @@ const FlightLegsQuery = gql`
       id
       travel
       airline
+      cooperation
       originalPrice
       discountPrice
       financialState
@@ -61,8 +62,12 @@ const Admin: Screen = ({}) => {
         ...filters,
         airline:
           filters.airline?.value === Airlines.norlandair
-            ? [Airlines.icelandair, Airlines.norlandair]
+            ? Airlines.icelandair
             : filters.airline?.value,
+        cooperation:
+          filters.airline?.value === Airlines.norlandair
+            ? Airlines.norlandair
+            : undefined,
         gender:
           filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
         age: {
