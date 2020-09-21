@@ -239,7 +239,6 @@ type SectionWithImage {
 
 type Article {
   id: ID!
-  contentStatus: String!
   title: String!
   slug: String!
   shortTitle: String
