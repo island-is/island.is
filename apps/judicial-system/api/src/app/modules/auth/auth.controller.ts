@@ -136,12 +136,12 @@ export class AuthController {
       )
     }
 
-    const authId = `&authId=${uuid()}`
+    const authId = uuid()
     const electronicIdOnly = '&qaa=4'
 
     return res
       .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(`${samlEntryPoint}${authId}${electronicIdOnly}`)
+      .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
   @Get('logout')

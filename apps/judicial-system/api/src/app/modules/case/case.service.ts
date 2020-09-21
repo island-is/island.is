@@ -85,7 +85,7 @@ export class CaseService {
 
     const smsText =
       existingCase.state === CaseState.DRAFT
-        ? this.constructHeadsUpSmsText(existingCase)
+        ? this.constructHeadsUpSmsText(existingCase, user)
         : // State is CaseState.SUBMITTED
           this.constructReadyForCourtpSmsText(existingCase, user)
 
@@ -108,7 +108,10 @@ export class CaseService {
     })
   }
 
-  private constructHeadsUpSmsText(existingCase: Case): string {
+  private constructHeadsUpSmsText(existingCase: Case, user: User): string {
+    // Prosecutor
+    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+
     // Arrest date
     const ad = existingCase.arrestDate?.toISOString()
     const adText = ad
@@ -140,12 +143,12 @@ export class CaseService {
     existingCase: Case,
     user: User,
   ): string {
-    // Procecutor
-    const procecutor = user ? ` Ákærandi: ${user.name}.` : ''
+    // Prosecutor
+    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
 
     // Court
     const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
 
-    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${procecutor}${court}`
+    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
   }
 }
