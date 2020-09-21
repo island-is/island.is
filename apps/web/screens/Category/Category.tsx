@@ -209,7 +209,7 @@ const Category: Screen<CategoryProps> = ({
           />
         }
         belowContent={
-          <Stack space={2}>
+          <>
             <Stack space={2}>
               <Accordion
                 dividerOnBottom={false}
@@ -316,27 +316,21 @@ const Category: Screen<CategoryProps> = ({
               </Accordion>
             </Stack>
             <Stack space={2}>
-              <div
-                style={{
-                  marginTop: '-16px',
-                }}
-              >
-                {lifeEvents.map((lifeEvent, index) => {
-                  return (
-                    <LifeEventInCategory
-                      key={index}
-                      title={lifeEvent.title}
-                      slug={lifeEvent.slug}
-                      intro={lifeEvent.intro}
-                      image={
-                        lifeEvent.thumbnail
-                          ? lifeEvent.thumbnail.url
-                          : lifeEvent.image.url
-                      }
-                    />
-                  )
-                })}
-              </div>
+              {lifeEvents.map((lifeEvent, index) => {
+                return (
+                  <LifeEventInCategory
+                    key={index}
+                    title={lifeEvent.title}
+                    slug={lifeEvent.slug}
+                    intro={lifeEvent.intro}
+                    image={
+                      lifeEvent.thumbnail
+                        ? lifeEvent.thumbnail.url
+                        : lifeEvent.image.url
+                    }
+                  />
+                )
+              })}
             </Stack>
             <Stack space={2}>
               {cards.map(({ title, content, slug }, index) => {
@@ -351,7 +345,7 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
-          </Stack>
+          </>
         }
       >
         <Box paddingBottom={2}>
