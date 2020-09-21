@@ -281,9 +281,11 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.INewsFields>(lang, params)
       .catch(errorHandler('getNewsList'))
 
+    const mappedNews = result.items.map(mapNews)
+
     return {
-      page: makePage(page, perPage, result.total),
-      news: result.items.map(mapNews),
+      page: makePage(page, perPage, mappedNews.length),
+      news: mappedNews.filter((news) => news.title && news.slug), // we consider news "empty" that dont pass this check
     }
   }
 
