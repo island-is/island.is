@@ -6,7 +6,6 @@ export interface ServiceCardInformation {
     id:string
     name: string;
     owner:string;
-    url:string;
     pricing:Array<string>;
     data:Array<string>
     type:Array<string>;
@@ -193,19 +192,8 @@ export async function getService(id: string):Promise<ServiceResult> {
     if (filter.length < 1){
         return { result:null};
     } 
-    const ret:ServiceDetails = {
-        id : filter[0].id.toString(),
-        name: filter[0].name,
-        owner: filter[0].owner,
-        description: 'todo description',
-        url:filter[0].url,
-        access:filter[0].access,
-        data:filter[0].data,
-        pricing:filter[0].pricing,
-        type:filter[0].type,
-        status:filter[0].status
-    }
-    return { result:ret };
+    
+    return { result:filter[0] };
     
 }
 
@@ -233,7 +221,31 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         params.limit = null;
     }
     
-    return await limitServices(filtered, params.cursor, params.limit);
+
+
+    //Convert to ServiceCardInformation
+    const limited = await limitServices(filtered, params.cursor, params.limit);
+
+    if (limited.result === null || limited.result.length < 1)
+        return limited;
+
+    
+    //replace array of ServiceDetails with array of ServiceCardInformation
+    const cardInfoList:Array<ServiceCardInformation> = [];
+    limited.result.forEach(e => {
+        cardInfoList.push({
+            id:e.id,
+            name:e.name,
+            owner:e.owner,
+            status:e.status,
+            access:e.access,
+            data: e.data,
+            pricing:e.pricing,
+            type:e.type
+        })
+    });
+    limited.result = cardInfoList;
+    return limited;
 }
 
 function timeout(ms) {
