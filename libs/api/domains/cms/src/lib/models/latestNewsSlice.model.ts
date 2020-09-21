@@ -6,9 +6,8 @@ import { News } from './news.model'
 
 @ObjectType()
 export class LatestNewsSlice {
-  constructor(initializer: LatestNewsSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -23,9 +22,9 @@ export class LatestNewsSlice {
 export const mapLatestNewsSlice = ({
   fields,
   sys,
-}: ILatestNewsSlice): LatestNewsSlice =>
-  new LatestNewsSlice({
-    id: sys.id,
-    title: fields.title ?? '',
-    news: [], // populated by resolver
-  })
+}: ILatestNewsSlice): LatestNewsSlice => ({
+  typename: 'LatestNewsSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  news: [], // populated by resolver
+})

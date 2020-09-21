@@ -4,9 +4,8 @@ import { IProcessEntry } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class ProcessEntry {
-  constructor(initializer: ProcessEntry) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -24,11 +23,11 @@ export class ProcessEntry {
   buttonText: string
 }
 
-export const mapProcessEntry = ({ fields, sys }: IProcessEntry): ProcessEntry =>
-  new ProcessEntry({
-    id: sys.id,
-    type: fields.type,
-    processTitle: fields.processTitle,
-    processLink: fields.processLink,
-    buttonText: fields.buttonText ?? '',
-  })
+export const mapProcessEntry = ({ fields, sys }: IProcessEntry): ProcessEntry => ({
+  typename: 'ProcessEntry',
+  id: sys.id,
+  type: fields?.type ?? '',
+  processTitle: fields?.processTitle ?? '',
+  processLink: fields?.processLink ?? '',
+  buttonText: fields?.buttonText ?? '',
+})

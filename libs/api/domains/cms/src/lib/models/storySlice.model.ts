@@ -6,9 +6,8 @@ import { Story, mapStory } from './story.model'
 
 @ObjectType()
 export class StorySlice {
-  constructor(initializer: StorySlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -20,9 +19,9 @@ export class StorySlice {
   stories: Story[]
 }
 
-export const mapStorySlice = ({ fields, sys }: IStorySection): StorySlice =>
-  new StorySlice({
-    id: sys.id,
-    readMoreText: fields.readMoreText ?? '',
-    stories: fields.stories.map(mapStory),
-  })
+export const mapStorySlice = ({ fields, sys }: IStorySection): StorySlice => ({
+  typename: 'StorySlice',
+  id: sys.id,
+  readMoreText: fields.readMoreText ?? '',
+  stories: fields.stories.map(mapStory),
+})

@@ -14,7 +14,6 @@ import { AdgerdirNews } from './models/adgerdirNews.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
-import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
@@ -58,6 +57,7 @@ import { GetArticlesInput } from './dto/getArticles.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
+import { GetSingleArticleInput } from './dto/getSingleArticle.input'
 
 const { cacheTime } = environment
 
@@ -69,16 +69,7 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
-  ) {}
-
-  @Directive(cacheControlDirective())
-  @Query(() => Article, { nullable: true })
-  getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
-    return this.cmsContentfulService.getArticle(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
-    )
-  }
+  ) { }
 
   @Directive(cacheControlDirective())
   @Query(() => PaginatedNews)
@@ -239,6 +230,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getLifeEventPage(input.slug, input.lang)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => [LifeEventPage])
   getLifeEvents(
     @Args('input') input: GetLifeEventsInput,
@@ -246,6 +238,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getLifeEvents(input.lang)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => [LifeEventPage])
   getLifeEventsInCategory(
     @Args('input') input: GetLifeEventsInCategoryInput,
@@ -256,6 +249,7 @@ export class CmsResolver {
     )
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => [ArticleCategory])
   getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
@@ -266,6 +260,16 @@ export class CmsResolver {
     )
   }
 
+  @Directive(cacheControlDirective())
+  @Query(() => Article, { nullable: true })
+  getSingleArticle(@Args('input') { lang, slug }: GetSingleArticleInput): Promise<Article | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
+      SearchIndexes[lang],
+      { type: 'webArticle', slug }
+    )
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => [Article])
   getArticles(
     @Args('input') { lang, ...input }: GetArticlesInput,
@@ -276,11 +280,15 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => News, { nullable: true })
   getSingleNews(
-    @Args('input') { lang, ...input }: GetSingleNewsInput,
+    @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
-    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], input)
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
+      SearchIndexes[lang],
+      { type: 'webNews', slug }
+    )
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => Url, { nullable: true })
   getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
     return this.cmsContentfulService.getUrl(
@@ -292,7 +300,7 @@ export class CmsResolver {
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsContentfulService: CmsContentfulService) { }
 
   @ResolveField(() => [News])
   async news() {
@@ -306,7 +314,7 @@ export class LatestNewsSliceResolver {
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsContentfulService: CmsContentfulService) { }
 
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
