@@ -34,7 +34,9 @@ export class ApplicationSerializer
           ...new ApplicationTemplateHelper(
             application,
             template,
-          ).getPermittedAnswersAndExternalData('applicant'), // TODO how do we know the role
+          ).getPermittedAnswersAndExternalData(
+            application.state === 'inReview' ? 'reviewer' : 'applicant',
+          ), // TODO how do we know the role
         }
       }),
     )

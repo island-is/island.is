@@ -1,5 +1,6 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
+import { useLocale } from '@island.is/localization'
 
 import {
   Section,
@@ -11,6 +12,7 @@ import SectionNumber from './components/SectionNumber'
 import SubSectionItem from './components/SubSectionItem'
 
 import * as styles from './FormProgressSection.treat'
+import { ProgressThemes } from '../../types'
 
 const SubSections: FC<{
   isActive: boolean
@@ -24,6 +26,7 @@ const SubSections: FC<{
     'auto',
   )
   const isClient = typeof window === 'object'
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (!isClient) return
@@ -57,7 +60,7 @@ const SubSections: FC<{
               }
               showIcon={showSubSectionIcon}
             >
-              {subSection.name}
+              {formatMessage(subSection.name)}
             </SubSectionItem>
           ))}
         </BulletList>
@@ -67,6 +70,7 @@ const SubSections: FC<{
 }
 
 const FormProgressSection: FC<{
+  theme?: ProgressThemes
   section: Section
   sectionIndex: number
   isActive: boolean
@@ -75,6 +79,7 @@ const FormProgressSection: FC<{
   activeSubSection: number
   showSubSectionIcon?: boolean
 }> = ({
+  theme = ProgressThemes.PURPLE,
   section,
   sectionIndex,
   isActive,
@@ -89,6 +94,7 @@ const FormProgressSection: FC<{
   const { height: activeHeight } = useComponentSize(containerRef)
   const [containerHeight, setContainerHeight] = useState(0)
   const isClient = typeof window === 'object'
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (!isClient) return
@@ -104,6 +110,7 @@ const FormProgressSection: FC<{
         <Box display="flex" alignItems="flexStart" marginBottom={1}>
           <Box paddingTop={2}>
             <SectionNumber
+              theme={theme}
               lineHeight={isLastSection ? 0 : containerHeight}
               currentState={
                 isActive ? 'active' : isComplete ? 'previous' : 'next'
@@ -117,7 +124,7 @@ const FormProgressSection: FC<{
                 isActive ? 'formProgressSectionActive' : 'formProgressSection'
               }
             >
-              {section.name}
+              {formatMessage(section.name)}
             </Typography>
           </Box>
         </Box>
