@@ -22,6 +22,11 @@ export enum CaseState {
   COMPLETED = 'COMPLETED',
 }
 
+export enum NotificationType {
+  HEADS_UP = 'HEADS_UP',
+  READY_FOR_COURT = 'READY_FOR_COURT',
+}
+
 export interface Case {
   id: string
   policeCaseNumber: string
@@ -55,9 +60,22 @@ export interface GetCaseByIdCaseResponse {
   legalArguments: string
 }
 
+export interface NotificationResponse {
+  id: string
+  created: Date
+  caseId: string
+  type: NotificationType
+  message: string
+}
+
 export interface GetCaseByIdResponse {
   httpStatusCode: number
   case?: GetCaseByIdCaseResponse
+}
+
+export interface SendNotificationResponse {
+  httpStatusCode: number
+  response?: NotificationResponse
 }
 
 export interface CreateCaseRequest {

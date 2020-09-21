@@ -27,6 +27,7 @@ import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
+import * as Constants from '../../../utils/constants'
 
 export const StepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
@@ -226,7 +227,9 @@ export const StepTwo: React.FC = () => {
             <Logo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1">Krafa um gæsluvarðhald</Typography>
+            <Typography as="h1" variant="h1">
+              Krafa um gæsluvarðhald
+            </Typography>
           </GridColumn>
         </GridRow>
         <GridRow>
@@ -388,19 +391,15 @@ export const StepTwo: React.FC = () => {
                             checked={provision.getCheckbox}
                             tooltip={provision.explination}
                             onChange={({ target }) => {
+                              console.log(target.checked)
                               // Toggle the checkbox on or off
-                              provision.setCheckbox(!provision.getCheckbox)
+                              provision.setCheckbox(target.checked)
 
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
                               // If the user is checking the box, add the broken law to the state
-                              if (
-                                target.checked &&
-                                copyOfState.case.caseCustodyProvisions.indexOf(
-                                  target.value as CaseCustodyProvisions,
-                                ) === -1
-                              ) {
+                              if (target.checked) {
                                 copyOfState.case.caseCustodyProvisions.push(
                                   target.value as CaseCustodyProvisions,
                                 )
@@ -468,18 +467,13 @@ export const StepTwo: React.FC = () => {
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Toggle the checkbox on or off
-                            restriction.setCheckbox(!restriction.getCheckbox)
+                            restriction.setCheckbox(target.checked)
 
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
                             // If the user is checking the box, add the restriction to the state
-                            if (
-                              target.checked &&
-                              copyOfState.case.restrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ) === -1
-                            ) {
+                            if (target.checked) {
                               copyOfState.case.restrictions.push(
                                 target.value as CaseCustodyRestrictions,
                               )
@@ -620,8 +614,8 @@ export const StepTwo: React.FC = () => {
               </Box>
             </Box>
             <FormFooter
-              previousUrl="/stofna-krofu/grunnupplysingar"
-              nextUrl="/stofna-krofu/yfirlit"
+              previousUrl={Constants.STEP_ONE_ROUTE}
+              nextUrl={Constants.STEP_THREE_ROUTE}
               nextIsDisabled={
                 workingCase.case.lawsBroken === '' &&
                 workingCase.case.caseCustodyProvisions.length === 0
