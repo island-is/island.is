@@ -130,7 +130,7 @@ export const safelyMapSlices = (data) => {
   try {
     return mapSlice(data)
   } catch (error) {
-    logger.error('Failed to map slice in about page', error)
+    logger.error('Failed to map slice', error)
     return null
   }
 }
