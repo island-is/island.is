@@ -106,6 +106,12 @@
           },
           {
             "name": "LifeEventPage"
+          },
+          {
+            "name": "News"
+          },
+          {
+            "name": "AboutPage"
           }
         ]
       }

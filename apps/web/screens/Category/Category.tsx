@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useRef } from 'react'
+import pullAllBy from 'lodash/pullAllBy'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import {
@@ -43,14 +44,14 @@ import {
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
 
-type Article = GetArticlesQuery['getArticles']
+type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
-export interface CategoryProps {
-  articles: Article
-  lifeEvents: LifeEvents
+interface CategoryProps {
+  articles: Articles
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
+  lifeEvents: LifeEvents
   slug: string
 }
 
@@ -93,6 +94,16 @@ const Category: Screen<CategoryProps> = ({
     },
   )
 
+  // Get all available subgroups.
+  const availableSubgroups = articles
+    .map((article) => article.subgroup)
+    .filter(
+      (value, index, all) =>
+        all.findIndex((t) => JSON.stringify(t) === JSON.stringify(value)) ===
+        index,
+    )
+    .filter((x) => x)
+
   // find current category in categories list
   const category = categories.find((x) => x.slug === slug)
 
@@ -129,17 +140,8 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
-  const subgroupSorting = (a: string, b: string) => {
-    // Make items with no subgroup appear last.
-    if (b === 'null') {
-      return -1
-    }
-    // Otherwise sort them alphabetically.
-    return a.localeCompare(b, 'is')
-  }
-
-  const groupArticlesBySubgroup = (articles: Article) =>
-    articles.reduce(
+  const groupArticlesBySubgroup = (articles: Articles) => {
+    const articlesBySubgroup = articles.reduce(
       (result, item) => ({
         ...result,
         [item?.subgroup?.title]: [
@@ -150,8 +152,45 @@ const Category: Screen<CategoryProps> = ({
       {},
     )
 
-  const sortArticlesByTitle = (articles: Article) =>
-    articles.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+    return { articlesBySubgroup }
+  }
+
+  const sortArticles = (articles: Articles) => {
+    // Sort articles by importance (which defaults to 0).
+    // If both articles being compared have the same importance we sort by comparing their titles.
+    const sortedArticles = articles.sort((a, b) =>
+      a.importance > b.importance
+        ? -1
+        : a.importance === b.importance && a.title.localeCompare(b.title),
+    )
+
+    // If it's sorted alphabetically we need to be able to communicate that.
+    const isSortedAlphabetically =
+      JSON.stringify(sortedArticles) ===
+      JSON.stringify(
+        [...articles].sort((a, b) => a.title.localeCompare(b.title)),
+      )
+
+    return { sortedArticles, isSortedAlphabetically }
+  }
+
+  const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
+    Object.keys(articlesBySubgroup).sort((a, b) => {
+      // Look up the subgroups being sorted and find+compare their importance.
+      // If their importance is equal we sort alphabetically.
+      const foundA = availableSubgroups.find((subgroup) => subgroup.title === a)
+      const foundB = availableSubgroups.find((subgroup) => subgroup.title === b)
+
+      if (foundA && foundB) {
+        return foundA.importance > foundB.importance
+          ? -1
+          : foundA.importance === foundB.importance &&
+              foundA.title.localeCompare(foundB.title)
+      }
+
+      // Fall back to alphabet
+      return a.localeCompare(b)
+    })
 
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
@@ -182,11 +221,11 @@ const Category: Screen<CategoryProps> = ({
 
                   const expanded = groupSlug === hash.replace('#', '')
 
-                  const articlesBySubgroup = groupArticlesBySubgroup(articles)
+                  const { articlesBySubgroup } = groupArticlesBySubgroup(
+                    articles,
+                  )
 
-                  const sortedSubgroupKeys = Object.keys(
-                    articlesBySubgroup,
-                  ).sort(subgroupSorting)
+                  const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
 
                   return (
                     <div
@@ -203,24 +242,44 @@ const Category: Screen<CategoryProps> = ({
                       >
                         <Box paddingY={2}>
                           {sortedSubgroupKeys.map((subgroup, index) => {
+                            const {
+                              sortedArticles,
+                              isSortedAlphabetically,
+                            } = sortArticles(articlesBySubgroup[subgroup])
+
+                            // Articles with 1 subgroup only have the "other" group and don't get a heading.
                             const hasSubgroups = sortedSubgroupKeys.length > 1
+
+                            // Single articles that don't belong to a subgroup don't get a heading
+                            const isSingleArticle = sortedArticles.length === 1
+
+                            // Rename 'undefined' group to 'Other'
                             const subgroupName =
-                              subgroup === 'null' ? n('other') : subgroup
+                              subgroup === 'undefined' ||
+                              subgroup === 'null' ||
+                              !subgroup
+                                ? n('other')
+                                : subgroup
+
+                            const heading = hasSubgroups
+                              ? subgroupName
+                              : isSortedAlphabetically && !isSingleArticle
+                              ? n('sortedAlphabetically', 'A til Ö')
+                              : '' // No subgroup and custom sorting = no heading
+
                             return (
                               <React.Fragment key={subgroup}>
-                                {hasSubgroups && (
+                                {heading && (
                                   <Typography
                                     variant="h5"
                                     paddingBottom={3}
                                     paddingTop={index === 0 ? 0 : 3}
                                   >
-                                    {subgroupName}
+                                    {heading}
                                   </Typography>
                                 )}
                                 <Stack space={2}>
-                                  {sortArticlesByTitle(
-                                    articlesBySubgroup[subgroup],
-                                  ).map(
+                                  {sortedArticles.map(
                                     ({
                                       title,
                                       slug,
@@ -236,7 +295,7 @@ const Category: Screen<CategoryProps> = ({
                                           <LinkCard
                                             tag={
                                               containsApplicationForm &&
-                                              'Umsókn'
+                                              n('applicationProcess', 'Umsókn')
                                             }
                                           >
                                             {title}

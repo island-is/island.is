@@ -37,7 +37,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   title: fields.title,
   subtitle: fields.subtitle,
   intro: fields.intro,
-  image: mapImage(fields.image),
+  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
   date: fields.date,
   content: JSON.stringify(fields.content),
 })

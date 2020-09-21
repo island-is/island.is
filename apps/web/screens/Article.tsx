@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo, ReactNode } from 'react'
+import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -13,9 +13,9 @@ import {
   GridColumn,
   GridRow,
   Tag,
-  Button,
   Divider,
   Link,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
@@ -37,10 +37,10 @@ import {
   GetNamespaceQuery,
   QueryGetArticleArgs,
   GetArticleQuery,
-  ProcessEntry,
   Article,
   SubArticle,
   Slice,
+  ProcessEntry,
 } from '../graphql/schema'
 import { createNavigation } from '../utils/navigation'
 import useScrollSpy from '../hooks/useScrollSpy'
@@ -77,7 +77,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/'),
+      url: makePath('article', '[slug]'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -129,6 +129,28 @@ const RelatedArticles: FC<{
   )
 }
 
+const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
+  content,
+  defaultText,
+}) => {
+  const processEntries = content.filter((slice): slice is ProcessEntry => {
+    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
+  })
+
+  // we'll only show the button if there is exactly one process entry on the page
+  if (processEntries.length !== 1) return null
+
+  const { buttonText, processLink } = processEntries[0]
+
+  return (
+    <SidebarBox>
+      <Button href={processLink} width="fluid">
+        {buttonText || defaultText}
+      </Button>
+    </SidebarBox>
+  )
+}
+
 const SubArticleNavigation: FC<{
   title: string
   article: Article
@@ -164,15 +186,15 @@ const SubArticleNavigation: FC<{
           <Typography variant="p" as="p">
             <Link
               shallow
-              href={makePath('article', '[slug]/[subSlug]')}
+              href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
             >
               {maybeBold(article.title, !selectedSubArticle)}
             </Link>
           </Typography>
         </div>
-        {article.subArticles.map((subArticle) => (
-          <>
+        {article.subArticles.map((subArticle, id) => (
+          <Fragment key={id}>
             <div
               ref={
                 subArticle === selectedSubArticle && navigation.length === 0
@@ -197,9 +219,8 @@ const SubArticleNavigation: FC<{
               <SidebarSubNav>
                 <Stack space={1}>
                   {navigation.map(({ id, text }) => (
-                    <div ref={id === activeId ? setBullet : null}>
+                    <div key={id} ref={id === activeId ? setBullet : null}>
                       <Box
-                        key={id}
                         component="button"
                         type="button"
                         textAlign="left"
@@ -215,7 +236,7 @@ const SubArticleNavigation: FC<{
                 </Stack>
               </SidebarSubNav>
             )}
-          </>
+          </Fragment>
         ))}
       </Stack>
     </SidebarBox>
@@ -278,6 +299,10 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   return (
     <Stack space={3}>
+      <ActionButton
+        content={article.body}
+        defaultText={n('processLinkButtonText')}
+      />
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
       ) : (
@@ -332,13 +357,15 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
-              <Link
-                href={`${makePath('ArticleCategory')}/[slug]`}
-                as={makePath('ArticleCategory', article.category.slug)}
-              >
-                {article.category.title}
-              </Link>
-              {article.group && (
+              {!!article.category && (
+                <Link
+                  href={`${makePath('ArticleCategory')}/[slug]`}
+                  as={makePath('ArticleCategory', article.category.slug)}
+                >
+                  {article.category.title}
+                </Link>
+              )}
+              {!!article.group && (
                 <Link
                   as={makePath(
                     'ArticleCategory',
@@ -381,7 +408,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             )}
           </GridColumn>
         </GridRow>
-        <Box paddingTop={subArticle ? 0 : 7}>
+        <Box paddingTop={subArticle ? 2 : 4}>
           <RichText body={(subArticle ?? article).body} />
         </Box>
       </ArticleLayout>

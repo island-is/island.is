@@ -47,6 +47,12 @@ export type Link = {
   url: Scalars['String']
 }
 
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
 export type TimelineEvent = {
   __typename?: 'TimelineEvent'
   id: Scalars['ID']
@@ -55,7 +61,7 @@ export type TimelineEvent = {
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
-  body?: Maybe<Scalars['String']>
+  body?: Maybe<Html>
   tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
@@ -112,12 +118,6 @@ export type Statistic = {
   label: Scalars['String']
 }
 
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
-}
-
 export type QuestionAndAnswer = {
   __typename?: 'QuestionAndAnswer'
   id: Scalars['ID']
@@ -142,6 +142,7 @@ export type ArticleGroup = {
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
+  importance?: Maybe<Scalars['Float']>
   slug: Scalars['String']
 }
 
@@ -276,13 +277,8 @@ export type Statistics = {
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
   id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
   type: Scalars['String']
   processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
   processLink: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -315,9 +311,10 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Float']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -439,6 +436,7 @@ export type Namespace = {
 
 export type AboutPage = {
   __typename?: 'AboutPage'
+  id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
@@ -501,7 +499,7 @@ export type LifeEventPage = {
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
-  image: Image
+  image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
   category?: Maybe<ArticleCategory>
@@ -534,7 +532,7 @@ export type SearchResult = {
   items: Array<Items>
 }
 
-export type Items = Article | LifeEventPage
+export type Items = Article | LifeEventPage | News | AboutPage
 
 export type ContentItem = {
   __typename?: 'ContentItem'
@@ -546,6 +544,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Float']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -926,10 +925,17 @@ export type GetUrlInput = {
 
 export type SearcherInput = {
   queryString: Scalars['String']
-  types?: Maybe<Array<Scalars['String']>>
+  types?: Maybe<Array<SearchableContentTypes>>
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+}
+
+export enum SearchableContentTypes {
+  webAboutPage = 'webAboutPage',
+  webArticle = 'webArticle',
+  webLifeEventPage = 'webLifeEventPage',
+  webNews = 'webNews',
 }
 
 export enum ContentLanguage {
@@ -1199,6 +1205,8 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>
   Int: ResolverTypeWrapper<Scalars['Int']>
   Link: ResolverTypeWrapper<Link>
+  Html: ResolverTypeWrapper<Html>
+  JSON: ResolverTypeWrapper<Scalars['JSON']>
   TimelineEvent: ResolverTypeWrapper<TimelineEvent>
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   Story: ResolverTypeWrapper<Story>
@@ -1206,12 +1214,11 @@ export type ResolversTypes = {
   News: ResolverTypeWrapper<News>
   NumberBullet: ResolverTypeWrapper<NumberBullet>
   Statistic: ResolverTypeWrapper<Statistic>
-  Html: ResolverTypeWrapper<Html>
-  JSON: ResolverTypeWrapper<Scalars['JSON']>
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
+  Float: ResolverTypeWrapper<Scalars['Float']>
   OrganizationTag: ResolverTypeWrapper<OrganizationTag>
   Organization: ResolverTypeWrapper<Organization>
   SubArticle: ResolverTypeWrapper<
@@ -1262,7 +1269,6 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
-  Float: ResolverTypeWrapper<Scalars['Float']>
   Organizations: ResolverTypeWrapper<Organizations>
   AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
@@ -1308,7 +1314,11 @@ export type ResolversTypes = {
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
-  Items: ResolversTypes['Article'] | ResolversTypes['LifeEventPage']
+  Items:
+    | ResolversTypes['Article']
+    | ResolversTypes['LifeEventPage']
+    | ResolversTypes['News']
+    | ResolversTypes['AboutPage']
   ContentItem: ResolverTypeWrapper<ContentItem>
   WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   Application: ResolverTypeWrapper<Application>
@@ -1346,6 +1356,7 @@ export type ResolversTypes = {
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
+  SearchableContentTypes: SearchableContentTypes
   ContentLanguage: ContentLanguage
   ItemInput: ItemInput
   ItemType: ItemType
@@ -1375,6 +1386,8 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']
   Int: Scalars['Int']
   Link: Link
+  Html: Html
+  JSON: Scalars['JSON']
   TimelineEvent: TimelineEvent
   TimelineSlice: TimelineSlice
   Story: Story
@@ -1382,12 +1395,11 @@ export type ResolversParentTypes = {
   News: News
   NumberBullet: NumberBullet
   Statistic: Statistic
-  Html: Html
-  JSON: Scalars['JSON']
   QuestionAndAnswer: QuestionAndAnswer
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
+  Float: Scalars['Float']
   OrganizationTag: OrganizationTag
   Organization: Organization
   SubArticle: Omit<SubArticle, 'body'> & {
@@ -1436,7 +1448,6 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
-  Float: Scalars['Float']
   Organizations: Organizations
   AdgerdirNews: AdgerdirNews
   AdgerdirPages: AdgerdirPages
@@ -1478,7 +1489,11 @@ export type ResolversParentTypes = {
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
-  Items: ResolversParentTypes['Article'] | ResolversParentTypes['LifeEventPage']
+  Items:
+    | ResolversParentTypes['Article']
+    | ResolversParentTypes['LifeEventPage']
+    | ResolversParentTypes['News']
+    | ResolversParentTypes['AboutPage']
   ContentItem: ContentItem
   WebSearchAutocomplete: WebSearchAutocomplete
   Application: Application
@@ -1562,6 +1577,20 @@ export type LinkResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type HtmlResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export interface JsonScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON'
+}
+
 export type TimelineEventResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TimelineEvent'] = ResolversParentTypes['TimelineEvent']
@@ -1572,7 +1601,7 @@ export type TimelineEventResolvers<
   numerator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   tags?: Resolver<
     Maybe<Array<ResolversTypes['String']>>,
     ParentType,
@@ -1656,20 +1685,6 @@ export type StatisticResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type HtmlResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export interface JsonScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
-  name: 'JSON'
-}
-
 export type QuestionAndAnswerResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['QuestionAndAnswer'] = ResolversParentTypes['QuestionAndAnswer']
@@ -1713,6 +1728,7 @@ export type ArticleSubgroupResolvers<
   ParentType extends ResolversParentTypes['ArticleSubgroup'] = ResolversParentTypes['ArticleSubgroup']
 > = {
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1937,17 +1953,8 @@ export type ProcessEntryResolvers<
   ParentType extends ResolversParentTypes['ProcessEntry'] = ResolversParentTypes['ProcessEntry']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  details?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   processTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  processDescription?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  processInfo?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   processLink?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
@@ -1996,13 +2003,18 @@ export type ArticleResolvers<
   contentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  shortTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   containsApplicationForm?: Resolver<
     Maybe<ResolversTypes['Boolean']>,
     ParentType,
     ContextType
   >
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   body?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
     Maybe<ResolversTypes['ArticleCategory']>,
@@ -2255,6 +2267,7 @@ export type AboutPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AboutPage'] = ResolversParentTypes['AboutPage']
 > = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -2354,7 +2367,7 @@ export type LifeEventPageResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
@@ -2426,7 +2439,7 @@ export type ItemsResolvers<
   ParentType extends ResolversParentTypes['Items'] = ResolversParentTypes['Items']
 > = {
   __resolveType: TypeResolveFn<
-    'Article' | 'LifeEventPage',
+    'Article' | 'LifeEventPage' | 'News' | 'AboutPage',
     ParentType,
     ContextType
   >
@@ -2460,6 +2473,7 @@ export type ContentItemResolvers<
     ParentType,
     ContextType
   >
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   subgroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
@@ -2840,6 +2854,8 @@ export type Resolvers<ContextType = Context> = {
   HelloWorld?: HelloWorldResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
   Link?: LinkResolvers<ContextType>
+  Html?: HtmlResolvers<ContextType>
+  JSON?: GraphQLScalarType
   TimelineEvent?: TimelineEventResolvers<ContextType>
   TimelineSlice?: TimelineSliceResolvers<ContextType>
   Story?: StoryResolvers<ContextType>
@@ -2847,8 +2863,6 @@ export type Resolvers<ContextType = Context> = {
   News?: NewsResolvers<ContextType>
   NumberBullet?: NumberBulletResolvers<ContextType>
   Statistic?: StatisticResolvers<ContextType>
-  Html?: HtmlResolvers<ContextType>
-  JSON?: GraphQLScalarType
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
@@ -3039,6 +3053,12 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'LifeEventPage',
+          },
+          {
+            name: 'News',
+          },
+          {
+            name: 'AboutPage',
           },
         ],
       },

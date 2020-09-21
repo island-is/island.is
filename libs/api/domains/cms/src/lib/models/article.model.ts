@@ -1,10 +1,11 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { isEmpty } from 'lodash'
 
 import { IArticle } from '../generated/contentfulTypes'
 import { Slice, mapDocument } from './slice.model'
 
-import { ArticleCategory } from './articleCategory.model'
-import { ArticleGroup } from './articleGroup.model'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
+import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
@@ -23,14 +24,17 @@ export class Article {
   @Field()
   slug: string
 
-  @Field()
-  shortTitle: string
+  @Field({ nullable: true })
+  shortTitle?: string
 
-  @Field()
-  intro: string
+  @Field({ nullable: true })
+  intro?: string
 
   @Field({ nullable: true })
   containsApplicationForm: boolean
+
+  @Field({ nullable: true })
+  importance: number
 
   @Field(() => [Slice])
   body: Array<typeof Slice>
@@ -62,11 +66,18 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   slug: fields.slug,
   intro: fields.intro ?? '',
   containsApplicationForm: fields.containsApplicationForm ?? false,
+  importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
-  category: fields.category?.fields,
-  group: fields.group?.fields,
+  category: fields?.category ? mapArticleCategory(fields.category) : null,
+  group: fields?.group ? mapArticleGroup(fields.group) : null,
   subgroup: fields.subgroup?.fields,
-  organization: (fields.organization ?? []).map(mapOrganization),
-  subArticles: (fields.subArticles ?? []).map(mapSubArticle),
-  relatedArticles: (fields.relatedArticles ?? []).map(mapArticle),
+  organization: (fields?.organization ?? [])
+    .filter((doc) => !isEmpty(doc))
+    .map(mapOrganization),
+  subArticles: (fields?.subArticles ?? [])
+    .filter((doc) => !isEmpty(doc))
+    .map(mapSubArticle),
+  relatedArticles: (fields?.relatedArticles ?? [])
+    .filter((doc) => !isEmpty(doc))
+    .map(mapArticle),
 })

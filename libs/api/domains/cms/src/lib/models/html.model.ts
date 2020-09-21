@@ -1,8 +1,44 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Document, BLOCKS, TopLevelBlock } from '@contentful/rich-text-types'
+import {
+  Document,
+  BLOCKS,
+  TopLevelBlock,
+  Block,
+  Inline,
+  Text,
+} from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
+import { RichTextContent } from 'contentful'
 
 import { Slice } from './slice.model'
+
+type RichText = Block | Inline | Text
+
+const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
+  ...obj,
+  data: {
+    ...obj?.data,
+    target: {
+      ...obj?.data?.target,
+      fields: {
+        ...obj?.data?.target?.fields,
+        details: {
+          ...obj?.data?.target?.details,
+          content: (obj?.data?.target?.fields?.details?.content ?? []).filter(
+            (field: RichTextContent) => id !== field?.data?.target?.sys?.id,
+          ),
+        },
+      },
+    },
+  },
+})
+
+const sanitizeData = (html: Document | TopLevelBlock) => ({
+  ...deepChange(html, html?.data?.target?.sys?.id),
+  content: (
+    html?.content ?? ([] as (TopLevelBlock | RichText)[])
+  ).map((content) => deepChange(content, content?.data?.target?.sys?.id)),
+})
 
 @ObjectType()
 export class Html {
@@ -18,11 +54,13 @@ export class Html {
 }
 
 export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
-  switch (html.nodeType) {
+  const newHtml = sanitizeData(html)
+
+  switch (newHtml.nodeType) {
     case BLOCKS.DOCUMENT:
       return new Html({
         id: String(id),
-        document: html,
+        document: newHtml as Document,
       })
 
     default:
@@ -30,7 +68,7 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
         id: String(id),
         document: {
           nodeType: BLOCKS.DOCUMENT,
-          content: [html],
+          content: [newHtml as TopLevelBlock],
           data: {},
         },
       })

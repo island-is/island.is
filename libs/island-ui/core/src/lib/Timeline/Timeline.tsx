@@ -21,6 +21,7 @@ import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
 import ReactDOM from 'react-dom'
 import { Box } from '../Box'
+import Link from 'next/link'
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -297,9 +298,11 @@ const EventBar = forwardRef(
               <span className={eventStyles.value}>
                 {formatNumber(event.value)}
               </span>
-              <span className={eventStyles.maxValue}>
-                /{formatNumber(event.maxValue || 0)}
-              </span>
+              {!!event.maxValue && (
+                <span className={eventStyles.maxValue}>
+                  /{formatNumber(event.maxValue)}
+                </span>
+              )}
             </span>
             <span className={eventStyles.valueLabel}>
               {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
@@ -348,17 +351,19 @@ const EventModal = forwardRef(
               paddingLeft={2}
               paddingRight={4}
             >
-              <Typography variant="h1" color="purple400" as="span">
+              <Typography variant="h2" color="purple400" as="span">
                 {formatNumber(event.value)}
               </Typography>
-              <Typography
-                variant="h1"
-                color="purple400"
-                as="span"
-                fontWeight="light"
-              >
-                /{formatNumber(event.maxValue || 0)}
-              </Typography>
+              {!!event.maxValue && (
+                <Typography
+                  variant="h2"
+                  color="purple400"
+                  as="span"
+                  fontWeight="light"
+                >
+                  /{formatNumber(event.maxValue)}
+                </Typography>
+              )}
               <Box marginLeft={1}>
                 <Typography
                   variant="eyebrow"
@@ -387,16 +392,20 @@ const EventModal = forwardRef(
             {event.data?.labels && (
               <Inline space={2}>
                 {event.data.labels.map((label, index) => (
-                  <Tag key={index} label>
+                  <Tag key={index} label variant="purple" bordered>
                     {label}
                   </Tag>
                 ))}
               </Inline>
             )}
-            {event.data?.text || ''}
-            <Button variant="text" icon="arrowRight">
-              Lesa meira
-            </Button>
+            {Boolean(event.data?.text) && event.data.text}
+            {event.data?.link && (
+              <Link href={event.data.link}>
+                <Button variant="text" icon="arrowRight">
+                  Lesa meira
+                </Button>
+              </Link>
+            )}
           </Stack>
         </Box>
       </div>

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, Int } from '@nestjs/graphql'
 
 import { IArticleSubgroup } from '../generated/contentfulTypes'
 
@@ -7,6 +7,9 @@ export class ArticleSubgroup {
   @Field()
   title: string
 
+  @Field({ nullable: true })
+  importance?: number
+
   @Field()
   slug: string
 }
@@ -14,6 +17,7 @@ export class ArticleSubgroup {
 export const mapArticleSubgroup = ({
   fields,
 }: IArticleSubgroup): ArticleSubgroup => ({
-  title: fields.title,
-  slug: fields.slug,
+  title: fields?.title ?? '',
+  importance: fields?.importance ?? 0,
+  slug: fields?.slug ?? '',
 })

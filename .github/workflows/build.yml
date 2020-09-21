@@ -10,6 +10,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch: {}
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/

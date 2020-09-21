@@ -11,6 +11,7 @@ import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
+import { AboutPageSyncService } from './importers/aboutPage.service'
 
 export interface PostSyncOptions {
   locale: keyof typeof SearchIndexes
@@ -21,6 +22,7 @@ export interface PostSyncOptions {
 export class CmsSyncService {
   private contentSyncProviders
   constructor(
+    private readonly aboutPageSyncService: AboutPageSyncService,
     private readonly newsSyncService: NewsSyncService,
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
@@ -33,6 +35,7 @@ export class CmsSyncService {
       this.lifeEventsPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
+      this.aboutPageSyncService,
     ]
   }
 

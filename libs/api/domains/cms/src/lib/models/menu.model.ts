@@ -15,5 +15,5 @@ export class Menu {
 
 export const mapMenu = ({ fields }: IMenu): Menu => ({
   title: fields.title ?? '',
-  links: fields.links.map(mapLink),
+  links: (fields.links ?? []).map(mapLink),
 })

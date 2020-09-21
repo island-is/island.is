@@ -5,17 +5,17 @@ describe('Authenticate utils', () => {
   describe('HasRole util', () => {
     test('should accurately determine if a role is in a list of roles', () => {
       // Arrange
-      const procAndJudge = [UserRole.PROCECUTOR, UserRole.JUDGE]
+      const procAndJudge = [UserRole.PROSECUTOR, UserRole.JUDGE]
       const judge = [UserRole.JUDGE]
 
       // Act
-      const hasProcecutorRole = hasRole(procAndJudge, UserRole.PROCECUTOR)
+      const hasProsecutorRole = hasRole(procAndJudge, UserRole.PROSECUTOR)
       const hasJudgeRole = hasRole(procAndJudge, UserRole.JUDGE)
-      const judgeHasProcRole = hasRole(judge, UserRole.PROCECUTOR)
-      const hasNoRole = hasRole([], UserRole.PROCECUTOR)
+      const judgeHasProcRole = hasRole(judge, UserRole.PROSECUTOR)
+      const hasNoRole = hasRole([], UserRole.PROSECUTOR)
 
       // Assert
-      expect(hasProcecutorRole).toBeTruthy()
+      expect(hasProsecutorRole).toBeTruthy()
       expect(hasJudgeRole).toBeTruthy()
       expect(judgeHasProcRole).toBeFalsy()
       expect(hasNoRole).toBeFalsy()

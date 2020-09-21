@@ -9,7 +9,7 @@ export const documentsModule: ServicePortalModule = {
   widgets: () => [
     {
       name: 'Rafræn skjöl',
-      weight: 1,
+      weight: 2,
       render: () => lazy(() => import('./widgets')),
     },
   ],
