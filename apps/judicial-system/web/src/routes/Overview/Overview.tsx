@@ -31,12 +31,15 @@ export const Overview: React.FC = () => {
 
   const renderSuspectName = () => (
     <Typography>
-      Tilkynning hefur verið send á dómara á vakt hjá {caseDraftJSON.case.court}{' '}
-      um að það sé gæsluvarðhaldskrafa á{' '}
+      Tilkynning hefur verið send á dómara á vakt.
+      <br />
+      Dómstóll: {caseDraftJSON.case.court}.
+      <br />
+      Sakborningur:
       <span className={styles.suspectName}>
-        {caseDraftJSON.case.suspectName}
-      </span>{' '}
-      sé tilbúin.
+        {` ${caseDraftJSON.case.suspectName}`}
+      </span>
+      .
     </Typography>
   )
 
@@ -236,7 +239,7 @@ export const Overview: React.FC = () => {
         <Modal
           title="Krafa um gæsluvarðhald hefur verið staðfest"
           text={renderSuspectName() as JSX.Element}
-          handleClose={() => setModalVisible(false)}
+          handleClose={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
           handlePrimaryButtonClick={async () => {
             history.push(Constants.DETENTION_REQUESTS_ROUTE)
           }}
