@@ -435,7 +435,6 @@ export class CmsContentfulService {
         include: 1,
       })
       .catch(errorHandler('getUrl'))
-    logger.info('url', { result })
     return result.items.map(mapUrl)[0] ?? null
   }
 
