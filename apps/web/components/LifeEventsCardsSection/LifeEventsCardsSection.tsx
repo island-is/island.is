@@ -9,9 +9,9 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { LifeEventCard } from './components/LifeEventCard'
-import { GetLifeEventsQuery } from '../../graphql/schema'
+import { GetLifeEventsQuery } from '@island.is/web/graphql/schema'
 import { Sleeve } from '@island.is/island-ui/core'
+import { Card } from '@island.is/web/components'
 
 interface LifeEventsSectionProps {
   title?: string
@@ -26,15 +26,13 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   const { makePath } = routeNames(activeLocale)
 
   const renderLifeEventCard = (lifeEvent) => (
-    <LifeEventCard
+    <Card
       key={lifeEvent.title}
       title={lifeEvent.title}
-      intro={lifeEvent.intro}
+      description={lifeEvent.intro}
       href={makePath('lifeEvent', '[slug]')}
       as={makePath('lifeEvent', lifeEvent.slug)}
-      image={
-        lifeEvent.thumbnail ? lifeEvent.thumbnail.url : lifeEvent.image.url
-      }
+      image={lifeEvent.thumbnail ? lifeEvent.thumbnail : lifeEvent.image}
     />
   )
 

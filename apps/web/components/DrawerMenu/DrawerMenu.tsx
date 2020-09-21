@@ -31,7 +31,6 @@ interface DrawerMenuCategoryProps extends Category {
 const MainCategoryHeader = ({ title, onClick, isOpen }) => (
   <Box
     display="flex"
-    component="button"
     alignItems="center"
     justifyContent="spaceBetween"
     className={cn(styles.top, styles.mainHeader)}

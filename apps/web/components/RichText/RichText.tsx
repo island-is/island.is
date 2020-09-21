@@ -21,7 +21,10 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
     children = (
       <GridContainer>
         <GridRow>
-          <GridColumn offset={['0', '0', '1/9']} span={['0', '0', '7/9']}>
+          <GridColumn
+            offset={['0', '0', '0', '0', '1/9']}
+            span={['0', '0', '0', '0', '7/9']}
+          >
             {children}
           </GridColumn>
         </GridRow>

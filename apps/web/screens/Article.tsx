@@ -15,6 +15,7 @@ import {
   Tag,
   Divider,
   Link,
+  Icon,
   Button,
 } from '@island.is/island-ui/core'
 import {
@@ -26,12 +27,12 @@ import {
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
-import { ArticleLayout } from './Layouts/Layouts'
-import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import { useI18n } from '../i18n'
-import routeNames from '../i18n/routeNames'
-import { CustomNextError } from '../units/errors'
+import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { Screen } from '@island.is/web/types'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -41,9 +42,9 @@ import {
   SubArticle,
   Slice,
   ProcessEntry,
-} from '../graphql/schema'
-import { createNavigation } from '../utils/navigation'
-import useScrollSpy from '../hooks/useScrollSpy'
+} from '@island.is/web/graphql/schema'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 
 const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
   condition ? <b>{content}</b> : content
@@ -289,20 +290,24 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
 interface ArticleSidebarProps {
   article: Article
   subArticle: SubArticle
+  showActionButton: boolean
   n: (s: string) => string
 }
 
 const ArticleSidebar: FC<ArticleSidebarProps> = ({
   article,
   subArticle,
+  showActionButton,
   n,
 }) => {
   return (
     <Stack space={3}>
-      <ActionButton
-        content={article.body}
-        defaultText={n('processLinkButtonText')}
-      />
+      {!!showActionButton && (
+        <ActionButton
+          content={article.body}
+          defaultText={n('processLinkButtonText')}
+        />
+      )}
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
       ) : (
@@ -339,20 +344,43 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
+  const metaTitle = `${article.title} | Ísland.is`
+  const metaDescription =
+    article.intro ||
+    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
+
+  const processEntries = article?.body?.length
+    ? article.body.filter((x) => x.__typename === 'ProcessEntry')
+    : []
+
+  const processEntry =
+    processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
+
   return (
     <>
       <Head>
-        <title>{article.title} | Ísland.is</title>
+        <title>{metaTitle}</title>
+        <meta name="title" property="og:title" content={metaTitle} />
+        <meta
+          name="description"
+          property="og:description"
+          content={metaDescription}
+        />
       </Head>
       <ArticleLayout
         sidebar={
-          <ArticleSidebar article={article} subArticle={subArticle} n={n} />
+          <ArticleSidebar
+            showActionButton={Boolean(processEntry)}
+            article={article}
+            subArticle={subArticle}
+            n={n}
+          />
         }
       >
         <GridRow>
           <GridColumn
-            offset={['0', '0', '1/9']}
-            span={['0', '0', '7/9']}
+            offset={['0', '0', '0', '0', '1/9']}
+            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
             paddingBottom={2}
           >
             <Breadcrumbs>
@@ -380,19 +408,27 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
+        {!!contentOverviewOptions.length && (
+          <GridRow>
+            <GridColumn span="9/9" paddingBottom={4}>
+              <Hidden above="sm">
+                <DrawerMenu
+                  categories={[
+                    {
+                      title: n('categoryOverview', 'Efnisyfirlit'),
+                      items: contentOverviewOptions,
+                    },
+                  ]}
+                />
+              </Hidden>
+            </GridColumn>
+          </GridRow>
+        )}
         <GridRow>
-          <GridColumn span="9/9" paddingBottom={4}>
-            <Hidden above="sm">
-              <DrawerMenu
-                categories={[
-                  { title: 'Efnisyfirlit', items: contentOverviewOptions },
-                ]}
-              />
-            </Hidden>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn offset={['0', '0', '1/9']} span={['9/9', '9/9', '7/9']}>
+          <GridColumn
+            offset={['0', '0', '0', '0', '1/9']}
+            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+          >
             <Typography variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
             </Typography>
@@ -405,6 +441,29 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <Typography variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>
               </Typography>
+            )}
+            {!!processEntry && (
+              <Hidden above="sm">
+                <Box
+                  background="blue100"
+                  padding={3}
+                  marginY={3}
+                  borderRadius="large"
+                >
+                  <Typography variant="h4" as="span" color="blue400">
+                    <Link
+                      passHref
+                      href={processEntry.processLink}
+                      withUnderline
+                    >
+                      <span>{processEntry.processTitle}</span>
+                      <Box component="span" marginLeft={2}>
+                        <Icon type="external" width="15" />
+                      </Box>
+                    </Link>
+                  </Typography>
+                </Box>
+              </Hidden>
             )}
           </GridColumn>
         </GridRow>

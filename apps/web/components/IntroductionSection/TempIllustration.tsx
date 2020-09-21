@@ -1,145 +1,457 @@
-import React from 'react'
+import * as React from 'react'
 
-export const Illustration = () => (
-  <svg
-    viewBox="0 0 438 425"
-    fill="none"
-    width="100%"
-    style={{ maxHeight: 400 }}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <g clipPath="url(#clip0)">
-      <path
-        d="M297.43 188.72l-17.7-27.83c-.56-.89-1.84-.92-2.45-.06l-10.37 14.64c-.33.47-.36 1.09-.07 1.59l17.19 29.77c.55.95 1.91.99 2.51.07l10.88-16.57c.32-.49.32-1.12.01-1.61zm-19.29-19.25a2.2 2.2 0 010-4.4c1.21 0 2.2.99 2.2 2.2 0 1.22-.98 2.2-2.2 2.2zm113.62 88.03s-29.97-.78-71.85-22.47c-4.42-2.29-8.98-4.29-13.69-5.89-10.24-3.47-27.48-8.53-35.84-6.53-12.33 2.95-82.7 80.85-82.7 80.85s27.84 23.52 49.46 34.4l14.07-24.56 14.55 67.34h53.27l-27.98-77.17 64.92.05c-.01-.02 30.97-7.87 35.79-46.02zm-227.87-11.75c0-16.32 13.23-29.55 29.55-29.55s29.55 13.23 29.55 29.55h-59.1zM79.66 57.67c16.5-8.03 40.6-6.38 65.67 11.12 31.3-6.38 38.36 20.92 38.36 20.92H79.66V57.67z"
-        fill="url(#paint0_linear)"
-      />
-      <path
-        d="M325.99 105.5s2.55 20.72 12.52 30.85c4 4.75 14.26 3.14 17.66-4.28M312.72 217.15c-2.43-13.25-5.12-36.63 5.67-53.15 10.14-15.52 28.5-17.73 28.5-17.73v-5.96M362.5 128.54l6.86 14.88c15.83.04 36.65 7.21 36.65 32.65 0 18.68-3.94 49.98-13.53 64.87-25.97 4.12-64.5-1.92-64.5-1.92M383.03 226.62s-35.52-4.76-77.44 2.88M372.74 178.73s4.01 28.57 8.02 46.77"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M374.26 106.29c-1.76-2.34-3.29-4.27-4.52-5.95-2.86-3.9-2.29-9.25 1.19-12.61 4.04-3.9 6.31-10.06 3-15.61-3.86-6.48-18.92-9.99-22.97-2.04-2 3.93 2.27 8.23-1.59 10.83-6.38 4.32-9.83-7.73-16.6-4.65-4.76 2.16-5.29 7.17-3.95 11.06 1.34 3.89.07 9.28-7.53 7.13-9.74-2.75-10.58 13.01-4.61 18.73 7.51 7.19 18.45 2.79 13.15-4.67-2.46-3.46-1.07-7.35 3.57-5.79 3.18 1.06 10.87 3.14 11.8-2.28-.63 6.13 5.72 4.89 8.14 3.06 2.76-2.08 5.58.45 1.42 6-2.93 3.9 4.41 8.48 5.43-.3.67-5.77 7.68-2.92 4.3 2.76-3.37 5.67-8.82 15.85-.94 20.43 8.94 5.19 22.59-10.3 10.71-26.1z"
-        fill="#FF4C84"
-      />
-      <path
-        d="M280.68 253.5s32.96 43.95 68.53 48c35.57 4.05 45.72-45.82 43.26-60.56"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M305.59 229.5s-19.37-9.82-35.2-6.9c-15.83 2.92-93.81 93.56-93.81 93.56s26.54 21.35 53.89 33.34l20.74-36.21"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M278.64 262.68h-15.51c-11.84 0-20.01 10.62-16.74 27.35 3.27 16.73 22 103.47 22 103.47h54.76s-15.51-50.39-35.93-99.38M291.04 303.45h90.59M300.55 325.5h81.08M380.32 422.1l55.97-313.2"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M187.29 377.81l47.67-8.31-4.49-20-16.36-8.21s1.66 21.42-24.06 24.68c-.01 0-6.34 1.23-2.76 11.84zM295.99 393.5l2.65 29.9h-48.59s-2.86-11.43 8.57-11.43 19.41-4.35 21.05-8.02c1.63-3.67-1.48-10.44-1.48-10.44h17.8v-.01z"
-        fill="#6A2EA0"
-      />
-      <path
-        d="M18.65 74.19c-9.47 0-17.15 7.68-17.15 17.15v9.09h34.3v-9.09c0-9.47-7.68-17.15-17.15-17.15zM18.65 1.5v72.69M391.76 30.71H102.24c-12.47 0-22.59 10.11-22.59 22.59v169.87c0 12.47 10.11 22.59 22.59 22.59h138.84M334.76 423.5H197.65M84.45 356.01c-6.7.56-16.12 7.77-19.13 11.76-14.16 18.78-11.84 42.84-9.36 55.62h64.96v-96.33c-.01.01-29.11-6.86-36.47 28.95zm0 0c-2.05 11.33-2.26 40.68-2.26 40.68"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M91.31 396.69h18.37v9.99c0 5.07-4.11 9.19-9.19 9.19-5.07 0-9.19-4.11-9.19-9.19v-9.99h.01z"
-        fill="#FF4C84"
-      />
-      <path
-        d="M111.43 337.84V317.2M120.92 337.84h10.89c7.29 0 12.53 7.02 10.44 14.01l-21.34 71.54M153.65 423.5h-120"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M111.43 318.78a4.6 4.6 0 100-9.2 4.6 4.6 0 000 9.2zM20.65 164.8a4.6 4.6 0 100-9.2 4.6 4.6 0 000 9.2zM404.76 20.1a4.6 4.6 0 100-9.2 4.6 4.6 0 000 9.2z"
-        fill="#0061FF"
-      />
-      <path
-        d="M81.21 138.9h70v41.07h50v37.18M151.21 200.16v-20.19"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M163.89 245.75c0-16.32 13.23-29.55 29.55-29.55s29.55 13.23 29.55 29.55M295.65 15.5H96.55c-17.44 0-31.58 14.14-31.58 31.58v179.54"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M138.21 159.5h-15.56v24h15.56v-24zM138.21 206.59h-15.56v24h15.56v-24zM265.76 191.25s2.18 18.25 29.89 34.26M275.12 183.96l-2.6 7.29M271.65 174.74l-5.89 16.51M280.68 189.52l-4.36 12.21M286.24 195.09l-4.35 12.21M327.97 189.49s6.4 17.37 8.47 36.08M315.67 219.17s-10.08-7.03-26.49-9.67M328.76 117.98s-.99 10.73-.68 13.52c.32 2.85 3.36 2.27 5.77 0M350.45 79.87l18.49 10.56M337.65 134.8s6.12-.75 6.85-6.69M335.14 149.88s12.64 19.59 40.25-5.42"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M249.74 99.06c6.49 0 11.75-5.26 11.75-11.75s-5.26-11.75-11.75-11.75c-6.489 0-11.75 5.26-11.75 11.75s5.261 11.75 11.75 11.75z"
-        fill="#FF4C84"
-      />
-      <path
-        d="M243.19 83.98l6.78 7.67 9.68-15.42"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M237.65 99.06s-28.3 45.09 23.85 74.17"
-        stroke="#6A2EA0"
-        strokeWidth="3"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeDasharray="0.2 0.2"
-      />
-    </g>
-    <defs>
-      <linearGradient
-        id="paint0_linear"
-        x1="148.824"
-        y1="313.111"
-        x2="258.589"
-        y2="122.993"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop stopColor="#FF4C84" />
-        <stop offset=".254" stopColor="#D65CA1" />
-        <stop offset=".823" stopColor="#6E84E8" />
-        <stop offset="1" stopColor="#4C90FF" />
-      </linearGradient>
-      <clipPath id="clip0">
-        <path fill="#fff" d="M0 0h437.79v425H0z" />
-      </clipPath>
-    </defs>
-  </svg>
-)
+function SvgComponent(props) {
+  return (
+    <svg viewBox="0 0 546 563" {...props}>
+      <defs>
+        <linearGradient
+          id="prefix__linear-gradient"
+          x1={97.8}
+          y1={72.27}
+          x2={504.79}
+          y2={479.26}
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset={0} stopColor="#ff4c84" />
+          <stop offset={0.23} stopColor="#d45ca2" />
+          <stop offset={0.76} stopColor="#7381e4" />
+          <stop offset={1} stopColor="#4c90ff" />
+        </linearGradient>
+        <style>
+          {
+            '.prefix__cls-1{fill:#ccdfff}.prefix__cls-3{fill:#0061ff}.prefix__cls-4{fill:none;stroke:#6a2ea0;stroke-linecap:round;stroke-linejoin:round;stroke-width:3px}'
+          }
+        </style>
+      </defs>
+      <g id="prefix__gridd">
+        <circle className="prefix__cls-1" cx={311.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={311.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={263.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={215.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={287.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={239.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={191.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={167.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={335.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={143.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={95.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={47.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={119.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={71.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={23.39} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={122.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={170.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={242.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={146.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={218.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={194.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={266.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={290.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={338.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={410.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={314.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={386.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={362.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={434.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={74.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={50.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={98.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={458.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={506.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={407.5} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={359.5} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={482.24} r={2} />
+        <circle className="prefix__cls-1" cx={431.5} cy={530.24} r={2} />
+        <circle className="prefix__cls-1" cx={383.5} cy={530.24} r={2} />
+      </g>
+      <g id="prefix__teikningar">
+        <path
+          d="M227.56 313.12a16.54 16.54 0 00-10.17-1.47c-4.41.55-7.31 2.1-9.19 4.12a129.86 129.86 0 01-23.44-.25s-3.64-19.1-24.14-16.11c-12.25 1.79-17.44 11.31-13.68 30l15.56 77.2h33.23l-8-66.17 14.76-.18 2 87.32h32.36l2.53-87.08s9.69-7.15 10.31-15.41-2.94-16.93-2.94-16.93a145.69 145.69 0 01-19.19 4.96zM88.78 88.5a17.39 17.39 0 1017.39 17.39A17.39 17.39 0 0088.78 88.5zm369.06 423.68a95.89 95.89 0 00-1.43-12.64l-16.25 13.63s-10.89-2.6-11.78 3.34c-.41 2.76 1.2 5.19 3.17 7.37l1.64-3.93s7.28 5.89 16.14 5.56l-3.72 6.94h3.07l5.76-7.81a31 31 0 0014.6-9.85zm-70.57-23.71c-1.86-2.27-4-4.23-6.81-4.23-6 0-5.06 11.15-5.06 11.15l-15.9 14s10.35 4.74 19.69 3.92c5.73-1 7.44-3.25 8.08-5.77 1.87-7.32-4.13-18.08-4.13-18.08zm-7.68-333.57c4.22 13.36 4.37 18.13-8.32 28.52-12.91 10.58-12.59 23.38-6.81 34.87 4.75 9.47 1.85 21.71-11.65 30.65-21.88 14.48-23.87 38.2-10.81 62.67 16.77 31.46 65.47 34.39 65.59 34.39l-.38-233.89c-33.69.44-29.54 36.7-27.62 42.79zm-175 93.1a10.54 10.54 0 01-10.54-10.36h-13.12v14.71h19.46s-1 4.36-3 5.14c0 0 1.41 6.71-5 7.9a.64.64 0 010 .07c0 3.11-3.43 7-8 7h20.33V248z"
+          fill="url(#prefix__linear-gradient)"
+        />
+        <circle className="prefix__cls-3" cx={407.5} cy={50.45} r={4.6} />
+        <circle className="prefix__cls-3" cx={119.39} cy={196.45} r={4.6} />
+        <circle className="prefix__cls-3" cx={287.39} cy={506.98} r={4.6} />
+        <path
+          className="prefix__cls-4"
+          d="M466.74 386.45h-88.55a18.43 18.43 0 00-18.44 18.44 18.45 18.45 0 01-18.44 18.44h-53.92M55.99 458.13h115.05M255.05 458.13h80.34M306.09 231.48c-51 0-76.54-15.45-91-17.71M218 175.73v21.19a15.57 15.57 0 01-15.57 15.57 15.58 15.58 0 01-15.58-15.57v-21.19M188.7 218.6v-14.05M214.89 218.6v-12.21M180.93 252.34v-14.71h23.76v34.83h-23.74M144 246.23H89a41.6 41.6 0 00-41.6 41.61v24.88h98.54M324.74 246.23h29v27.83A38.66 38.66 0 01315 312.72h-66.72M201.87 204.08a6.24 6.24 0 007.53-2.48"
+        />
+        <path
+          className="prefix__cls-4"
+          d="M168.42 261.42l9.59-9.08h22.38s0 6.2-7.47 6.2h-12M241.87 253.15s18.69 3 64.22-.69v-21"
+        />
+        <path
+          className="prefix__cls-4"
+          d="M187.3 212.5c-14.73 0-35.86 10.13-42.84 32.34s-.76 44.47 10.68 56.48M161.57 265.45s0 7.84 9.67 14M199.56 181.25v11.53c0 2.83 4.17 3.17 6.07-1.5M218.55 181.26a5.13 5.13 0 110 10.25M186.77 181.26a5.13 5.13 0 100 10.25M306.09 249s11.84 5.06 22 1.87a14.29 14.29 0 00-9.5-6.76M307.25 233.81l18.94 1.61 15.26 10.81M188.22 340.23h14.3M239.51 340.23h95.88M153.23 362.35H58.44a11.06 11.06 0 01-11-11.06 11.06 11.06 0 0111-11.06h90.39M195.37 421.33l-.04 36.8h-54.81"
+        />
+        <path
+          className="prefix__cls-4"
+          d="M165.27 420.31l32.12.05-12.63-104.84c-1.95-11-12-18.58-24.14-16.11a20.73 20.73 0 00-5.48 1.91c-8.83 4.61-11.78 15-9.06 23.8l16.42 81.46M230.08 436.65v30.73a9.68 9.68 0 01-9.68 9.67 9.67 9.67 0 01-9.68-9.67v-30.73M158.48 446.38l17.32-8.81-4.44-17.25M226 436.65h10.63l2.13-106c0-13.32-7.66-19.15-16.71-19.33s-19.42 4.11-19.42 18.65l2.12 106.67h10.23M140.52 458.13a12.71 12.71 0 0123.25-7.13"
+        />
+        <path
+          className="prefix__cls-4"
+          d="M165.27 420.31c-15.11 0-13.12-13.73-13.12-13.73h22.52M243.07 245.76s-7.17 32.66 3.69 62.35c0 0 10.13 23.86-7.25 32.12M228.67 312.65c5.54-1.15 11.57-2.63 18.09-4.54M184.76 315.52s8.07 1.6 23.41.22M215.51 443.54v-11.2a4.94 4.94 0 014.94-4.94 4.94 4.94 0 014.93 4.94v11.2M215.51 455.62h9.87M215.51 463.46h9.87M71.39 363.91v92.94M316.81 363.91v92.94M239.51 362.35h95.88M407.5 346c.13 0 48.82-2.88 65.6-34.34 13-24.47 11.06-48.19-10.82-62.67-13.5-8.94-16.4-21.18-11.65-30.65 5.78-11.49 6.11-24.29-6.8-34.87-12.7-10.39-12.55-15.16-8.33-28.52 1.92-6.09 6.08-42.35-27.62-42.84M407.42 97.75v287.68M390.4 153.36l17.02 16.16M439.87 281.7l-32.45 30.82M349.16 184.75l58.26 55.31M45.7 107.45h125.54s-7.05-27.3-38.36-20.93c-43.95-30.7-84.96-12.65-87.18 20.93zM221.55 164v11.34h-39.28a13.88 13.88 0 01-13.88-13.89h18.09"
+        />
+        <path
+          className="prefix__cls-4"
+          d="M186.48 168.88V164a10.61 10.61 0 0110.62-10.62h13.84A10.61 10.61 0 01221.55 164M359.5 530.24a16.8 16.8 0 0133.59 0M197.75 303s23.2 3 44.49-6.72M203.02 362.45h-12.61"
+        />
+        <circle cx={301.81} cy={130.82} r={11.75} fill="#ff4c84" />
+        <path
+          d="M301.81 150.77c.49 15.68-5.52 40.74-43.75 45.68-33.76 4.36-35.36 41.18-35.36 41.18-.36 9.88-4.75 16.29-9.31 19.28"
+          strokeDasharray=".2 7 .2 7"
+          fill="none"
+          stroke="#6a2ea0"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={3}
+        />
+        <path
+          className="prefix__cls-4"
+          d="M296.26 127.49l6.78 7.67 9.68-15.42M192.03 265.45h-11.1"
+        />
+      </g>
+    </svg>
+  )
+}
+
+export default SvgComponent

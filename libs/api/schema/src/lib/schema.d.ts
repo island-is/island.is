@@ -404,7 +404,6 @@ export type FrontpageSlider = {
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
   animationJson?: Maybe<Scalars['String']>
 }
@@ -2212,7 +2211,6 @@ export type FrontpageSliderResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   animationJson?: Resolver<
     Maybe<ResolversTypes['String']>,
