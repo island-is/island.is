@@ -62,8 +62,6 @@ const Home: Screen<HomeProps> = ({
     document.documentElement.lang = activeLocale
   }
 
-  const ourGoals = n('ourGoals', {})
-
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
@@ -116,12 +114,12 @@ const Home: Screen<HomeProps> = ({
       </Section>
       <Section paddingY={[8, 8, 8, 10, 15]}>
         <IntroductionSection
-          subtitle={ourGoals?.subTitles || ''}
-          title={ourGoals?.title || ''}
-          introText={ourGoals?.intro || ''}
-          text={ourGoals?.text || ''}
-          linkText={ourGoals?.buttonText || ''}
-          linkUrl={ourGoals?.link || ''}
+          subtitle={n('ourGoalsSubTitle')}
+          title={n('ourGoalsTitle')}
+          introText={n('ourGoalsIntro')}
+          text={n('ourGoalsText')}
+          linkText={n('ourGoalsButtonText')}
+          linkUrl={n('ourGoalsLink')}
         />
       </Section>
     </>
