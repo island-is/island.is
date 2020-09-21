@@ -4,11 +4,9 @@ import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
-import {
-  SearcherService,
-  WebSearchAutocompleteInput,
-} from '@island.is/api/schema'
+import { SearcherService } from '@island.is/api/schema'
 import { SearcherInput } from './dto/searcher.input'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { logger } from '@island.is/logging'
 
 @Injectable()

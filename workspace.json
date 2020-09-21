@@ -345,6 +345,38 @@
             "buildTarget": "api:build"
           }
         },
+        "build-schema": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/api",
+            "main": "apps/api/src/buildSchema.ts",
+            "tsConfig": "apps/api/tsconfig.app.json",
+            "showCircularDependencies": false
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn nx run api:contentful-types"
+              },
+              {
+                "command": "yarn nx run api:build-schema"
+              },
+              {
+                "command": "node dist/apps/api/main"
+              },
+              {
+                "command": "yarn nx run api:codegen"
+              },
+              {
+                "command": "yarn nx run web:codegen"
+              }
+            ]
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
@@ -399,7 +431,7 @@
           "options": {
             "commands": [
               {
-                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
+                "command": "yarn ts-node ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
               }
             ]
           }
@@ -409,7 +441,7 @@
           "options": {
             "commands": [
               {
-                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
+                "command": "yarn ts-node ./libs/api/domains/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
               }
             ]
           }
@@ -1688,6 +1720,32 @@
             "passWithNoTests": true
           }
         },
+        "build-schema": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/api",
+            "main": "apps/air-discount-scheme/api/src/buildSchema.ts",
+            "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
+            "showCircularDependencies": false
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn nx run air-discount-scheme-api:build-schema"
+              },
+              {
+                "command": "node dist/apps/air-discount-scheme/api/main"
+              },
+              {
+                "command": "yarn nx run air-discount-scheme-api:codegen"
+              }
+            ]
+          }
+        },
         "codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2892,6 +2950,28 @@
             "jestConfig": "apps/skilavottord/ws/jest.config.js",
             "tsConfig": "apps/skilavottord/ws/tsconfig.spec.json",
             "passWithNoTests": true
+          }
+        },
+        "build-schema": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/skilavottord/ws",
+            "main": "apps/skilavottord/ws/src/buildSchema.ts",
+            "tsConfig": "apps/skilavottord/ws/tsconfig.app.json"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn nx run skilavottord-ws:build-schema"
+              },
+              {
+                "command": "node dist/apps/skilavottord/ws/main"
+              }
+            ]
           }
         },
         "docker-express": {}

@@ -1,16 +1,14 @@
 import { Client } from '@elastic/elasticsearch'
-import { MappedData, SearchIndexes, SearchResponse } from '../types'
-import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
-import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
-
+import { logger } from '@island.is/logging'
 import {
   SearcherInput,
   WebSearchAutocompleteInput,
-} from '@island.is/api/schema'
+} from '@island.is/api/domains/content-search'
+
 import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
@@ -20,6 +18,8 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
+import { MappedData, SearchIndexes, SearchResponse } from '../types'
+import { environment } from '../environments/environment'
 
 const { elastic } = environment
 interface SyncRequest {

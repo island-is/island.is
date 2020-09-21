@@ -34,7 +34,8 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "storybook:island-ui": "nx run island-ui-storybook:storybook",
-    "ts-node": "node -r ./scripts/ts-node"
+    "ts-node": "node -r ./scripts/ts-node",
+    "postinstall": "echo -e 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && nx run api:generate-schema && nx run air-discount-scheme-api:generate-schema && nx run skilavottord-ws:generate-schema && nx run gjafakort-api:codegen"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",
@@ -174,7 +175,6 @@
     "swagger-ui-express": "4.1.4",
     "timeout-signal": "1.0.0",
     "treat": "1.4.1",
-    "ts-node": "9.0.0",
     "turndown": "6.0.0",
     "uuidv4": "6.0.8",
     "webcrypto-jwt": "^0.2.2",
@@ -267,6 +267,7 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "sequelize-cli": "5.5.1",
     "ts-jest": "25.2.1",
+    "ts-node": "9.0.0",
     "typescript": "~3.8.3"
   },
   "resolutions": {

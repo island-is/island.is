@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
-import { HelloWorldModule } from '@island.is/api/domains/hello-world'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { ApplicationModule } from '@island.is/api/domains/application'
@@ -32,7 +31,6 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
         }),
       ],
     }),
-    HelloWorldModule,
     ContentSearchModule,
     CmsModule,
     ApplicationModule,

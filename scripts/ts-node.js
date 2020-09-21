@@ -10,6 +10,9 @@
 //      yarn ts-node
 
 require('ts-node').register({
-  compilerOptions: { module: 'commonjs', esModuleInterop: true },
+  compilerOptions: {
+    module: 'commonjs',
+    esModuleInterop: true,
+  },
 })
 require('tsconfig-paths').register()

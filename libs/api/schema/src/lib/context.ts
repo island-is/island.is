@@ -1,14 +1,10 @@
 import { Request, Response } from 'express'
 import {
   SearchResult,
+  SearcherInput,
   ContentItem,
   WebSearchAutocomplete,
-  SearcherInput,
-} from './schema'
-
-export interface HelloWorldService {
-  getMessage(name: string): string
-}
+} from '@island.is/api/domains/content-search'
 
 export interface SearcherService {
   find(query: SearcherInput): Promise<SearchResult>
@@ -19,6 +15,5 @@ export interface SearcherService {
 export interface Context {
   req: Request
   res: Response
-  helloWorld: HelloWorldService
   contentSearch: SearcherService
 }

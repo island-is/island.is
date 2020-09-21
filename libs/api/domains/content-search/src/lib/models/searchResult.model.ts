@@ -12,6 +12,7 @@ const types = {
   webNews: News,
   webAboutPage: AboutPage,
 }
+
 const Items = createUnionType({
   name: 'Items',
   types: () => Object.values(types),
