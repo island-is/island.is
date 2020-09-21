@@ -18,7 +18,7 @@ export const button = style({
   position: 'relative',
   justifyContent: 'center',
   alignItems: 'center',
-  borderRadius: 10,
+  borderRadius: theme.border.radius.large,
   outline: 0,
   border: 0,
   cursor: 'pointer',
@@ -44,7 +44,7 @@ export const button = style({
     borderStyle: 'solid',
     borderWidth: 4,
     borderColor: theme.color.mint400,
-    borderRadius: 10,
+    borderRadius: theme.border.radius.large,
     top: 0,
     left: 0,
     bottom: 0,
@@ -167,7 +167,7 @@ export const variants = styleMap({
       opacity: 1,
       borderWidth: 1,
       borderColor: theme.color.blue400,
-      borderRadius: 10,
+      borderRadius: theme.border.radius.large,
     },
     ':hover': {
       color: theme.color.blueberry400,
@@ -205,7 +205,7 @@ export const variants = styleMap({
       opacity: 1,
       borderWidth: 1,
       borderColor: theme.color.red400,
-      borderRadius: 10,
+      borderRadius: theme.border.radius.large,
     },
     ':hover': {
       color: theme.color.red600,
@@ -303,7 +303,7 @@ export const variants = styleMap({
     borderStyle: 'solid',
     borderColor: theme.color.blue200,
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: theme.border.radius.large,
     transition: `border-color ${speed} ease`,
     ...themeUtils.responsiveStyle({
       xs: sizeMenuMobile,
@@ -313,7 +313,7 @@ export const variants = styleMap({
       borderColor: theme.color.mint400,
       borderWidth: 3,
       opacity: 0,
-      borderRadius: 5,
+      borderRadius: theme.border.radius.large,
       top: -3,
       left: -3,
       bottom: -3,
@@ -479,8 +479,8 @@ export const leftSpacer = style({
 
 export const leftContentContainer = style({
   backgroundColor: theme.color.blue100,
-  borderTopLeftRadius: 5,
-  borderBottomLeftRadius: 5,
+  borderTopLeftRadius: theme.border.radius.large,
+  borderBottomLeftRadius: theme.border.radius.large,
   ...themeUtils.responsiveStyle({
     xs: {
       width: 40,
