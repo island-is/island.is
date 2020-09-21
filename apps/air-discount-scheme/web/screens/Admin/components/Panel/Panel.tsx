@@ -12,15 +12,14 @@ import {
 } from '@island.is/air-discount-scheme-web/components/Table'
 import { Typography, Box } from '@island.is/island-ui/core'
 import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
-import { FilterInput, financialStateOptions } from '../../consts'
+import { financialStateOptions } from '../../consts'
 import * as styles from './Panel.treat'
 
 interface PropTypes {
-  filters: FilterInput
   flightLegs: FlightLeg[]
 }
 
-function Panel({ filters, flightLegs }: PropTypes) {
+function Panel({ flightLegs }: PropTypes) {
   const translateGender = (gender: string): string => {
     if (gender === 'kk') {
       return 'karlmaður'
