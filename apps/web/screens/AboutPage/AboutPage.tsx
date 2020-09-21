@@ -348,23 +348,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
         >
           <Layout width={mainContentSpan}>
             <Box paddingTop={8} paddingBottom={10}>
-              <Tabs
-                label={slice?.title}
-                tabs={slice?.cards.map((card) => ({
-                  label: card.title,
-                  content: (
-                    <GridRow>
-                      <GridColumn
-                        span={['9/9', '9/9', '9/9', '7/9']}
-                        offset={[null, null, null, '1/9']}
-                      >
-                        <Box paddingY={9}>{card.body}</Box>
-                      </GridColumn>
-                    </GridRow>
-                  ),
-                }))}
-                contentBackground="white"
-              />
+              <LinkCardList {...slice} />
             </Box>
           </Layout>
         </Box>
@@ -479,9 +463,13 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                         offset={[null, null, null, '1/9']}
                       >
                         <Box paddingY={9}>
-                          <Typography variant="h2" as="h2">
+                          <Typography variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}
                           </Typography>
+                          <img
+                            src={tab.image.url}
+                            className={styles.tabSectionImg}
+                          />
                           {tab.body && renderSlices(tab.body)}
                         </Box>
                       </GridColumn>
