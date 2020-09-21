@@ -136,6 +136,7 @@ const Search: Screen<CategoryProps> = ({
       category: item.category,
       group: item.group,
       ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
       labels: getLabels(item),
     }),
   )
@@ -241,20 +242,29 @@ const Search: Screen<CategoryProps> = ({
         }
         belowContent={
           <Stack space={2}>
-            {filteredItems.map((item, index) => {
-              const tags: Array<CardTagsProps> = []
+            {filteredItems.map(
+              ({ image, thumbnail, labels, ...rest }, index) => {
+                const tags: Array<CardTagsProps> = []
 
-              item.labels.forEach((label) => {
-                tags.push({
-                  title: label,
-                  tagProps: {
-                    label: true,
-                  },
+                labels.forEach((label) => {
+                  tags.push({
+                    title: label,
+                    tagProps: {
+                      label: true,
+                    },
+                  })
                 })
-              })
 
-              return <Card key={index} tags={tags} {...item} />
-            })}
+                return (
+                  <Card
+                    key={index}
+                    tags={tags}
+                    image={thumbnail ? thumbnail : image}
+                    {...rest}
+                  />
+                )
+              },
+            )}
             <Box paddingTop={8}>
               <Pagination
                 page={page}
