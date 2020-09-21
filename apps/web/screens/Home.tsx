@@ -35,7 +35,6 @@ import {
   LatestNewsSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Sleeve, ContentBlock } from '@island.is/island-ui/core'
 import { GlobalNamespaceContext } from '@island.is/web/context'
 
 interface HomeProps {
@@ -174,6 +173,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           perPage: 3,
+          lang: locale as ContentLanguage,
         },
       },
     }),
