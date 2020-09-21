@@ -1,0 +1,822 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type HelloWorld {
+  message: String!
+}
+
+type Image {
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
+  width: Int!
+  height: Int!
+}
+
+type Link {
+  text: String!
+  url: String!
+}
+
+type Html {
+  id: ID!
+  document: JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type TimelineEvent {
+  id: ID!
+  title: String!
+  date: String!
+  numerator: Int
+  denominator: Int
+  label: String!
+  body: Html
+  tags: [String!]
+  link: String!
+}
+
+type TimelineSlice {
+  id: ID!
+  title: String!
+  events: [TimelineEvent!]!
+}
+
+type Story {
+  label: String!
+  title: String!
+  logo: Image!
+  readMoreText: String!
+  date: String!
+  intro: String!
+  body: String
+}
+
+type LinkCard {
+  title: String!
+  body: String!
+  link: String!
+  linkText: String!
+}
+
+type News {
+  id: String!
+  slug: String!
+  title: String!
+  subtitle: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type NumberBullet {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type Statistic {
+  id: ID!
+  value: String!
+  label: String!
+}
+
+type QuestionAndAnswer {
+  id: ID!
+  question: String!
+  answer: Html
+}
+
+type ArticleCategory {
+  title: String!
+  slug: String!
+  description: String
+}
+
+type ArticleGroup {
+  title: String!
+  slug: String!
+  description: String
+}
+
+type ArticleSubgroup {
+  title: String!
+  importance: Float
+  slug: String!
+}
+
+type OrganizationTag {
+  id: ID!
+  title: String!
+}
+
+type Organization {
+  id: ID!
+  title: String!
+  description: String
+  slug: String!
+  tag: [OrganizationTag!]
+  link: String
+}
+
+type SubArticle {
+  title: String!
+  slug: String!
+  body: [Slice!]!
+}
+
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
+
+type PageHeaderSlice {
+  id: ID!
+  title: String!
+  introduction: String!
+  navigationText: String!
+  links: [Link!]!
+  slices: [TimelineSlice!]!
+}
+
+type HeadingSlice {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type StorySlice {
+  id: ID!
+  readMoreText: String!
+  stories: [Story!]!
+}
+
+type LinkCardSlice {
+  id: ID!
+  title: String!
+  cards: [LinkCard!]!
+}
+
+type LatestNewsSlice {
+  id: ID!
+  title: String!
+  news: [News!]!
+}
+
+type MailingListSignupSlice {
+  id: ID!
+  title: String!
+  description: String
+  inputLabel: String!
+  buttonText: String!
+}
+
+type LogoListSlice {
+  id: ID!
+  title: String!
+  body: String!
+  images: [Image!]!
+}
+
+type BulletListSlice {
+  id: ID!
+  bullets: [BulletEntry!]!
+}
+
+union BulletEntry = IconBullet | NumberBulletGroup
+
+type IconBullet {
+  id: ID!
+  title: String!
+  body: String!
+  icon: Image!
+  url: String
+  linkText: String
+}
+
+type NumberBulletGroup {
+  id: ID!
+  defaultVisible: Int!
+  bullets: [NumberBullet!]!
+}
+
+type Statistics {
+  id: ID!
+  title: String!
+  statistics: [Statistic!]!
+}
+
+type ProcessEntry {
+  id: ID!
+  type: String!
+  processTitle: String!
+  processLink: String!
+  buttonText: String!
+}
+
+type FaqList {
+  id: ID!
+  title: String!
+  questions: [QuestionAndAnswer!]!
+}
+
+type EmbeddedVideo {
+  id: ID!
+  title: String!
+  url: String!
+}
+
+type SectionWithImage {
+  id: ID!
+  title: String!
+  image: Image
+  html: Html!
+}
+
+type Article {
+  id: ID!
+  contentStatus: String!
+  title: String!
+  slug: String!
+  shortTitle: String
+  intro: String
+  containsApplicationForm: Boolean
+  importance: Float
+  body: [Slice!]!
+  category: ArticleCategory
+  group: ArticleGroup
+  subgroup: ArticleSubgroup
+  organization: [Organization!]
+  subArticles: [SubArticle!]!
+  relatedArticles: [Article!]
+}
+
+type AdgerdirTag {
+  id: ID!
+  title: String!
+}
+
+type AdgerdirPage {
+  id: ID!
+  title: String!
+  description: String!
+  longDescription: String
+  content: String
+  objective: String
+  slug: String!
+  tags: [AdgerdirTag!]!
+  link: String
+  linkButtonText: String
+  status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
+}
+
+type Organizations {
+  items: [Organization!]!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+  pages: [AdgerdirPage!]
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
+}
+
+type AdgerdirFrontpage {
+  id: ID!
+  slug: String!
+  title: String!
+  description: String
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
+}
+
+type FrontpageSlider {
+  title: String!
+  subtitle: String!
+  content: String!
+  link: String
+  animationJson: String
+}
+
+type FrontpageSliderList {
+  items: [FrontpageSlider!]!
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
+}
+
+type PaginatedNews {
+  page: Pagination!
+  news: [News!]!
+}
+
+type Namespace {
+  namespace: String!
+  fields: String!
+}
+
+type AboutPage {
+  id: ID!
+  title: String!
+  seoDescription: String!
+  theme: String!
+  slices: [Slice!]!
+}
+
+type LinkList {
+  title: String!
+  links: [Link!]!
+}
+
+type LandingPage {
+  title: String!
+  slug: String!
+  introduction: String!
+  image: Image
+  actionButton: Link
+  links: LinkList
+  content: [Slice!]!
+}
+
+type AlertBanner {
+  id: ID!
+  showAlertBanner: Boolean!
+  bannerVariant: String!
+  title: String
+  description: String
+  link: Link
+  isDismissable: Boolean!
+  dismissedForDays: Int!
+}
+
+type GenericPage {
+  title: String!
+  slug: String!
+  intro: String
+  mainContent: String
+  sidebar: String
+  misc: String
+}
+
+type Menu {
+  title: String!
+  links: [Link!]!
+}
+
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
+type LifeEventPage {
+  id: ID!
+  title: String!
+  slug: String!
+  intro: String!
+  image: Image
+  thumbnail: Image
+  content: [Slice!]!
+  category: ArticleCategory
+}
+
+type PaginatedAdgerdirNews {
+  page: Pagination!
+  news: [AdgerdirNews!]!
+}
+
+type OrganizationTags {
+  items: [OrganizationTag!]!
+}
+
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
+
+type SearchResult {
+  total: Int!
+  items: [Items!]!
+}
+
+union Items = Article | LifeEventPage | News | AboutPage
+
+type ContentItem {
+  id: ID!
+  title: String
+  content: String
+  tag: [String!]
+  category: String
+  categorySlug: String
+  categoryDescription: String
+  containsApplicationForm: Boolean
+  importance: Float
+  group: String
+  subgroup: String
+  groupSlug: String
+  groupDescription: String
+  contentBlob: String
+  contentId: String
+  contentType: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
+}
+
+type Application {
+  id: ID!
+  created: DateTime!
+  modified: DateTime!
+  applicant: String!
+  assignee: String!
+  externalId: String
+  state: String!
+  attachments: JSON
+  typeId: ApplicationTypeIdEnum!
+  answers: JSON!
+  externalData: JSON!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum ApplicationTypeIdEnum {
+  ExampleForm
+  DrivingLessons
+  ParentalLeave
+}
+
+type PresignedPost {
+  url: String!
+  fields: JSON!
+}
+
+type Document {
+  id: ID!
+  date: DateTime!
+  subject: String!
+  senderName: String!
+  senderNatReg: String!
+  opened: Boolean!
+}
+
+type DocumentDetails {
+  fileType: String!
+  content: String!
+  html: String!
+  url: String!
+}
+
+type DocumentCategory {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  helloWorld(input: HelloWorldInput!): HelloWorld!
+  getArticle(input: GetArticleInput!): Article
+  getNewsList(input: GetNewsListInput!): PaginatedNews!
+  getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
+  getNamespace(input: GetNamespaceInput!): Namespace
+  getAboutPage(input: GetAboutPageInput!): AboutPage!
+  getLandingPage(input: GetLandingPageInput!): LandingPage
+  getAlertBanner(input: GetAlertBannerInput!): AlertBanner
+  getGenericPage(input: GetGenericPageInput!): GenericPage
+  getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getOrganization(input: GetOrganizationInput!): Organization
+  getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
+  getOrganizations(input: GetOrganizationsInput!): Organizations!
+  getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
+  getOrganizationTags(input: GetOrganizationTagsInput!): OrganizationTags
+  getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
+  getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
+  getMenu(input: GetMenuInput!): Menu
+  getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
+  getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
+  getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getArticles(input: GetArticlesInput!): [Article!]!
+  getSingleNews(input: GetSingleNewsInput!): News
+  getUrl(input: GetUrlInput!): Url
+  searchResults(query: SearcherInput!): SearchResult!
+  singleItem(input: ItemInput!): ContentItem
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
+  getApplication(input: GetApplicationInput!): Application
+  getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
+  getDocument(input: GetDocumentInput!): DocumentDetails
+  listDocuments(input: ListDocumentsInput!): [Document!]
+  getDocumentCategories: [DocumentCategory!]
+  getTranslations(input: GetTranslationsInput!): JSON
+}
+
+input HelloWorldInput {
+  name: String = "World"
+}
+
+input GetArticleInput {
+  slug: String
+  lang: String!
+}
+
+input GetNewsListInput {
+  lang: String
+  year: Int
+  month: Int
+  ascending: Boolean
+  page: Int
+  perPage: Int
+}
+
+input GetAdgerdirNewsListInput {
+  lang: String
+  year: Int
+  month: Int
+  ascending: Boolean
+  page: Int
+  perPage: Int
+}
+
+input GetNamespaceInput {
+  namespace: String
+  lang: String!
+}
+
+input GetAboutPageInput {
+  lang: String!
+}
+
+input GetLandingPageInput {
+  slug: String!
+  lang: String!
+}
+
+input GetAlertBannerInput {
+  id: String!
+  lang: String!
+}
+
+input GetGenericPageInput {
+  slug: String!
+  lang: String!
+}
+
+input GetAdgerdirPageInput {
+  slug: String
+  lang: String!
+}
+
+input GetOrganizationInput {
+  slug: String
+  lang: String!
+}
+
+input GetAdgerdirNewsInput {
+  slug: String
+  lang: String!
+}
+
+input GetAdgerdirPagesInput {
+  lang: String
+  perPage: Int
+}
+
+input GetOrganizationsInput {
+  lang: String
+  perPage: Int
+}
+
+input GetAdgerdirTagsInput {
+  lang: String
+}
+
+input GetOrganizationTagsInput {
+  lang: String
+}
+
+input GetFrontpageSliderListInput {
+  lang: String
+}
+
+input GetAdgerdirFrontpageInput {
+  lang: String!
+}
+
+input GetMenuInput {
+  name: String!
+  lang: String!
+}
+
+input GetLifeEventPageInput {
+  slug: String!
+  lang: String!
+}
+
+input GetLifeEventsInput {
+  lang: String!
+}
+
+input GetLifeEventsInCategoryInput {
+  slug: String!
+  lang: String!
+}
+
+input GetArticleCategoriesInput {
+  lang: String!
+  size: Int
+}
+
+input GetArticlesInput {
+  lang: String!
+  category: String!
+  size: Int
+}
+
+input GetSingleNewsInput {
+  slug: String!
+  lang: String
+}
+
+input GetUrlInput {
+  slug: String!
+  lang: String!
+}
+
+input SearcherInput {
+  queryString: String!
+  types: [SearchableContentTypes!] = [webAboutPage, webArticle, webLifeEventPage, webNews]
+  language: ContentLanguage = is
+  size: Int
+  page: Int
+}
+
+enum SearchableContentTypes {
+  webAboutPage
+  webArticle
+  webLifeEventPage
+  webNews
+}
+
+enum ContentLanguage {
+  is
+  en
+}
+
+input ItemInput {
+  id: ID
+  slug: String
+  type: ItemType
+  language: ContentLanguage
+}
+
+enum ItemType {
+  article
+  category
+}
+
+input WebSearchAutocompleteInput {
+  singleTerm: String!
+  language: ContentLanguage = is
+  size: Int = 10
+}
+
+input GetApplicationInput {
+  id: String!
+}
+
+input GetApplicationsByTypeInput {
+  typeId: ApplicationTypeIdEnum!
+}
+
+input GetDocumentInput {
+  id: String!
+}
+
+input ListDocumentsInput {
+  natReg: String!
+  dateFrom: DateTime!
+  dateTo: DateTime!
+  category: String!
+  page: Float!
+  pageSize: Float!
+}
+
+input GetTranslationsInput {
+  namespaces: [String!]
+  lang: String!
+}
+
+type Mutation {
+  createApplication(input: CreateApplicationInput!): Application
+  updateApplication(input: UpdateApplicationInput!): Application
+  updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
+  addAttachment(input: AddAttachmentInput!): Application
+  deleteAttachment(input: DeleteAttachmentInput!): Application
+  submitApplication(input: SubmitApplicationInput!): Application
+  createUploadUrl(filename: String!): PresignedPost!
+}
+
+input CreateApplicationInput {
+  applicant: String!
+  assignee: String!
+  externalId: String
+  state: String!
+  attachments: JSON
+  typeId: CreateApplicationDtoTypeIdEnum!
+  answers: JSON!
+}
+
+enum CreateApplicationDtoTypeIdEnum {
+  ExampleForm
+  DrivingLessons
+  ParentalLeave
+}
+
+input UpdateApplicationInput {
+  id: String!
+  applicant: String
+  assignee: String
+  externalId: String
+  attachments: JSON
+  answers: JSON
+}
+
+input UpdateApplicationExternalDataInput {
+  id: String!
+  dataProviders: [DataProvider!]!
+}
+
+input DataProvider {
+  id: String!
+  type: DataProviderDtoTypeEnum!
+}
+
+enum DataProviderDtoTypeEnum {
+  ExpectedDateOfBirth
+  ExampleFails
+  ExampleSucceeds
+}
+
+input AddAttachmentInput {
+  id: String!
+  key: String!
+  url: String!
+}
+
+input DeleteAttachmentInput {
+  id: String!
+  key: String!
+}
+
+input SubmitApplicationInput {
+  id: String!
+  event: String!
+  answers: JSON
+}
