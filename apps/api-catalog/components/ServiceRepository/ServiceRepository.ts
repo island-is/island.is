@@ -1,7 +1,18 @@
 import {SERVICE_STATUS } from  '..'
-import { ServiceCardInformation } from '../ServiceCard/ServiceCard';
 
 const MAX_LIMIT = 3;
+
+export interface ServiceCardInformation {
+    id:string
+    name: string;
+    owner:string;
+    url:string;
+    pricing:Array<string>;
+    data:Array<string>
+    type:Array<string>;
+    access:Array<string>;
+    status:SERVICE_STATUS;
+}
 
 export interface ServicesResult {
     result:Array<ServiceCardInformation>,
@@ -9,7 +20,7 @@ export interface ServicesResult {
     nextCursor:string;
 }
 
-export interface ServiceDetailX {
+export interface ServiceDetails {
     id:string;
     name: string;
     description: string;
@@ -23,7 +34,7 @@ export interface ServiceDetailX {
 }
 
 export interface ServiceResult {
-    result:ServiceDetailX,
+    result:ServiceDetails,
 }
 
 export enum SERVICE_SEARCH_METHOD {
@@ -79,42 +90,50 @@ export enum ACCESS_CATEGORY {
     API_GW  ='API GW',
 }
 
-const OrgServices:Array<ServiceCardInformation> =[
-    { id:'0', owner:"Þjóðskrá", name:"Fasteignaskrá", url:"http://fasteignaskra.thodskra.is:4700", status:SERVICE_STATUS.OK,      
+const OrgServices:Array<ServiceDetails> =[
+    { id:'0', owner:"Þjóðskrá", name:"Fasteignaskrá", url:"http://fasteignaskra.thodskra.is:4700", description:"Fasteignaskráarlýsing",
+        status:SERVICE_STATUS.OK,      
         pricing:[PRICING_CATEGORY.FREE],
         data:   [DATA_CATEGORY.PUBLIC],
         type:   [TYPE_CATEGORY.REACT], 
         access: [ACCESS_CATEGORY.X_ROAD] },
-    { id:'1', owner:"Þjóðskrá", name:"Einstaklingsskrá", url:"http://einstaklingskra.thodskra.is:4700", status:SERVICE_STATUS.WARNING,
+    { id:'1', owner:"Þjóðskrá", name:"Einstaklingsskrá", url:"http://einstaklingskra.thodskra.is:4700", description:"Einstaklingarskráarlýsing",
+        status:SERVICE_STATUS.WARNING,
         pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.CUSTOM],                           
         data:   [DATA_CATEGORY.PERSONAL],                         
         type:   [TYPE_CATEGORY.REACT],
         access: [ACCESS_CATEGORY.X_ROAD] },
-    { id:'2', owner:"Þjóðskrá", name:"Staðfangaskrá", url:"http://stadfangaskra.thodskra.is:4700", status:SERVICE_STATUS.ERROR, 
+    { id:'2', owner:"Þjóðskrá", name:"Staðfangaskrá", url:"http://stadfangaskra.thodskra.is:4700", description:"Staðfangaskráarlýsing", 
+        status:SERVICE_STATUS.ERROR, 
         pricing:[PRICING_CATEGORY.USAGE],                                                   
         data:   [DATA_CATEGORY.PUBLIC],                           
         type:[TYPE_CATEGORY.REACT],
         access:[ACCESS_CATEGORY.X_ROAD]},
-    { id:'3', owner:"Skatturinn", name:"Virðisaukaskattur", url:"http://vsk.skattur.is/:2100",              status:SERVICE_STATUS.WARNING, 
+    { id:'3', owner:"Skatturinn", name:"Virðisaukaskattur", url:"http://vsk.skattur.is/:2100",description:"Virðisaukaskattarlýsing",
+        status:SERVICE_STATUS.WARNING, 
         pricing:[PRICING_CATEGORY.DAILY,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY], 
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
         type:   [TYPE_CATEGORY.SOAP], 
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:'4', owner:"Skatturinn", name:"Staðgreiðsla", url:"http://stadgreidsla.skattur.is:2100", status:SERVICE_STATUS.OK ,      
+    { id:'4', owner:"Skatturinn", name:"Staðgreiðsla", url:"http://stadgreidsla.skattur.is:2100", description:"Staðgreiðslulýsing",
+        status:SERVICE_STATUS.OK ,      
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],  
         data:   [  DATA_CATEGORY.PERSONAL, DATA_CATEGORY.FINANCIAL],
         type:   [TYPE_CATEGORY.SOAP], access:[ACCESS_CATEGORY.API_GW]},
-    { id:'5', owner:"Vinnumálastofnun",name:"Fæðingarorlofssjóður",url:"http://faedingarorlofssjodur.vms.is:74200",status:SERVICE_STATUS.ERROR, 
+    { id:'5', owner:"Vinnumálastofnun",name:"Fæðingarorlofssjóður",url:"http://faedingarorlofssjodur.vms.is:74200",description:"Fæðingarorlofssjóðslýsing",
+        status:SERVICE_STATUS.ERROR, 
         pricing:[PRICING_CATEGORY.YEARLY],                                                  
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
         type:   [TYPE_CATEGORY.REACT],
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:'6', owner:"Samgöngustofa", name:"Ökutækjaskrá", url:"http://okutaeki.samgongustofa.is:74200", status:SERVICE_STATUS.UNKNOWN,     
+    { id:'6', owner:"Samgöngustofa", name:"Ökutækjaskrá", url:"http://okutaeki.samgongustofa.is:74200", description:"Ökutækjaskráarlýsing",
+        status:SERVICE_STATUS.UNKNOWN,     
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],  
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
         type:   [TYPE_CATEGORY.SOAP], 
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:'7', owner:"Dúddi í bæ", name:"Monthly free service", url:"http://asdf.asdf:74200", status:SERVICE_STATUS.UNKNOWN, 
+    { id:'7', owner:"Dúddi í bæ", name:"Monthly free service", url:"http://asdf.asdf:74200", description:"MonthlyFreeServiceLýsing",
+        status:SERVICE_STATUS.UNKNOWN, 
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY],                           
         data:   [DATA_CATEGORY.PUBLIC, DATA_CATEGORY.OFFICIAL, DATA_CATEGORY.PERSONAL,DATA_CATEGORY.HEALTH, DATA_CATEGORY.PUBLIC], 
         type:   [TYPE_CATEGORY.SOAP], 
@@ -191,7 +210,7 @@ export async function getService(id: string):Promise<ServiceResult> {
     if (filter.length < 1){
         return { result:null};
     } 
-    const ret:ServiceDetailX = {
+    const ret:ServiceDetails = {
         id : filter[0].id.toString(),
         name: filter[0].name,
         owner: filter[0].owner,

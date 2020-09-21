@@ -5,7 +5,8 @@ import { render } from '@testing-library/react'
 import ServiceList from './ServiceList'
 import {  getAllPriceCategories, 
           GetServicesParameters, 
-          SERVICE_SEARCH_METHOD  } from '../../../components';
+          SERVICE_SEARCH_METHOD  } from '../../components';
+import ContentfulApi from '../../services/contentful';
 
 describe(' ServiceList ', () => {
   
@@ -21,9 +22,13 @@ describe(' ServiceList ', () => {
     type:[],
     searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY
   };
-  
-  it('should render successfully', () => {
-    const { baseElement } = render(<ServiceList parameters={params} prevCursor={null} nextCursor={0} />);
+
+    
+  it('should render successfully', async () => {
+    const client = new ContentfulApi();
+
+    const pageContent = await client.fetchStaticPageBySlug('services', 'is-IS');
+    const { baseElement } = render(<ServiceList parameters={params} prevCursor={null} nextCursor={null} pageContent={pageContent} />);
     expect(baseElement).toBeTruthy();
   })
   

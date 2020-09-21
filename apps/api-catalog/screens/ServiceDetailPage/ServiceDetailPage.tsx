@@ -2,7 +2,7 @@ import React from 'react'
 import { useQuery } from 'react-apollo';
 import { ServiceCardInformation, 
         getService, 
-        ServiceResult, ServiceDetail, Layout} from '../../components';
+        ServiceResult, ServiceSection, Layout} from '../../components';
 import { GET_CATALOGUES_QUERY } from '../Queries';
 
 
@@ -10,8 +10,9 @@ import {
     Query,
     QueryGetApiCatalogueByIdArgs
   } from '@island.is/api/schema'
+import { ServiceDetails } from '../../components'
 
-function ServiceDetailPage(service: ServiceCardInformation) {
+export function ServiceDetailPage(service: ServiceDetails) {
 /*
     const { data, loading } = useQuery<Query, QueryGetApiCatalogueByIdArgs>(
         GET_CATALOGUES_QUERY,
@@ -28,17 +29,15 @@ function ServiceDetailPage(service: ServiceCardInformation) {
     return (
         <Layout
             left ={
-                        <ServiceDetail service={service} />}
+                        <ServiceSection service={service} />}
         />
     )
 }
 
-ServiceDetailPage.getInitialProps = async (ctx):Promise<ServiceCardInformation> => {
+ServiceDetailPage.getInitialProps = async (ctx):Promise<ServiceDetails> => {
     const { query } = ctx;
     const service:ServiceResult = await getService(query.service);
     //service.result.id = Number(query.service);
 
   return service.result;
 }
-
-export default ServiceDetailPage;

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 
 
 
-describe(' ServiceDetail ', () => {
+describe(' ServiceSection ', () => {
   test(' todo: ', ()=>{
     expect(2).toBe(2);
   })

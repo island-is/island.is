@@ -1,15 +1,15 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
-import * as styles from './ServiceDetail.treat';
+import * as styles from './ServiceSection.treat';
 import cn from 'classnames'
-import { ServiceCardInformation } from '..';
+import { ServiceDetails } from '..';
 
-export interface ServiceDetailProps {
- service:ServiceCardInformation 
+export interface ServiceSectionProps {
+ service:ServiceDetails 
 }
 
 
-export const ServiceDetail = (props: ServiceDetailProps) => {
+export const ServiceSection = (props: ServiceSectionProps) => {
   
   if (props.service === null) {
     return (
@@ -26,6 +26,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
        <dl>
         <dt>Id</dt><dd>{props.service.id}</dd>
         <dt>Name</dt><dd>{props.service.name}</dd>
+        <dt>Description</dt><dd>{props.service.description}</dd>
         <dt>Owner</dt><dd>{props.service.owner}</dd>
         <dt>Url</dt><dd>{props.service.url}</dd>
         <dt>Status</dt><dd>{props.service.status}</dd>
@@ -38,5 +39,3 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
       </Box>
   )
 }
-
-//export default ServiceCard

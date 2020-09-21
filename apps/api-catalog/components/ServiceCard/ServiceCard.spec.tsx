@@ -1,24 +1,24 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import {ServiceCard, ServiceCardInformation} from '.'
+import {ServiceCard} from '.'
 
-import { ACCESS_CATEGORY, DATA_CATEGORY, PRICING_CATEGORY, TYPE_CATEGORY } from '../ServiceRepository';
+import { ACCESS_CATEGORY, DATA_CATEGORY, PRICING_CATEGORY, ServiceCardInformation, TYPE_CATEGORY } from '../ServiceRepository';
 import { SERVICE_STATUS } from '..';
 
 describe(' ServiceCard ', () => {
-  const service:ServiceCardInformation = {
-    id:0,
-    owner:"Þjóðskrá",
-    name:"Fasteignaskrá",
-    url:"http://fasteignaskra.thodskra.is:4700",
-    status:SERVICE_STATUS.OK,
+  const service:ServiceCardInformation = { 
+    id:'0', 
+    owner:"Þjóðskrá", 
+    name:"Fasteignaskrá", 
+    url:"http://fasteignaskra.thodskra.is:4700", 
+    status:SERVICE_STATUS.OK,      
     pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.CUSTOM],
     data:   [DATA_CATEGORY.PUBLIC],
-    type:   [TYPE_CATEGORY.REACT,  TYPE_CATEGORY.SOAP],
-    access: [ACCESS_CATEGORY.X_ROAD]
+    type:   [TYPE_CATEGORY.REACT,  TYPE_CATEGORY.SOAP], 
+    access: [ACCESS_CATEGORY.X_ROAD] 
   };
-
+  
   it('should render successfully', () => {
     const { baseElement } = render(<ServiceCard service={service}/>)
     expect(baseElement).toBeTruthy()
@@ -29,12 +29,12 @@ describe(' ServiceCard ', () => {
       const { getByText } = render(<ServiceCard service={service}/>)
       expect(getByText(service.name)).toBeTruthy()
     })
-
+  
     it('should contain owner name', () => {
       const { getByText } = render(<ServiceCard service={service}/>)
       expect(getByText(service.owner)).toBeTruthy()
     })
-
+  
     it('should contain all pricing values', () => {
       const { getByText } = render(<ServiceCard service={service}/>)
       expect(getByText(service.pricing[0])).toBeTruthy()
