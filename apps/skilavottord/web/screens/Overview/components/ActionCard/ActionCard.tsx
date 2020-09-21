@@ -13,9 +13,6 @@ import {
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { useRouter } from 'next/router'
-import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
-import Link from 'next/link'
 
 interface MockCar {
   id: string
@@ -30,18 +27,17 @@ interface MockCar {
 }
 
 interface ActionCardProps {
+  onContinue: () => void
   car: MockCar
 }
 
 export const ActionCard: FC<ActionCardProps> = ({
+  onContinue,
   car: { id, name, model, year, color, recyclable, status, hasCoOwner = false },
 }: ActionCardProps) => {
   const {
     t: { myCars: t },
   } = useI18n()
-
-  const Router = useRouter()
-  const { makePath } = useRouteNames()
 
   return (
     <OutlinedBox backgroundColor="white">
@@ -78,14 +74,13 @@ export const ActionCard: FC<ActionCardProps> = ({
                 paddingX={4}
                 paddingY={3}
               >
-                <Link href="/my-cars/[id]" as={makePath('myCars', id)} passHref>
-                  <Button
-                    size="small"
-                    width={isMobile() ? 'fluid' : 'normal'}
-                  >
-                    {t.actions.valid}
-                  </Button>
-                </Link>
+                <Button
+                  size="small"
+                  width={isMobile() ? 'fluid' : 'normal'}
+                  onClick={onContinue}
+                >
+                  {t.actions.valid}
+                </Button>
               </ColumnBox>
             ) : (
               <ColumnBox

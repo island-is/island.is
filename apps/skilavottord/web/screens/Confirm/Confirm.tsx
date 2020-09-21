@@ -1,12 +1,12 @@
-import React, { FC, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   Stack,
   Typography,
   Button,
   Checkbox,
-  Link,
   Inline,
+  Link,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -15,62 +15,42 @@ import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 import * as styles from './Confirm.treat'
-import { useQuery } from '@apollo/client'
-import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
 
-const nationalId = '2222222222'
+const Confirm = (props) => {
+  const { car } = props
 
-const Confirm = () => {
   const [checkbox, setCheckbox] = useState(false)
 
   const {
     t: { confirm: t },
   } = useI18n()
-
-  const Router = useRouter()
   const { makePath } = useRouteNames()
 
-  const { id } = Router.query
+  const router = useRouter()
+  const { id } = router.query
 
-  const { data, loading, error } = useQuery(GET_USER, {
-    variables: { nationalId },
-  })
-
-  if (error || (loading && !data)) {
-    return <>ERROR</>
-  }
-  const { cars } = data.getCarownerByNationalId || {}
-
-  let car = {
-    id: null,
-    model: null,
-    brand: null,
-    year: null,
-    status: null,
-    hasCoOwner: null,
-    name: null,
-    color: null,
-    recyclable: null,
-  }
-
-  for (const carEntry of cars) {
-    if (carEntry.id === id) {
-      car = carEntry
+  useEffect(() => {
+    if (!car) {
+      router.push({
+        pathname: makePath('myCars'),
+      })
     }
-  }
+  }, [car])
 
   const onCancel = () => {
-    Router.push({
+    router.push({
       pathname: makePath('myCars'),
     })
   }
 
-  const onContinue = (id) => {
+  const onConfirm = (id) => {
     // Login with return URL
     // with car info
     // Mutate data on DB
-    console.log('login')
-    console.log('mutate be')
+    router.replace(
+      '/recycle-vehicle/[id]/handover',
+      makePath('recycleVehicle', id, 'handover'),
+    )
   }
 
   const checkboxLabel = (
@@ -92,51 +72,66 @@ const Confirm = () => {
   )
 
   return (
-    <ProcessPageLayout>
-      <Stack space={4}>
-        <Typography variant="h1">{t.title}</Typography>
-        <Stack space={2}>
-          <Typography variant="h3">{t.subTitles.confirm}</Typography>
-          <Typography variant="p">{t.info}</Typography>
-        </Stack>
-        <Stack space={2}>
-          <CarDetailsBox car={car} />
-          <OutlinedBox backgroundColor="blue100" borderColor="white">
-            <Box padding={4}>
-              <Checkbox
-                name="confirm"
-                label={checkboxLabel.props.children}
-                onChange={({ target }) => {
-                  setCheckbox(target.checked)
-                }}
-                checked={checkbox}
-                disabled={!car.recyclable}
-              />
-            </Box>
-          </OutlinedBox>
-        </Stack>
-        <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
-          <Button variant="ghost" onClick={onCancel}>
-            {t.buttons.cancel}
-          </Button>
-          <Link
-            href="/recycling-companies"
-            as={makePath('recyclingCompanies', id.toString())}
-            passHref
-          >
-            <Button
-              variant="normal"
-              disabled={!checkbox}
-              icon="arrowRight"
-              onClick={onContinue}
+    <>
+      {car && (
+        <ProcessPageLayout>
+          <Stack space={4}>
+            <Typography variant="h1">{t.title}</Typography>
+            <Stack space={2}>
+              <Typography variant="h3">{t.subTitles.confirm}</Typography>
+              <Typography variant="p">{t.info}</Typography>
+            </Stack>
+            <Stack space={2}>
+              <CarDetailsBox car={car} />
+              <OutlinedBox backgroundColor="blue100" borderColor="white">
+                <Box padding={4}>
+                  <Checkbox
+                    name="confirm"
+                    label={checkboxLabel.props.children}
+                    onChange={({ target }) => {
+                      setCheckbox(target.checked)
+                    }}
+                    checked={checkbox}
+                    disabled={!car.recyclable}
+                  />
+                </Box>
+              </OutlinedBox>
+            </Stack>
+            <Box
+              width="full"
+              display="inlineFlex"
+              justifyContent="spaceBetween"
             >
-              {t.buttons.continue}
-            </Button>
-          </Link>
-        </Box>
-      </Stack>
-    </ProcessPageLayout>
+              <Button variant="ghost" onClick={onCancel}>
+                {t.buttons.cancel}
+              </Button>
+              <Button
+                variant="normal"
+                disabled={!checkbox}
+                icon="arrowRight"
+                onClick={() => onConfirm(id)}
+              >
+                {t.buttons.continue}
+              </Button>
+            </Box>
+          </Stack>
+        </ProcessPageLayout>
+      )}
+    </>
   )
+}
+
+Confirm.getInitialProps = async (ctx) => {
+  const { apolloClient, query } = ctx
+  const {
+    cache: {
+      data: { data },
+    },
+  } = apolloClient
+
+  const car = data[`Car:${query.id}`]
+
+  return { car }
 }
 
 export default Confirm

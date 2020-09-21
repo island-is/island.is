@@ -22,7 +22,7 @@ import { LanguageToggler } from '../'
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC = () => {
-  const Router = useRouter()
+  const router = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
 
@@ -55,7 +55,7 @@ export const Header: FC = () => {
                     variant="menu"
                     leftIcon="user"
                     onClick={() => {
-                      Router.push({
+                      router.push({
                         pathname: makePath('myCars')
                       })
                     }}

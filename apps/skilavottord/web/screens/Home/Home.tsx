@@ -19,7 +19,7 @@ import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 
 const Home: FC = () => {
-  const Router = useRouter()
+  const router = useRouter()
   const { activeLocale, t: { home: t } } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
 
@@ -65,7 +65,7 @@ const Home: FC = () => {
             <Box padding={3}>
               <Button
                 onClick={() => {
-                  Router.push({
+                  router.push({
                     pathname: makePath('myCars')
                   })
                 }}
@@ -97,8 +97,8 @@ const Home: FC = () => {
               <Button
                 variant="text"
                 onClick={() => {
-                  Router.push({
-                    pathname: makePath('companies')
+                  router.push({
+                    pathname: makePath('recyclingCompanies')
                   })
                 }}
               >

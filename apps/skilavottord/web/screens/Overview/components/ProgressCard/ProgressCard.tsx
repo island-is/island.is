@@ -76,7 +76,12 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
                   paddingTop={[0, 0, 0, 3]}
                 >
-                  <Button variant="text" icon="arrowRight" size="small">
+                  <Button
+                    variant="text"
+                    icon="arrowRight"
+                    size="small"
+                    onClick={onClick}
+                  >
                     {status === 'pending'
                       ? t.buttons.openProcess
                       : t.buttons.seeDetails}
