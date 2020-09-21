@@ -15,6 +15,7 @@ import {
   findCurrentScreen,
   moveToScreen,
 } from './reducerUtils'
+import { FormModes } from '../types'
 
 export function initializeReducer(
   state: ApplicationUIState,
@@ -42,7 +43,7 @@ export function initializeReducer(
   const sections = getSectionsInForm(form)
   const screens = convertLeavesToScreens(formLeaves, answers)
   const currentScreen =
-    form.mode === 'review' ? 0 : findCurrentScreen(screens, answers)
+    form.mode === FormModes.REVIEW ? 0 : findCurrentScreen(screens, answers)
 
   return moveToScreen(
     {

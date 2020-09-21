@@ -232,7 +232,7 @@ export function buildCustomField(
 export function buildFileUploadField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string | string
+  name: MessageDescriptor | string
   introduction: MessageDescriptor | string
   uploadHeader?: string
   uploadDescription?: string

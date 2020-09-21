@@ -114,7 +114,7 @@ export const DrivingLessons: ApplicationTemplate<
     },
   },
   mapNationalRegistryIdToRole(id: string, state: string): ApplicationRole {
-    if (state === 'inReview' && id === '2212902169') {
+    if (state === 'inReview') {
       return 'reviewer'
     }
     return 'applicant'

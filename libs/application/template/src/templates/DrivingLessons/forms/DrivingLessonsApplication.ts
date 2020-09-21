@@ -66,17 +66,6 @@ export const DrivingLessonsApplication: Form = buildForm({
             }),
           ],
         }),
-        // buildFileUploadField({
-        //   id: 'passportPicture',
-        //   name: 'Passamynd',
-        //   introduction: 'Ökunámsumsókn krefst passamyndar',
-        //   uploadAccept: '.jpg .png',
-        //   uploadHeader:
-        //     'Dragðu skjalið hingað, eða smelltu á hnappinn að neðan',
-        //   uploadDescription: 'Myndin þarf að vera á .png eða .jpg sniðmáti',
-        //   uploadButtonLabel: 'Veldu skjal',
-        //   uploadMultiple: false,
-        // }),
       ],
     }),
     buildSection({

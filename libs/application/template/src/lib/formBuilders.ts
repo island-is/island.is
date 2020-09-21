@@ -32,7 +32,7 @@ export function buildForm(data: {
 export function buildMultiField(data: {
   id?: string
   condition?: Condition
-  name: MessageDescriptor | string | string
+  name: MessageDescriptor | string
   children: Field[]
 }): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }
