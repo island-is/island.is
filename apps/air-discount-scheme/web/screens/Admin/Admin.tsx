@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { SubmitHandler } from 'react-hook-form'
-import CSVStringify from 'csv-stringify'
 
 import { NotFound } from '@island.is/air-discount-scheme-web/screens'
 import { Airlines } from '@island.is/air-discount-scheme/consts'
@@ -19,8 +18,9 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Filters, Panel, Summary } from './components'
-import { FilterInput, financialStateOptions } from './consts'
+import { FilterInput } from './consts'
 import { Screen } from '../../types'
+import { downloadCSV } from './utils'
 
 const FlightLegsQuery = gql`
   query FlightLegsQuery($input: FlightLegsInput!) {
@@ -93,48 +93,6 @@ const Admin: Screen = ({}) => {
     setFilters(data)
   }
 
-  const downloadCSV = () => {
-    Object.keys(Airlines)
-      .filter(
-        (airline) => !filters.airline || filters.airline?.value === airline,
-      )
-      .forEach((airline) => {
-        const header = [
-          'Flug',
-          'Dagsetning',
-          'Staða',
-          'Upphafsverð',
-          'Afsláttarverð',
-          'Afsláttur',
-        ]
-        const data = flightLegs
-          .filter((flightLeg) => flightLeg.airline === airline)
-          .map((flightLeg) => [
-            flightLeg.travel,
-            flightLeg.flight.bookingDate,
-            (
-              financialStateOptions.find(
-                (state) => state.value === flightLeg.financialState,
-              ) || { label: '-' }
-            ).label,
-            flightLeg.originalPrice,
-            flightLeg.discountPrice,
-            flightLeg.originalPrice - flightLeg.discountPrice,
-          ])
-        data.unshift(header)
-
-        CSVStringify(data, (err, output) => {
-          const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${output}`)
-          const link = document.createElement('a')
-          link.setAttribute('href', encodedUri)
-          link.setAttribute('download', `loftbru_${airline}_yfirlit.csv`)
-          document.body.appendChild(link)
-
-          link.click()
-        })
-      })
-  }
-
   return (
     <GridContainer>
       <GridRow>
@@ -177,7 +135,7 @@ const Admin: Screen = ({}) => {
                 <Button
                   width="fluid"
                   variant="ghost"
-                  onClick={() => downloadCSV()}
+                  onClick={() => downloadCSV(flightLegs, filters)}
                 >
                   Prenta yfirlit
                 </Button>

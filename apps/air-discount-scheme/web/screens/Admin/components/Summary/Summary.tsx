@@ -7,6 +7,7 @@ import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
 import { KeyValues } from '../'
 import { TSummary } from '../../types'
 import * as styles from './Summary.treat'
+import { getFilteredFlightLegs } from '../../utils'
 
 interface PropTypes {
   flightLegs: FlightLeg[]
@@ -27,21 +28,6 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
             : filteredAirline)),
   )
 
-  const getFlightLegs = (airline) => {
-    if (filteredAirline === Airlines.norlandair) {
-      return flightLegs.filter(
-        (flightLeg) =>
-          flightLeg.airline === airline &&
-          flightLeg.cooperation === filteredAirline,
-      )
-    }
-
-    return flightLegs.filter(
-      (flightLeg) =>
-        flightLeg.airline === airline || flightLeg.cooperation === airline,
-    )
-  }
-
   const getAirline = (airline) => {
     if (airline === Airlines.icelandair) {
       return 'Icelandair + Norlandair'
@@ -60,7 +46,11 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
         </Typography>
         <Stack space={6}>
           {airlines.map((airline) => {
-            const legs = getFlightLegs(airline)
+            const legs = getFilteredFlightLegs(
+              airline,
+              filteredAirline,
+              flightLegs,
+            )
             const awaitingCredit = legs.filter(
               (leg) => leg.financialState === States.awaitingCredit,
             )
