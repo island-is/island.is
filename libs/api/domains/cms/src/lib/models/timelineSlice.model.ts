@@ -19,7 +19,10 @@ export class TimelineSlice {
   events: TimelineEvent[]
 }
 
-export const mapTimelineSlice = ({ fields, sys }: ITimeline): TimelineSlice => ({
+export const mapTimelineSlice = ({
+  fields,
+  sys,
+}: ITimeline): TimelineSlice => ({
   typename: 'TimelineSlice',
   id: sys.id,
   title: fields.title ?? '',

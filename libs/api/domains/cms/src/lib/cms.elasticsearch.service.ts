@@ -9,7 +9,7 @@ import { Article } from './models/article.model'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -49,7 +49,10 @@ export class CmsElasticsearchService {
     )
   }
 
-  async getSingleDocumentTypeBySlug<RequestedType>(index: SearchIndexes, { type, slug }: { type: string, slug: string }): Promise<RequestedType | null> {
+  async getSingleDocumentTypeBySlug<RequestedType>(
+    index: SearchIndexes,
+    { type, slug }: { type: string; slug: string },
+  ): Promise<RequestedType | null> {
     // return a single news item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
     const newsResponse = await this.elasticService.getDocumentsByMetaData(

@@ -23,7 +23,10 @@ export class ProcessEntry {
   buttonText: string
 }
 
-export const mapProcessEntry = ({ fields, sys }: IProcessEntry): ProcessEntry => ({
+export const mapProcessEntry = ({
+  fields,
+  sys,
+}: IProcessEntry): ProcessEntry => ({
   typename: 'ProcessEntry',
   id: sys.id,
   type: fields?.type ?? '',

@@ -69,7 +69,7 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
-  ) { }
+  ) {}
 
   @Directive(cacheControlDirective())
   @Query(() => PaginatedNews)
@@ -262,10 +262,12 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
-  getSingleArticle(@Args('input') { lang, slug }: GetSingleArticleInput): Promise<Article | null> {
+  getSingleArticle(
+    @Args('input') { lang, slug }: GetSingleArticleInput,
+  ): Promise<Article | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
       SearchIndexes[lang],
-      { type: 'webArticle', slug }
+      { type: 'webArticle', slug },
     )
   }
 
@@ -284,7 +286,7 @@ export class CmsResolver {
   ): Promise<News | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
       SearchIndexes[lang],
-      { type: 'webNews', slug }
+      { type: 'webNews', slug },
     )
   }
 
@@ -300,7 +302,7 @@ export class CmsResolver {
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) { }
+  constructor(private cmsContentfulService: CmsContentfulService) {}
 
   @ResolveField(() => [News])
   async news() {
@@ -314,7 +316,7 @@ export class LatestNewsSliceResolver {
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) { }
+  constructor(private cmsContentfulService: CmsContentfulService) {}
 
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {

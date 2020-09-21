@@ -74,9 +74,9 @@ export const Slice = createUnionType({
     EmbeddedVideo,
     SectionWithImage,
     Html,
-    Image
+    Image,
   ],
-  resolveType: (document) => document.typename,// typename is appended to request on indexing
+  resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
