@@ -134,7 +134,7 @@ const NewsList: Screen<NewsListProps> = ({
           </Hidden>
 
           <GridRow>
-            <GridColumn hideAbove="sm" span="12/12" paddingBottom={1}>
+            <GridColumn hiddenAbove="sm" span="12/12" paddingBottom={1}>
               <Select
                 label="Ár"
                 placeholder="Ár"
@@ -146,7 +146,7 @@ const NewsList: Screen<NewsListProps> = ({
                 name="year"
               />
             </GridColumn>
-            <GridColumn hideAbove="sm" span="12/12">
+            <GridColumn hiddenAbove="sm" span="12/12">
               <Select
                 label="Mánuður"
                 placeholder="Allt árið"
