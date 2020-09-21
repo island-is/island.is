@@ -47,18 +47,22 @@ export const DrivingLessonsApplication: Form = buildForm({
               id: 'student.nationalId',
               name: m.nationalId,
               disabled: false,
+              width: 'half',
             }),
             buildTextField({
               id: 'student.phoneNumber',
               name: m.phoneNumber,
+              width: 'half',
             }),
             buildTextField({
               id: 'student.address',
               name: m.address,
+              width: 'half',
             }),
             buildTextField({
               id: 'student.zipCode',
               name: m.zipCode,
+              width: 'half',
             }),
           ],
         }),
@@ -224,9 +228,13 @@ export const DrivingLessonsApplication: Form = buildForm({
       children: [
         buildIntroductionField({
           id: 'overview',
-          name: 'Takk fyrir að sækja um',
-          introduction:
-            'Með því að smella á "Staðfesta" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+          name: m.overview,
+          introduction: m.overviewIntro,
+        }),
+        buildIntroductionField({
+          id: 'final',
+          name: 'Takk',
+          introduction: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

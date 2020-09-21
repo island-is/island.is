@@ -5,6 +5,7 @@ import {
 } from '../../../lib/formBuilders'
 import {
   buildDividerField,
+  buildIntroductionField,
   buildRadioField,
   buildReviewField,
   buildSelectField,
@@ -182,6 +183,12 @@ export const ReviewApplication: Form = buildForm({
               ],
             }),
           ],
+        }),
+        buildIntroductionField({
+          id: 'final',
+          name: 'Takk fyrir',
+          introduction:
+            'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],
     }),

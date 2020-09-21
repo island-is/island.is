@@ -6,7 +6,6 @@ import {
   FormMode,
   FormValue,
   Schema,
-  Section,
 } from '@island.is/application/template'
 import { Box, Button, GridColumn, Typography } from '@island.is/island-ui/core'
 import {
@@ -34,6 +33,7 @@ type ScreenProps = {
   dataSchema: Schema
   externalData: ExternalData
   shouldSubmit?: boolean
+  isLastScreen?: boolean
   expandRepeater(): void
   prevScreen(): void
   screen: FormScreen
@@ -51,6 +51,7 @@ const Screen: FC<ScreenProps> = ({
   answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
+  isLastScreen = false,
   screen,
   mode,
   applicationId,
@@ -101,9 +102,8 @@ const Screen: FC<ScreenProps> = ({
           },
         },
       })
-      console.log('these were my answers:', data)
-      answerAndGoToNextScreen(data)
     }
+    answerAndGoToNextScreen(data)
   }
 
   function canProceed(): boolean {
@@ -168,89 +168,90 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
-        {(mode === FormModes.REVIEW || mode === FormModes.APPLYING) && (
-          <Box marginTop={3} className={styles.buttonContainer}>
-            <GridColumn
-              span={['12/12', '12/12', '7/9', '7/9']}
-              offset={[null, null, '1/9']}
-            >
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-                paddingTop={[1, 4]}
-                paddingBottom={[1, 5]}
+        {!isLastScreen &&
+          (mode === FormModes.REVIEW || mode === FormModes.APPLYING) && (
+            <Box marginTop={3} className={styles.buttonContainer}>
+              <GridColumn
+                span={['12/12', '12/12', '7/9', '7/9']}
+                offset={[null, null, '1/9']}
               >
                 <Box
-                  display={['none', 'inlineFlex']}
-                  padding={2}
-                  paddingLeft="none"
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
+                  paddingTop={[1, 4]}
+                  paddingBottom={[1, 5]}
                 >
-                  <Button variant="ghost" onClick={goBack}>
-                    {formatMessage({
-                      id: 'application.system:button.back',
-                      defaultMessage: 'Til baka',
-                      description: 'Back button text',
-                    })}
-                  </Button>
-                </Box>
-                <Box
-                  display={['inlineFlex', 'none']}
-                  padding={2}
-                  paddingLeft="none"
-                >
-                  <Button
-                    variant="ghost"
-                    rounded={true}
-                    icon="arrowLeft"
-                    onClick={goBack}
-                  />
-                </Box>
-                <Box display="inlineFlex" padding={2} paddingRight="none">
-                  {shouldSubmit ? (
-                    <Button
-                      loading={loading}
-                      disabled={!canProceed()}
-                      htmlType="submit"
-                    >
+                  <Box
+                    display={['none', 'inlineFlex']}
+                    padding={2}
+                    paddingLeft="none"
+                  >
+                    <Button variant="ghost" onClick={goBack}>
                       {formatMessage({
-                        id: 'application.system:button.submit',
-                        defaultMessage: 'Submit',
-                        description: 'Submit button text',
+                        id: 'application.system:button.back',
+                        defaultMessage: 'Til baka',
+                        description: 'Back button text',
                       })}
                     </Button>
-                  ) : (
-                    <>
-                      <Box display={['none', 'inlineFlex']}>
-                        <Button
-                          loading={loading}
-                          disabled={!canProceed()}
-                          icon="arrowRight"
-                          htmlType="submit"
-                        >
-                          {formatMessage({
-                            id: 'application.system:button.next',
-                            defaultMessage: 'Halda áfram',
-                            description: 'Next button text',
-                          })}
-                        </Button>
-                      </Box>
-                      <Box display={['inlineFlex', 'none']}>
-                        <Button
-                          loading={loading}
-                          disabled={!canProceed()}
-                          icon="arrowRight"
-                          htmlType="submit"
-                          rounded
-                        />
-                      </Box>
-                    </>
-                  )}
+                  </Box>
+                  <Box
+                    display={['inlineFlex', 'none']}
+                    padding={2}
+                    paddingLeft="none"
+                  >
+                    <Button
+                      variant="ghost"
+                      rounded={true}
+                      icon="arrowLeft"
+                      onClick={goBack}
+                    />
+                  </Box>
+                  <Box display="inlineFlex" padding={2} paddingRight="none">
+                    {shouldSubmit ? (
+                      <Button
+                        loading={loading}
+                        disabled={!canProceed()}
+                        htmlType="submit"
+                      >
+                        {formatMessage({
+                          id: 'application.system:button.submit',
+                          defaultMessage: 'Submit',
+                          description: 'Submit button text',
+                        })}
+                      </Button>
+                    ) : (
+                      <>
+                        <Box display={['none', 'inlineFlex']}>
+                          <Button
+                            loading={loading}
+                            disabled={!canProceed()}
+                            icon="arrowRight"
+                            htmlType="submit"
+                          >
+                            {formatMessage({
+                              id: 'application.system:button.next',
+                              defaultMessage: 'Halda áfram',
+                              description: 'Next button text',
+                            })}
+                          </Button>
+                        </Box>
+                        <Box display={['inlineFlex', 'none']}>
+                          <Button
+                            loading={loading}
+                            disabled={!canProceed()}
+                            icon="arrowRight"
+                            htmlType="submit"
+                            rounded
+                          />
+                        </Box>
+                      </>
+                    )}
+                  </Box>
                 </Box>
-              </Box>
-            </GridColumn>
-          </Box>
-        )}
+              </GridColumn>
+            </Box>
+          )}
       </Box>
     </FormProvider>
   )

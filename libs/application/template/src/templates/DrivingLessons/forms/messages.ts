@@ -209,7 +209,7 @@ export const m = defineMessages({
   overviewIntro: {
     id: 'dl.application:overview.introduction',
     defaultMessage:
-      'Með því að smella á "Staðfesta" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+      'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
     description: 'Some description',
   },
 })

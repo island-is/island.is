@@ -136,7 +136,8 @@ export const ApplicationForm: FC<{
                     })
                   }
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                  shouldSubmit={activeScreen === screens.length - 1}
+                  shouldSubmit={activeScreen === screens.length - 2}
+                  isLastScreen={activeScreen === screens.length - 1} // TODO do this better
                   screen={screens[activeScreen]}
                   mode={mode}
                   applicationId={storedApplication.id}

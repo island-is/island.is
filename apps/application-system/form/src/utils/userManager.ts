@@ -1,8 +1,4 @@
-import {
-  UserManager,
-  WebStorageStateStore,
-  InMemoryWebStorage,
-} from 'oidc-client'
+import { UserManager, WebStorageStateStore } from 'oidc-client'
 
 const settings = {
   authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
@@ -18,7 +14,7 @@ const settings = {
   loadUserInfo: true,
   automaticSilentRenew: true,
   scope: 'openid profile offline_access',
-  userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
+  userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 
 export const userManager = new UserManager(settings)
