@@ -292,14 +292,20 @@ const Category: Screen<CategoryProps> = ({
                                           as={makePath('article', slug)}
                                           borderRadius="large"
                                         >
-                                          <LinkCard
-                                            tag={
-                                              containsApplicationForm &&
-                                              n('applicationProcess', 'Umsókn')
-                                            }
-                                          >
-                                            {title}
-                                          </LinkCard>
+                                          {({ isFocused }) => (
+                                            <LinkCard
+                                              isFocused={isFocused}
+                                              tag={
+                                                containsApplicationForm &&
+                                                n(
+                                                  'applicationProcess',
+                                                  'Umsókn',
+                                                )
+                                              }
+                                            >
+                                              {title}
+                                            </LinkCard>
+                                          )}
                                         </FocusableBox>
                                       )
                                     },
