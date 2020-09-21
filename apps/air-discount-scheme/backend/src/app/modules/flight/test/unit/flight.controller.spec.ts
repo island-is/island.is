@@ -92,6 +92,7 @@ describe('PublicFlightController', () => {
           originalPrice: 100000,
           discountPrice: 60000,
           date: new Date('2021-10-05T14:48:00.000Z'),
+          cooperation: null,
         },
       ],
     }
