@@ -220,7 +220,6 @@ const Category: Screen<CategoryProps> = ({
                   const { title, description, articles } = groups[groupSlug]
 
                   const expanded = groupSlug === hash.replace('#', '')
-
                   const { articlesBySubgroup } = groupArticlesBySubgroup(
                     articles,
                   )
@@ -239,6 +238,15 @@ const Category: Screen<CategoryProps> = ({
                         labelUse="h2"
                         startExpanded={expanded}
                         visibleContent={description}
+                        onClick={() => {
+                          Router.push(
+                            makePath(
+                              'ArticleCategory',
+                              category.slug + `#${groupSlug}`,
+                            ),
+                          )
+                          setHash(groupSlug)
+                        }}
                       >
                         <Box paddingY={2}>
                           {sortedSubgroupKeys.map((subgroup, index) => {
