@@ -38,7 +38,7 @@ export const withLocale = <Props,>(locale?: Locale) => (
   NewComponent.getInitialProps = async (ctx: NextPageContext) => {
     const newContext = {
       ...ctx,
-      locale: locale ?? getLocaleFromPath(ctx.asPath),
+      locale: locale || getLocaleFromPath(ctx.asPath),
     } as any
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),
