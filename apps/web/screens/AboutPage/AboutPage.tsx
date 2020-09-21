@@ -39,6 +39,7 @@ import {
   GridColumn,
   GridRow,
   SpanType,
+  Tabs,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -440,6 +441,46 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
             </Box>
           </Layout>
         </div>
+      )
+    case 'TabSection':
+      return (
+        <Box
+          key={slice.id}
+          id={slice.id}
+          ref={setRef(slice.id)}
+          background="dotted"
+        >
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={8} paddingBottom={10}>
+              <Tabs
+                label={slice?.title}
+                tabs={slice?.tabs.map((tab) => ({
+                  label: tab.tabTitle,
+                  content: (
+                    <GridRow>
+                      <GridColumn
+                        span={['9/9', '9/9', '9/9', '7/9']}
+                        offset={[null, null, null, '1/9']}
+                      >
+                        <Box paddingY={9}>
+                          <Typography variant="h2" as="h2" marginBottom={3}>
+                            {tab.contentTitle}
+                          </Typography>
+                          <img
+                            src={tab.image.url}
+                            className={styles.tabSectionImg}
+                          />
+                          {tab.body && renderSlices(tab.body)}
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  ),
+                }))}
+                contentBackground="white"
+              />
+            </Box>
+          </Layout>
+        </Box>
       )
   }
 }

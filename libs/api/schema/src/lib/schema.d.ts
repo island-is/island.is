@@ -125,6 +125,14 @@ export type QuestionAndAnswer = {
   answer?: Maybe<Html>
 }
 
+export type TabContent = {
+  __typename?: 'TabContent'
+  tabTitle: Scalars['String']
+  contentTitle?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  body?: Maybe<Html>
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -186,6 +194,7 @@ export type Slice =
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
+  | TabSection
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -303,6 +312,13 @@ export type SectionWithImage = {
   title: Scalars['String']
   image?: Maybe<Image>
   html: Html
+}
+
+export type TabSection = {
+  __typename?: 'TabSection'
+  id: Scalars['ID']
+  title: Scalars['String']
+  tabs: Array<TabContent>
 }
 
 export type Article = {
@@ -1213,6 +1229,7 @@ export type ResolversTypes = {
   NumberBullet: ResolverTypeWrapper<NumberBullet>
   Statistic: ResolverTypeWrapper<Statistic>
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
+  TabContent: ResolverTypeWrapper<TabContent>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
@@ -1239,6 +1256,7 @@ export type ResolversTypes = {
     | ResolversTypes['FaqList']
     | ResolversTypes['EmbeddedVideo']
     | ResolversTypes['SectionWithImage']
+    | ResolversTypes['TabSection']
   PageHeaderSlice: ResolverTypeWrapper<PageHeaderSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   StorySlice: ResolverTypeWrapper<StorySlice>
@@ -1261,6 +1279,7 @@ export type ResolversTypes = {
   FaqList: ResolverTypeWrapper<FaqList>
   EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
+  TabSection: ResolverTypeWrapper<TabSection>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1394,6 +1413,7 @@ export type ResolversParentTypes = {
   NumberBullet: NumberBullet
   Statistic: Statistic
   QuestionAndAnswer: QuestionAndAnswer
+  TabContent: TabContent
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
@@ -1420,6 +1440,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['FaqList']
     | ResolversParentTypes['EmbeddedVideo']
     | ResolversParentTypes['SectionWithImage']
+    | ResolversParentTypes['TabSection']
   PageHeaderSlice: PageHeaderSlice
   HeadingSlice: HeadingSlice
   StorySlice: StorySlice
@@ -1440,6 +1461,7 @@ export type ResolversParentTypes = {
   FaqList: FaqList
   EmbeddedVideo: EmbeddedVideo
   SectionWithImage: SectionWithImage
+  TabSection: TabSection
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1693,6 +1715,21 @@ export type QuestionAndAnswerResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type TabContentResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TabContent'] = ResolversParentTypes['TabContent']
+> = {
+  tabTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleCategoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
@@ -1791,7 +1828,8 @@ export type SliceResolvers<
     | 'ProcessEntry'
     | 'FaqList'
     | 'EmbeddedVideo'
-    | 'SectionWithImage',
+    | 'SectionWithImage'
+    | 'TabSection',
     ParentType,
     ContextType
   >
@@ -1990,6 +2028,16 @@ export type SectionWithImageResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   html?: Resolver<ResolversTypes['Html'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TabSectionResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TabSection'] = ResolversParentTypes['TabSection']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  tabs?: Resolver<Array<ResolversTypes['TabContent']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2860,6 +2908,7 @@ export type Resolvers<ContextType = Context> = {
   NumberBullet?: NumberBulletResolvers<ContextType>
   Statistic?: StatisticResolvers<ContextType>
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
+  TabContent?: TabContentResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
   ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
@@ -2883,6 +2932,7 @@ export type Resolvers<ContextType = Context> = {
   FaqList?: FaqListResolvers<ContextType>
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   SectionWithImage?: SectionWithImageResolvers<ContextType>
+  TabSection?: TabSectionResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -2995,6 +3045,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'SectionWithImage',
+          },
+          {
+            name: 'TabSection',
           },
         ],
       },
