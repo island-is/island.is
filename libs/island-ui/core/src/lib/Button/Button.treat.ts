@@ -359,7 +359,7 @@ export const white = style({
   borderColor: theme.color.white,
   color: theme.color.white,
   ':after': {
-    borderColor: theme.color.mint400,
+    borderColor: theme.color.white,
   },
   ':disabled': {
     color: theme.color.white,

@@ -4,8 +4,9 @@ import {
   Typography,
   Timeline as UITimeline,
   TimelineEvent,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
-import * as styles from './Timeline.treat'
 
 export interface TimelineEventProps {
   date: string
@@ -27,14 +28,18 @@ export const Timeline: FC<TimelineProps> = ({ title, events }) => {
   const mappedEvents = useMemo(() => events.map(mapEvent), [events])
 
   return (
-    <div>
-      <Box paddingTop={2} paddingBottom={5} className={styles.indent}>
-        <Typography variant="p" as="p" color="white">
-          {title}
-        </Typography>
-      </Box>
+    <>
+      <GridRow>
+        <GridColumn offset={[null, null, null, '1/9']}>
+          <Box paddingTop={2} paddingBottom={5}>
+            <Typography variant="p" as="p" color="white">
+              {title}
+            </Typography>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <UITimeline events={mappedEvents} />
-    </div>
+    </>
   )
 }
 

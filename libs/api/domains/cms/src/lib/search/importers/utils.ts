@@ -10,3 +10,21 @@ export const createTerms = (termStrings: string[]): string[] => {
   })
   return flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
 }
+
+export const extractStringsFromObject = (contentObject) => {
+  return Object.values(contentObject).reduce((contentString, content) => {
+    if (typeof content === 'object') {
+      // lets extract string from nested objects
+      return contentString + extractStringsFromObject(content)
+    } else if (typeof content === 'string') {
+      try {
+        const parsedContent = JSON.parse(content)
+        return contentString + extractStringsFromObject(parsedContent)
+      } catch (e) {
+        return `${contentString} ${content}`
+      }
+    } else {
+      return contentString
+    }
+  }, '')
+}
