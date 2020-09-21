@@ -11,7 +11,7 @@ interface Props {
 // ExternalLink has the "external" icon which is only visible on hover.
 // It also has a custom underline on hover.
 
-const ExternalLink: React.FC<Props> = ({ href, children, color = 'white' }) => {
+const ExternalLink: React.FC<Props> = ({ href, children, color }) => {
   return (
     <Link href={href} color={color} className={styles.root} withUnderline>
       {children}
