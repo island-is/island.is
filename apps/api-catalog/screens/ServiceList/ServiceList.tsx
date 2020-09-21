@@ -40,12 +40,12 @@ export function ServiceLayout({ top, bottom, left, right }: PropTypes) {
       </ContentBlock>}
       <ContentBlock>
         <GridRow >
-          <GridColumn span={['12/12', '12/12',  '8/12', '8/12', '8/12']}
-                    offset={[    '0',     '0',     '0',    '0', '1/12']}>
+          <GridColumn span={['12/12',  '11/12',  '8/12', '10/12', '9/12']}
+                    offset={[    '0',     '0',  '0',    '0', '0']}>
             {left}
           </GridColumn>
-          <GridColumn span={[ '7/12',  '3/12',  '3/12', '2/12', '2/12']}
-                    offset={[    '0',  '1/12',     '0',    '0', '1/12']}>
+          <GridColumn span={[ '7/12',  '2/12',  '2/12', '2/12', '2/12']}
+                    offset={[    '0',  '0',     '0',    '0', '1/12']}>
               {right}
           </GridColumn>
         </GridRow>

@@ -18,16 +18,18 @@ export const name = style({
     fontWeight:600,
 })
 
+export const owner = style({
+    fontSize:18,
+    color:theme.color.dark400,
+    fontWeight:300
+})
+
 export const serviceStatus = style({
     position:'relative',
     top:-32,
     left:370
 })
 
-export const owner = style({
-    fontSize:18,
-    color:theme.color.dark400
-})
 
 export const sharedStyles = style({
       
@@ -55,7 +57,8 @@ export const category = style({
     borderBottomLeftRadius:7,
     borderBottomRightRadius:7,
     paddingTop:5,
-    paddingBottom:2
+    paddingBottom:2,
+    fontWeight:600
 })
 
 
