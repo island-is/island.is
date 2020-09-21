@@ -65,7 +65,7 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
@@ -357,7 +357,7 @@ const Category: Screen<CategoryProps> = ({
 
         <Hidden above="sm">
           <Select
-            label="Þjónustuflokkar"
+            label={t.serviceCategories}
             defaultValue={{
               label: category.title,
               value: category.slug,
