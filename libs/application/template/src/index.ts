@@ -5,6 +5,7 @@ export * from './types/DataProviderResult'
 export * from './types/Fields'
 export * from './types/Form'
 export * from './types/Application'
+export * from './types/StateMachine'
 
 export * from './lib/conditionUtils'
 export * from './lib/dataProviderUtils'

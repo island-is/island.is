@@ -2,8 +2,10 @@ import 'isomorphic-fetch'
 import {
   Case,
   CreateCaseRequest,
-  GetCaseByIdResponse,
   GetCaseByIdCaseResponse,
+  GetCaseByIdResponse,
+  NotificationResponse,
+  SendNotificationResponse,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
@@ -127,5 +129,35 @@ export const logOut = async () => {
     window.location.assign('/')
   } else {
     // TODO: Handle error
+  }
+}
+
+/**
+ * 
+ * export const getCaseById: (
+  caseId: string,
+) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
+ */
+
+export const sendNotification: (
+  caseId: string,
+) => Promise<SendNotificationResponse> = async (caseId: string) => {
+  const response = await fetch(`/api/case/${caseId}/notification`, {
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  if (response.ok) {
+    const a: NotificationResponse = await response.json()
+    return {
+      httpStatusCode: response.status,
+      response: a,
+    }
+  } else {
+    return {
+      httpStatusCode: response.status,
+    }
   }
 }

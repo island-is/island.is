@@ -1,0 +1,5 @@
+export const STEP_ONE_ROUTE = '/stofna-krofu/grunnupplysingar'
+export const STEP_TWO_ROUTE = '/stofna-krofu/lagaakvaedi'
+export const STEP_THREE_ROUTE = '/stofna-krofu/yfirlit'
+export const DETENTION_REQUESTS_ROUTE = '/gaesluvardhaldskrofur'
+export const SINGLE_REQUEST_BASE_ROUTE = '/krafa'

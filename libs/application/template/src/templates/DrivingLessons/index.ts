@@ -2,12 +2,16 @@ import { ApplicationTemplate } from '../ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
+  ApplicationRole,
   ApplicationStateSchema,
 } from '../../types/StateMachine'
 import * as z from 'zod'
 import { DrivingLessonsApplication } from './forms/DrivingLessonsApplication'
 import { nationalIdRegex } from '../examples/constants'
-import { ParentalLeaveForm } from '../ParentalLeave/ParentalLeaveForm'
+import { ReviewApplication } from './forms/ReviewApplication'
+import { Approved } from './forms/Approved'
+import { Rejected } from './forms/Rejected'
+import { PendingReview } from './forms/PendingReview'
 
 type Events =
   | { type: 'APPROVE' }
@@ -16,6 +20,7 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
+  passportPicture: z.any().optional(),
   school: z.string().nonempty(),
   teacher: z.string().nonempty(),
   type: z.enum(['B', 'AM', 'A', 'A1', 'A2', 'T']),
@@ -30,9 +35,11 @@ const dataSchema = z.object({
     address: z.string().nonempty(),
     zipCode: z.string().nonempty(),
   }),
+  approveExternalData: z.boolean().refine((v) => v === true),
   useGlasses: z.enum(['yes', 'no']),
   damagedEyeSight: z.enum(['yes', 'no']),
   limitedFieldOfView: z.enum(['yes', 'no']),
+  approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
 
 export const DrivingLessons: ApplicationTemplate<
@@ -69,31 +76,47 @@ export const DrivingLessons: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
-          roles: [{ id: 'reviewer', form: ParentalLeaveForm }],
+          roles: [
+            {
+              id: 'reviewer',
+              form: ReviewApplication,
+              actions: [
+                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+                { event: 'REJECT', name: 'Hafna', type: 'reject' },
+              ],
+              read: 'all',
+            },
+            {
+              id: 'applicant',
+              form: PendingReview,
+              read: 'all',
+            },
+          ],
         },
         on: {
-          APPROVE: { target: 'payment' },
-          REJECT: { target: 'draft' },
+          APPROVE: { target: 'approved' },
+          REJECT: { target: 'rejected' },
         },
-      },
-      payment: {
-        meta: {
-          name: 'Greiðsla',
-          roles: [{ id: 'applicant', write: { externalData: ['payment'] } }],
-        },
-        on: { SUBMIT: { target: 'approved' } },
       },
       approved: {
         meta: {
           name: 'Approved',
+          roles: [{ id: 'applicant', form: Approved }],
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
+          roles: [{ id: 'applicant', form: Rejected }],
         },
       },
     },
+  },
+  mapNationalRegistryIdToRole(id: string, state: string): ApplicationRole {
+    if (state === 'inReview') {
+      return 'reviewer'
+    }
+    return 'applicant'
   },
 }

@@ -1,19 +1,21 @@
 import { useContext, useEffect } from 'react'
 import { LocaleContext } from './LocaleContext'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 
-export function useLocale(namespaces?: string | string[]) {
+export function useLocale() {
   const intl = useIntl()
-  const { loadMessages, loadingMessages, lang } = useContext(LocaleContext)
+  const { lang } = useContext(LocaleContext)
 
-  useEffect(() => {
-    loadMessages(namespaces, lang)
-  }, [namespaces, lang])
+  function formatMessage(descriptor: MessageDescriptor | string, values?: any) {
+    if (!descriptor || typeof descriptor === 'string') return descriptor
+
+    return intl.formatMessage(descriptor, values)
+  }
 
   return {
     ...intl,
+    formatMessage,
     lang,
-    loadingMessages,
   }
 }
 

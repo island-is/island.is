@@ -26,11 +26,11 @@ export const withLocale = (namespaces: string | string[] = 'global') => (
   if (!getInitialProps) {
     // For non Nextjs apps
     const NewComponent = (props) => {
-      const { loadMessages, loadingMessages, lang } = useContext(LocaleContext)
+      const { loadMessages, loadingMessages } = useContext(LocaleContext)
 
       useEffect(() => {
-        loadMessages(namespaces, lang)
-      }, [namespaces, lang])
+        loadMessages(namespaces)
+      }, [])
 
       if (loadingMessages) return null
 

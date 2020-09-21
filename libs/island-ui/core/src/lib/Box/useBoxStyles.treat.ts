@@ -492,6 +492,7 @@ export const minWidth = styleMap(
 
 const relativePositionRules = {
   0: 0,
+  4: '32px',
   20: '20px',
 }
 // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers,
@@ -521,4 +522,5 @@ export const outline = styleMap({
 
 export const opacity = styleMap({
   0: { opacity: 0 },
+  1: { opacity: 1 },
 })

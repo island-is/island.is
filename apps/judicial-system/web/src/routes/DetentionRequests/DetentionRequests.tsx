@@ -14,6 +14,7 @@ import { Case, CaseState, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
 import { hasRole, UserRole } from '../../utils/authenticate'
+import * as Constants from '../../utils/constants'
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>(null)
@@ -77,7 +78,7 @@ export const DetentionRequests: React.FC = () => {
       <div className={styles.addDetentionRequestButtonContainer}>
         <Button
           icon="plus"
-          href="/stofna-krofu/grunnupplysingar"
+          href={Constants.STEP_ONE_ROUTE}
           onClick={() => window.localStorage.removeItem('workingCase')}
         >
           Stofna nýja kröfu
@@ -117,7 +118,7 @@ export const DetentionRequests: React.FC = () => {
                 </td>
                 <td>
                   <Button
-                    href={`/krafa/${c.id}`}
+                    href={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`}
                     icon="arrowRight"
                     variant="text"
                     onClick={async () => {

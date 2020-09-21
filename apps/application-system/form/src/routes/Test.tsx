@@ -1,12 +1,10 @@
 import React, { FC } from 'react'
 import { Typography } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 export const Test: FC<{}> = () => {
-  const { formatMessage, loadingMessages } = useLocale([
-    'applications',
-    'global',
-  ])
+  const { loadingMessages } = useNamespaces(['applications', 'global'])
+  const { formatMessage } = useLocale()
   if (loadingMessages) {
     return <p>Loading</p>
   }

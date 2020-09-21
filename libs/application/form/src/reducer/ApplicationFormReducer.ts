@@ -15,27 +15,35 @@ import {
   findCurrentScreen,
   moveToScreen,
 } from './reducerUtils'
+import { FormModes } from '../types'
 
 export function initializeReducer(
   state: ApplicationUIState,
 ): ApplicationUIState {
-  const { application } = state
+  const { application, nationalRegistryId } = state
   const { answers, typeId } = application
   const template = getApplicationTemplateByTypeId(typeId)
   let form
   if (state.form) {
     form = state.form
   } else {
-    const state = getApplicationStateInformation(application)
-    if (state?.roles?.length) {
-      // TODO later map this to current role
-      form = state.roles[0].form
+    const stateInformation = getApplicationStateInformation(application)
+    const role = template.mapNationalRegistryIdToRole(
+      nationalRegistryId,
+      application.state,
+    )
+    if (stateInformation?.roles?.length) {
+      const currentRole = stateInformation.roles.find((r) => r.id === role)
+      if (currentRole) {
+        form = currentRole.form
+      }
     }
   }
   const formLeaves: FormLeaf[] = getFormLeaves(form) // todo add conditions here to set isVisible: true/false
   const sections = getSectionsInForm(form)
   const screens = convertLeavesToScreens(formLeaves, answers)
-  const currentScreen = findCurrentScreen(screens, answers)
+  const currentScreen =
+    form.mode === FormModes.REVIEW ? 0 : findCurrentScreen(screens, answers)
 
   return moveToScreen(
     {

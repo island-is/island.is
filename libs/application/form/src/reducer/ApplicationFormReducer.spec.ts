@@ -116,6 +116,7 @@ describe('ApplicationFormReducer', () => {
     activeSubSection: -1,
     dataSchema,
     form,
+    nationalRegistryId: '1111112199',
     screens: [],
     progress: 0,
     formLeaves: [],
@@ -167,6 +168,23 @@ describe('ApplicationFormReducer', () => {
       const initializedState = initializeReducer(state)
       expect(initializedState.activeScreen).toBe(2)
       expect(initializedState.activeSection).toBe(1)
+    })
+    it('should go to the first screen although there are answers, if and only if the current form is in review mode', () => {
+      const answers = {
+        person: [{ age: '19', name: 'Ingolfur' }],
+        familyName: 'Arnarson',
+      }
+      const state = {
+        ...initialState,
+        form: { ...form, mode: 'review' as const },
+        application: {
+          ...application,
+          answers,
+        },
+      }
+      const initializedState = initializeReducer(state)
+      expect(initializedState.activeScreen).toBe(0)
+      expect(initializedState.activeSection).toBe(0)
     })
   })
   describe('next screen', () => {
@@ -301,6 +319,7 @@ describe('ApplicationFormReducer', () => {
         activeSection: 0,
         activeSubSection: 0,
         activeScreen: 0,
+        nationalRegistryId: '1111112199',
         progress: 0,
         screens: [],
         sections: [],

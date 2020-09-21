@@ -34,7 +34,7 @@ URL: [https://loftbru.dev01.devland.is/admin](https://loftbru.dev01.devland.is/a
 
 ### Public API
 
-The API is used by the airlines to verify the discount code validity and get
+The API is used by airlines to verify the discount code validity and get
 basic booking info about the user.
 
 The airlines that have access to this api are `Air Iceland Connect` and `Ernir`.
