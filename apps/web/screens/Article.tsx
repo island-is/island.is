@@ -36,12 +36,12 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  QueryGetArticleArgs,
-  GetArticleQuery,
   Article,
   SubArticle,
   Slice,
   ProcessEntry,
+  GetSingleArticleQuery,
+  QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
@@ -480,7 +480,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<GetArticleQuery, QueryGetArticleArgs>({
+      .query<GetSingleArticleQuery, QueryGetSingleArticleArgs>({
         query: GET_ARTICLE_QUERY,
         variables: {
           input: {
@@ -489,7 +489,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((r) => r.data.getArticle),
+      .then((response) => response.data.getSingleArticle),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,

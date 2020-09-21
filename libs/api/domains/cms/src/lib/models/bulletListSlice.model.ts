@@ -6,9 +6,8 @@ import { BulletEntry, mapBulletEntry } from './bulletEntry.model'
 
 @ObjectType()
 export class BulletListSlice {
-  constructor(initializer: BulletListSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -20,8 +19,8 @@ export class BulletListSlice {
 export const mapBulletListSlice = ({
   fields,
   sys,
-}: IBigBulletList): BulletListSlice =>
-  new BulletListSlice({
-    id: sys.id,
-    bullets: fields.bullets.map(mapBulletEntry),
-  })
+}: IBigBulletList): BulletListSlice => ({
+  typename: 'BulletListSlice',
+  id: sys.id,
+  bullets: fields.bullets.map(mapBulletEntry),
+})

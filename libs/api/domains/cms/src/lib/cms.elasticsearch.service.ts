@@ -49,9 +49,12 @@ export class CmsElasticsearchService {
     )
   }
 
-  async getNews(index: SearchIndexes, { slug }: { slug: string }) {
+  async getSingleDocumentTypeBySlug<RequestedType>(
+    index: SearchIndexes,
+    { type, slug }: { type: string; slug: string },
+  ): Promise<RequestedType | null> {
     // return a single news item by slug
-    const query = { types: ['webNews'], tags: [{ type: 'slug', key: slug }] }
+    const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
     const newsResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,

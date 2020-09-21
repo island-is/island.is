@@ -46,6 +46,9 @@ export class Html {
     Object.assign(this, initializer)
   }
 
+  @Field()
+  typename: string
+
   @Field(() => ID)
   id: string
 
@@ -59,12 +62,14 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
   switch (newHtml.nodeType) {
     case BLOCKS.DOCUMENT:
       return new Html({
+        typename: 'Html',
         id: String(id),
         document: newHtml as Document,
       })
 
     default:
       return new Html({
+        typename: 'Html',
         id: String(id),
         document: {
           nodeType: BLOCKS.DOCUMENT,

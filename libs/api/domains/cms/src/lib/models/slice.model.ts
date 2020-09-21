@@ -61,21 +61,22 @@ export const Slice = createUnionType({
   types: () => [
     PageHeaderSlice,
     TimelineSlice,
-    HeadingSlice,
-    StorySlice,
-    LinkCardSlice,
-    LatestNewsSlice,
     MailingListSignupSlice,
+    HeadingSlice,
+    LinkCardSlice,
+    StorySlice,
     LogoListSlice,
+    LatestNewsSlice,
     BulletListSlice,
-    Html,
-    Image,
     Statistics,
     ProcessEntry,
     FaqList,
     EmbeddedVideo,
     SectionWithImage,
+    Html,
+    Image,
   ],
+  resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
