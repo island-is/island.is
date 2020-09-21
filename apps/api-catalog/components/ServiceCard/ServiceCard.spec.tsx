@@ -11,12 +11,12 @@ describe(' ServiceCard ', () => {
     id:'0', 
     owner:"Þjóðskrá", 
     name:"Fasteignaskrá", 
-    url:"http://fasteignaskra.thodskra.is:4700", 
     status:SERVICE_STATUS.OK,      
     pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.CUSTOM],
     data:   [DATA_CATEGORY.PUBLIC],
     type:   [TYPE_CATEGORY.REACT,  TYPE_CATEGORY.SOAP], 
-    access: [ACCESS_CATEGORY.X_ROAD] 
+    access: [ACCESS_CATEGORY.X_ROAD],
+    status: SERVICE_STATUS.OK
   };
   
   it('should render successfully', () => {

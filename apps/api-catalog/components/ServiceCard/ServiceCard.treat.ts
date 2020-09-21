@@ -1,27 +1,37 @@
 import { style} from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
-    marginBottom:40,
+    width:432,
+    marginBottom:20,
+    marginLeft:20,
+    fontFamily:theme.typography.fontFamily,
+    borderColor:theme.color.blue200,
+    borderWidth:1,
+    borderStyle:'solid',
+    boxSizing:'border-box'
 })
 
-export const cardTexts = style({
-    padding:40
+export const name = style({   
+    fontSize:24,
+    color:theme.color.blue400,
+    fontWeight:600,
 })
 
-export const name = style({
-    fontSize:32,
-    marginTop:20
+export const serviceStatus = style({
+    position:'relative',
+    top:-32,
+    left:370
 })
 
 export const owner = style({
-    fontSize:16,
-          marginTop:20,
-          marginBottom:20,
+    fontSize:18,
+    color:theme.color.dark400
 })
 
 export const sharedStyles = style({
-      background:'silver',
-      borderRadius:15,
+      
+      borderRadius:5,
       paddingTop:5,
       paddingBottom:3,
       paddingLeft:15,
@@ -29,22 +39,29 @@ export const sharedStyles = style({
       marginRight:10,
       fontSize:14,
       marginBottom:3,
-      minWidth:40
-});
+      minWidth:40,
+      color:theme.color.blue400,
+      background:theme.color.blue100
+      
+})
 
-export const categoryContainer = style({
-    fontFamily : 'areal,sans-serif',
-});
 
 export const category = style({
     display:'flex',
     flexWrap:'wrap',
-    background:'whitesmoke',
+    background:theme.color.white,
     paddingLeft:5,
     paddingRight:5,
     borderBottomLeftRadius:7,
     borderBottomRightRadius:7,
     paddingTop:5,
-    paddingBottom:2,
+    paddingBottom:2
 })
 
+
+export const cardTexts = style({
+    paddingLeft:32,
+    paddingRight:32,
+    paddingTop:24,
+    paddingBottom:24
+})

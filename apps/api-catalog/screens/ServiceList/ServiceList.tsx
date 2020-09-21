@@ -29,9 +29,10 @@ interface PropTypes {
   top?: ReactNode
   left: ReactNode
   right?: ReactNode
+  bottom?: ReactNode
 }
 
-export function ServiceLayout({ top, left, right }: PropTypes) {
+export function ServiceLayout({ top, bottom, left, right }: PropTypes) {
   return (
     <Box paddingX="gutter">
       {<ContentBlock >
@@ -40,15 +41,18 @@ export function ServiceLayout({ top, left, right }: PropTypes) {
       <ContentBlock>
         <GridRow >
           <GridColumn span={['12/12', '12/12',  '8/12', '8/12', '8/12']}
-                    offset={[    '0',     '0',     '0', '1/12', '1/12']}>
+                    offset={[    '0',     '0',     '0',    '0', '1/12']}>
             {left}
           </GridColumn>
-          <GridColumn span={[ '7/12',  '4/12',  '3/12', '2/12', '2/12']}
-                    offset={[    '0',  '1/12',     '0', '1/12', '1/12']}>
+          <GridColumn span={[ '7/12',  '3/12',  '3/12', '2/12', '2/12']}
+                    offset={[    '0',  '1/12',     '0',    '0', '1/12']}>
               {right}
           </GridColumn>
         </GridRow>
       </ContentBlock>
+      {<ContentBlock >
+        {bottom}
+      </ContentBlock>}
     </Box>
   )
 }
@@ -190,18 +194,21 @@ export default function ServiceList(props:ServiceListProps) {
                         return <ServiceCard key={index} service={item} />
                       })
                     }
-                  <div className={cn(styles.navigation)}>
-                    <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
-                      <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
-                    </div>
-                    <div className={cn(isLoading? styles.displayHidden : {})}>
-                      <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-                        {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
-                      </Button>
-                    </div>
-                  </div>
           </Box>
       } 
+
+      bottom={
+        <div className={cn(styles.navigation)}>
+          <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
+            <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
+          </div>
+          <div className={cn(isLoading? styles.displayHidden : {})}>
+            <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
+              {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
+            </Button>
+          </div>
+        </div>
+      }
       right={
         <Box  className={cn(styles.filter)}>
               <h4>Filter:</h4>

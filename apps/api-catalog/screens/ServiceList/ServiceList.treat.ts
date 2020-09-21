@@ -2,8 +2,9 @@ import { style } from 'treat'
 
 
 export const serviceList = style ({
-  /*background:'yellow',
-  justifyContent:'center'*/
+    display: 'flex',  
+    flexWrap: 'wrap',
+    alignItems:'center'
 })
 
 export const filter = style({
@@ -16,7 +17,7 @@ export const filterItem = style({
 
 export const navigation = style({
   padding:50,
-  textAlign: 'center'
+  textAlign: 'center',
 })
 
 export const displayInline = style({
@@ -25,6 +26,7 @@ export const displayInline = style({
 export const displayHidden = style({
   display:'none'
 })
+
 
 export const radioButton = style({
   marginTop:5
