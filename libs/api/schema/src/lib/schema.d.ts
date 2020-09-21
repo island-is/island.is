@@ -308,7 +308,6 @@ export type SectionWithImage = {
 export type Article = {
   __typename?: 'Article'
   id: Scalars['ID']
-  contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
   shortTitle?: Maybe<Scalars['String']>
@@ -1999,7 +1998,6 @@ export type ArticleResolvers<
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  contentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   shortTitle?: Resolver<
