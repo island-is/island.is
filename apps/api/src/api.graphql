@@ -97,6 +97,13 @@ type QuestionAndAnswer {
   answer: Html
 }
 
+type TabContent {
+  tabTitle: String!
+  contentTitle: String
+  image: Image
+  body: Html
+}
+
 type ArticleCategory {
   title: String!
   slug: String!
@@ -135,7 +142,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | Html | Image
+union Slice = PageHeaderSlice | TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | Html | Image
 
 type PageHeaderSlice {
   typename: String!
@@ -251,6 +258,13 @@ type SectionWithImage {
   title: String!
   image: Image
   html: Html!
+}
+
+type TabSection {
+  typename: String!
+  id: ID!
+  title: String!
+  tabs: [TabContent!]!
 }
 
 type Article {

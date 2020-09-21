@@ -114,6 +114,14 @@ export type QuestionAndAnswer = {
   answer?: Maybe<Html>
 }
 
+export type TabContent = {
+  __typename?: 'TabContent'
+  tabTitle: Scalars['String']
+  contentTitle?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  body?: Maybe<Html>
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -175,6 +183,7 @@ export type Slice =
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
+  | TabSection
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -292,6 +301,13 @@ export type SectionWithImage = {
   title: Scalars['String']
   image?: Maybe<Image>
   html: Html
+}
+
+export type TabSection = {
+  __typename?: 'TabSection'
+  id: Scalars['ID']
+  title: Scalars['String']
+  tabs: Array<TabContent>
 }
 
 export type Article = {
@@ -1108,6 +1124,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({
             __typename?: 'SectionWithImage'
           } & AllSlicesSectionWithImageFragment)
+        | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
       >
     }
 }
@@ -1173,6 +1190,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1230,6 +1248,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                 | ({
                     __typename?: 'SectionWithImage'
                   } & AllSlicesSectionWithImageFragment)
+                | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
               >
             }
         >
@@ -1342,6 +1361,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
         >
       }
   >
@@ -1385,6 +1405,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
         >
       }
   >
@@ -1867,6 +1888,21 @@ export type SectionWithImageFieldsFragment = {
     html: { __typename?: 'Html' } & HtmlFieldsFragment
   }
 
+export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
+  TabSection,
+  'id' | 'title'
+> & {
+    tabs: Array<
+      { __typename?: 'TabContent' } & Pick<
+        TabContent,
+        'tabTitle' | 'contentTitle'
+      > & {
+          image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
+          body?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
+        }
+    >
+  }
+
 export type AllSlicesPageHeaderSliceFragment = {
   __typename?: 'PageHeaderSlice'
 } & PageHeaderFieldsFragment
@@ -1929,6 +1965,10 @@ export type AllSlicesSectionWithImageFragment = {
   __typename?: 'SectionWithImage'
 } & SectionWithImageFieldsFragment
 
+export type AllSlicesTabSectionFragment = {
+  __typename?: 'TabSection'
+} & TabSectionFieldsFragment
+
 export type AllSlicesFragment =
   | AllSlicesPageHeaderSliceFragment
   | AllSlicesTimelineSliceFragment
@@ -1946,3 +1986,4 @@ export type AllSlicesFragment =
   | AllSlicesFaqListFragment
   | AllSlicesEmbeddedVideoFragment
   | AllSlicesSectionWithImageFragment
+  | AllSlicesTabSectionFragment

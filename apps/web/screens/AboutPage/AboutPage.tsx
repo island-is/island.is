@@ -458,6 +458,8 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           </Layout>
         </div>
       )
+    case 'TabSection':
+      return <div>{slice.title} (TODO)</div>
   }
 }
 
