@@ -1,8 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-
 import * as types from '../generated/contentfulTypes'
-
-import { Slice, mapSlice } from './slice.model'
+import { Slice, safelyMapSlices } from './slice.model'
 
 @ObjectType()
 export class AboutPage {
@@ -24,8 +22,8 @@ export class AboutPage {
 
 export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
   id: sys.id,
-  slices: fields.slices.map(mapSlice),
-  title: fields.title,
-  theme: fields.theme.toLowerCase(),
-  seoDescription: fields.seoDescription ?? '',
+  slices: fields?.slices?.map(safelyMapSlices).filter(Boolean), // filter out empty slices that failed mapping
+  title: fields?.title ?? '',
+  theme: fields?.theme?.toLowerCase() ?? '',
+  seoDescription: fields?.seoDescription ?? '',
 })

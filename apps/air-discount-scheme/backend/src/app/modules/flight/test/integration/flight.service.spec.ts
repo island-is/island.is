@@ -1,5 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 
+import { Airlines } from '@island.is/air-discount-scheme/consts'
+
 import { setup } from '../../../../../../test/setup'
 import { NationalRegistryUser } from '../../../nationalRegistry'
 import { FlightService } from '../../flight.service'
@@ -23,6 +25,7 @@ describe('create', () => {
         originalPrice: 50000,
         discountPrice: 30000,
         date: new Date('2021-03-12T12:35:50.971Z'),
+        cooperation: null,
       },
       {
         origin: 'AK',
@@ -30,6 +33,7 @@ describe('create', () => {
         originalPrice: 100000,
         discountPrice: 60000,
         date: new Date('2021-03-15T12:35:50.971Z'),
+        cooperation: null,
       },
       {
         origin: 'GRY',
@@ -37,6 +41,7 @@ describe('create', () => {
         originalPrice: 100000,
         discountPrice: 60000,
         date: new Date('2021-03-15T12:35:50.971Z'),
+        cooperation: null,
       },
       {
         origin: 'AK',
@@ -44,6 +49,15 @@ describe('create', () => {
         originalPrice: 100000,
         discountPrice: 60000,
         date: new Date('2021-03-15T12:35:50.971Z'),
+        cooperation: Airlines.norlandair,
+      },
+      {
+        origin: 'AK',
+        destination: 'RVK',
+        originalPrice: 100000,
+        discountPrice: 60000,
+        date: new Date('2021-03-15T12:35:50.971Z'),
+        cooperation: null,
       },
     ],
   }
@@ -62,22 +76,24 @@ describe('create', () => {
     const airline = 'icelandair'
     const result = await flightService.create(flightDto, user, airline)
 
-    expect(result.flightLegs.length).toEqual(4)
+    expect(result.flightLegs.length).toEqual(5)
     expect(result.flightLegs[0].airline).toEqual(airline)
     expect(result.flightLegs[1].airline).toEqual(airline)
     expect(result.flightLegs[2].airline).toEqual(airline)
     expect(result.flightLegs[3].airline).toEqual(airline)
-    expect(result.flightLegs[0].cooperation).toEqual('norlandair')
-    expect(result.flightLegs[1].cooperation).toEqual('norlandair')
-    expect(result.flightLegs[2].cooperation).toEqual('norlandair')
-    expect(result.flightLegs[3].cooperation).toEqual(null)
+    expect(result.flightLegs[4].airline).toEqual(airline)
+    expect(result.flightLegs[0].cooperation).toEqual(Airlines.norlandair)
+    expect(result.flightLegs[1].cooperation).toEqual(Airlines.norlandair)
+    expect(result.flightLegs[2].cooperation).toEqual(Airlines.norlandair)
+    expect(result.flightLegs[3].cooperation).toEqual(Airlines.norlandair)
+    expect(result.flightLegs[4].cooperation).toEqual(null)
   })
 
   it('should set the airline as ernir', async () => {
     const airline = 'ernir'
     const result = await flightService.create(flightDto, user, airline)
 
-    expect(result.flightLegs.length).toEqual(4)
+    expect(result.flightLegs.length).toEqual(5)
     expect(result.flightLegs[0].airline).toEqual(airline)
     expect(result.flightLegs[1].airline).toEqual(airline)
     expect(result.flightLegs[2].airline).toEqual(airline)
@@ -85,6 +101,7 @@ describe('create', () => {
     expect(result.flightLegs[0].cooperation).toEqual(null)
     expect(result.flightLegs[1].cooperation).toEqual(null)
     expect(result.flightLegs[2].cooperation).toEqual(null)
-    expect(result.flightLegs[3].cooperation).toEqual(null)
+    expect(result.flightLegs[3].cooperation).toEqual(Airlines.norlandair)
+    expect(result.flightLegs[4].cooperation).toEqual(null)
   })
 })

@@ -38,6 +38,7 @@ import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
+import { logger } from '@island.is/logging'
 
 type SliceTypes =
   | IPageHeader
@@ -120,6 +121,20 @@ const isEmptyNode = (node: Block): boolean => {
   })
 }
 
+/*
+if we add a slice that is not in mapper mapSlices fails for that slice.
+we dont want a single slice to cause errors on a whole page so we fail them gracefully
+this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
+*/
+export const safelyMapSlices = (data) => {
+  try {
+    return mapSlice(data)
+  } catch (error) {
+    logger.error('Failed to map slice', error)
+    return null
+  }
+}
+
 export const mapDocument = (
   document: Document,
   idPrefix: string,
@@ -130,7 +145,7 @@ export const mapDocument = (
   docs.forEach((block, index) => {
     switch (block.nodeType) {
       case BLOCKS.EMBEDDED_ENTRY:
-        slices.push(mapSlice(block.data.target))
+        slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
         slices.push(mapImage(block.data.target))
@@ -151,5 +166,5 @@ export const mapDocument = (
     }
   })
 
-  return slices
+  return slices.filter(Boolean) // filter out empty slices that failed mapping
 }
