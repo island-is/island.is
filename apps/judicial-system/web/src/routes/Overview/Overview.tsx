@@ -14,6 +14,7 @@ import is from 'date-fns/locale/is'
 import { getRestrictionByValue } from '../../utils/stepHelper'
 import { CaseCustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
+import * as Constants from '../../utils/constants'
 
 export const Overview: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
@@ -27,7 +28,9 @@ export const Overview: React.FC = () => {
             <Logo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1">Krafa um gæsluvarðhald</Typography>
+            <Typography as="h1" variant="h1">
+              Krafa um gæsluvarðhald
+            </Typography>
           </GridColumn>
         </GridRow>
         <GridRow>
@@ -180,7 +183,7 @@ export const Overview: React.FC = () => {
               </Accordion>
             </Box>
             <FormFooter
-              previousUrl="/stofna-krofu/lagaakvaedi"
+              previousUrl={Constants.STEP_TWO_ROUTE}
               nextUrl="/"
               nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
               confirmationText="Með því að ýta á þennan hnapp fær dómari á vakt tilkynningu um að krafan sé tilbúin."

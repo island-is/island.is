@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
+import { Logo } from '../../../shared-components/Logo/Logo'
+import Modal from '../../../shared-components/Modal/Modal'
 import {
   Typography,
   GridContainer,
@@ -20,6 +22,7 @@ import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
+import * as Constants from '../../../utils/constants'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -28,7 +31,7 @@ export const StepOne: React.FC = () => {
       JSON.stringify({ id: '', case: {} }),
     )
   }
-
+  const history = useHistory()
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
@@ -78,6 +81,9 @@ export const StepOne: React.FC = () => {
   const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
     '',
   )
+  const [modalVisible, setModalVisible] = useState(false)
+  const [isSendingNotification, setIsSendingNotification] = useState(false)
+
   const { id } = useParams<{ id: string }>()
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
@@ -165,347 +171,374 @@ export const StepOne: React.FC = () => {
   }, [])
 
   return (
-    <Box marginTop={7} marginBottom={30}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <Logo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1">Krafa um gæsluvarðhald</Typography>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
-          </GridColumn>
-          <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  LÖKE málsnúmer
-                </Typography>
-              </Box>
-              <Input
-                data-testid="policeCaseNumber"
-                name="policeCaseNumber"
-                label="Slá inn LÖKE málsnúmer"
-                defaultValue={workingCase.case.policeCaseNumber}
-                ref={policeCaseNumberRef}
-                errorMessage={policeCaseNumberErrorMessage}
-                hasError={policeCaseNumberErrorMessage !== ''}
-                onBlur={(evt) => {
-                  const validateField = validate(evt.target.value, 'empty')
-                  if (validateField.isValid) {
-                    createCaseIfPossible()
-                    updateState(
-                      workingCase,
-                      'policeCaseNumber',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  } else {
-                    setPoliceCaseNumberErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onFocus={() => setPoliceCaseNumberErrorMessage('')}
-                required
-                autoFocus
-              />
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Ákærði
-                </Typography>
-              </Box>
-              <Box marginBottom={3}>
+    <>
+      <Box marginTop={7} marginBottom={30}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <Logo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Typography as="h1" variant="h1">
+                Krafa um gæsluvarðhald
+              </Typography>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '3/12']}>
+              <Typography>Hliðarstika</Typography>
+            </GridColumn>
+            <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    LÖKE málsnúmer
+                  </Typography>
+                </Box>
                 <Input
-                  data-testid="nationalId"
-                  name="nationalId"
-                  label="Kennitala"
-                  defaultValue={workingCase.case.suspectNationalId}
-                  ref={suspectNationalIdRef}
-                  errorMessage={nationalIdErrorMessage}
-                  hasError={nationalIdErrorMessage !== ''}
+                  data-testid="policeCaseNumber"
+                  name="policeCaseNumber"
+                  label="Slá inn LÖKE málsnúmer"
+                  defaultValue={workingCase.case.policeCaseNumber}
+                  ref={policeCaseNumberRef}
+                  errorMessage={policeCaseNumberErrorMessage}
+                  hasError={policeCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
                     const validateField = validate(evt.target.value, 'empty')
-
                     if (validateField.isValid) {
                       createCaseIfPossible()
                       updateState(
                         workingCase,
-                        'suspectNationalId',
+                        'policeCaseNumber',
                         evt.target.value,
                         setWorkingCase,
                       )
                     } else {
-                      setNationalIdErrorMessage(validateField.errorMessage)
+                      setPoliceCaseNumberErrorMessage(
+                        validateField.errorMessage,
+                      )
                     }
                   }}
-                  onFocus={() => setNationalIdErrorMessage('')}
+                  onFocus={() => setPoliceCaseNumberErrorMessage('')}
                   required
+                  autoFocus
                 />
               </Box>
-              <Box marginBottom={3}>
-                <Input
-                  data-testid="suspectName"
-                  name="suspectName"
-                  label="Fullt nafn kærða"
-                  defaultValue={workingCase.case.suspectName}
-                  errorMessage={suspectNameErrorMessage}
-                  hasError={suspectNameErrorMessage !== ''}
-                  onBlur={(evt) => {
-                    const validateField = validate(evt.target.value, 'empty')
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Ákærði
+                  </Typography>
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    data-testid="nationalId"
+                    name="nationalId"
+                    label="Kennitala"
+                    defaultValue={workingCase.case.suspectNationalId}
+                    ref={suspectNationalIdRef}
+                    errorMessage={nationalIdErrorMessage}
+                    hasError={nationalIdErrorMessage !== ''}
+                    onBlur={(evt) => {
+                      const validateField = validate(evt.target.value, 'empty')
 
-                    if (validateField.isValid) {
-                      autoSave(
-                        workingCase,
-                        'suspectName',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-                    } else {
-                      setSuspectNameErrorMessage(validateField.errorMessage)
-                    }
-                  }}
-                  onFocus={() => setSuspectNameErrorMessage('')}
-                  required
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  data-testid="suspectAddress"
-                  name="suspectAddress"
-                  label="Lögheimili/dvalarstaður"
-                  defaultValue={workingCase.case.suspectAddress}
-                  errorMessage={suspectAddressErrorMessage}
-                  hasError={suspectAddressErrorMessage !== ''}
-                  onBlur={(evt) => {
-                    const validateField = validate(evt.target.value, 'empty')
-
-                    if (validateField.isValid) {
-                      autoSave(
-                        workingCase,
-                        'suspectAddress',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-                    } else {
-                      setSuspectAddressErrorMessage(validateField.errorMessage)
-                    }
-                  }}
-                  onFocus={() => setSuspectAddressErrorMessage('')}
-                  required
-                />
-              </Box>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Dómstóll
-                </Typography>
-              </Box>
-              <Select
-                name="court"
-                label="Veldu dómstól"
-                defaultValue={{
-                  label:
-                    defaultCourt.length > 0
-                      ? defaultCourt[0].label
-                      : courts[0].label,
-                  value:
-                    defaultCourt.length > 0
-                      ? defaultCourt[0].value
-                      : courts[0].value,
-                }}
-                options={courts}
-                onChange={({ label }: Option) => {
-                  autoSave(workingCase, 'court', label, setWorkingCase)
-                }}
-              />
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Tími handtöku
-                </Typography>
-              </Box>
-              <GridRow>
-                <GridColumn span="5/8">
-                  <DatePicker
-                    label="Veldu dagsetningu"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    errorMessage={arrestDateErrorMessage}
-                    hasError={arrestDateErrorMessage !== ''}
-                    selected={
-                      caseDraftJSON.case.arrestDate
-                        ? parseISO(caseDraftJSON.case.arrestDate.toString())
-                        : null
-                    }
-                    handleChange={(date) => {
-                      updateState(
-                        workingCase,
-                        'arrestDate',
-                        date,
-                        setWorkingCase,
-                      )
-                    }}
-                    handleCloseCalander={(date: Date) => {
-                      if (isNull(date) || !isValid(date)) {
-                        setArrestDateErrorMessage('Reitur má ekki vera tómur')
+                      if (validateField.isValid) {
+                        createCaseIfPossible()
+                        updateState(
+                          workingCase,
+                          'suspectNationalId',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+                      } else {
+                        setNationalIdErrorMessage(validateField.errorMessage)
                       }
                     }}
-                    handleOpenCalander={() => setArrestDateErrorMessage('')}
+                    onFocus={() => setNationalIdErrorMessage('')}
                     required
                   />
-                </GridColumn>
-                <GridColumn span="3/8">
+                </Box>
+                <Box marginBottom={3}>
                   <Input
-                    data-testid="arrestTime"
-                    name="arrestTime"
-                    label="Tímasetning"
-                    placeholder="Settu inn tíma"
-                    disabled={!workingCase.case.arrestDate}
-                    errorMessage={arrestTimeErrorMessage}
-                    hasError={arrestTimeErrorMessage !== ''}
-                    defaultValue={caseDraftJSON.case.arrestTime}
+                    data-testid="suspectName"
+                    name="suspectName"
+                    label="Fullt nafn kærða"
+                    defaultValue={workingCase.case.suspectName}
+                    errorMessage={suspectNameErrorMessage}
+                    hasError={suspectNameErrorMessage !== ''}
                     onBlur={(evt) => {
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
+                      const validateField = validate(evt.target.value, 'empty')
 
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
+                      if (validateField.isValid) {
+                        autoSave(
+                          workingCase,
+                          'suspectName',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+                      } else {
+                        setSuspectNameErrorMessage(validateField.errorMessage)
+                      }
+                    }}
+                    onFocus={() => setSuspectNameErrorMessage('')}
+                    required
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    data-testid="suspectAddress"
+                    name="suspectAddress"
+                    label="Lögheimili/dvalarstaður"
+                    defaultValue={workingCase.case.suspectAddress}
+                    errorMessage={suspectAddressErrorMessage}
+                    hasError={suspectAddressErrorMessage !== ''}
+                    onBlur={(evt) => {
+                      const validateField = validate(evt.target.value, 'empty')
+
+                      if (validateField.isValid) {
+                        autoSave(
+                          workingCase,
+                          'suspectAddress',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+                      } else {
+                        setSuspectAddressErrorMessage(
+                          validateField.errorMessage,
+                        )
+                      }
+                    }}
+                    onFocus={() => setSuspectAddressErrorMessage('')}
+                    required
+                  />
+                </Box>
+              </Box>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Dómstóll
+                  </Typography>
+                </Box>
+                <Select
+                  name="court"
+                  label="Veldu dómstól"
+                  defaultValue={{
+                    label:
+                      defaultCourt.length > 0
+                        ? defaultCourt[0].label
+                        : courts[0].label,
+                    value:
+                      defaultCourt.length > 0
+                        ? defaultCourt[0].value
+                        : courts[0].value,
+                  }}
+                  options={courts}
+                  onChange={({ label }: Option) => {
+                    autoSave(workingCase, 'court', label, setWorkingCase)
+                  }}
+                />
+              </Box>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Tími handtöku
+                  </Typography>
+                </Box>
+                <GridRow>
+                  <GridColumn span="5/8">
+                    <DatePicker
+                      label="Veldu dagsetningu"
+                      placeholderText="Veldu dagsetningu"
+                      locale="is"
+                      errorMessage={arrestDateErrorMessage}
+                      hasError={arrestDateErrorMessage !== ''}
+                      selected={
+                        caseDraftJSON.case.arrestDate
+                          ? parseISO(caseDraftJSON.case.arrestDate.toString())
+                          : null
+                      }
+                      handleChange={(date) => {
+                        updateState(
+                          workingCase,
+                          'arrestDate',
+                          date,
+                          setWorkingCase,
+                        )
+                      }}
+                      handleCloseCalander={(date: Date) => {
+                        if (isNull(date) || !isValid(date)) {
+                          setArrestDateErrorMessage('Reitur má ekki vera tómur')
+                        }
+                      }}
+                      handleOpenCalander={() => setArrestDateErrorMessage('')}
+                      required
+                    />
+                  </GridColumn>
+                  <GridColumn span="3/8">
+                    <Input
+                      data-testid="arrestTime"
+                      name="arrestTime"
+                      label="Tímasetning"
+                      placeholder="Settu inn tíma"
+                      disabled={!workingCase.case.arrestDate}
+                      errorMessage={arrestTimeErrorMessage}
+                      hasError={arrestTimeErrorMessage !== ''}
+                      defaultValue={caseDraftJSON.case.arrestTime}
+                      onBlur={(evt) => {
+                        const validateTimeEmpty = validate(
+                          evt.target.value,
+                          'empty',
+                        )
+                        const validateTimeFormat = validate(
+                          evt.target.value,
+                          'time-format',
+                        )
+
+                        if (
+                          validateTimeEmpty.isValid &&
+                          validateTimeFormat.isValid
+                        ) {
+                          const timeWithoutColon = evt.target.value.replace(
+                            ':',
+                            '',
+                          )
+
+                          const arrestDateHours = setHours(
+                            workingCase.case.arrestDate,
+                            parseInt(timeWithoutColon.substr(0, 2)),
+                          )
+
+                          const arrestDateMinutes = setMinutes(
+                            arrestDateHours,
+                            parseInt(timeWithoutColon.substr(2, 4)),
+                          )
+
+                          autoSave(
+                            workingCase,
+                            'arrestDate',
+                            arrestDateMinutes,
+                            setWorkingCase,
+                          )
+                          updateState(
+                            workingCase,
+                            'arrestTime',
+                            evt.target.value,
+                            setWorkingCase,
+                          )
+                        } else {
+                          setArrestTimeErrorMessage(
+                            validateTimeEmpty.errorMessage ||
+                              validateTimeFormat.errorMessage,
+                          )
+                        }
+                      }}
+                      onFocus={() => setArrestTimeErrorMessage('')}
+                      required
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Ósk um fyrirtökudag og tíma
+                  </Typography>
+                </Box>
+                <GridRow>
+                  <GridColumn span="5/8">
+                    <DatePicker
+                      label="Veldu dagsetningu"
+                      placeholderText="Veldu dagsetningu"
+                      locale="is"
+                      minDate={new Date()}
+                      selected={
+                        caseDraftJSON.case.requestedCourtDate
+                          ? parseISO(
+                              caseDraftJSON.case.requestedCourtDate.toString(),
+                            )
+                          : null
+                      }
+                      handleChange={(date) => {
+                        updateState(
+                          workingCase,
+                          'requestedCourtDate',
+                          date,
+                          setWorkingCase,
+                        )
+                      }}
+                    />
+                  </GridColumn>
+                  <GridColumn span="3/8">
+                    <Input
+                      data-testid="courtDate"
+                      name="courtDate"
+                      label="Tímasetning"
+                      placeholder="Settu inn tíma"
+                      defaultValue={caseDraftJSON.case.requestedCourtTime}
+                      disabled={!workingCase.case.requestedCourtDate}
+                      onBlur={(evt) => {
                         const timeWithoutColon = evt.target.value.replace(
                           ':',
                           '',
                         )
 
-                        const arrestDateHours = setHours(
-                          workingCase.case.arrestDate,
+                        const requestedCourtDateHours = setHours(
+                          workingCase.case.requestedCourtDate,
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 
-                        const arrestDateMinutes = setMinutes(
-                          arrestDateHours,
+                        const requestedCourtDateMinutes = setMinutes(
+                          requestedCourtDateHours,
                           parseInt(timeWithoutColon.substr(2, 4)),
                         )
 
                         autoSave(
                           workingCase,
-                          'arrestDate',
-                          arrestDateMinutes,
+                          'requestedCourtDate',
+                          requestedCourtDateMinutes,
                           setWorkingCase,
                         )
+
                         updateState(
                           workingCase,
-                          'arrestTime',
+                          'requestedCourtTime',
                           evt.target.value,
                           setWorkingCase,
                         )
-                      } else {
-                        setArrestTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
-                      }
-                    }}
-                    onFocus={() => setArrestTimeErrorMessage('')}
-                    required
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Ósk um fyrirtökudag og tíma
-                </Typography>
+                      }}
+                    />
+                  </GridColumn>
+                </GridRow>
               </Box>
-              <GridRow>
-                <GridColumn span="5/8">
-                  <DatePicker
-                    label="Veldu dagsetningu"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    minDate={new Date()}
-                    selected={
-                      caseDraftJSON.case.requestedCourtDate
-                        ? parseISO(
-                            caseDraftJSON.case.requestedCourtDate.toString(),
-                          )
-                        : null
-                    }
-                    handleChange={(date) => {
-                      updateState(
-                        workingCase,
-                        'requestedCourtDate',
-                        date,
-                        setWorkingCase,
-                      )
-                    }}
-                  />
-                </GridColumn>
-                <GridColumn span="3/8">
-                  <Input
-                    data-testid="courtDate"
-                    name="courtDate"
-                    label="Tímasetning"
-                    placeholder="Settu inn tíma"
-                    defaultValue={caseDraftJSON.case.requestedCourtTime}
-                    disabled={!workingCase.case.requestedCourtDate}
-                    onBlur={(evt) => {
-                      const timeWithoutColon = evt.target.value.replace(':', '')
-
-                      const requestedCourtDateHours = setHours(
-                        workingCase.case.requestedCourtDate,
-                        parseInt(timeWithoutColon.substr(0, 2)),
-                      )
-
-                      const requestedCourtDateMinutes = setMinutes(
-                        requestedCourtDateHours,
-                        parseInt(timeWithoutColon.substr(2, 4)),
-                      )
-
-                      autoSave(
-                        workingCase,
-                        'requestedCourtDate',
-                        requestedCourtDateMinutes,
-                        setWorkingCase,
-                      )
-
-                      updateState(
-                        workingCase,
-                        'requestedCourtTime',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-                    }}
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <FormFooter
-              previousUrl="/"
-              nextUrl="/stofna-krofu/lagaakvaedi"
-              nextIsDisabled={
-                filledRequiredFields.length !== requiredFields.length
-              }
-              previousIsDisabled
-            />
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
+              <FormFooter
+                previousUrl="/"
+                nextUrl={Constants.STEP_TWO_ROUTE}
+                onNextButtonClick={() => setModalVisible(true)}
+                nextIsDisabled={
+                  filledRequiredFields.length !== requiredFields.length
+                }
+                previousIsDisabled
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      {modalVisible && (
+        <Modal
+          handleClose={() => setModalVisible(false)}
+          handleSecondaryButtonClick={() =>
+            history.push(Constants.STEP_TWO_ROUTE)
+          }
+          handlePrimaryButtonClick={async () => {
+            setIsSendingNotification(true)
+            await api.sendNotification(workingCase.id)
+            setIsSendingNotification(false)
+            history.push(Constants.STEP_TWO_ROUTE)
+          }}
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
+    </>
   )
 }
 

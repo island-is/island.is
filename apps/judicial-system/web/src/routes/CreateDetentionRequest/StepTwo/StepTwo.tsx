@@ -29,6 +29,7 @@ import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
+import * as Constants from '../../../utils/constants'
 import Modal from '@island.is/judicial-system-web/src/shared-components/Modal/Modal'
 
 export const StepTwo: React.FC = () => {
@@ -235,7 +236,9 @@ export const StepTwo: React.FC = () => {
               <Logo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
-              <Typography as="h1">Krafa um gæsluvarðhald</Typography>
+              <Typography as="h1" variant="h1">
+                Krafa um gæsluvarðhald
+              </Typography>
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -624,8 +627,8 @@ export const StepTwo: React.FC = () => {
                 </Box>
               </Box>
               <FormFooter
-                previousUrl="/stofna-krofu/grunnupplysingar"
-                nextUrl="/stofna-krofu/yfirlit"
+                previousUrl={Constants.STEP_ONE_ROUTE}
+                nextUrl={Constants.STEP_THREE_ROUTE}
                 onNextButtonClick={() => setModalVisible(true)}
                 nextIsDisabled={
                   workingCase.case.lawsBroken === '' &&
@@ -640,13 +643,13 @@ export const StepTwo: React.FC = () => {
         <Modal
           handleClose={() => setModalVisible(false)}
           handleSecondaryButtonClick={() =>
-            history.push('/stofna-krofu/yfirlit')
+            history.push(Constants.STEP_THREE_ROUTE)
           }
           handlePrimaryButtonClick={async () => {
             setIsSendingNotification(true)
             await api.sendNotification(workingCase.id)
             setIsSendingNotification(false)
-            // history.push('/stofna-krofu/yfirlit')
+            history.push(Constants.STEP_THREE_ROUTE)
           }}
           isPrimaryButtonLoading={isSendingNotification}
         />

@@ -12,8 +12,9 @@ import userEvent from '@testing-library/user-event'
 import StepOne from './StepOne'
 import { Router } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
+import * as Constants from '../../../utils/constants'
 
-describe('/stofna-krofu/grunnupplysingar', () => {
+describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
   test('should display an empty form if there is nothing in local storage', async () => {
     // Arrange
     const history = createMemoryHistory()

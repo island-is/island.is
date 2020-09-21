@@ -11,6 +11,8 @@ import { StepTwo, StepOne } from './routes/CreateDetentionRequest'
 import { DetentionRequests } from './routes/DetentionRequests'
 import { Overview } from './routes/Overview'
 import { Login } from './routes/Login'
+import * as Constants from './utils/constants'
+
 // Sentry.init({
 //   dsn:
 //     'https://0e96d7d759684a79a3d90b7cb5999066@o406638.ingest.sentry.io/5415125',
@@ -23,19 +25,19 @@ ReactDOM.render(
     <Header />
     <main className={styles.mainConainer}>
       <Switch>
-        <Route path="/stofna-krofu/yfirlit">
+        <Route path={Constants.STEP_THREE_ROUTE}>
           <Overview />
         </Route>
-        <Route path="/stofna-krofu/lagaakvaedi">
+        <Route path={Constants.STEP_TWO_ROUTE}>
           <StepTwo />
         </Route>
-        <Route path="/krafa/:id">
+        <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
           <StepOne />
         </Route>
-        <Route path="/stofna-krofu/grunnupplysingar">
+        <Route path={Constants.STEP_ONE_ROUTE}>
           <StepOne />
         </Route>
-        <Route path="/gaesluvardhaldskrofur">
+        <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
           <DetentionRequests />
         </Route>
         <Route path="/">
