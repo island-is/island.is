@@ -68,6 +68,13 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   @ApiProperty()
   airline: string
 
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(Airlines),
+  })
+  @ApiProperty()
+  cooperation: string
+
   // eslint-disable-next-line
   @BelongsTo(() => Flight)
   flight

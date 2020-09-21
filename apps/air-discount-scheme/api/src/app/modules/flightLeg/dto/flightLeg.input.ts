@@ -39,6 +39,9 @@ export class FlightLegsInput implements TFlightLegsInput {
   @Field((_) => String, { nullable: true })
   airline: string
 
+  @Field((_) => String, { nullable: true })
+  cooperation: string
+
   @Field((_) => Travel, { nullable: true })
   flightLeg: Travel
 
