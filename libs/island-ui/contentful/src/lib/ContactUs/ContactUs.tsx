@@ -9,6 +9,8 @@ import {
   Box,
   Button,
 } from '@island.is/island-ui/core'
+import Background from '../Background/Background'
+import * as styles from './ContactUs.treat'
 
 export interface ContactUsFormState {
   name: string
@@ -50,100 +52,107 @@ const defaultTranslations: ContactUsTranslations = {
 
 export interface ContactUsProps extends Partial<ContactUsTranslations> {
   onSubmit: (formState: ContactUsFormState) => Promise<void>
+  hasError: boolean
 }
 
 export const ContactUs: FC<ContactUsProps> = ({
   onSubmit,
+  hasError,
   ...translations
 }) => {
   const t = { ...defaultTranslations, ...translations }
   const { handleSubmit, register, errors } = useForm<ContactUsFormState>()
 
   return (
-    <Box background="blue100" borderRadius="large" paddingY={6}>
-      <GridRow>
-        <GridColumn span="7/9" offset="1/9">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack space={6}>
-              {Boolean(t.title) && (
-                <Typography variant="h2" as="h2">
-                  {t.title}
-                </Typography>
-              )}
-              <Stack space={3}>
-                <GridRow>
-                  <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
+    <Box position="relative" paddingBottom={15}>
+      <Background className={styles.background} background="dotted" />
+      <Box position="relative">
+        <Box background="blue100" borderRadius="large" paddingY={6}>
+          <GridRow>
+            <GridColumn span="7/9" offset="1/9">
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Stack space={6}>
+                  {Boolean(t.title) && (
+                    <Typography variant="h2" as="h2">
+                      {t.title}
+                    </Typography>
+                  )}
+                  <Stack space={3}>
+                    <GridRow>
+                      <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
+                        <Input
+                          name="name"
+                          label={t.labelName}
+                          required
+                          errorMessage={errors.name?.message}
+                          ref={register({
+                            required: t.required,
+                          })}
+                        />
+                      </GridColumn>
+                      <GridColumn
+                        span={['10/10', '10/10', '10/10', '3/10']}
+                        paddingTop={[3, 3, 3, 0]}
+                      >
+                        <Input
+                          name="phone"
+                          label={t.labelPhone}
+                          placeholder="000 0000"
+                          required
+                          errorMessage={errors.phone?.message}
+                          ref={register({
+                            required: t.required,
+                            pattern: {
+                              value: /^\d{3}[\d- ]*$/,
+                              message: t.invalidPhone,
+                            },
+                          })}
+                        />
+                      </GridColumn>
+                    </GridRow>
                     <Input
-                      name="name"
-                      label={t.labelName}
+                      name="email"
+                      label={t.labelEmail}
                       required
-                      errorMessage={errors.name?.message}
-                      ref={register({
-                        required: t.required,
-                      })}
-                    />
-                  </GridColumn>
-                  <GridColumn
-                    span={['10/10', '10/10', '10/10', '3/10']}
-                    paddingTop={[3, 3, 3, 0]}
-                  >
-                    <Input
-                      name="phone"
-                      label={t.labelPhone}
-                      placeholder="000 0000"
-                      required
-                      errorMessage={errors.phone?.message}
+                      errorMessage={errors.email?.message}
                       ref={register({
                         required: t.required,
                         pattern: {
-                          value: /^\d{3}[\d- ]*$/,
-                          message: t.invalidPhone,
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: t.invalidEmail,
                         },
                       })}
                     />
-                  </GridColumn>
-                </GridRow>
-                <Input
-                  name="email"
-                  label={t.labelEmail}
-                  required
-                  errorMessage={errors.email?.message}
-                  ref={register({
-                    required: t.required,
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: t.invalidEmail,
-                    },
-                  })}
-                />
-                <Input
-                  name="subject"
-                  label={t.labelSubject}
-                  required
-                  errorMessage={errors.subject?.message}
-                  ref={register({
-                    required: t.required,
-                  })}
-                />
-                <Input
-                  name="message"
-                  label={t.labelMessage}
-                  required
-                  errorMessage={errors.message?.message}
-                  textarea
-                  rows={6}
-                  ref={register({
-                    required: t.required,
-                  })}
-                />
-              </Stack>
-              <Box textAlign="right">
-                <Button htmlType="submit">{t.submitButtonText}</Button>
-              </Box>
-            </Stack>
-          </form>
-        </GridColumn>
-      </GridRow>
+                    <Input
+                      name="subject"
+                      label={t.labelSubject}
+                      required
+                      errorMessage={errors.subject?.message}
+                      ref={register({
+                        required: t.required,
+                      })}
+                    />
+                    <Input
+                      name="message"
+                      label={t.labelMessage}
+                      required
+                      errorMessage={errors.message?.message}
+                      textarea
+                      rows={6}
+                      ref={register({
+                        required: t.required,
+                      })}
+                    />
+                  </Stack>
+                  <Box textAlign="right">
+                    <Button htmlType="submit">{t.submitButtonText}</Button>
+                  </Box>
+                </Stack>
+              </form>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      </Box>
     </Box>
   )
 }

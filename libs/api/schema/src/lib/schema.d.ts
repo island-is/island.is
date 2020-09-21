@@ -411,7 +411,6 @@ export type FrontpageSlider = {
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
   animationJson?: Maybe<Scalars['String']>
 }
@@ -533,6 +532,19 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+export type ContactUsPayload = {
+  __typename?: 'ContactUsPayload'
+  success: Scalars['Boolean']
+}
+
+export type AboutSubPage = {
+  __typename?: 'AboutSubPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description: Scalars['String']
+  slices: Array<Slice>
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
@@ -651,6 +663,7 @@ export type Query = {
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
   getUrl?: Maybe<Url>
+  getAboutSubPage?: Maybe<AboutSubPage>
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
@@ -764,6 +777,10 @@ export type QueryGetSingleNewsArgs = {
 
 export type QueryGetUrlArgs = {
   input: GetUrlInput
+}
+
+export type QueryGetAboutSubPageArgs = {
+  input: GetAboutSubPageInput
 }
 
 export type QuerySearchResultsArgs = {
@@ -930,6 +947,11 @@ export type GetUrlInput = {
   lang: Scalars['String']
 }
 
+export type GetAboutSubPageInput = {
+  lang: Scalars['String']
+  slug: Scalars['String']
+}
+
 export type SearcherInput = {
   queryString: Scalars['String']
   types?: Maybe<Array<SearchableContentTypes>>
@@ -996,6 +1018,7 @@ export type GetTranslationsInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  contactUs: ContactUsPayload
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
   updateApplicationExternalData?: Maybe<Application>
@@ -1003,6 +1026,10 @@ export type Mutation = {
   deleteAttachment?: Maybe<Application>
   submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
+}
+
+export type MutationContactUsArgs = {
+  input: ContactUsInput
 }
 
 export type MutationCreateApplicationArgs = {
@@ -1031,6 +1058,14 @@ export type MutationSubmitApplicationArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type ContactUsInput = {
+  name: Scalars['String']
+  phone: Scalars['String']
+  email: Scalars['String']
+  subject: Scalars['String']
+  message: Scalars['String']
 }
 
 export type CreateApplicationInput = {
@@ -1320,6 +1355,10 @@ export type ResolversTypes = {
     | ResolversTypes['ArticleCategory']
     | ResolversTypes['News']
     | ResolversTypes['LifeEventPage']
+  ContactUsPayload: ResolverTypeWrapper<ContactUsPayload>
+  AboutSubPage: ResolverTypeWrapper<
+    Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
+  >
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
@@ -1364,6 +1403,7 @@ export type ResolversTypes = {
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
+  GetAboutSubPageInput: GetAboutSubPageInput
   SearcherInput: SearcherInput
   SearchableContentTypes: SearchableContentTypes
   ContentLanguage: ContentLanguage
@@ -1376,6 +1416,7 @@ export type ResolversTypes = {
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
   Mutation: ResolverTypeWrapper<{}>
+  ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
@@ -1497,6 +1538,10 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ArticleCategory']
     | ResolversParentTypes['News']
     | ResolversParentTypes['LifeEventPage']
+  ContactUsPayload: ContactUsPayload
+  AboutSubPage: Omit<AboutSubPage, 'slices'> & {
+    slices: Array<ResolversParentTypes['Slice']>
+  }
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
@@ -1540,6 +1585,7 @@ export type ResolversParentTypes = {
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
+  GetAboutSubPageInput: GetAboutSubPageInput
   SearcherInput: SearcherInput
   ItemInput: ItemInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
@@ -1549,6 +1595,7 @@ export type ResolversParentTypes = {
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
   Mutation: {}
+  ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
@@ -2233,7 +2280,6 @@ export type FrontpageSliderResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   animationJson?: Resolver<
     Maybe<ResolversTypes['String']>,
@@ -2444,6 +2490,25 @@ export type UrlPageResolvers<
     ParentType,
     ContextType
   >
+}
+
+export type ContactUsPayloadResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ContactUsPayload'] = ResolversParentTypes['ContactUsPayload']
+> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AboutSubPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AboutSubPage'] = ResolversParentTypes['AboutSubPage']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type SearchResultResolvers<
@@ -2768,6 +2833,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetUrlArgs, 'input'>
   >
+  getAboutSubPage?: Resolver<
+    Maybe<ResolversTypes['AboutSubPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAboutSubPageArgs, 'input'>
+  >
   searchResults?: Resolver<
     ResolversTypes['SearchResult'],
     ParentType,
@@ -2827,6 +2898,12 @@ export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
+  contactUs?: Resolver<
+    ResolversTypes['ContactUsPayload'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationContactUsArgs, 'input'>
+  >
   createApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -2936,6 +3013,8 @@ export type Resolvers<ContextType = Context> = {
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
   Url?: UrlResolvers<ContextType>
   UrlPage?: UrlPageResolvers<ContextType>
+  ContactUsPayload?: ContactUsPayloadResolvers<ContextType>
+  AboutSubPage?: AboutSubPageResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>

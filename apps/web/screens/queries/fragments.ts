@@ -205,6 +205,8 @@ export const slices = gql`
   }
 
   fragment ContactUsFields on ContactUs {
+    __typename
+    id
     title
   }
 

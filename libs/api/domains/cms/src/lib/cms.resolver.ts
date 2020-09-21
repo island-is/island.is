@@ -5,6 +5,7 @@ import {
   ResolveField,
   Parent,
   Directive,
+  Mutation,
 } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
@@ -15,6 +16,7 @@ import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { GetArticleInput } from './dto/getArticle.input'
+import { ContactUsInput } from './dto/contactUs.input'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
@@ -51,6 +53,7 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
+import { EmailService } from './cms.email.service'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { SearchIndexes } from '@island.is/api/content-search'
@@ -58,6 +61,9 @@ import { GetArticlesInput } from './dto/getArticles.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
+import { ContactUsPayload } from './models/contactUsPayload.model'
+import {GetAboutSubPageInput} from './dto/getAboutSubPage.input'
+import {AboutSubPage} from './models/aboutSubPage.model'
 
 const { cacheTime } = environment
 
@@ -69,6 +75,7 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
+    private readonly emailService: EmailService,
   ) {}
 
   @Directive(cacheControlDirective())
@@ -287,6 +294,22 @@ export class CmsResolver {
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
+  }
+
+  @Query(() => AboutSubPage, { nullable: true })
+  getAboutSubPage(
+    @Args('input') input: GetAboutSubPageInput,
+  ): Promise<AboutSubPage | null> {
+    return this.cmsContentfulService.getAboutSubPage(input.lang, input.slug)
+  }
+
+  @Mutation(() => ContactUsPayload)
+  async contactUs(
+    @Args('input') input: ContactUsInput,
+  ): Promise<ContactUsPayload> {
+    return {
+      success: await this.emailService.deliverContactUs(input),
+    }
   }
 }
 

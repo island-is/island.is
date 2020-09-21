@@ -3,6 +3,39 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
+export interface IAboutSubPageFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Description */
+  description?: string | undefined
+
+  /** Content */
+  content: Document
+}
+
+/** sub-page of the about-page */
+
+export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'aboutSubPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAlertBannerFields {
   /** Show Alert Banner */
   showAlertBanner: boolean
@@ -38,6 +71,31 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
     contentType: {
       sys: {
         id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnimationsJsonFields {
+  /** Title */
+  title: string
+
+  /** JSON */
+  json: Record<string, any>
+}
+
+export interface IAnimationsJson extends Entry<IAnimationsJsonFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'animationsJson'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -365,9 +423,6 @@ export interface IFrontpageSliderFields {
   /** Texti */
   content: string
 
-  /** Image */
-  image?: Asset | undefined
-
   /** Efnisstengill */
   link?:
     | IArticle
@@ -377,9 +432,6 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
-
-  /** Animation (zip) */
-  animationZip?: Asset | undefined
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
@@ -405,11 +457,11 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
 }
 
 export interface IFrontpageSliderListFields {
-  /** items */
-  items: IFrontpageSlider[]
-
   /** Titill */
   titill: string
+
+  /** items */
+  items: IFrontpageSlider[]
 }
 
 /** Listi af efniseiningum sem hægt er að fletta á milli og birtast efst á forsíðu Ísland.is. */
@@ -975,6 +1027,7 @@ export interface IPageFields {
     | ILogoListSlice
     | IPageHeader
     | IStorySection
+    | ITabSection
     | ITimeline
   )[]
 }
@@ -1334,6 +1387,66 @@ export interface ISubArticle extends Entry<ISubArticleFields> {
     contentType: {
       sys: {
         id: 'subArticle'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITabContentFields {
+  /** tab title */
+  tabTitle: string
+
+  /** content title */
+  contentTitle?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** Body */
+  body?: Document | undefined
+}
+
+/** Tab with content */
+
+export interface ITabContent extends Entry<ITabContentFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tabContent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITabSectionFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Tabs */
+  tabs?: ITabContent[] | undefined
+}
+
+/** List of tab contents */
+
+export interface ITabSection extends Entry<ITabSectionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tabSection'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1766,7 +1879,9 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
+  | 'aboutSubPage'
   | 'alertBanner'
+  | 'animationsJson'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -1807,6 +1922,8 @@ export type CONTENT_TYPE =
   | 'story'
   | 'storySection'
   | 'subArticle'
+  | 'tabContent'
+  | 'tabSection'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'

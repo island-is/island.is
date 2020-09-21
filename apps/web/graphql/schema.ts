@@ -400,7 +400,6 @@ export type FrontpageSlider = {
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
   animationJson?: Maybe<Scalars['String']>
 }
@@ -522,6 +521,19 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+export type ContactUsPayload = {
+  __typename?: 'ContactUsPayload'
+  success: Scalars['Boolean']
+}
+
+export type AboutSubPage = {
+  __typename?: 'AboutSubPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description: Scalars['String']
+  slices: Array<Slice>
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
@@ -640,6 +652,7 @@ export type Query = {
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
   getUrl?: Maybe<Url>
+  getAboutSubPage?: Maybe<AboutSubPage>
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
@@ -753,6 +766,10 @@ export type QueryGetSingleNewsArgs = {
 
 export type QueryGetUrlArgs = {
   input: GetUrlInput
+}
+
+export type QueryGetAboutSubPageArgs = {
+  input: GetAboutSubPageInput
 }
 
 export type QuerySearchResultsArgs = {
@@ -919,6 +936,11 @@ export type GetUrlInput = {
   lang: Scalars['String']
 }
 
+export type GetAboutSubPageInput = {
+  lang: Scalars['String']
+  slug: Scalars['String']
+}
+
 export type SearcherInput = {
   queryString: Scalars['String']
   types?: Maybe<Array<SearchableContentTypes>>
@@ -985,6 +1007,7 @@ export type GetTranslationsInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  contactUs: ContactUsPayload
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
   updateApplicationExternalData?: Maybe<Application>
@@ -992,6 +1015,10 @@ export type Mutation = {
   deleteAttachment?: Maybe<Application>
   submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
+}
+
+export type MutationContactUsArgs = {
+  input: ContactUsInput
 }
 
 export type MutationCreateApplicationArgs = {
@@ -1020,6 +1047,14 @@ export type MutationSubmitApplicationArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type ContactUsInput = {
+  name: Scalars['String']
+  phone: Scalars['String']
+  email: Scalars['String']
+  subject: Scalars['String']
+  message: Scalars['String']
 }
 
 export type CreateApplicationInput = {
@@ -1290,6 +1325,17 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type ContactUsMutationVariables = Exact<{
+  input: ContactUsInput
+}>
+
+export type ContactUsMutation = { __typename?: 'Mutation' } & {
+  contactUs: { __typename?: 'ContactUsPayload' } & Pick<
+    ContactUsPayload,
+    'success'
+  >
+}
+
 export type GetFrontpageSliderListQueryVariables = Exact<{
   input: GetFrontpageSliderListInput
 }>
@@ -1301,14 +1347,7 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
         { __typename?: 'FrontpageSlider' } & Pick<
           FrontpageSlider,
           'subtitle' | 'title' | 'content' | 'link' | 'animationJson'
-        > & {
-            image?: Maybe<
-              { __typename?: 'Image' } & Pick<
-                Image,
-                'url' | 'title' | 'contentType' | 'width' | 'height'
-              >
-            >
-          }
+        >
       >
     }
   >
@@ -1873,9 +1912,9 @@ export type SectionWithImageFieldsFragment = {
     html: { __typename?: 'Html' } & HtmlFieldsFragment
   }
 
-export type ContactUsFieldsFragment = { __typename?: 'ContactUs' } & Pick<
+export type ContactUsFieldsFragment = { __typename: 'ContactUs' } & Pick<
   ContactUs,
-  'title'
+  'id' | 'title'
 >
 
 export type AllSlicesPageHeaderSliceFragment = {

@@ -5,6 +5,7 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
 } from './cms.resolver'
+import { EmailService } from './cms.email.service'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
@@ -15,6 +16,7 @@ import { CmsElasticsearchService } from './cms.elasticsearch.service'
     ArticleResolver,
     LatestNewsSliceResolver,
     ElasticService,
+    EmailService,
     CmsContentfulService,
     CmsElasticsearchService,
     ContentfulRepository,

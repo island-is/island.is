@@ -437,6 +437,17 @@ type Url {
 
 union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+type ContactUsPayload {
+  success: Boolean!
+}
+
+type AboutSubPage {
+  id: ID!
+  title: String!
+  description: String!
+  slices: [Slice!]!
+}
+
 type SearchResult {
   total: Int!
   items: [Items!]!
@@ -551,6 +562,7 @@ type Query {
   getArticles(input: GetArticlesInput!): [Article!]!
   getSingleNews(input: GetSingleNewsInput!): News
   getUrl(input: GetUrlInput!): Url
+  getAboutSubPage(input: GetAboutSubPageInput!): AboutSubPage
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
@@ -694,6 +706,11 @@ input GetUrlInput {
   lang: String!
 }
 
+input GetAboutSubPageInput {
+  lang: String!
+  slug: String!
+}
+
 input SearcherInput {
   queryString: String!
   types: [SearchableContentTypes!] = [webAboutPage, webArticle, webLifeEventPage, webNews]
@@ -759,6 +776,7 @@ input GetTranslationsInput {
 }
 
 type Mutation {
+  contactUs(input: ContactUsInput!): ContactUsPayload!
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
   updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
@@ -766,6 +784,14 @@ type Mutation {
   deleteAttachment(input: DeleteAttachmentInput!): Application
   submitApplication(input: SubmitApplicationInput!): Application
   createUploadUrl(filename: String!): PresignedPost!
+}
+
+input ContactUsInput {
+  name: String!
+  phone: String!
+  email: String!
+  subject: String!
+  message: String!
 }
 
 input CreateApplicationInput {
