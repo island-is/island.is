@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useRef } from 'react'
-import pullAllBy from 'lodash/pullAllBy'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import {
@@ -30,6 +29,7 @@ import {
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import { LifeEventCard } from '../../components/LifeEventsCardsSection/components/LifeEventCard'
+import LifeEventInCategory from './LifeEventInCategory'
 
 import { useNamespace } from '@island.is/web/hooks'
 import {
@@ -209,7 +209,7 @@ const Category: Screen<CategoryProps> = ({
           />
         }
         belowContent={
-          <Stack space={2}>
+          <>
             <Stack space={2}>
               <Accordion
                 dividerOnBottom={false}
@@ -316,6 +316,23 @@ const Category: Screen<CategoryProps> = ({
               </Accordion>
             </Stack>
             <Stack space={2}>
+              {lifeEvents.map((lifeEvent, index) => {
+                return (
+                  <LifeEventInCategory
+                    key={index}
+                    title={lifeEvent.title}
+                    slug={lifeEvent.slug}
+                    intro={lifeEvent.intro}
+                    image={
+                      lifeEvent.thumbnail
+                        ? lifeEvent.thumbnail.url
+                        : lifeEvent.image.url
+                    }
+                  />
+                )
+              })}
+            </Stack>
+            <Stack space={2}>
               {cards.map(({ title, content, slug }, index) => {
                 return (
                   <Card
@@ -328,23 +345,7 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
-            {lifeEvents.map((lifeEvent, index) => {
-              return (
-                <LifeEventCard
-                  key={index}
-                  title={lifeEvent.title}
-                  intro={lifeEvent.intro}
-                  href={makePath('lifeEvent', '[slug]')}
-                  as={makePath('lifeEvent', lifeEvent.slug)}
-                  image={
-                    lifeEvent.thumbnail
-                      ? lifeEvent.thumbnail.url
-                      : lifeEvent.image.url
-                  }
-                />
-              )
-            })}
-          </Stack>
+          </>
         }
       >
         <Box paddingBottom={2}>
