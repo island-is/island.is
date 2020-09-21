@@ -107,6 +107,10 @@
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],
+      "@island.is/api/domains/translations": [
+        "libs/api/domains/translations/src/index.ts"
+      ],
+      "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
@@ -114,7 +118,11 @@
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],
-      "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"]
+      "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
+      "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
+      "@island.is/service-portal/assets": [
+        "libs/service-portal/assets/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -2,24 +2,32 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
 
+import { environment } from '../../../environments'
+import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case } from './case.model'
-import { Notification } from './case.types'
+import { Case, Notification, NotificationType, CaseState } from './models'
 
 @Injectable()
 export class CaseService {
   constructor(
+    private readonly smsService: SmsService,
     @InjectModel(Case)
-    private caseModel: typeof Case,
+    private readonly caseModel: typeof Case,
+    @InjectModel(Notification)
+    private readonly notificationModel: typeof Notification,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseModel.findAll({ order: [['modified', 'DESC']] })
+    return this.caseModel.findAll({
+      order: [['modified', 'DESC']],
+      include: [Notification],
+    })
   }
 
   findById(id: string): Promise<Case> {
@@ -27,6 +35,7 @@ export class CaseService {
 
     return this.caseModel.findOne({
       where: { id },
+      include: [Notification],
     })
   }
 
@@ -53,19 +62,93 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  delete(id: string): Promise<number> {
-    this.logger.debug(`Deleting case with id "${id}"`)
+  async getAllNotificationsByCaseId(
+    existingCase: Case,
+  ): Promise<Notification[]> {
+    this.logger.debug(
+      `Getting all notifications for case with id "${existingCase.id}"`,
+    )
 
-    return this.caseModel.destroy({ where: { id } })
+    return this.notificationModel.findAll({
+      where: { caseId: existingCase.id },
+      order: [['created', 'DESC']],
+    })
   }
 
-  async getAllNotificationsByCaseId(id: string): Promise<Notification[]> {
-    this.logger.debug(`Getting all notifications for case with id "${id}"`)
+  async sendNotificationByCaseId(
+    existingCase: Case,
+    user: User,
+  ): Promise<Notification> {
+    this.logger.debug(
+      `Sending a notification for case with id "${existingCase.id}"`,
+    )
 
-    return []
+    const smsText =
+      existingCase.state === CaseState.DRAFT
+        ? this.constructHeadsUpSmsText(existingCase, user)
+        : // State is CaseState.SUBMITTED
+          this.constructReadyForCourtpSmsText(existingCase, user)
+
+    // Production or local development with judge phone number
+    if (environment.production || environment.notifications.judgePhoneNumber) {
+      await this.smsService.sendSms(
+        environment.notifications.judgePhoneNumber,
+        smsText,
+      )
+    }
+
+    return this.notificationModel.create({
+      caseId: existingCase.id,
+      type:
+        existingCase.state === CaseState.DRAFT
+          ? NotificationType.HEADS_UP
+          : // State is CaseState.SUBMITTED
+            NotificationType.READY_FOR_COURT,
+      message: smsText,
+    })
   }
 
-  async sendNotificationByCaseId(id: string): Promise<Notification> {
-    return new Notification()
+  private constructHeadsUpSmsText(existingCase: Case, user: User): string {
+    // Prosecutor
+    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+
+    // Arrest date
+    const ad = existingCase.arrestDate?.toISOString()
+    const adText = ad
+      ? ` Viðkomandi handtekinn ${ad.substring(8, 10)}.${ad.substring(
+          5,
+          7,
+        )}.${ad.substring(0, 4)} kl. ${ad.substring(11, 13)}:${ad.substring(
+          14,
+          16,
+        )}.`
+      : ''
+
+    // Court date
+    const cd = existingCase.requestedCourtDate?.toISOString()
+    const cdText = cd
+      ? ` ÓE fyrirtöku ${cd.substring(8, 10)}.${cd.substring(
+          5,
+          7,
+        )}.${cd.substring(0, 4)} eftir kl. ${cd.substring(
+          11,
+          13,
+        )}:${cd.substring(14, 16)}.`
+      : ''
+
+    return `Ný gæsluvarðhaldskrafa í vinnslu.${adText}${cdText}`
+  }
+
+  private constructReadyForCourtpSmsText(
+    existingCase: Case,
+    user: User,
+  ): string {
+    // Prosecutor
+    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+
+    // Court
+    const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
+
+    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
   }
 }

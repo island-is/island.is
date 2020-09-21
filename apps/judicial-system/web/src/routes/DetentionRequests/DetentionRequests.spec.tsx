@@ -54,12 +54,12 @@ describe('Detention requests route', () => {
     )
   })
 
-  test('should list all cases in a list if you are a procecutor', async () => {
+  test('should list all cases in a list if you are a prosecutor', async () => {
     fetchMock.mock(
       '/api/user',
       {
         nationalId: '1112902539',
-        roles: [UserRole.PROCECUTOR],
+        roles: [UserRole.PROSECUTOR],
       },
       { overwriteRoutes: true },
     )

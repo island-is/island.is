@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo, ReactNode } from 'react'
+import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -13,9 +13,9 @@ import {
   GridColumn,
   GridRow,
   Tag,
-  Button,
   Divider,
   Link,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
@@ -24,23 +24,23 @@ import {
   SidebarSubNav,
   RichText,
 } from '@island.is/web/components'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { CustomNextError } from '../units/errors'
-import { withMainLayout } from '../layouts/main'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   QueryGetArticleArgs,
   GetArticleQuery,
-  ProcessEntry,
   Article,
   SubArticle,
   Slice,
+  ProcessEntry,
 } from '../graphql/schema'
 import { createNavigation } from '../utils/navigation'
 import useScrollSpy from '../hooks/useScrollSpy'
@@ -77,7 +77,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/[subSlug]'),
+      url: makePath('article', '[slug]'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -101,14 +101,14 @@ const RelatedArticles: FC<{
   articles: Array<{ slug: string; title: string }>
 }> = ({ title, articles }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   if (articles.length === 0) return null
 
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -129,13 +129,35 @@ const RelatedArticles: FC<{
   )
 }
 
+const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
+  content,
+  defaultText,
+}) => {
+  const processEntries = content.filter((slice): slice is ProcessEntry => {
+    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
+  })
+
+  // we'll only show the button if there is exactly one process entry on the page
+  if (processEntries.length !== 1) return null
+
+  const { buttonText, processLink } = processEntries[0]
+
+  return (
+    <SidebarBox>
+      <Button href={processLink} width="fluid">
+        {buttonText || defaultText}
+      </Button>
+    </SidebarBox>
+  )
+}
+
 const SubArticleNavigation: FC<{
   title: string
   article: Article
   selectedSubArticle: SubArticle
 }> = ({ title, article, selectedSubArticle }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const [bullet, setBullet] = useState<HTMLDivElement>(null)
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
@@ -171,8 +193,8 @@ const SubArticleNavigation: FC<{
             </Link>
           </Typography>
         </div>
-        {article.subArticles.map((subArticle) => (
-          <>
+        {article.subArticles.map((subArticle, id) => (
+          <Fragment key={id}>
             <div
               ref={
                 subArticle === selectedSubArticle && navigation.length === 0
@@ -197,9 +219,8 @@ const SubArticleNavigation: FC<{
               <SidebarSubNav>
                 <Stack space={1}>
                   {navigation.map(({ id, text }) => (
-                    <div ref={id === activeId ? setBullet : null}>
+                    <div key={id} ref={id === activeId ? setBullet : null}>
                       <Box
-                        key={id}
                         component="button"
                         type="button"
                         textAlign="left"
@@ -215,7 +236,7 @@ const SubArticleNavigation: FC<{
                 </Stack>
               </SidebarSubNav>
             )}
-          </>
+          </Fragment>
         ))}
       </Stack>
     </SidebarBox>
@@ -240,7 +261,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
       {bullet && <Bullet align="left" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -261,28 +282,6 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
           </Box>
         ))}
       </Stack>
-    </SidebarBox>
-  )
-}
-
-const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
-  content,
-  defaultText,
-}) => {
-  const processEntries = content.filter((slice): slice is ProcessEntry => {
-    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
-  })
-
-  // we'll only show the button if there is exactly one process entry on the page
-  if (processEntries.length !== 1) return null
-
-  const { buttonText, processLink } = processEntries[0]
-
-  return (
-    <SidebarBox>
-      <Button href={processLink} width="fluid">
-        {buttonText || defaultText}
-      </Button>
     </SidebarBox>
   )
 }
@@ -321,7 +320,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   )
 }
 
-interface ArticleProps {
+export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
 }
@@ -330,7 +329,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
@@ -358,13 +357,15 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
-              <Link
-                href={`${makePath('ArticleCategory')}/[slug]`}
-                as={makePath('ArticleCategory', article.category.slug)}
-              >
-                {article.category.title}
-              </Link>
-              {article.group && (
+              {!!article.category && (
+                <Link
+                  href={`${makePath('ArticleCategory')}/[slug]`}
+                  as={makePath('ArticleCategory', article.category.slug)}
+                >
+                  {article.category.title}
+                </Link>
+              )}
+              {!!article.group && (
                 <Link
                   as={makePath(
                     'ArticleCategory',
@@ -407,7 +408,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             )}
           </GridColumn>
         </GridRow>
-        <Box paddingTop={subArticle ? 0 : 7}>
+        <Box paddingTop={subArticle ? 2 : 4}>
           <RichText body={(subArticle ?? article).body} />
         </Box>
       </ArticleLayout>

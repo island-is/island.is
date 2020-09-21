@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -15,6 +15,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CreateDetentionReqStepOneCase,
+  CaseState,
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -22,7 +23,10 @@ import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
@@ -68,18 +72,52 @@ export const StepTwo: React.FC = () => {
     '',
   )
 
-  const [checkboxOne, setCheckboxOne] = useState(false)
-  const [checkboxTwo, setCheckboxTwo] = useState(false)
-  const [checkboxThree, setCheckboxThree] = useState(false)
-  const [checkboxFour, setCheckboxFour] = useState(false)
-  const [checkboxFive, setCheckboxFive] = useState(false)
-  const [checkboxSix, setCheckboxSix] = useState(false)
-  const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(false)
-  const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(false)
-  const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    false,
+  const [checkboxOne, setCheckboxOne] = useState(
+    caseDraftJSON.case.caseCustodyProvisions.indexOf(
+      CaseCustodyProvisions._95_1_A,
+    ) > -1,
   )
-  const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(false)
+  const [checkboxTwo, setCheckboxTwo] = useState(
+    caseDraftJSON.case.caseCustodyProvisions.indexOf(
+      CaseCustodyProvisions._95_1_B,
+    ) > -1,
+  )
+  const [checkboxThree, setCheckboxThree] = useState(
+    caseDraftJSON.case.caseCustodyProvisions.indexOf(
+      CaseCustodyProvisions._95_1_C,
+    ) > -1,
+  )
+  const [checkboxFour, setCheckboxFour] = useState(
+    caseDraftJSON.case.caseCustodyProvisions.indexOf(
+      CaseCustodyProvisions._95_1_D,
+    ) > -1,
+  )
+  const [checkboxFive, setCheckboxFive] = useState(
+    caseDraftJSON.case.caseCustodyProvisions.indexOf(
+      CaseCustodyProvisions._95_2,
+    ) > -1,
+  )
+  const [checkboxSix, setCheckboxSix] = useState(
+    caseDraftJSON.case.caseCustodyProvisions.indexOf(
+      CaseCustodyProvisions._99_1_B,
+    ) > -1,
+  )
+  const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
+    caseDraftJSON.case.restrictions.indexOf(CaseCustodyRestrictions.ISOLATION) >
+      -1,
+  )
+  const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
+    caseDraftJSON.case.restrictions.indexOf(CaseCustodyRestrictions.VISITAION) >
+      -1,
+  )
+  const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
+    caseDraftJSON.case.restrictions.indexOf(
+      CaseCustodyRestrictions.COMMUNICATION,
+    ) > -1,
+  )
+  const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
+    caseDraftJSON.case.restrictions.indexOf(CaseCustodyRestrictions.MEDIA) > -1,
+  )
 
   const caseCustodyProvisions = [
     {
@@ -166,6 +204,19 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
+
+  useEffect(() => {
+    api.saveCase(
+      window.localStorage.getItem('caseId'),
+      parseString('state', CaseState.SUBMITTED),
+    )
+    updateState(
+      workingCase,
+      'id',
+      window.localStorage.getItem('caseId'),
+      setWorkingCase,
+    )
+  }, [])
 
   return (
     <Box marginTop={7} marginBottom={30}>
@@ -335,22 +386,21 @@ export const StepTwo: React.FC = () => {
                             label={provision.brokenLaw}
                             value={provision.value}
                             checked={provision.getCheckbox}
-                            defaultChecked={
-                              caseDraftJSON.case.caseCustodyProvisions.indexOf(
-                                provision.value,
-                              ) > -1
-                            }
                             tooltip={provision.explination}
                             onChange={({ target }) => {
-                              console.log(target.checked)
                               // Toggle the checkbox on or off
-                              provision.setCheckbox(target.checked)
+                              provision.setCheckbox(!provision.getCheckbox)
 
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
                               // If the user is checking the box, add the broken law to the state
-                              if (target.checked) {
+                              if (
+                                target.checked &&
+                                copyOfState.case.caseCustodyProvisions.indexOf(
+                                  target.value as CaseCustodyProvisions,
+                                ) === -1
+                              ) {
                                 copyOfState.case.caseCustodyProvisions.push(
                                   target.value as CaseCustodyProvisions,
                                 )
@@ -415,21 +465,21 @@ export const StepTwo: React.FC = () => {
                           label={restriction.restriction}
                           value={restriction.value}
                           checked={restriction.getCheckbox}
-                          defaultChecked={
-                            caseDraftJSON.case.restrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Toggle the checkbox on or off
-                            restriction.setCheckbox(target.checked)
+                            restriction.setCheckbox(!restriction.getCheckbox)
 
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
                             // If the user is checking the box, add the restriction to the state
-                            if (target.checked) {
+                            if (
+                              target.checked &&
+                              copyOfState.case.restrictions.indexOf(
+                                target.value as CaseCustodyRestrictions,
+                              ) === -1
+                            ) {
                               copyOfState.case.restrictions.push(
                                 target.value as CaseCustodyRestrictions,
                               )

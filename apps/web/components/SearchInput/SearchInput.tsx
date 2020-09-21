@@ -6,8 +6,8 @@ import React, {
   useCallback,
   useRef,
   forwardRef,
-  useContext,
   ReactElement,
+  useReducer,
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
@@ -25,21 +25,20 @@ import {
   Typography,
   Stack,
 } from '@island.is/island-ui/core'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
 import {
   GetSearchResultsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
-  SearchResult,
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
-} from '../../graphql/schema'
-import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
+  SearchableContentTypes,
+} from '@island.is/web/graphql/schema'
 
-const DEBOUNCE_TIMER = 300
+const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
 
 type SearchState = {
@@ -50,54 +49,82 @@ type SearchState = {
   isLoading: boolean
 }
 
-const emptyState: Readonly<SearchState> = {
+const isEmpty = ({ results, suggestions }: SearchState): boolean =>
+  suggestions?.length === 0 && (results?.total ?? 0) === 0
+
+const initialSearchState: Readonly<SearchState> = {
   term: '',
   suggestions: [],
   prefix: '',
   isLoading: false,
 }
 
-const isEmpty = ({ results, suggestions }: SearchState): boolean =>
-  suggestions.length === 0 && (results?.total ?? 0) === 0
+const searchReducer = (state, action): SearchState => {
+  switch (action.type) {
+    case 'startLoading': {
+      return { ...state, isLoading: true }
+    }
+    case 'suggestions': {
+      return { ...state, suggestions: action.suggestions }
+    }
+    case 'searchResults': {
+      return { ...state, results: action.results, isLoading: false }
+    }
+    case 'searchString': {
+      return { ...state, term: action.term, prefix: action.prefix }
+    }
+    case 'reset': {
+      return initialSearchState
+    }
+  }
+}
 
-const useSearch = (locale: Locale, term?: string): SearchState => {
-  const { globalNamespace } = useContext(GlobalNamespaceContext)
-  const [state, setState] = useState<SearchState>(emptyState)
+const useSearch = (
+  locale: Locale,
+  term?: string,
+  autocomplete?: boolean,
+): SearchState => {
+  const [state, dispatch] = useReducer(searchReducer, initialSearchState)
   const client = useApolloClient()
   const timer = useRef(null)
 
   useEffect(() => {
-    if (term == null) {
-      setState(emptyState)
+    if (!autocomplete) {
+      dispatch({
+        type: 'reset',
+      })
       return
     }
-
     if (term === '') {
-      setState({
-        isLoading: false,
-        term: '',
-        prefix: '',
-        // hardcoded while not supported by search
-        suggestions: globalNamespace.searchSuggestions ?? [],
+      dispatch({
+        type: 'reset',
       })
       return
     }
 
-    setState({ ...state, isLoading: true })
+    dispatch({ type: 'startLoading' })
 
     const thisTimerId = (timer.current = setTimeout(async () => {
-      const {
-        data: { searchResults: results },
-      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
-        query: GET_SEARCH_RESULTS_QUERY,
-        variables: {
-          query: {
-            queryString: term,
-            language: locale as ContentLanguage,
-            types: ['webArticle'],
+      client
+        .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+          query: GET_SEARCH_RESULTS_QUERY,
+          variables: {
+            query: {
+              queryString: term.trim(),
+              language: locale as ContentLanguage,
+              types: [
+                SearchableContentTypes['WebArticle'],
+                SearchableContentTypes['WebLifeEventPage'],
+              ],
+            },
           },
-        },
-      })
+        })
+        .then(({ data: { searchResults: results } }) => {
+          dispatch({
+            type: 'searchResults',
+            results,
+          })
+        })
 
       // the api only completes single terms get only single terms
       const indexOfLastSpace = term.lastIndexOf(' ')
@@ -105,45 +132,47 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
-      const {
-        data: {
-          webSearchAutocomplete: { completions: suggestions },
-        },
-      } = await client.query<
-        AutocompleteTermResultsQuery,
-        QueryWebSearchAutocompleteArgs
-      >({
-        query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-        variables: {
-          input: {
-            singleTerm: queryString,
-            language: locale as ContentLanguage,
-            size: 10, // only show top X completions to prevent long list
+      client
+        .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
+          query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+          variables: {
+            input: {
+              singleTerm: queryString.trim(),
+              language: locale as ContentLanguage,
+              size: 10, // only show top X completions to prevent long list
+            },
           },
-        },
-      })
-
-      if (thisTimerId === timer.current) {
-        setState({
-          isLoading: false,
-          term,
-          results,
-          suggestions,
-          prefix,
         })
-      }
+        .then(
+          ({
+            data: {
+              webSearchAutocomplete: { completions: suggestions },
+            },
+          }) => {
+            dispatch({
+              type: 'suggestions',
+              suggestions,
+            })
+          },
+        )
+
+      dispatch({
+        type: 'searchString',
+        term,
+        prefix,
+      })
     }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, locale, term, setState])
+  }, [client, locale, term, dispatch])
 
   return state
 }
 
 const useSubmit = (locale: Locale) => {
   const Router = useRouter()
-  const { makePath } = useRouteNames(locale)
+  const { makePath } = routeNames(locale)
 
   return useCallback(
     (q: string) => {
@@ -178,17 +207,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       placeholder = '',
       activeLocale: locale,
       initialInputValue = '',
-      autocomplete = true,
       openOnFocus = false,
       size = 'medium',
       white = false,
       colored = true,
+      autocomplete = true,
       id = 'downshift',
     },
     ref,
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
-    const search = useSearch(locale, autocomplete ? searchTerm : null)
+    const search = useSearch(locale, searchTerm, autocomplete)
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
     const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
@@ -198,15 +227,26 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       <Downshift<string>
         id={id}
         initialInputValue={initialInputValue}
-        onChange={(q) => onSubmit(q)}
+        onChange={(q) => {
+          return onSubmit(`${search.prefix} ${q}`.trim() || '')
+        }}
         onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) => v ?? ''}
+        itemToString={(v) => {
+          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+
+          if (str === 'null') {
+            return ''
+          }
+
+          return str
+        }}
         stateReducer={(state, changes) => {
           // pressing tab when input is not empty should move focus to the
           // search icon, so we need to prevent downshift from closing on blur
           const shouldIgnore =
-            changes.type === Downshift.stateChangeTypes.blurInput &&
-            state.inputValue !== ''
+            changes.type === Downshift.stateChangeTypes.mouseUp ||
+            (changes.type === Downshift.stateChangeTypes.blurInput &&
+              state.inputValue !== '')
 
           return shouldIgnore ? {} : changes
         }}
@@ -281,7 +321,7 @@ const Results: FC<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
 }> = ({ locale, search, highlightedIndex, getItemProps }) => {
-  const { makePath } = useRouteNames(locale)
+  const { makePath } = routeNames(locale)
 
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
@@ -308,27 +348,28 @@ const Results: FC<{
     >
       <div className={styles.menuRow}>
         <Stack space={1}>
-          {search.suggestions.map((suggestion, i) => {
-            const suggestionHasTerm = suggestion.startsWith(search.term)
-            const startOfString = suggestionHasTerm ? search.term : suggestion
-            const endOfString = suggestionHasTerm
-              ? suggestion.replace(search.term, '')
-              : ''
-            return (
-              <div key={suggestion} {...getItemProps({ item: suggestion })}>
-                <Typography
-                  links
-                  color={i === highlightedIndex ? 'blue400' : 'dark400'}
-                >
-                  {`${search.prefix} ${startOfString}`}
-                  <strong>{endOfString}</strong>
-                </Typography>
-              </div>
-            )
-          })}
+          {search.suggestions &&
+            search.suggestions.map((suggestion, i) => {
+              const suggestionHasTerm = suggestion.startsWith(search.term)
+              const startOfString = suggestionHasTerm ? search.term : suggestion
+              const endOfString = suggestionHasTerm
+                ? suggestion.replace(search.term, '')
+                : ''
+              return (
+                <div key={suggestion} {...getItemProps({ item: suggestion })}>
+                  <Typography
+                    links
+                    color={i === highlightedIndex ? 'blue400' : 'dark400'}
+                  >
+                    {`${search.prefix} ${startOfString}`}
+                    <strong>{endOfString}</strong>
+                  </Typography>
+                </div>
+              )
+            })}
         </Stack>
       </div>{' '}
-      {search.results.items.length > 0 && (
+      {search.results && search.results.items.length > 0 && (
         <>
           <div className={styles.separatorHorizontal} />
           <div className={styles.menuRow}>

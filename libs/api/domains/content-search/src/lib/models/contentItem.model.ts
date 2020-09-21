@@ -27,6 +27,9 @@ export class ContentItem {
   containsApplicationForm: boolean
 
   @Field({ nullable: true })
+  importance: number
+
+  @Field({ nullable: true })
   group: string
 
   @Field({ nullable: true })

@@ -15,11 +15,11 @@ export enum CaseCustodyRestrictions {
 }
 
 export enum CaseState {
-  UNKNOWN = 'Óþekkt',
-  DRAFT = 'Drög',
-  SUBMITTED = 'Krafa staðfest',
-  ACTIVE = 'Gæsluvarðhald virkt',
-  COMPLETED = 'Gæsluvarðhaldi lokið',
+  UNKNOWN = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
 }
 
 export interface Case {
@@ -32,9 +32,32 @@ export interface Case {
   state: CaseState
 }
 
+export interface GetCaseByIdCaseResponse {
+  id: string
+  created: Date
+  modified: Date
+  state: CaseState
+  court: string
+  comments: string
+  policeCaseNumber: string
+  suspectNationalId: string
+  suspectName: string
+  suspectAddress: string
+  arrestDate: Date
+  requestedCourtDate: Date
+  requestedCustodyEndDate: Date
+  lawsBroken: string
+  custodyProvisions: CaseCustodyProvisions[]
+  custodyRestrictions: CaseCustodyRestrictions[]
+  caseFacts: string
+  witnessAccounts: string
+  investigationProgress: string
+  legalArguments: string
+}
+
 export interface GetCaseByIdResponse {
   httpStatusCode: number
-  case?: Case
+  case?: GetCaseByIdCaseResponse
 }
 
 export interface CreateCaseRequest {

@@ -6,6 +6,7 @@ import { ItemInput } from './dto/item.input'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { SearcherInput } from './dto/searcher.input'
+import { logger } from '@island.is/logging'
 
 @Resolver()
 export class ContentSearchResolver {

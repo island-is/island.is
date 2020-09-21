@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -19,6 +19,7 @@ import { updateState, autoSave } from '../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
+import { useParams } from 'react-router-dom'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -43,16 +44,18 @@ export const StepOne: React.FC = () => {
         arrestTime: caseDraftJSON.case.arrestTime ?? '',
         requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
         requestedCourtTime: caseDraftJSON.case.requestedCourtTime ?? '',
-        requestedCustodyEndDate: null,
-        requestedCustodyEndTime: '',
-        lawsBroken: '',
-        caseCustodyProvisions: [],
-        restrictions: [],
-        caseFacts: '',
-        witnessAccounts: '',
-        investigationProgress: '',
-        legalArguments: '',
-        comments: '',
+        requestedCustodyEndDate:
+          caseDraftJSON.case.requestedCustodyEndDate ?? null,
+        requestedCustodyEndTime:
+          caseDraftJSON.case.requestedCustodyEndTime ?? '',
+        lawsBroken: caseDraftJSON.case.lawsBroken ?? '',
+        caseCustodyProvisions: caseDraftJSON.case.caseCustodyProvisions ?? [],
+        restrictions: caseDraftJSON.case.restrictions ?? [],
+        caseFacts: caseDraftJSON.case.caseFacts ?? '',
+        witnessAccounts: caseDraftJSON.case.witnessAccounts ?? '',
+        investigationProgress: caseDraftJSON.case.investigationProgress ?? '',
+        legalArguments: caseDraftJSON.case.legalArguments ?? '',
+        comments: caseDraftJSON.case.comments ?? '',
       },
     },
   )
@@ -75,6 +78,7 @@ export const StepOne: React.FC = () => {
   const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
     '',
   )
+  const { id } = useParams()
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
@@ -146,6 +150,20 @@ export const StepOne: React.FC = () => {
     }
   }
 
+  useEffect(() => {
+    const getCurrentCase = async () => {
+      const currentCase = await api.getCaseById(id)
+      window.localStorage.setItem(
+        'workingCase',
+        JSON.stringify({ id, case: currentCase.case }),
+      )
+    }
+
+    if (id) {
+      getCurrentCase()
+    }
+  }, [])
+
   return (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -169,6 +187,7 @@ export const StepOne: React.FC = () => {
                 </Typography>
               </Box>
               <Input
+                data-testid="policeCaseNumber"
                 name="policeCaseNumber"
                 label="Slá inn LÖKE málsnúmer"
                 defaultValue={workingCase.case.policeCaseNumber}
@@ -202,6 +221,7 @@ export const StepOne: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Input
+                  data-testid="nationalId"
                   name="nationalId"
                   label="Kennitala"
                   defaultValue={workingCase.case.suspectNationalId}
@@ -229,6 +249,7 @@ export const StepOne: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Input
+                  data-testid="suspectName"
                   name="suspectName"
                   label="Fullt nafn kærða"
                   defaultValue={workingCase.case.suspectName}
@@ -254,6 +275,7 @@ export const StepOne: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Input
+                  data-testid="suspectAddress"
                   name="suspectAddress"
                   label="Lögheimili/dvalarstaður"
                   defaultValue={workingCase.case.suspectAddress}
@@ -288,8 +310,14 @@ export const StepOne: React.FC = () => {
                 name="court"
                 label="Veldu dómstól"
                 defaultValue={{
-                  label: defaultCourt[0].label,
-                  value: defaultCourt[0].value,
+                  label:
+                    defaultCourt.length > 0
+                      ? defaultCourt[0].label
+                      : courts[0].label,
+                  value:
+                    defaultCourt.length > 0
+                      ? defaultCourt[0].value
+                      : courts[0].value,
                 }}
                 options={courts}
                 onChange={({ label }: Option) => {
@@ -335,6 +363,7 @@ export const StepOne: React.FC = () => {
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
+                    data-testid="arrestTime"
                     name="arrestTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
@@ -428,6 +457,7 @@ export const StepOne: React.FC = () => {
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
+                    data-testid="courtDate"
                     name="courtDate"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"

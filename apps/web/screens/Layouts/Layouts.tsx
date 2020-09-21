@@ -81,7 +81,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
 )
 
 interface NewsItemProps {
-  sidebar: ReactNode
+  sidebar?: ReactNode
 }
 
 export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
@@ -98,11 +98,13 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
           span={['12/12', '12/12', '4/12', '3/12']}
           offset={['0', '0', '0', '1/12']}
         >
-          <Sticky>
-            <Box background="purple100" padding={4}>
-              {sidebar}
-            </Box>
-          </Sticky>
+          {sidebar && (
+            <Sticky>
+              <Box background="purple100" padding={4}>
+                {sidebar}
+              </Box>
+            </Sticky>
+          )}
         </GridColumn>
       </GridRow>
     </Box>

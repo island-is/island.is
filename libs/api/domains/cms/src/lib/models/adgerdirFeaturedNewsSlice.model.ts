@@ -25,7 +25,7 @@ export const mapAdgerdirFeaturedNewsSlice = ({
   sys,
 }: IVidspyrnaFeaturedNews): AdgerdirFeaturedNewsSlice =>
   new AdgerdirFeaturedNewsSlice({
-    id: sys.id,
-    title: fields.title,
+    id: sys.id ?? '',
+    title: fields.title ?? '',
     featured: fields.featured.map(mapAdgerdirNewsItem),
   })

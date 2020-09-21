@@ -6,14 +6,16 @@ interface Props {
   title: string
   intro: string
   image: string
-  url: string
+  href: string
+  as: string
 }
 
-const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
+const LifeEventCard: React.FC<Props> = ({ title, intro, image, href, as }) => {
   return (
     <FocusableBox
       component={Link}
-      href={url}
+      href={href}
+      as={as}
       borderColor="blue200"
       borderWidth="standard"
       height="full"
@@ -24,11 +26,16 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
         alignItems="flexStart"
         background="white"
         display="flex"
+        flexDirection={['column', 'column', 'row']}
         height="full"
         paddingX={[3, 3, 4]}
         paddingY={[1, 1, 3]}
         overflow="hidden"
       >
+        <div
+          className={styles.image}
+          style={{ backgroundImage: `url(${image})` }}
+        />
         <Box
           display="flex"
           flexDirection="column"

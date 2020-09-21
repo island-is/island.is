@@ -39,6 +39,6 @@ export const mapAdgerdirGroupSlice = ({
     title: fields.title,
     subtitle: fields.subtitle,
     description: fields.description,
-    image: fields.image?.fields?.file && mapImage(fields.image),
+    image: fields.image?.fields?.file ? mapImage(fields.image) : null,
     pages: fields.pages.map(mapAdgerdirPage),
   })

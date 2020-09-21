@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, getTime } from 'date-fns'
 import localeIS from 'date-fns/locale/is'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
@@ -52,18 +52,20 @@ export const DetentionRequests: React.FC = () => {
     }
   }, [])
 
-  const mapCaseStateToTagVariant = (state: string): TagVariant => {
+  const mapCaseStateToTagVariant = (
+    state: CaseState,
+  ): { color: TagVariant; text: string } => {
     switch (state) {
-      case 'DRAFT':
-        return 'red'
-      case 'SUBMITTED':
-        return 'purple'
-      case 'ACTIVE':
-        return 'darkerMint'
-      case 'COMPLETED':
-        return 'blue'
+      case CaseState.DRAFT:
+        return { color: 'red', text: 'Drög' }
+      case CaseState.SUBMITTED:
+        return { color: 'purple', text: 'Krafa staðfest' }
+      case CaseState.ACTIVE:
+        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+      case CaseState.COMPLETED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi lokið' }
       default:
-        return 'white'
+        return { color: 'white', text: 'Óþekkt' }
     }
   }
 
@@ -109,12 +111,66 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  <Tag variant={mapCaseStateToTagVariant(c.state)} label>
-                    {CaseState[c.state]}
+                  <Tag variant={mapCaseStateToTagVariant(c.state).color} label>
+                    {mapCaseStateToTagVariant(c.state).text}
                   </Tag>
                 </td>
                 <td>
-                  <Button href="/" icon="arrowRight" variant="text">
+                  <Button
+                    href={`/krafa/${c.id}`}
+                    icon="arrowRight"
+                    variant="text"
+                    onClick={async () => {
+                      const workingCase = await api.getCaseById(c.id)
+                      console.log(workingCase)
+                      window.localStorage.setItem(
+                        'workingCase',
+                        JSON.stringify({
+                          id: workingCase.case.id,
+                          case: {
+                            policeCaseNumber: workingCase.case.policeCaseNumber,
+                            suspectNationalId:
+                              workingCase.case.suspectNationalId,
+                            suspectName: workingCase.case.suspectName,
+                            suspectAddress: workingCase.case.suspectAddress,
+                            court: workingCase.case.court,
+                            arrestDate: workingCase.case.arrestDate,
+                            arrestTime: format(
+                              getTime(
+                                parseISO(
+                                  workingCase.case.arrestDate.toString(),
+                                ),
+                              ),
+                              'hh:mm',
+                            ),
+                            requestedCourtDate:
+                              workingCase.case.requestedCourtDate,
+                            requestedCourtTime: format(
+                              getTime(
+                                parseISO(
+                                  workingCase.case.requestedCourtDate.toString(),
+                                ),
+                              ),
+                              'hh:mm',
+                            ),
+                            requestedCustodyEndDate:
+                              workingCase.case.requestedCustodyEndDate,
+                            requestedCustodyEndTime: '',
+                            lawsBroken: workingCase.case.lawsBroken,
+                            caseCustodyProvisions:
+                              workingCase.case.custodyProvisions,
+                            restrictions: workingCase.case.custodyRestrictions,
+                            caseFacts: workingCase.case.caseFacts,
+                            witnessAccounts: workingCase.case.witnessAccounts,
+                            investigationProgress:
+                              workingCase.case.investigationProgress,
+                            legalArguments: workingCase.case.legalArguments,
+                            comments: workingCase.case.comments,
+                          },
+                        }),
+                      )
+                    }}
+                  >
                     Opna kröfu
                   </Button>
                 </td>

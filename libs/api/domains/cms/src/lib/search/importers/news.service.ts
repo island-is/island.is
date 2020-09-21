@@ -2,8 +2,8 @@ import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { INews } from '../../generated/contentfulTypes'
-import { News, mapNews } from '../../models/news.model'
-import { createTerms } from './utils'
+import { mapNews } from '../../models/news.model'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class NewsSyncService {
@@ -17,17 +17,16 @@ export class NewsSyncService {
     logger.info('Mapping news', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
-        let mapped: News
         try {
-          mapped = mapNews(entry)
-
+          const mapped = mapNews(entry)
+          const type = 'webNews'
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
-            type: 'webNews',
+            content: extractStringsFromObject(JSON.parse(mapped.content)),
+            type,
             termPool: createTerms([mapped.title, mapped.intro]),
-            response: JSON.stringify(mapped),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [
               {
                 key: mapped.slug,

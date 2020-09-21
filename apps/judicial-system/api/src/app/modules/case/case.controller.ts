@@ -8,15 +8,17 @@ import {
   Put,
   UseGuards,
   Inject,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
-import { JwtAuthGuard } from '../auth'
+import { JwtAuthGuard, AuthUser } from '../auth'
+import { UserService } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case } from './case.model'
-import { Notification } from './case.types'
+import { Case, Notification, CaseState } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 
@@ -26,8 +28,10 @@ import { CaseValidationPipe } from './case.pipe'
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+    @Inject(UserService)
+    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get('cases')
@@ -39,19 +43,13 @@ export class CaseController {
   @Get('case/:id')
   @ApiOkResponse({ type: Case })
   async getById(@Param('id') id: string): Promise<Case> {
-    const existingCase = await this.caseService.findById(id)
-
-    if (!existingCase) {
-      throw new NotFoundException(`A case with the id ${id} does not exist`)
-    }
-
-    return existingCase
+    return this.findCaseById(id)
   }
 
   @Post('case')
   @ApiCreatedResponse({ type: Case })
   create(
-    @Body(new CaseValidationPipe(true))
+    @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
   ): Promise<Case> {
     return this.caseService.create(caseToCreate)
@@ -78,13 +76,45 @@ export class CaseController {
 
   @Get('case/:id/notifications')
   @ApiOkResponse({ type: Notification, isArray: true })
-  getAllNotificationsById(@Param('id') id: string): Promise<Notification[]> {
-    return this.caseService.getAllNotificationsByCaseId(id)
+  async getAllNotificationsById(
+    @Param('id') id: string,
+  ): Promise<Notification[]> {
+    const existingCase = await this.findCaseById(id)
+
+    return this.caseService.getAllNotificationsByCaseId(existingCase)
   }
 
   @Post('case/:id/notification')
   @ApiOkResponse({ type: Notification })
-  sendNotificationByCaseId(@Param('id') id: string): Promise<Notification> {
-    return this.caseService.sendNotificationByCaseId(id)
+  async sendNotificationByCaseId(
+    @Param('id') id: string,
+    @Req() req,
+  ): Promise<Notification> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.DRAFT &&
+      existingCase.state !== CaseState.SUBMITTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot send a notification for case in state ${existingCase.state}`,
+      )
+    }
+
+    const authUser: AuthUser = req.user
+
+    const user = await this.userService.findByNationalId(authUser)
+
+    return this.caseService.sendNotificationByCaseId(existingCase, user)
+  }
+
+  private async findCaseById(id: string) {
+    const existingCase = await this.caseService.findById(id)
+
+    if (!existingCase) {
+      throw new NotFoundException(`A case with the id ${id} does not exist`)
+    }
+
+    return existingCase
   }
 }

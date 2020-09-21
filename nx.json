@@ -222,6 +222,12 @@
     "skilavottord-ws": {
       "tags": []
     },
+    "api-domains-translations": {
+      "tags": []
+    },
+    "localization": {
+      "tags": []
+    },
     "infra-monitoring": {
       "tags": []
     },
@@ -229,6 +235,15 @@
       "tags": []
     },
     "elastic-indexing": {
+      "tags": []
+    },
+    "reference-next-app": {
+      "tags": []
+    },
+    "nova-sms": {
+      "tags": []
+    },
+    "service-portal-assets": {
       "tags": []
     }
   }

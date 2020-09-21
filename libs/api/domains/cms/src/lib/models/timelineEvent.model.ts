@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 
 import { ITimelineEvent } from '../generated/contentfulTypes'
+import { Html, mapHtml } from './html.model'
 
 @ObjectType()
 export class TimelineEvent {
@@ -22,8 +23,8 @@ export class TimelineEvent {
   @Field()
   label: string
 
-  @Field({ nullable: true })
-  body?: string
+  @Field(() => Html, { nullable: true })
+  body?: Html
 
   @Field(() => [String], { nullable: true })
   tags?: Array<string>
@@ -39,10 +40,10 @@ export const mapTimelineEvent = ({
   id: sys.id,
   title: fields.title,
   date: fields.date,
-  numerator: fields.numerator ?? 0,
-  denominator: fields.denominator ?? 0,
+  numerator: fields.numerator,
+  denominator: fields.denominator,
   label: fields.label ?? '',
-  body: (fields.body && JSON.stringify(fields.body)) ?? null,
+  body: (fields.body && mapHtml(fields.body, sys.id + ':body')) ?? null,
   tags: fields.tags ?? [],
   link: fields.link ?? '',
 })

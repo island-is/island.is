@@ -19,5 +19,5 @@ export class SubArticle {
 export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
   title: fields.title,
   slug: fields.slug,
-  body: mapDocument(fields.content, sys.id + ':body'),
+  body: fields?.content ? mapDocument(fields.content, sys.id + ':body') : [],
 })

@@ -45,27 +45,25 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
           <Stack space={4}>
             <Stack space={2}>
               <Controller
-                defaultValue=""
                 name="period.from"
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Frá"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
-                    value={value.toString() || undefined}
+                    selected={value}
                     handleChange={onChange}
                   />
                 )}
               />
               <Controller
-                defaultValue=""
                 name="period.to"
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Til"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
-                    value={value.toString() || undefined}
+                    selected={value}
                     handleChange={onChange}
                   />
                 )}
@@ -75,7 +73,6 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Typography variant="h5">Flug</Typography>
               <Divider weight="alternate" />
               <Controller
-                defaultValue=""
                 name="airline"
                 render={({ onChange, value }) => {
                   return (
@@ -92,7 +89,6 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 }}
               />
               <Controller
-                defaultValue=""
                 name="flightLeg.from"
                 render={({ onChange, value }) => (
                   <Input
@@ -104,7 +100,6 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
               <Controller
-                defaultValue=""
                 name="flightLeg.to"
                 render={({ onChange, value }) => (
                   <Input
@@ -120,7 +115,6 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Typography variant="h5">Notandi</Typography>
               <Divider weight="alternate" />
               <Controller
-                defaultValue=""
                 name="postalCode"
                 render={({ onChange, value }) => (
                   <Input
@@ -132,7 +126,6 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
               <Controller
-                defaultValue=""
                 name="age.from"
                 render={({ onChange, value }) => (
                   <Input
@@ -144,7 +137,6 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
               <Controller
-                defaultValue=""
                 name="age.to"
                 render={({ onChange, value }) => (
                   <Input

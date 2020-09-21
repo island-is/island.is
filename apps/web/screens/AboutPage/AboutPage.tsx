@@ -11,7 +11,7 @@ import React, {
   useCallback,
 } from 'react'
 import { fromPairs, minBy } from 'lodash'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ABOUT_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
@@ -29,30 +29,35 @@ import {
 import {
   Typography,
   Divider,
-  ContentBlock,
   Box,
-  Column,
-  Columns,
-  ColumnProps,
   BoxProps,
   Breadcrumbs,
   Stack,
   Link,
   ColorSchemeContext,
+  GridContainer,
+  GridColumn,
+  GridRow,
+  SpanType,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/island-ui/contentful'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
-} from '../../graphql/schema'
+} from '@island.is/web/graphql/schema'
 import useViewport from '@island.is/web/hooks/useViewport'
+import { renderSlices } from '@island.is/island-ui/contentful'
+
+const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
+const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
+const mainContentIndent: SpanType = [null, null, null, '1/12']
+const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
 
 const useScrollSpy = ({
   margin = 0,
@@ -143,26 +148,20 @@ const connectSlices = (slices: AvailableSlices[]): { [k: string]: string } => {
 }
 
 export interface LayoutProps {
-  width: ColumnProps['width']
-  indent?: ColumnProps['width']
+  width: SpanType
+  indent?: SpanType
   boxProps?: BoxProps
 }
 
-const Layout: FC<LayoutProps> = ({
-  width,
-  indent,
-  boxProps = {},
-  children,
-}) => {
+const Layout: FC<LayoutProps> = ({ width, indent, children }) => {
   return (
-    <ContentBlock>
-      <Box paddingX={[0, 0, 0, 6]} {...boxProps}>
-        <Columns collapseBelow="lg">
-          {indent && <Column width={indent}>{null}</Column>}
-          <Column width={width}>{children}</Column>
-        </Columns>
-      </Box>
-    </ContentBlock>
+    <GridContainer position="none">
+      <GridRow>
+        <GridColumn span={width} offset={indent}>
+          {children}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 
@@ -219,125 +218,122 @@ interface SectionProps {
 
 const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return (
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
-          <ContentBlock>
+          <GridContainer position="none">
             <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-              <Header />
+              <Box marginBottom={[8, 8, 8, 15]}>
+                <Header />
+              </Box>
             </ColorSchemeContext.Provider>
-            <Box paddingX={[0, 0, 6]} paddingTop={8}>
-              <Columns collapseBelow="lg">
-                <Column width="9/12">
-                  <div className={styles.indent}>
-                    <Stack space={2}>
-                      <Breadcrumbs color="blue300" separatorColor="blue300">
-                        <Link href={makePath()}>Ísland.is</Link>
-                        <Link href="">{page.title}</Link>
-                      </Breadcrumbs>
-                      <Typography variant="h1" as="h1" color="white">
-                        {slice.title}
-                      </Typography>
-                      <Typography variant="p" as="p" color="white">
-                        {slice.introduction}
-                      </Typography>
-                    </Stack>
-                  </div>
-                  {(slice.slices as AvailableSlices[]).map((slice) => (
-                    <Section
-                      key={slice.id}
-                      slice={slice}
-                      page={page}
-                      currentSliceId={currentSliceId}
-                      setRef={setRef}
-                    />
-                  ))}
-                </Column>
-                <Column width="3/12">
-                  <Sidebar
-                    title={page.title}
-                    type={decideSidebarType(
-                      (page.slices as AvailableSlices[]).find(
-                        (slice) =>
-                          !currentSliceId || slice.id === currentSliceId,
-                      ),
-                    )}
-                  >
-                    {({ bulletRef, colors }) => (
-                      <>
-                        {page.slices
-                          .map(extractSliceTitle)
-                          .filter(Boolean)
-                          .map(([id, text], index) => (
-                            <Box
-                              key={index}
-                              paddingBottom={index === 0 ? 2 : 0}
+            <GridRow>
+              <GridColumn
+                offset={mainContentIndent}
+                span={mainContentSpanWithIndent}
+              >
+                <Stack space={2}>
+                  <Breadcrumbs color="blue300" separatorColor="blue300">
+                    <Link href={makePath()}>Ísland.is</Link>
+                    <span>{page.title}</span>
+                  </Breadcrumbs>
+                  <Typography variant="h1" as="h1" color="white">
+                    {slice.title}
+                  </Typography>
+                  <Typography variant="p" as="p" color="white">
+                    {slice.introduction}
+                  </Typography>
+                </Stack>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+                {(slice.slices as AvailableSlices[]).map((slice) => (
+                  <Section
+                    key={slice.id}
+                    slice={slice}
+                    page={page}
+                    currentSliceId={currentSliceId}
+                    setRef={setRef}
+                  />
+                ))}
+              </GridColumn>
+              <GridColumn span={sidebarContentSpan} position="none">
+                <Sidebar
+                  title={page.title}
+                  type={decideSidebarType(
+                    (page.slices as AvailableSlices[]).find(
+                      (slice) => !currentSliceId || slice.id === currentSliceId,
+                    ),
+                  )}
+                >
+                  {({ bulletRef, colors }) => (
+                    <>
+                      {page.slices
+                        .map(extractSliceTitle)
+                        .filter(Boolean)
+                        .map(([id, text], index) => (
+                          <Box key={index} paddingBottom={index === 0 ? 2 : 0}>
+                            <a
+                              ref={id === currentSliceId ? bulletRef : null}
+                              href={'#' + id}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                document.getElementById(id).scrollIntoView()
+                              }}
                             >
-                              <a
-                                ref={id === currentSliceId ? bulletRef : null}
-                                href={'#' + id}
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  document.getElementById(id).scrollIntoView()
-                                }}
-                              >
-                                <Typography
-                                  variant={index === 0 ? 'p' : 'pSmall'}
-                                  as="p"
-                                  color={colors.main}
-                                >
-                                  {id === currentSliceId ? <b>{text}</b> : text}
-                                </Typography>
-                              </a>
-                            </Box>
-                          ))}
-                        {slice.links.map(({ url, text }, index) => (
-                          <span key={index}>
-                            <Box paddingY={2}>
-                              <Divider weight={colors.divider} />
-                            </Box>
-                            <Link href={url}>
                               <Typography
-                                variant="p"
-                                as="div"
-                                color={colors.secondary}
+                                variant={index === 0 ? 'p' : 'pSmall'}
+                                as="p"
+                                color={colors.main}
                               >
-                                {text}
+                                {id === currentSliceId ? <b>{text}</b> : text}
                               </Typography>
-                            </Link>
-                          </span>
+                            </a>
+                          </Box>
                         ))}
-                      </>
-                    )}
-                  </Sidebar>
-                </Column>
-              </Columns>
-            </Box>
-          </ContentBlock>
+                      {slice.links.map(({ url, text }, index) => (
+                        <span key={index}>
+                          <Box paddingY={2}>
+                            <Divider weight={colors.divider} />
+                          </Box>
+                          <Link href={url}>
+                            <Typography
+                              variant="p"
+                              as="div"
+                              color={colors.secondary}
+                            >
+                              {text}
+                            </Typography>
+                          </Link>
+                        </span>
+                      ))}
+                    </>
+                  )}
+                </Sidebar>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Background>
       )
     case 'TimelineSlice':
       return (
         <Timeline
           {...slice}
-          events={slice.events.map((event, index) => ({
+          events={slice.events.map((event) => ({
             ...event,
-            body: event.body && <Content key={index} document={event.body} />,
+            body: event.body && renderSlices(event.body),
           }))}
         />
       )
     case 'HeadingSlice':
       return (
         <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
-          <Layout
-            indent="1/12"
-            width="7/12"
-            boxProps={{ paddingTop: 15, paddingBottom: 10 }}
-          >
-            <Heading {...slice} />
+          <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
+            <Box paddingTop={15} paddingBottom={10}>
+              <Heading {...slice} />
+            </Box>
           </Layout>
         </div>
       )
@@ -349,8 +345,10 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           background="dotted"
         >
-          <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
-            <LinkCardList {...slice} />
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={8} paddingBottom={10}>
+              <LinkCardList {...slice} />
+            </Box>
           </Layout>
         </Box>
       )
@@ -362,12 +360,10 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           background="blue100"
         >
-          <Layout
-            width="7/12"
-            indent="1/12"
-            boxProps={{ paddingTop: 10, paddingBottom: 7 }}
-          >
-            <EmailSignup {...slice} />
+          <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
+            <Box paddingTop={10} paddingBottom={7}>
+              <EmailSignup {...slice} />
+            </Box>
           </Layout>
         </Box>
       )
@@ -379,22 +375,26 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           className={styles.gradient}
         >
-          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
-            <StoryList
-              {...slice}
-              stories={(slice.stories as any[]).map((story) => ({
-                ...story,
-                logoUrl: story.logo.url,
-              }))}
-            />
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={12} paddingBottom={10}>
+              <StoryList
+                {...slice}
+                stories={(slice.stories as any[]).map((story) => ({
+                  ...story,
+                  logoUrl: story.logo.url,
+                }))}
+              />
+            </Box>
           </Layout>
         </div>
       )
     case 'LatestNewsSlice':
       return (
         <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
-          <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
-            <AboutLatestNews {...slice} />
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={15} paddingBottom={12}>
+              <AboutLatestNews {...slice} />
+            </Box>
           </Layout>
         </div>
       )
@@ -406,31 +406,38 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           className={styles.gradient}
         >
-          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
-            <LogoList {...slice} images={slice.images.map((img) => img.url)} />
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={12} paddingBottom={5}>
+              <LogoList
+                {...slice}
+                images={slice.images.map((img) => img.url)}
+              />
+            </Box>
           </Layout>
         </div>
       )
     case 'BulletListSlice':
       return (
         <div key={slice.id} ref={setRef(slice.id)}>
-          <Layout width="7/12" boxProps={{ paddingBottom: 10 }}>
-            <BulletList
-              bullets={slice.bullets.map((bullet) => {
-                switch (bullet.__typename) {
-                  case 'IconBullet':
-                    return {
-                      ...bullet,
-                      type: 'IconBullet',
-                      icon: bullet.icon.url,
-                    }
-                  case 'NumberBulletGroup':
-                    return { ...bullet, type: 'NumberBulletGroup' }
-                  default:
-                    return null
-                }
-              })}
-            />
+          <Layout width={mainContentSpan}>
+            <Box paddingBottom={10}>
+              <BulletList
+                bullets={slice.bullets.map((bullet) => {
+                  switch (bullet.__typename) {
+                    case 'IconBullet':
+                      return {
+                        ...bullet,
+                        type: 'IconBullet',
+                        icon: bullet.icon.url,
+                      }
+                    case 'NumberBulletGroup':
+                      return { ...bullet, type: 'NumberBulletGroup' }
+                    default:
+                      return null
+                  }
+                })}
+              />
+            </Box>
           </Layout>
         </div>
       )

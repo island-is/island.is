@@ -36,6 +36,12 @@ export type Link = {
   url: Scalars['String']
 }
 
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
 export type TimelineEvent = {
   __typename?: 'TimelineEvent'
   id: Scalars['ID']
@@ -44,7 +50,7 @@ export type TimelineEvent = {
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
-  body?: Maybe<Scalars['String']>
+  body?: Maybe<Html>
   tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
@@ -101,12 +107,6 @@ export type Statistic = {
   label: Scalars['String']
 }
 
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
-}
-
 export type QuestionAndAnswer = {
   __typename?: 'QuestionAndAnswer'
   id: Scalars['ID']
@@ -131,6 +131,7 @@ export type ArticleGroup = {
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
+  importance?: Maybe<Scalars['Float']>
   slug: Scalars['String']
 }
 
@@ -265,13 +266,8 @@ export type Statistics = {
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
   id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
   type: Scalars['String']
   processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
   processLink: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -304,9 +300,10 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
-  containsApplicationForm: Scalars['Boolean']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Float']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -428,6 +425,7 @@ export type Namespace = {
 
 export type AboutPage = {
   __typename?: 'AboutPage'
+  id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
@@ -479,20 +477,21 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
-  image: Image
+  image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
-}
-
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
+  category?: Maybe<ArticleCategory>
 }
 
 export type PaginatedAdgerdirNews = {
@@ -506,13 +505,23 @@ export type OrganizationTags = {
   items: Array<OrganizationTag>
 }
 
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
   items: Array<Items>
 }
 
-export type Items = Article | LifeEventPage
+export type Items = Article | LifeEventPage | News | AboutPage
 
 export type ContentItem = {
   __typename?: 'ContentItem'
@@ -523,6 +532,8 @@ export type ContentItem = {
   category?: Maybe<Scalars['String']>
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Float']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -617,9 +628,11 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getLifeEventsInCategory: Array<LifeEventPage>
   getArticleCategories: Array<ArticleCategory>
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
+  getUrl?: Maybe<Url>
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
@@ -628,6 +641,7 @@ export type Query = {
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
+  getTranslations?: Maybe<Scalars['JSON']>
 }
 
 export type QueryHelloWorldArgs = {
@@ -714,6 +728,10 @@ export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
 }
 
+export type QueryGetLifeEventsInCategoryArgs = {
+  input: GetLifeEventsInCategoryInput
+}
+
 export type QueryGetArticleCategoriesArgs = {
   input: GetArticleCategoriesInput
 }
@@ -724,6 +742,10 @@ export type QueryGetArticlesArgs = {
 
 export type QueryGetSingleNewsArgs = {
   input: GetSingleNewsInput
+}
+
+export type QueryGetUrlArgs = {
+  input: GetUrlInput
 }
 
 export type QuerySearchResultsArgs = {
@@ -752,6 +774,10 @@ export type QueryGetDocumentArgs = {
 
 export type QueryListDocumentsArgs = {
   input: ListDocumentsInput
+}
+
+export type QueryGetTranslationsArgs = {
+  input: GetTranslationsInput
 }
 
 export type HelloWorldInput = {
@@ -860,6 +886,11 @@ export type GetLifeEventsInput = {
   lang: Scalars['String']
 }
 
+export type GetLifeEventsInCategoryInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetArticleCategoriesInput = {
   lang: Scalars['String']
   size?: Maybe<Scalars['Int']>
@@ -876,12 +907,24 @@ export type GetSingleNewsInput = {
   lang?: Maybe<Scalars['String']>
 }
 
+export type GetUrlInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type SearcherInput = {
   queryString: Scalars['String']
-  types?: Maybe<Array<Scalars['String']>>
+  types?: Maybe<Array<SearchableContentTypes>>
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+}
+
+export enum SearchableContentTypes {
+  WebAboutPage = 'webAboutPage',
+  WebArticle = 'webArticle',
+  WebLifeEventPage = 'webLifeEventPage',
+  WebNews = 'webNews',
 }
 
 export enum ContentLanguage {
@@ -926,6 +969,11 @@ export type ListDocumentsInput = {
   category: Scalars['String']
   page: Scalars['Float']
   pageSize: Scalars['Float']
+}
+
+export type GetTranslationsInput = {
+  namespaces?: Maybe<Array<Scalars['String']>>
+  lang: Scalars['String']
 }
 
 export type Mutation = {
@@ -1091,7 +1139,13 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
   getArticle?: Maybe<
     { __typename?: 'Article' } & Pick<
       Article,
-      'id' | 'slug' | 'title' | 'shortTitle' | 'intro'
+      | 'id'
+      | 'slug'
+      | 'title'
+      | 'shortTitle'
+      | 'intro'
+      | 'containsApplicationForm'
+      | 'importance'
     > & {
         body: Array<
           | ({
@@ -1205,7 +1259,7 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
     { __typename?: 'Article' } & Pick<
       Article,
-      'intro' | 'slug' | 'title' | 'containsApplicationForm'
+      'intro' | 'containsApplicationForm' | 'importance' | 'slug' | 'title'
     > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
@@ -1217,7 +1271,10 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
           >
         >
         subgroup?: Maybe<
-          { __typename?: 'ArticleSubgroup' } & Pick<ArticleSubgroup, 'title'>
+          { __typename?: 'ArticleSubgroup' } & Pick<
+            ArticleSubgroup,
+            'title' | 'importance'
+          >
         >
       }
   >
@@ -1308,7 +1365,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
       LifeEventPage,
       'title' | 'slug' | 'intro'
     > & {
-        image: { __typename?: 'Image' } & ImageFieldsFragment
+        image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
         content: Array<
           | ({
               __typename?: 'PageHeaderSlice'
@@ -1352,7 +1409,29 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
       'title' | 'slug' | 'intro'
     > & {
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
-        image: { __typename?: 'Image' } & Pick<Image, 'url'>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
+      }
+  >
+}
+
+export type GetLifeEventsInCategoryQueryVariables = Exact<{
+  input: GetLifeEventsInCategoryInput
+}>
+
+export type GetLifeEventsInCategoryQuery = { __typename?: 'Query' } & {
+  getLifeEventsInCategory: Array<
+    { __typename?: 'LifeEventPage' } & Pick<
+      LifeEventPage,
+      'title' | 'slug' | 'intro'
+    > & {
+        category?: Maybe<
+          { __typename?: 'ArticleCategory' } & Pick<
+            ArticleCategory,
+            'title' | 'slug'
+          >
+        >
+        thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
       }
   >
 }
@@ -1498,8 +1577,11 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1529,7 +1611,9 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
-          > & { image: { __typename?: 'Image' } & Pick<Image, 'id'> })
+          > & { image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>> })
+        | { __typename?: 'News' }
+        | { __typename?: 'AboutPage' }
       >
     }
 }
@@ -1557,8 +1641,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1589,9 +1676,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
-              image: { __typename?: 'Image' } & Pick<
-                Image,
-                'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+              image?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
               >
               thumbnail?: Maybe<
                 { __typename?: 'Image' } & Pick<
@@ -1600,8 +1689,26 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
                 >
               >
             })
+        | { __typename?: 'News' }
+        | { __typename?: 'AboutPage' }
       >
     }
+}
+
+export type GetUrlQueryVariables = Exact<{
+  input: GetUrlInput
+}>
+
+export type GetUrlQuery = { __typename?: 'Query' } & {
+  getUrl?: Maybe<
+    { __typename?: 'Url' } & Pick<Url, 'id' | 'title' | 'urlsList'> & {
+        page:
+          | ({ __typename: 'Article' } & Pick<Article, 'slug'>)
+          | ({ __typename: 'ArticleCategory' } & Pick<ArticleCategory, 'slug'>)
+          | ({ __typename: 'News' } & Pick<News, 'slug'>)
+          | ({ __typename: 'LifeEventPage' } & Pick<LifeEventPage, 'slug'>)
+      }
+  >
 }
 
 export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
@@ -1630,10 +1737,9 @@ export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
         | 'numerator'
         | 'denominator'
         | 'label'
-        | 'body'
         | 'tags'
         | 'link'
-      >
+      > & { body?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment> }
     >
   }
 
@@ -1736,18 +1842,8 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
 
 export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
-  | 'id'
-  | 'title'
-  | 'subtitle'
-  | 'type'
-  | 'processTitle'
-  | 'processDescription'
-  | 'processLink'
-  | 'buttonText'
-> & {
-    details?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-    processInfo?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-  }
+  'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
+>
 
 export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,

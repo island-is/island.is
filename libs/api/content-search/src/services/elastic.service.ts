@@ -6,6 +6,7 @@ import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
+
 import {
   SearcherInput,
   WebSearchAutocompleteInput,
@@ -46,6 +47,7 @@ export class ElasticService {
     }
   }
 
+  // this can partially succeed
   async bulk(index: SearchIndexes, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
@@ -74,24 +76,38 @@ export class ElasticService {
       })
     }
 
-    // if we have any requests execute them
-    if (requests.length) {
-      try {
-        const client = await this.getClient()
+    if (!requests.length) {
+      logger.info('No requests for elasticsearch to execute')
+      // no need to continue
+      return false
+    }
+
+    try {
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to 200 entries just in case
+      const chunkSize = 200 // this has to be an even number
+      const client = await this.getClient()
+      let requestChunk = requests.splice(-chunkSize, chunkSize)
+      while (requestChunk.length) {
+        // wait for request b4 continuing
         const response = await client.bulk({
           index: index,
-          body: requests,
+          body: requestChunk,
         })
-        // TODO: ES errors while indexing might not throw, but appear in response log those errors here
-        return true
-      } catch (error) {
-        logger.error('Elastic request failed on bulk index', error)
-        throw error
+
+        // not all errors are thrown log if the response has any errors
+        if (response.body.errors) {
+          logger.error('Failed to import some documents in bulk import', {
+            response,
+          })
+        }
+        requestChunk = requests.splice(-chunkSize, chunkSize)
       }
-    } else {
-      logger.info('No requests to execute')
+
+      return true
+    } catch (error) {
+      logger.error('Elasticsearch request failed on bulk index', error)
+      throw error
     }
-    return false
   }
 
   async findByQuery<ResponseBody, RequestBody>(

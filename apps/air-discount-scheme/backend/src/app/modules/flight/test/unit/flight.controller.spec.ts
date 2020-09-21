@@ -3,7 +3,7 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { PublicFlightController } from '../../flight.controller'
 import { FlightService } from '../../flight.service'
-import { FlightDto } from '../../dto/flight.dto'
+import { CreateFlightBody } from '../../dto'
 import { Flight } from '../../flight.model'
 import { DiscountService, Discount } from '../../../discount'
 import {
@@ -21,8 +21,6 @@ describe('PublicFlightController', () => {
   const nationalId = '1234567890'
   const flight = {
     id: '70de7be1-6b6d-4ec3-8063-be55e241d488',
-    nationalId,
-    airline,
     bookingDate: new Date('2020-10-05T14:48:00.000Z'),
     flightLegs: [
       {
@@ -60,6 +58,7 @@ describe('PublicFlightController', () => {
           useClass: jest.fn(() => ({
             getDiscountByDiscountCode: () => ({}),
             useDiscount: () => ({}),
+            reactivateDiscount: () => ({}),
           })),
         },
         {
@@ -84,7 +83,7 @@ describe('PublicFlightController', () => {
   describe('create', () => {
     const discountCode = 'ABCDEFG'
     const discount = new Discount(discountCode, nationalId, 0)
-    const flightDto: FlightDto = {
+    const flightDto: CreateFlightBody = {
       bookingDate: new Date('2020-10-05T14:48:00.000Z'),
       flightLegs: [
         {
@@ -137,7 +136,11 @@ describe('PublicFlightController', () => {
         { airline },
       )
 
-      expect(useDiscountSpy).toHaveBeenCalledWith(discountCode, nationalId)
+      expect(useDiscountSpy).toHaveBeenCalledWith(
+        discountCode,
+        nationalId,
+        flight.id,
+      )
       expect(result).toEqual(flight)
     })
 
@@ -177,7 +180,7 @@ describe('PublicFlightController', () => {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
-          message: `User<${nationalId}> not found`,
+          message: `User not found`,
         })
       }
     })
@@ -242,9 +245,14 @@ describe('PublicFlightController', () => {
         .spyOn(flightService as any, 'findOne')
         .mockImplementation(() => Promise.resolve(flight))
       const deleteSpy = jest.spyOn(flightService, 'delete')
+      const reactivateDiscountSpy = jest.spyOn(
+        discountService,
+        'reactivateDiscount',
+      )
 
       await publicFlightController.delete({ flightId: flight.id }, { airline })
 
+      expect(reactivateDiscountSpy).toHaveBeenCalledWith(flight.id)
       expect(deleteSpy).toHaveBeenCalledWith(flight)
     })
 

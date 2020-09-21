@@ -29,7 +29,7 @@ import {
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
@@ -69,7 +69,7 @@ const Layout: NextComponentType<
   children,
 }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const menuTabs = [
     {

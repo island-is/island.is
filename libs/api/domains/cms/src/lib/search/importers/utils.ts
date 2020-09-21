@@ -10,3 +10,26 @@ export const createTerms = (termStrings: string[]): string[] => {
   })
   return flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
 }
+
+export const extractStringsFromObject = (contentObject: object): string => {
+  return Object.values(contentObject).reduce((contentString, content) => {
+    if (Array.isArray(content)) {
+      // lets extract string from nested arrays
+      return contentString + extractStringsFromObject({ ...content })
+    } else if (content && typeof content === 'object') {
+      // lets extract string from nested objects
+      return contentString + extractStringsFromObject(content)
+    } else if (typeof content === 'string') {
+      try {
+        const parsedContent = JSON.parse(content)
+        return contentString + extractStringsFromObject(parsedContent)
+      } catch (e) {
+        // we only consider string of more than 3 words valid content strings
+        if (content.split(' ').length > 3) {
+          return `${contentString} ${content}`
+        }
+      }
+    }
+    return contentString
+  }, '')
+}

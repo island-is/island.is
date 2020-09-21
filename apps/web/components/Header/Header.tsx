@@ -16,7 +16,7 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'
@@ -30,7 +30,7 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const { colorScheme } = useContext(ColorSchemeContext)
 

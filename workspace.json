@@ -1040,7 +1040,7 @@
           "options": {
             "commands": [
               {
-                "command": "docker-compose -f docker-compose.yml up -d"
+                "command": "docker-compose -f docker-compose.yml up -d --build"
               }
             ],
             "cwd": "apps/services/search-indexer/dev-services"
@@ -2110,6 +2110,17 @@
             "tsConfig": "apps/application-system/form/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
+              }
+            ]
+          }
         }
       }
     },
@@ -2886,6 +2897,65 @@
         "docker-express": {}
       }
     },
+    "api-domains-translations": {
+      "root": "libs/api/domains/translations",
+      "sourceRoot": "libs/api/domains/translations/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/translations/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/translations/tsconfig.lib.json",
+              "libs/api/domains/translations/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/translations/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/translations/jest.config.js",
+            "tsConfig": "libs/api/domains/translations/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "localization": {
+      "root": "libs/localization",
+      "sourceRoot": "libs/localization/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/localization/.eslintrc",
+            "tsConfig": [
+              "libs/localization/tsconfig.lib.json",
+              "libs/localization/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/localization/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/localization/jest.config.js",
+            "tsConfig": "libs/localization/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "infra-monitoring": {
       "root": "libs/infra-monitoring",
       "sourceRoot": "libs/infra-monitoring/src",
@@ -2965,6 +3035,137 @@
           "options": {
             "jestConfig": "libs/elastic-indexing/jest.config.js",
             "tsConfig": "libs/elastic-indexing/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "reference-next-app": {
+      "root": "apps/reference-next-app",
+      "sourceRoot": "apps/reference-next-app",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/reference-next-app",
+            "outputPath": "dist/apps/reference-next-app"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/reference-next-app/environments/environment.ts",
+                  "with": "apps/reference-next-app/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "reference-next-app:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "reference-next-app:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "reference-next-app:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/reference-next-app/.eslintrc",
+            "tsConfig": [
+              "apps/reference-next-app/tsconfig.json",
+              "apps/reference-next-app/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/reference-next-app/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/reference-next-app/jest.config.js",
+            "tsConfig": "apps/reference-next-app/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "nova-sms": {
+      "root": "libs/nova-sms",
+      "sourceRoot": "libs/nova-sms/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/nova-sms/.eslintrc",
+            "tsConfig": [
+              "libs/nova-sms/tsconfig.lib.json",
+              "libs/nova-sms/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/nova-sms/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/nova-sms/jest.config.js",
+            "tsConfig": "libs/nova-sms/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-assets": {
+      "root": "libs/service-portal/assets",
+      "sourceRoot": "libs/service-portal/assets/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/assets/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/assets/tsconfig.lib.json",
+              "libs/service-portal/assets/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/assets/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/assets/jest.config.js",
+            "tsConfig": "libs/service-portal/assets/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

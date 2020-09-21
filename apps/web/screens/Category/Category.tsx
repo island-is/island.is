@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useRef } from 'react'
+import pullAllBy from 'lodash/pullAllBy'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import {
@@ -18,16 +19,21 @@ import {
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
+  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
+import { LifeEventCard } from '../../components/LifeEventsCardsSection/components/LifeEventCard'
+
 import { useNamespace } from '@island.is/web/hooks'
 import {
+  GetLifeEventsInCategoryQuery,
   GetNamespaceQuery,
   GetArticlesQuery,
   QueryGetArticlesArgs,
@@ -35,28 +41,33 @@ import {
   QueryGetNamespaceArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
-import { withMainLayout } from '@island.is/web/layouts/main'
 
-type Article = GetArticlesQuery['getArticles']
+type Articles = GetArticlesQuery['getArticles']
+type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
 interface CategoryProps {
-  articles: Article
+  articles: Articles
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
+  lifeEvents: LifeEvents
+  slug: string
 }
 
 const Category: Screen<CategoryProps> = ({
   articles,
+  lifeEvents,
   categories,
   namespace,
+  slug,
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -83,8 +94,18 @@ const Category: Screen<CategoryProps> = ({
     },
   )
 
+  // Get all available subgroups.
+  const availableSubgroups = articles
+    .map((article) => article.subgroup)
+    .filter(
+      (value, index, all) =>
+        all.findIndex((t) => JSON.stringify(t) === JSON.stringify(value)) ===
+        index,
+    )
+    .filter((x) => x)
+
   // find current category in categories list
-  const category = categories.find((x) => x.slug === Router.query.slug)
+  const category = categories.find((x) => x.slug === slug)
 
   useEffect(() => {
     const hashMatch = Router.asPath.match(/#([a-z0-9_-]+)/gi)
@@ -119,17 +140,8 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
-  const subgroupSorting = (a: string, b: string) => {
-    // Make items with no subgroup appear last.
-    if (b === 'null') {
-      return -1
-    }
-    // Otherwise sort them alphabetically.
-    return a.localeCompare(b, 'is')
-  }
-
-  const groupArticlesBySubgroup = (articles: Article) =>
-    articles.reduce(
+  const groupArticlesBySubgroup = (articles: Articles) => {
+    const articlesBySubgroup = articles.reduce(
       (result, item) => ({
         ...result,
         [item?.subgroup?.title]: [
@@ -140,13 +152,49 @@ const Category: Screen<CategoryProps> = ({
       {},
     )
 
-  const sortArticlesByTitle = (articles: Article) =>
-    articles.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+    return { articlesBySubgroup }
+  }
+
+  const sortArticles = (articles: Articles) => {
+    // Sort articles by importance (which defaults to 0).
+    // If both articles being compared have the same importance we sort by comparing their titles.
+    const sortedArticles = articles.sort((a, b) =>
+      a.importance > b.importance
+        ? -1
+        : a.importance === b.importance && a.title.localeCompare(b.title),
+    )
+
+    // If it's sorted alphabetically we need to be able to communicate that.
+    const isSortedAlphabetically =
+      JSON.stringify(sortedArticles) ===
+      JSON.stringify(
+        [...articles].sort((a, b) => a.title.localeCompare(b.title)),
+      )
+
+    return { sortedArticles, isSortedAlphabetically }
+  }
+
+  const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
+    Object.keys(articlesBySubgroup).sort((a, b) => {
+      // Look up the subgroups being sorted and find+compare their importance.
+      // If their importance is equal we sort alphabetically.
+      const foundA = availableSubgroups.find((subgroup) => subgroup.title === a)
+      const foundB = availableSubgroups.find((subgroup) => subgroup.title === b)
+
+      if (foundA && foundB) {
+        return foundA.importance > foundB.importance
+          ? -1
+          : foundA.importance === foundB.importance &&
+              foundA.title.localeCompare(foundB.title)
+      }
+
+      // Fall back to alphabet
+      return a.localeCompare(b)
+    })
 
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
   )
-
   return (
     <>
       <Head>
@@ -173,11 +221,11 @@ const Category: Screen<CategoryProps> = ({
 
                   const expanded = groupSlug === hash.replace('#', '')
 
-                  const articlesBySubgroup = groupArticlesBySubgroup(articles)
+                  const { articlesBySubgroup } = groupArticlesBySubgroup(
+                    articles,
+                  )
 
-                  const sortedSubgroupKeys = Object.keys(
-                    articlesBySubgroup,
-                  ).sort(subgroupSorting)
+                  const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
 
                   return (
                     <div
@@ -188,29 +236,50 @@ const Category: Screen<CategoryProps> = ({
                       <AccordionCard
                         id={`accordion-item-${groupSlug}`}
                         label={title}
+                        labelUse="h2"
                         startExpanded={expanded}
                         visibleContent={description}
                       >
                         <Box paddingY={2}>
                           {sortedSubgroupKeys.map((subgroup, index) => {
+                            const {
+                              sortedArticles,
+                              isSortedAlphabetically,
+                            } = sortArticles(articlesBySubgroup[subgroup])
+
+                            // Articles with 1 subgroup only have the "other" group and don't get a heading.
                             const hasSubgroups = sortedSubgroupKeys.length > 1
+
+                            // Single articles that don't belong to a subgroup don't get a heading
+                            const isSingleArticle = sortedArticles.length === 1
+
+                            // Rename 'undefined' group to 'Other'
                             const subgroupName =
-                              subgroup === 'null' ? n('other') : subgroup
+                              subgroup === 'undefined' ||
+                              subgroup === 'null' ||
+                              !subgroup
+                                ? n('other')
+                                : subgroup
+
+                            const heading = hasSubgroups
+                              ? subgroupName
+                              : isSortedAlphabetically && !isSingleArticle
+                              ? n('sortedAlphabetically', 'A til Ö')
+                              : '' // No subgroup and custom sorting = no heading
+
                             return (
                               <React.Fragment key={subgroup}>
-                                {hasSubgroups && (
+                                {heading && (
                                   <Typography
                                     variant="h5"
                                     paddingBottom={3}
                                     paddingTop={index === 0 ? 0 : 3}
                                   >
-                                    {subgroupName}
+                                    {heading}
                                   </Typography>
                                 )}
                                 <Stack space={2}>
-                                  {sortArticlesByTitle(
-                                    articlesBySubgroup[subgroup],
-                                  ).map(
+                                  {sortedArticles.map(
                                     ({
                                       title,
                                       slug,
@@ -226,7 +295,7 @@ const Category: Screen<CategoryProps> = ({
                                           <LinkCard
                                             tag={
                                               containsApplicationForm &&
-                                              'Umsókn'
+                                              n('applicationProcess', 'Umsókn')
                                             }
                                           >
                                             {title}
@@ -259,6 +328,22 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
+            {lifeEvents.map((lifeEvent, index) => {
+              return (
+                <LifeEventCard
+                  key={index}
+                  title={lifeEvent.title}
+                  intro={lifeEvent.intro}
+                  href={makePath('lifeEvent', '[slug]')}
+                  as={makePath('lifeEvent', lifeEvent.slug)}
+                  image={
+                    lifeEvent.thumbnail
+                      ? lifeEvent.thumbnail.url
+                      : lifeEvent.image.url
+                  }
+                />
+              )
+            })}
           </Stack>
         }
       >
@@ -311,6 +396,9 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getArticles: articles },
     },
     {
+      data: { getLifeEventsInCategory: lifeEvents },
+    },
+    {
       data: { getArticleCategories },
     },
     namespace,
@@ -321,6 +409,18 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           category: slug,
+        },
+      },
+    }),
+    apolloClient.query<
+      GetLifeEventsInCategoryQuery,
+      QueryGetLifeEventsInCategoryArgs
+    >({
+      query: GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -350,8 +450,10 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     articles,
+    lifeEvents,
     categories: getArticleCategories,
     namespace,
+    slug,
   }
 }
 

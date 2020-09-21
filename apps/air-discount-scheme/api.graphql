@@ -24,7 +24,7 @@ type TimelineEvent {
   denominator: Int
   label: String!
   body: String
-  tags: [String!]!
+  tags: [String!]
   link: String!
 }
 
@@ -87,7 +87,7 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 type QuestionAndAnswer {
   id: ID!
   question: String!
-  answer: Html!
+  answer: Html
 }
 
 type ArticleCategory {
@@ -104,6 +104,7 @@ type ArticleGroup {
 
 type ArticleSubgroup {
   title: String!
+  importance: Float
   slug: String!
 }
 
@@ -207,13 +208,8 @@ type Statistics {
 
 type ProcessEntry {
   id: ID!
-  title: String!
-  subtitle: String
-  details: Html
   type: String!
   processTitle: String!
-  processDescription: String
-  processInfo: Html
   processLink: String!
   buttonText: String!
 }
@@ -244,13 +240,15 @@ type Article {
   slug: String!
   shortTitle: String!
   intro: String!
+  containsApplicationForm: Boolean
+  importance: Float
   body: [Slice!]!
   category: ArticleCategory
   group: ArticleGroup
   subgroup: ArticleSubgroup
-  organization: [Organization!]!
+  organization: [Organization!]
   subArticles: [SubArticle!]!
-  relatedArticles: [Article!]!
+  relatedArticles: [Article!]
 }
 
 type AdgerdirTag {
@@ -320,16 +318,17 @@ type AdgerdirFeaturedNewsSlice {
   featured: [AdgerdirNews!]!
 }
 
-type FrontpageSlide {
+type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
   image: Image
   link: String
+  animationJson: String
 }
 
 type FrontpageSliderList {
-  items: [FrontpageSlide!]!
+  items: [FrontpageSlider!]!
 }
 
 type Pagination {
@@ -371,6 +370,17 @@ type LandingPage {
   content: [Slice!]!
 }
 
+type AlertBanner {
+  id: ID!
+  showAlertBanner: Boolean!
+  bannerVariant: String!
+  title: String
+  description: String
+  link: Link
+  isDismissable: Boolean!
+  dismissedForDays: Int!
+}
+
 type GenericPage {
   title: String!
   slug: String!
@@ -385,17 +395,19 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type LifeEventPage {
+  id: ID!
   title: String!
   slug: String!
   intro: String!
   image: Image!
   thumbnail: Image
   content: [Slice!]!
-}
-
-type AdgerdirTags {
-  items: [AdgerdirTag!]!
+  category: ArticleCategory
 }
 
 type PaginatedAdgerdirNews {
@@ -406,6 +418,15 @@ type PaginatedAdgerdirNews {
 type OrganizationTags {
   items: [OrganizationTag!]!
 }
+
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 type Fund {
   credit: Float!
@@ -456,12 +477,12 @@ type Discount {
 
 type Query {
   getArticle(input: GetArticleInput!): Article
-  getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getOrganization(input: GetOrganizationInput!): Organization
@@ -475,6 +496,11 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
+  getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getArticles(input: GetArticlesInput!): [Article!]!
+  getSingleNews(input: GetSingleNewsInput!): News
+  getUrl(input: GetUrlInput!): Url
   flightLegs(input: FlightLegsInput!): [FlightLeg!]!
   user: User
   discounts: [Discount!]
@@ -483,11 +509,6 @@ type Query {
 input GetArticleInput {
   slug: String
   lang: String!
-}
-
-input GetNewsInput {
-  slug: String!
-  lang: String
 }
 
 input GetNewsListInput {
@@ -519,6 +540,11 @@ input GetAboutPageInput {
 
 input GetLandingPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetAlertBannerInput {
+  id: String!
   lang: String!
 }
 
@@ -579,6 +605,32 @@ input GetLifeEventPageInput {
 }
 
 input GetLifeEventsInput {
+  lang: String!
+}
+
+input GetLifeEventsInCategoryInput {
+  slug: String!
+  lang: String!
+}
+
+input GetArticleCategoriesInput {
+  lang: String!
+  size: Int
+}
+
+input GetArticlesInput {
+  lang: String!
+  category: String!
+  size: Int
+}
+
+input GetSingleNewsInput {
+  slug: String!
+  lang: String
+}
+
+input GetUrlInput {
+  slug: String!
   lang: String!
 }
 

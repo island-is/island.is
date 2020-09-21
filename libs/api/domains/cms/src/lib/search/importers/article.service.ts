@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { IArticle } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 
-import { createTerms } from './utils'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class ArticleSyncService {
@@ -35,18 +35,18 @@ export class ArticleSyncService {
             : []
 
           mapped = mapArticle(entry)
-
+          const type = 'webArticle'
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
-            type: 'webArticle',
+            content: extractStringsFromObject(mapped.body),
+            type,
             termPool: createTerms([
               mapped.title,
               mapped.category?.title,
               mapped.group?.title,
             ]),
-            response: JSON.stringify(mapped),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [
               {
                 key: entry.fields?.group?.fields?.slug,

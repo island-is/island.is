@@ -87,7 +87,7 @@ export const useBoxStyles = ({
   marginBottom,
   marginLeft,
   marginRight,
-  display,
+  display = 'block',
   flexDirection,
   flexWrap,
   flexShrink,
@@ -263,7 +263,7 @@ export const useBoxStyles = ({
         styles.paddingLg.right,
         styles.paddingXl.right,
       ),
-    display && resolvedDisplay !== undefined &&
+    resolvedDisplay !== undefined &&
       resolveResponsiveProp(
         resolvedDisplay,
         styles.display,

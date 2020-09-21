@@ -26,6 +26,6 @@ export const mapLinkCardSlice = ({
 }: ICardSection): LinkCardSlice =>
   new LinkCardSlice({
     id: sys.id,
-    title: fields.title ?? '',
+    title: fields?.title ?? '',
     cards: fields.cards.map(mapLinkCard),
   })
