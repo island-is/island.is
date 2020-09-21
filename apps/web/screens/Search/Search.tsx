@@ -119,6 +119,10 @@ const Search: Screen<CategoryProps> = ({
       labels.push(item.group.title)
     }
 
+    if (item.organization?.length) {
+      labels.push(item.organization[0].title)
+    }
+
     return labels
   }
 
