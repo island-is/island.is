@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { ITabContent } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
-import {Html, mapHtml} from './html.model'
+import { Html, mapHtml } from './html.model'
 
 @ObjectType()
 export class TabContent {
