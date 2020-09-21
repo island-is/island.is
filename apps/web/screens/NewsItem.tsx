@@ -57,7 +57,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       </Head>
       <NewsItemLayout>
         <Breadcrumbs>
-          <Link href={makePath()}>Ísland.is</Link>
+          <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
           <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
         </Breadcrumbs>
         <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>

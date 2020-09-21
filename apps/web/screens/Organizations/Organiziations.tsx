@@ -66,7 +66,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             paddingBottom={2}
           >
             <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
+              <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
               <span>{n('organizations', 'Stofnanir')}</span>
             </Breadcrumbs>
           </GridColumn>

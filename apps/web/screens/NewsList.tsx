@@ -143,7 +143,7 @@ const NewsList: Screen<NewsListProps> = ({
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
+            <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
             <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
           </Breadcrumbs>
           {selectedYear && (

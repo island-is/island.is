@@ -237,7 +237,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
               >
                 <Stack space={2}>
                   <Breadcrumbs color="blue300" separatorColor="blue300">
-                    <Link href={makePath()}>Ísland.is</Link>
+                    <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
                     <span>{page.title}</span>
                   </Breadcrumbs>
                   <Typography variant="h1" as="h1" color="white">
