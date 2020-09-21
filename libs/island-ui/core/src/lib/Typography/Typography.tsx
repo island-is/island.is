@@ -7,7 +7,6 @@ import styles, {
   colors,
   truncate as truncateStyle,
   links as linksStyle,
-  spacing,
   fontWeight as fontWeightStyles,
   defaultFontWeights,
 } from './Typography.treat'
@@ -58,15 +57,16 @@ export const Typography = ({
   fontWeight,
   as = 'p',
 }: TypographyProps) => {
-  const resolvedPaddingTop = paddingTop ?? paddingY
-  const resolvedPaddingBottom = paddingBottom ?? paddingY
-  const resolvedMarginTop = marginTop ?? marginY
-  const resolvedMarginBottom = marginBottom ?? marginY
-
   return (
     <Box
       id={id}
       component={as}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      marginY={marginY}
+      paddingTop={paddingTop}
+      paddingBottom={paddingBottom}
+      paddingY={paddingY}
       className={cn(
         variant ? styles[variant] : null,
         color ? colors[color] : null,
@@ -76,42 +76,6 @@ export const Typography = ({
           [linksStyle]: links,
           [defaultFontWeights[variant!]]: variant && !fontWeight,
         },
-        resolvedPaddingBottom !== undefined &&
-          resolveResponsiveProp(
-            resolvedPaddingBottom,
-            spacing.padding.bottomXs,
-            spacing.padding.bottomSm,
-            spacing.padding.bottomMd,
-            spacing.padding.bottomLg,
-            spacing.padding.bottomXl,
-          ),
-        resolvedPaddingTop !== undefined &&
-          resolveResponsiveProp(
-            resolvedPaddingTop,
-            spacing.padding.topXs,
-            spacing.padding.topSm,
-            spacing.padding.topMd,
-            spacing.padding.topLg,
-            spacing.padding.topXl,
-          ),
-        resolvedMarginBottom !== undefined &&
-          resolveResponsiveProp(
-            resolvedMarginBottom,
-            spacing.margin.bottomXs,
-            spacing.margin.bottomSm,
-            spacing.margin.bottomMd,
-            spacing.margin.bottomLg,
-            spacing.margin.bottomXl,
-          ),
-        resolvedMarginTop !== undefined &&
-          resolveResponsiveProp(
-            resolvedMarginTop,
-            spacing.margin.topXs,
-            spacing.margin.topSm,
-            spacing.margin.topMd,
-            spacing.margin.topLg,
-            spacing.margin.topXl,
-          ),
       )}
     >
       {children}
