@@ -59,6 +59,7 @@ export interface Case {
   legalArguments?: string
   comments?: string
   notifications?: Notification[]
+  courtCaseNumber?: string
 }
 
 export interface Notification {

@@ -42,7 +42,7 @@ export const getCaseById: (
   caseId: string,
 ) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
   const response = await fetch(`/api/case/${caseId}`)
-  console.log(response)
+
   if (response.ok) {
     const theCase: Case = await response.json()
     return {
