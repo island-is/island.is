@@ -25,7 +25,6 @@ import {
   MailingListSignupSlice,
   mapMailingListSignup,
 } from './mailingListSignupSlice.model'
-import { PageHeaderSlice, mapPageHeaderSlice } from './pageHeaderSlice.model'
 import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from './headingSlice.model'
 import { StorySlice, mapStorySlice } from './storySlice.model'
@@ -43,7 +42,6 @@ import { logger } from '@island.is/logging'
 import { TabSection, mapTabSection } from './tabSection.model'
 
 type SliceTypes =
-  | IPageHeader
   | ITimeline
   | IMailingListSignup
   | ISectionHeading
@@ -62,7 +60,6 @@ type SliceTypes =
 export const Slice = createUnionType({
   name: 'Slice',
   types: () => [
-    PageHeaderSlice,
     TimelineSlice,
     MailingListSignupSlice,
     HeadingSlice,
@@ -85,8 +82,6 @@ export const Slice = createUnionType({
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
   switch (slice.sys.contentType.sys.id) {
-    case 'pageHeader':
-      return mapPageHeaderSlice(slice as IPageHeader)
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':

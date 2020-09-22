@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
-import { fromPairs, minBy } from 'lodash'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ABOUT_PAGE_QUERY } from '../queries'
@@ -60,37 +59,6 @@ type AvailableSlices = Exclude<
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
 
-const extractSliceTitle = (slice: AvailableSlices): [string, string] | null => {
-  switch (slice.__typename) {
-    case 'PageHeaderSlice':
-      return [slice.id, slice.navigationText]
-
-    case 'HeadingSlice':
-    case 'LinkCardSlice':
-    case 'MailingListSignupSlice':
-    case 'LatestNewsSlice':
-    case 'LogoListSlice':
-      return [slice.id, slice.title]
-
-    default:
-      return null
-  }
-}
-
-const connectSlices = (slices: AvailableSlices[]): { [k: string]: string } => {
-  let head = slices.find(extractSliceTitle) ?? slices[0]
-
-  const pairs = slices.map((slice) => {
-    if (extractSliceTitle(slice)) {
-      head = slice
-    }
-
-    return [slice.id, head.id]
-  })
-
-  return fromPairs(pairs)
-}
-
 export interface LayoutProps {
   width: SpanType
   indent?: SpanType
@@ -141,124 +109,129 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
   },
 )
 
-const decideSidebarType = (slice?: AllSlicesFragment): SidebarProps['type'] => {
-  switch (slice && slice.__typename) {
-    case 'PageHeaderSlice':
-    case 'MailingListSignupSlice':
-    case 'LogoListSlice':
-      return 'gradient'
-
-    default:
-      return 'standard'
+const decideSidebarType = (
+  page: GetAboutPageQuery['getAboutPage'],
+  currentSliceId: string,
+): SidebarProps['type'] => {
+  if (
+    currentSliceId === page.pageHeader.id ||
+    page.slices.some(
+      (slice) =>
+        slice.id === currentSliceId &&
+        ['MailingListSignupSlice', 'LogoListSlice'].includes(slice.__typename),
+    )
+  ) {
+    return 'gradient'
   }
+
+  return 'standard'
+}
+
+interface PageHeaderProps {
+  page: GetAboutPageQuery['getAboutPage']
+}
+
+const PageHeader: FC<PageHeaderProps> = ({ page }) => {
+  const slice = page.pageHeader
+  const { activeLocale } = useI18n()
+  const { makePath } = routeNames(activeLocale)
+  const navigation = useMemo(
+    () =>
+      [{ id: slice.id, text: slice.navigationText }].concat(
+        createNavigation(page.slices),
+      ),
+    [page.slices, slice],
+  )
+  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
+  const [currentSliceId, navigate] = useScrollSpy(ids, { marginTop: 220 })
+
+  return (
+    <Background id={slice.id} theme={page.theme}>
+      <GridContainer position="none">
+        <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
+          <Box marginBottom={[8, 8, 8, 15]}>
+            <Header />
+          </Box>
+        </ColorSchemeContext.Provider>
+        <GridRow>
+          <GridColumn
+            offset={mainContentIndent}
+            span={mainContentSpanWithIndent}
+          >
+            <Stack space={2}>
+              <Breadcrumbs color="blue300" separatorColor="blue300">
+                <Link href={makePath()}>Ísland.is</Link>
+                <span>{page.title}</span>
+              </Breadcrumbs>
+              <Typography variant="h1" as="h1" color="white">
+                {slice.title}
+              </Typography>
+              <Typography variant="p" as="p" color="white">
+                {slice.introduction}
+              </Typography>
+            </Stack>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+            {(slice.slices as AvailableSlices[]).map((slice) => (
+              <Section key={slice.id} slice={slice} />
+            ))}
+          </GridColumn>
+          <GridColumn span={sidebarContentSpan} position="none">
+            <Sidebar
+              title={page.title}
+              type={decideSidebarType(page, currentSliceId)}
+            >
+              {({ bulletRef, colors }) => (
+                <>
+                  {navigation.map(({ id, text }, index) => (
+                    <Box key={index} paddingBottom={index === 0 ? 2 : 0}>
+                      <a
+                        ref={id === currentSliceId ? bulletRef : null}
+                        href={'#' + id}
+                        onClick={() => navigate(id)}
+                      >
+                        <Typography
+                          variant={index === 0 ? 'p' : 'pSmall'}
+                          as="p"
+                          color={colors.main}
+                        >
+                          {id === currentSliceId ? <b>{text}</b> : text}
+                        </Typography>
+                      </a>
+                    </Box>
+                  ))}
+                  {slice.links.map(({ url, text }, index) => (
+                    <span key={index}>
+                      <Box paddingY={2}>
+                        <Divider weight={colors.divider} />
+                      </Box>
+                      <Link href={url}>
+                        <Typography
+                          variant="p"
+                          as="div"
+                          color={colors.secondary}
+                        >
+                          {text}
+                        </Typography>
+                      </Link>
+                    </span>
+                  ))}
+                </>
+              )}
+            </Sidebar>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Background>
+  )
 }
 
 interface SectionProps {
   slice: AvailableSlices
-  page: GetAboutPageQuery['getAboutPage']
-  currentSliceId: string
 }
 
-const Section: FC<SectionProps> = ({ slice, page, currentSliceId }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
-
+const Section: FC<SectionProps> = ({ slice }) => {
   switch (slice.__typename) {
-    case 'PageHeaderSlice':
-      return (
-        <Background id={slice.id} theme={page.theme}>
-          <GridContainer position="none">
-            <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-              <Box marginBottom={[8, 8, 8, 15]}>
-                <Header />
-              </Box>
-            </ColorSchemeContext.Provider>
-            <GridRow>
-              <GridColumn
-                offset={mainContentIndent}
-                span={mainContentSpanWithIndent}
-              >
-                <Stack space={2}>
-                  <Breadcrumbs color="blue300" separatorColor="blue300">
-                    <Link href={makePath()}>Ísland.is</Link>
-                    <span>{page.title}</span>
-                  </Breadcrumbs>
-                  <Typography variant="h1" as="h1" color="white">
-                    {slice.title}
-                  </Typography>
-                  <Typography variant="p" as="p" color="white">
-                    {slice.introduction}
-                  </Typography>
-                </Stack>
-              </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
-                {(slice.slices as AvailableSlices[]).map((slice) => (
-                  <Section
-                    key={slice.id}
-                    slice={slice}
-                    page={page}
-                    currentSliceId={currentSliceId}
-                  />
-                ))}
-              </GridColumn>
-              <GridColumn span={sidebarContentSpan} position="none">
-                <Sidebar
-                  title={page.title}
-                  type={decideSidebarType(
-                    (page.slices as AvailableSlices[]).find(
-                      (slice) => !currentSliceId || slice.id === currentSliceId,
-                    ),
-                  )}
-                >
-                  {({ bulletRef, colors }) => (
-                    <>
-                      {page.slices
-                        .map(extractSliceTitle)
-                        .filter(Boolean)
-                        .map(([id, text], index) => (
-                          <Box key={index} paddingBottom={index === 0 ? 2 : 0}>
-                            <a
-                              ref={id === currentSliceId ? bulletRef : null}
-                              href={'#' + id}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                document.getElementById(id).scrollIntoView()
-                              }}
-                            >
-                              <Typography
-                                variant={index === 0 ? 'p' : 'pSmall'}
-                                as="p"
-                                color={colors.main}
-                              >
-                                {id === currentSliceId ? <b>{text}</b> : text}
-                              </Typography>
-                            </a>
-                          </Box>
-                        ))}
-                      {slice.links.map(({ url, text }, index) => (
-                        <span key={index}>
-                          <Box paddingY={2}>
-                            <Divider weight={colors.divider} />
-                          </Box>
-                          <Link href={url}>
-                            <Typography
-                              variant="p"
-                              as="div"
-                              color={colors.secondary}
-                            >
-                              {text}
-                            </Typography>
-                          </Link>
-                        </span>
-                      ))}
-                    </>
-                  )}
-                </Sidebar>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Background>
-      )
     case 'TimelineSlice':
       return (
         <div id={slice.id}>
@@ -367,12 +340,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId }) => {
       )
     case 'TabSection':
       return (
-        <Box
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          background="dotted"
-        >
+        <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
             <Box paddingTop={8} paddingBottom={10}>
               <Tabs
@@ -413,14 +381,6 @@ export interface AboutPageProps {
 }
 
 const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
-  const navigation = useMemo(() => createNavigation(page.slices), [page.slices])
-  const ids = useMemo(() => navigation.map((x) => x.id), navigation)
-  const [sliceId, navigate] = useScrollSpy(ids, { marginTop: 220 })
-  const sliceMap = useMemo(
-    () => connectSlices(page.slices as AvailableSlices[]),
-    [page.slices],
-  )
-
   return (
     <>
       <Head>
@@ -428,13 +388,9 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
+        <PageHeader page={page} />
         {(page.slices as AvailableSlices[]).map((slice) => (
-          <Section
-            key={slice.id}
-            slice={slice}
-            page={page}
-            currentSliceId={sliceMap[sliceId]}
-          />
+          <Section key={slice.id} slice={slice} />
         ))}
       </Box>
     </>

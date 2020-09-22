@@ -22,6 +22,7 @@ export type HelloWorld = {
 
 export type Image = {
   __typename?: 'Image'
+  typename: Scalars['String']
   id: Scalars['ID']
   url: Scalars['String']
   title: Scalars['String']
@@ -30,14 +31,9 @@ export type Image = {
   height: Scalars['Int']
 }
 
-export type Link = {
-  __typename?: 'Link'
-  text: Scalars['String']
-  url: Scalars['String']
-}
-
 export type Html = {
   __typename?: 'Html'
+  typename: Scalars['String']
   id: Scalars['ID']
   document: Scalars['JSON']
 }
@@ -57,6 +53,7 @@ export type TimelineEvent = {
 
 export type TimelineSlice = {
   __typename?: 'TimelineSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   events: Array<TimelineEvent>
@@ -167,64 +164,26 @@ export type SubArticle = {
 }
 
 export type Slice =
-  | PageHeaderSlice
   | TimelineSlice
-  | HeadingSlice
-  | StorySlice
-  | LinkCardSlice
-  | LatestNewsSlice
   | MailingListSignupSlice
+  | HeadingSlice
+  | LinkCardSlice
+  | StorySlice
   | LogoListSlice
+  | LatestNewsSlice
   | BulletListSlice
-  | Html
-  | Image
   | Statistics
   | ProcessEntry
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
   | TabSection
-
-export type PageHeaderSlice = {
-  __typename?: 'PageHeaderSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  introduction: Scalars['String']
-  navigationText: Scalars['String']
-  links: Array<Link>
-  slices: Array<TimelineSlice>
-}
-
-export type HeadingSlice = {
-  __typename?: 'HeadingSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-}
-
-export type StorySlice = {
-  __typename?: 'StorySlice'
-  id: Scalars['ID']
-  readMoreText: Scalars['String']
-  stories: Array<Story>
-}
-
-export type LinkCardSlice = {
-  __typename?: 'LinkCardSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  cards: Array<LinkCard>
-}
-
-export type LatestNewsSlice = {
-  __typename?: 'LatestNewsSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  news: Array<News>
-}
+  | Html
+  | Image
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   description?: Maybe<Scalars['String']>
@@ -232,16 +191,50 @@ export type MailingListSignupSlice = {
   buttonText: Scalars['String']
 }
 
+export type HeadingSlice = {
+  __typename?: 'HeadingSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type LinkCardSlice = {
+  __typename?: 'LinkCardSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  cards: Array<LinkCard>
+}
+
+export type StorySlice = {
+  __typename?: 'StorySlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  readMoreText: Scalars['String']
+  stories: Array<Story>
+}
+
 export type LogoListSlice = {
   __typename?: 'LogoListSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   body: Scalars['String']
   images: Array<Image>
 }
 
+export type LatestNewsSlice = {
+  __typename?: 'LatestNewsSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  news: Array<News>
+}
+
 export type BulletListSlice = {
   __typename?: 'BulletListSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   bullets: Array<BulletEntry>
 }
@@ -267,6 +260,7 @@ export type NumberBulletGroup = {
 
 export type Statistics = {
   __typename?: 'Statistics'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   statistics: Array<Statistic>
@@ -274,6 +268,7 @@ export type Statistics = {
 
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
+  typename: Scalars['String']
   id: Scalars['ID']
   type: Scalars['String']
   processTitle: Scalars['String']
@@ -283,6 +278,7 @@ export type ProcessEntry = {
 
 export type FaqList = {
   __typename?: 'FaqList'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   questions: Array<QuestionAndAnswer>
@@ -290,6 +286,7 @@ export type FaqList = {
 
 export type EmbeddedVideo = {
   __typename?: 'EmbeddedVideo'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   url: Scalars['String']
@@ -297,6 +294,7 @@ export type EmbeddedVideo = {
 
 export type SectionWithImage = {
   __typename?: 'SectionWithImage'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   image?: Maybe<Image>
@@ -305,6 +303,7 @@ export type SectionWithImage = {
 
 export type TabSection = {
   __typename?: 'TabSection'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   tabs: Array<TabContent>
@@ -313,7 +312,6 @@ export type TabSection = {
 export type Article = {
   __typename?: 'Article'
   id: Scalars['ID']
-  contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
   shortTitle?: Maybe<Scalars['String']>
@@ -438,12 +436,30 @@ export type Namespace = {
   fields: Scalars['String']
 }
 
+export type Link = {
+  __typename?: 'Link'
+  text: Scalars['String']
+  url: Scalars['String']
+}
+
+export type PageHeader = {
+  __typename?: 'PageHeader'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  introduction: Scalars['String']
+  navigationText: Scalars['String']
+  links: Array<Link>
+  slices: Array<TimelineSlice>
+}
+
 export type AboutPage = {
   __typename?: 'AboutPage'
   id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
+  pageHeader: PageHeader
   slices: Array<Slice>
 }
 
@@ -1097,26 +1113,30 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
     AboutPage,
     'title' | 'seoDescription' | 'theme'
   > & {
+      pageHeader: { __typename?: 'PageHeader' } & Pick<
+        PageHeader,
+        'id' | 'title' | 'introduction' | 'navigationText'
+      > & {
+          links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
+          slices: Array<
+            { __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment
+          >
+        }
       slices: Array<
-        | ({
-            __typename?: 'PageHeaderSlice'
-          } & AllSlicesPageHeaderSliceFragment)
         | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+        | ({
+            __typename?: 'MailingListSignupSlice'
+          } & AllSlicesMailingListSignupSliceFragment)
         | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-        | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
         | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+        | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+        | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
         | ({
             __typename?: 'LatestNewsSlice'
           } & AllSlicesLatestNewsSliceFragment)
         | ({
-            __typename?: 'MailingListSignupSlice'
-          } & AllSlicesMailingListSignupSliceFragment)
-        | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-        | ({
             __typename?: 'BulletListSlice'
           } & AllSlicesBulletListSliceFragment)
-        | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-        | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
         | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
         | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1125,6 +1145,8 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
             __typename?: 'SectionWithImage'
           } & AllSlicesSectionWithImageFragment)
         | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+        | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+        | ({ __typename?: 'Image' } & AllSlicesImageFragment)
       >
     }
 }
@@ -1164,25 +1186,20 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
       | 'importance'
     > & {
         body: Array<
-          | ({
-              __typename?: 'PageHeaderSlice'
-            } & AllSlicesPageHeaderSliceFragment)
           | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
           | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
           | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
           | ({
               __typename?: 'LatestNewsSlice'
             } & AllSlicesLatestNewsSliceFragment)
           | ({
-              __typename?: 'MailingListSignupSlice'
-            } & AllSlicesMailingListSignupSliceFragment)
-          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-          | ({
               __typename?: 'BulletListSlice'
             } & AllSlicesBulletListSliceFragment)
-          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1191,6 +1208,8 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1211,32 +1230,27 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
           { __typename?: 'SubArticle' } & Pick<SubArticle, 'title' | 'slug'> & {
               body: Array<
                 | ({
-                    __typename?: 'PageHeaderSlice'
-                  } & AllSlicesPageHeaderSliceFragment)
-                | ({
                     __typename?: 'TimelineSlice'
                   } & AllSlicesTimelineSliceFragment)
-                | ({
-                    __typename?: 'HeadingSlice'
-                  } & AllSlicesHeadingSliceFragment)
-                | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
-                | ({
-                    __typename?: 'LinkCardSlice'
-                  } & AllSlicesLinkCardSliceFragment)
-                | ({
-                    __typename?: 'LatestNewsSlice'
-                  } & AllSlicesLatestNewsSliceFragment)
                 | ({
                     __typename?: 'MailingListSignupSlice'
                   } & AllSlicesMailingListSignupSliceFragment)
                 | ({
+                    __typename?: 'HeadingSlice'
+                  } & AllSlicesHeadingSliceFragment)
+                | ({
+                    __typename?: 'LinkCardSlice'
+                  } & AllSlicesLinkCardSliceFragment)
+                | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+                | ({
                     __typename?: 'LogoListSlice'
                   } & AllSlicesLogoListSliceFragment)
                 | ({
+                    __typename?: 'LatestNewsSlice'
+                  } & AllSlicesLatestNewsSliceFragment)
+                | ({
                     __typename?: 'BulletListSlice'
                   } & AllSlicesBulletListSliceFragment)
-                | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-                | ({ __typename?: 'Image' } & AllSlicesImageFragment)
                 | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
                 | ({
                     __typename?: 'ProcessEntry'
@@ -1249,6 +1263,8 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                     __typename?: 'SectionWithImage'
                   } & AllSlicesSectionWithImageFragment)
                 | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+                | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+                | ({ __typename?: 'Image' } & AllSlicesImageFragment)
               >
             }
         >
@@ -1335,25 +1351,20 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
             }
         >
         content: Array<
-          | ({
-              __typename?: 'PageHeaderSlice'
-            } & AllSlicesPageHeaderSliceFragment)
           | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
           | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
           | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
           | ({
               __typename?: 'LatestNewsSlice'
             } & AllSlicesLatestNewsSliceFragment)
           | ({
-              __typename?: 'MailingListSignupSlice'
-            } & AllSlicesMailingListSignupSliceFragment)
-          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-          | ({
               __typename?: 'BulletListSlice'
             } & AllSlicesBulletListSliceFragment)
-          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1362,6 +1373,8 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
       }
   >
@@ -1379,25 +1392,20 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
     > & {
         image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
         content: Array<
-          | ({
-              __typename?: 'PageHeaderSlice'
-            } & AllSlicesPageHeaderSliceFragment)
           | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
           | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
           | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
           | ({
               __typename?: 'LatestNewsSlice'
             } & AllSlicesLatestNewsSliceFragment)
           | ({
-              __typename?: 'MailingListSignupSlice'
-            } & AllSlicesMailingListSignupSliceFragment)
-          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-          | ({
               __typename?: 'BulletListSlice'
             } & AllSlicesBulletListSliceFragment)
-          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1406,6 +1414,8 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
       }
   >
@@ -1631,7 +1641,18 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
                   'slug' | 'title'
                 >
               >
-              image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>>
+              image?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
+              >
+              thumbnail?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
+              >
             })
         | { __typename?: 'News' }
         | { __typename?: 'AboutPage' }
@@ -1740,20 +1761,12 @@ export type GetUrlQuery = { __typename?: 'Query' } & {
 
 export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
   Image,
-  'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
+  'typename' | 'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
 >
-
-export type PageHeaderFieldsFragment = { __typename: 'PageHeaderSlice' } & Pick<
-  PageHeaderSlice,
-  'id' | 'title' | 'introduction' | 'navigationText'
-> & {
-    links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
-    slices: Array<{ __typename?: 'TimelineSlice' } & TimelineFieldsFragment>
-  }
 
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
   TimelineSlice,
-  'id' | 'title'
+  'typename' | 'id' | 'title'
 > & {
     events: Array<
       { __typename?: 'TimelineEvent' } & Pick<
@@ -1774,12 +1787,12 @@ export type MailingListSignupFieldsFragment = {
   __typename: 'MailingListSignupSlice'
 } & Pick<
   MailingListSignupSlice,
-  'id' | 'title' | 'description' | 'inputLabel' | 'buttonText'
+  'typename' | 'id' | 'title' | 'description' | 'inputLabel' | 'buttonText'
 >
 
 export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
   StorySlice,
-  'id' | 'readMoreText'
+  'typename' | 'id' | 'readMoreText'
 > & {
     stories: Array<
       { __typename?: 'Story' } & Pick<
@@ -1791,7 +1804,7 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
 
 export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
   LatestNewsSlice,
-  'id' | 'title'
+  'typename' | 'id' | 'title'
 > & {
     news: Array<
       { __typename?: 'News' } & Pick<
@@ -1803,7 +1816,7 @@ export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
 
 export type LinkCardFieldsFragment = { __typename: 'LinkCardSlice' } & Pick<
   LinkCardSlice,
-  'id' | 'title'
+  'typename' | 'id' | 'title'
 > & {
     cards: Array<
       { __typename?: 'LinkCard' } & Pick<
@@ -1815,17 +1828,17 @@ export type LinkCardFieldsFragment = { __typename: 'LinkCardSlice' } & Pick<
 
 export type HeadingFieldsFragment = { __typename: 'HeadingSlice' } & Pick<
   HeadingSlice,
-  'id' | 'title' | 'body'
+  'typename' | 'id' | 'title' | 'body'
 >
 
 export type LogoListFieldsFragment = { __typename: 'LogoListSlice' } & Pick<
   LogoListSlice,
-  'id' | 'title' | 'body'
+  'typename' | 'id' | 'title' | 'body'
 > & { images: Array<{ __typename?: 'Image' } & ImageFieldsFragment> }
 
 export type BulletListFieldsFragment = { __typename: 'BulletListSlice' } & Pick<
   BulletListSlice,
-  'id'
+  'typename' | 'id'
 > & {
     bullets: Array<
       | ({ __typename: 'IconBullet' } & Pick<
@@ -1848,7 +1861,7 @@ export type BulletListFieldsFragment = { __typename: 'BulletListSlice' } & Pick<
 
 export type FaqListFieldsFragment = { __typename: 'FaqList' } & Pick<
   FaqList,
-  'id' | 'title'
+  'typename' | 'id' | 'title'
 > & {
     questions: Array<
       { __typename?: 'QuestionAndAnswer' } & Pick<
@@ -1860,7 +1873,7 @@ export type FaqListFieldsFragment = { __typename: 'FaqList' } & Pick<
 
 export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
   Statistics,
-  'id' | 'title'
+  'typename' | 'id' | 'title'
 > & {
     statistics: Array<
       { __typename?: 'Statistic' } & Pick<Statistic, 'id' | 'value' | 'label'>
@@ -1869,28 +1882,28 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
 
 export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
-  'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
+  'typename' | 'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
 >
 
 export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,
-  'id' | 'document'
+  'typename' | 'id' | 'document'
 >
 
 export type EmbeddedVideoFieldsFragment = {
   __typename: 'EmbeddedVideo'
-} & Pick<EmbeddedVideo, 'id' | 'title' | 'url'>
+} & Pick<EmbeddedVideo, 'typename' | 'id' | 'title' | 'url'>
 
 export type SectionWithImageFieldsFragment = {
   __typename: 'SectionWithImage'
-} & Pick<SectionWithImage, 'id' | 'title'> & {
+} & Pick<SectionWithImage, 'typename' | 'id' | 'title'> & {
     image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
     html: { __typename?: 'Html' } & HtmlFieldsFragment
   }
 
 export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
   TabSection,
-  'id' | 'title'
+  'typename' | 'id' | 'title'
 > & {
     tabs: Array<
       { __typename?: 'TabContent' } & Pick<
@@ -1903,47 +1916,37 @@ export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
     >
   }
 
-export type AllSlicesPageHeaderSliceFragment = {
-  __typename?: 'PageHeaderSlice'
-} & PageHeaderFieldsFragment
-
 export type AllSlicesTimelineSliceFragment = {
   __typename?: 'TimelineSlice'
 } & TimelineFieldsFragment
-
-export type AllSlicesHeadingSliceFragment = {
-  __typename?: 'HeadingSlice'
-} & HeadingFieldsFragment
-
-export type AllSlicesStorySliceFragment = {
-  __typename?: 'StorySlice'
-} & StoryFieldsFragment
-
-export type AllSlicesLinkCardSliceFragment = {
-  __typename?: 'LinkCardSlice'
-} & LinkCardFieldsFragment
-
-export type AllSlicesLatestNewsSliceFragment = {
-  __typename?: 'LatestNewsSlice'
-} & LatestNewsFieldsFragment
 
 export type AllSlicesMailingListSignupSliceFragment = {
   __typename?: 'MailingListSignupSlice'
 } & MailingListSignupFieldsFragment
 
+export type AllSlicesHeadingSliceFragment = {
+  __typename?: 'HeadingSlice'
+} & HeadingFieldsFragment
+
+export type AllSlicesLinkCardSliceFragment = {
+  __typename?: 'LinkCardSlice'
+} & LinkCardFieldsFragment
+
+export type AllSlicesStorySliceFragment = {
+  __typename?: 'StorySlice'
+} & StoryFieldsFragment
+
 export type AllSlicesLogoListSliceFragment = {
   __typename?: 'LogoListSlice'
 } & LogoListFieldsFragment
 
+export type AllSlicesLatestNewsSliceFragment = {
+  __typename?: 'LatestNewsSlice'
+} & LatestNewsFieldsFragment
+
 export type AllSlicesBulletListSliceFragment = {
   __typename?: 'BulletListSlice'
 } & BulletListFieldsFragment
-
-export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
-
-export type AllSlicesImageFragment = {
-  __typename?: 'Image'
-} & ImageFieldsFragment
 
 export type AllSlicesStatisticsFragment = {
   __typename?: 'Statistics'
@@ -1969,21 +1972,26 @@ export type AllSlicesTabSectionFragment = {
   __typename?: 'TabSection'
 } & TabSectionFieldsFragment
 
+export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
+
+export type AllSlicesImageFragment = {
+  __typename?: 'Image'
+} & ImageFieldsFragment
+
 export type AllSlicesFragment =
-  | AllSlicesPageHeaderSliceFragment
   | AllSlicesTimelineSliceFragment
-  | AllSlicesHeadingSliceFragment
-  | AllSlicesStorySliceFragment
-  | AllSlicesLinkCardSliceFragment
-  | AllSlicesLatestNewsSliceFragment
   | AllSlicesMailingListSignupSliceFragment
+  | AllSlicesHeadingSliceFragment
+  | AllSlicesLinkCardSliceFragment
+  | AllSlicesStorySliceFragment
   | AllSlicesLogoListSliceFragment
+  | AllSlicesLatestNewsSliceFragment
   | AllSlicesBulletListSliceFragment
-  | AllSlicesHtmlFragment
-  | AllSlicesImageFragment
   | AllSlicesStatisticsFragment
   | AllSlicesProcessEntryFragment
   | AllSlicesFaqListFragment
   | AllSlicesEmbeddedVideoFragment
   | AllSlicesSectionWithImageFragment
   | AllSlicesTabSectionFragment
+  | AllSlicesHtmlFragment
+  | AllSlicesImageFragment

@@ -6,37 +6,28 @@
         "name": "Slice",
         "possibleTypes": [
           {
-            "name": "PageHeaderSlice"
-          },
-          {
             "name": "TimelineSlice"
-          },
-          {
-            "name": "HeadingSlice"
-          },
-          {
-            "name": "StorySlice"
-          },
-          {
-            "name": "LinkCardSlice"
-          },
-          {
-            "name": "LatestNewsSlice"
           },
           {
             "name": "MailingListSignupSlice"
           },
           {
+            "name": "HeadingSlice"
+          },
+          {
+            "name": "LinkCardSlice"
+          },
+          {
+            "name": "StorySlice"
+          },
+          {
             "name": "LogoListSlice"
           },
           {
+            "name": "LatestNewsSlice"
+          },
+          {
             "name": "BulletListSlice"
-          },
-          {
-            "name": "Html"
-          },
-          {
-            "name": "Image"
           },
           {
             "name": "Statistics"
@@ -55,6 +46,12 @@
           },
           {
             "name": "TabSection"
+          },
+          {
+            "name": "Html"
+          },
+          {
+            "name": "Image"
           }
         ]
       },

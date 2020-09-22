@@ -33,6 +33,7 @@ export type HelloWorld = {
 
 export type Image = {
   __typename?: 'Image'
+  typename: Scalars['String']
   id: Scalars['ID']
   url: Scalars['String']
   title: Scalars['String']
@@ -41,14 +42,9 @@ export type Image = {
   height: Scalars['Int']
 }
 
-export type Link = {
-  __typename?: 'Link'
-  text: Scalars['String']
-  url: Scalars['String']
-}
-
 export type Html = {
   __typename?: 'Html'
+  typename: Scalars['String']
   id: Scalars['ID']
   document: Scalars['JSON']
 }
@@ -68,6 +64,7 @@ export type TimelineEvent = {
 
 export type TimelineSlice = {
   __typename?: 'TimelineSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   events: Array<TimelineEvent>
@@ -178,64 +175,26 @@ export type SubArticle = {
 }
 
 export type Slice =
-  | PageHeaderSlice
   | TimelineSlice
-  | HeadingSlice
-  | StorySlice
-  | LinkCardSlice
-  | LatestNewsSlice
   | MailingListSignupSlice
+  | HeadingSlice
+  | LinkCardSlice
+  | StorySlice
   | LogoListSlice
+  | LatestNewsSlice
   | BulletListSlice
-  | Html
-  | Image
   | Statistics
   | ProcessEntry
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
   | TabSection
-
-export type PageHeaderSlice = {
-  __typename?: 'PageHeaderSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  introduction: Scalars['String']
-  navigationText: Scalars['String']
-  links: Array<Link>
-  slices: Array<TimelineSlice>
-}
-
-export type HeadingSlice = {
-  __typename?: 'HeadingSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-}
-
-export type StorySlice = {
-  __typename?: 'StorySlice'
-  id: Scalars['ID']
-  readMoreText: Scalars['String']
-  stories: Array<Story>
-}
-
-export type LinkCardSlice = {
-  __typename?: 'LinkCardSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  cards: Array<LinkCard>
-}
-
-export type LatestNewsSlice = {
-  __typename?: 'LatestNewsSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  news: Array<News>
-}
+  | Html
+  | Image
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   description?: Maybe<Scalars['String']>
@@ -243,16 +202,50 @@ export type MailingListSignupSlice = {
   buttonText: Scalars['String']
 }
 
+export type HeadingSlice = {
+  __typename?: 'HeadingSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type LinkCardSlice = {
+  __typename?: 'LinkCardSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  cards: Array<LinkCard>
+}
+
+export type StorySlice = {
+  __typename?: 'StorySlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  readMoreText: Scalars['String']
+  stories: Array<Story>
+}
+
 export type LogoListSlice = {
   __typename?: 'LogoListSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   body: Scalars['String']
   images: Array<Image>
 }
 
+export type LatestNewsSlice = {
+  __typename?: 'LatestNewsSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  news: Array<News>
+}
+
 export type BulletListSlice = {
   __typename?: 'BulletListSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   bullets: Array<BulletEntry>
 }
@@ -278,6 +271,7 @@ export type NumberBulletGroup = {
 
 export type Statistics = {
   __typename?: 'Statistics'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   statistics: Array<Statistic>
@@ -285,6 +279,7 @@ export type Statistics = {
 
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
+  typename: Scalars['String']
   id: Scalars['ID']
   type: Scalars['String']
   processTitle: Scalars['String']
@@ -294,6 +289,7 @@ export type ProcessEntry = {
 
 export type FaqList = {
   __typename?: 'FaqList'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   questions: Array<QuestionAndAnswer>
@@ -301,6 +297,7 @@ export type FaqList = {
 
 export type EmbeddedVideo = {
   __typename?: 'EmbeddedVideo'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   url: Scalars['String']
@@ -308,6 +305,7 @@ export type EmbeddedVideo = {
 
 export type SectionWithImage = {
   __typename?: 'SectionWithImage'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   image?: Maybe<Image>
@@ -316,6 +314,7 @@ export type SectionWithImage = {
 
 export type TabSection = {
   __typename?: 'TabSection'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   tabs: Array<TabContent>
@@ -448,12 +447,30 @@ export type Namespace = {
   fields: Scalars['String']
 }
 
+export type Link = {
+  __typename?: 'Link'
+  text: Scalars['String']
+  url: Scalars['String']
+}
+
+export type PageHeader = {
+  __typename?: 'PageHeader'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  introduction: Scalars['String']
+  navigationText: Scalars['String']
+  links: Array<Link>
+  slices: Array<TimelineSlice>
+}
+
 export type AboutPage = {
   __typename?: 'AboutPage'
   id: Scalars['ID']
   title: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
+  pageHeader: PageHeader
   slices: Array<Slice>
 }
 
@@ -1218,7 +1235,6 @@ export type ResolversTypes = {
   Image: ResolverTypeWrapper<Image>
   ID: ResolverTypeWrapper<Scalars['ID']>
   Int: ResolverTypeWrapper<Scalars['Int']>
-  Link: ResolverTypeWrapper<Link>
   Html: ResolverTypeWrapper<Html>
   JSON: ResolverTypeWrapper<Scalars['JSON']>
   TimelineEvent: ResolverTypeWrapper<TimelineEvent>
@@ -1240,30 +1256,28 @@ export type ResolversTypes = {
     Omit<SubArticle, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
   Slice:
-    | ResolversTypes['PageHeaderSlice']
     | ResolversTypes['TimelineSlice']
-    | ResolversTypes['HeadingSlice']
-    | ResolversTypes['StorySlice']
-    | ResolversTypes['LinkCardSlice']
-    | ResolversTypes['LatestNewsSlice']
     | ResolversTypes['MailingListSignupSlice']
+    | ResolversTypes['HeadingSlice']
+    | ResolversTypes['LinkCardSlice']
+    | ResolversTypes['StorySlice']
     | ResolversTypes['LogoListSlice']
+    | ResolversTypes['LatestNewsSlice']
     | ResolversTypes['BulletListSlice']
-    | ResolversTypes['Html']
-    | ResolversTypes['Image']
     | ResolversTypes['Statistics']
     | ResolversTypes['ProcessEntry']
     | ResolversTypes['FaqList']
     | ResolversTypes['EmbeddedVideo']
     | ResolversTypes['SectionWithImage']
     | ResolversTypes['TabSection']
-  PageHeaderSlice: ResolverTypeWrapper<PageHeaderSlice>
-  HeadingSlice: ResolverTypeWrapper<HeadingSlice>
-  StorySlice: ResolverTypeWrapper<StorySlice>
-  LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
-  LatestNewsSlice: ResolverTypeWrapper<LatestNewsSlice>
+    | ResolversTypes['Html']
+    | ResolversTypes['Image']
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
+  HeadingSlice: ResolverTypeWrapper<HeadingSlice>
+  LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
+  StorySlice: ResolverTypeWrapper<StorySlice>
   LogoListSlice: ResolverTypeWrapper<LogoListSlice>
+  LatestNewsSlice: ResolverTypeWrapper<LatestNewsSlice>
   BulletListSlice: ResolverTypeWrapper<
     Omit<BulletListSlice, 'bullets'> & {
       bullets: Array<ResolversTypes['BulletEntry']>
@@ -1304,6 +1318,8 @@ export type ResolversTypes = {
   Pagination: ResolverTypeWrapper<Pagination>
   PaginatedNews: ResolverTypeWrapper<PaginatedNews>
   Namespace: ResolverTypeWrapper<Namespace>
+  Link: ResolverTypeWrapper<Link>
+  PageHeader: ResolverTypeWrapper<PageHeader>
   AboutPage: ResolverTypeWrapper<
     Omit<AboutPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
@@ -1402,7 +1418,6 @@ export type ResolversParentTypes = {
   Image: Image
   ID: Scalars['ID']
   Int: Scalars['Int']
-  Link: Link
   Html: Html
   JSON: Scalars['JSON']
   TimelineEvent: TimelineEvent
@@ -1424,30 +1439,28 @@ export type ResolversParentTypes = {
     body: Array<ResolversParentTypes['Slice']>
   }
   Slice:
-    | ResolversParentTypes['PageHeaderSlice']
     | ResolversParentTypes['TimelineSlice']
-    | ResolversParentTypes['HeadingSlice']
-    | ResolversParentTypes['StorySlice']
-    | ResolversParentTypes['LinkCardSlice']
-    | ResolversParentTypes['LatestNewsSlice']
     | ResolversParentTypes['MailingListSignupSlice']
+    | ResolversParentTypes['HeadingSlice']
+    | ResolversParentTypes['LinkCardSlice']
+    | ResolversParentTypes['StorySlice']
     | ResolversParentTypes['LogoListSlice']
+    | ResolversParentTypes['LatestNewsSlice']
     | ResolversParentTypes['BulletListSlice']
-    | ResolversParentTypes['Html']
-    | ResolversParentTypes['Image']
     | ResolversParentTypes['Statistics']
     | ResolversParentTypes['ProcessEntry']
     | ResolversParentTypes['FaqList']
     | ResolversParentTypes['EmbeddedVideo']
     | ResolversParentTypes['SectionWithImage']
     | ResolversParentTypes['TabSection']
-  PageHeaderSlice: PageHeaderSlice
-  HeadingSlice: HeadingSlice
-  StorySlice: StorySlice
-  LinkCardSlice: LinkCardSlice
-  LatestNewsSlice: LatestNewsSlice
+    | ResolversParentTypes['Html']
+    | ResolversParentTypes['Image']
   MailingListSignupSlice: MailingListSignupSlice
+  HeadingSlice: HeadingSlice
+  LinkCardSlice: LinkCardSlice
+  StorySlice: StorySlice
   LogoListSlice: LogoListSlice
+  LatestNewsSlice: LatestNewsSlice
   BulletListSlice: Omit<BulletListSlice, 'bullets'> & {
     bullets: Array<ResolversParentTypes['BulletEntry']>
   }
@@ -1484,6 +1497,8 @@ export type ResolversParentTypes = {
   Pagination: Pagination
   PaginatedNews: PaginatedNews
   Namespace: Namespace
+  Link: Link
+  PageHeader: PageHeader
   AboutPage: Omit<AboutPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
@@ -1579,6 +1594,7 @@ export type ImageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -1588,19 +1604,11 @@ export type ImageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type LinkResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
-> = {
-  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type HtmlResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
@@ -1635,6 +1643,7 @@ export type TimelineSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TimelineSlice'] = ResolversParentTypes['TimelineSlice']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   events?: Resolver<
@@ -1813,89 +1822,32 @@ export type SliceResolvers<
   ParentType extends ResolversParentTypes['Slice'] = ResolversParentTypes['Slice']
 > = {
   __resolveType: TypeResolveFn<
-    | 'PageHeaderSlice'
     | 'TimelineSlice'
-    | 'HeadingSlice'
-    | 'StorySlice'
-    | 'LinkCardSlice'
-    | 'LatestNewsSlice'
     | 'MailingListSignupSlice'
+    | 'HeadingSlice'
+    | 'LinkCardSlice'
+    | 'StorySlice'
     | 'LogoListSlice'
+    | 'LatestNewsSlice'
     | 'BulletListSlice'
-    | 'Html'
-    | 'Image'
     | 'Statistics'
     | 'ProcessEntry'
     | 'FaqList'
     | 'EmbeddedVideo'
     | 'SectionWithImage'
-    | 'TabSection',
+    | 'TabSection'
+    | 'Html'
+    | 'Image',
     ParentType,
     ContextType
   >
-}
-
-export type PageHeaderSliceResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['PageHeaderSlice'] = ResolversParentTypes['PageHeaderSlice']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  navigationText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
-  slices?: Resolver<
-    Array<ResolversTypes['TimelineSlice']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type HeadingSliceResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['HeadingSlice'] = ResolversParentTypes['HeadingSlice']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type StorySliceResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['StorySlice'] = ResolversParentTypes['StorySlice']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  stories?: Resolver<Array<ResolversTypes['Story']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type LinkCardSliceResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['LinkCardSlice'] = ResolversParentTypes['LinkCardSlice']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  cards?: Resolver<Array<ResolversTypes['LinkCard']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type LatestNewsSliceResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['LatestNewsSlice'] = ResolversParentTypes['LatestNewsSlice']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type MailingListSignupSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['MailingListSignupSlice'] = ResolversParentTypes['MailingListSignupSlice']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<
@@ -1908,10 +1860,44 @@ export type MailingListSignupSliceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type HeadingSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['HeadingSlice'] = ResolversParentTypes['HeadingSlice']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LinkCardSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LinkCardSlice'] = ResolversParentTypes['LinkCardSlice']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  cards?: Resolver<Array<ResolversTypes['LinkCard']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type StorySliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['StorySlice'] = ResolversParentTypes['StorySlice']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  stories?: Resolver<Array<ResolversTypes['Story']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type LogoListSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LogoListSlice'] = ResolversParentTypes['LogoListSlice']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -1919,10 +1905,22 @@ export type LogoListSliceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LatestNewsSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LatestNewsSlice'] = ResolversParentTypes['LatestNewsSlice']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type BulletListSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['BulletListSlice'] = ResolversParentTypes['BulletListSlice']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   bullets?: Resolver<
     Array<ResolversTypes['BulletEntry']>,
@@ -1974,6 +1972,7 @@ export type StatisticsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Statistics'] = ResolversParentTypes['Statistics']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   statistics?: Resolver<
@@ -1988,6 +1987,7 @@ export type ProcessEntryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ProcessEntry'] = ResolversParentTypes['ProcessEntry']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   processTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -2000,6 +2000,7 @@ export type FaqListResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['FaqList'] = ResolversParentTypes['FaqList']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   questions?: Resolver<
@@ -2014,6 +2015,7 @@ export type EmbeddedVideoResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['EmbeddedVideo'] = ResolversParentTypes['EmbeddedVideo']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -2024,6 +2026,7 @@ export type SectionWithImageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['SectionWithImage'] = ResolversParentTypes['SectionWithImage']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
@@ -2035,6 +2038,7 @@ export type TabSectionResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TabSection'] = ResolversParentTypes['TabSection']
 > = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   tabs?: Resolver<Array<ResolversTypes['TabContent']>, ParentType, ContextType>
@@ -2307,6 +2311,33 @@ export type NamespaceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LinkResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
+> = {
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type PageHeaderResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['PageHeader'] = ResolversParentTypes['PageHeader']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  navigationText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
+  slices?: Resolver<
+    Array<ResolversTypes['TimelineSlice']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type AboutPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AboutPage'] = ResolversParentTypes['AboutPage']
@@ -2315,6 +2346,7 @@ export type AboutPageResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  pageHeader?: Resolver<ResolversTypes['PageHeader'], ParentType, ContextType>
   slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -2897,7 +2929,6 @@ export type MutationResolvers<
 export type Resolvers<ContextType = Context> = {
   HelloWorld?: HelloWorldResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
-  Link?: LinkResolvers<ContextType>
   Html?: HtmlResolvers<ContextType>
   JSON?: GraphQLScalarType
   TimelineEvent?: TimelineEventResolvers<ContextType>
@@ -2916,13 +2947,12 @@ export type Resolvers<ContextType = Context> = {
   Organization?: OrganizationResolvers<ContextType>
   SubArticle?: SubArticleResolvers<ContextType>
   Slice?: SliceResolvers<ContextType>
-  PageHeaderSlice?: PageHeaderSliceResolvers<ContextType>
-  HeadingSlice?: HeadingSliceResolvers<ContextType>
-  StorySlice?: StorySliceResolvers<ContextType>
-  LinkCardSlice?: LinkCardSliceResolvers<ContextType>
-  LatestNewsSlice?: LatestNewsSliceResolvers<ContextType>
   MailingListSignupSlice?: MailingListSignupSliceResolvers<ContextType>
+  HeadingSlice?: HeadingSliceResolvers<ContextType>
+  LinkCardSlice?: LinkCardSliceResolvers<ContextType>
+  StorySlice?: StorySliceResolvers<ContextType>
   LogoListSlice?: LogoListSliceResolvers<ContextType>
+  LatestNewsSlice?: LatestNewsSliceResolvers<ContextType>
   BulletListSlice?: BulletListSliceResolvers<ContextType>
   BulletEntry?: BulletEntryResolvers<ContextType>
   IconBullet?: IconBulletResolvers<ContextType>
@@ -2948,6 +2978,8 @@ export type Resolvers<ContextType = Context> = {
   Pagination?: PaginationResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
+  Link?: LinkResolvers<ContextType>
+  PageHeader?: PageHeaderResolvers<ContextType>
   AboutPage?: AboutPageResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
   LandingPage?: LandingPageResolvers<ContextType>
@@ -2999,37 +3031,28 @@ const result: IntrospectionResultData = {
         name: 'Slice',
         possibleTypes: [
           {
-            name: 'PageHeaderSlice',
-          },
-          {
             name: 'TimelineSlice',
-          },
-          {
-            name: 'HeadingSlice',
-          },
-          {
-            name: 'StorySlice',
-          },
-          {
-            name: 'LinkCardSlice',
-          },
-          {
-            name: 'LatestNewsSlice',
           },
           {
             name: 'MailingListSignupSlice',
           },
           {
+            name: 'HeadingSlice',
+          },
+          {
+            name: 'LinkCardSlice',
+          },
+          {
+            name: 'StorySlice',
+          },
+          {
             name: 'LogoListSlice',
           },
           {
+            name: 'LatestNewsSlice',
+          },
+          {
             name: 'BulletListSlice',
-          },
-          {
-            name: 'Html',
-          },
-          {
-            name: 'Image',
           },
           {
             name: 'Statistics',
@@ -3048,6 +3071,12 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'TabSection',
+          },
+          {
+            name: 'Html',
+          },
+          {
+            name: 'Image',
           },
         ],
       },
