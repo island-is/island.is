@@ -113,7 +113,8 @@
       "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"],
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
-      ]
+      ],
+      "@island.is/skilavottord": ["libs/skilavottord/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
