@@ -92,4 +92,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly comments: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtCaseNumber: string
 }
