@@ -546,6 +546,16 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+export type AboutSubPage = {
+  __typename?: 'AboutSubPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  description: Scalars['String']
+  subDescription: Scalars['String']
+  slices: Array<Slice>
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
@@ -643,6 +653,7 @@ export type Query = {
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
+  getAboutSubPage?: Maybe<AboutSubPage>
   getLandingPage?: Maybe<LandingPage>
   getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
@@ -693,6 +704,10 @@ export type QueryGetNamespaceArgs = {
 
 export type QueryGetAboutPageArgs = {
   input: GetAboutPageInput
+}
+
+export type QueryGetAboutSubPageArgs = {
+  input: GetAboutSubPageInput
 }
 
 export type QueryGetLandingPageArgs = {
@@ -839,6 +854,11 @@ export type GetNamespaceInput = {
 }
 
 export type GetAboutPageInput = {
+  lang: Scalars['String']
+}
+
+export type GetAboutSubPageInput = {
+  slug: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -1149,6 +1169,59 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'Image' } & AllSlicesImageFragment)
       >
     }
+}
+
+export type GetAboutPageNavigationQueryVariables = Exact<{
+  input: GetAboutPageInput
+}>
+
+export type GetAboutPageNavigationQuery = { __typename?: 'Query' } & {
+  getAboutPage: { __typename?: 'AboutPage' } & Pick<AboutPage, 'title'> & {
+      pageHeader: { __typename?: 'PageHeader' } & Pick<
+        PageHeader,
+        'navigationText'
+      > & { links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>> }
+    }
+}
+
+export type GetAboutSubPageQueryVariables = Exact<{
+  input: GetAboutSubPageInput
+}>
+
+export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
+  getAboutSubPage?: Maybe<
+    { __typename?: 'AboutSubPage' } & Pick<
+      AboutSubPage,
+      'title' | 'slug' | 'description' | 'subDescription'
+    > & {
+        slices: Array<
+          | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
+          | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+          | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
+          | ({
+              __typename?: 'LatestNewsSlice'
+            } & AllSlicesLatestNewsSliceFragment)
+          | ({
+              __typename?: 'BulletListSlice'
+            } & AllSlicesBulletListSliceFragment)
+          | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+          | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+          | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+          | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+        >
+      }
+  >
 }
 
 export type GetAlertBannerQueryVariables = Exact<{

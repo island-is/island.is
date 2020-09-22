@@ -557,6 +557,16 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+export type AboutSubPage = {
+  __typename?: 'AboutSubPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  description: Scalars['String']
+  subDescription: Scalars['String']
+  slices: Array<Slice>
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
@@ -654,6 +664,7 @@ export type Query = {
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
+  getAboutSubPage?: Maybe<AboutSubPage>
   getLandingPage?: Maybe<LandingPage>
   getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
@@ -704,6 +715,10 @@ export type QueryGetNamespaceArgs = {
 
 export type QueryGetAboutPageArgs = {
   input: GetAboutPageInput
+}
+
+export type QueryGetAboutSubPageArgs = {
+  input: GetAboutSubPageInput
 }
 
 export type QueryGetLandingPageArgs = {
@@ -850,6 +865,11 @@ export type GetNamespaceInput = {
 }
 
 export type GetAboutPageInput = {
+  lang: Scalars['String']
+}
+
+export type GetAboutSubPageInput = {
+  slug: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -1344,6 +1364,9 @@ export type ResolversTypes = {
     | ResolversTypes['ArticleCategory']
     | ResolversTypes['News']
     | ResolversTypes['LifeEventPage']
+  AboutSubPage: ResolverTypeWrapper<
+    Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
+  >
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
@@ -1367,6 +1390,7 @@ export type ResolversTypes = {
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
+  GetAboutSubPageInput: GetAboutSubPageInput
   GetLandingPageInput: GetLandingPageInput
   GetAlertBannerInput: GetAlertBannerInput
   GetGenericPageInput: GetGenericPageInput
@@ -1521,6 +1545,9 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ArticleCategory']
     | ResolversParentTypes['News']
     | ResolversParentTypes['LifeEventPage']
+  AboutSubPage: Omit<AboutSubPage, 'slices'> & {
+    slices: Array<ResolversParentTypes['Slice']>
+  }
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
@@ -1543,6 +1570,7 @@ export type ResolversParentTypes = {
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
+  GetAboutSubPageInput: GetAboutSubPageInput
   GetLandingPageInput: GetLandingPageInput
   GetAlertBannerInput: GetAlertBannerInput
   GetGenericPageInput: GetGenericPageInput
@@ -2501,6 +2529,19 @@ export type UrlPageResolvers<
   >
 }
 
+export type AboutSubPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AboutSubPage'] = ResolversParentTypes['AboutSubPage']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type SearchResultResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
@@ -2696,6 +2737,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetAboutPageArgs, 'input'>
+  >
+  getAboutSubPage?: Resolver<
+    Maybe<ResolversTypes['AboutSubPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAboutSubPageArgs, 'input'>
   >
   getLandingPage?: Resolver<
     Maybe<ResolversTypes['LandingPage']>,
@@ -2992,6 +3039,7 @@ export type Resolvers<ContextType = Context> = {
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
   Url?: UrlResolvers<ContextType>
   UrlPage?: UrlPageResolvers<ContextType>
+  AboutSubPage?: AboutSubPageResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>

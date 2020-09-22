@@ -7,6 +7,43 @@ import {
 } from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
 
+export interface StandardLayoutProps {
+  sidebar: {
+    position: 'left' | 'right'
+    node: ReactNode
+  }
+}
+
+export const StandardLayout: FC<StandardLayoutProps> = ({
+  sidebar,
+  children,
+}) => {
+  const columns = [
+    <GridColumn
+      key="sidebar"
+      hiddenBelow="md"
+      span={['0', '0', '4/12', '4/12', '3/12']}
+    >
+      <Sticky>{sidebar.node}</Sticky>
+    </GridColumn>,
+    <GridColumn key="content" span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
+      <Box>{children}</Box>
+    </GridColumn>,
+  ]
+
+  if (sidebar.position === 'right') {
+    columns.reverse()
+  }
+
+  return (
+    <GridContainer>
+      <Box paddingY={[2, 2, 10]}>
+        <GridRow>{columns}</GridRow>
+      </Box>
+    </GridContainer>
+  )
+}
+
 interface CategoryProps {
   sidebar: ReactNode
   belowContent?: ReactNode

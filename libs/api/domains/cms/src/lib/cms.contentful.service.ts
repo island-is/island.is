@@ -41,6 +41,7 @@ import { ContentfulRepository } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
+import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 
 const makePage = (
   page: number,
@@ -330,9 +331,27 @@ export class CmsContentfulService {
         include: 10,
         order: '-sys.createdAt',
       })
-      .catch(errorHandler('getPage'))
+      .catch(errorHandler('getAboutPage'))
 
     return result.items.map(mapAboutPage)[0] ?? null
+  }
+
+  async getAboutSubPage({
+    lang,
+    slug,
+  }: {
+    lang: string
+    slug: string
+  }): Promise<AboutSubPage | null> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAboutSubPageFields>(lang, {
+        ['content_type']: 'aboutSubPage',
+        include: 10,
+        'fields.slug': slug,
+      })
+      .catch(errorHandler('getAboutSubPage'))
+
+    return result.items.map(mapAboutSubPage)[0] ?? null
   }
 
   async getLandingPage({
