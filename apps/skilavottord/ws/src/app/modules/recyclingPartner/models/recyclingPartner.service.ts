@@ -20,7 +20,7 @@ export class RecyclingPartnerService {
     )
     this.recyclingPartnerList.push(
       new RecyclingPartner(
-        1,
+        2,
         'Hringrás',
         'Vesturlandsbraut 1',
         109,
@@ -31,7 +31,7 @@ export class RecyclingPartnerService {
     )
     this.recyclingPartnerList.push(
       new RecyclingPartner(
-        1,
+        3,
         'Rusl & Drasl',
         'Valhúsabraut 1',
         229,

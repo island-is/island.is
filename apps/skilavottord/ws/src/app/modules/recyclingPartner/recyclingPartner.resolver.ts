@@ -1,4 +1,7 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Car } from '../car/models/car.model'
+
+
 import { RecyclingPartner } from './models'
 import { RecyclingPartnerService } from './models/recyclingPartner.service'
 
@@ -14,4 +17,5 @@ export class RecyclingPartnerResolver {
   getRecyclingPartner(@Args('id') nid: number): RecyclingPartner {
     return this.RecyclingPartnerService.getRecyclingPartner(nid)
   }
+
 }

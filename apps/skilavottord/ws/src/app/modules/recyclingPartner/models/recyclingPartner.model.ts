@@ -32,12 +32,12 @@ export class RecyclingPartner {
   @Field()
   postNumber: number
 
-  @Field()
+  @Field({ nullable: true })
   website: string
 
-  @Field()
+  @Field({ nullable: true })
   phone: string
 
-  @Field()
+  @Field({ nullable: true })
   active: boolean
 }

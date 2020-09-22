@@ -1,6 +1,7 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Carowner } from './models'
 import { CarownerService } from './models/carowner.service'
+import { DeregisterCarInput } from './models/dto'
 
 @Resolver(() => Carowner)
 export class CarownerResolver {
@@ -15,5 +16,12 @@ export class CarownerResolver {
   @Query(() => Carowner)
   getVehiclesForNationalId(@Args('nationalId') nid: string): Carowner {
     return this.carownerService.getVehiclesForNationalId(nid)
+  }
+
+  @Mutation((returns) => Boolean)
+  deregisterCar(
+    @Args('deregisterCarInput') dereginput: DeregisterCarInput,
+  ): boolean {
+    return true
   }
 }

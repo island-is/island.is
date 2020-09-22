@@ -7,9 +7,9 @@ type RecyclingPartner {
   name: String!
   address: String!
   postNumber: Float!
-  website: String!
-  phone: String!
-  active: Boolean!
+  website: String
+  phone: String
+  active: Boolean
 }
 
 type Car {
@@ -31,4 +31,16 @@ type Carowner {
 type Query {
   getRecyclingPartner(id: Float!): RecyclingPartner!
   getVehiclesForNationalId(nationalId: String!): Carowner!
+}
+
+type Mutation {
+  deregisterCar(deregisterCarInput: DeregisterCarInput!): Boolean!
+}
+
+input DeregisterCarInput {
+  permno: String!
+  nationalid: String!
+  recyclingCompanyId: Float!
+  recyclingCompanyName: String!
+  deregisterDescription: String
 }
