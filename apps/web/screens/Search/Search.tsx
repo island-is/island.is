@@ -69,7 +69,8 @@ const Search: Screen<CategoryProps> = ({
   }
 
   useEffect(() => {
-    if (searchRef.current) {
+    const hasMatch = Router.asPath.includes('focus=true')
+    if (hasMatch) {
       searchRef.current.focus()
     }
   }, [searchRef])

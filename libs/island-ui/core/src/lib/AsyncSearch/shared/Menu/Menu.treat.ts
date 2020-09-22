@@ -20,7 +20,7 @@ export const menu = style({
 })
 
 export const open = style({
-  zIndex: 1,
+  zIndex: 10,
   opacity: 1,
 })
 
