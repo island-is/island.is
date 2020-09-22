@@ -2,6 +2,7 @@
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
+import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
@@ -238,7 +239,9 @@ export class CmsContentfulService {
       })
       .catch(errorHandler('getRelatedArticles'))
 
-    return relatedResult.items.map(mapArticle)
+    const sortedIds = articles.map((a) => a.sys.id)
+    const results = relatedResult.items.map(mapArticle)
+    return sortBy(results, (a) => sortedIds.indexOf(a.id))
   }
 
   async getNews(lang: string, slug: string): Promise<News | null> {
