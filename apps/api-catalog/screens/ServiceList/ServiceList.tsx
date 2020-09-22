@@ -1,12 +1,12 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import {  Box,  
           Button, 
-          SidebarAccordion, 
+          AsyncSearchOption,
           ContentBlock, 
           GridRow, 
           GridColumn,
           Icon,
-          Typography
+          Typography, AccordionItem, AsyncSearch
 } from '@island.is/island-ui/core';
 
 import * as styles from './ServiceList.treat';
@@ -32,7 +32,7 @@ interface PropTypes {
   bottom?: ReactNode
 }
 
-export function ServiceLayout({ top, bottom, left, right }: PropTypes) {
+function ServiceLayout({ top, bottom, left, right }: PropTypes) {
   return (
     <Box paddingX="gutter">
       {<ContentBlock >
@@ -40,11 +40,11 @@ export function ServiceLayout({ top, bottom, left, right }: PropTypes) {
       </ContentBlock>}
       <ContentBlock>
         <GridRow >
-          <GridColumn span={['12/12',  '11/12',  '8/12', '10/12', '9/12']}
+          <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '8/12']}
                     offset={[    '0',     '0',  '0',    '0', '0']}>
             {left}
           </GridColumn>
-          <GridColumn span={[ '7/12',  '2/12',  '2/12', '2/12', '2/12']}
+          <GridColumn span={[ '12/12',  '8/12',  '3/12', '3/12', '3/12']}
                     offset={[    '0',  '0',     '0',    '0', '1/12']}>
               {right}
           </GridColumn>
@@ -56,7 +56,23 @@ export function ServiceLayout({ top, bottom, left, right }: PropTypes) {
     </Box>
   )
 }
-
+const SearchInput = (items) => {
+  const [options, setOptions] = useState<AsyncSearchOption[]>([])
+  const [value, setValue] = useState('')
+  const [loading, setLoading] = useState<boolean>(false)
+  
+  return (
+        <Box className={cn(styles.inputSearch)}>
+          <AsyncSearch 
+            options={options}
+            size='medium'
+            placeholder="Leita"
+            onInputValueChange={(inputValue) => setValue(inputValue)}
+            loading={loading}
+          />
+        </Box>
+    )
+  }
 
 export interface ServiceListProps {
   nextCursor: string
@@ -177,6 +193,7 @@ export default function ServiceList(props:ServiceListProps) {
         loadData();
     }, [firstGet, StatusQueryString, props.parameters]); 
     
+    
   return (   
       <ServiceLayout 
       top={
@@ -188,7 +205,7 @@ export default function ServiceList(props:ServiceListProps) {
             </div>
       }
       left={
-          <Box className={cn(styles.serviceList, "BALLER")} marginBottom="containerGutter" marginTop={1}>
+          <Box className={cn(styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
                     {
                       services?.map( (item, index) => {
                         return <ServiceCard key={index} service={item} />
@@ -210,39 +227,43 @@ export default function ServiceList(props:ServiceListProps) {
         </div>
       }
       right={
-        <Box  className={cn(styles.filter)}>
-              <h4>Filter:</h4>
+        <Box  className={cn(styles.filter, "filter")}>
+              <div>
+              <SearchInput 
+              items={ [{ label:'blue', value: 'bull' }]}
+              ></SearchInput>
+              </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion  id="pricing_category" label="Pricing">
+                <AccordionItem  id="pricing_category" label="Pricing" labelVariant="sideMenu" iconVariant="default">
                   <CategoryCheckBox label={PRICING_CATEGORY.FREE}    value={PRICING_CATEGORY.FREE}    checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.USAGE}   value={PRICING_CATEGORY.USAGE}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.USAGE)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.DAILY}   value={PRICING_CATEGORY.DAILY}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.DAILY)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.MONTHLY} value={PRICING_CATEGORY.MONTHLY} checked={props.parameters.pricing.includes(PRICING_CATEGORY.MONTHLY)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.YEARLY}  value={PRICING_CATEGORY.YEARLY}  checked={props.parameters.pricing.includes(PRICING_CATEGORY.YEARLY)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.CUSTOM}  value={PRICING_CATEGORY.CUSTOM}  checked={props.parameters.pricing.includes(PRICING_CATEGORY.CUSTOM)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </SidebarAccordion>
+                </AccordionItem>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="data_category" label="Data">
+              <AccordionItem  id="data_category" label="Data" labelVariant="sideMenu" iconVariant="default">
                   <CategoryCheckBox label={DATA_CATEGORY.PUBLIC}    value={DATA_CATEGORY.PUBLIC}    checked={props.parameters.data.includes(DATA_CATEGORY.PUBLIC)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={DATA_CATEGORY.OFFICIAL}  value={DATA_CATEGORY.OFFICIAL}  checked={props.parameters.data.includes(DATA_CATEGORY.OFFICIAL)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={DATA_CATEGORY.PERSONAL}  value={DATA_CATEGORY.PERSONAL}  checked={props.parameters.data.includes(DATA_CATEGORY.PERSONAL)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={DATA_CATEGORY.HEALTH}    value={DATA_CATEGORY.HEALTH}    checked={props.parameters.data.includes(DATA_CATEGORY.HEALTH)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={DATA_CATEGORY.FINANCIAL} value={DATA_CATEGORY.FINANCIAL} checked={props.parameters.data.includes(DATA_CATEGORY.FINANCIAL)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </SidebarAccordion>
+                </AccordionItem>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="type_category" label="Type">
+                <AccordionItem  id="type_category" label="Type" labelVariant="sideMenu" iconVariant="default">
                   <CategoryCheckBox label={TYPE_CATEGORY.REACT}   value={TYPE_CATEGORY.REACT}   checked={props.parameters.type.includes(TYPE_CATEGORY.REACT)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={TYPE_CATEGORY.SOAP}    value={TYPE_CATEGORY.SOAP}    checked={props.parameters.type.includes(TYPE_CATEGORY.SOAP)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={TYPE_CATEGORY.GRAPHQL} value={TYPE_CATEGORY.GRAPHQL} checked={props.parameters.type.includes(TYPE_CATEGORY.GRAPHQL)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </SidebarAccordion>
+                </AccordionItem>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="access_category" label="Access">
+                <AccordionItem  id="access_category" label="Access" labelVariant="sideMenu" iconVariant="default">
                   <CategoryCheckBox label={ACCESS_CATEGORY.X_ROAD} value={ACCESS_CATEGORY.X_ROAD}  checked={props.parameters.access.includes(ACCESS_CATEGORY.X_ROAD)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={ACCESS_CATEGORY.API_GW} value={ACCESS_CATEGORY.API_GW}  checked={props.parameters.access.includes(ACCESS_CATEGORY.API_GW)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </SidebarAccordion>
+                </AccordionItem>
               </div>
           </Box>
       } />

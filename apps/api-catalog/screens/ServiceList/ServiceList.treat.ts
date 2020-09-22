@@ -1,5 +1,5 @@
 import { style } from 'treat'
-
+import { theme } from '@island.is/island-ui/theme'
 
 export const serviceList = style ({
     display: 'flex',  
@@ -8,11 +8,20 @@ export const serviceList = style ({
 })
 
 export const filter = style({
-  marginTop:10
+  background:theme.color.blue100,
+  fontFamily:'IBM Plex Sans',
+  borderRadius:5,
+  marginTop:10,
+  padding:24,
+  minWidth:220
 })
 
 export const filterItem = style({
-  marginTop:5
+  marginTop:0
+})
+
+export const inputSearch = style({
+  marginBottom:20
 })
 
 export const navigation = style({
