@@ -286,7 +286,7 @@ const Search: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href="/">Ísland.is</Link>
+            <Link href={makePath()}>Ísland.is</Link>
           </Breadcrumbs>
           <SearchInput
             id="search_input_search_page"

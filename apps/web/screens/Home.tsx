@@ -69,7 +69,7 @@ const Home: Screen<HomeProps> = ({
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
-    href: `${makePath('ArticleCategory')}/[slug]`,
+    href: makePath('ArticleCategory', '/[slug]'),
     as: makePath('ArticleCategory', slug),
   }))
 
