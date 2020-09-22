@@ -2067,7 +2067,7 @@ export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
     news: Array<
       { __typename?: 'News' } & Pick<
         News,
-        'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro'
+        'typename' | 'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro'
       > & { image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment> }
     >
   }

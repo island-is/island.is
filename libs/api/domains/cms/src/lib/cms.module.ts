@@ -4,6 +4,7 @@ import { TerminusModule } from '@nestjs/terminus'
 import {
   CmsResolver,
   ArticleResolver,
+  LatestNewsSliceResolver
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -22,6 +23,7 @@ import { CmsHealthIndicator } from './cms.health'
     MailService,
     ContentfulRepository,
     CmsHealthIndicator,
+    LatestNewsSliceResolver,
   ],
   exports: [ContentfulRepository, CmsHealthIndicator],
 })
