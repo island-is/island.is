@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   GridContainer,
   GridRow,
@@ -7,26 +7,41 @@ import {
   Typography,
   Accordion,
   AccordionItem,
+  Input,
 } from '@island.is/island-ui/core'
 import { Logo } from '../../shared-components/Logo/Logo'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import { getRestrictionByValue } from '../../utils/stepHelper'
-import { CaseCustodyRestrictions } from '../../types'
+import { autoSave, getRestrictionByValue } from '../../utils/stepHelper'
+import { Case, CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../api'
+import { validate } from '../../utils/validate'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraftJSON = JSON.parse(caseDraft)
+  const [accordionItemOneExpanded, setAccordionItemOneExpanded] = useState(true)
+  const [accordionItemTwoExpanded, setAccordionItemTwoExpanded] = useState(true)
+  const [accordionItemThreeExpanded, setAccordionItemThreeExpanded] = useState(
+    true,
+  )
+  const [accordionItemFourExpanded, setAccordionItemFourExpanded] = useState(
+    true,
+  )
+  const [
+    courtCaseNumberErrorMessage,
+    setCourtCaseNumberErrorMessage,
+  ] = useState('')
+  const [workingCase, setWorkingCase] = useState<Case>()
 
   useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
-      window.localStorage.setItem(
-        'workingCase',
-        JSON.stringify({ id, case: currentCase.case }),
-      )
+      window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
+      setWorkingCase(currentCase.case)
     }
 
     if (id) {
@@ -50,13 +65,20 @@ export const JudgeOverview: React.FC = () => {
             <Typography>Hliðarstika</Typography>
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Málsnúmer héraðsdóms
+                </Typography>
+              </Box>
+            </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
                 <Typography variant="eyebrow" color="blue400">
                   LÖKE málsnúmer
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.case.policeCaseNumber}</Typography>
+              <Typography>{caseDraftJSON.policeCaseNumber}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -64,7 +86,7 @@ export const JudgeOverview: React.FC = () => {
                   Fullt nafn kærða
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.case.suspectName}</Typography>
+              <Typography>{caseDraftJSON.suspectName}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -72,7 +94,7 @@ export const JudgeOverview: React.FC = () => {
                   Lögheimili/dvalarstaður
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.case.suspectAddress}</Typography>
+              <Typography>{caseDraftJSON.suspectAddress}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -80,7 +102,7 @@ export const JudgeOverview: React.FC = () => {
                   Dómstóll
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.case.court}</Typography>
+              <Typography>{caseDraftJSON.court}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -90,14 +112,14 @@ export const JudgeOverview: React.FC = () => {
               </Box>
               <Typography>
                 {`${capitalize(
-                  formatDate(caseDraftJSON.case.arrestDate, 'PPPP', {
+                  formatDate(caseDraftJSON.arrestDate, 'PPPP', {
                     locale: is,
                   }),
-                )} kl. ${caseDraftJSON.case.arrestTime}`}
+                )} kl. ${caseDraftJSON.arrestTime}`}
               </Typography>
             </Box>
-            {caseDraftJSON.case.requestedCourtDate &&
-              caseDraftJSON.case.requestedCourtTime && (
+            {caseDraftJSON.requestedCourtDate &&
+              caseDraftJSON.requestedCourtTime && (
                 <Box component="section" marginBottom={5}>
                   <Box marginBottom={1}>
                     <Typography variant="eyebrow" color="blue400">
@@ -106,41 +128,52 @@ export const JudgeOverview: React.FC = () => {
                   </Box>
                   <Typography>
                     {`${capitalize(
-                      formatDate(
-                        caseDraftJSON.case.requestedCourtDate,
-                        'PPPP',
-                        {
-                          locale: is,
-                        },
-                      ),
-                    )} kl. ${caseDraftJSON.case.requestedCourtTime}`}
+                      formatDate(caseDraftJSON.requestedCourtDate, 'PPPP', {
+                        locale: is,
+                      }),
+                    )} kl. ${caseDraftJSON.requestedCourtTime}`}
                   </Typography>
                 </Box>
               )}
             <Box component="section" marginBottom={5}>
               <Accordion>
-                <AccordionItem id="id_1" label="Dómkröfur">
+                <AccordionItem
+                  id="id_1"
+                  label="Dómkröfur"
+                  expanded={accordionItemOneExpanded}
+                  onToggle={() => setAccordionItemOneExpanded(false)}
+                >
                   <Typography variant="p" as="p">
                     Gæsluvarðhald til
                     <strong>
                       {` ${formatDate(
-                        caseDraftJSON.case.requestedCustodyEndDate,
+                        caseDraftJSON.requestedCustodyEndDate,
                         'PPP',
                         { locale: is },
-                      )} kl. ${caseDraftJSON.case.requestedCustodyEndTime}`}
+                      )} kl. ${caseDraftJSON.requestedCustodyEndTime}`}
                     </strong>
                   </Typography>
                 </AccordionItem>
-                <AccordionItem id="id_2" label="Lagaákvæði">
+                <AccordionItem
+                  id="id_2"
+                  label="Lagaákvæði"
+                  expanded={accordionItemTwoExpanded}
+                  onToggle={() => setAccordionItemTwoExpanded(false)}
+                >
                   <Typography variant="p" as="p">
-                    {caseDraftJSON.case.lawsBroken}
+                    {caseDraftJSON.lawsBroken}
                   </Typography>
                 </AccordionItem>
-                <AccordionItem id="id_3" label="Takmarkanir á gæslu">
+                <AccordionItem
+                  id="id_3"
+                  label="Takmarkanir á gæslu"
+                  expanded={accordionItemThreeExpanded}
+                  onToggle={() => setAccordionItemThreeExpanded(false)}
+                >
                   <Typography variant="p" as="p">
-                    {caseDraftJSON.case.restrictions
+                    {caseDraftJSON.custodyRestrictions
                       .map(
-                        (restriction: CaseCustodyRestrictions) =>
+                        (restriction: CustodyRestrictions) =>
                           `${getRestrictionByValue(restriction)}`,
                       )
                       .toString()
@@ -150,26 +183,26 @@ export const JudgeOverview: React.FC = () => {
                 <AccordionItem
                   id="id_4"
                   label="Greinagerð um málsatvik og lagarök"
+                  expanded={accordionItemFourExpanded}
+                  onToggle={() => setAccordionItemFourExpanded(false)}
                 >
-                  {caseDraftJSON.case.caseFacts && (
+                  {caseDraftJSON.caseFacts && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">Málsatvik rakin</Typography>
                       </Box>
-                      <Typography>{caseDraftJSON.case.caseFacts}</Typography>
+                      <Typography>{caseDraftJSON.caseFacts}</Typography>
                     </Box>
                   )}
-                  {caseDraftJSON.case.witnessAccount && (
+                  {caseDraftJSON.witnessAccount && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">Framburður</Typography>
                       </Box>
-                      <Typography>
-                        {caseDraftJSON.case.witnessAccount}
-                      </Typography>
+                      <Typography>{caseDraftJSON.witnessAccount}</Typography>
                     </Box>
                   )}
-                  {caseDraftJSON.case.investigationProgress && (
+                  {caseDraftJSON.investigationProgress && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">
@@ -177,18 +210,16 @@ export const JudgeOverview: React.FC = () => {
                         </Typography>
                       </Box>
                       <Typography>
-                        {caseDraftJSON.case.investigationProgress}
+                        {caseDraftJSON.investigationProgress}
                       </Typography>
                     </Box>
                   )}
-                  {caseDraftJSON.case.legalArguments && (
+                  {caseDraftJSON.legalArguments && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">Lagarök</Typography>
                       </Box>
-                      <Typography>
-                        {caseDraftJSON.case.legalArguments}
-                      </Typography>
+                      <Typography>{caseDraftJSON.legalArguments}</Typography>
                     </Box>
                   )}
                 </AccordionItem>

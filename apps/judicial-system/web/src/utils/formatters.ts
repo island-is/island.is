@@ -19,7 +19,11 @@ export const parseString = (property: string, value: string | Date) => {
   }
 }
 
-export const formatDate = (date: Date, formatPattern: string, options: any) => {
+export const formatDate = (
+  date: Date,
+  formatPattern: string,
+  options?: any,
+) => {
   if (isValid(date)) {
     return format(date, formatPattern, options)
   } else if (isValid(parseISO(date.toString()))) {
