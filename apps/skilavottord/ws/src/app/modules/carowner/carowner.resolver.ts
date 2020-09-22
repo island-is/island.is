@@ -22,6 +22,6 @@ export class CarownerResolver {
   deregisterCar(
     @Args('deregisterCarInput') dereginput: DeregisterCarInput,
   ): boolean {
-    return true
+    return dereginput.permno === '1'
   }
 }

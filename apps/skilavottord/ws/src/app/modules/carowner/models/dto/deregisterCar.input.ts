@@ -1,12 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import {
-  IsEnum,
-  IsString,
-  IsOptional,
-  IsObject,
-  IsNumber,
-  IsDate,
-} from 'class-validator'
+import { IsOptional, IsNumber } from 'class-validator'
 
 // inp.samkv. datamodeli
 // permno
