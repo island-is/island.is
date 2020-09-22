@@ -3,8 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const serviceList = style ({
     display: 'flex',  
-    flexWrap: 'wrap',
-    alignItems:'center'
+    flexWrap: 'wrap'
 })
 
 export const filter = style({
