@@ -62,6 +62,10 @@ export const variants = styleMap({
     color: theme.color.dark400,
     backgroundColor: theme.color.mint200,
   },
+  rose: {
+    color: theme.color.roseTinted400,
+    backgroundColor: theme.color.roseTinted100,
+  },
   label: {},
 })
 
