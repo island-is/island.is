@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { UserModule, CarModule } from './modules'
+//import { UserModule, CarModule, RecyclingPartner } from './modules'
 import { CarownerModule } from './modules/carowner'
+import { RecyclingPartnerModule } from './modules/recyclingPartner'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -15,6 +16,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       autoSchemaFile: 'apps/skilavottord/ws/src/app/api.graphql',
     }),
     CarownerModule,
+    RecyclingPartnerModule,
   ],
   //providers: [BackendAPI],
 })
