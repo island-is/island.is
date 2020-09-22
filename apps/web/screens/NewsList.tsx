@@ -23,10 +23,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  GET_NEWS_LIST_QUERY,
-  GET_NAMESPACE_QUERY,
-} from './queries'
+import { GET_NEWS_LIST_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import { CustomNextError } from '../units/errors'
 import {
@@ -57,7 +54,7 @@ const NewsList: Screen<NewsListProps> = ({
   namespace,
 }) => {
   const Router = useRouter()
-  const { activeLocale,  } = useI18n()
+  const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
   const n = useNamespace(namespace)
@@ -152,7 +149,9 @@ const NewsList: Screen<NewsListProps> = ({
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
             <Link href={makePath()}>Ísland.is</Link>
-            <Link href={makePath('news')}>{n('newsTitle', 'Fréttir og tilkynningar')}</Link>
+            <Link href={makePath('news')}>
+              {n('newsTitle', 'Fréttir og tilkynningar')}
+            </Link>
           </Breadcrumbs>
           {selectedYear && (
             <Hidden below="lg">
