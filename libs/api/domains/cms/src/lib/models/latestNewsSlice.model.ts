@@ -17,7 +17,7 @@ export class LatestNewsSlice {
   title: string
 
   @Field(() => [News])
-  news: News[]
+  news: GetNewsInput
 }
 
 export const mapLatestNewsSlice = ({
@@ -27,5 +27,5 @@ export const mapLatestNewsSlice = ({
   typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',
-  news: [],
+  news: { lang: sys.locale === 'is-IS' ? 'is' : sys.locale, size: 3 },
 })
