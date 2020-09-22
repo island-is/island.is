@@ -20,19 +20,24 @@ import {
   Select,
   Option,
   Link,
-  GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_NEWS_LIST_QUERY } from './queries'
+import {
+  GET_NEWS_LIST_QUERY,
+  GET_NAMESPACE_QUERY,
+} from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import { CustomNextError } from '../units/errors'
 import {
   GetNewsListQuery,
   QueryGetNewsListArgs,
   ContentLanguage,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
 } from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface NewsListProps {
   newsList: GetNewsListQuery['getNewsList']['news']
@@ -40,6 +45,7 @@ interface NewsListProps {
   dateRange: string[]
   selectedYear: number
   selectedMonth: number
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const NewsList: Screen<NewsListProps> = ({
@@ -48,11 +54,13 @@ const NewsList: Screen<NewsListProps> = ({
   dateRange,
   selectedYear,
   selectedMonth,
+  namespace,
 }) => {
   const Router = useRouter()
-  const { activeLocale } = useI18n()
+  const { activeLocale,  } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
+  const n = useNamespace(namespace)
 
   const dates = dateRange.map((s) => new Date(s))
   const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
@@ -60,11 +68,11 @@ const NewsList: Screen<NewsListProps> = ({
   const years = Object.keys(datesByYear)
   const months = datesByYear[selectedYear] ?? []
 
-  const allYearsString = 'Allar fréttir'
-  const allMonthsString = 'Allt árið'
+  const allYearsString = n('allYears', 'Allar fréttir')
+  const allMonthsString = n('allMonths', 'Allt árið')
 
-  const yearString = 'Ár'
-  const monthString = 'Mánuður'
+  const yearString = n('year', 'Ár')
+  const monthString = n('month', 'Mánuður')
 
   const yearOptions = [
     {
@@ -105,7 +113,7 @@ const NewsList: Screen<NewsListProps> = ({
   const sidebar = (
     <Stack space={3}>
       <Typography variant="h4" as="h4">
-        Fréttir og tilkynningar
+        {n('newsTitle', 'Fréttir og tilkynningar')}
       </Typography>
       <Divider weight="alternate" />
       <NativeSelect
@@ -138,13 +146,13 @@ const NewsList: Screen<NewsListProps> = ({
   return (
     <>
       <Head>
-        <title>Fréttir | Ísland.is</title>
+        <title>{n('pageTitle')} | Ísland.is</title>
       </Head>
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
             <Link href={makePath()}>Ísland.is</Link>
-            <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
+            <Link href={makePath('news')}>{n('newsTitle', 'Fréttir og tilkynningar')}</Link>
           </Breadcrumbs>
           {selectedYear && (
             <Hidden below="lg">
@@ -195,6 +203,7 @@ const NewsList: Screen<NewsListProps> = ({
               as={makePath('news', newsItem.slug)}
               url={makePath('news', '[slug]')}
               date={newsItem.date}
+              readMoreText={n('readMore', 'Lesa nánar')}
             />
           ))}
           <Box paddingTop={[4, 4, 8]}>
@@ -239,6 +248,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         getNewsList: { news: newsList, page },
       },
     },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
@@ -269,6 +279,21 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
+    // TODO: these queries really should be in a library
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'NewsList',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(variables.data.getNamespace.fields)
+      }),
   ])
 
   if ((year || page.page > 1) && newsList.length === 0) {
@@ -284,6 +309,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       oldest[0] && new Date(oldest[0].date),
       latest[0] && new Date(latest[0].date),
     ),
+    namespace,
   }
 }
 
