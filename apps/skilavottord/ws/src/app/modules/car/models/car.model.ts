@@ -15,7 +15,6 @@ export class Car {
     this.color = color
     this.newregdate = newregdate
     this.recyclable = recyclable
-    this.isRecycled = false
   }
 
   @Field((_1) => ID)
