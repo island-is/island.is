@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { GetNewsInput } from '../dto/getNews.input'
 
 import { ILatestNewsSlice } from '../generated/contentfulTypes'
 
@@ -16,7 +17,7 @@ export class LatestNewsSlice {
   title: string
 
   @Field(() => [News])
-  news: News[]
+  news: GetNewsInput
 }
 
 export const mapLatestNewsSlice = ({
@@ -26,5 +27,8 @@ export const mapLatestNewsSlice = ({
   typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',
-  news: [], // populated by resolver
+  news: { // populated by resolver
+    lang: 'is',
+    size: 3
+  },
 })
