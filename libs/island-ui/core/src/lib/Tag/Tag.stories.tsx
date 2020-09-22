@@ -22,6 +22,9 @@ export const Basic = () => (
         <Tag variant="white" label>
           Færnimat
         </Tag>
+        <Tag variant="red" attention>
+          Mikilvægt
+        </Tag>
       </Inline>
     </Box>
   </ContentBlock>
@@ -49,6 +52,9 @@ export const Bordered = () => (
         </Tag>
         <Tag variant="white" label bordered>
           Færnimat
+        </Tag>
+        <Tag variant="darkerMint" label bordered attention>
+          Mikilvægt
         </Tag>
       </Inline>
     </Box>

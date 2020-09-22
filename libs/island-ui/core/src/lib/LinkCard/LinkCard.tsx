@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react'
+import cn from 'classnames'
 import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { Tag, TagVariant, TagProps } from '../Tag/Tag'
@@ -10,6 +11,7 @@ export interface LinkCardProps {
   tag?: string
   tagVariant?: TagVariant
   tagProps?: Omit<TagProps, 'children'>
+  isFocused?: boolean
 }
 
 export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
@@ -22,6 +24,7 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
       tagProps = {
         label: true,
       },
+      isFocused,
     }: LinkCardProps,
     ref,
   ) => {
@@ -35,6 +38,7 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
         padding={[2, 2, 3]}
         ref={ref}
         width="full"
+        className={cn(styles.container, { [styles.focused]: isFocused })}
       >
         <Typography variant="h4" as="span" color="blue400">
           {children}

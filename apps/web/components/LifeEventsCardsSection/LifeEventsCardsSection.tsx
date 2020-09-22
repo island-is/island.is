@@ -16,11 +16,13 @@ import { Card } from '@island.is/web/components'
 interface LifeEventsSectionProps {
   title?: string
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
+  showSleeve?: boolean
 }
 
 export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
   lifeEvents = [],
+  showSleeve = false,
 }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
@@ -40,7 +42,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
+          <Typography variant="h3" as="h2" paddingBottom={4}>
             {title}
           </Typography>
         </GridColumn>
@@ -50,7 +52,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
           .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
           .map((lifeEvent) => (
             <GridColumn
-              span={['12/12', '12/12', '6/12', '6/12', '4/12']}
+              span={['12/12', '6/12', '6/12', '6/12', '4/12']}
               paddingBottom={3}
               key={lifeEvent.title}
             >
@@ -64,7 +66,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   return (
     <>
       <Hidden below="sm">
-        {lifeEvents.length > 6 ? (
+        {showSleeve ? (
           <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
         ) : (
           renderDesktopView(lifeEvents)

@@ -44,6 +44,19 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           }
           image {
             id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
           }
         }
       }

@@ -58,6 +58,10 @@ const Home: Screen<HomeProps> = ({
   const gn = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
 
+  if (!lifeEvents || !lifeEvents.length) {
+    return null
+  }
+
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
@@ -68,6 +72,8 @@ const Home: Screen<HomeProps> = ({
     href: `${makePath('ArticleCategory')}/[slug]`,
     as: makePath('ArticleCategory', slug),
   }))
+
+  const featuredArticles = n('featuredArticles', [])
 
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
@@ -83,32 +89,58 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }, index) => (
-            <Tag href={url} key={url} variant="darkerBlue">
-              {title}
-            </Tag>
-          ))}
+          {featuredArticles.map(({ title, url }, index) => {
+            const isLatest = index + 1 === featuredArticles.length
+            return (
+              <Tag
+                href={url}
+                key={url}
+                variant="darkerBlue"
+                attention={isLatest}
+              >
+                {title}
+              </Tag>
+            )
+          })}
         </Inline>
       </Stack>
     </Box>
   )
+
+  const LIFE_EVENTS_THRESHOLD = 6
+  const includeLifeEventSectionBleed =
+    lifeEvents.length <= LIFE_EVENTS_THRESHOLD
+  const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
 
   return (
     <>
       <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Box marginTop={0}>
+      <Section
+        paddingTop={4}
+        backgroundBleed={
+          includeLifeEventSectionBleed && {
+            bleedAmount: 100,
+            bleedDirection: 'bottom',
+            fromColor: 'white',
+            toColor: 'purple100',
+          }
+        }
+      >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
           lifeEvents={lifeEvents}
+          showSleeve={showSleeve}
         />
-      </Box>
-      <Box marginTop={0} background="purple100">
-        <Section paddingTop={[8, 8, 6]}>
-          <Categories title={n('articlesTitle')} cards={cards} />
-        </Section>
-      </Box>
+      </Section>
+      <Section
+        paddingTop={[8, 8, 6]}
+        paddingBottom={[8, 8, 6]}
+        background="purple100"
+      >
+        <Categories title={n('articlesTitle')} cards={cards} />
+      </Section>
       <Section paddingTop={[8, 8, 6]}>
         <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
       </Section>

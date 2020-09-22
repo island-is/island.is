@@ -131,9 +131,18 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Typography variant={labelVariant} as={labelUse}>
+                <Typography
+                  variant={labelVariant}
+                  as={labelUse}
+                  paddingBottom={1}
+                >
                   {label}
                 </Typography>
+                {visibleContent && (
+                  <div className={styles.visibleContent}>
+                    <Typography variant="pSmall">{visibleContent}</Typography>
+                  </div>
+                )}
               </Column>
               <Column width="content">
                 <div
@@ -168,12 +177,6 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </div>
               </Column>
             </Columns>
-
-            {visibleContent && (
-              <div className={styles.visibleContent}>
-                <Typography variant="pSmall">{visibleContent}</Typography>
-              </div>
-            )}
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>

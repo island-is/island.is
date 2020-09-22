@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme, blue100 } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const button = style({})
 

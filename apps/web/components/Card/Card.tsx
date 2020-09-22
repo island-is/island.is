@@ -17,6 +17,7 @@ import {
   TagVariant,
 } from '@island.is/island-ui/core'
 import { Image } from '@island.is/web/graphql/schema'
+import { BackgroundImage } from '@island.is/web/components'
 
 import * as styles from './Card.treat'
 
@@ -85,16 +86,14 @@ export const Card: FC<CardProps> = ({
       borderRadius="large"
       flexDirection="column"
     >
-      {!!image && (
-        <div
-          className={cn(styles.imageContainer, {
-            [styles.imageContainerStacked]: stackImage,
-          })}
-          style={{ backgroundImage: `url(${image.url})` }}
-        />
-      )}
-      <Box flexGrow={1} height="full" position="relative">
-        <div
+      <Box
+        flexGrow={1}
+        height="full"
+        position="relative"
+        display="flex"
+        flexDirection={stackImage ? 'column' : 'row'}
+      >
+        <Box
           className={cn(styles.cardContent, {
             [styles.cardContentNarrower]: image && !stackImage,
           })}
@@ -113,32 +112,51 @@ export const Card: FC<CardProps> = ({
               </Box>
             </Typography>
             {description && <Typography variant="p">{description}</Typography>}
-          </Stack>
-        </div>
-      </Box>
-      {tags.length > 0 && (
-        <Box paddingTop={3} flexGrow={0} position="relative">
-          <Inline space={1}>
-            {tags.map(({ title, href, as, ...props }: CardTagsProps, index) => {
-              const tagProps = {
-                ...tagPropsDefaults,
-                ...props.tagProps,
-                variant: tagVariant,
-              }
+            {tags.length > 0 && (
+              <Box paddingTop={3} flexGrow={0} position="relative">
+                <Inline space={1}>
+                  {tags.map(
+                    ({ title, href, as, ...props }: CardTagsProps, index) => {
+                      const tagProps = {
+                        ...tagPropsDefaults,
+                        ...props.tagProps,
+                        variant: tagVariant,
+                      }
 
-              return href ? (
-                <Link key={index} href={href} as={as}>
-                  <Tag {...tagProps}>{title}</Tag>
-                </Link>
-              ) : (
-                <Tag key={index} {...tagProps}>
-                  {title}
-                </Tag>
-              )
-            })}
-          </Inline>
+                      return href ? (
+                        <Link key={index} href={href} as={as}>
+                          <Tag {...tagProps}>{title}</Tag>
+                        </Link>
+                      ) : (
+                        <Tag key={index} {...tagProps}>
+                          {title}
+                        </Tag>
+                      )
+                    },
+                  )}
+                </Inline>
+              </Box>
+            )}
+          </Stack>
         </Box>
-      )}
+        {!!image && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            className={cn(styles.imageContainer, {
+              [styles.imageContainerStacked]: stackImage,
+            })}
+          >
+            <BackgroundImage
+              positionX={stackImage ? 'left' : 'right'}
+              background="transparent"
+              backgroundSize="contain"
+              image={image}
+            />
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 

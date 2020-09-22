@@ -9,8 +9,11 @@ export type BackgroundImageProps = {
   image: ApiImage
   ratio?: string
   width?: number
+  height?: number
   background?: Colors
   boxProps?: BoxProps
+  positionX?: 'left' | 'right'
+  backgroundSize?: 'cover' | 'contain'
 }
 
 const useImageLoader = (url: string): boolean => {
@@ -27,9 +30,12 @@ const useImageLoader = (url: string): boolean => {
 
 export const BackgroundImage: FC<BackgroundImageProps> = ({
   image = null,
-  ratio = '16:9',
+  ratio = '',
   width = 1000,
+  height,
   background = theme.color.dark100,
+  backgroundSize = 'cover',
+  positionX,
   boxProps = {
     alignItems: 'center',
     width: 'full',
@@ -44,17 +50,45 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
 
   const imageLoaded = useImageLoader(src)
 
-  let r1 = 16
-  let r2 = 9
+  let paddingTop = '0px'
 
-  if (ratio.match(/[0-9]{1,2}:[0-9]{1,2}/g)) {
-    const r = ratio.split(':')
+  if (ratio) {
+    let r1 = 16
+    let r2 = 9
 
-    r1 = parseInt(r[0], 10)
-    r2 = parseInt(r[1], 10)
+    if (ratio.match(/[0-9]{1,2}:[0-9]{1,2}/g)) {
+      const r = ratio.split(':')
+
+      r1 = parseInt(r[0], 10)
+      r2 = parseInt(r[1], 10)
+    }
+
+    paddingTop = `${(r2 / r1) * 100}%`
+  } else {
+    boxProps = {
+      ...boxProps,
+      style: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        top: 0,
+      },
+    }
   }
 
-  const paddingTop = `${(r2 / r1) * 100}%`
+  let backgroundPosition = 'center center'
+
+  switch (positionX) {
+    case 'left':
+      backgroundPosition = 'center left'
+      break
+    case 'right':
+      backgroundPosition = 'center right'
+      break
+    default:
+      break
+  }
 
   return (
     <Box {...boxProps}>
@@ -65,6 +99,9 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
           })}
           style={{
             backgroundImage: `url(${thumbnail})`,
+            backgroundSize,
+            backgroundPosition,
+            height,
           }}
         />
         <div
@@ -75,6 +112,9 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
           })}
           style={{
             backgroundImage: `url(${src})`,
+            backgroundSize,
+            backgroundPosition,
+            height,
           }}
         />
       </div>

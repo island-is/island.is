@@ -4,7 +4,7 @@ import { Link, mapLink } from './link.model'
 import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 
 @ObjectType()
-export class PageHeaderSlice {
+export class PageHeader {
   @Field()
   typename: string
 
@@ -27,11 +27,8 @@ export class PageHeaderSlice {
   slices: Array<TimelineSlice>
 }
 
-export const mapPageHeaderSlice = ({
-  fields,
-  sys,
-}: IPageHeader): PageHeaderSlice => ({
-  typename: 'PageHeaderSlice',
+export const mapPageHeader = ({ fields, sys }: IPageHeader): PageHeader => ({
+  typename: 'PageHeader',
   id: sys.id,
   title: fields.title,
   introduction: fields.introduction,

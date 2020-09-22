@@ -236,7 +236,16 @@ const removePackagesIfExist = async (
       }
 
       // this package should never be in use so we can delete it
-      return awsEs.deletePackage(params).promise()
+      return awsEs
+        .deletePackage(params)
+        .promise()
+        .catch((error) => {
+          logger.info('Unable to remove conflicting package', {
+            error: error,
+            existingPackage: existingPackage,
+          })
+          return false
+        })
     } else {
       // no file found, return promise
       return false
@@ -249,7 +258,7 @@ const removePackagesIfExist = async (
 }
 
 /*
-createAwsEsPackagesshould only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
+createAwsEsPackages should only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
 We run a remove packages for this version function to handle failed partial updates
 */
 export interface AwsEsPackage {
