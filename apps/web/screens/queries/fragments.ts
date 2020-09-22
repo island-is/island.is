@@ -204,6 +204,22 @@ export const slices = gql`
     }
   }
 
+  fragment TabSectionFields on TabSection {
+    __typename
+    id
+    title
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...HtmlFields
+      }
+    }
+  }
+
   fragment AllSlices on Slice {
     ...PageHeaderFields
     ...TimelineFields
@@ -221,5 +237,6 @@ export const slices = gql`
     ...ImageFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...TabSectionFields
   }
 `

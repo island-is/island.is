@@ -43,6 +43,7 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -64,7 +65,7 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
@@ -292,14 +293,20 @@ const Category: Screen<CategoryProps> = ({
                                           as={makePath('article', slug)}
                                           borderRadius="large"
                                         >
-                                          <LinkCard
-                                            tag={
-                                              containsApplicationForm &&
-                                              n('applicationProcess', 'Umsókn')
-                                            }
-                                          >
-                                            {title}
-                                          </LinkCard>
+                                          {({ isFocused }) => (
+                                            <LinkCard
+                                              isFocused={isFocused}
+                                              tag={
+                                                containsApplicationForm &&
+                                                n(
+                                                  'applicationProcess',
+                                                  'Umsókn',
+                                                )
+                                              }
+                                            >
+                                              {title}
+                                            </LinkCard>
+                                          )}
                                         </FocusableBox>
                                       )
                                     },
@@ -356,7 +363,7 @@ const Category: Screen<CategoryProps> = ({
 
         <Hidden above="sm">
           <Select
-            label="Þjónustuflokkar"
+            label={t.serviceCategories}
             defaultValue={{
               label: category.title,
               value: category.slug,
@@ -448,6 +455,14 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
+
+  const categoryExists = getArticleCategories.some(
+    (category) => category.slug === slug,
+  )
+  // if requested category si not in returned list of categories we assume it does not exist
+  if (!categoryExists) {
+    throw new CustomNextError(404, 'Category not found')
+  }
 
   return {
     articles,

@@ -40,6 +40,11 @@ export class CreateFlightLegBody {
   @IsISO8601()
   @ApiProperty()
   readonly date: Date
+
+  @IsOptional()
+  @IsEnum([Airlines.norlandair])
+  @ApiProperty({ enum: [Airlines.norlandair] })
+  cooperation: string
 }
 
 export class CreateFlightBody {

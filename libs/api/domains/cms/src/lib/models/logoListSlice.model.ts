@@ -6,9 +6,8 @@ import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class LogoListSlice {
-  constructor(initializer: LogoListSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -26,10 +25,10 @@ export class LogoListSlice {
 export const mapLogoListSlice = ({
   fields,
   sys,
-}: ILogoListSlice): LogoListSlice =>
-  new LogoListSlice({
-    id: sys.id,
-    title: fields.title ?? '',
-    body: fields.body ?? '',
-    images: (fields.images ?? []).map(mapImage),
-  })
+}: ILogoListSlice): LogoListSlice => ({
+  typename: 'LogoListSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  body: fields.body ?? '',
+  images: (fields.images ?? []).map(mapImage),
+})

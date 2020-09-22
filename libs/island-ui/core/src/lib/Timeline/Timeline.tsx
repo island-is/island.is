@@ -24,29 +24,13 @@ import ReactDOM from 'react-dom'
 import { Box } from '../Box'
 import Link from 'next/link'
 
-const formatNumber = (value: number) =>
-  value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-
-const months = [
-  'Janúar',
-  'Febrúar',
-  'Mars',
-  'Apríl',
-  'Maí',
-  'Júní',
-  'Júlí',
-  'Ágúst',
-  'September',
-  'Október',
-  'Nóvember',
-  'Desember',
-]
-
 export type TimelineEvent = {
   date: Date
   title: string
   value?: number
+  valueFormatted?: string
   maxValue?: number
+  maxValueFormatted?: string
   valueLabel?: string
   data?: {
     labels: string[]
@@ -57,6 +41,7 @@ export type TimelineEvent = {
 
 export interface TimelineProps {
   events: TimelineEvent[]
+  getMonthByIndex: (idx: number) => string
 }
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
@@ -80,7 +65,7 @@ const mapEvents = (
   return byYear
 }
 
-export const Timeline = ({ events }: TimelineProps) => {
+export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
   const frameRef = useRef<HTMLDivElement>(null)
   const innerContainerRef = useRef<HTMLDivElement>(null)
 
@@ -160,7 +145,7 @@ export const Timeline = ({ events }: TimelineProps) => {
                           timelineStyles.leftLabel,
                         )}
                       >
-                        {months[month]}
+                        {getMonthByIndex(month)}
                       </span>
                     </div>
                     <div className={timelineStyles.right}>&nbsp;</div>
@@ -296,12 +281,10 @@ const EventBar = forwardRef(
         {!!event.value && (
           <div className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
-              <span className={eventStyles.value}>
-                {formatNumber(event.value)}
-              </span>
+              <span className={eventStyles.value}>{event.valueFormatted}</span>
               {!!event.maxValue && (
                 <span className={eventStyles.maxValue}>
-                  /{formatNumber(event.maxValue)}
+                  /{event.maxValueFormatted}
                 </span>
               )}
             </span>
@@ -353,7 +336,7 @@ const EventModal = forwardRef(
               paddingRight={4}
             >
               <Typography variant="h2" color="purple400" as="span">
-                {formatNumber(event.value)}
+                {event.valueFormatted}
               </Typography>
               {!!event.maxValue && (
                 <Typography
@@ -362,7 +345,7 @@ const EventModal = forwardRef(
                   as="span"
                   fontWeight="light"
                 >
-                  /{formatNumber(event.maxValue)}
+                  /{event.maxValueFormatted}
                 </Typography>
               )}
               <Box marginLeft={1}>

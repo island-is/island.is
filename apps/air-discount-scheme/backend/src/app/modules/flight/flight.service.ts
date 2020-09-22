@@ -58,11 +58,14 @@ export class FlightService {
     return false
   }
 
-  // TODO: get cooperation in POST flight body
   private getCooperatingAirline(
     flightLeg: CreateFlightLegBody,
     airline: ValueOf<typeof Airlines>,
   ): ValueOf<typeof Airlines> {
+    if (flightLeg.cooperation) {
+      return flightLeg.cooperation
+    }
+    // TODO: remove when icelandair has fixed their POST parameters
     if (airline === Airlines.icelandair) {
       if (
         NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||

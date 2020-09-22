@@ -19,7 +19,6 @@ export const tab = style({
 })
 
 export const bg = style({
-  backgroundColor: theme.color.purple100,
   position: 'absolute',
   top: 0,
   bottom: 0,

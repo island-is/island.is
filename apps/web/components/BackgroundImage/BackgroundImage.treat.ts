@@ -1,10 +1,9 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   position: 'relative',
   display: 'inline-block',
-  height: 'auto',
+  height: '100%',
   width: '100%',
   overflow: 'hidden',
 })
@@ -23,7 +22,6 @@ export const srOnly = style({
 export const bgImage = style({
   backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover',
 })
 
 export const image = style({

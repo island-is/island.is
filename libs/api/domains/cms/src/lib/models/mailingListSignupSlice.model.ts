@@ -4,9 +4,8 @@ import { IMailingListSignup } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class MailingListSignupSlice {
-  constructor(initializer: MailingListSignupSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -27,11 +26,11 @@ export class MailingListSignupSlice {
 export const mapMailingListSignup = ({
   fields,
   sys,
-}: IMailingListSignup): MailingListSignupSlice =>
-  new MailingListSignupSlice({
-    id: sys.id,
-    title: fields.title,
-    description: fields.description,
-    inputLabel: fields.inputLabel,
-    buttonText: fields.buttonText,
-  })
+}: IMailingListSignup): MailingListSignupSlice => ({
+  typename: 'MailingListSignupSlice',
+  id: sys.id,
+  title: fields.title,
+  description: fields.description,
+  inputLabel: fields.inputLabel,
+  buttonText: fields.buttonText,
+})

@@ -6,6 +6,7 @@ import { Select, Option } from '../Select/Select'
 
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
+import { Colors } from '@island.is/island-ui/theme'
 
 const TAB_ID_PREFIX = 'tab'
 
@@ -19,9 +20,15 @@ interface TabInterface {
   label: string
   selected?: number
   tabs: TabType[]
+  contentBackground?: Colors
 }
 
-export const Tabs: FC<TabInterface> = ({ label, selected = 0, tabs }) => {
+export const Tabs: FC<TabInterface> = ({
+  label,
+  selected = 0,
+  tabs,
+  contentBackground = 'purple100',
+}) => {
   const [selectedIndex, setSelectedIndex] = useState(selected)
 
   const tab = useTabState({
@@ -45,12 +52,8 @@ export const Tabs: FC<TabInterface> = ({ label, selected = 0, tabs }) => {
 
   return (
     <Box position="relative">
-      <div className={styles.bg} />
-      <Box
-        position="relative"
-        padding={['gutter', 'gutter', 0]}
-        paddingY="none"
-      >
+      <Box background={contentBackground} className={styles.bg} />
+      <Box position="relative" paddingY="none">
         <div className={styles.select}>
           <Select
             name={label}
@@ -80,13 +83,7 @@ export const Tabs: FC<TabInterface> = ({ label, selected = 0, tabs }) => {
         </TabList>
         {tabs.map(({ content }, index) => (
           <TabPanel {...tab} key={index} className={styles.tabPanel}>
-            <Box
-              padding={[0, 0, 'gutter']}
-              paddingTop={[0, 0, 4]}
-              paddingBottom={4}
-            >
-              {content}
-            </Box>
+            <Box>{content}</Box>
           </TabPanel>
         ))}
       </Box>
