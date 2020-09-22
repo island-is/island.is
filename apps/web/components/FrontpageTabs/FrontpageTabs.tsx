@@ -24,6 +24,8 @@ import {
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -71,6 +73,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   })
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
+  const { width } = useWindowSize()
 
   useEffect(() => {
     if (!animationDataLoaded.current) {
@@ -108,7 +111,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
     itemsRef.current.forEach((x) => {
       if (x) {
-        height = Math.max(height, x.offsetHeight)
+        height =
+          width < theme.breakpoints.md
+            ? Math.min(height, x.offsetHeight)
+            : Math.max(height, x.offsetHeight)
       }
     })
 
