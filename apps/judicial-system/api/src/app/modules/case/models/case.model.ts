@@ -172,9 +172,9 @@ export class Case extends Model<Case> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Málsnúmer héraðsdóms
   courtCaseNumber: string
 

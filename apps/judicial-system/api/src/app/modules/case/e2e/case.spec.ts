@@ -288,7 +288,7 @@ describe('Case', () => {
           expect(response.body.legalArguments).toBe(data.legalArguments)
           expect(response.body.comments).toBe(data.comments)
           expect(response.body.notifications).toBeUndefined()
-          expect(response.body.notifications).toBe(data.courtCaseNumber)
+          expect(response.body.courtCaseNumber).toBe(data.courtCaseNumber)
 
           // Check the data in the database
           await Case.findOne({
@@ -326,7 +326,7 @@ describe('Case', () => {
             expect(newValue.legalArguments).toBe(data.legalArguments)
             expect(newValue.comments).toBe(data.comments)
             expect(newValue.notifications).toStrictEqual([])
-            expect(newValue.notifications).toBe(data.courtCaseNumber)
+            expect(newValue.courtCaseNumber).toBe(data.courtCaseNumber)
           })
         })
     })
