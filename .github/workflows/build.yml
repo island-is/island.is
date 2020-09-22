@@ -152,8 +152,16 @@ jobs:
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
+      - name: Cache for generated files
+        id: generated-files-cache
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files
+
       - name: Generate schemas
-        run: yarn schemas --all
+        if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
 
       - name: debug directory
         run: ls apps/air-discount-scheme/web/graphql/
@@ -264,6 +272,15 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         uses: crazy-max/ghaction-docker-buildx@v1
@@ -319,6 +336,15 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}

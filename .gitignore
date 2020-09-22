@@ -64,3 +64,4 @@ apps/air-discount-scheme/web/graphql/possibleTypes.json
 apps/skilavottord/ws/src/app/api.graphql
 # libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts
 libs/api/schema/src/lib/schema.d.ts
+/generated_files.tar.gz
