@@ -7,16 +7,14 @@ interface Props {
 }
 
 const ProgressBar: FC<Props> = ({ progress }) => {
-  const wrapperColor = progress === 100 ? { opacity: '0.3' } : { opacity: '1' }
   return (
     <Box
-      background={progress === 100 ? 'dark200' : 'mint200'}
+      background={progress === 100 ? 'mint100' : 'roseTinted100'}
       borderRadius="large"
-      style={wrapperColor}
       className={styles.wrapper}
     >
       <Box
-        background={progress === 100 ? 'dark300' : 'mint400'}
+        background={progress === 100 ? 'mint400' : 'roseTinted400'}
         borderRadius="large"
         style={{ width: `${progress}%` }}
         className={styles.bar}

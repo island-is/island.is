@@ -2,13 +2,9 @@ import React from 'react'
 import { Stack, Typography } from '@island.is/island-ui/core'
 import { PageLayout } from '../Layouts'
 import CompanyList from './components/CompanyList'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 const RecyclingCompanies = (props) => {
   const { companies } = props
-  const {
-    t: { companies: t },
-  } = useI18n()
 
   return (
     <PageLayout>
@@ -24,7 +20,7 @@ const RecyclingCompanies = (props) => {
               be able to accept your car.
             </Typography>
           </Stack>
-          <Typography variant="h3">{t.subTitles.companies}</Typography>
+          <Typography variant="h3">Recycling companies</Typography>
           <CompanyList companies={companies} />
         </Stack>
       </Stack>

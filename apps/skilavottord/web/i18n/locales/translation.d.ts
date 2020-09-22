@@ -11,7 +11,8 @@ export interface Translation {
   home: Home
   myCars: MyCars
   confirm: Confirm
-  companies: Companies
+  handover: Handover
+  completed: Completed
   cancelModal: CancelModal
 }
 
@@ -22,6 +23,7 @@ export interface Home {
 export interface MyCars {
   title: string
   subTitles: MyCarsSubtitles
+  info: MyCarsInfo
   actions: CarActions
   status: CarStatus
   buttons: CarsButtons
@@ -36,11 +38,19 @@ export interface Confirm {
   checkbox: CheckBox
 }
 
-export interface Companies {
+export interface Handover {
   title: string
-  subTitles: CompaniesSubTitles
+  subTitles: HandoverSubTitles
   info: string
-  buttons: CompaniesButton
+  buttons: HandoverButtons
+}
+
+export interface Completed {
+  title: string
+  subTitles: CompletedSubTitles
+  info: CompletedInfo
+  confirmedBy: CompletedConfirmation
+  buttons: CompletedButtons
 }
 
 export interface CancelModal {
@@ -53,6 +63,10 @@ export interface MyCarsSubtitles {
   pending: string
   active: string
   done: string
+}
+
+export interface MyCarsSubtitles {
+  noCarsAvailable: string
 }
 
 export interface CarActions {
@@ -85,13 +99,34 @@ export interface CheckBox {
   linkLabel: string
 }
 
-export interface CompaniesSubTitles {
+export interface HandoverSubTitles {
   recycle: string
   companies: string
 }
 
-export interface CompaniesButton extends ProcessButtons {
+export interface HandoverButtons extends ProcessButtons {
   website: string
+}
+
+export interface CompletedSubTitles {
+  summary: string
+  payment: string
+}
+
+export interface CompletedInfo {
+  payment: string
+  paymentLinkText: string
+}
+
+export interface CompletedConfirmation {
+  user: string
+  company: string
+  authority: string
+  fund: string
+}
+
+export interface CompletedButtons extends ProcessButtons {
+  close: string
 }
 
 // Converts JSON strings to/from your types

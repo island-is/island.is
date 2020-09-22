@@ -27,7 +27,7 @@ export const CompanyListItem: FC<CompanyProps> = ({
   website,
 }: CompanyProps) => {
 
-  const { t: { companies: t } } = useI18n()
+  const { t: { handover: t } } = useI18n()
   
   return (
     <Box padding={3} className={styles.container}>

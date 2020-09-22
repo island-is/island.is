@@ -9,6 +9,9 @@
       "active": "Your cars",
       "done": "Recycled cars"
     },
+    "info": {
+      "noCarsAvailable": "We cannot find any cars registered to you."
+    },
     "actions": {
       "valid": "Recycle car",
       "invalid": "Cannot be recycled"
@@ -39,7 +42,7 @@
       "linkLabel": " Terms and conditions"
     }
   },
-  "companies": {
+  "handover": {
     "title": "Car is ready to be recycled!",
     "subTitles": {
       "recycle": "Take the car to any of our connected recycling companies for recycling",
@@ -50,6 +53,26 @@
       "cancel": "Cancel recycling",
       "continue": "Back to my cars",
       "website": "Go to website"
+    }
+  },
+  "completed": {
+    "title": "Car has been recycled!",
+    "subTitles": {
+      "summary": "Summary",
+      "payment": "Payment"
+    },
+    "info": {
+      "payment": "Money will be payed by Fjársýsla ríkisins to your state collector within 2 days of the payment has been initiated. You will find your payment",
+      "paymentLinkText": "your financial pages"
+    },
+    "confirmedBy": {
+      "user": "Confirmed for recycling by",
+      "company": "Handed over to",
+      "authority": "Car deregistered with Samgöngustofa",
+      "fund": "Car payment inititated by Fjársýsla ríkisins"
+    },
+    "buttons": {
+      "close": "Close"
     }
   },
   "cancelModal": {

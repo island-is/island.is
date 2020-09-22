@@ -46,7 +46,7 @@ export const ActionCard: FC<ActionCardProps> = ({
           <GridColumn span={['10/10', '10/10', '7/10', '7/10']}>
             <GridRow>
               <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
-                <Box paddingLeft={4} paddingY={3}>
+                <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
                     <Typography variant="h5">{id}</Typography>
                     <Typography variant="p">
@@ -72,7 +72,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 textAlign="center"
                 borderRadius="large"
                 paddingX={4}
-                paddingY={3}
+                paddingY={4}
               >
                 <Button
                   size="small"

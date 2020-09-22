@@ -37,10 +37,9 @@ export const ProgressCard: FC<ProgressCardProps> = ({
   } = useI18n()
   return (
     <OutlinedBox
-      paddingY={3}
+      paddingY={4}
       paddingX={4}
       borderColor={status === 'pending' ? 'blue200' : 'dark200'}
-      backgroundColor={status === 'pending' ? 'white' : 'dark100'}
     >
       <GridContainer>
         <GridRow>
@@ -63,7 +62,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
                 >
                   <Tag
-                    variant={status === 'pending' ? 'darkerMint' : 'grey'}
+                    variant={status === 'pending' ? 'rose' : 'darkerMint'}
                     label
                   >
                     {status === 'pending'

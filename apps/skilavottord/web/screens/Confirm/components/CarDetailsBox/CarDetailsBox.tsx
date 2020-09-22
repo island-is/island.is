@@ -24,7 +24,7 @@ export const CarDetailsBox: FC<BoxProps> = ({
 }: BoxProps) => {
   return (
     <OutlinedBox>
-      <Box paddingX={4} paddingY={3}>
+      <Box paddingX={4} paddingY={4}>
         <Box>
           <Stack space={1}>
             <Typography variant="h5">{id}</Typography>

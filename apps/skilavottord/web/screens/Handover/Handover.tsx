@@ -21,7 +21,7 @@ const Handover = (props) => {
 
   const {
     activeLocale,
-    t: { companies: t },
+    t: { handover: t },
   } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
 
