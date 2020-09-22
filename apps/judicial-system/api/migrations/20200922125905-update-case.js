@@ -5,8 +5,7 @@ module.exports = {
     return Promise.all([
       queryInterface.addColumn('case', 'court_case_number', {
         type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'MISSING',
+        allowNull: true,
       }),
     ])
   },
