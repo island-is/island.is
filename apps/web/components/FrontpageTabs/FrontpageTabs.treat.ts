@@ -5,6 +5,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const animationContainer = style({
   position: 'absolute',
+  display: 'inline-block',
   top: 0,
   left: 0,
   right: 0,
@@ -111,13 +112,10 @@ export const dots = style({
 
 export const imageContainer = style({
   position: 'relative',
-  outline: '1px solid red',
-  display: 'flex',
+  display: 'inline-block',
   overflow: 'hidden',
   height: '100%',
   width: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
 })
 
 export const arrowButton = style({

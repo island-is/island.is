@@ -20,7 +20,6 @@ import {
   GridRow,
   GridColumn,
   Icon,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -28,19 +27,10 @@ import { useI18n } from '../../i18n'
 
 import * as styles from './FrontpageTabs.treat'
 
-type ImageProps = {
-  title: string
-  url: string
-  contentType: string
-  width: number
-  height: number
-}
-
 type TabsProps = {
   subtitle?: string
   title?: string
   content?: string
-  image?: ImageProps
   link?: string
   animationJson?: string
 }
@@ -74,21 +64,13 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const [animations, setAnimations] = useState([])
   const animationDataLoaded = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
-  const [maxContainerHeight, setMaxContainerHeight] = useState<number>(0)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const [image, setImage] = useState<ImageProps | null>(null)
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
-
-  const updateImage = useCallback(() => {
-    if (selectedIndex >= 0) {
-      setImage(tabs[selectedIndex].image)
-    }
-  }, [selectedIndex, tabs])
 
   useEffect(() => {
     if (!animationDataLoaded.current) {
@@ -121,7 +103,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   const onResize = useCallback(() => {
     setMinHeight(0)
-    setMaxContainerHeight(0)
 
     let height = 0
 
@@ -132,10 +113,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     })
 
     setMinHeight(height)
-
-    if (contentRef.current) {
-      setMaxContainerHeight(contentRef.current.offsetHeight)
-    }
   }, [itemsRef, contentRef])
 
   const nextSlide = useCallback(() => {
@@ -188,10 +165,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         const ms = index * 100
         span.style.transitionDelay = `${ms}ms`
       })
-
-      updateImage()
     }
-  }, [selectedIndex, updateImage, animations])
+  }, [selectedIndex, animations])
 
   const goTo = (direction: string) => {
     switch (direction) {
@@ -211,34 +186,18 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       <GridRow>
         <GridColumn hiddenBelow="lg" span="1/12">
           <Box display="flex" height="full" width="full" alignItems="center">
-            <Hidden below="lg">
-              <button
-                onClick={() => goTo('prev')}
-                className={cn(styles.arrowButton, {
-                  [styles.arrowButtonDisabled]: false,
-                })}
-              >
-                <Icon color="red400" width="18" height="18" type="arrowLeft" />
-              </button>
-            </Hidden>
+            <button
+              onClick={() => goTo('prev')}
+              className={cn(styles.arrowButton, {
+                [styles.arrowButtonDisabled]: false,
+              })}
+            >
+              <Icon color="red400" width="18" height="18" type="arrowLeft" />
+            </button>
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box ref={contentRef}>
-            <Hidden above="md">
-              <Box
-                display="flex"
-                height="full"
-                width="full"
-                marginBottom={2}
-                justifyContent="center"
-                alignItems="center"
-                overflow="hidden"
-                style={{ maxHeight: 220 }}
-              >
-                <Image image={image} />
-              </Box>
-            </Hidden>
             <Box>
               <TabList
                 {...tab}
@@ -347,34 +306,20 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             </Box>
           </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-          <Box
-            display="flex"
-            height="full"
-            width="full"
-            justifyContent="center"
-            alignItems="center"
-            overflow="hidden"
-            style={{ maxHeight: `${maxContainerHeight}px` }}
-          >
-            <div className={styles.imageContainer}>
-              <Hidden below="lg">
-                {animationData.map((_, index) => {
-                  const visible = index === selectedIndex
+        <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
+          {animationData.map((_, index) => {
+            const visible = index === selectedIndex
 
-                  return (
-                    <div
-                      key={index}
-                      ref={(el) => (animationContainerRefs.current[index] = el)}
-                      className={cn(styles.animationContainer, {
-                        [styles.animationContainerHidden]: !visible,
-                      })}
-                    />
-                  )
+            return (
+              <div
+                key={index}
+                ref={(el) => (animationContainerRefs.current[index] = el)}
+                className={cn(styles.animationContainer, {
+                  [styles.animationContainerHidden]: !visible,
                 })}
-              </Hidden>
-            </div>
-          </Box>
+              />
+            )
+          })}
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12">
           <Box
@@ -384,38 +329,18 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             justifyContent="flexEnd"
             alignItems="center"
           >
-            <Hidden below="lg">
-              <button
-                onClick={() => goTo('next')}
-                className={cn(styles.arrowButton, {
-                  [styles.arrowButtonDisabled]: false,
-                })}
-              >
-                <Icon color="red400" width="18" height="18" type="arrowRight" />
-              </button>
-            </Hidden>
+            <button
+              onClick={() => goTo('next')}
+              className={cn(styles.arrowButton, {
+                [styles.arrowButtonDisabled]: false,
+              })}
+            >
+              <Icon color="red400" width="18" height="18" type="arrowRight" />
+            </button>
           </Box>
         </GridColumn>
       </GridRow>
     </GridContainer>
-  )
-}
-
-const Image = ({ image = null }: { image?: ImageProps }) => {
-  if (!image) {
-    return null
-  }
-
-  return (
-    <Box
-      display="flex"
-      height="full"
-      width="full"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <img src={image.url} alt={image.title} />
-    </Box>
   )
 }
 
