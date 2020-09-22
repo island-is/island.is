@@ -20,7 +20,7 @@
     "affected:lint": "nx affected:lint",
     "affected:dep-graph": "nx affected:dep-graph",
     "affected:codegen": "nx affected --target=codegen",
-    "affected:schemas": "nx affected --target=init-schema --parallel --maxParallel=5 $(test -f .env && echo \"--exclude=$(grep EXCLUDES_SCHEMAS .env | cut -d '=' -f2)\")",
+    "affected:schemas": "./scripts/_nx-affected-targets.sh init-schema --parallel --maxParallel=5 $(test -f .env && echo \"--exclude=$(grep EXCLUDES_SCHEMAS .env | cut -d '=' -f2)\")",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
     "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
