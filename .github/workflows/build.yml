@@ -153,7 +153,7 @@ jobs:
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
       - name: Generate schemas
-        run: yarn schemas
+        run: yarn schemas --all
 
       - name: Security audit Node modules
         run: yarn run security-audit
