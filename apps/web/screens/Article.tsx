@@ -73,12 +73,17 @@ const createArticleNavigation = (
   }
 
   let nav = []
-  nav.push({ url: slugify(article.title), title: article.title })
+
+  nav.push({
+    title: article.title,
+    url: makePath('article', '[slug]'),
+    as: makePath('article', article.slug),
+  })
 
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]'),
+      url: makePath('article', '[slug]/[subSlug]'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -430,11 +435,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Typography variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
             </Typography>
-            {article.intro && (
-              <Typography variant="intro" as="p" paddingTop={2}>
-                <span id={slugify(article.intro)}>{article.intro}</span>
-              </Typography>
-            )}
             {subArticle && (
               <Typography variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>

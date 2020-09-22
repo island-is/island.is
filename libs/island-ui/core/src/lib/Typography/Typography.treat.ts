@@ -14,6 +14,7 @@ export type VariantTypes =
   | 'h5'
   | 'intro'
   | 'eyebrow'
+  | 'menuTab'
   | 'tag'
   | 'cardCategoryTitle'
   | 'sideMenu'
@@ -63,6 +64,7 @@ const defaultFontWeightsMap: defaultFontWeights = {
   pSmall: theme.typography.regular,
   intro: theme.typography.light,
   eyebrow: theme.typography.medium,
+  menuTab: theme.typography.medium,
   tag: theme.typography.semiBold,
   cardCategoryTitle: theme.typography.headingsFontWeight,
   sideMenu: theme.typography.medium,
@@ -141,6 +143,12 @@ export const variants: Variants = {
     fontSize: {
       xs: 12,
       md: 14,
+    },
+    lineHeight: 1.142857,
+  },
+  menuTab: {
+    fontSize: {
+      xs: 14,
     },
     lineHeight: 1.142857,
   },

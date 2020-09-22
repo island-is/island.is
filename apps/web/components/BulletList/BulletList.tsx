@@ -2,13 +2,7 @@ import React, { FC, useState, ReactNode } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import IconBullet from '../IconBullet/IconBullet'
-import {
-  Stack,
-  Box,
-  Typography,
-  Icon,
-  ArrowLink,
-} from '@island.is/island-ui/core'
+import { Stack, Box, Typography, Icon, Button } from '@island.is/island-ui/core'
 import * as styles from './BulletList.treat'
 
 type IconBullet = {
@@ -53,7 +47,9 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
               {bullet.body}
             </Typography>
             {bullet.url && bullet.linkText && (
-              <ArrowLink href={bullet.url}>{bullet.linkText}</ArrowLink>
+              <Button variant="text" href={bullet.url} icon="arrowRight">
+                {bullet.linkText}
+              </Button>
             )}
           </Stack>
         </Row>

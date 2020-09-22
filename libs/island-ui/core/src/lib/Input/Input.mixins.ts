@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const containerPaddingTop = 7
 const containerPaddingRight = 7
@@ -17,6 +17,14 @@ export const label = {
   fontSize: inputLabelFontSize,
   marginBottom: theme.spacing[1],
   transition: 'color 0.1s',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      fontSize: 12,
+    },
+    md: {
+      fontSize: inputLabelFontSize,
+    },
+  }),
 }
 
 export const container = {
