@@ -444,37 +444,6 @@
         "docker-express": {}
       }
     },
-    "api-domains-hello-world": {
-      "root": "libs/api/domains/hello-world",
-      "sourceRoot": "libs/api/domains/hello-world/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/api/domains/hello-world/.eslintrc",
-            "tsConfig": [
-              "libs/api/domains/hello-world/tsconfig.lib.json",
-              "libs/api/domains/hello-world/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/hello-world/**"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api/domains/hello-world/jest.config.js",
-            "tsConfig": "libs/api/domains/hello-world/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-cms": {
       "root": "libs/api/domains/cms",
       "sourceRoot": "libs/api/domains/cms/src",

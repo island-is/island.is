@@ -118,7 +118,6 @@ To run tests, you can either run all tests affected by your changes, or run test
 ```
 yarn affected:test
 yarn test api
-yarn test api-domains-hello-world
 ```
 
 Many jest arguments can be passed to test commands. For more details, add `--help`.
