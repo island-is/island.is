@@ -385,7 +385,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <Link href={makePath()}>Ísland.is</Link>
               {!!article.category && (
                 <Link
-                  href={`${makePath('ArticleCategory')}/[slug]`}
+                  href={makePath('ArticleCategory', '/[slug]')}
                   as={makePath('ArticleCategory', article.category.slug)}
                 >
                   {article.category.title}

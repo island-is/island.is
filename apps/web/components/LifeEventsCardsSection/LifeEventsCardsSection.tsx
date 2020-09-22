@@ -16,11 +16,13 @@ import { Card } from '@island.is/web/components'
 interface LifeEventsSectionProps {
   title?: string
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
+  showSleeve?: boolean
 }
 
 export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
   lifeEvents = [],
+  showSleeve = false,
 }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
@@ -64,7 +66,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   return (
     <>
       <Hidden below="lg">
-        {lifeEvents.length > 6 ? (
+        {showSleeve ? (
           <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
         ) : (
           renderDesktopView(lifeEvents)

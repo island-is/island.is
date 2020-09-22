@@ -7,6 +7,19 @@ export const GET_ABOUT_PAGE_QUERY = gql`
       title
       seoDescription
       theme
+      pageHeader {
+        id
+        title
+        introduction
+        navigationText
+        links {
+          text
+          url
+        }
+        slices {
+          ...AllSlices
+        }
+      }
       slices {
         ...AllSlices
       }

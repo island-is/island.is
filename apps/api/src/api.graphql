@@ -16,11 +16,6 @@ type Image {
   height: Int!
 }
 
-type Link {
-  text: String!
-  url: String!
-}
-
 type Html {
   typename: String!
   id: ID!
@@ -142,17 +137,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | Html | Image
-
-type PageHeaderSlice {
-  typename: String!
-  id: ID!
-  title: String!
-  introduction: String!
-  navigationText: String!
-  links: [Link!]!
-  slices: [TimelineSlice!]!
-}
+union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | Html | Image
 
 type MailingListSignupSlice {
   typename: String!
@@ -380,11 +365,27 @@ type Namespace {
   fields: String!
 }
 
+type Link {
+  text: String!
+  url: String!
+}
+
+type PageHeader {
+  typename: String!
+  id: ID!
+  title: String!
+  introduction: String!
+  navigationText: String!
+  links: [Link!]!
+  slices: [TimelineSlice!]!
+}
+
 type AboutPage {
   id: ID!
   title: String!
   seoDescription: String!
   theme: String!
+  pageHeader: PageHeader!
   slices: [Slice!]!
 }
 

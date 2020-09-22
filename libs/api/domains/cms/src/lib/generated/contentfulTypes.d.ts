@@ -3,6 +3,39 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
+export interface IAboutSubPageFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Description */
+  description?: string | undefined
+
+  /** Content */
+  content: Document
+}
+
+/** sub-page of the about-page */
+
+export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'aboutSubPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAlertBannerFields {
   /** Show Alert Banner */
   showAlertBanner: boolean
@@ -38,6 +71,31 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
     contentType: {
       sys: {
         id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnimationsJsonFields {
+  /** Title */
+  title: string
+
+  /** JSON */
+  json: Record<string, any>
+}
+
+export interface IAnimationsJson extends Entry<IAnimationsJsonFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'animationsJson'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -959,6 +1017,9 @@ export interface IPageFields {
   /** theme */
   theme?: 'nautral' | 'red' | 'blue' | 'gradient' | undefined
 
+  /** header */
+  header: IPageHeader
+
   /** Slices */
   slices: (
     | IBigBulletList
@@ -1821,7 +1882,9 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
+  | 'aboutSubPage'
   | 'alertBanner'
+  | 'animationsJson'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
