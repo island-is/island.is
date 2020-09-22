@@ -21,6 +21,7 @@ import {
   GridColumn,
   Box,
   FocusableBox,
+  Logo,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
@@ -94,15 +95,18 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
           borderRadius="large"
           height="full"
         >
-          <Box display="flex" paddingBottom={3} justifyContent="flexEnd">
-            <FocusableBox
-              component="button"
-              onClick={handleClose}
-              tabIndex={-1}
-              padding={1}
-            >
-              <Icon type="close" />
-            </FocusableBox>
+          <Box display="flex" paddingBottom={3} justifyContent="spaceBetween">
+            <Logo iconOnly id="sideMenuLogo" />
+            <Box display="flex" alignItems="center">
+              <FocusableBox
+                component="button"
+                onClick={handleClose}
+                tabIndex={-1}
+                padding={1}
+              >
+                <Icon type="close" />
+              </FocusableBox>
+            </Box>
           </Box>
           <Hidden above="sm">
             <GridContainer>
