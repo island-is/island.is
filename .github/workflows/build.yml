@@ -155,6 +155,9 @@ jobs:
       - name: Generate schemas
         run: yarn schemas --all
 
+      - name: debug directory
+        run: ls apps/air-discount-scheme/web/graphql/
+
       - name: Security audit Node modules
         run: yarn run security-audit
 
@@ -267,6 +270,9 @@ jobs:
         with:
           buildx-version: v0.4.1
           qemu-version: latest
+
+      - name: debug directory
+        run: ls apps/air-discount-scheme/web/graphql/
 
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
