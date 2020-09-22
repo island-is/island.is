@@ -7,13 +7,13 @@ export const root = style({
   visibility: 'hidden',
   display: 'flex',
   flexDirection: 'column',
-  left: 0,
+  left: theme.spacing[3],
   paddingTop: theme.spacing[3],
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[3],
   position: 'fixed',
-  right: 0,
-  top: 0,
+  right: theme.spacing[3],
+  top: theme.spacing[3],
   zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {

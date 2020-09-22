@@ -157,7 +157,11 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                         [styles.tabFocused]: isFocused,
                       })}
                     >
-                      <Typography variant="eyebrow" color="blue400">
+                      <Typography
+                        variant="menuTab"
+                        fontWeight={activeTab === index ? 'medium' : 'light'}
+                        color="blue400"
+                      >
                         {tab.title}
                       </Typography>
                     </div>
@@ -210,7 +214,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                     flexDirection="column"
                   >
                     <Typography
-                      variant="eyebrow"
+                      variant="menuTab"
                       color="blue400"
                       paddingTop={3}
                       paddingBottom={3}
