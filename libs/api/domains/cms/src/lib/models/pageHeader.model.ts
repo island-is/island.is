@@ -27,10 +27,7 @@ export class PageHeader {
   slices: Array<TimelineSlice>
 }
 
-export const mapPageHeader = ({
-  fields,
-  sys,
-}: IPageHeader): PageHeader => ({
+export const mapPageHeader = ({ fields, sys }: IPageHeader): PageHeader => ({
   typename: 'PageHeader',
   id: sys.id,
   title: fields.title,

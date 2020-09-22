@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
 import { Slice, safelyMapSlices } from './slice.model'
-import {PageHeader, mapPageHeader} from './pageHeader.model'
+import { PageHeader, mapPageHeader } from './pageHeader.model'
 
 @ObjectType()
 export class AboutPage {

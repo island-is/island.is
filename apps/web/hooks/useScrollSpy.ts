@@ -2,7 +2,10 @@ import { useEffect, useState, useCallback } from 'react'
 import { throttle, debounce } from 'lodash'
 import { useEvent } from 'react-use'
 
-const guessVisibleSection = (ids: string[], marginTop: number): string | null => {
+const guessVisibleSection = (
+  ids: string[],
+  marginTop: number,
+): string | null => {
   if (ids.length === 0) return null
 
   // top of the page is a special case because otherwise we might match the
