@@ -99,7 +99,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 />
               </Box>
               <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
+                <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
                 <Tag variant="blue" label>
                   Lífsviðburður
                 </Tag>
