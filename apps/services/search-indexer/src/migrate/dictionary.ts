@@ -4,13 +4,14 @@ import { logger } from '@island.is/logging'
 import _ from 'lodash'
 import { AwsEsPackage } from './aws'
 
+// Analyzers name must not exceed 20 in length and must satisfy this pattern [a-z][a-z0-9\\-]+
 const analyzers = [
   'stemmer',
   'keywords',
   'synonyms',
   'stopwords',
-  'hyphenation_decompound_is',
-  'hyphenation_decompound_whitelist',
+  'hyphen-patterns',
+  'hyphen-whitelist',
 ]
 
 const getDictUrl = (type: string, lang: string): string => {

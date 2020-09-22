@@ -102,7 +102,7 @@ const createTemplateBody = (locale: string, packageMap: PackageMap): string => {
     }
   }
 
-  logger.info('Created template config', { locale })
+  logger.info('Created template config', { locale: locale, config: config })
   return config
 }
 
