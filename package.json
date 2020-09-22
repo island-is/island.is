@@ -20,6 +20,7 @@
     "affected:lint": "nx affected:lint",
     "affected:dep-graph": "nx affected:dep-graph",
     "affected:codegen": "nx affected --target=codegen",
+    "affected:schemas": "nx affected --target=init-schema --parallel --maxParallel=5 --exclude=$(grep EXCLUDES_SCHEMAS .env | cut -d '=' -f2)",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
     "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
@@ -35,7 +36,8 @@
     "help": "nx help",
     "storybook:island-ui": "nx run island-ui-storybook:storybook",
     "ts-node": "node -r ./scripts/ts-node",
-    "postinstall": "echo -e 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && nx run api:generate-schema && nx run air-discount-scheme-api:generate-schema && nx run skilavottord-ws:generate-schema && nx run gjafakort-api:codegen"
+    "schemas": "test -f libs/api/schema/src/lib/schema.d.ts || echo 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && yarn nx run api:contentful-types && yarn affected:schemas",
+    "postinstall": "yarn schemas"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",

@@ -313,6 +313,16 @@
             ]
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "yarn nx run gjafakort-api:codegen"
+              }
+            ]
+          }
+        },
         "docker-express": {}
       }
     },
@@ -345,28 +355,13 @@
             "buildTarget": "api:build"
           }
         },
-        "build-schema": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/api",
-            "main": "apps/api/src/buildSchema.ts",
-            "tsConfig": "apps/api/tsconfig.app.json",
-            "showCircularDependencies": false
-          }
-        },
-        "generate-schema": {
+        "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
             "commands": [
               {
-                "command": "yarn nx run api:contentful-types"
-              },
-              {
-                "command": "yarn nx run api:build-schema"
-              },
-              {
-                "command": "node dist/apps/api/main"
+                "command": "yarn ts-node apps/api/src/buildSchema.ts"
               },
               {
                 "command": "yarn nx run api:codegen"
@@ -1720,25 +1715,13 @@
             "passWithNoTests": true
           }
         },
-        "build-schema": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/air-discount-scheme/api",
-            "main": "apps/air-discount-scheme/api/src/buildSchema.ts",
-            "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
-            "showCircularDependencies": false
-          }
-        },
-        "generate-schema": {
+        "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
             "commands": [
               {
-                "command": "yarn nx run air-discount-scheme-api:build-schema"
-              },
-              {
-                "command": "node dist/apps/air-discount-scheme/api/main"
+                "command": "yarn ts-node apps/air-discount-scheme/api/src/buildSchema.ts"
               },
               {
                 "command": "yarn nx run air-discount-scheme-api:codegen"
@@ -2952,24 +2935,13 @@
             "passWithNoTests": true
           }
         },
-        "build-schema": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/skilavottord/ws",
-            "main": "apps/skilavottord/ws/src/buildSchema.ts",
-            "tsConfig": "apps/skilavottord/ws/tsconfig.app.json"
-          }
-        },
-        "generate-schema": {
+        "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
             "commands": [
               {
-                "command": "yarn nx run skilavottord-ws:build-schema"
-              },
-              {
-                "command": "node dist/apps/skilavottord/ws/main"
+                "command": "yarn ts-node apps/skilavottord/ws/src/buildSchema.ts"
               }
             ]
           }
