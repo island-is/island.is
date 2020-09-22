@@ -63,7 +63,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
 
   return (
     <>
-      <Hidden below="sm">
+      <Hidden below="lg">
         {lifeEvents.length > 6 ? (
           <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
         ) : (
@@ -71,7 +71,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
         )}
       </Hidden>
       <GridContainer>
-        <Hidden above="xs">
+        <Hidden above="md">
           <Swiper>
             {lifeEvents.map((lifeEvent) => renderLifeEventCard(lifeEvent))}
           </Swiper>
