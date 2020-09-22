@@ -102,7 +102,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   useEffect(() => {
     if (animationContainerRefs.current?.length) {
-      let newAnimations = []
+      const newAnimations = []
 
       animationContainerRefs.current.forEach((x, i) => {
         newAnimations.push(
