@@ -132,7 +132,7 @@ const Category: Screen<CategoryProps> = ({
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
     active: c.slug === Router.query.slug,
-    href: `${makePath('ArticleCategory')}/[slug]`,
+    href: makePath('ArticleCategory', '/[slug]'),
     as: makePath('ArticleCategory', c.slug),
   }))
 
@@ -196,6 +196,7 @@ const Category: Screen<CategoryProps> = ({
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
   )
+
   return (
     <>
       <Head>
@@ -289,7 +290,7 @@ const Category: Screen<CategoryProps> = ({
                                       return (
                                         <FocusableBox
                                           key={slug}
-                                          href={`${makePath('article')}/[slug]`}
+                                          href={makePath('article', '/[slug]')}
                                           as={makePath('article', slug)}
                                           borderRadius="large"
                                         >
@@ -346,7 +347,7 @@ const Category: Screen<CategoryProps> = ({
                     key={index}
                     title={title}
                     description={content}
-                    href={`${makePath('article')}/[slug]`}
+                    href={makePath('article', '/[slug]')}
                     as={makePath('article', slug)}
                   />
                 )
@@ -357,7 +358,7 @@ const Category: Screen<CategoryProps> = ({
       >
         <Box paddingBottom={2}>
           <Breadcrumbs>
-            <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
+            <Link href={makePath()}>Ísland.is</Link>
           </Breadcrumbs>
         </Box>
 
@@ -372,7 +373,7 @@ const Category: Screen<CategoryProps> = ({
               const slug = value as string
 
               Router.push(
-                `${makePath('ArticleCategory')}/[slug]`,
+                makePath('ArticleCategory', '/[slug]'),
                 makePath('ArticleCategory', slug),
               )
             }}

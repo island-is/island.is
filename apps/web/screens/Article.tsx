@@ -382,10 +382,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             paddingBottom={2}
           >
             <Breadcrumbs>
-              <Link href={activeLocale === 'en' ? '/en' : '/'}>Ísland.is</Link>
+              <Link href={makePath()}>Ísland.is</Link>
               {!!article.category && (
                 <Link
-                  href={`${makePath('ArticleCategory')}/[slug]`}
+                  href={makePath('ArticleCategory', '/[slug]')}
                   as={makePath('ArticleCategory', article.category.slug)}
                 >
                   {article.category.title}

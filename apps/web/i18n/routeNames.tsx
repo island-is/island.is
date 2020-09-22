@@ -42,15 +42,18 @@ export type PathTypes =
 export const routeNames = (locale: Locale = defaultLanguage) => {
   return {
     makePath: (type?: PathTypes, subfix?: string) => {
+      const typePath =
+        type && typeof routes[locale][type] === 'string'
+          ? String(routes[locale][type])
+          : null
+
       let path = ''
 
-      const typePath = (type && routes[locale][type]) ?? null
-
-      if (locale && locale !== defaultLanguage) {
-        path += '/' + locale
+      if (locale !== defaultLanguage) {
+        path = '/' + locale
       }
 
-      if (typePath) {
+      if (typePath && typePath !== '') {
         path += '/' + typePath
       }
 
@@ -58,7 +61,7 @@ export const routeNames = (locale: Locale = defaultLanguage) => {
         path += '/' + subfix
       }
 
-      return path
+      return path ? path.replace(/\/\/+/g, '/') : '/'
     },
   }
 }

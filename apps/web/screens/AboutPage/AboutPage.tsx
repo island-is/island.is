@@ -160,9 +160,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
           >
             <Stack space={2}>
               <Breadcrumbs color="blue300" separatorColor="blue300">
-                <Link href={activeLocale === 'en' ? '/en' : '/'}>
-                  Ísland.is
-                </Link>
+                <Link href={makePath()}>Ísland.is</Link>
                 <span>{page.title}</span>
               </Breadcrumbs>
               <Typography variant="h1" as="h1" color="white">

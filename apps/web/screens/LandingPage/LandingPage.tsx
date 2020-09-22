@@ -78,9 +78,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
           <GridColumn span={['0', '0', '7/9']} offset={['0', '0', '1/9']}>
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs>
-                <Link href={activeLocale === 'en' ? '/en' : '/'}>
-                  Ísland.is
-                </Link>
+                <Link href={makePath()}>Ísland.is</Link>
                 <Link href={'/' + page.slug}>{page.title}</Link>
               </Breadcrumbs>
               <Typography id={makeId(page.title)} variant="h1" as="h1">
