@@ -17,7 +17,7 @@ export class LatestNewsSlice {
   title: string
 
   @Field(() => [News])
-  news: GetNewsInput
+  news: News[]
 }
 
 export const mapLatestNewsSlice = ({
@@ -27,8 +27,5 @@ export const mapLatestNewsSlice = ({
   typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',
-  news: { // populated by resolver
-    lang: 'is',
-    size: 3
-  },
+  news: [],
 })

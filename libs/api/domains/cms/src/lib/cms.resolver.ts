@@ -351,8 +351,10 @@ export class CmsResolver {
 export class LatestNewsSliceResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
-  @ResolveField('nres', () => [News])
-  async news(@Parent() { news: { lang, size } }: LatestNewsSlice): Promise<News[]> {
+  @ResolveField(() => [News])
+  async news(): Promise<News[]> {
+    const lang = 'is'
+    const size = 3
     logger.info('Got params', { lang, size })
     return this.cmsElasticsearchService.getNews(
       SearchIndexes[lang],
