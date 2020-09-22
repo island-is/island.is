@@ -1,10 +1,10 @@
 import 'isomorphic-fetch'
 import {
-  Case,
+  DetentionRequest,
   CreateCaseRequest,
-  GetCaseByIdCaseResponse,
+  Case,
   GetCaseByIdResponse,
-  NotificationResponse,
+  Notification,
   SendNotificationResponse,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
@@ -15,7 +15,7 @@ const { API_URL = '' } = process.env
 
 export const apiUrl = API_URL
 
-export const getCases: () => Promise<Case[]> = async () => {
+export const getCases: () => Promise<DetentionRequest[]> = async () => {
   try {
     const response = await fetch(`${apiUrl}/api/cases`, {
       method: 'get',
@@ -44,7 +44,7 @@ export const getCaseById: (
   const response = await fetch(`/api/case/${caseId}`)
 
   if (response.ok) {
-    const theCase: GetCaseByIdCaseResponse = await response.json()
+    const theCase: Case = await response.json()
     return {
       httpStatusCode: response.status,
       case: theCase,
@@ -70,7 +70,7 @@ export const createCase: (
     })
 
     if (response.ok) {
-      const responseJSON: Case = await response.json()
+      const responseJSON: DetentionRequest = await response.json()
       return responseJSON.id
     } else if (response.status === 401) {
       window.location.assign('/?error=true')
@@ -150,7 +150,7 @@ export const sendNotification: (
   })
 
   if (response.ok) {
-    const a: NotificationResponse = await response.json()
+    const a: Notification = await response.json()
     return {
       httpStatusCode: response.status,
       response: a,

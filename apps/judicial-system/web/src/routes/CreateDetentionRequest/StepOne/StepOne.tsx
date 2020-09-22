@@ -14,11 +14,18 @@ import {
   Option,
   DatePicker,
 } from '@island.is/island-ui/core'
-import { CreateDetentionReqStepOneCase } from '../../../types'
+import { Case } from '../../../types'
 import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import { updateState, autoSave } from '../../../utils/stepHelper'
-import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
+import {
+  setHours,
+  setMinutes,
+  isValid,
+  parseISO,
+  getTime,
+  format,
+} from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
@@ -26,42 +33,34 @@ import * as Constants from '../../../utils/constants'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
-    window.localStorage.setItem(
-      'workingCase',
-      JSON.stringify({ id: '', case: {} }),
-    )
+    window.localStorage.setItem('workingCase', JSON.stringify({}))
   }
   const history = useHistory()
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
-  const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
-    {
-      id: '',
-      case: {
-        policeCaseNumber: caseDraftJSON.case.policeCaseNumber ?? '',
-        suspectNationalId: caseDraftJSON.case.suspectNationalId ?? '',
-        suspectName: caseDraftJSON.case.suspectName ?? '',
-        suspectAddress: caseDraftJSON.case.suspectAddress ?? '',
-        court: caseDraftJSON.case.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.case.arrestDate ?? null,
-        arrestTime: caseDraftJSON.case.arrestTime ?? '',
-        requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
-        requestedCourtTime: caseDraftJSON.case.requestedCourtTime ?? '',
-        requestedCustodyEndDate:
-          caseDraftJSON.case.requestedCustodyEndDate ?? null,
-        requestedCustodyEndTime:
-          caseDraftJSON.case.requestedCustodyEndTime ?? '',
-        lawsBroken: caseDraftJSON.case.lawsBroken ?? '',
-        caseCustodyProvisions: caseDraftJSON.case.caseCustodyProvisions ?? [],
-        restrictions: caseDraftJSON.case.restrictions ?? [],
-        caseFacts: caseDraftJSON.case.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.case.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.case.investigationProgress ?? '',
-        legalArguments: caseDraftJSON.case.legalArguments ?? '',
-        comments: caseDraftJSON.case.comments ?? '',
-      },
-    },
-  )
+
+  const [workingCase, setWorkingCase] = useState<Case>({
+    id: caseDraftJSON.id ?? '',
+    created: new Date(),
+    modified: new Date(),
+    state: caseDraftJSON.state ?? '',
+    policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
+    suspectNationalId: caseDraftJSON.suspectNationalId ?? '',
+    suspectName: caseDraftJSON.suspectName ?? '',
+    suspectAddress: caseDraftJSON.suspectAddress ?? '',
+    court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
+    arrestDate: caseDraftJSON.arrestDate ?? null,
+    requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
+    requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
+    lawsBroken: caseDraftJSON.lawsBroken ?? '',
+    custodyProvisions: caseDraftJSON.caseCustodyProvisions ?? [],
+    custodyRestrictions: caseDraftJSON.restrictions ?? [],
+    caseFacts: caseDraftJSON.caseFacts ?? '',
+    witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
+    investigationProgress: caseDraftJSON.investigationProgress ?? '',
+    legalArguments: caseDraftJSON.legalArguments ?? '',
+    comments: caseDraftJSON.comments ?? '',
+  })
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
@@ -88,14 +87,14 @@ export const StepOne: React.FC = () => {
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
+  const arrestTimeRef = useRef<HTMLInputElement>()
 
   const requiredFields = [
-    workingCase.case.policeCaseNumber,
-    workingCase.case.suspectNationalId,
-    workingCase.case.suspectName,
-    workingCase.case.suspectAddress,
-    workingCase.case.arrestDate,
-    workingCase.case.arrestTime,
+    workingCase.policeCaseNumber,
+    workingCase.suspectNationalId,
+    workingCase.suspectName,
+    workingCase.suspectAddress,
+    workingCase.arrestDate,
   ]
 
   const filledRequiredFields = requiredFields.filter(
@@ -134,7 +133,7 @@ export const StepOne: React.FC = () => {
   ]
 
   const defaultCourt = courts.filter(
-    (court) => court.label === workingCase.case.court,
+    (court) => court.label === workingCase.court,
   )
 
   const createCaseIfPossible = async () => {
@@ -148,11 +147,22 @@ export const StepOne: React.FC = () => {
         policeCaseNumber: policeCaseNumberRef.current.value,
         suspectNationalId: suspectNationalIdRef.current.value,
       })
+
       window.localStorage.setItem(
         'workingCase',
-        JSON.stringify({ id: caseId, case: workingCase.case }),
+        JSON.stringify({
+          ...workingCase,
+          id: caseId,
+          suspectNationalId: suspectNationalIdRef.current.value,
+          policeCaseNumber: policeCaseNumberRef.current.value,
+        }),
       )
-      setWorkingCase({ id: caseId, case: workingCase.case })
+      setWorkingCase({
+        ...workingCase,
+        id: caseId,
+        suspectNationalId: suspectNationalIdRef.current.value,
+        policeCaseNumber: policeCaseNumberRef.current.value,
+      })
     }
   }
 
@@ -161,7 +171,7 @@ export const StepOne: React.FC = () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem(
         'workingCase',
-        JSON.stringify({ id, case: currentCase.case }),
+        JSON.stringify(currentCase.case),
       )
     }
 
@@ -199,7 +209,7 @@ export const StepOne: React.FC = () => {
                   data-testid="policeCaseNumber"
                   name="policeCaseNumber"
                   label="Slá inn LÖKE málsnúmer"
-                  defaultValue={workingCase.case.policeCaseNumber}
+                  defaultValue={workingCase.policeCaseNumber}
                   ref={policeCaseNumberRef}
                   errorMessage={policeCaseNumberErrorMessage}
                   hasError={policeCaseNumberErrorMessage !== ''}
@@ -235,7 +245,7 @@ export const StepOne: React.FC = () => {
                     data-testid="nationalId"
                     name="nationalId"
                     label="Kennitala"
-                    defaultValue={workingCase.case.suspectNationalId}
+                    defaultValue={workingCase.suspectNationalId}
                     ref={suspectNationalIdRef}
                     errorMessage={nationalIdErrorMessage}
                     hasError={nationalIdErrorMessage !== ''}
@@ -263,7 +273,7 @@ export const StepOne: React.FC = () => {
                     data-testid="suspectName"
                     name="suspectName"
                     label="Fullt nafn kærða"
-                    defaultValue={workingCase.case.suspectName}
+                    defaultValue={workingCase.suspectName}
                     errorMessage={suspectNameErrorMessage}
                     hasError={suspectNameErrorMessage !== ''}
                     onBlur={(evt) => {
@@ -289,7 +299,7 @@ export const StepOne: React.FC = () => {
                     data-testid="suspectAddress"
                     name="suspectAddress"
                     label="Lögheimili/dvalarstaður"
-                    defaultValue={workingCase.case.suspectAddress}
+                    defaultValue={workingCase.suspectAddress}
                     errorMessage={suspectAddressErrorMessage}
                     hasError={suspectAddressErrorMessage !== ''}
                     onBlur={(evt) => {
@@ -353,8 +363,8 @@ export const StepOne: React.FC = () => {
                       errorMessage={arrestDateErrorMessage}
                       hasError={arrestDateErrorMessage !== ''}
                       selected={
-                        caseDraftJSON.case.arrestDate
-                          ? parseISO(caseDraftJSON.case.arrestDate.toString())
+                        caseDraftJSON.arrestDate
+                          ? parseISO(caseDraftJSON.arrestDate.toString())
                           : null
                       }
                       handleChange={(date) => {
@@ -380,10 +390,18 @@ export const StepOne: React.FC = () => {
                       name="arrestTime"
                       label="Tímasetning"
                       placeholder="Settu inn tíma"
-                      disabled={!workingCase.case.arrestDate}
+                      disabled={!workingCase.arrestDate}
                       errorMessage={arrestTimeErrorMessage}
                       hasError={arrestTimeErrorMessage !== ''}
-                      defaultValue={caseDraftJSON.case.arrestTime}
+                      defaultValue={
+                        caseDraftJSON.arrestDate
+                          ? format(
+                              getTime(parseISO(caseDraftJSON.arrestDate)),
+                              'hh:mm',
+                            )
+                          : null
+                      }
+                      ref={arrestTimeRef}
                       onBlur={(evt) => {
                         const validateTimeEmpty = validate(
                           evt.target.value,
@@ -404,7 +422,7 @@ export const StepOne: React.FC = () => {
                           )
 
                           const arrestDateHours = setHours(
-                            workingCase.case.arrestDate,
+                            workingCase.arrestDate,
                             parseInt(timeWithoutColon.substr(0, 2)),
                           )
 
@@ -417,12 +435,6 @@ export const StepOne: React.FC = () => {
                             workingCase,
                             'arrestDate',
                             arrestDateMinutes,
-                            setWorkingCase,
-                          )
-                          updateState(
-                            workingCase,
-                            'arrestTime',
-                            evt.target.value,
                             setWorkingCase,
                           )
                         } else {
@@ -452,9 +464,9 @@ export const StepOne: React.FC = () => {
                       locale="is"
                       minDate={new Date()}
                       selected={
-                        caseDraftJSON.case.requestedCourtDate
+                        caseDraftJSON.requestedCourtDate
                           ? parseISO(
-                              caseDraftJSON.case.requestedCourtDate.toString(),
+                              caseDraftJSON.requestedCourtDate.toString(),
                             )
                           : null
                       }
@@ -474,8 +486,8 @@ export const StepOne: React.FC = () => {
                       name="courtDate"
                       label="Tímasetning"
                       placeholder="Settu inn tíma"
-                      defaultValue={caseDraftJSON.case.requestedCourtTime}
-                      disabled={!workingCase.case.requestedCourtDate}
+                      defaultValue={caseDraftJSON.requestedCourtTime}
+                      disabled={!workingCase.requestedCourtDate}
                       onBlur={(evt) => {
                         const timeWithoutColon = evt.target.value.replace(
                           ':',
@@ -483,7 +495,7 @@ export const StepOne: React.FC = () => {
                         )
 
                         const requestedCourtDateHours = setHours(
-                          workingCase.case.requestedCourtDate,
+                          workingCase.requestedCourtDate,
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 
@@ -515,7 +527,15 @@ export const StepOne: React.FC = () => {
                 nextUrl={Constants.STEP_TWO_ROUTE}
                 onNextButtonClick={() => setModalVisible(true)}
                 nextIsDisabled={
-                  filledRequiredFields.length !== requiredFields.length
+                  !arrestTimeRef.current
+                    ? true
+                    : !validate(arrestTimeRef.current.value, 'empty').isValid ||
+                      !validate(arrestTimeRef.current.value, 'time-format')
+                        .isValid
+                    ? true
+                    : filledRequiredFields.length !== requiredFields.length
+                    ? true
+                    : false
                 }
                 previousIsDisabled
               />
