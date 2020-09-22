@@ -2,8 +2,9 @@ import { Locale, defaultLanguage } from './I18n'
 
 const routes = {
   is: {
-    article: '',
-    Article: '',
+    page: '',
+    article: 'grein',
+    Article: 'grein',
     category: 'flokkur',
     ArticleCategory: 'flokkur',
     ContentCategory: 'flokkur',
@@ -14,8 +15,9 @@ const routes = {
     LifeEventPage: 'lifsvidburdur',
   },
   en: {
-    article: '',
-    Article: '',
+    page: '',
+    article: 'article',
+    Article: 'article',
     category: 'category',
     ArticleCategory: 'category',
     ContentCategory: 'category',
@@ -58,7 +60,7 @@ export const routeNames = (locale: Locale = defaultLanguage) => {
         path += '/' + subfix
       }
 
-      return path
+      return path || '/'
     },
   }
 }
