@@ -301,6 +301,12 @@
     },
     "api-domains-api-catalogue": {
       "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
+    "api-catalogue-consts": {
+      "tags": []
     }
   },
   "affected": {

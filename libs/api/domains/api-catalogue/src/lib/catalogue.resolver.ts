@@ -1,7 +1,7 @@
 import { Resolver, Query, Args } from '@nestjs/graphql'
 import { ApiCatalogueService } from './catalogue.service'
-import { ApiCatalogue } from './dto/catalogue.dto'
-import { GetApiCatalogueInput } from './inputs/catalogue.input'
+import { ApiCatalogue } from './models/catalogue.model'
+import { GetApiCatalogueInput } from './dto/catalogue.input'
 
 @Resolver()
 export class ApiCatalogueResolver {

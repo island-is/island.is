@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
+import { ApiCatalogue } from './models/catalogue.model'
 import {
-  ApiCatalogue,
-  AccessCategoryEnum,
-  DataCategoryEnum,
-  TypeCategoryEnum,
-  PricingCategoryEnum,
-} from './dto/catalogue.dto'
+  AccessCategory,
+  PricingCategory,
+  DataCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
 
 @Injectable()
 export class ApiCatalogueService {
@@ -16,10 +16,10 @@ export class ApiCatalogueService {
       serviceName: 'FirstService',
       description: 'First service description',
       url: 'www.firstService.is',
-      pricing: PricingCategoryEnum.FREE,
-      data: DataCategoryEnum.HEALTH,
-      type: TypeCategoryEnum.SOAP,
-      access: AccessCategoryEnum.APIGW,
+      pricing: PricingCategory.FREE,
+      data: DataCategory.HEALTH,
+      type: TypeCategory.SOAP,
+      access: AccessCategory.APIGW,
     },
     {
       id: '2',
@@ -27,10 +27,10 @@ export class ApiCatalogueService {
       serviceName: 'SecondService',
       description: 'Second service description',
       url: 'www.secondService.is',
-      pricing: PricingCategoryEnum.MONTHLY,
-      data: DataCategoryEnum.PERSONAL,
-      type: TypeCategoryEnum.REST,
-      access: AccessCategoryEnum.XROAD,
+      pricing: PricingCategory.MONTHLY,
+      data: DataCategory.PERSONAL,
+      type: TypeCategory.REST,
+      access: AccessCategory.XROAD,
     },
   ]
 
