@@ -340,7 +340,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               background="blue100"
               paddingTop={[4, 4, 5]}
               paddingBottom={4}
-              paddingX={4}
+              paddingX={[3, 3, 4]}
               className={styles.searchContentContainer}
             >
               {searchContent}

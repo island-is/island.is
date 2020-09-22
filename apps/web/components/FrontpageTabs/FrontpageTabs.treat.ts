@@ -149,7 +149,8 @@ export const searchContentContainer = style({
   borderRadius: theme.border.radius.large,
   ...whenMobile({
     borderRadius: 0,
-    width: 'calc(100% + 60px)',
-    marginLeft: -30,
+    marginLeft: -24,
+    marginRight: -24,
+    width: `calc(100% + ${24 * 2}px)`,
   }),
 })
