@@ -10,13 +10,11 @@ export const animationContainer = style({
   right: 0,
   bottom: 0,
   opacity: 1,
-  // transform: `translateX(0)`,
-  transition: `opacity 400ms ease, transform 400ms ease`,
+  transition: `opacity 400ms ease`,
 })
 
 export const animationContainerHidden = style({
   opacity: 0,
-  // transform: `translateX(25px)`,
 })
 
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
