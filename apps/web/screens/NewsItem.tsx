@@ -29,7 +29,7 @@ interface NewsItemProps {
 }
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
 
@@ -58,7 +58,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <NewsItemLayout>
         <Breadcrumbs>
           <Link href={makePath()}>Ísland.is</Link>
-          <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
+          <Link href={makePath('news')}>{t.newsAndAnnouncements}</Link>
         </Breadcrumbs>
         <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
           {newsItem.title}
