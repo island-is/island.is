@@ -758,17 +758,24 @@ export type DocumentCategory = {
   name: Scalars['String']
 }
 
-export type ApiCatalogue = {
-  __typename?: 'ApiCatalogue'
+export type PageInfo = {
+  __typename?: 'PageInfo'
+  nextCursor: Scalars['String']
+}
+
+export type ApiService = {
+  __typename?: 'ApiService'
   id: Scalars['ID']
   owner: Scalars['String']
-  serviceName: Scalars['String']
+  name: Scalars['String']
   description: Scalars['String']
   url: Scalars['String']
   pricing: PricingCategoryEnum
-  data: DataCategoryEnum
+  data: Array<DataCategoryEnum>
   type: TypeCategoryEnum
-  access: AccessCategoryEnum
+  access: Array<AccessCategoryEnum>
+  created: Scalars['DateTime']
+  updated?: Maybe<Scalars['DateTime']>
 }
 
 export enum PricingCategoryEnum {
@@ -797,6 +804,12 @@ export enum TypeCategoryEnum {
 export enum AccessCategoryEnum {
   XROAD = 'XROAD',
   APIGW = 'APIGW',
+}
+
+export type ApiCatalogue = {
+  __typename?: 'ApiCatalogue'
+  services: Array<ApiService>
+  pageInfo?: Maybe<PageInfo>
 }
 
 export type Query = {
@@ -841,8 +854,8 @@ export type Query = {
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
   getTranslations?: Maybe<Scalars['JSON']>
-  getApiCatalogues: Array<ApiCatalogue>
-  getApiCatalogueById: ApiCatalogue
+  getApiCatalogues: ApiCatalogue
+  getApiCatalogueById: ApiService
 }
 
 export type QueryGetAdgerdirNewsListArgs = {
@@ -1001,8 +1014,12 @@ export type QueryGetTranslationsArgs = {
   input: GetTranslationsInput
 }
 
+export type QueryGetApiCataloguesArgs = {
+  input: GetApiCataloguesInput
+}
+
 export type QueryGetApiCatalogueByIdArgs = {
-  input: GetApiCatalogueInput
+  input: GetApiServiceInput
 }
 
 export type GetAdgerdirNewsListInput = {
@@ -1232,7 +1249,18 @@ export type GetTranslationsInput = {
   lang: Scalars['String']
 }
 
-export type GetApiCatalogueInput = {
+export type GetApiCataloguesInput = {
+  limit: Scalars['Float']
+  cursor?: Maybe<Scalars['String']>
+  owner?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+  pricing?: Maybe<PricingCategoryEnum>
+  data?: Maybe<DataCategoryEnum>
+  type?: Maybe<TypeCategoryEnum>
+  access?: Maybe<AccessCategoryEnum>
+}
+
+export type GetApiServiceInput = {
   id: Scalars['ID']
 }
 
@@ -1614,11 +1642,13 @@ export type ResolversTypes = {
   Document: ResolverTypeWrapper<Document>
   DocumentDetails: ResolverTypeWrapper<DocumentDetails>
   DocumentCategory: ResolverTypeWrapper<DocumentCategory>
-  ApiCatalogue: ResolverTypeWrapper<ApiCatalogue>
+  PageInfo: ResolverTypeWrapper<PageInfo>
+  ApiService: ResolverTypeWrapper<ApiService>
   PricingCategoryEnum: PricingCategoryEnum
   DataCategoryEnum: DataCategoryEnum
   TypeCategoryEnum: TypeCategoryEnum
   accessCategoryEnum: AccessCategoryEnum
+  ApiCatalogue: ResolverTypeWrapper<ApiCatalogue>
   Query: ResolverTypeWrapper<{}>
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
@@ -1663,7 +1693,8 @@ export type ResolversTypes = {
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
-  GetApiCatalogueInput: GetApiCatalogueInput
+  GetApiCataloguesInput: GetApiCataloguesInput
+  GetApiServiceInput: GetApiServiceInput
   Mutation: ResolverTypeWrapper<{}>
   ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
@@ -1823,6 +1854,8 @@ export type ResolversParentTypes = {
   Document: Document
   DocumentDetails: DocumentDetails
   DocumentCategory: DocumentCategory
+  PageInfo: PageInfo
+  ApiService: ApiService
   ApiCatalogue: ApiCatalogue
   Query: {}
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
@@ -1864,7 +1897,8 @@ export type ResolversParentTypes = {
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
-  GetApiCatalogueInput: GetApiCatalogueInput
+  GetApiCataloguesInput: GetApiCataloguesInput
+  GetApiServiceInput: GetApiServiceInput
   Mutation: {}
   ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
@@ -3125,13 +3159,21 @@ export type DocumentCategoryResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type ApiCatalogueResolvers<
+export type PageInfoResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['ApiCatalogue'] = ResolversParentTypes['ApiCatalogue']
+  ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']
+> = {
+  nextCursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ApiServiceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ApiService'] = ResolversParentTypes['ApiService']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   owner?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  serviceName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   pricing?: Resolver<
@@ -3139,10 +3181,33 @@ export type ApiCatalogueResolvers<
     ParentType,
     ContextType
   >
-  data?: Resolver<ResolversTypes['DataCategoryEnum'], ParentType, ContextType>
+  data?: Resolver<
+    Array<ResolversTypes['DataCategoryEnum']>,
+    ParentType,
+    ContextType
+  >
   type?: Resolver<ResolversTypes['TypeCategoryEnum'], ParentType, ContextType>
   access?: Resolver<
-    ResolversTypes['accessCategoryEnum'],
+    Array<ResolversTypes['accessCategoryEnum']>,
+    ParentType,
+    ContextType
+  >
+  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  updated?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ApiCatalogueResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ApiCatalogue'] = ResolversParentTypes['ApiCatalogue']
+> = {
+  services?: Resolver<
+    Array<ResolversTypes['ApiService']>,
+    ParentType,
+    ContextType
+  >
+  pageInfo?: Resolver<
+    Maybe<ResolversTypes['PageInfo']>,
     ParentType,
     ContextType
   >
@@ -3393,12 +3458,13 @@ export type QueryResolvers<
     RequireFields<QueryGetTranslationsArgs, 'input'>
   >
   getApiCatalogues?: Resolver<
-    Array<ResolversTypes['ApiCatalogue']>,
+    ResolversTypes['ApiCatalogue'],
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryGetApiCataloguesArgs, 'input'>
   >
   getApiCatalogueById?: Resolver<
-    ResolversTypes['ApiCatalogue'],
+    ResolversTypes['ApiService'],
     ParentType,
     ContextType,
     RequireFields<QueryGetApiCatalogueByIdArgs, 'input'>
@@ -3546,6 +3612,8 @@ export type Resolvers<ContextType = Context> = {
   Document?: DocumentResolvers<ContextType>
   DocumentDetails?: DocumentDetailsResolvers<ContextType>
   DocumentCategory?: DocumentCategoryResolvers<ContextType>
+  PageInfo?: PageInfoResolvers<ContextType>
+  ApiService?: ApiServiceResolvers<ContextType>
   ApiCatalogue?: ApiCatalogueResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>

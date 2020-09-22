@@ -5,6 +5,8 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { Service } from '@island.is/api-catalogue/types'
+import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
 
 registerEnumType(AccessCategory, {
   name: 'accessCategoryEnum',
@@ -23,31 +25,63 @@ registerEnumType(TypeCategory, {
 })
 
 @ObjectType()
-export class ApiCatalogue {
-  @Field(() => ID)
+export class PageInfo {
+  @Field()
+  nextCursor: string
+}
+
+@ObjectType()
+export class ApiService implements Service {
+  @Field((type) => ID)
   id: string
 
   @Field()
+  @IsString()
   owner: string
 
   @Field()
-  serviceName: string
+  @IsString()
+  name: string
 
   @Field()
+  @IsString()
   description: string
 
   @Field()
+  @IsString()
   url: string
 
-  @Field(() => PricingCategory)
+  @Field((type) => PricingCategory)
+  @IsEnum(PricingCategory)
   pricing: PricingCategory
 
-  @Field(() => DataCategory)
-  data: DataCategory
+  @Field((type) => [DataCategory])
+  @IsEnum(DataCategory)
+  data: Array<DataCategory>
 
-  @Field(() => TypeCategory)
+  @Field((type) => TypeCategory)
+  @IsEnum(TypeCategory)
   type: TypeCategory
 
-  @Field(() => AccessCategory)
-  access: AccessCategory
+  @Field((type) => [AccessCategory])
+  @IsEnum(AccessCategory)
+  access: Array<AccessCategory>
+
+  @Field((type) => Date)
+  @IsDate()
+  created: Date
+
+  @Field((type) => Date, { nullable: true })
+  @IsDate()
+  updated?: Date
+}
+
+@ObjectType()
+export class ApiCatalogue {
+  @Field((type) => [ApiService])
+  services: ApiService[]
+
+  @Field((type) => PageInfo, { nullable: true })
+  @IsOptional()
+  pageInfo?: PageInfo
 }

@@ -1,21 +1,22 @@
 import { Resolver, Query, Args } from '@nestjs/graphql'
 import { ApiCatalogueService } from './catalogue.service'
-import { ApiCatalogue } from './models/catalogue.model'
-import { GetApiCatalogueInput } from './dto/catalogue.input'
+import { ApiCatalogue, ApiService } from './models/catalogue.model'
+import {
+  GetApiCataloguesInput,
+  GetApiServiceInput,
+} from './dto/catalogue.input'
 
 @Resolver()
 export class ApiCatalogueResolver {
   constructor(private catalogueService: ApiCatalogueService) {}
 
-  @Query(() => [ApiCatalogue])
-  getApiCatalogues(): ApiCatalogue[] {
-    return this.catalogueService.getCatalogues()
+  @Query(() => ApiCatalogue)
+  getApiCatalogues(@Args('input') input: GetApiCataloguesInput): ApiCatalogue {
+    return this.catalogueService.getCatalogues(input)
   }
 
-  @Query(() => ApiCatalogue)
-  getApiCatalogueById(
-    @Args('input') input: GetApiCatalogueInput,
-  ): ApiCatalogue {
+  @Query(() => ApiService)
+  getApiCatalogueById(@Args('input') input: GetApiServiceInput): ApiService {
     return this.catalogueService.getCatalogueById(input.id)
   }
 }

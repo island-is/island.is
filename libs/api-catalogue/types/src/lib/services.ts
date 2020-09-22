@@ -16,5 +16,5 @@ export interface Service {
   type: TypeCategory
   access: Array<AccessCategory>
   created: Date
-  updated: Date
+  updated?: Date | null
 }

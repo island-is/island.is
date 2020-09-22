@@ -645,16 +645,22 @@ type DocumentCategory {
   name: String!
 }
 
-type ApiCatalogue {
+type PageInfo {
+  nextCursor: String!
+}
+
+type ApiService {
   id: ID!
   owner: String!
-  serviceName: String!
+  name: String!
   description: String!
   url: String!
   pricing: PricingCategoryEnum!
-  data: DataCategoryEnum!
+  data: [DataCategoryEnum!]!
   type: TypeCategoryEnum!
-  access: accessCategoryEnum!
+  access: [accessCategoryEnum!]!
+  created: DateTime!
+  updated: DateTime
 }
 
 enum PricingCategoryEnum {
@@ -683,6 +689,11 @@ enum TypeCategoryEnum {
 enum accessCategoryEnum {
   XROAD
   APIGW
+}
+
+type ApiCatalogue {
+  services: [ApiService!]!
+  pageInfo: PageInfo
 }
 
 type Query {
@@ -726,8 +737,8 @@ type Query {
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
   getTranslations(input: GetTranslationsInput!): JSON
-  getApiCatalogues: [ApiCatalogue!]!
-  getApiCatalogueById(input: GetApiCatalogueInput!): ApiCatalogue!
+  getApiCatalogues(input: GetApiCataloguesInput!): ApiCatalogue!
+  getApiCatalogueById(input: GetApiServiceInput!): ApiService!
 }
 
 input GetAdgerdirNewsListInput {
@@ -957,7 +968,18 @@ input GetTranslationsInput {
   lang: String!
 }
 
-input GetApiCatalogueInput {
+input GetApiCataloguesInput {
+  limit: Float!
+  cursor: String
+  owner: String
+  name: String
+  pricing: PricingCategoryEnum
+  data: DataCategoryEnum
+  type: TypeCategoryEnum
+  access: accessCategoryEnum
+}
+
+input GetApiServiceInput {
   id: ID!
 }
 
