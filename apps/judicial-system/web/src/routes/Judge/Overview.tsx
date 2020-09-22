@@ -18,11 +18,10 @@ import { FormFooter } from '../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../api'
 import { validate } from '../../utils/validate'
+import useWorkingCase from '../../utils/hooks/useWorkingCase'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const caseDraft = window.localStorage.getItem('workingCase')
-  const caseDraftJSON = JSON.parse(caseDraft)
   const [accordionItemOneExpanded, setAccordionItemOneExpanded] = useState(true)
   const [accordionItemTwoExpanded, setAccordionItemTwoExpanded] = useState(true)
   const [accordionItemThreeExpanded, setAccordionItemThreeExpanded] = useState(
@@ -35,13 +34,14 @@ export const JudgeOverview: React.FC = () => {
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
       setWorkingCase(currentCase.case)
+      console.log(currentCase.case)
     }
 
     if (id) {
@@ -65,20 +65,44 @@ export const JudgeOverview: React.FC = () => {
             <Typography>Hliðarstika</Typography>
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
-            <Box component="section" marginBottom={7}>
+            <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Typography as="h3" variant="h3">
                   Málsnúmer héraðsdóms
                 </Typography>
               </Box>
-            </Box>
-            <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
-                <Typography variant="eyebrow" color="blue400">
-                  LÖKE málsnúmer
-                </Typography>
+                <Input
+                  data-testid="courtCaseNumber"
+                  name="courtCaseNumber"
+                  label="Slá inn málsnúmer"
+                  // defaultValue={workingCase.courtCaseNumber} TODO
+                  errorMessage={courtCaseNumberErrorMessage}
+                  hasError={courtCaseNumberErrorMessage !== ''}
+                  onBlur={(evt) => {
+                    const validateField = validate(evt.target.value, 'empty')
+
+                    if (validateField.isValid) {
+                      autoSave(
+                        workingCase,
+                        'courtCaseNumber',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    } else {
+                      setCourtCaseNumberErrorMessage(validateField.errorMessage)
+                    }
+                  }}
+                  onFocus={() => setCourtCaseNumberErrorMessage('')}
+                  required
+                />
               </Box>
-              <Typography>{caseDraftJSON.policeCaseNumber}</Typography>
+              <Box>
+                <Typography
+                  variant="pSmall"
+                  fontWeight="semiBold"
+                >{`LÖKE málsnr. ${workingCase?.policeCaseNumber}`}</Typography>
+              </Box>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -86,7 +110,7 @@ export const JudgeOverview: React.FC = () => {
                   Fullt nafn kærða
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.suspectName}</Typography>
+              <Typography>{workingCase?.suspectName}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -94,7 +118,7 @@ export const JudgeOverview: React.FC = () => {
                   Lögheimili/dvalarstaður
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.suspectAddress}</Typography>
+              <Typography>{workingCase?.suspectAddress}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -102,7 +126,7 @@ export const JudgeOverview: React.FC = () => {
                   Dómstóll
                 </Typography>
               </Box>
-              <Typography>{caseDraftJSON.court}</Typography>
+              <Typography>{workingCase?.court}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -111,30 +135,33 @@ export const JudgeOverview: React.FC = () => {
                 </Typography>
               </Box>
               <Typography>
-                {`${capitalize(
-                  formatDate(caseDraftJSON.arrestDate, 'PPPP', {
-                    locale: is,
-                  }),
-                )} kl. ${caseDraftJSON.arrestTime}`}
+                {workingCase?.arrestDate &&
+                  `${capitalize(
+                    formatDate(workingCase?.arrestDate, 'PPPP', {
+                      locale: is,
+                    }),
+                  )} kl. ${formatDate(workingCase?.arrestDate, 'hh:mm')}`}
               </Typography>
             </Box>
-            {caseDraftJSON.requestedCourtDate &&
-              caseDraftJSON.requestedCourtTime && (
-                <Box component="section" marginBottom={5}>
-                  <Box marginBottom={1}>
-                    <Typography variant="eyebrow" color="blue400">
-                      Ósk um fyrirtökudag og tíma
-                    </Typography>
-                  </Box>
-                  <Typography>
-                    {`${capitalize(
-                      formatDate(caseDraftJSON.requestedCourtDate, 'PPPP', {
-                        locale: is,
-                      }),
-                    )} kl. ${caseDraftJSON.requestedCourtTime}`}
+            {workingCase?.requestedCourtDate && (
+              <Box component="section" marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Typography variant="eyebrow" color="blue400">
+                    Ósk um fyrirtökudag og tíma
                   </Typography>
                 </Box>
-              )}
+                <Typography>
+                  {`${capitalize(
+                    formatDate(workingCase?.requestedCourtDate, 'PPPP', {
+                      locale: is,
+                    }),
+                  )} kl. ${formatDate(
+                    workingCase?.requestedCourtDate,
+                    'hh:mm',
+                  )}`}
+                </Typography>
+              </Box>
+            )}
             <Box component="section" marginBottom={5}>
               <Accordion>
                 <AccordionItem
@@ -146,11 +173,15 @@ export const JudgeOverview: React.FC = () => {
                   <Typography variant="p" as="p">
                     Gæsluvarðhald til
                     <strong>
-                      {` ${formatDate(
-                        caseDraftJSON.requestedCustodyEndDate,
-                        'PPP',
-                        { locale: is },
-                      )} kl. ${caseDraftJSON.requestedCustodyEndTime}`}
+                      {workingCase?.requestedCustodyEndDate &&
+                        ` ${formatDate(
+                          workingCase?.requestedCustodyEndDate,
+                          'PPP',
+                          { locale: is },
+                        )} kl. ${formatDate(
+                          workingCase.requestedCustodyEndDate,
+                          'hh:mm',
+                        )}`}
                     </strong>
                   </Typography>
                 </AccordionItem>
@@ -161,7 +192,7 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemTwoExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {caseDraftJSON.lawsBroken}
+                    {workingCase?.lawsBroken}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem
@@ -171,7 +202,7 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {caseDraftJSON.custodyRestrictions
+                    {workingCase?.custodyRestrictions
                       .map(
                         (restriction: CustodyRestrictions) =>
                           `${getRestrictionByValue(restriction)}`,
@@ -186,23 +217,23 @@ export const JudgeOverview: React.FC = () => {
                   expanded={accordionItemFourExpanded}
                   onToggle={() => setAccordionItemFourExpanded(false)}
                 >
-                  {caseDraftJSON.caseFacts && (
+                  {workingCase?.caseFacts && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">Málsatvik rakin</Typography>
                       </Box>
-                      <Typography>{caseDraftJSON.caseFacts}</Typography>
+                      <Typography>{workingCase?.caseFacts}</Typography>
                     </Box>
                   )}
-                  {caseDraftJSON.witnessAccount && (
+                  {workingCase?.witnessAccounts && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">Framburður</Typography>
                       </Box>
-                      <Typography>{caseDraftJSON.witnessAccount}</Typography>
+                      <Typography>{workingCase?.witnessAccounts}</Typography>
                     </Box>
                   )}
-                  {caseDraftJSON.investigationProgress && (
+                  {workingCase?.investigationProgress && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">
@@ -210,26 +241,24 @@ export const JudgeOverview: React.FC = () => {
                         </Typography>
                       </Box>
                       <Typography>
-                        {caseDraftJSON.investigationProgress}
+                        {workingCase?.investigationProgress}
                       </Typography>
                     </Box>
                   )}
-                  {caseDraftJSON.legalArguments && (
+                  {workingCase?.legalArguments && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
                         <Typography variant="h5">Lagarök</Typography>
                       </Box>
-                      <Typography>{caseDraftJSON.legalArguments}</Typography>
+                      <Typography>{workingCase?.legalArguments}</Typography>
                     </Box>
                   )}
                 </AccordionItem>
               </Accordion>
             </Box>
             <FormFooter
-              previousUrl="/stofna-krofu/lagaakvaedi"
               nextUrl="/"
-              nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
-              confirmationText="Með því að ýta á þennan hnapp fær dómari á vakt tilkynningu um að krafan sé tilbúin."
+              nextIsDisabled={workingCase?.courtCaseNumber === ''}
             />
           </GridColumn>
         </GridRow>
