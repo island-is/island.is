@@ -1,1 +1,1 @@
-export * from './lib/serviceCard'
+export * from './lib/services'
