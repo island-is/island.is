@@ -159,7 +159,7 @@ const Search: Screen<CategoryProps> = ({
 
   const filteredItems = items.filter(byCategory)
 
-  const totalSearchResults = searchResults.total;
+  const totalSearchResults = searchResults.total
 
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
     ?.category?.title
@@ -202,7 +202,6 @@ const Search: Screen<CategoryProps> = ({
             >
               {totalSearchResults > 0 && (
                 <>
-                  {' '}
                   <div
                     style={{
                       right: 40,
@@ -216,9 +215,10 @@ const Search: Screen<CategoryProps> = ({
                       truncate
                       selected={!filters.category}
                       onClick={() => onSelectCategory(null)}
-                      text={`${n('allCategories', 'Allir flokkar')} (${
-                        totalSearchResults
-                      })`}
+                      text={`${n(
+                        'allCategories',
+                        'Allir flokkar',
+                      )} (${totalSearchResults})`}
                     />
                   </div>
                   <SidebarAccordion
