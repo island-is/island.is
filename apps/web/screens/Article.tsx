@@ -73,12 +73,17 @@ const createArticleNavigation = (
   }
 
   let nav = []
-  nav.push({ url: slugify(article.title), title: article.title })
+
+  nav.push({
+    title: article.title,
+    url: makePath('article', '[slug]'),
+    as: makePath('article', article.slug),
+  })
 
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]'),
+      url: makePath('article', '[slug]/[subSlug]'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
