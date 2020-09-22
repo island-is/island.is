@@ -28,7 +28,6 @@ import {
   GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
-import { LifeEventCard } from '../../components/LifeEventsCardsSection/components/LifeEventCard'
 import LifeEventInCategory from './LifeEventInCategory'
 
 import { useNamespace } from '@island.is/web/hooks'
@@ -336,6 +335,7 @@ const Category: Screen<CategoryProps> = ({
                         ? lifeEvent.thumbnail.url
                         : lifeEvent.image.url
                     }
+                    categoryTag={n('categoryTag', 'Lífsviðburður')}
                   />
                 )
               })}

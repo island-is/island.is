@@ -77,7 +77,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
       <ArticleLayout
         sidebar={
           <SidebarNavigation
-            title="Efnisyfirlit"
+            title={n('categoryOverview', 'Efnisyfirlit')}
             navigation={navigation}
             position="right"
           />
@@ -101,7 +101,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
                 <Tag variant="blue" label>
-                  Lífsviðburður
+                  {n('lifeEventTitle', 'Lífsviðburður')}
                 </Tag>
               </Breadcrumbs>
             </GridColumn>
