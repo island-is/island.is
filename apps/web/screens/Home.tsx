@@ -58,6 +58,10 @@ const Home: Screen<HomeProps> = ({
   const gn = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
 
+  if (!lifeEvents || !lifeEvents.length) {
+    return null
+  }
+
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
@@ -103,23 +107,41 @@ const Home: Screen<HomeProps> = ({
     </Box>
   )
 
+  const LIFE_EVENTS_THRESHOLD = 6
+  const includeLifeEventSectionBleed =
+    lifeEvents.length <= LIFE_EVENTS_THRESHOLD
+  const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
+
   return (
     <>
       <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Box marginTop={0}>
+      <Section
+        paddingTop={4}
+        backgroundBleed={
+          includeLifeEventSectionBleed && {
+            bleedAmount: 100,
+            bleedDirection: 'bottom',
+            fromColor: 'white',
+            toColor: 'purple100',
+          }
+        }
+      >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
           lifeEvents={lifeEvents}
+          showSleeve={showSleeve}
         />
-      </Box>
-      <Box marginTop={0} background="purple100">
-        <Section paddingTop={[8, 8, 6]}>
-          <Categories title={n('articlesTitle')} cards={cards} />
-        </Section>
-      </Box>
-      <Section paddingTop={[8, 8, 5]}>
+      </Section>
+      <Section
+        paddingTop={[8, 8, 6]}
+        paddingBottom={[8, 8, 6]}
+        background="purple100"
+      >
+        <Categories title={n('articlesTitle')} cards={cards} />
+      </Section>
+      <Section paddingTop={[8, 8, 6]}>
         <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
       </Section>
       <Section paddingY={[8, 8, 8, 10, 15]}>
