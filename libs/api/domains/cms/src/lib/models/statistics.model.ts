@@ -6,9 +6,8 @@ import { Statistic, mapStatistic } from './statistic.model'
 
 @ObjectType()
 export class Statistics {
-  constructor(initializer: Statistics) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -20,9 +19,9 @@ export class Statistics {
   statistics: Statistic[]
 }
 
-export const mapStatistics = ({ fields, sys }: IStatistics): Statistics =>
-  new Statistics({
-    id: sys.id,
-    title: fields.title ?? '',
-    statistics: fields.statistics.map(mapStatistic),
-  })
+export const mapStatistics = ({ fields, sys }: IStatistics): Statistics => ({
+  typename: 'Statistics',
+  id: sys.id,
+  title: fields.title ?? '',
+  statistics: fields.statistics.map(mapStatistic),
+})

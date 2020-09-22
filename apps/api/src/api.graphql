@@ -7,6 +7,7 @@ type HelloWorld {
 }
 
 type Image {
+  typename: String!
   id: ID!
   url: String!
   title: String!
@@ -21,6 +22,7 @@ type Link {
 }
 
 type Html {
+  typename: String!
   id: ID!
   document: JSON!
 }
@@ -43,6 +45,7 @@ type TimelineEvent {
 }
 
 type TimelineSlice {
+  typename: String!
   id: ID!
   title: String!
   events: [TimelineEvent!]!
@@ -94,6 +97,13 @@ type QuestionAndAnswer {
   answer: Html
 }
 
+type TabContent {
+  tabTitle: String!
+  contentTitle: String
+  image: Image
+  body: Html
+}
+
 type ArticleCategory {
   title: String!
   slug: String!
@@ -132,9 +142,10 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
+union Slice = PageHeaderSlice | TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | Html | Image
 
 type PageHeaderSlice {
+  typename: String!
   id: ID!
   title: String!
   introduction: String!
@@ -143,31 +154,8 @@ type PageHeaderSlice {
   slices: [TimelineSlice!]!
 }
 
-type HeadingSlice {
-  id: ID!
-  title: String!
-  body: String!
-}
-
-type StorySlice {
-  id: ID!
-  readMoreText: String!
-  stories: [Story!]!
-}
-
-type LinkCardSlice {
-  id: ID!
-  title: String!
-  cards: [LinkCard!]!
-}
-
-type LatestNewsSlice {
-  id: ID!
-  title: String!
-  news: [News!]!
-}
-
 type MailingListSignupSlice {
+  typename: String!
   id: ID!
   title: String!
   description: String
@@ -175,14 +163,44 @@ type MailingListSignupSlice {
   buttonText: String!
 }
 
+type HeadingSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type LinkCardSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  cards: [LinkCard!]!
+}
+
+type StorySlice {
+  typename: String!
+  id: ID!
+  readMoreText: String!
+  stories: [Story!]!
+}
+
 type LogoListSlice {
+  typename: String!
   id: ID!
   title: String!
   body: String!
   images: [Image!]!
 }
 
+type LatestNewsSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  news: [News!]!
+}
+
 type BulletListSlice {
+  typename: String!
   id: ID!
   bullets: [BulletEntry!]!
 }
@@ -205,12 +223,14 @@ type NumberBulletGroup {
 }
 
 type Statistics {
+  typename: String!
   id: ID!
   title: String!
   statistics: [Statistic!]!
 }
 
 type ProcessEntry {
+  typename: String!
   id: ID!
   type: String!
   processTitle: String!
@@ -219,27 +239,36 @@ type ProcessEntry {
 }
 
 type FaqList {
+  typename: String!
   id: ID!
   title: String!
   questions: [QuestionAndAnswer!]!
 }
 
 type EmbeddedVideo {
+  typename: String!
   id: ID!
   title: String!
   url: String!
 }
 
 type SectionWithImage {
+  typename: String!
   id: ID!
   title: String!
   image: Image
   html: Html!
 }
 
+type TabSection {
+  typename: String!
+  id: ID!
+  title: String!
+  tabs: [TabContent!]!
+}
+
 type Article {
   id: ID!
-  contentStatus: String!
   title: String!
   slug: String!
   shortTitle: String
@@ -521,7 +550,6 @@ type DocumentCategory {
 
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
-  getArticle(input: GetArticleInput!): Article
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
@@ -543,6 +571,7 @@ type Query {
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
   getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getSingleArticle(input: GetSingleArticleInput!): Article
   getArticles(input: GetArticlesInput!): [Article!]!
   getSingleNews(input: GetSingleNewsInput!): News
   getUrl(input: GetUrlInput!): Url
@@ -559,11 +588,6 @@ type Query {
 
 input HelloWorldInput {
   name: String = "World"
-}
-
-input GetArticleInput {
-  slug: String
-  lang: String!
 }
 
 input GetNewsListInput {
@@ -671,6 +695,11 @@ input GetLifeEventsInCategoryInput {
 input GetArticleCategoriesInput {
   lang: String!
   size: Int
+}
+
+input GetSingleArticleInput {
+  slug: String!
+  lang: String!
 }
 
 input GetArticlesInput {

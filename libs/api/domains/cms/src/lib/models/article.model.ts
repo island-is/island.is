@@ -16,9 +16,6 @@ export class Article {
   id: string
 
   @Field()
-  contentStatus: string
-
-  @Field()
   title: string
 
   @Field()
@@ -60,10 +57,9 @@ export class Article {
 
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   id: sys.id,
-  contentStatus: fields.contentStatus,
-  title: fields.title,
+  title: fields?.title ?? '',
   shortTitle: fields.shortTitle ?? '',
-  slug: fields.slug,
+  slug: fields?.slug ?? '',
   intro: fields.intro ?? '',
   containsApplicationForm: fields.containsApplicationForm ?? false,
   importance: fields.importance ?? 0,
@@ -78,6 +74,6 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
     .filter((doc) => !isEmpty(doc))
     .map(mapSubArticle),
   relatedArticles: (fields?.relatedArticles ?? [])
-    .filter((doc) => !isEmpty(doc))
+    .filter((article) => article?.fields?.title && article?.fields?.slug) // we assume articles failing this check are empty
     .map(mapArticle),
 })

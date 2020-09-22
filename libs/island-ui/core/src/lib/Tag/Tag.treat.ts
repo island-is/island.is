@@ -10,8 +10,6 @@ export const container = style({
   height: 32,
   padding: '0 8px',
   whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
@@ -108,4 +106,20 @@ export const active = style({
 
 export const label = style({
   pointerEvents: 'none',
+})
+
+export const attention = style({
+  position: 'relative',
+  selectors: {
+    '&::after': {
+      content: '""',
+      background: theme.color.red400,
+      borderRadius: '50%',
+      height: 8,
+      position: 'absolute',
+      right: -4,
+      top: -3,
+      width: 8,
+    },
+  },
 })

@@ -17,6 +17,7 @@ import {
   IFaqList,
   IEmbeddedVideo,
   ISectionWithImage,
+  ITabSection,
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
@@ -39,6 +40,7 @@ import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
 import { logger } from '@island.is/logging'
+import { TabSection, mapTabSection } from './tabSection.model'
 
 type SliceTypes =
   | IPageHeader
@@ -55,27 +57,30 @@ type SliceTypes =
   | IFaqList
   | IEmbeddedVideo
   | ISectionWithImage
+  | ITabSection
 
 export const Slice = createUnionType({
   name: 'Slice',
   types: () => [
     PageHeaderSlice,
     TimelineSlice,
-    HeadingSlice,
-    StorySlice,
-    LinkCardSlice,
-    LatestNewsSlice,
     MailingListSignupSlice,
+    HeadingSlice,
+    LinkCardSlice,
+    StorySlice,
     LogoListSlice,
+    LatestNewsSlice,
     BulletListSlice,
-    Html,
-    Image,
     Statistics,
     ProcessEntry,
     FaqList,
     EmbeddedVideo,
     SectionWithImage,
+    TabSection,
+    Html,
+    Image,
   ],
+  resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
@@ -108,6 +113,8 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
+    case 'tabSection':
+      return mapTabSection(slice as ITabSection)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,

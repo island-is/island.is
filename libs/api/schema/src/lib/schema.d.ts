@@ -125,6 +125,14 @@ export type QuestionAndAnswer = {
   answer?: Maybe<Html>
 }
 
+export type TabContent = {
+  __typename?: 'TabContent'
+  tabTitle: Scalars['String']
+  contentTitle?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  body?: Maybe<Html>
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -186,6 +194,7 @@ export type Slice =
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
+  | TabSection
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -305,10 +314,16 @@ export type SectionWithImage = {
   html: Html
 }
 
+export type TabSection = {
+  __typename?: 'TabSection'
+  id: Scalars['ID']
+  title: Scalars['String']
+  tabs: Array<TabContent>
+}
+
 export type Article = {
   __typename?: 'Article'
   id: Scalars['ID']
-  contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
   shortTitle?: Maybe<Scalars['String']>
@@ -618,7 +633,6 @@ export type DocumentCategory = {
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
-  getArticle?: Maybe<Article>
   getNewsList: PaginatedNews
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
@@ -640,6 +654,7 @@ export type Query = {
   getLifeEvents: Array<LifeEventPage>
   getLifeEventsInCategory: Array<LifeEventPage>
   getArticleCategories: Array<ArticleCategory>
+  getSingleArticle?: Maybe<Article>
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
   getUrl?: Maybe<Url>
@@ -656,10 +671,6 @@ export type Query = {
 
 export type QueryHelloWorldArgs = {
   input: HelloWorldInput
-}
-
-export type QueryGetArticleArgs = {
-  input: GetArticleInput
 }
 
 export type QueryGetNewsListArgs = {
@@ -746,6 +757,10 @@ export type QueryGetArticleCategoriesArgs = {
   input: GetArticleCategoriesInput
 }
 
+export type QueryGetSingleArticleArgs = {
+  input: GetSingleArticleInput
+}
+
 export type QueryGetArticlesArgs = {
   input: GetArticlesInput
 }
@@ -792,11 +807,6 @@ export type QueryGetTranslationsArgs = {
 
 export type HelloWorldInput = {
   name?: Maybe<Scalars['String']>
-}
-
-export type GetArticleInput = {
-  slug?: Maybe<Scalars['String']>
-  lang: Scalars['String']
 }
 
 export type GetNewsListInput = {
@@ -904,6 +914,11 @@ export type GetLifeEventsInCategoryInput = {
 export type GetArticleCategoriesInput = {
   lang: Scalars['String']
   size?: Maybe<Scalars['Int']>
+}
+
+export type GetSingleArticleInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
 }
 
 export type GetArticlesInput = {
@@ -1214,6 +1229,7 @@ export type ResolversTypes = {
   NumberBullet: ResolverTypeWrapper<NumberBullet>
   Statistic: ResolverTypeWrapper<Statistic>
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
+  TabContent: ResolverTypeWrapper<TabContent>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
@@ -1240,6 +1256,7 @@ export type ResolversTypes = {
     | ResolversTypes['FaqList']
     | ResolversTypes['EmbeddedVideo']
     | ResolversTypes['SectionWithImage']
+    | ResolversTypes['TabSection']
   PageHeaderSlice: ResolverTypeWrapper<PageHeaderSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   StorySlice: ResolverTypeWrapper<StorySlice>
@@ -1262,6 +1279,7 @@ export type ResolversTypes = {
   FaqList: ResolverTypeWrapper<FaqList>
   EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
+  TabSection: ResolverTypeWrapper<TabSection>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1329,7 +1347,6 @@ export type ResolversTypes = {
   DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
-  GetArticleInput: GetArticleInput
   GetNewsListInput: GetNewsListInput
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
@@ -1351,6 +1368,7 @@ export type ResolversTypes = {
   GetLifeEventsInput: GetLifeEventsInput
   GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
+  GetSingleArticleInput: GetSingleArticleInput
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
@@ -1395,6 +1413,7 @@ export type ResolversParentTypes = {
   NumberBullet: NumberBullet
   Statistic: Statistic
   QuestionAndAnswer: QuestionAndAnswer
+  TabContent: TabContent
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
@@ -1421,6 +1440,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['FaqList']
     | ResolversParentTypes['EmbeddedVideo']
     | ResolversParentTypes['SectionWithImage']
+    | ResolversParentTypes['TabSection']
   PageHeaderSlice: PageHeaderSlice
   HeadingSlice: HeadingSlice
   StorySlice: StorySlice
@@ -1441,6 +1461,7 @@ export type ResolversParentTypes = {
   FaqList: FaqList
   EmbeddedVideo: EmbeddedVideo
   SectionWithImage: SectionWithImage
+  TabSection: TabSection
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1503,7 +1524,6 @@ export type ResolversParentTypes = {
   DocumentCategory: DocumentCategory
   Query: {}
   HelloWorldInput: HelloWorldInput
-  GetArticleInput: GetArticleInput
   GetNewsListInput: GetNewsListInput
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
@@ -1525,6 +1545,7 @@ export type ResolversParentTypes = {
   GetLifeEventsInput: GetLifeEventsInput
   GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
+  GetSingleArticleInput: GetSingleArticleInput
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
@@ -1694,6 +1715,21 @@ export type QuestionAndAnswerResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type TabContentResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TabContent'] = ResolversParentTypes['TabContent']
+> = {
+  tabTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleCategoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
@@ -1792,7 +1828,8 @@ export type SliceResolvers<
     | 'ProcessEntry'
     | 'FaqList'
     | 'EmbeddedVideo'
-    | 'SectionWithImage',
+    | 'SectionWithImage'
+    | 'TabSection',
     ParentType,
     ContextType
   >
@@ -1994,12 +2031,21 @@ export type SectionWithImageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type TabSectionResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TabSection'] = ResolversParentTypes['TabSection']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  tabs?: Resolver<Array<ResolversTypes['TabContent']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  contentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   shortTitle?: Resolver<
@@ -2595,12 +2641,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryHelloWorldArgs, 'input'>
   >
-  getArticle?: Resolver<
-    Maybe<ResolversTypes['Article']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryGetArticleArgs, 'input'>
-  >
   getNewsList?: Resolver<
     ResolversTypes['PaginatedNews'],
     ParentType,
@@ -2726,6 +2766,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetArticleCategoriesArgs, 'input'>
+  >
+  getSingleArticle?: Resolver<
+    Maybe<ResolversTypes['Article']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetSingleArticleArgs, 'input'>
   >
   getArticles?: Resolver<
     Array<ResolversTypes['Article']>,
@@ -2862,6 +2908,7 @@ export type Resolvers<ContextType = Context> = {
   NumberBullet?: NumberBulletResolvers<ContextType>
   Statistic?: StatisticResolvers<ContextType>
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
+  TabContent?: TabContentResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
   ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
@@ -2885,6 +2932,7 @@ export type Resolvers<ContextType = Context> = {
   FaqList?: FaqListResolvers<ContextType>
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   SectionWithImage?: SectionWithImageResolvers<ContextType>
+  TabSection?: TabSectionResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -2997,6 +3045,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'SectionWithImage',
+          },
+          {
+            name: 'TabSection',
           },
         ],
       },

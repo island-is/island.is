@@ -6,9 +6,8 @@ import { Html, mapHtml } from './html.model'
 
 @ObjectType()
 export class SectionWithImage {
-  constructor(initializer: SectionWithImage) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -26,10 +25,10 @@ export class SectionWithImage {
 export const mapSectionWithImage = ({
   fields,
   sys,
-}: ISectionWithImage): SectionWithImage =>
-  new SectionWithImage({
-    id: sys.id,
-    title: fields.title ?? '',
-    image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-    html: mapHtml(fields.body, sys.id + ':html'),
-  })
+}: ISectionWithImage): SectionWithImage => ({
+  typename: 'SectionWithImage',
+  id: sys.id,
+  title: fields.title ?? '',
+  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
+  html: mapHtml(fields.body, sys.id + ':html'),
+})

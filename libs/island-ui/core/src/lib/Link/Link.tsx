@@ -43,6 +43,10 @@ const Link: React.FC<Props> = ({
     },
   )
 
+  // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be
+  // optiona - but as things stand, as is needed if you have a dynamic href
+  const prefetchDefault = !as ? false : prefetch
+
   if (isInternal) {
     return (
       <NextLink
@@ -51,7 +55,7 @@ const Link: React.FC<Props> = ({
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}
-        prefetch={prefetch}
+        prefetch={prefetchDefault}
       >
         <a className={classNames} {...linkProps}>
           {children}

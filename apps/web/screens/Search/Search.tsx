@@ -136,6 +136,7 @@ const Search: Screen<CategoryProps> = ({
       category: item.category,
       group: item.group,
       ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
       labels: getLabels(item),
     }),
   )
@@ -241,20 +242,29 @@ const Search: Screen<CategoryProps> = ({
         }
         belowContent={
           <Stack space={2}>
-            {filteredItems.map((item, index) => {
-              const tags: Array<CardTagsProps> = []
+            {filteredItems.map(
+              ({ image, thumbnail, labels, ...rest }, index) => {
+                const tags: Array<CardTagsProps> = []
 
-              item.labels.forEach((label) => {
-                tags.push({
-                  title: label,
-                  tagProps: {
-                    label: true,
-                  },
+                labels.forEach((label) => {
+                  tags.push({
+                    title: label,
+                    tagProps: {
+                      label: true,
+                    },
+                  })
                 })
-              })
 
-              return <Card key={index} tags={tags} {...item} />
-            })}
+                return (
+                  <Card
+                    key={index}
+                    tags={tags}
+                    image={thumbnail ? thumbnail : image}
+                    {...rest}
+                  />
+                )
+              },
+            )}
             <Box paddingTop={8}>
               <Pagination
                 page={page}
@@ -295,34 +305,39 @@ const Search: Screen<CategoryProps> = ({
               name="content-overview"
             />
           </Hidden>
-          <Typography variant="intro" as="p">
-            {filteredItems.length === 0 ? (
-              <span>
+
+          {filteredItems.length === 0 ? (
+            <>
+              <Typography variant="intro" as="p">
                 {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
                 <strong>{q}</strong>
-              </span>
-            ) : (
-              <span>
-                {resultsCountToShow}{' '}
-                {resultsCountToShow === 1
-                  ? n('searchResult', 'leitarniðurstaða')
-                  : n('searchResults', 'leitarniðurstöður')}
-                {filters.category && (
-                  <>
-                    {' '}
-                    {n('inCategory', 'í flokki')}
-                    {categoryTitle ? (
-                      <>
-                        : <strong>{categoryTitle}</strong>
-                      </>
-                    ) : (
-                      '.'
-                    )}
-                  </>
-                )}
-              </span>
-            )}
-          </Typography>
+              </Typography>
+
+              <Typography variant="intro" as="p">
+                {n('nothingFoundExtendedExplanation')}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="intro" as="p">
+              {resultsCountToShow}{' '}
+              {resultsCountToShow === 1
+                ? n('searchResult', 'leitarniðurstaða')
+                : n('searchResults', 'leitarniðurstöður')}
+              {filters.category && (
+                <>
+                  {' '}
+                  {n('inCategory', 'í flokki')}
+                  {categoryTitle ? (
+                    <>
+                      : <strong>{categoryTitle}</strong>
+                    </>
+                  ) : (
+                    '.'
+                  )}
+                </>
+              )}
+            </Typography>
+          )}
         </Stack>
       </CategoryLayout>
     </>

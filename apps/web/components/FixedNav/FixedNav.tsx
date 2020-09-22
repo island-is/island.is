@@ -8,7 +8,7 @@ import { useI18n } from '@island.is/web/i18n'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
 
   useScrollPosition(
     ({ prevPos, currPos }) => {
@@ -54,7 +54,7 @@ export const FixedNav: FC = () => {
                 white
                 size="medium"
                 activeLocale={activeLocale}
-                placeholder="Leitaðu á Ísland.is"
+                placeholder={t.searchPlaceholder}
                 autocomplete={false}
               />
             </Box>

@@ -111,7 +111,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                   <SearchInput
                     id="search_input_side_menu"
                     activeLocale={activeLocale}
-                    placeholder="Leitaðu á Ísland.is"
+                    placeholder={t.searchPlaceholder}
                     size="medium"
                   />
                 </GridColumn>
@@ -139,7 +139,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
               <FocusableBox
                 ref={(el) => (tabRefs.current[index] = el)}
                 component="button"
-                key={tab.title}
+                key={index}
                 role="tab"
                 aria-controls={`tab-content-${index}`}
                 aria-selected={activeTab === index}
@@ -209,7 +209,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                       paddingTop={3}
                       paddingBottom={3}
                     >
-                      {tab.externalLinksHeading || 'Aðrir opinberir vefir'}
+                      {tab.externalLinksHeading}
                     </Typography>
                     <div className={styles.linksContent}>
                       {tab.externalLinks.map((link, index) => (
