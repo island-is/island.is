@@ -8,6 +8,7 @@ interface Props {
   nextUrl?: string
   nextIsDisabled?: boolean
   nextButtonText?: string
+  onNextButtonClick?: () => void
   previousUrl?: string
   previousIsDisabled?: boolean
   confirmationText?: string
@@ -32,7 +33,9 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           icon="arrowRight"
           disabled={props.nextIsDisabled}
           onClick={() => {
-            history.push(props.nextUrl)
+            props.onNextButtonClick
+              ? props.onNextButtonClick()
+              : history.push(props.nextUrl)
           }}
         >
           {props.nextButtonText ?? 'Halda áfram'}

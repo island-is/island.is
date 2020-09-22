@@ -6,9 +6,8 @@ import { LinkCard, mapLinkCard } from './linkCard.model'
 
 @ObjectType()
 export class LinkCardSlice {
-  constructor(initializer: LinkCardSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -23,9 +22,9 @@ export class LinkCardSlice {
 export const mapLinkCardSlice = ({
   fields,
   sys,
-}: ICardSection): LinkCardSlice =>
-  new LinkCardSlice({
-    id: sys.id,
-    title: fields?.title ?? '',
-    cards: fields.cards.map(mapLinkCard),
-  })
+}: ICardSection): LinkCardSlice => ({
+  typename: 'LinkCardSlice',
+  id: sys.id,
+  title: fields?.title ?? '',
+  cards: fields.cards.map(mapLinkCard),
+})

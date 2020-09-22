@@ -7,6 +7,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { useDateUtils } from '../../i18n/useDateUtils'
 
 export interface TimelineEventProps {
   date: string
@@ -26,6 +27,7 @@ export interface TimelineProps {
 
 export const Timeline: FC<TimelineProps> = ({ title, events }) => {
   const mappedEvents = useMemo(() => events.map(mapEvent), [events])
+  const { getMonthByIndex } = useDateUtils()
 
   return (
     <>
@@ -38,7 +40,7 @@ export const Timeline: FC<TimelineProps> = ({ title, events }) => {
           </Box>
         </GridColumn>
       </GridRow>
-      <UITimeline events={mappedEvents} />
+      <UITimeline getMonthByIndex={getMonthByIndex} events={mappedEvents} />
     </>
   )
 }

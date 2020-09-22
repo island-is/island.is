@@ -1,6 +1,7 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+import { logger } from '@island.is/logging'
 
 import {
   IPageHeader,
@@ -39,7 +40,7 @@ import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
-import { mapTabSection, TabSection } from './tabSection.model'
+import { TabSection, mapTabSection } from './tabSection.model'
 
 type SliceTypes =
   | IPageHeader
@@ -63,22 +64,23 @@ export const Slice = createUnionType({
   types: () => [
     PageHeaderSlice,
     TimelineSlice,
-    HeadingSlice,
-    StorySlice,
-    LinkCardSlice,
-    LatestNewsSlice,
     MailingListSignupSlice,
+    HeadingSlice,
+    LinkCardSlice,
+    StorySlice,
     LogoListSlice,
+    LatestNewsSlice,
     BulletListSlice,
-    Html,
-    Image,
     Statistics,
     ProcessEntry,
     FaqList,
     EmbeddedVideo,
     SectionWithImage,
     TabSection,
+    Html,
+    Image,
   ],
+  resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
@@ -126,6 +128,20 @@ const isEmptyNode = (node: Block): boolean => {
   })
 }
 
+/*
+if we add a slice that is not in mapper mapSlices fails for that slice.
+we dont want a single slice to cause errors on a whole page so we fail them gracefully
+this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
+*/
+export const safelyMapSlices = (data) => {
+  try {
+    return mapSlice(data)
+  } catch (error) {
+    logger.error('Failed to map slice', error)
+    return null
+  }
+}
+
 export const mapDocument = (
   document: Document,
   idPrefix: string,
@@ -136,7 +152,7 @@ export const mapDocument = (
   docs.forEach((block, index) => {
     switch (block.nodeType) {
       case BLOCKS.EMBEDDED_ENTRY:
-        slices.push(mapSlice(block.data.target))
+        slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
         slices.push(mapImage(block.data.target))
@@ -157,5 +173,5 @@ export const mapDocument = (
     }
   })
 
-  return slices
+  return slices.filter(Boolean) // filter out empty slices that failed mapping
 }

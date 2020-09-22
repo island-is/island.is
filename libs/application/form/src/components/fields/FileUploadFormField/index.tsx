@@ -20,6 +20,7 @@ import {
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
+import { useLocale } from '@island.is/localization'
 
 type UploadFileAnswer = {
   name: string
@@ -72,8 +73,15 @@ const FileUploadFormField: FC<Props> = ({
   field,
   formValue,
 }) => {
-  const { id, introduction } = field
+  const {
+    id,
+    introduction,
+    uploadDescription = 'Documents accepted with extension: .pdf, .docx, .rtf',
+    uploadHeader = 'Drag documents here to upload',
+    uploadButtonLabel = 'Select documents to upload',
+  } = field
   const { clearErrors, setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const [uploadError, setUploadError] = useState<string | undefined>(undefined)
   const val = getValueViaPath(formValue, id, [])
 
@@ -216,7 +224,7 @@ const FileUploadFormField: FC<Props> = ({
 
   return (
     <Box>
-      <Typography variant="p">{introduction}</Typography>
+      <Typography variant="p">{formatMessage(introduction)}</Typography>
       <Controller
         name={`${id}`}
         defaultValue={initialUploadFiles}
@@ -225,9 +233,9 @@ const FileUploadFormField: FC<Props> = ({
             <Box paddingTop={2}>
               <InputFileUpload
                 fileList={state}
-                header="Drag documents here to upload"
-                description="Documents accepted with extension: .pdf, .docx, .rtf"
-                buttonLabel="Select documents to upload"
+                header={uploadHeader}
+                description={uploadDescription}
+                buttonLabel={uploadButtonLabel}
                 onChange={onFileChange}
                 onRemove={onRemoveFile}
                 errorMessage={error || uploadError}

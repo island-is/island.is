@@ -17,18 +17,20 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '../utils'
+import { useLocale } from '@island.is/localization'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
 }> = ({ dataProviderResult = {}, provider }) => {
   const { subTitle, title } = provider
+  const { formatMessage } = useLocale()
   return (
     <Box marginBottom={3}>
       <Typography variant="h4" color="blue400">
-        {title}
+        {formatMessage(title)}
       </Typography>
-      <Typography variant="p">{subTitle}</Typography>
+      <Typography variant="p">{formatMessage(subTitle)}</Typography>
       {dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}

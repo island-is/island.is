@@ -1,28 +1,29 @@
 import React, { FC, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import {
-  FormValue,
-  FormItemTypes,
-  Schema,
-  Section,
   ExternalData,
+  FormItemTypes,
+  FormMode,
+  FormValue,
+  Schema,
 } from '@island.is/application/template'
-import { Typography, Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, Typography } from '@island.is/island-ui/core'
 import {
-  UPDATE_APPLICATION,
   SUBMIT_APPLICATION,
+  UPDATE_APPLICATION,
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
-import { FormScreen } from '../types'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { FormModes, FormScreen } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import { verifyExternalData } from '../utils'
+import { findReviewField, verifyExternalData } from '../utils'
 
 import * as styles from './Screen.treat'
+import { useLocale } from '@island.is/localization'
 
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
@@ -32,10 +33,11 @@ type ScreenProps = {
   dataSchema: Schema
   externalData: ExternalData
   shouldSubmit?: boolean
+  isLastScreen?: boolean
   expandRepeater(): void
   prevScreen(): void
   screen: FormScreen
-  section?: Section
+  mode?: FormMode
   applicationId?: string
 }
 
@@ -49,10 +51,12 @@ const Screen: FC<ScreenProps> = ({
   answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
+  isLastScreen = false,
   screen,
-  section,
+  mode,
   applicationId,
 }) => {
+  const { formatMessage } = useLocale()
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -77,17 +81,18 @@ const Screen: FC<ScreenProps> = ({
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
+      const finalAnswers = { ...formValue, ...data }
+      const reviewField = findReviewField(screen)
+      const event = finalAnswers[reviewField?.id] || 'SUBMIT'
       await submitApplication({
         variables: {
           input: {
             id: applicationId,
-            event: 'SUBMIT',
-            answers: { ...formValue, ...data },
+            event,
+            answers: finalAnswers,
           },
         },
       })
-      // call submit mutation
-      console.log('here we will submit', { ...formValue, ...data })
     } else {
       await updateApplication({
         variables: {
@@ -97,9 +102,8 @@ const Screen: FC<ScreenProps> = ({
           },
         },
       })
-      console.log('these were my answers:', data)
-      answerAndGoToNextScreen(data)
     }
+    answerAndGoToNextScreen(data)
   }
 
   function canProceed(): boolean {
@@ -129,7 +133,7 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={[null, null, '1/9']}
         >
-          <Typography variant="h2">{screen.name}</Typography>
+          <Typography variant="h2">{formatMessage(screen.name)}</Typography>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
@@ -164,75 +168,90 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
-        <Box marginTop={3} className={styles.buttonContainer}>
-          <GridColumn
-            span={['12/12', '12/12', '7/9', '7/9']}
-            offset={[null, null, '1/9']}
-          >
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
-              paddingTop={[1, 4]}
-              paddingBottom={[1, 5]}
-            >
-              <Box
-                display={['none', 'inlineFlex']}
-                padding={2}
-                paddingLeft="none"
+        {!isLastScreen &&
+          (mode === FormModes.REVIEW || mode === FormModes.APPLYING) && (
+            <Box marginTop={3} className={styles.buttonContainer}>
+              <GridColumn
+                span={['12/12', '12/12', '7/9', '7/9']}
+                offset={[null, null, '1/9']}
               >
-                <Button variant="ghost" onClick={goBack}>
-                  Til baka
-                </Button>
-              </Box>
-              <Box
-                display={['inlineFlex', 'none']}
-                padding={2}
-                paddingLeft="none"
-              >
-                <Button
-                  variant="ghost"
-                  rounded={true}
-                  icon="arrowLeft"
-                  onClick={goBack}
-                ></Button>
-              </Box>
-              <Box display="inlineFlex" padding={2} paddingRight="none">
-                {shouldSubmit ? (
-                  <Button
-                    loading={loading}
-                    disabled={!canProceed()}
-                    htmlType="submit"
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
+                  paddingTop={[1, 4]}
+                  paddingBottom={[1, 5]}
+                >
+                  <Box
+                    display={['none', 'inlineFlex']}
+                    padding={2}
+                    paddingLeft="none"
                   >
-                    Submit
-                  </Button>
-                ) : (
-                  <>
-                    <Box display={['none', 'inlineFlex']}>
+                    <Button variant="ghost" onClick={goBack}>
+                      {formatMessage({
+                        id: 'application.system:button.back',
+                        defaultMessage: 'Til baka',
+                        description: 'Back button text',
+                      })}
+                    </Button>
+                  </Box>
+                  <Box
+                    display={['inlineFlex', 'none']}
+                    padding={2}
+                    paddingLeft="none"
+                  >
+                    <Button
+                      variant="ghost"
+                      rounded={true}
+                      icon="arrowLeft"
+                      onClick={goBack}
+                    />
+                  </Box>
+                  <Box display="inlineFlex" padding={2} paddingRight="none">
+                    {shouldSubmit ? (
                       <Button
                         loading={loading}
                         disabled={!canProceed()}
-                        icon="arrowRight"
                         htmlType="submit"
                       >
-                        Halda áfram
+                        {formatMessage({
+                          id: 'application.system:button.submit',
+                          defaultMessage: 'Submit',
+                          description: 'Submit button text',
+                        })}
                       </Button>
-                    </Box>
-                    <Box display={['inlineFlex', 'none']}>
-                      <Button
-                        loading={loading}
-                        disabled={!canProceed()}
-                        icon="arrowRight"
-                        htmlType="submit"
-                        rounded
-                      ></Button>
-                    </Box>
-                  </>
-                )}
-              </Box>
+                    ) : (
+                      <>
+                        <Box display={['none', 'inlineFlex']}>
+                          <Button
+                            loading={loading}
+                            disabled={!canProceed()}
+                            icon="arrowRight"
+                            htmlType="submit"
+                          >
+                            {formatMessage({
+                              id: 'application.system:button.next',
+                              defaultMessage: 'Halda áfram',
+                              description: 'Next button text',
+                            })}
+                          </Button>
+                        </Box>
+                        <Box display={['inlineFlex', 'none']}>
+                          <Button
+                            loading={loading}
+                            disabled={!canProceed()}
+                            icon="arrowRight"
+                            htmlType="submit"
+                            rounded
+                          />
+                        </Box>
+                      </>
+                    )}
+                  </Box>
+                </Box>
+              </GridColumn>
             </Box>
-          </GridColumn>
-        </Box>
+          )}
       </Box>
     </FormProvider>
   )

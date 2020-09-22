@@ -5,7 +5,9 @@ import Timeline from './Timeline'
 
 describe(' Timeline', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Timeline events={[]} />)
+    const { baseElement } = render(
+      <Timeline getMonthByIndex={() => 'month'} events={[]} />,
+    )
     expect(baseElement).toBeTruthy()
   })
 })

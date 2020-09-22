@@ -4,6 +4,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubSection,
 } from '../../../lib/formBuilders'
 import {
   buildIntroductionField,
@@ -14,9 +15,10 @@ import {
 import { Form } from '../../../types/Form'
 import { DataProviderTypes } from '../../../types/DataProvider'
 import { ApplicationTypes } from '../../../types/ApplicationTypes'
+import { m } from './messages'
 
-const yesOption = { value: 'yes', label: 'Já' }
-const noOption = { value: 'no', label: 'Nei' }
+const yesOption = { value: 'yes', label: m.yesOptionLabel }
+const noOption = { value: 'no', label: m.noOptionLabel }
 
 export const DrivingLessonsApplication: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
@@ -25,35 +27,42 @@ export const DrivingLessonsApplication: Form = buildForm({
   children: [
     buildSection({
       id: 'student',
-      name: 'Nemandi',
+      name: m.studentSection,
       children: [
         buildMultiField({
           id: 'student',
-          name: 'Upplýsingar um nemanda',
+          name: m.studentTitle,
           children: [
             buildTextField({
               id: 'student.name',
-              name: 'Nafn nemandi',
-              disabled: true,
+              name: m.studentName,
+              disabled: false,
             }),
             buildTextField({
               id: 'student.parentEmail',
-              name: 'Netfang forráðamans',
-              disabled: true,
+              name: m.parentEmail,
+              disabled: false,
             }),
             buildTextField({
               id: 'student.nationalId',
-              name: 'Kennitala nemanda',
-              disabled: true,
+              name: m.nationalId,
+              disabled: false,
+              width: 'half',
             }),
             buildTextField({
               id: 'student.phoneNumber',
-              name: 'Símanúmer',
+              name: m.phoneNumber,
+              width: 'half',
             }),
-            buildTextField({ id: 'student.address', name: 'Heimilisfang' }),
+            buildTextField({
+              id: 'student.address',
+              name: m.address,
+              width: 'half',
+            }),
             buildTextField({
               id: 'student.zipCode',
-              name: 'Póstnúmer og staður',
+              name: m.zipCode,
+              width: 'half',
             }),
           ],
         }),
@@ -61,111 +70,123 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'type',
-      name: 'Tegund ökunáms',
+      name: m.typeSection,
       children: [
-        buildRadioField({
+        buildSubSection({
           id: 'type',
-          name: 'Tegund ökunáms',
-          options: [
-            {
-              value: 'B',
-              label: 'Fólksbifreið (B)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'AM',
-              label: 'Léttbifhjól (AM)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'A',
-              label: 'Bifhjól (A)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'A1',
-              label: 'Bifhjól (A1)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'A2',
-              label: 'Bifhjól (A2)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'T',
-              label: 'Dráttarvél (T)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
+          name: 'Tegund',
+          children: [
+            buildRadioField({
+              id: 'type',
+              name: m.type,
+              options: [
+                {
+                  value: 'B',
+                  label: m.typeOption1Label,
+                  tooltip: m.typeOption1Tooltip,
+                },
+                {
+                  value: 'AM',
+                  label: m.typeOption2Label,
+                  tooltip: m.typeOption2Tooltip,
+                },
+                {
+                  value: 'A',
+                  label: m.typeOption3Label,
+                  tooltip: m.typeOption3Tooltip,
+                },
+                {
+                  value: 'A1',
+                  label: m.typeOption4Label,
+                  tooltip: m.typeOption4Tooltip,
+                },
+                {
+                  value: 'A2',
+                  label: m.typeOption5Label,
+                  tooltip: m.typeOption5Tooltip,
+                },
+                {
+                  value: 'T',
+                  label: m.typeOption6Label,
+                  tooltip: m.typeOption6Tooltip,
+                },
+              ],
+            }),
           ],
         }),
-        buildSelectField({
+        buildSubSection({
           id: 'teacher',
-          name: 'Ökukennari',
-          placeholder: 'Veldu ökukennara',
-          options: [
-            {
-              label: 'Ingólfur Jónsson (101)',
-              value: '1',
-            },
-            {
-              label: 'Hallveig Traustadóttir (105)',
-              value: '2',
-            },
-            {
-              label: 'Björn Egilsson (107)',
-              value: '3',
-            },
-            {
-              label: 'Auður Egilsdóttir (170)',
-              value: '4',
-            },
+          name: 'Kennari',
+          children: [
+            buildSelectField({
+              id: 'teacher',
+              name: m.teacher,
+              placeholder: 'Veldu ökukennara',
+              options: [
+                {
+                  label: 'Ingólfur Jónsson (101)',
+                  value: '1',
+                },
+                {
+                  label: 'Hallveig Traustadóttir (105)',
+                  value: '2',
+                },
+                {
+                  label: 'Björn Egilsson (107)',
+                  value: '3',
+                },
+                {
+                  label: 'Auður Egilsdóttir (170)',
+                  value: '4',
+                },
+              ],
+            }),
           ],
         }),
-        buildSelectField({
+        buildSubSection({
           id: 'school',
-          name: 'Ökuskóli',
-          placeholder: 'Veldu ökuskóla',
-          options: [
-            {
-              label: 'Harvard',
-              value: '1',
-            },
-            {
-              label: 'Oxford',
-              value: '2',
-            },
+          name: m.school,
+          children: [
+            buildSelectField({
+              id: 'school',
+              name: m.school,
+              placeholder: 'Veldu ökuskóla',
+              options: [
+                {
+                  label: 'Harvard',
+                  value: '1',
+                },
+                {
+                  label: 'Oxford',
+                  value: '2',
+                },
+              ],
+            }),
           ],
         }),
       ],
     }),
     buildSection({
       id: 'health',
-      name: 'Heilbrigðisupplýsingar',
+      name: m.healthSection,
       children: [
         buildMultiField({
           id: 'eyeSight',
-          name: 'HeilbrigðisUpplýsingar',
+          name: m.eyeSight,
           children: [
             buildRadioField({
               id: 'useGlasses',
-              name: 'Notar þú gleraugu eða snertilinsur?',
+              name: m.useGlasses,
               options: [yesOption, noOption],
             }),
             buildRadioField({
               id: 'damagedEyeSight',
-              name: 'Hefur þú skerta sjón á öðru auga eða báðum?',
+              name: m.damagedEyeSight,
               options: [yesOption, noOption],
             }),
             buildRadioField({
               id: 'limitedFieldOfView',
-              name: 'Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
+              name: m.limitedFieldOfView,
               options: [yesOption, noOption],
             }),
           ],
@@ -173,50 +194,36 @@ export const DrivingLessonsApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'fetchData',
-      name: 'Sækja gögn',
+      id: 'approveExternalData',
+      name: m.fetchDataSection,
       children: [
         buildExternalDataProvider({
-          name: 'Sækja gögn',
+          name: m.fetchData,
           id: 'fetchData',
           dataProviders: [
             buildDataProviderItem({
-              id: 'passportImgAndSignature',
-              title: 'Passamynd og undirskrift',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-              type: DataProviderTypes.ExampleSucceeds,
-            }),
-            buildDataProviderItem({
               id: 'healthInfo',
-              title: 'Gögn úr Heilsuveru',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              title: m.healthInfoTitle,
+              subTitle: m.healthInfoSubtitle,
               type: DataProviderTypes.ExampleSucceeds,
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      name: 'Greiðsla',
-      children: [
-        buildIntroductionField({
-          id: 'payment',
-          name: 'Ganga frá greiðslu',
-          introduction: 'TODO IMPLEMENT',
         }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      name: 'Staðfesta',
+      name: m.confirmationSection,
       children: [
         buildIntroductionField({
           id: 'overview',
-          name: 'Hvað á eiginlega að koma hér?',
-          introduction: 'TODO IMPLEMENT',
+          name: m.overview,
+          introduction: m.overviewIntro,
+        }),
+        buildIntroductionField({
+          id: 'final',
+          name: 'Takk',
+          introduction: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

@@ -4,9 +4,8 @@ import { ISectionHeading } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class HeadingSlice {
-  constructor(initializer: HeadingSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -21,9 +20,9 @@ export class HeadingSlice {
 export const mapHeadingSlice = ({
   fields,
   sys,
-}: ISectionHeading): HeadingSlice =>
-  new HeadingSlice({
-    id: sys.id,
-    title: fields.title ?? '',
-    body: fields.body ?? '',
-  })
+}: ISectionHeading): HeadingSlice => ({
+  typename: 'HeadingSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  body: fields.body ?? '',
+})

@@ -2,8 +2,8 @@ import gql from 'graphql-tag'
 import { slices } from './fragments'
 
 export const GET_ARTICLE_QUERY = gql`
-  query GetArticle($input: GetArticleInput!) {
-    getArticle(input: $input) {
+  query GetSingleArticle($input: GetSingleArticleInput!) {
+    getSingleArticle(input: $input) {
       id
       slug
       title

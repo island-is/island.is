@@ -2040,6 +2040,17 @@
             "tsConfig": "libs/application/template/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/template/src/templates/**/*.{js,ts,tsx}'"
+              }
+            ]
+          }
         }
       }
     },
@@ -2067,6 +2078,17 @@
             "jestConfig": "libs/application/form/jest.config.js",
             "tsConfig": "libs/application/form/tsconfig.spec.json",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/form/src/{lib,components}/**/*.{js,ts,tsx}'"
+              }
+            ]
           }
         }
       }

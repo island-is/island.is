@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { CheckboxField } from '@island.is/application/template'
 import { CheckboxController, Typography, Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '../../types'
 
 import { getValueViaPath } from '../../utils'
@@ -15,10 +16,13 @@ const CheckboxFormField: FC<Props> = ({
   formValue,
 }) => {
   const { id, name, options, disabled } = field
+  const { formatMessage } = useLocale()
 
   return (
     <div>
-      {showFieldName && <Typography variant="p">{name}</Typography>}
+      {showFieldName && (
+        <Typography variant="p">{formatMessage(name)}</Typography>
+      )}
       <Box paddingTop={2}>
         <CheckboxController
           id={id}
@@ -26,7 +30,11 @@ const CheckboxFormField: FC<Props> = ({
           name={`${id}`}
           defaultValue={getValueViaPath(formValue, id, [])}
           error={error}
-          options={options}
+          options={options.map(({ label, tooltip, ...o }) => ({
+            ...o,
+            label: formatMessage(label) as string,
+            tooltip: formatMessage(tooltip) as string,
+          }))}
         />
       </Box>
     </div>

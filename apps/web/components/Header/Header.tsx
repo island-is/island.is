@@ -67,7 +67,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                         id="search_input_header"
                         size="medium"
                         activeLocale={locale}
-                        placeholder="Leitaðu á Ísland.is"
+                        placeholder={t.searchPlaceholder}
                         autocomplete={false}
                       />
                     </Hidden>
@@ -105,7 +105,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     onClick={() => setSideMenuOpen(true)}
                     icon="burger"
                   >
-                    Valmynd
+                    {t.menuCaption}
                   </Button>
                 </Box>
               </Box>

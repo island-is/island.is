@@ -20,6 +20,7 @@ import {
 import { Filters, Panel, Summary } from './components'
 import { FilterInput } from './consts'
 import { Screen } from '../../types'
+import { downloadCSV } from './utils'
 
 const FlightLegsQuery = gql`
   query FlightLegsQuery($input: FlightLegsInput!) {
@@ -55,7 +56,7 @@ const Admin: Screen = ({}) => {
       to: TODAY,
     },
   } as any)
-  const { data, loading } = useQuery(FlightLegsQuery, {
+  const { data, loading, error } = useQuery(FlightLegsQuery, {
     ssr: false,
     variables: {
       input: {
@@ -84,7 +85,10 @@ const Admin: Screen = ({}) => {
 
   if (!user) {
     return null
-  } else if (!['admin', 'developer'].includes(user?.role)) {
+  } else if (
+    !['admin', 'developer'].includes(user?.role) ||
+    error?.graphQLErrors.find((err) => err.extensions.code === 'FORBIDDEN')
+  ) {
     return <NotFound />
   }
 
@@ -131,7 +135,11 @@ const Admin: Screen = ({}) => {
                 <Typography variant="h4">Aðgerðir</Typography>
               </Box>
               <Box paddingTop={2}>
-                <Button width="fluid" variant="ghost">
+                <Button
+                  width="fluid"
+                  variant="ghost"
+                  onClick={() => downloadCSV(flightLegs, filters)}
+                >
                   Prenta yfirlit
                 </Button>
               </Box>
@@ -176,7 +184,7 @@ const Admin: Screen = ({}) => {
                         </Typography>
                       </Box>
 
-                      <Panel filters={filters} flightLegs={flightLegs} />
+                      <Panel flightLegs={flightLegs} />
                     </Stack>
                   </Box>
                 </GridColumn>

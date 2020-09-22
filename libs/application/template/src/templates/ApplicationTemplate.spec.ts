@@ -7,6 +7,7 @@ import { Application, ExternalData, FormValue } from '../types/Application'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import {
   ApplicationContext,
+  ApplicationRole,
   ApplicationStateSchema,
 } from '../types/StateMachine'
 import { ParentalLeaveForm } from './ParentalLeave/ParentalLeaveForm'
@@ -38,6 +39,9 @@ const TestApplicationTemplate: ApplicationTemplate<
   ApplicationStateSchema<TestEvents>,
   TestEvents
 > = {
+  mapNationalRegistryIdToRole(): ApplicationRole {
+    return 'applicant'
+  },
   type: ApplicationTypes.EXAMPLE,
   dataProviders: [],
   dataSchema: z.object({

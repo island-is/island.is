@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { ITabContent } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
+import { Html, mapHtml } from './html.model'
 
 @ObjectType()
 export class TabContent {
@@ -14,13 +15,13 @@ export class TabContent {
   @Field({ nullable: true })
   image?: Image
 
-  @Field({ nullable: true })
-  body?: string
+  @Field(() => Html, { nullable: true })
+  body?: Html
 }
 
-export const mapTabContent = ({ fields }: ITabContent): TabContent => ({
-  tabTitle: fields.tabTitle,
-  contentTitle: fields.contentTitle ?? '',
-  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  body: (fields.body && JSON.stringify(fields.body)) ?? null,
+export const mapTabContent = ({ sys, fields }: ITabContent): TabContent => ({
+  tabTitle: fields?.tabTitle ?? '',
+  contentTitle: fields?.contentTitle ?? '',
+  image: fields.image?.fields?.file ? mapImage(fields?.image) : null,
+  body: (fields?.body && mapHtml(fields.body, sys.id + ':body')) ?? null,
 })

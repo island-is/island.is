@@ -68,12 +68,13 @@ const Layout: NextComponentType<
   alertBannerContent,
   children,
 }) => {
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
   const menuTabs = [
     {
-      title: 'Þjónustuflokkar',
+      title: t.serviceCategories,
+      externalLinksHeading: t.serviceCategories,
       links: categories.map((x) => {
         return {
           title: x.title,
@@ -83,9 +84,9 @@ const Layout: NextComponentType<
       }),
     },
     {
-      title: 'Stafrænt Ísland',
+      title: t.siteTitle,
       links: topMenuCustomLinks,
-      externalLinksHeading: 'Aðrir opinberir vefir',
+      externalLinksHeading: t.siteTitle,
       externalLinks: footerLowerMenu,
     },
   ]
