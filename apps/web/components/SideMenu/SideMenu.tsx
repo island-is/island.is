@@ -136,28 +136,30 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
 
           <div className={styles.tabBar}>
             {tabList.map((tab, index) => (
-              <FocusableBox
-                ref={(el) => (tabRefs.current[index] = el)}
-                component="button"
-                key={index}
-                role="tab"
-                aria-controls={`tab-content-${index}`}
-                aria-selected={activeTab === index}
-                onClick={() => setActiveTab(index)}
-              >
-                {({ isFocused }) => (
-                  <div
-                    className={cn(styles.tab, {
-                      [styles.tabActive]: activeTab === index,
-                      [styles.tabFocused]: isFocused,
-                    })}
-                  >
-                    <Typography variant="eyebrow" color="blue400">
-                      {tab.title}
-                    </Typography>
-                  </div>
-                )}
-              </FocusableBox>
+              <div key={index} className={styles.tabContainer}>
+                <FocusableBox
+                  ref={(el) => (tabRefs.current[index] = el)}
+                  component="button"
+                  role="tab"
+                  aria-controls={`tab-content-${index}`}
+                  aria-selected={activeTab === index}
+                  onClick={() => setActiveTab(index)}
+                  className={styles.tabButton}
+                >
+                  {({ isFocused }) => (
+                    <div
+                      className={cn(styles.tab, {
+                        [styles.tabActive]: activeTab === index,
+                        [styles.tabFocused]: isFocused,
+                      })}
+                    >
+                      <Typography variant="eyebrow" color="blue400">
+                        {tab.title}
+                      </Typography>
+                    </div>
+                  )}
+                </FocusableBox>
+              </div>
             ))}
           </div>
           {tabList.map((tab, index) => {
