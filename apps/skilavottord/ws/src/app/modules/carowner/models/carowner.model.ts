@@ -2,7 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Car } from '../../car'
 
 @ObjectType()
-export class Carowner{
+export class Carowner {
   constructor(nationalId: string, name: string, mobile: string, cars: Car[]) {
     this.nationalId = nationalId
     this.name = name

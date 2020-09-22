@@ -1,9 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { Car } from '../../car'
 
 @ObjectType()
 export class User {
-
   @Field((_1) => ID)
   nationalId: string
 
@@ -12,5 +10,4 @@ export class User {
 
   @Field({ nullable: true })
   mobile?: string
-
 }

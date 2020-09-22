@@ -2,13 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Car {
+type RecyclingPartner {
   id: ID!
   name: String!
-  model: String!
+  address: String!
+  postNumber: Float!
+  website: String!
+  phone: String!
+  active: Boolean!
+}
+
+type Car {
+  permno: ID!
+  type: String!
   color: String!
-  year: String!
+  newregdate: String!
   recyclable: Boolean!
+  recyclingPartner: RecyclingPartner
 }
 
 type Carowner {
@@ -19,5 +29,6 @@ type Carowner {
 }
 
 type Query {
-  getCarownerByNationalId(nationalId: String!): Carowner!
+  getRecyclingPartner(id: Float!): RecyclingPartner!
+  getVehiclesForNationalId(nationalId: String!): Carowner!
 }
