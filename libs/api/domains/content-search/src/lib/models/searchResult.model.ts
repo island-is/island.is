@@ -9,12 +9,7 @@ import { TagCount } from './tagCount'
 
 const Items = createUnionType({
   name: 'Items',
-  types: () => [
-    Article,
-    LifeEventPage,
-    News,
-    AboutPage,
-  ],
+  types: () => [Article, LifeEventPage, News, AboutPage],
   resolveType: (document) => document.typename, // typename is appended to request on mapping
 })
 

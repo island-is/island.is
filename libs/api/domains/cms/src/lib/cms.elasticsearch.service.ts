@@ -10,7 +10,7 @@ import { News } from './models/news.model'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -57,7 +57,7 @@ export class CmsElasticsearchService {
   ): Promise<News[]> {
     const query = {
       types: ['webNews'],
-      sort: { 'dateCreated': 'asc' as sortDirection },
+      sort: { dateCreated: 'asc' as sortDirection },
       size,
     }
 

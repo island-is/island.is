@@ -322,14 +322,9 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [News])
-  getNews(
-    @Args('input') { lang, size }: GetNewsInput,
-  ): Promise<News[]> {
+  getNews(@Args('input') { lang, size }: GetNewsInput): Promise<News[]> {
     logger.info('inside')
-    return this.cmsElasticsearchService.getNews(
-      SearchIndexes[lang],
-      { size },
-    )
+    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
   }
 
   @Mutation(() => ContactUsPayload)
@@ -352,11 +347,10 @@ export class LatestNewsSliceResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => [News])
-  async news(@Parent() { news: { lang, size } }: LatestNewsSlice): Promise<News[]> {
-    return this.cmsElasticsearchService.getNews(
-      SearchIndexes[lang],
-      { size },
-    )
+  async news(
+    @Parent() { news: { lang, size } }: LatestNewsSlice,
+  ): Promise<News[]> {
+    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
   }
 }
 
