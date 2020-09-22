@@ -1,6 +1,7 @@
 import { createLogger, format, transports } from 'winston'
-import { SentryTransport } from './transports'
 import { utilities } from 'nest-winston'
+
+import { SentryTransport } from './transports'
 
 // Default log settings for debug mode
 let logLevel = 'debug'
