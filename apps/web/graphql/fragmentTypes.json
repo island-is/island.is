@@ -51,13 +51,13 @@
             "name": "TeamList"
           },
           {
+            "name": "ContactUs"
+          },
+          {
             "name": "Html"
           },
           {
             "name": "Image"
-          },
-          {
-            "name": "Asset"
           }
         ]
       },

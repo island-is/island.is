@@ -78,8 +78,6 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
-  link: Scalars['String']
-  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -199,9 +197,9 @@ export type Slice =
   | SectionWithImage
   | TabSection
   | TeamList
+  | ContactUs
   | Html
   | Image
-  | Asset
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
@@ -338,13 +336,22 @@ export type TeamList = {
   teamMembers: Array<TeamMember>
 }
 
-export type Asset = {
-  __typename?: 'Asset'
+export type ContactUs = {
+  __typename?: 'ContactUs'
   typename: Scalars['String']
   id: Scalars['ID']
-  url: Scalars['String']
   title: Scalars['String']
-  contentType: Scalars['String']
+  required: Scalars['String']
+  invalidPhone: Scalars['String']
+  invalidEmail: Scalars['String']
+  labelName: Scalars['String']
+  labelPhone: Scalars['String']
+  labelEmail: Scalars['String']
+  labelSubject: Scalars['String']
+  labelMessage: Scalars['String']
+  submitButtonText: Scalars['String']
+  successMessage: Scalars['String']
+  errorMessage: Scalars['String']
 }
 
 export type Article = {
@@ -592,6 +599,11 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
+}
+
+export type ContactUsPayload = {
+  __typename?: 'ContactUsPayload'
+  success: Scalars['Boolean']
 }
 
 export type TagCount = {
@@ -1086,6 +1098,7 @@ export type GetTranslationsInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  contactUs: ContactUsPayload
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
   updateApplicationExternalData?: Maybe<Application>
@@ -1093,6 +1106,10 @@ export type Mutation = {
   deleteAttachment?: Maybe<Application>
   submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
+}
+
+export type MutationContactUsArgs = {
+  input: ContactUsInput
 }
 
 export type MutationCreateApplicationArgs = {
@@ -1121,6 +1138,14 @@ export type MutationSubmitApplicationArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type ContactUsInput = {
+  name: Scalars['String']
+  phone: Scalars['String']
+  email: Scalars['String']
+  subject: Scalars['String']
+  message: Scalars['String']
 }
 
 export type CreateApplicationInput = {
@@ -1338,9 +1363,9 @@ export type ResolversTypes = {
     | ResolversTypes['SectionWithImage']
     | ResolversTypes['TabSection']
     | ResolversTypes['TeamList']
+    | ResolversTypes['ContactUs']
     | ResolversTypes['Html']
     | ResolversTypes['Image']
-    | ResolversTypes['Asset']
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
@@ -1364,7 +1389,7 @@ export type ResolversTypes = {
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
   TabSection: ResolverTypeWrapper<TabSection>
   TeamList: ResolverTypeWrapper<TeamList>
-  Asset: ResolverTypeWrapper<Asset>
+  ContactUs: ResolverTypeWrapper<ContactUs>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1418,6 +1443,7 @@ export type ResolversTypes = {
   AboutSubPage: ResolverTypeWrapper<
     Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
+  ContactUsPayload: ResolverTypeWrapper<ContactUsPayload>
   TagCount: ResolverTypeWrapper<TagCount>
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
@@ -1478,6 +1504,7 @@ export type ResolversTypes = {
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
   Mutation: ResolverTypeWrapper<{}>
+  ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
@@ -1533,9 +1560,9 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['SectionWithImage']
     | ResolversParentTypes['TabSection']
     | ResolversParentTypes['TeamList']
+    | ResolversParentTypes['ContactUs']
     | ResolversParentTypes['Html']
     | ResolversParentTypes['Image']
-    | ResolversParentTypes['Asset']
   MailingListSignupSlice: MailingListSignupSlice
   HeadingSlice: HeadingSlice
   LinkCardSlice: LinkCardSlice
@@ -1557,7 +1584,7 @@ export type ResolversParentTypes = {
   SectionWithImage: SectionWithImage
   TabSection: TabSection
   TeamList: TeamList
-  Asset: Asset
+  ContactUs: ContactUs
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1607,6 +1634,7 @@ export type ResolversParentTypes = {
   AboutSubPage: Omit<AboutSubPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
+  ContactUsPayload: ContactUsPayload
   TagCount: TagCount
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
@@ -1662,6 +1690,7 @@ export type ResolversParentTypes = {
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
   Mutation: {}
+  ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
@@ -1753,12 +1782,6 @@ export type StoryResolvers<
   readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  linkedPage?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1942,9 +1965,9 @@ export type SliceResolvers<
     | 'SectionWithImage'
     | 'TabSection'
     | 'TeamList'
+    | 'ContactUs'
     | 'Html'
-    | 'Image'
-    | 'Asset',
+    | 'Image',
     ParentType,
     ContextType
   >
@@ -2166,15 +2189,24 @@ export type TeamListResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type AssetResolvers<
+export type ContactUsResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']
+  ParentType extends ResolversParentTypes['ContactUs'] = ResolversParentTypes['ContactUs']
 > = {
   typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  required?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  invalidPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  invalidEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  labelName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  labelPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  labelEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  labelSubject?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  labelMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  submitButtonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  successMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  errorMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2647,6 +2679,14 @@ export type AboutSubPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type ContactUsPayloadResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ContactUsPayload'] = ResolversParentTypes['ContactUsPayload']
+> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type TagCountResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TagCount'] = ResolversParentTypes['TagCount']
@@ -3049,6 +3089,12 @@ export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
+  contactUs?: Resolver<
+    ResolversTypes['ContactUsPayload'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationContactUsArgs, 'input'>
+  >
   createApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -3132,7 +3178,7 @@ export type Resolvers<ContextType = Context> = {
   SectionWithImage?: SectionWithImageResolvers<ContextType>
   TabSection?: TabSectionResolvers<ContextType>
   TeamList?: TeamListResolvers<ContextType>
-  Asset?: AssetResolvers<ContextType>
+  ContactUs?: ContactUsResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -3163,6 +3209,7 @@ export type Resolvers<ContextType = Context> = {
   Url?: UrlResolvers<ContextType>
   UrlPage?: UrlPageResolvers<ContextType>
   AboutSubPage?: AboutSubPageResolvers<ContextType>
+  ContactUsPayload?: ContactUsPayloadResolvers<ContextType>
   TagCount?: TagCountResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
@@ -3248,13 +3295,13 @@ const result: IntrospectionResultData = {
             name: 'TeamList',
           },
           {
+            name: 'ContactUs',
+          },
+          {
             name: 'Html',
           },
           {
             name: 'Image',
-          },
-          {
-            name: 'Asset',
           },
         ],
       },

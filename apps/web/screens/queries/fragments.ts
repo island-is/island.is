@@ -245,6 +245,24 @@ export const slices = gql`
     }
   }
 
+  fragment ContactUsFields on ContactUs {
+    __typename
+    typename
+    id
+    title
+    required
+    invalidPhone
+    invalidEmail
+    labelName
+    labelPhone
+    labelEmail
+    labelSubject
+    labelMessage
+    submitButtonText
+    successMessage
+    errorMessage
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -264,5 +282,6 @@ export const slices = gql`
     ...SectionWithImageFields
     ...TabSectionFields
     ...TeamListFields
+    ...ContactUsFields
   }
 `
