@@ -69,7 +69,7 @@ const Home: Screen<HomeProps> = ({
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
-    href: `${makePath('ArticleCategory')}/[slug]`,
+    href: makePath('ArticleCategory', '/[slug]'),
     as: makePath('ArticleCategory', slug),
   }))
 
@@ -77,7 +77,7 @@ const Home: Screen<HomeProps> = ({
 
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
-      <Stack space={[1, 1, 3]}>
+      <Stack space={4}>
         <Box display="inlineFlex" alignItems="center" width="full">
           <SearchInput
             id="search_input_home"
@@ -88,7 +88,7 @@ const Home: Screen<HomeProps> = ({
             placeholder={n('heroSearchPlaceholder')}
           />
         </Box>
-        <Inline space={1}>
+        <Inline space={2}>
           {featuredArticles.map(({ title, url }, index) => {
             const isLatest = index + 1 === featuredArticles.length
             return (
@@ -114,7 +114,7 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Section paddingY={[0, 0, 3, 3, 6]}>
+      <Section paddingY={[0, 0, 4, 4, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Section

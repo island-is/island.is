@@ -7,13 +7,13 @@ export const root = style({
   visibility: 'hidden',
   display: 'flex',
   flexDirection: 'column',
-  left: 0,
+  left: theme.spacing[3],
   paddingTop: theme.spacing[3],
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[3],
   position: 'fixed',
-  right: 0,
-  top: 0,
+  right: theme.spacing[3],
+  top: theme.spacing[3],
   zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
@@ -40,13 +40,24 @@ export const isVisible = style({
   transition: `visibility 0s linear 0s, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
+export const tabButton = style({
+  width: '100%',
+})
+
+export const tabContainer = style({
+  width: '100%',
+})
+
 export const tabBar = style({
   display: 'flex',
+  width: '100%',
 })
 
 export const tab = style({
   borderBottom: '2px solid transparent',
-  flex: 1,
+  display: 'flex',
+  minWidth: '100%',
+  justifyContent: 'center',
   padding: theme.spacing[2],
 })
 

@@ -57,7 +57,7 @@ export class SmsService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async login(): Promise<string> {
+  private async login(): Promise<string> {
     try {
       const res: NovaAuthResponse = await this.post('Login', undefined, {
         headers: {

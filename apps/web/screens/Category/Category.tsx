@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import { theme } from '@island.is/island-ui/theme'
 import {
   Typography,
   Stack,
@@ -16,19 +17,19 @@ import {
   Accordion,
   FocusableBox,
 } from '@island.is/island-ui/core'
-import { Card, Sidebar } from '../../components'
+import { Card, Sidebar } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Screen } from '../../types'
+import { Screen } from '@island.is/web/types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
   GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
-} from '../queries'
-import { CategoryLayout } from '../Layouts/Layouts'
-import { LifeEventCard } from '../../components/LifeEventsCardsSection/components/LifeEventCard'
+} from '@island.is/web/screens/queries'
+import { CategoryLayout } from '@island.is/web/screens/Layouts/Layouts'
+
 import LifeEventInCategory from './LifeEventInCategory'
 
 import { useNamespace } from '@island.is/web/hooks'
@@ -69,6 +70,16 @@ const Category: Screen<CategoryProps> = ({
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
+
+  const scrollToSelectOnMobile = (e) => {
+    if (e.currentTarget && typeof window === 'object') {
+      if (window.innerWidth < theme.breakpoints.md) {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const px = rect.top + window.scrollY - 16
+        window.scrollTo(0, px)
+      }
+    }
+  }
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -132,7 +143,7 @@ const Category: Screen<CategoryProps> = ({
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
     active: c.slug === Router.query.slug,
-    href: `${makePath('ArticleCategory')}/[slug]`,
+    href: makePath('ArticleCategory', '/[slug]'),
     as: makePath('ArticleCategory', c.slug),
   }))
 
@@ -196,6 +207,7 @@ const Category: Screen<CategoryProps> = ({
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
   )
+
   return (
     <>
       <Head>
@@ -289,7 +301,7 @@ const Category: Screen<CategoryProps> = ({
                                       return (
                                         <FocusableBox
                                           key={slug}
-                                          href={`${makePath('article')}/[slug]`}
+                                          href={makePath('article', '/[slug]')}
                                           as={makePath('article', slug)}
                                           borderRadius="large"
                                         >
@@ -335,6 +347,7 @@ const Category: Screen<CategoryProps> = ({
                         ? lifeEvent.thumbnail.url
                         : lifeEvent.image.url
                     }
+                    categoryTag={n('categoryTag', 'Lífsviðburður')}
                   />
                 )
               })}
@@ -346,7 +359,7 @@ const Category: Screen<CategoryProps> = ({
                     key={index}
                     title={title}
                     description={content}
-                    href={`${makePath('article')}/[slug]`}
+                    href={makePath('article', '/[slug]')}
                     as={makePath('article', slug)}
                   />
                 )
@@ -362,23 +375,25 @@ const Category: Screen<CategoryProps> = ({
         </Box>
 
         <Hidden above="sm">
-          <Select
-            label={t.serviceCategories}
-            defaultValue={{
-              label: category.title,
-              value: category.slug,
-            }}
-            onChange={({ value }: Option) => {
-              const slug = value as string
+          <Box onClick={scrollToSelectOnMobile}>
+            <Select
+              label={t.serviceCategories}
+              defaultValue={{
+                label: category.title,
+                value: category.slug,
+              }}
+              onChange={({ value }: Option) => {
+                const slug = value as string
 
-              Router.push(
-                `${makePath('ArticleCategory')}/[slug]`,
-                makePath('ArticleCategory', slug),
-              )
-            }}
-            options={categoryOptions}
-            name="categories"
-          />
+                Router.push(
+                  makePath('ArticleCategory', '/[slug]'),
+                  makePath('ArticleCategory', slug),
+                )
+              }}
+              options={categoryOptions}
+              name="categories"
+            />
+          </Box>
         </Hidden>
         <Typography
           variant="h1"

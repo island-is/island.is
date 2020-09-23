@@ -2,9 +2,8 @@ import { Locale, defaultLanguage } from './I18n'
 
 const routes = {
   is: {
-    page: '',
-    article: 'grein',
-    Article: 'grein',
+    article: '',
+    Article: '',
     category: 'flokkur',
     ArticleCategory: 'flokkur',
     ContentCategory: 'flokkur',
@@ -15,9 +14,8 @@ const routes = {
     LifeEventPage: 'lifsvidburdur',
   },
   en: {
-    page: '',
-    article: 'article',
-    Article: 'article',
+    article: '',
+    Article: '',
     category: 'category',
     ArticleCategory: 'category',
     ContentCategory: 'category',
@@ -44,15 +42,18 @@ export type PathTypes =
 export const routeNames = (locale: Locale = defaultLanguage) => {
   return {
     makePath: (type?: PathTypes, subfix?: string) => {
+      const typePath =
+        type && typeof routes[locale][type] === 'string'
+          ? String(routes[locale][type])
+          : null
+
       let path = ''
 
-      const typePath = (type && routes[locale][type]) ?? null
-
-      if (locale && locale !== defaultLanguage) {
-        path += '/' + locale
+      if (locale !== defaultLanguage) {
+        path = '/' + locale
       }
 
-      if (typePath) {
+      if (typePath && typePath !== '') {
         path += '/' + typePath
       }
 
@@ -60,7 +61,7 @@ export const routeNames = (locale: Locale = defaultLanguage) => {
         path += '/' + subfix
       }
 
-      return path || '/'
+      return path ? path.replace(/\/\/+/g, '/') : '/'
     },
   }
 }

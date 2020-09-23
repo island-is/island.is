@@ -3213,6 +3213,34 @@
           }
         }
       }
+    },
+    "dokobit-signing": {
+      "root": "libs/dokobit-signing",
+      "sourceRoot": "libs/dokobit-signing/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/dokobit-signing/.eslintrc",
+            "tsConfig": [
+              "libs/dokobit-signing/tsconfig.lib.json",
+              "libs/dokobit-signing/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/dokobit-signing/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/dokobit-signing/jest.config.js",
+            "tsConfig": "libs/dokobit-signing/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

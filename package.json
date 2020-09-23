@@ -73,6 +73,7 @@
     "@sentry/react": "^5.22.3",
     "@sentry/tracing": "^5.22.3",
     "@sindresorhus/slugify": "1.0.0",
+    "@types/js-base64": "^3.0.0",
     "@types/react-datepicker": "^3.1.1",
     "@xstate/react": "0.8.1",
     "amazon-s3-uri": "^0.0.3",

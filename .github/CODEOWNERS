@@ -24,6 +24,7 @@ gjafakort/                      @island-is/vice-versa
 /apps/judicial-system/          @island-is/kolibri
 /libs/judicial-system/          @island-is/kolibri
 /libs/nova-sms/                 @island-is/kolibri
+/libs/dokobit-signing           @island-is/kolibri
 
 service-portal*/                @island-is/sendiradid
 /libs/api/domains/documents/    @island-is/sendiradid

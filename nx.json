@@ -242,6 +242,9 @@
     },
     "service-portal-assets": {
       "tags": []
+    },
+    "dokobit-signing": {
+      "tags": []
     }
   }
 }

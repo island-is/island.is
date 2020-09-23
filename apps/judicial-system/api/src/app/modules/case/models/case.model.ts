@@ -170,6 +170,14 @@ export class Case extends Model<Case> {
   // Athugasemdir til dómara
   comments: string
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Málsnúmer héraðsdóms
+  courtCaseNumber: string
+
   @HasMany(() => Notification)
   @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications: Notification[]
