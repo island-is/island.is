@@ -3,7 +3,6 @@ import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 
 import {
-  IPageHeader,
   ITimeline,
   IMailingListSignup,
   ISectionHeading,
@@ -18,9 +17,11 @@ import {
   IEmbeddedVideo,
   ISectionWithImage,
   ITabSection,
+  ITeamList,
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
+import { Asset, mapAsset } from './asset.model'
 import {
   MailingListSignupSlice,
   mapMailingListSignup,
@@ -40,6 +41,7 @@ import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
 import { logger } from '@island.is/logging'
 import { TabSection, mapTabSection } from './tabSection.model'
+import { TeamList, mapTeamList } from './teamList.model'
 
 type SliceTypes =
   | ITimeline
@@ -56,6 +58,7 @@ type SliceTypes =
   | IEmbeddedVideo
   | ISectionWithImage
   | ITabSection
+  | ITeamList
 
 export const Slice = createUnionType({
   name: 'Slice',
@@ -74,8 +77,10 @@ export const Slice = createUnionType({
     EmbeddedVideo,
     SectionWithImage,
     TabSection,
+    TeamList,
     Html,
     Image,
+    Asset,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -110,6 +115,8 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapSectionWithImage(slice as ISectionWithImage)
     case 'tabSection':
       return mapTabSection(slice as ITabSection)
+    case 'teamList':
+      return mapTeamList(slice as ITeamList)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
@@ -150,7 +157,11 @@ export const mapDocument = (
         slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        slices.push(mapImage(block.data.target))
+        if (block.data.target.fields.file) {
+          block.data.target.fields.file.details?.image
+            ? slices.push(mapImage(block.data.target))
+            : slices.push(mapAsset(block.data.target))
+        }
         break
       default: {
         // ignore last empty paragraph because of this annoying bug:

@@ -10,8 +10,8 @@ const analyzers = [
   'keywords',
   'synonyms',
   'stopwords',
-  'hyphen-patterns',
-  'hyphen-whitelist',
+  'hyphenpatterns',
+  'hyphenwhitelist',
 ]
 
 const getDictUrl = (type: string, lang: string): string => {

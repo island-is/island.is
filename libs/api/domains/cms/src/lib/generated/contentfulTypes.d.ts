@@ -13,6 +13,9 @@ export interface IAboutSubPageFields {
   /** Description */
   description?: string | undefined
 
+  /** subDescription */
+  subDescription?: string | undefined
+
   /** Content */
   content: Document
 }
@@ -1309,9 +1312,6 @@ export interface IStoryFields {
   /** Label */
   label: string
 
-  /** readMoreText */
-  readMoreText: string
-
   /** Introduction */
   intro: string
 
@@ -1320,6 +1320,15 @@ export interface IStoryFields {
 
   /** Logo */
   logo: Asset
+
+  /** Link button text */
+  readMoreText: string
+
+  /** Linked page */
+  linkedPage?: IArticle | INews | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {
@@ -1450,6 +1459,58 @@ export interface ITabSection extends Entry<ITabSectionFields> {
     contentType: {
       sys: {
         id: 'tabSection'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITeamListFields {
+  /** Team members */
+  teamMembers?: ITeamMember[] | undefined
+}
+
+/** list of team members */
+
+export interface ITeamList extends Entry<ITeamListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'teamList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITeamMemberFields {
+  /** Name */
+  name: string
+
+  /** Title */
+  title: string
+
+  /** Mynd */
+  mynd: Asset
+}
+
+export interface ITeamMember extends Entry<ITeamMemberFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'teamMember'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1927,6 +1988,8 @@ export type CONTENT_TYPE =
   | 'subArticle'
   | 'tabContent'
   | 'tabSection'
+  | 'teamList'
+  | 'teamMember'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'

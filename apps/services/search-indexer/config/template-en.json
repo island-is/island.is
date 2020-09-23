@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 3,
+  "version": 4,
   "index_patterns": ["island-en-v*"],
   "settings": {
     "analysis": {
@@ -44,7 +44,12 @@
             "type": "keyword"
           },
           "value": {
-            "type": "text"
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "type": {
             "type": "keyword"

@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
 import { Button, Typography, Stack } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
+import { ContentLink } from '@island.is/web/components'
+
 import * as styles from './StoryList.treat'
 
 export interface StoryProps {
@@ -9,6 +11,8 @@ export interface StoryProps {
   title: string
   intro: string
   readMoreText: string
+  link?: string
+  linkedPage?: string
 }
 
 export interface StoryListProps {
@@ -21,13 +25,13 @@ export const StoryList: FC<StoryListProps> = ({ readMoreText, stories }) => (
     {stories.map((story, i) => (
       <Story key={i} {...story} />
     ))}
-    {stories.length > 0 && (
+    {/* stories.length > 0 && (
       <div className={styles.margin}>
         <Button variant="ghost" white>
           {readMoreText}
         </Button>
       </div>
-    )}
+    ) */}
   </Stack>
 )
 
@@ -37,26 +41,34 @@ const Story: FC<StoryProps> = ({
   title,
   intro,
   readMoreText,
-}) => (
-  <div className={styles.margin}>
-    <div className={styles.icon}>
-      <IconBullet variant="gradient" image={logoUrl} />
+  linkedPage,
+  link,
+}) => {
+  return (
+    <div className={styles.margin}>
+      <div className={styles.icon}>
+        <IconBullet variant="gradient" image={logoUrl} />
+      </div>
+      <Stack space={2}>
+        <Typography variant="eyebrow" color="white">
+          {label}
+        </Typography>
+        <Typography variant="h2" as="h2" color="white">
+          {title}
+        </Typography>
+        <Typography variant="p" color="white">
+          {intro}
+        </Typography>
+        {!!(linkedPage || link) && (
+          <ContentLink pageData={linkedPage} fallbackLink={link}>
+            <Button variant="text" size="medium" white icon="arrowRight">
+              {readMoreText}
+            </Button>
+          </ContentLink>
+        )}
+      </Stack>
     </div>
-    <Stack space={2}>
-      <Typography variant="eyebrow" color="white">
-        {label}
-      </Typography>
-      <Typography variant="h2" as="h2" color="white">
-        {title}
-      </Typography>
-      <Typography variant="p" color="white">
-        {intro}
-      </Typography>
-      <Button variant="text" size="medium" white icon="arrowRight">
-        {readMoreText}
-      </Button>
-    </Stack>
-  </div>
-)
+  )
+}
 
 export default StoryList

@@ -24,6 +24,12 @@ export class Story {
   @Field()
   intro: string
 
+  @Field()
+  link: string
+
+  @Field({ nullable: true })
+  linkedPage?: string
+
   @Field({ nullable: true })
   body?: string
 }
@@ -35,5 +41,7 @@ export const mapStory = ({ fields, sys }: IStory): Story => ({
   date: sys.createdAt,
   readMoreText: fields.readMoreText,
   intro: fields.intro,
+  linkedPage: (fields.linkedPage && JSON.stringify(fields.linkedPage)) ?? '',
+  link: fields.link ?? '',
   body: fields.body && JSON.stringify(fields.body),
 })

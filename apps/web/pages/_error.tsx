@@ -7,7 +7,6 @@ import { withApollo } from '../graphql/withApollo'
 
 import {
   Article,
-  ArticleCategory,
   LifeEventPage,
   News,
   GetUrlQuery,
@@ -16,7 +15,6 @@ import {
 import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import { NextPageContext } from 'next'
 import routeNames, { PathTypes } from '../i18n/routeNames'
 
 type ErrorPageProps = {
@@ -58,7 +56,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   static async getInitialProps(props /*: NextPageContext*/) {
-    const { err, res, asPath } = props
+    const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
 

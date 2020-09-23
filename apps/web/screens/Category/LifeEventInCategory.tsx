@@ -20,6 +20,7 @@ export interface LifeEventInCategoryProps {
   slug: string
   intro: string
   image: string
+  categoryTag: string
 }
 
 const LifeEventInCategory: FC<LifeEventInCategoryProps> = ({
@@ -27,6 +28,7 @@ const LifeEventInCategory: FC<LifeEventInCategoryProps> = ({
   slug,
   intro,
   image,
+  categoryTag,
 }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
@@ -54,7 +56,7 @@ const LifeEventInCategory: FC<LifeEventInCategoryProps> = ({
                 {intro}
               </Typography>
               <div className={styles.pushDown}>
-                <Tag>{'Lífsviðburður'}</Tag>
+                <Tag>{categoryTag}</Tag>
               </div>
             </GridRow>
           </GridColumn>

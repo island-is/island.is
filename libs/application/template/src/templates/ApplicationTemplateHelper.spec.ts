@@ -37,7 +37,7 @@ const testApplicationTemplate: ApplicationTemplate<
   ApplicationStateSchema<TestEvents>,
   TestEvents
 > = {
-  mapNationalRegistryIdToRole(): ApplicationRole {
+  mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
   type: ApplicationTypes.EXAMPLE,
@@ -62,7 +62,7 @@ const testApplicationTemplate: ApplicationTemplate<
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
               id: 'applicant',
-              form: ParentalLeaveForm,
+              formLoader: () => Promise.resolve(ParentalLeaveForm),
               write: {
                 answers: ['person', 'wantsInsurance'],
                 externalData: ['salary'],

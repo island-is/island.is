@@ -73,12 +73,17 @@ const createArticleNavigation = (
   }
 
   let nav = []
-  nav.push({ url: slugify(article.title), title: article.title })
+
+  nav.push({
+    title: article.title,
+    url: makePath('article', '[slug]'),
+    as: makePath('article', article.slug),
+  })
 
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]'),
+      url: makePath('article', '[slug]/[subSlug]'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -190,7 +195,10 @@ const SubArticleNavigation: FC<{
               href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
             >
-              {maybeBold(article.title, !selectedSubArticle)}
+              {maybeBold(
+                article.shortTitle || article.title,
+                !selectedSubArticle,
+              )}
             </Link>
           </Typography>
         </div>
@@ -250,7 +258,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   const [bullet, setBullet] = useState<HTMLElement>(null)
 
   const navigation = useMemo(() => {
-    return createNavigation(article.body, { title: article.title })
+    return createNavigation(article.body, {
+      title: article.shortTitle || article.title,
+    })
   }, [article])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
@@ -385,7 +395,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <Link href={makePath()}>Ísland.is</Link>
               {!!article.category && (
                 <Link
-                  href={`${makePath('ArticleCategory')}/[slug]`}
+                  href={makePath('ArticleCategory', '/[slug]')}
                   as={makePath('ArticleCategory', article.category.slug)}
                 >
                   {article.category.title}
@@ -430,11 +440,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Typography variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
             </Typography>
-            {article.intro && (
-              <Typography variant="intro" as="p" paddingTop={2}>
-                <span id={slugify(article.intro)}>{article.intro}</span>
-              </Typography>
-            )}
             {subArticle && (
               <Typography variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>

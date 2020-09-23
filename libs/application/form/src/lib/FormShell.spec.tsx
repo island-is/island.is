@@ -1,14 +1,21 @@
 import React from 'react'
 import { act, render } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import * as z from 'zod'
 
-import { ApplicationForm } from './ApplicationForm'
-import { Application, ApplicationTypes } from '@island.is/application/template'
+import { FormShell } from './FormShell'
+import {
+  Application,
+  ApplicationTypes,
+  buildForm,
+  buildIntroductionField,
+  Form,
+} from '@island.is/application/template'
 import { client } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
 import { LocaleProvider } from '@island.is/localization'
 
-describe(' ApplicationForm', () => {
+describe(' FormShell', () => {
   const applicant = '1111112219'
   const application: Application = {
     id: '12315151515',
@@ -22,6 +29,18 @@ describe(' ApplicationForm', () => {
     modified: new Date(),
     created: new Date(),
   }
+  const form: Form = buildForm({
+    id: ApplicationTypes.PARENTAL_LEAVE,
+    ownerId: 'asdf',
+    name: 'Umsókn um fæðingarorlof',
+    children: [
+      buildIntroductionField({
+        id: 'intro',
+        name: 'velkomin',
+        introduction: 'This is an awesome application',
+      }),
+    ],
+  })
 
   it('should render successfully', async () => {
     let baseElement
@@ -29,8 +48,10 @@ describe(' ApplicationForm', () => {
       const wrapper = await render(
         <ApolloProvider client={client}>
           <LocaleProvider locale="is" messages={{}}>
-            <ApplicationForm
+            <FormShell
               application={application}
+              dataSchema={z.object({})}
+              form={form}
               nationalRegistryId={applicant}
             />
           </LocaleProvider>
@@ -46,14 +67,16 @@ describe(' ApplicationForm', () => {
       const wrapper = await render(
         <ApolloProvider client={client}>
           <LocaleProvider locale="is" messages={{}}>
-            <ApplicationForm
+            <FormShell
               application={application}
+              dataSchema={z.object({})}
+              form={form}
               nationalRegistryId={applicant}
             />
           </LocaleProvider>
         </ApolloProvider>,
       )
-      expect(wrapper.getByText(`Fæðingarorlof`)).toBeInTheDocument()
+      expect(wrapper.getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
     })
   })
 })

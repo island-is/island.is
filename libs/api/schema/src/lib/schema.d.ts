@@ -78,6 +78,8 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
+  link: Scalars['String']
+  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -128,6 +130,13 @@ export type TabContent = {
   contentTitle?: Maybe<Scalars['String']>
   image?: Maybe<Image>
   body?: Maybe<Html>
+}
+
+export type TeamMember = {
+  __typename?: 'TeamMember'
+  name: Scalars['String']
+  title: Scalars['String']
+  image: Image
 }
 
 export type ArticleCategory = {
@@ -189,8 +198,10 @@ export type Slice =
   | EmbeddedVideo
   | SectionWithImage
   | TabSection
+  | TeamList
   | Html
   | Image
+  | Asset
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
@@ -318,6 +329,22 @@ export type TabSection = {
   id: Scalars['ID']
   title: Scalars['String']
   tabs: Array<TabContent>
+}
+
+export type TeamList = {
+  __typename?: 'TeamList'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  teamMembers: Array<TeamMember>
+}
+
+export type Asset = {
+  __typename?: 'Asset'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
 }
 
 export type Article = {
@@ -557,10 +584,28 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+export type AboutSubPage = {
+  __typename?: 'AboutSubPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  description: Scalars['String']
+  subDescription: Scalars['String']
+  slices: Array<Slice>
+}
+
+export type TagCount = {
+  __typename?: 'TagCount'
+  key: Scalars['String']
+  value: Scalars['String']
+  count: Scalars['Int']
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
   items: Array<Items>
+  tagCounts?: Maybe<Array<TagCount>>
 }
 
 export type Items = Article | LifeEventPage | News | AboutPage
@@ -654,6 +699,7 @@ export type Query = {
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
+  getAboutSubPage?: Maybe<AboutSubPage>
   getLandingPage?: Maybe<LandingPage>
   getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
@@ -704,6 +750,10 @@ export type QueryGetNamespaceArgs = {
 
 export type QueryGetAboutPageArgs = {
   input: GetAboutPageInput
+}
+
+export type QueryGetAboutSubPageArgs = {
+  input: GetAboutSubPageInput
 }
 
 export type QueryGetLandingPageArgs = {
@@ -853,6 +903,11 @@ export type GetAboutPageInput = {
   lang: Scalars['String']
 }
 
+export type GetAboutSubPageInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetLandingPageInput = {
   slug: Scalars['String']
   lang: Scalars['String']
@@ -960,6 +1015,8 @@ export type SearcherInput = {
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+  tags?: Maybe<Array<Tag>>
+  countTag?: Maybe<SearchableTags>
 }
 
 export enum SearchableContentTypes {
@@ -972,6 +1029,15 @@ export enum SearchableContentTypes {
 export enum ContentLanguage {
   is = 'is',
   en = 'en',
+}
+
+export type Tag = {
+  type: SearchableTags
+  key: Scalars['String']
+}
+
+export enum SearchableTags {
+  category = 'category',
 }
 
 export type ItemInput = {
@@ -1246,6 +1312,7 @@ export type ResolversTypes = {
   Statistic: ResolverTypeWrapper<Statistic>
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
   TabContent: ResolverTypeWrapper<TabContent>
+  TeamMember: ResolverTypeWrapper<TeamMember>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
@@ -1270,8 +1337,10 @@ export type ResolversTypes = {
     | ResolversTypes['EmbeddedVideo']
     | ResolversTypes['SectionWithImage']
     | ResolversTypes['TabSection']
+    | ResolversTypes['TeamList']
     | ResolversTypes['Html']
     | ResolversTypes['Image']
+    | ResolversTypes['Asset']
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
@@ -1294,6 +1363,8 @@ export type ResolversTypes = {
   EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
   TabSection: ResolverTypeWrapper<TabSection>
+  TeamList: ResolverTypeWrapper<TeamList>
+  Asset: ResolverTypeWrapper<Asset>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1344,6 +1415,10 @@ export type ResolversTypes = {
     | ResolversTypes['ArticleCategory']
     | ResolversTypes['News']
     | ResolversTypes['LifeEventPage']
+  AboutSubPage: ResolverTypeWrapper<
+    Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
+  >
+  TagCount: ResolverTypeWrapper<TagCount>
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
@@ -1367,6 +1442,7 @@ export type ResolversTypes = {
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
+  GetAboutSubPageInput: GetAboutSubPageInput
   GetLandingPageInput: GetLandingPageInput
   GetAlertBannerInput: GetAlertBannerInput
   GetGenericPageInput: GetGenericPageInput
@@ -1391,6 +1467,8 @@ export type ResolversTypes = {
   SearcherInput: SearcherInput
   SearchableContentTypes: SearchableContentTypes
   ContentLanguage: ContentLanguage
+  Tag: Tag
+  SearchableTags: SearchableTags
   ItemInput: ItemInput
   ItemType: ItemType
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
@@ -1429,6 +1507,7 @@ export type ResolversParentTypes = {
   Statistic: Statistic
   QuestionAndAnswer: QuestionAndAnswer
   TabContent: TabContent
+  TeamMember: TeamMember
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
@@ -1453,8 +1532,10 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['EmbeddedVideo']
     | ResolversParentTypes['SectionWithImage']
     | ResolversParentTypes['TabSection']
+    | ResolversParentTypes['TeamList']
     | ResolversParentTypes['Html']
     | ResolversParentTypes['Image']
+    | ResolversParentTypes['Asset']
   MailingListSignupSlice: MailingListSignupSlice
   HeadingSlice: HeadingSlice
   LinkCardSlice: LinkCardSlice
@@ -1475,6 +1556,8 @@ export type ResolversParentTypes = {
   EmbeddedVideo: EmbeddedVideo
   SectionWithImage: SectionWithImage
   TabSection: TabSection
+  TeamList: TeamList
+  Asset: Asset
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1521,6 +1604,10 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ArticleCategory']
     | ResolversParentTypes['News']
     | ResolversParentTypes['LifeEventPage']
+  AboutSubPage: Omit<AboutSubPage, 'slices'> & {
+    slices: Array<ResolversParentTypes['Slice']>
+  }
+  TagCount: TagCount
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
@@ -1543,6 +1630,7 @@ export type ResolversParentTypes = {
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
+  GetAboutSubPageInput: GetAboutSubPageInput
   GetLandingPageInput: GetLandingPageInput
   GetAlertBannerInput: GetAlertBannerInput
   GetGenericPageInput: GetGenericPageInput
@@ -1565,6 +1653,7 @@ export type ResolversParentTypes = {
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
+  Tag: Tag
   ItemInput: ItemInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
@@ -1664,6 +1753,12 @@ export type StoryResolvers<
   readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  linkedPage?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1736,6 +1831,16 @@ export type TabContentResolvers<
   >
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TeamMemberResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TeamMember'] = ResolversParentTypes['TeamMember']
+> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1836,8 +1941,10 @@ export type SliceResolvers<
     | 'EmbeddedVideo'
     | 'SectionWithImage'
     | 'TabSection'
+    | 'TeamList'
     | 'Html'
-    | 'Image',
+    | 'Image'
+    | 'Asset',
     ParentType,
     ContextType
   >
@@ -2042,6 +2149,32 @@ export type TabSectionResolvers<
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   tabs?: Resolver<Array<ResolversTypes['TabContent']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TeamListResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TeamList'] = ResolversParentTypes['TeamList']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  teamMembers?: Resolver<
+    Array<ResolversTypes['TeamMember']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AssetResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2501,12 +2634,40 @@ export type UrlPageResolvers<
   >
 }
 
+export type AboutSubPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AboutSubPage'] = ResolversParentTypes['AboutSubPage']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TagCountResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TagCount'] = ResolversParentTypes['TagCount']
+> = {
+  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type SearchResultResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
 > = {
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   items?: Resolver<Array<ResolversTypes['Items']>, ParentType, ContextType>
+  tagCounts?: Resolver<
+    Maybe<Array<ResolversTypes['TagCount']>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2696,6 +2857,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetAboutPageArgs, 'input'>
+  >
+  getAboutSubPage?: Resolver<
+    Maybe<ResolversTypes['AboutSubPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAboutSubPageArgs, 'input'>
   >
   getLandingPage?: Resolver<
     Maybe<ResolversTypes['LandingPage']>,
@@ -2940,6 +3107,7 @@ export type Resolvers<ContextType = Context> = {
   Statistic?: StatisticResolvers<ContextType>
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
   TabContent?: TabContentResolvers<ContextType>
+  TeamMember?: TeamMemberResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
   ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
@@ -2963,6 +3131,8 @@ export type Resolvers<ContextType = Context> = {
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   SectionWithImage?: SectionWithImageResolvers<ContextType>
   TabSection?: TabSectionResolvers<ContextType>
+  TeamList?: TeamListResolvers<ContextType>
+  Asset?: AssetResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -2992,6 +3162,8 @@ export type Resolvers<ContextType = Context> = {
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
   Url?: UrlResolvers<ContextType>
   UrlPage?: UrlPageResolvers<ContextType>
+  AboutSubPage?: AboutSubPageResolvers<ContextType>
+  TagCount?: TagCountResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
@@ -3073,10 +3245,16 @@ const result: IntrospectionResultData = {
             name: 'TabSection',
           },
           {
+            name: 'TeamList',
+          },
+          {
             name: 'Html',
           },
           {
             name: 'Image',
+          },
+          {
+            name: 'Asset',
           },
         ],
       },

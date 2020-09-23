@@ -48,10 +48,16 @@
             "name": "TabSection"
           },
           {
+            "name": "TeamList"
+          },
+          {
             "name": "Html"
           },
           {
             "name": "Image"
+          },
+          {
+            "name": "Asset"
           }
         ]
       },

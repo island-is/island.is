@@ -20,37 +20,36 @@ import {
   GridRow,
   GridColumn,
   Icon,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 import * as styles from './FrontpageTabs.treat'
-
-const AUTOPLAY_TIMER = 8000
-
-type ImageProps = {
-  title: string
-  url: string
-  contentType: string
-  width: number
-  height: number
-}
 
 type TabsProps = {
   subtitle?: string
   title?: string
   content?: string
-  image?: ImageProps
   link?: string
   animationJson?: string
 }
 
+type LinkUrls = {
+  href: string
+  as: string
+}
+
+export const LEFT = 'Left'
+export const RIGHT = 'Right'
+export const UP = 'Up'
+export const DOWN = 'Down'
+
 export interface FrontpageTabsProps {
   tabs: TabsProps[]
   searchContent: ReactNode
-  autoplay?: boolean
 }
 
 export interface TabBulletProps {
@@ -70,88 +69,70 @@ const TabBullet: FC<TabBulletProps> = ({ selected }) => {
 export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   tabs,
   searchContent,
-  autoplay = true,
 }) => {
   const contentRef = useRef(null)
-  const animationContainerRef = useRef(null)
-  const animationTimer = useRef(null)
   const [animationData, setAnimationData] = useState([])
-  const [
-    animationContainerTransitioning,
-    setAnimationContainerTransitioning,
-  ] = useState<boolean>(true)
-  const timer = useRef(null)
+  const animationContainerRefs = useRef<Array<HTMLElement | null>>([])
+  const [animations, setAnimations] = useState([])
   const animationDataLoaded = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
-  const [maxContainerHeight, setMaxContainerHeight] = useState<number>(0)
-  const [autoplayOn, setAutoplayOn] = useState<boolean>(autoplay)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const [image, setImage] = useState<ImageProps | null>(null)
+  const [initialClientX, setInitialClientX] = useState<number>(0)
+  const [finalClientX, setFinalClientX] = useState<number>(0)
+  const [finalClientY, setFinalClientY] = useState<number>(0)
+
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
-
-  const updateImage = useCallback(() => {
-    if (selectedIndex >= 0) {
-      setImage(tabs[selectedIndex].image)
-    }
-  }, [selectedIndex, tabs])
+  const { width } = useWindowSize()
 
   useEffect(() => {
     if (!animationDataLoaded.current) {
-      const data = tabs.reduce((acc, x) => {
-        if (x.animationJson) {
-          acc.push(JSON.parse(x.animationJson))
-        }
-        return acc
-      }, [])
+      const data = tabs.map((x) =>
+        x.animationJson ? JSON.parse(x.animationJson) : null,
+      )
       setAnimationData(data)
       animationDataLoaded.current = true
     }
   }, [tabs, animationDataLoaded])
 
   useEffect(() => {
-    if (animationContainerRef.current) {
-      setAnimationContainerTransitioning(false)
-      clearTimeout(animationTimer.current)
+    if (animationContainerRefs.current?.length) {
+      const newAnimations = []
 
-      animationTimer.current = setTimeout(() => {
-        bodymovin.destroy()
+      animationContainerRefs.current.forEach((x, i) => {
+        newAnimations.push(
+          bodymovin.loadAnimation({
+            container: x,
+            loop: true,
+            autoplay: false,
+            animationData: animationData[i],
+          }),
+        )
+      })
 
-        bodymovin.loadAnimation({
-          container: animationContainerRef.current,
-          loop: true,
-          autoplay: true,
-          animationData: animationData[selectedIndex],
-        })
-
-        setAnimationContainerTransitioning(false)
-      }, 400)
-
-      setAnimationContainerTransitioning(true)
+      setAnimations(newAnimations)
     }
-  }, [animationData, animationContainerRef, selectedIndex])
+  }, [animationData, animationContainerRefs])
 
   const onResize = useCallback(() => {
     setMinHeight(0)
-    setMaxContainerHeight(0)
 
     let height = 0
 
     itemsRef.current.forEach((x) => {
       if (x) {
-        height = Math.max(height, x.offsetHeight)
+        height =
+          width < theme.breakpoints.md
+            ? Math.min(height, x.offsetHeight)
+            : Math.max(height, x.offsetHeight)
       }
     })
 
     setMinHeight(height)
-
-    if (contentRef.current) {
-      setMaxContainerHeight(contentRef.current.offsetHeight)
-    }
   }, [itemsRef, contentRef])
 
   const nextSlide = useCallback(() => {
@@ -163,16 +144,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [tab])
 
   useEffect(() => {
-    clearInterval(timer.current)
-
-    if (autoplayOn) {
-      timer.current = setInterval(() => nextSlide(), AUTOPLAY_TIMER)
-    }
-
-    return () => clearInterval(timer.current)
-  }, [autoplayOn, nextSlide])
-
-  useEffect(() => {
     setTimeout(onResize, 0)
     window.addEventListener('resize', onResize, { passive: true })
     return () => window.removeEventListener('resize', onResize)
@@ -181,10 +152,21 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
     setSelectedIndex(newSelectedIndex)
-    setAutoplayOn(false)
   }, [tab])
 
   useEffect(() => {
+    if (animations.length) {
+      animations.forEach((x, i) => {
+        if (typeof animations[i] === 'object') {
+          if (i === selectedIndex) {
+            animations[i].play()
+          } else {
+            animations[i].stop()
+          }
+        }
+      })
+    }
+
     itemsRef.current.forEach((x) => {
       const spans = x.querySelectorAll('span')
 
@@ -203,10 +185,27 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         const ms = index * 100
         span.style.transitionDelay = `${ms}ms`
       })
-
-      updateImage()
     }
-  }, [selectedIndex, updateImage])
+  }, [selectedIndex, animations])
+
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown, false)
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, false)
+    }
+  }, [])
+
+  const onKeyDown = useCallback((event) => {
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft':
+        goTo('prev')
+        break
+      case 'arrowright':
+        goTo('prev')
+        break
+    }
+  }, [])
 
   const goTo = (direction: string) => {
     switch (direction) {
@@ -221,40 +220,109 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
+  const getDirection = (absX: number, absY: number, deltaX, deltaY) => {
+    if (absX > absY) {
+      if (deltaX > 0) {
+        return LEFT
+      }
+      return RIGHT
+    } else if (deltaY > 0) {
+      return UP
+    }
+    return DOWN
+  }
+
+  const isMouseEvent = <T extends HTMLElement>(
+    event: React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>,
+  ): event is React.MouseEvent<T, MouseEvent> => {
+    return event.nativeEvent instanceof MouseEvent
+  }
+
+  const handleTouchStart = (
+    e:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
+  ) => {
+    const x = isMouseEvent(e) ? e.clientX : e.targetTouches[0].pageX
+    const y = isMouseEvent(e) ? e.clientY : e.targetTouches[0].pageY
+    setInitialClientX(x)
+  }
+
+  const handleTouchMove = (
+    e:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
+  ) => {
+    const x = isMouseEvent(e) ? e.clientX : e.targetTouches[0].pageX
+    const y = isMouseEvent(e) ? e.clientY : e.targetTouches[0].pageY
+
+    setFinalClientX(x)
+    setFinalClientY(y)
+  }
+
+  const handleTouchEnd = (
+    e:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
+  ) => {
+    if (e.cancelable) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
+    const deltaX = finalClientX - initialClientX
+    const deltaY = finalClientY - initialClientX
+    const absX = Math.abs(deltaX)
+    const absY = Math.abs(deltaY)
+
+    if (finalClientX > 10) {
+      if (getDirection(absX, absY, deltaX, deltaY) === LEFT) {
+        goTo('prev')
+      }
+      if (getDirection(absX, absY, deltaX, deltaY) === RIGHT) {
+        goTo('next')
+      }
+    }
+
+    setFinalClientX(0)
+    setInitialClientX(0)
+  }
+
+  const generateUrls = (link: string): LinkUrls => {
+    if (link) {
+      const linkData = JSON.parse(link)
+      const contentId = linkData.sys?.contentType?.sys?.id
+
+      const slug = linkData.fields?.slug
+
+      if (slug && ['article', 'category', 'news'].includes(contentId)) {
+        return {
+          href: makePath(contentId, '/[slug]'),
+          as: makePath(contentId, slug),
+        }
+      }
+      return { href: null, as: null }
+    }
+  }
+
   return (
-    <GridContainer className={styles.removeMobileSpacing}>
+    <GridContainer>
       <GridRow>
-        <GridColumn span={[null, null, null, '1/12']}>
+        <GridColumn hiddenBelow="lg" span="1/12">
           <Box display="flex" height="full" width="full" alignItems="center">
-            <Hidden below="lg">
-              <button
-                onClick={() => goTo('prev')}
-                className={cn(styles.arrowButton, {
-                  [styles.arrowButtonDisabled]: false,
-                })}
-              >
-                <Icon color="red400" width="18" height="18" type="arrowLeft" />
-              </button>
-            </Hidden>
+            <button
+              onClick={() => goTo('prev')}
+              className={cn(styles.arrowButton, {
+                [styles.arrowButtonDisabled]: false,
+              })}
+            >
+              <Icon color="red400" width="18" height="18" type="arrowLeft" />
+            </button>
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <div ref={contentRef}>
-            <Hidden above="md">
-              <Box
-                display="flex"
-                height="full"
-                width="full"
-                marginBottom={2}
-                justifyContent="center"
-                alignItems="center"
-                overflow="hidden"
-                style={{ maxHeight: 220 }}
-              >
-                <Image image={image} />
-              </Box>
-            </Hidden>
-            <Box paddingX={[3, 3, 0]}>
+          <Box ref={contentRef}>
+            <Box>
               <TabList
                 {...tab}
                 aria-label="My tabs"
@@ -273,31 +341,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                   )
                 })}
               </TabList>
-              <div className={styles.tabPanelWrapper}>
+              <Box className={styles.tabPanelWrapper}>
                 {tabs.map(({ title, subtitle, content, link }, index) => {
-                  let href = null
-                  let as = null
+                  const linkUrls = generateUrls(link)
 
                   const currentIndex = tab.items.findIndex(
                     (x) => x.id === tab.currentId,
                   )
 
                   const visible = currentIndex === index
-
-                  if (link) {
-                    const linkData = JSON.parse(link)
-                    const contentId = linkData.sys?.contentType?.sys?.id
-
-                    const slug = linkData.fields?.slug
-
-                    if (
-                      slug &&
-                      ['article', 'category', 'news'].includes(contentId)
-                    ) {
-                      href = `${makePath(contentId)}/[slug]`
-                      as = makePath(contentId, slug)
-                    }
-                  }
+                  const isTabletOrMobile = width < theme.breakpoints.lg
 
                   return (
                     <TabPanel
@@ -315,6 +368,15 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         paddingY={3}
                         ref={(el) => (itemsRef.current[index] = el)}
                         style={{ minHeight: `${minHeight}px` }}
+                        onTouchStart={(e) =>
+                          isTabletOrMobile ? handleTouchStart(e) : null
+                        }
+                        onTouchEnd={(e) =>
+                          isTabletOrMobile ? handleTouchEnd(e) : null
+                        }
+                        onTouchMove={(e) =>
+                          isTabletOrMobile ? handleTouchMove(e) : null
+                        }
                       >
                         <Stack space={3}>
                           <Typography
@@ -330,8 +392,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <Typography variant="p" as="p">
                             <span className={styles.textItem}>{content}</span>
                           </Typography>
-                          {href ? (
-                            <Link as={as} href={href} passHref>
+                          {linkUrls.href ? (
+                            <Link
+                              as={linkUrls.as}
+                              href={linkUrls.href}
+                              passHref
+                            >
                               <Button
                                 variant="text"
                                 icon="arrowRight"
@@ -346,44 +412,38 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                     </TabPanel>
                   )
                 })}
-              </div>
+              </Box>
             </Box>
             <Box
               display="inlineFlex"
               alignItems="center"
               width="full"
               background="blue100"
-              padding={3}
-              borderRadius="large"
+              paddingTop={[4, 4, 5]}
+              paddingBottom={4}
+              paddingX={[3, 3, 4]}
               className={styles.searchContentContainer}
             >
               {searchContent}
             </Box>
-          </div>
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-          <Box
-            display="flex"
-            height="full"
-            width="full"
-            justifyContent="center"
-            alignItems="center"
-            overflow="hidden"
-            style={{ maxHeight: `${maxContainerHeight}px` }}
-          >
-            <div className={styles.imageContainer}>
-              <Hidden below="lg">
-                <div
-                  ref={animationContainerRef}
-                  className={cn(styles.animationContainer, {
-                    [styles.animationContainerHidden]: animationContainerTransitioning,
-                  })}
-                />
-              </Hidden>
-            </div>
           </Box>
         </GridColumn>
-        <GridColumn span={[null, null, null, '1/12']}>
+        <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
+          {animationData.map((_, index) => {
+            const visible = index === selectedIndex
+
+            return (
+              <div
+                key={index}
+                ref={(el) => (animationContainerRefs.current[index] = el)}
+                className={cn(styles.animationContainer, {
+                  [styles.animationContainerHidden]: !visible,
+                })}
+              />
+            )
+          })}
+        </GridColumn>
+        <GridColumn hiddenBelow="lg" span="1/12">
           <Box
             display="flex"
             height="full"
@@ -391,38 +451,18 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             justifyContent="flexEnd"
             alignItems="center"
           >
-            <Hidden below="lg">
-              <button
-                onClick={() => goTo('next')}
-                className={cn(styles.arrowButton, {
-                  [styles.arrowButtonDisabled]: false,
-                })}
-              >
-                <Icon color="red400" width="18" height="18" type="arrowRight" />
-              </button>
-            </Hidden>
+            <button
+              onClick={() => goTo('next')}
+              className={cn(styles.arrowButton, {
+                [styles.arrowButtonDisabled]: false,
+              })}
+            >
+              <Icon color="red400" width="18" height="18" type="arrowRight" />
+            </button>
           </Box>
         </GridColumn>
       </GridRow>
     </GridContainer>
-  )
-}
-
-const Image = ({ image = null }: { image?: ImageProps }) => {
-  if (!image) {
-    return null
-  }
-
-  return (
-    <Box
-      display="flex"
-      height="full"
-      width="full"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <img src={image.url} alt={image.title} />
-    </Box>
   )
 }
 

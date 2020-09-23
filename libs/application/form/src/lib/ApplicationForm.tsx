@@ -1,168 +1,70 @@
-import React, { FC, useReducer } from 'react'
-import cn from 'classnames'
-
-import { Application } from '@island.is/application/template'
-
-import FormProgress from '../components/FormProgress/'
-import Sidebar from '../components/Sidebar'
-import Screen from '../components/Screen'
+import React, { FC, useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { GET_APPLICATION } from '@island.is/application/graphql'
 import {
-  ApplicationReducer,
-  initializeReducer,
-} from '../reducer/ApplicationFormReducer'
-import { ActionTypes } from '../reducer/ReducerTypes'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Tag,
-} from '@island.is/island-ui/core'
-
-import * as styles from './ApplicationForm.treat'
-import { FormModes, ProgressThemes } from '../types'
+  Form,
+  getApplicationStateInformation,
+  getApplicationTemplateByTypeId,
+  Schema,
+} from '@island.is/application/template'
+import { FormShell } from './FormShell'
 
 export const ApplicationForm: FC<{
-  application: Application
+  applicationId: string
   nationalRegistryId: string
-}> = ({ application, nationalRegistryId }) => {
-  const [state, dispatch] = useReducer(
-    ApplicationReducer,
-    {
-      application,
-      nationalRegistryId,
-      dataSchema: undefined,
-      form: undefined,
-      formLeaves: [],
-      activeSection: 0,
-      activeSubSection: 0,
-      activeScreen: 0,
-      progress: 0,
-      screens: [],
-      sections: [],
+}> = ({ applicationId, nationalRegistryId }) => {
+  const [dataSchema, setDataSchema] = useState<Schema>()
+  const [form, setForm] = useState<Form>()
+  const { data, error, loading } = useQuery(GET_APPLICATION, {
+    variables: {
+      input: {
+        id: applicationId,
+      },
     },
-    initializeReducer,
-  )
-  const {
-    activeSection,
-    activeSubSection,
-    activeScreen,
-    application: storedApplication,
-    form,
-    sections,
-    screens,
-    dataSchema,
-  } = state
+    skip: !applicationId,
+  })
 
-  const { mode = FormModes.APPLYING } = state.form
+  const application = data?.getApplication
 
-  const progressTheme = {
-    [FormModes.APPLYING]: ProgressThemes.PURPLE,
-    [FormModes.APPROVED]: ProgressThemes.GREEN,
-    [FormModes.REVIEW]: ProgressThemes.BLUE,
-    [FormModes.REJECTED]: ProgressThemes.RED,
-  }
-
-  const ProgressTag: FC = () => {
-    switch (mode) {
-      case FormModes.REVIEW:
-      case FormModes.PENDING:
-        return (
-          <Tag variant="darkerBlue" label bordered>
-            Status: In Review
-          </Tag>
+  useEffect(() => {
+    async function populateForm() {
+      if (application !== undefined && form === undefined) {
+        const template = getApplicationTemplateByTypeId(application.typeId)
+        const stateInformation = getApplicationStateInformation(application)
+        const role = template.mapUserToRole(
+          nationalRegistryId,
+          application.state,
         )
-      case FormModes.APPROVED:
-        return (
-          <Tag variant="darkerMint" label bordered>
-            Status: Approved
-          </Tag>
-        )
-      case FormModes.REJECTED:
-        return (
-          <Tag variant="red" label bordered>
-            Status: Rejected
-          </Tag>
-        )
-      default:
-        return null
+        if (stateInformation?.roles?.length) {
+          const currentRole = stateInformation.roles.find((r) => r.id === role)
+          if (currentRole) {
+            const formDescriptor = await currentRole.formLoader()
+            setForm(formDescriptor)
+            setDataSchema(template.dataSchema)
+          }
+        }
+      }
     }
-  }
+    populateForm()
+  }, [application, form, nationalRegistryId])
 
-  const showProgressTag = mode !== FormModes.APPLYING
+  if (!applicationId) {
+    return <p>Error there is no id</p>
+  }
+  if (error) {
+    return <p>{error}</p>
+  }
+  // TODO we need better loading states
+  if (loading || !form) {
+    return null
+  }
 
   return (
-    <Box
-      className={cn(styles.root, {
-        [styles.rootApplying]: mode === FormModes.APPLYING,
-        [styles.rootApproved]: mode === FormModes.APPROVED,
-        [styles.rootPending]: mode === FormModes.PENDING,
-        [styles.rootReviewing]: mode === FormModes.REVIEW,
-        [styles.rootRejected]: mode === FormModes.REJECTED,
-      })}
-    >
-      <Box
-        paddingTop={[0, 4]}
-        paddingBottom={[0, 5]}
-        width="full"
-        height="full"
-      >
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
-              <Box
-                paddingTop={[3, 6, 8]}
-                height="full"
-                borderRadius="large"
-                background="white"
-              >
-                <Screen
-                  addExternalData={(payload) =>
-                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-                  }
-                  answerQuestions={(payload) =>
-                    dispatch({ type: ActionTypes.ANSWER, payload })
-                  }
-                  dataSchema={dataSchema}
-                  externalData={storedApplication.externalData}
-                  formValue={storedApplication.answers}
-                  expandRepeater={() =>
-                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
-                  }
-                  answerAndGoToNextScreen={(payload) =>
-                    dispatch({
-                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-                      payload,
-                    })
-                  }
-                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                  shouldSubmit={activeScreen === screens.length - 2}
-                  isLastScreen={activeScreen === screens.length - 1} // TODO do this better
-                  screen={screens[activeScreen]}
-                  mode={mode}
-                  applicationId={storedApplication.id}
-                />
-              </Box>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '3/12', '3/12']}
-              className={styles.largeSidebarContainer}
-            >
-              <Sidebar>
-                <FormProgress
-                  theme={progressTheme[mode]}
-                  tag={showProgressTag && <ProgressTag />}
-                  formName={form.name}
-                  formIcon={form.icon}
-                  sections={sections}
-                  activeSection={activeSection}
-                  activeSubSection={activeSubSection}
-                />
-              </Sidebar>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
-    </Box>
+    <FormShell
+      application={application}
+      dataSchema={dataSchema}
+      form={form}
+      nationalRegistryId={nationalRegistryId}
+    />
   )
 }

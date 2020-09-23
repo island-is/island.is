@@ -4,6 +4,8 @@ import { render, waitFor } from '@testing-library/react'
 import { DetentionRequests } from './'
 import { UserRole } from '../../utils/authenticate'
 import { CaseState } from '../../types'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
 
 const mockDetensionRequests = [
   {
@@ -37,13 +39,19 @@ const mockDetensionRequests = [
 
 describe('Detention requests route', () => {
   test('should list submitted cases in a list if you are a judge', async () => {
+    const history = createMemoryHistory()
+
     fetchMock.mock('/api/user', {
       nationalId: '1112902539',
       roles: [UserRole.JUDGE],
     })
     fetchMock.mock('/api/cases', mockDetensionRequests)
 
-    const { getAllByTestId } = render(<DetentionRequests />)
+    const { getAllByTestId } = render(
+      <Router history={history}>
+        <DetentionRequests onGetUser={() => console.log('get user cb')} />
+      </Router>,
+    )
 
     await waitFor(() => getAllByTestId('detention-requests-table-row'))
 
@@ -55,6 +63,8 @@ describe('Detention requests route', () => {
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {
+    const history = createMemoryHistory()
+
     fetchMock.mock(
       '/api/user',
       {
@@ -64,7 +74,11 @@ describe('Detention requests route', () => {
       { overwriteRoutes: true },
     )
 
-    const { getAllByTestId } = render(<DetentionRequests />)
+    const { getAllByTestId } = render(
+      <Router history={history}>
+        <DetentionRequests onGetUser={() => console.log('get user cb')} />
+      </Router>,
+    )
 
     await waitFor(() => getAllByTestId('detention-requests-table-row'))
 
@@ -74,9 +88,15 @@ describe('Detention requests route', () => {
   })
 
   test('should display an error alert if the api call fails', async () => {
+    const history = createMemoryHistory()
+
     fetchMock.mock('/api/cases', 500, { overwriteRoutes: true })
 
-    const { getByTestId, queryByTestId } = render(<DetentionRequests />)
+    const { getByTestId, queryByTestId } = render(
+      <Router history={history}>
+        <DetentionRequests onGetUser={() => console.log('get user cb')} />
+      </Router>,
+    )
     await waitFor(() => getByTestId('detention-requests-error'))
 
     expect(queryByTestId('detention-requests-table')).toBeNull()

@@ -44,8 +44,10 @@ export * from './lib/Blockquote/Blockquote'
 export * from './lib/Alert/Alert'
 export { Swiper } from './lib/Swiper'
 export { FocusableBox } from './lib/FocusableBox'
+export { NewsletterSignup } from './lib/NewsletterSignup'
 export * from './lib/DatePicker/DatePicker'
 export * from './lib/AlertBanner/AlertBanner'
+export * from './lib/ProfileCard/ProfileCard'
 
 // Layout
 export * from './lib/Box/Box'

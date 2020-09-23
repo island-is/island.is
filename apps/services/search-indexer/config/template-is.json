@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 7,
+  "version": 10,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -25,14 +25,25 @@
         },
         "icelandicDeCompounded": {
           "type": "hyphenation_decompounder",
-          "word_list_path": "analyzers/{HYPHEN-WHITELIST}",
-          "hyphenation_patterns_path": "analyzers/{HYPHEN-PATTERNS}",
+          "word_list_path": "analyzers/{HYPHENWHITELIST}",
+          "hyphenation_patterns_path": "analyzers/{HYPHENPATTERNS}",
           "max_subword_size": 18,
           "min_subword_size": 4
         }
       },
       "analyzer": {
         "baseIcelandic": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "icelandicSynonym",
+            "icelandicStop",
+            "icelandicKeyword",
+            "icelandicStemmer"
+          ]
+        },
+        "compoundIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": [
@@ -47,7 +58,7 @@
         "termIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": ["lowercase", "icelandicSynonym"]
+          "filter": ["lowercase", "icelandicSynonym", "icelandicStop"]
         }
       }
     }
@@ -66,6 +77,10 @@
           "stemmed": {
             "type": "text",
             "analyzer": "baseIcelandic"
+          },
+          "compound": {
+            "type": "text",
+            "analyzer": "compoundIcelandic"
           }
         }
       },
@@ -89,7 +104,12 @@
           },
           "value": {
             "type": "text",
-            "analyzer": "baseIcelandic"
+            "analyzer": "baseIcelandic",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "type": {
             "type": "keyword"

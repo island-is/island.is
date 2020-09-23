@@ -2,6 +2,7 @@
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
+import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
@@ -41,6 +42,7 @@ import { ContentfulRepository } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
+import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 
 const makePage = (
   page: number,
@@ -67,6 +69,7 @@ const ArticleFields = [
   'sys',
   'fields.slug',
   'fields.title',
+  'fields.shortTitle',
   'fields.content',
   'fields.subgroup',
   'fields.group',
@@ -238,7 +241,9 @@ export class CmsContentfulService {
       })
       .catch(errorHandler('getRelatedArticles'))
 
-    return relatedResult.items.map(mapArticle)
+    const sortedIds = articles.map((a) => a.sys.id)
+    const results = relatedResult.items.map(mapArticle)
+    return sortBy(results, (a) => sortedIds.indexOf(a.id))
   }
 
   async getNews(lang: string, slug: string): Promise<News | null> {
@@ -330,9 +335,27 @@ export class CmsContentfulService {
         include: 10,
         order: '-sys.createdAt',
       })
-      .catch(errorHandler('getPage'))
+      .catch(errorHandler('getAboutPage'))
 
     return result.items.map(mapAboutPage)[0] ?? null
+  }
+
+  async getAboutSubPage({
+    lang,
+    slug,
+  }: {
+    lang: string
+    slug: string
+  }): Promise<AboutSubPage | null> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAboutSubPageFields>(lang, {
+        ['content_type']: 'aboutSubPage',
+        include: 10,
+        'fields.slug': slug,
+      })
+      .catch(errorHandler('getAboutSubPage'))
+
+    return result.items.map(mapAboutSubPage)[0] ?? null
   }
 
   async getLandingPage({
