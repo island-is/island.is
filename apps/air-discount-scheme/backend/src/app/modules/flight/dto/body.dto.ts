@@ -44,7 +44,7 @@ export class CreateFlightLegBody {
   @IsOptional()
   @IsEnum([Airlines.norlandair])
   @ApiProperty({ enum: [Airlines.norlandair] })
-  cooperation: string
+  readonly cooperation?: string
 }
 
 export class CreateFlightBody {
