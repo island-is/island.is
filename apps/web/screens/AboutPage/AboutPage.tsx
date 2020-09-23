@@ -445,7 +445,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Categories',
+            namespace: 'About',
             lang: locale,
           },
         },

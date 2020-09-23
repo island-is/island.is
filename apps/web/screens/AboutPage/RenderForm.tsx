@@ -5,12 +5,7 @@ import jsonp from 'jsonp'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-  NewsletterSignup,
-} from '@island.is/island-ui/core'
+import { NewsletterSignup } from '@island.is/island-ui/core'
 
 type FormState = {
   type: '' | 'error' | 'success'
