@@ -430,7 +430,7 @@ export class CmsContentfulService {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, {
         ['content_type']: 'lifeEventPage',
-        order: '-sys.createdAt',
+        order: 'sys.createdAt',
       })
       .catch(errorHandler('getLifeEvents'))
 
