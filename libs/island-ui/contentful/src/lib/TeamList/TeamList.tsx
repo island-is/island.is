@@ -3,7 +3,6 @@ import Background from '../Background/Background'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   ProfileCard,
 } from '@island.is/island-ui/core'
@@ -18,11 +17,12 @@ export const TeamList: FC<TeamListProps> = ({ teamMembers }) => {
       <GridRow>
         {teamMembers.map((member, index) => (
           <GridColumn span={['12/12', '6/12', '6/12', '4/12']} key={index}>
-            <Box marginBottom={3}>
+            <Box paddingBottom={3} height="full">
               <ProfileCard
                 title={member.name}
                 description={member.title}
                 image={member.image.url}
+                heightFull
               />
             </Box>
           </GridColumn>
