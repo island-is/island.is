@@ -130,6 +130,13 @@ export type TabContent = {
   body?: Maybe<Html>
 }
 
+export type TeamMember = {
+  __typename?: 'TeamMember'
+  name: Scalars['String']
+  title: Scalars['String']
+  image: Image
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -189,6 +196,7 @@ export type Slice =
   | EmbeddedVideo
   | SectionWithImage
   | TabSection
+  | TeamList
   | Html
   | Image
 
@@ -318,6 +326,13 @@ export type TabSection = {
   id: Scalars['ID']
   title: Scalars['String']
   tabs: Array<TabContent>
+}
+
+export type TeamList = {
+  __typename?: 'TeamList'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  teamMembers: Array<TeamMember>
 }
 
 export type Article = {
@@ -1285,6 +1300,7 @@ export type ResolversTypes = {
   Statistic: ResolverTypeWrapper<Statistic>
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
   TabContent: ResolverTypeWrapper<TabContent>
+  TeamMember: ResolverTypeWrapper<TeamMember>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
@@ -1309,6 +1325,7 @@ export type ResolversTypes = {
     | ResolversTypes['EmbeddedVideo']
     | ResolversTypes['SectionWithImage']
     | ResolversTypes['TabSection']
+    | ResolversTypes['TeamList']
     | ResolversTypes['Html']
     | ResolversTypes['Image']
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
@@ -1333,6 +1350,7 @@ export type ResolversTypes = {
   EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
   TabSection: ResolverTypeWrapper<TabSection>
+  TeamList: ResolverTypeWrapper<TeamList>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1475,6 +1493,7 @@ export type ResolversParentTypes = {
   Statistic: Statistic
   QuestionAndAnswer: QuestionAndAnswer
   TabContent: TabContent
+  TeamMember: TeamMember
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
@@ -1499,6 +1518,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['EmbeddedVideo']
     | ResolversParentTypes['SectionWithImage']
     | ResolversParentTypes['TabSection']
+    | ResolversParentTypes['TeamList']
     | ResolversParentTypes['Html']
     | ResolversParentTypes['Image']
   MailingListSignupSlice: MailingListSignupSlice
@@ -1521,6 +1541,7 @@ export type ResolversParentTypes = {
   EmbeddedVideo: EmbeddedVideo
   SectionWithImage: SectionWithImage
   TabSection: TabSection
+  TeamList: TeamList
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1791,6 +1812,16 @@ export type TabContentResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type TeamMemberResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TeamMember'] = ResolversParentTypes['TeamMember']
+> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleCategoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
@@ -1888,6 +1919,7 @@ export type SliceResolvers<
     | 'EmbeddedVideo'
     | 'SectionWithImage'
     | 'TabSection'
+    | 'TeamList'
     | 'Html'
     | 'Image',
     ParentType,
@@ -2094,6 +2126,20 @@ export type TabSectionResolvers<
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   tabs?: Resolver<Array<ResolversTypes['TabContent']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TeamListResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TeamList'] = ResolversParentTypes['TeamList']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  teamMembers?: Resolver<
+    Array<ResolversTypes['TeamMember']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3026,6 +3072,7 @@ export type Resolvers<ContextType = Context> = {
   Statistic?: StatisticResolvers<ContextType>
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
   TabContent?: TabContentResolvers<ContextType>
+  TeamMember?: TeamMemberResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
   ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
@@ -3049,6 +3096,7 @@ export type Resolvers<ContextType = Context> = {
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   SectionWithImage?: SectionWithImageResolvers<ContextType>
   TabSection?: TabSectionResolvers<ContextType>
+  TeamList?: TeamListResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -3159,6 +3207,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'TabSection',
+          },
+          {
+            name: 'TeamList',
           },
           {
             name: 'Html',
