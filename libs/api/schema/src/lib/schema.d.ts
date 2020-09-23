@@ -567,10 +567,18 @@ export type AboutSubPage = {
   slices: Array<Slice>
 }
 
+export type TagCount = {
+  __typename?: 'TagCount'
+  key: Scalars['String']
+  value: Scalars['String']
+  count: Scalars['Int']
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
   items: Array<Items>
+  tagCounts?: Maybe<Array<TagCount>>
 }
 
 export type Items = Article | LifeEventPage | News | AboutPage
@@ -980,6 +988,8 @@ export type SearcherInput = {
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+  tags?: Maybe<Array<Tag>>
+  countTag?: Maybe<SearchableTags>
 }
 
 export enum SearchableContentTypes {
@@ -992,6 +1002,15 @@ export enum SearchableContentTypes {
 export enum ContentLanguage {
   is = 'is',
   en = 'en',
+}
+
+export type Tag = {
+  type: SearchableTags
+  key: Scalars['String']
+}
+
+export enum SearchableTags {
+  category = 'category',
 }
 
 export type ItemInput = {
@@ -1367,6 +1386,7 @@ export type ResolversTypes = {
   AboutSubPage: ResolverTypeWrapper<
     Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
+  TagCount: ResolverTypeWrapper<TagCount>
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
@@ -1415,6 +1435,8 @@ export type ResolversTypes = {
   SearcherInput: SearcherInput
   SearchableContentTypes: SearchableContentTypes
   ContentLanguage: ContentLanguage
+  Tag: Tag
+  SearchableTags: SearchableTags
   ItemInput: ItemInput
   ItemType: ItemType
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
@@ -1548,6 +1570,7 @@ export type ResolversParentTypes = {
   AboutSubPage: Omit<AboutSubPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
+  TagCount: TagCount
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
@@ -1593,6 +1616,7 @@ export type ResolversParentTypes = {
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
+  Tag: Tag
   ItemInput: ItemInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
@@ -2542,12 +2566,27 @@ export type AboutSubPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type TagCountResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TagCount'] = ResolversParentTypes['TagCount']
+> = {
+  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type SearchResultResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
 > = {
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   items?: Resolver<Array<ResolversTypes['Items']>, ParentType, ContextType>
+  tagCounts?: Resolver<
+    Maybe<Array<ResolversTypes['TagCount']>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3040,6 +3079,7 @@ export type Resolvers<ContextType = Context> = {
   Url?: UrlResolvers<ContextType>
   UrlPage?: UrlPageResolvers<ContextType>
   AboutSubPage?: AboutSubPageResolvers<ContextType>
+  TagCount?: TagCountResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>

@@ -556,10 +556,18 @@ export type AboutSubPage = {
   slices: Array<Slice>
 }
 
+export type TagCount = {
+  __typename?: 'TagCount'
+  key: Scalars['String']
+  value: Scalars['String']
+  count: Scalars['Int']
+}
+
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
   items: Array<Items>
+  tagCounts?: Maybe<Array<TagCount>>
 }
 
 export type Items = Article | LifeEventPage | News | AboutPage
@@ -969,6 +977,8 @@ export type SearcherInput = {
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+  tags?: Maybe<Array<Tag>>
+  countTag?: Maybe<SearchableTags>
 }
 
 export enum SearchableContentTypes {
@@ -981,6 +991,15 @@ export enum SearchableContentTypes {
 export enum ContentLanguage {
   Is = 'is',
   En = 'en',
+}
+
+export type Tag = {
+  type: SearchableTags
+  key: Scalars['String']
+}
+
+export enum SearchableTags {
+  Category = 'category',
 }
 
 export type ItemInput = {
@@ -1812,6 +1831,14 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             })
         | { __typename?: 'News' }
         | { __typename?: 'AboutPage' }
+      >
+      tagCounts?: Maybe<
+        Array<
+          { __typename?: 'TagCount' } & Pick<
+            TagCount,
+            'key' | 'value' | 'count'
+          >
+        >
       >
     }
 }
