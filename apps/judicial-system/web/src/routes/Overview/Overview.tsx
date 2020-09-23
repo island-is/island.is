@@ -54,7 +54,7 @@ export const Overview: React.FC = () => {
     }
   }
 
-  return (
+  return caseDraftJSON ? (
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
@@ -113,10 +113,10 @@ export const Overview: React.FC = () => {
                 </Box>
                 <Typography>
                   {`${capitalize(
-                    formatDate(caseDraftJSON.arrestDate, 'PPPP', {
+                    formatDate(caseDraftJSON?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(caseDraftJSON.arrestDate, 'hh:mm')}`}
+                  )} kl. ${formatDate(caseDraftJSON?.arrestDate, 'hh:mm')}`}
                 </Typography>
               </Box>
               {caseDraftJSON.requestedCourtDate &&
@@ -129,11 +129,11 @@ export const Overview: React.FC = () => {
                     </Box>
                     <Typography>
                       {`${capitalize(
-                        formatDate(caseDraftJSON.requestedCourtDate, 'PPPP', {
+                        formatDate(caseDraftJSON?.requestedCourtDate, 'PPPP', {
                           locale: is,
                         }),
                       )} kl. ${formatDate(
-                        caseDraftJSON.requestedCourtDate,
+                        caseDraftJSON?.requestedCourtDate,
                         'hh:mm',
                       )}`}
                     </Typography>
@@ -146,11 +146,11 @@ export const Overview: React.FC = () => {
                       Gæsluvarðhald til
                       <strong>
                         {` ${formatDate(
-                          caseDraftJSON.requestedCustodyEndDate,
+                          caseDraftJSON?.requestedCustodyEndDate,
                           'PPP',
                           { locale: is },
                         )} kl. ${formatDate(
-                          caseDraftJSON.requestedCustodyEndDate,
+                          caseDraftJSON?.requestedCustodyEndDate,
                           'hh:mm',
                         )}`}
                       </strong>
@@ -184,12 +184,12 @@ export const Overview: React.FC = () => {
                         <Typography>{caseDraftJSON.caseFacts}</Typography>
                       </Box>
                     )}
-                    {caseDraftJSON.witnessAccount && (
+                    {caseDraftJSON.witnessAccounts && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
                           <Typography variant="h5">Framburður</Typography>
                         </Box>
-                        <Typography>{caseDraftJSON.witnessAccount}</Typography>
+                        <Typography>{caseDraftJSON.witnessAccounts}</Typography>
                       </Box>
                     )}
                     {caseDraftJSON.investigationProgress && (
@@ -245,7 +245,7 @@ export const Overview: React.FC = () => {
         />
       )}
     </>
-  )
+  ) : null
 }
 
 export default Overview
