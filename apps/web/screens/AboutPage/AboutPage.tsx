@@ -2,7 +2,7 @@
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_ABOUT_PAGE_QUERY } from '../queries'
+import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
   Header,
@@ -11,7 +11,6 @@ import {
   Timeline,
   StoryList,
   AboutLatestNews,
-  EmailSignup,
   LogoList,
   BulletList,
   DrawerMenu,
@@ -41,10 +40,13 @@ import {
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { renderSlices } from '@island.is/island-ui/contentful'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
+import { RenderForm } from './RenderForm'
 
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
 const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
@@ -246,9 +248,10 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
 
 interface SectionProps {
   slice: AvailableSlices
+  namespace?: GetNamespaceQuery['getNamespace']
 }
 
-const Section: FC<SectionProps> = ({ slice }) => {
+const Section: FC<SectionProps> = ({ slice, namespace }) => {
   switch (slice.__typename) {
     case 'TimelineSlice':
       return (
@@ -287,7 +290,13 @@ const Section: FC<SectionProps> = ({ slice }) => {
         <Box key={slice.id} id={slice.id} background="blue100">
           <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
             <Box paddingTop={10} paddingBottom={7}>
-              <EmailSignup {...slice} />
+              <RenderForm
+                namespace={namespace}
+                heading={slice.title}
+                text={slice.description}
+                submitButtonText={slice.buttonText}
+                inputLabel={slice.inputLabel}
+              />
             </Box>
           </Layout>
         </Box>
@@ -396,9 +405,10 @@ const Section: FC<SectionProps> = ({ slice }) => {
 
 export interface AboutPageProps {
   page?: GetAboutPageQuery['getAboutPage']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
-const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
+const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
   return (
     <>
       <Head>
@@ -408,7 +418,7 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
       <Box position="relative">
         <PageHeader page={page} />
         {(page.slices as AvailableSlices[]).map((slice) => (
-          <Section key={slice.id} slice={slice} />
+          <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
       </Box>
     </>
@@ -416,19 +426,36 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
 }
 
 AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
-  const {
-    data: { getAboutPage: page },
-  } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
-    query: GET_ABOUT_PAGE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-      },
+  const [
+    {
+      data: { getAboutPage: page },
     },
-  })
+    namespace,
+  ] = await Promise.all([
+    await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+      query: GET_ABOUT_PAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+        },
+      },
+    }),
+    await apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'About',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  ])
 
   return {
     page,
+    namespace,
   }
 }
 

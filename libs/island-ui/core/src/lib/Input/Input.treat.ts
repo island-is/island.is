@@ -27,9 +27,22 @@ export const input = style({
   '::placeholder': mixins.inputPlaceholder,
   ':focus': mixins.inputFocus,
   ':disabled': mixins.inputDisabled,
-  selectors: {
-    '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
-      boxShadow: '0 0 0px 1000px white inset',
+})
+
+// To handle styling auto-fill states
+export const inputBackground = styleMap({
+  white: {
+    selectors: {
+      '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
+        boxShadow: `0 0 0px 1000px ${theme.color.white} inset`,
+      },
+    },
+  },
+  blue: {
+    selectors: {
+      '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
+        boxShadow: `0 0 0px 1000px ${theme.color.blue100} inset`,
+      },
     },
   },
 })
