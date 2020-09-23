@@ -22,7 +22,7 @@ export class UserService {
       {
         nationalId: '2408783999',
         name: 'Baldur Kristjánsson',
-        roles: [UserRole.PROSECUTOR, UserRole.JUDGE],
+        roles: [UserRole.PROSECUTOR],
       },
     ]
   }
