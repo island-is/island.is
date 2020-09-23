@@ -188,6 +188,25 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }, [selectedIndex, animations])
 
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown, false)
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, false)
+    }
+  }, [])
+
+  const onKeyDown = useCallback((event) => {
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft':
+        goTo('prev')
+        break
+      case 'arrowright':
+        goTo('prev')
+        break
+    }
+  }, [])
+
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
@@ -197,17 +216,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         nextSlide()
         break
       default:
-        break
-    }
-  }
-
-  const onKeyDown = (event: React.KeyboardEvent) => {
-    switch (event.key.toLowerCase()) {
-      case 'arrowleft':
-        goTo('prev')
-        break
-      case 'arrowright':
-        goTo('prev')
         break
     }
   }
@@ -355,7 +363,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                       className={cn(styles.tabPanel, {
                         [styles.tabPanelVisible]: visible,
                       })}
-                      onKeyDown={onKeyDown}
                     >
                       <Box
                         paddingY={3}
