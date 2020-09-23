@@ -119,6 +119,13 @@ export type TabContent = {
   body?: Maybe<Html>
 }
 
+export type TeamMember = {
+  __typename?: 'TeamMember'
+  name: Scalars['String']
+  title: Scalars['String']
+  image: Image
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -178,6 +185,7 @@ export type Slice =
   | EmbeddedVideo
   | SectionWithImage
   | TabSection
+  | TeamList
   | Html
   | Image
 
@@ -307,6 +315,13 @@ export type TabSection = {
   id: Scalars['ID']
   title: Scalars['String']
   tabs: Array<TabContent>
+}
+
+export type TeamList = {
+  __typename?: 'TeamList'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  teamMembers: Array<TeamMember>
 }
 
 export type Article = {
@@ -1184,6 +1199,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
             __typename?: 'SectionWithImage'
           } & AllSlicesSectionWithImageFragment)
         | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+        | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
         | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
         | ({ __typename?: 'Image' } & AllSlicesImageFragment)
       >
@@ -1236,6 +1252,7 @@ export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
@@ -1300,6 +1317,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
@@ -1355,6 +1373,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                     __typename?: 'SectionWithImage'
                   } & AllSlicesSectionWithImageFragment)
                 | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+                | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
                 | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
                 | ({ __typename?: 'Image' } & AllSlicesImageFragment)
               >
@@ -1465,6 +1484,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
@@ -1506,6 +1526,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         >
@@ -2016,6 +2037,17 @@ export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
     >
   }
 
+export type TeamListFieldsFragment = { __typename: 'TeamList' } & Pick<
+  TeamList,
+  'typename' | 'id'
+> & {
+    teamMembers: Array<
+      { __typename?: 'TeamMember' } & Pick<TeamMember, 'name' | 'title'> & {
+          image: { __typename?: 'Image' } & ImageFieldsFragment
+        }
+    >
+  }
+
 export type AllSlicesTimelineSliceFragment = {
   __typename?: 'TimelineSlice'
 } & TimelineFieldsFragment
@@ -2072,6 +2104,10 @@ export type AllSlicesTabSectionFragment = {
   __typename?: 'TabSection'
 } & TabSectionFieldsFragment
 
+export type AllSlicesTeamListFragment = {
+  __typename?: 'TeamList'
+} & TeamListFieldsFragment
+
 export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
 
 export type AllSlicesImageFragment = {
@@ -2093,5 +2129,6 @@ export type AllSlicesFragment =
   | AllSlicesEmbeddedVideoFragment
   | AllSlicesSectionWithImageFragment
   | AllSlicesTabSectionFragment
+  | AllSlicesTeamListFragment
   | AllSlicesHtmlFragment
   | AllSlicesImageFragment
