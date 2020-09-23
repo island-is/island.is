@@ -66,7 +66,7 @@ export const searchQuery = ({
       // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      default_operator: "and",
+      default_operator: 'and',
     },
   })
 
