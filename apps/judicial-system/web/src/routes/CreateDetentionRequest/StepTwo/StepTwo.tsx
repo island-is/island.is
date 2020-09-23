@@ -227,7 +227,7 @@ export const StepTwo: React.FC = () => {
               <GridRow>
                 <GridColumn span="5/8">
                   <DatePicker
-                    label="Veldu dagsetningu"
+                    label="Gæsluvarðhald til"
                     placeholderText="Veldu dagsetningu"
                     selected={
                       caseDraftJSON.requestedCustodyEndDate

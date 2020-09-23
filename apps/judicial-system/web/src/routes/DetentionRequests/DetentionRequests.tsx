@@ -9,6 +9,7 @@ import {
   Typography,
   Tag,
   TagVariant,
+  Box,
 } from '@island.is/island-ui/core'
 import { DetentionRequest, CaseState, User } from '../../types'
 import * as api from '../../api'
@@ -104,7 +105,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
           data-testid="detention-requests-table"
         >
           <Typography as="caption" variant="h3">
-            Gæsluvarðhaldskröfur
+            <Box marginBottom={2}>Gæsluvarðhaldskröfur</Box>
           </Typography>
           <thead>
             <tr>

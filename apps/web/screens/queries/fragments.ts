@@ -221,6 +221,19 @@ export const slices = gql`
     }
   }
 
+  fragment TeamListFields on TeamList {
+    __typename
+    typename
+    id
+    teamMembers {
+      name
+      title
+      image {
+        ...ImageFields
+      }
+    }
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -238,5 +251,6 @@ export const slices = gql`
     ...EmbeddedVideoFields
     ...SectionWithImageFields
     ...TabSectionFields
+    ...TeamListFields
   }
 `
