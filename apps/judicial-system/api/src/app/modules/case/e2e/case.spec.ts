@@ -57,6 +57,13 @@ describe('Case', () => {
         expect(response.body.investigationProgress).toBeNull()
         expect(response.body.legalArguments).toBeNull()
         expect(response.body.comments).toBeNull()
+        expect(response.body.courtCaseNumber).toBeNull()
+        expect(response.body.courtStartTime).toBeNull()
+        expect(response.body.courtEndTime).toBeNull()
+        expect(response.body.courtAttendees).toBeNull()
+        expect(response.body.policeDemands).toBeNull()
+        expect(response.body.suspectPlea).toBeNull()
+        expect(response.body.litigationPresentations).toBeNull()
         expect(response.body.notifications).toBeUndefined()
 
         // Check the data in the database
@@ -86,6 +93,13 @@ describe('Case', () => {
           expect(value.investigationProgress).toBeNull()
           expect(value.legalArguments).toBeNull()
           expect(value.comments).toBeNull()
+          expect(value.courtCaseNumber).toBeNull()
+          expect(value.courtStartTime).toBeNull()
+          expect(value.courtEndTime).toBeNull()
+          expect(value.courtAttendees).toBeNull()
+          expect(value.policeDemands).toBeNull()
+          expect(value.suspectPlea).toBeNull()
+          expect(value.litigationPresentations).toBeNull()
           expect(value.notifications).toStrictEqual([])
         })
       })
@@ -123,6 +137,13 @@ describe('Case', () => {
         expect(response.body.investigationProgress).toBeNull()
         expect(response.body.legalArguments).toBeNull()
         expect(response.body.comments).toBeNull()
+        expect(response.body.courtCaseNumber).toBeNull()
+        expect(response.body.courtStartTime).toBeNull()
+        expect(response.body.courtEndTime).toBeNull()
+        expect(response.body.courtAttendees).toBeNull()
+        expect(response.body.policeDemands).toBeNull()
+        expect(response.body.suspectPlea).toBeNull()
+        expect(response.body.litigationPresentations).toBeNull()
         expect(response.body.notifications).toBeUndefined()
 
         // Check the data in the database
@@ -150,6 +171,13 @@ describe('Case', () => {
           expect(value.investigationProgress).toBeNull()
           expect(value.legalArguments).toBeNull()
           expect(value.comments).toBeNull()
+          expect(value.courtCaseNumber).toBeNull()
+          expect(value.courtStartTime).toBeNull()
+          expect(value.courtEndTime).toBeNull()
+          expect(value.courtAttendees).toBeNull()
+          expect(value.policeDemands).toBeNull()
+          expect(value.suspectPlea).toBeNull()
+          expect(value.litigationPresentations).toBeNull()
           expect(value.notifications).toStrictEqual([])
         })
       })
@@ -180,6 +208,13 @@ describe('Case', () => {
       investigationProgress: 'Investigation Progress',
       legalArguments: 'Legal Arguments',
       comments: 'Comments',
+      courtCaseNumber: 'Court Case Number',
+      courtStartTime: '2020-09-29T13:00:00.000Z',
+      courtEndTime: '2020-09-29T14:00:00.000Z',
+      courtAttendees: 'Court Attendees',
+      policeDemands: 'Police Demands',
+      suspectPlea: 'Suspect Plea',
+      litigationPresentations: 'Litigation Presentations',
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
@@ -217,6 +252,19 @@ describe('Case', () => {
           )
           expect(response.body.legalArguments).toBe(value.legalArguments)
           expect(response.body.comments).toBe(value.comments)
+          expect(response.body.courtCaseNumber).toBe(value.courtCaseNumber)
+          expect(response.body.courtStartTime).toBe(
+            value.courtStartTime.toISOString(),
+          )
+          expect(response.body.courtEndTime).toBe(
+            value.courtEndTime.toISOString(),
+          )
+          expect(response.body.courtAttendees).toBe(value.courtAttendees)
+          expect(response.body.policeDemands).toBe(value.policeDemands)
+          expect(response.body.suspectPlea).toBe(value.suspectPlea)
+          expect(response.body.litigationPresentations).toBe(
+            value.litigationPresentations,
+          )
           expect(response.body.notifications).toStrictEqual([])
         })
     })
@@ -252,6 +300,12 @@ describe('Case', () => {
         legalArguments: 'Legal Arguments',
         comments: 'Comments',
         courtCaseNumber: 'Court Case Number',
+        courtStartTime: '2020-09-29T13:00:00.000Z',
+        courtEndTime: '2020-09-29T14:00:00.000Z',
+        courtAttendees: 'Court Attendees',
+        policeDemands: 'Police Demands',
+        suspectPlea: 'Suspect Plea',
+        litigationPresentations: 'Litigation Presentations',
       }
 
       await request(app.getHttpServer())
@@ -288,8 +342,16 @@ describe('Case', () => {
           )
           expect(response.body.legalArguments).toBe(data.legalArguments)
           expect(response.body.comments).toBe(data.comments)
-          expect(response.body.notifications).toBeUndefined()
           expect(response.body.courtCaseNumber).toBe(data.courtCaseNumber)
+          expect(response.body.courtStartTime).toBe(data.courtStartTime)
+          expect(response.body.courtEndTime).toBe(data.courtEndTime)
+          expect(response.body.courtAttendees).toBe(data.courtAttendees)
+          expect(response.body.policeDemands).toBe(data.policeDemands)
+          expect(response.body.suspectPlea).toBe(data.suspectPlea)
+          expect(response.body.litigationPresentations).toBe(
+            data.litigationPresentations,
+          )
+          expect(response.body.notifications).toBeUndefined()
 
           // Check the data in the database
           await Case.findOne({
@@ -326,8 +388,18 @@ describe('Case', () => {
             )
             expect(newValue.legalArguments).toBe(data.legalArguments)
             expect(newValue.comments).toBe(data.comments)
-            expect(newValue.notifications).toStrictEqual([])
             expect(newValue.courtCaseNumber).toBe(data.courtCaseNumber)
+            expect(newValue.courtStartTime.toISOString()).toBe(
+              data.courtStartTime,
+            )
+            expect(newValue.courtEndTime.toISOString()).toBe(data.courtEndTime)
+            expect(newValue.courtAttendees).toBe(data.courtAttendees)
+            expect(newValue.policeDemands).toBe(data.policeDemands)
+            expect(newValue.suspectPlea).toBe(data.suspectPlea)
+            expect(newValue.litigationPresentations).toBe(
+              data.litigationPresentations,
+            )
+            expect(newValue.notifications).toStrictEqual([])
           })
         })
     })

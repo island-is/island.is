@@ -79,7 +79,6 @@ components:
         state:
           type: string
           enum:
-            - UNKNOWN
             - DRAFT
             - SUBMITTED
             - ACCEPTED
@@ -137,6 +136,20 @@ components:
           type: string
         courtCaseNumber:
           type: string
+        courtStartTime:
+          format: date-time
+          type: string
+        courtEndTime:
+          format: date-time
+          type: string
+        courtAttendees:
+          type: string
+        policeDemands:
+          type: string
+        suspectPlea:
+          type: string
+        litigationPresentations:
+          type: string
         notifications:
           type: array
           items:
@@ -148,8 +161,28 @@ components:
         - state
         - policeCaseNumber
         - suspectNationalId
+        - suspectName
+        - suspectAddress
+        - court
+        - arrestDate
+        - requestedCourtDate
+        - requestedCustodyEndDate
+        - lawsBroken
         - custodyProvisions
         - custodyRestrictions
+        - caseFacts
+        - witnessAccounts
+        - investigationProgress
+        - legalArguments
+        - comments
+        - courtCaseNumber
+        - courtStartTime
+        - courtEndTime
+        - courtAttendees
+        - policeDemands
+        - suspectPlea
+        - litigationPresentations
+        - notifications
     CreateCaseDto:
       type: object
       properties:
@@ -178,7 +211,6 @@ components:
         state:
           type: string
           enum:
-            - UNKNOWN
             - DRAFT
             - SUBMITTED
             - ACCEPTED
@@ -236,9 +268,30 @@ components:
           type: string
         courtCaseNumber:
           type: string
+        courtStartTime:
+          format: date-time
+          type: string
+        courtEndTime:
+          format: date-time
+          type: string
+        courtAttendees:
+          type: string
+        policeDemands:
+          type: string
+        suspectPlea:
+          type: string
+        litigationPresentations:
+          type: string
     SigningServiceResponse:
       type: object
-      properties: {}
+      properties:
+        controlCode:
+          type: string
+        documentToken:
+          type: string
+      required:
+        - controlCode
+        - documentToken
 paths:
   /liveness:
     get:
@@ -450,12 +503,13 @@ paths:
           in: path
           schema:
             type: string
+        - name: documentToken
+          required: true
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningServiceResponse'
       tags:
         - cases

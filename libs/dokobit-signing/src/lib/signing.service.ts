@@ -3,6 +3,7 @@ import { Base64 } from 'js-base64'
 import { createHash } from 'crypto'
 
 import { Injectable, Inject } from '@nestjs/common'
+import { ApiProperty } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -12,7 +13,10 @@ export interface SigningServiceOptions {
 }
 
 export class SigningServiceResponse {
+  @ApiProperty()
   controlCode: string
+
+  @ApiProperty()
   documentToken: string
 }
 

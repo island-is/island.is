@@ -10,6 +10,7 @@ import {
   Inject,
   Req,
   ForbiddenException,
+  Query,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -61,8 +62,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case })
   async update(
     @Param('id') id: string,
-    @Body()
-    caseToUpdate: UpdateCaseDto,
+    @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -135,10 +135,10 @@ export class CaseController {
   }
 
   @Get('case/:id/signature')
-  @ApiOkResponse({ type: SigningServiceResponse })
+  @ApiOkResponse()
   async confirmSignature(
     @Param('id') id: string,
-    documentToken: string,
+    @Query('documentToken') documentToken: string,
   ): Promise<void> {
     const existingCase = await this.findCaseById(id)
 

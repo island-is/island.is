@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 import { CaseState } from '@island.is/judicial-system/types'
 
@@ -64,49 +64,49 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   suspectName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   suspectAddress: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   court: string
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   arrestDate: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   requestedCourtDate: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   requestedCustodyEndDate: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Lagaákvæði sem brot varða við
   lawsBroken: string
 
@@ -132,7 +132,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Málsatvik rakin
   caseFacts: string
 
@@ -140,7 +140,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Framburðir
   witnessAccounts: string
 
@@ -148,7 +148,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Staða rannsóknar og næstu skref
   investigationProgress: string
 
@@ -156,7 +156,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Lagarök
   legalArguments: string
 
@@ -164,7 +164,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Athugasemdir til dómara
   comments: string
 
@@ -172,11 +172,57 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiPropertyOptional()
+  @ApiProperty()
   // Málsnúmer héraðsdóms
   courtCaseNumber: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtStartTime: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtEndTime: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Viðstaddir og hlutverk þeirra
+  courtAttendees: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Krafa lögreglu
+  policeDemands: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Afstaða kærða
+  suspectPlea: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Málflutningsræður
+  litigationPresentations: string
+
   @HasMany(() => Notification)
-  @ApiPropertyOptional({ type: Notification, isArray: true })
+  @ApiProperty({ type: Notification, isArray: true })
   notifications: Notification[]
 }
