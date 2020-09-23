@@ -188,6 +188,7 @@ export type Slice =
   | SectionWithImage
   | TabSection
   | TeamList
+  | ContactUs
   | Html
   | Image
   | Asset
@@ -325,6 +326,24 @@ export type TeamList = {
   typename: Scalars['String']
   id: Scalars['ID']
   teamMembers: Array<TeamMember>
+}
+
+export type ContactUs = {
+  __typename?: 'ContactUs'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  required: Scalars['String']
+  invalidPhone: Scalars['String']
+  invalidEmail: Scalars['String']
+  labelName: Scalars['String']
+  labelPhone: Scalars['String']
+  labelEmail: Scalars['String']
+  labelSubject: Scalars['String']
+  labelMessage: Scalars['String']
+  submitButtonText: Scalars['String']
+  successMessage: Scalars['String']
+  errorMessage: Scalars['String']
 }
 
 export type Asset = {
@@ -581,6 +600,11 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
+}
+
+export type ContactUsPayload = {
+  __typename?: 'ContactUsPayload'
+  success: Scalars['Boolean']
 }
 
 export type TagCount = {
@@ -1075,6 +1099,7 @@ export type GetTranslationsInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  contactUs: ContactUsPayload
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
   updateApplicationExternalData?: Maybe<Application>
@@ -1082,6 +1107,10 @@ export type Mutation = {
   deleteAttachment?: Maybe<Application>
   submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
+}
+
+export type MutationContactUsArgs = {
+  input: ContactUsInput
 }
 
 export type MutationCreateApplicationArgs = {
@@ -1110,6 +1139,14 @@ export type MutationSubmitApplicationArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type ContactUsInput = {
+  name: Scalars['String']
+  phone: Scalars['String']
+  email: Scalars['String']
+  subject: Scalars['String']
+  message: Scalars['String']
 }
 
 export type CreateApplicationInput = {
@@ -1212,6 +1249,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
           } & AllSlicesSectionWithImageFragment)
         | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
         | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+        | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
         | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
         | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1266,6 +1304,7 @@ export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1332,6 +1371,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1389,6 +1429,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                   } & AllSlicesSectionWithImageFragment)
                 | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
                 | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+                | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
                 | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
                 | ({ __typename?: 'Image' } & AllSlicesImageFragment)
                 | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1438,6 +1479,17 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
           >
         >
       }
+  >
+}
+
+export type ContactUsMutationVariables = Exact<{
+  input: ContactUsInput
+}>
+
+export type ContactUsMutation = { __typename?: 'Mutation' } & {
+  contactUs: { __typename?: 'ContactUsPayload' } & Pick<
+    ContactUsPayload,
+    'success'
   >
 }
 
@@ -1501,6 +1553,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1544,6 +1597,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -2078,6 +2132,24 @@ export type TeamListFieldsFragment = { __typename: 'TeamList' } & Pick<
     >
   }
 
+export type ContactUsFieldsFragment = { __typename: 'ContactUs' } & Pick<
+  ContactUs,
+  | 'typename'
+  | 'id'
+  | 'title'
+  | 'required'
+  | 'invalidPhone'
+  | 'invalidEmail'
+  | 'labelName'
+  | 'labelPhone'
+  | 'labelEmail'
+  | 'labelSubject'
+  | 'labelMessage'
+  | 'submitButtonText'
+  | 'successMessage'
+  | 'errorMessage'
+>
+
 export type AllSlicesTimelineSliceFragment = {
   __typename?: 'TimelineSlice'
 } & TimelineFieldsFragment
@@ -2138,6 +2210,10 @@ export type AllSlicesTeamListFragment = {
   __typename?: 'TeamList'
 } & TeamListFieldsFragment
 
+export type AllSlicesContactUsFragment = {
+  __typename?: 'ContactUs'
+} & ContactUsFieldsFragment
+
 export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
 
 export type AllSlicesImageFragment = {
@@ -2164,6 +2240,7 @@ export type AllSlicesFragment =
   | AllSlicesSectionWithImageFragment
   | AllSlicesTabSectionFragment
   | AllSlicesTeamListFragment
+  | AllSlicesContactUsFragment
   | AllSlicesHtmlFragment
   | AllSlicesImageFragment
   | AllSlicesAssetFragment

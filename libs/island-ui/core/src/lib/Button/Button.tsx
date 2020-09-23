@@ -81,6 +81,7 @@ export const Button = forwardRef<
       },
     )
 
+    icon = loading ? 'loading' : icon
     const isExternal = !!(href && isLinkExternal(href))
     const isMenuButton = variant === 'menu'
     const hasLeftContent = !!(leftImage || leftIcon)
