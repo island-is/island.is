@@ -1,8 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useMemo,
+  forwardRef,
+  useState,
+  useEffect,
+} from 'react'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_ABOUT_PAGE_QUERY } from '../queries'
+import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
   Header,
@@ -30,6 +37,7 @@ import {
   GridRow,
   SpanType,
   Tabs,
+  NewsletterSignup,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -41,10 +49,13 @@ import {
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { renderSlices } from '@island.is/island-ui/contentful'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
+import { RenderForm } from './RenderForm'
 
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
 const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
@@ -396,9 +407,10 @@ const Section: FC<SectionProps> = ({ slice }) => {
 
 export interface AboutPageProps {
   page?: GetAboutPageQuery['getAboutPage']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
-const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
+const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
   return (
     <>
       <Head>
@@ -411,24 +423,42 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
           <Section key={slice.id} slice={slice} />
         ))}
       </Box>
+      <RenderForm namespace={namespace} />
     </>
   )
 }
 
 AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
-  const {
-    data: { getAboutPage: page },
-  } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
-    query: GET_ABOUT_PAGE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-      },
+  const [
+    {
+      data: { getAboutPage: page },
     },
-  })
+    namespace,
+  ] = await Promise.all([
+    await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+      query: GET_ABOUT_PAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+        },
+      },
+    }),
+    await apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Categories',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  ])
 
   return {
     page,
+    namespace,
   }
 }
 

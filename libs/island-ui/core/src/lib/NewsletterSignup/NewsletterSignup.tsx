@@ -5,10 +5,9 @@ import { Button } from '../Button/Button'
 
 import * as styles from './NewsletterSignup.treat'
 import { Box } from '../Box'
-import { GridContainer, GridColumn, GridRow } from '../Grid'
 
 type ColorVariant = 'white' | 'blue'
-type State = 'default' | 'error'
+type State = 'default' | 'error' | 'success'
 
 interface Props {
   heading: string
@@ -18,12 +17,13 @@ interface Props {
   label: string
   buttonText: string
   variant?: ColorVariant
-  onClickSubmit: () => void
   state?: State
   errorMessage?: string
+  onChange: (bla: any) => void
+  value: string
 }
 
-export const NewsletterSignup: React.FC<Props> = ({
+const NewsletterSignup: React.FC<Props> = ({
   heading,
   text,
   id = 'newsletter',
@@ -32,40 +32,42 @@ export const NewsletterSignup: React.FC<Props> = ({
   buttonText,
   variant = 'white',
   state = 'default',
+  onChange,
+  value,
   errorMessage,
-  onClickSubmit = () => null,
 }) => {
   return (
-    <Box className={styles.variants[variant]} paddingY={5}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '1/12']}
-            span={['12/12', '12/12', '4/12']}
-            paddingBottom={[2, 2, 0]}
-          >
-            <Typography variant="h3" as="h3">
-              {heading}
-            </Typography>
-            <Typography variant="p">{text}</Typography>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '5/12']}>
-            <Input
-              name={id}
-              placeholder={placeholder}
-              label={label}
-              backgroundColor={variant === 'white' ? 'blue' : 'white'}
-              hasError={state === 'error'}
-              errorMessage={errorMessage}
-            />
-            <Box className={styles.buttonWrap} paddingTop={1}>
-              <Button variant="text" onClick={onClickSubmit}>
-                {buttonText}
-              </Button>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+    <Box className={styles.variants[variant]} paddingY={[4, 6, 8]}>
+      <Typography variant="h3" as="h3" color="blue400" paddingBottom={1}>
+        {heading}
+      </Typography>
+      <Typography variant="p" paddingBottom={3}>
+        {text}
+      </Typography>
+      <Box display="flex">
+        <Box className={styles.inputWrap}>
+          <Input
+            id={id}
+            name={id}
+            value={value}
+            placeholder={placeholder}
+            label={label}
+            backgroundColor={variant === 'white' ? 'blue' : 'white'}
+            hasError={state === 'error'}
+            errorMessage={errorMessage}
+            onChange={onChange}
+          />
+        </Box>
+        <Box
+          className={styles.buttonWrap}
+          paddingTop={1}
+          marginLeft={[4, 4, 8]}
+        >
+          <Button variant="text" htmlType="submit">
+            {buttonText}
+          </Button>
+        </Box>
+      </Box>
     </Box>
   )
 }

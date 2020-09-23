@@ -59,14 +59,14 @@ export const noWrap = style({
 })
 
 const sizeMenuDesktop = {
-  height: 48,
+  minHeight: 48,
   padding: '0 12px',
   fontSize: 14,
   lineHeight: 1.142857,
 }
 
 const sizeMenuMobile = {
-  height: 40,
+  minHeight: 40,
   padding: '0 12px',
   fontSize: 12,
   lineHeight: 1.333333,
@@ -75,28 +75,28 @@ const sizeMenuMobile = {
 const sizeMediumDesktop = {
   fontSize: 18,
   lineHeight: 1.555555,
-  height: 64,
+  minHeight: 64,
   padding: '0 24px',
 }
 
 const sizeLargeDesktop = {
   fontSize: 24,
   lineHeight: 1.416666,
-  height: 80,
+  minHeight: 80,
   padding: '0 24px',
 }
 
 const sizeMediumMobile = {
   fontSize: 15,
   lineHeight: 2.75,
-  height: 64,
+  minHeight: 64,
   padding: '0 24px',
 }
 
 const sizeLargeMobile = {
   fontSize: 20,
   lineHeight: 1.4,
-  height: 72,
+  minHeight: 72,
   padding: '0 24px',
 }
 
