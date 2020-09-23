@@ -6,6 +6,7 @@ import { Box } from '../../Box'
 
 interface Props {
   href?: string
+  as?: string
   color?: LinkColor
   arrowHeight?: number
 }
@@ -15,6 +16,7 @@ interface Props {
 
 const ArrowLink: React.FC<Props> = ({
   href,
+  as,
   children,
   color = 'blue400',
   arrowHeight = 12,
@@ -22,6 +24,7 @@ const ArrowLink: React.FC<Props> = ({
   <Box
     component={href ? Link : 'div'}
     href={href}
+    as={as}
     color={color}
     className={styles.root}
   >
