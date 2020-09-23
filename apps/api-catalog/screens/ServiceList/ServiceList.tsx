@@ -150,7 +150,7 @@ export default function ServiceList(props:ServiceListProps) {
     setStatusQueryString(createStatusQueryString());
     setFirstGet(true);
   }
-  
+
   useEffect(() => {
     
     const appendData = async () => {
@@ -194,8 +194,8 @@ export default function ServiceList(props:ServiceListProps) {
       left={
           <Box className={cn(styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
                     {
-                      services?.map( (item, index) => {
-                        return <ServiceCard key={index} service={item} />
+                      services?.map( (item) => {
+                        return <ServiceCard key={item.id} service={item} />
                       })
                     }
           </Box>
@@ -220,9 +220,10 @@ export default function ServiceList(props:ServiceListProps) {
                     options={[]}
                     size='medium'
                     placeholder="Leita"
-                    inputValue={searchValue}
+                    inputValue ={searchValue}
                     onInputValueChange={(inputValue) => onSearchChange(inputValue)}
                     loading={isLoading}
+                    colored={searchValue.length < 1}
                   />
               </Box>
               <div className={cn(styles.filterItem)}>
