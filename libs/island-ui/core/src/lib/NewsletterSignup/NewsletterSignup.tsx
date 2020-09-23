@@ -19,7 +19,7 @@ interface Props {
   variant?: ColorVariant
   state?: State
   errorMessage?: string
-  onChange: (bla: any) => void
+  onChange: (event: React.ChangeEvent<any>) => void
   value: string
 }
 
