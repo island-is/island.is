@@ -160,6 +160,7 @@ const Layout: NextComponentType<
             topLinks={footerUpperMenu}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
+            bottomLinksTitle={t.siteExternalTitle}
             tagLinks={footerTagsMenu}
             middleLinksTitle={String(namespace.footerMiddleLabel)}
             tagLinksTitle={String(namespace.footerRightLabel)}

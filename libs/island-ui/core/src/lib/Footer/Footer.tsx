@@ -26,6 +26,7 @@ interface FooterProps {
   tagLinks?: FooterLinkProps[]
   middleLinksTitle?: string
   tagLinksTitle?: string
+  bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
   hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
@@ -40,6 +41,7 @@ export const Footer = ({
   tagLinks = defaultBottomLinks,
   middleLinksTitle = 'Tenglar',
   tagLinksTitle = 'Flýtileiðir',
+  bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   showTagLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
@@ -183,7 +185,7 @@ export const Footer = ({
           <GridRow>
             <GridColumn span="12/12">
               <Typography variant="eyebrow" color="blue400" paddingBottom={3}>
-                Aðrir opinberir vefir
+                {bottomLinksTitle}
               </Typography>
             </GridColumn>
           </GridRow>
