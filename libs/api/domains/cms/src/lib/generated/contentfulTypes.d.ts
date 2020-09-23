@@ -1312,9 +1312,6 @@ export interface IStoryFields {
   /** Label */
   label: string
 
-  /** readMoreText */
-  readMoreText: string
-
   /** Introduction */
   intro: string
 
@@ -1323,6 +1320,15 @@ export interface IStoryFields {
 
   /** Logo */
   logo: Asset
+
+  /** Link button text */
+  readMoreText: string
+
+  /** Linked page */
+  linkedPage?: IArticle | INews | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {

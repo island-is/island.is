@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
-import { Button, Typography, Stack } from '@island.is/island-ui/core'
+import { Button, Typography, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import * as styles from './StoryList.treat'
+import makeLinkObject from '@island.is/web/i18n/makeLinkObject'
 
 export interface StoryProps {
   logoUrl: string
@@ -9,6 +10,8 @@ export interface StoryProps {
   title: string
   intro: string
   readMoreText: string
+  link?: string
+  linkedPage?: string
 }
 
 export interface StoryListProps {
@@ -37,26 +40,40 @@ const Story: FC<StoryProps> = ({
   title,
   intro,
   readMoreText,
-}) => (
-  <div className={styles.margin}>
-    <div className={styles.icon}>
-      <IconBullet variant="gradient" image={logoUrl} />
+  linkedPage,
+  link,
+}) => {
+  const linkObject = makeLinkObject({ pageData: linkedPage })
+
+  const linkProps = linkObject ?? {
+    href: link,
+  }
+
+  return (
+    <div className={styles.margin}>
+      <div className={styles.icon}>
+        <IconBullet variant="gradient" image={logoUrl} />
+      </div>
+      <Stack space={2}>
+        <Typography variant="eyebrow" color="white">
+          {label}
+        </Typography>
+        <Typography variant="h2" as="h2" color="white">
+          {title}
+        </Typography>
+        <Typography variant="p" color="white">
+          {intro}
+        </Typography>
+        {!!linkProps.href && (
+          <Link {...linkProps} pureChildren passHref>
+            <Button variant="text" size="medium" white icon="arrowRight">
+              {readMoreText}
+            </Button>
+          </Link>
+        )}
+      </Stack>
     </div>
-    <Stack space={2}>
-      <Typography variant="eyebrow" color="white">
-        {label}
-      </Typography>
-      <Typography variant="h2" as="h2" color="white">
-        {title}
-      </Typography>
-      <Typography variant="p" color="white">
-        {intro}
-      </Typography>
-      <Button variant="text" size="medium" white icon="arrowRight">
-        {readMoreText}
-      </Button>
-    </Stack>
-  </div>
-)
+  )
+}
 
 export default StoryList

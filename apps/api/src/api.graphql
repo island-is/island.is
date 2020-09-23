@@ -53,6 +53,8 @@ type Story {
   readMoreText: String!
   date: String!
   intro: String!
+  link: String!
+  linkedPage: String
   body: String
 }
 

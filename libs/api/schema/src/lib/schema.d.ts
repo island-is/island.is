@@ -78,6 +78,8 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
+  link: Scalars['String']
+  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -1737,6 +1739,12 @@ export type StoryResolvers<
   readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  linkedPage?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }

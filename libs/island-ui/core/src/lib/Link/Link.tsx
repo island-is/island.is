@@ -16,6 +16,7 @@ interface Props extends LinkProps {
   className?: string
   withUnderline?: boolean
   onClick?: () => void
+  pureChildren?: boolean
 }
 
 // Next link that can handle external urls
@@ -31,6 +32,7 @@ const Link: React.FC<Props> = ({
   color,
   className,
   withUnderline,
+  pureChildren,
   ...linkProps
 }) => {
   const isInternal = isLinkInternal(href as string)
@@ -57,9 +59,13 @@ const Link: React.FC<Props> = ({
         passHref={passHref}
         prefetch={prefetchDefault}
       >
-        <a className={classNames} {...linkProps}>
-          {children}
-        </a>
+        {pureChildren ? (
+          children
+        ) : (
+          <a className={classNames} {...linkProps}>
+            {children}
+          </a>
+        )}
       </NextLink>
     )
   } else {
