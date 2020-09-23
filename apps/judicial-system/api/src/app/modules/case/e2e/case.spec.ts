@@ -2,10 +2,11 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
+import { CaseState } from '@island.is/judicial-system/types'
+
 import { setup } from '../../../../../test/setup'
 import {
   Case,
-  CaseState,
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
   Notification,
@@ -227,7 +228,7 @@ describe('Case', () => {
       suspectNationalId: '0101010000',
     }).then(async (value) => {
       const data = {
-        state: CaseState.ACTIVE,
+        state: CaseState.ACCEPTED,
         policeCaseNumber: 'New Case Number',
         suspectNationalId: '0101010009',
         suspectName: 'Suspect Name',

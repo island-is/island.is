@@ -14,11 +14,13 @@ import {
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { SigningServiceResponse } from '@island.is/dokobit-signing'
+import { CaseState } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard, AuthUser } from '../auth'
 import { UserService } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, Notification, CaseState } from './models'
+import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 
@@ -97,7 +99,7 @@ export class CaseController {
       existingCase.state !== CaseState.SUBMITTED
     ) {
       throw new ForbiddenException(
-        `Cannot send a notification for case in state ${existingCase.state}`,
+        `Cannot send a notification for a case in state ${existingCase.state}`,
       )
     }
 
@@ -106,6 +108,51 @@ export class CaseController {
     const user = await this.userService.findByNationalId(authUser)
 
     return this.caseService.sendNotificationByCaseId(existingCase, user)
+  }
+
+  @Post('case/:id/signature')
+  @ApiOkResponse({ type: SigningServiceResponse })
+  async requestSignature(
+    @Param('id') id: string,
+    @Req() req,
+    documentToken: string,
+  ): Promise<SigningServiceResponse> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.ACCEPTED &&
+      existingCase.state !== CaseState.REJECTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot sign a ruling for a case in state ${existingCase.state}`,
+      )
+    }
+
+    const authUser: AuthUser = req.user
+
+    const user = await this.userService.findByNationalId(authUser)
+
+    return this.caseService.requestSignature(existingCase, user)
+  }
+
+  @Get('case/:id/signature')
+  @ApiOkResponse({ type: SigningServiceResponse })
+  async confirmSignature(
+    @Param('id') id: string,
+    documentToken: string,
+  ): Promise<void> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.ACCEPTED &&
+      existingCase.state !== CaseState.REJECTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
+      )
+    }
+
+    this.caseService.confirrmSignature(existingCase, documentToken)
   }
 
   private async findCaseById(id: string) {

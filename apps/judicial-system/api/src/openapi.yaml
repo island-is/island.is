@@ -31,6 +31,8 @@ components:
           type: string
         name:
           type: string
+        mobileNumber:
+          type: string
         roles:
           type: array
           items:
@@ -38,6 +40,7 @@ components:
       required:
         - nationalId
         - name
+        - mobileNumber
         - roles
     Notification:
       type: object
@@ -79,8 +82,8 @@ components:
             - UNKNOWN
             - DRAFT
             - SUBMITTED
-            - ACTIVE
-            - COMPLETED
+            - ACCEPTED
+            - REJECTED
         policeCaseNumber:
           type: string
         suspectNationalId:
@@ -131,6 +134,8 @@ components:
         legalArguments:
           type: string
         comments:
+          type: string
+        courtCaseNumber:
           type: string
         notifications:
           type: array
@@ -176,8 +181,8 @@ components:
             - UNKNOWN
             - DRAFT
             - SUBMITTED
-            - ACTIVE
-            - COMPLETED
+            - ACCEPTED
+            - REJECTED
         policeCaseNumber:
           type: string
         suspectNationalId:
@@ -229,6 +234,11 @@ components:
           type: string
         comments:
           type: string
+        courtCaseNumber:
+          type: string
+    SigningServiceResponse:
+      type: object
+      properties: {}
 paths:
   /liveness:
     get:
@@ -412,5 +422,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Notification'
+      tags:
+        - cases
+  '/api/case/{id}/signature':
+    post:
+      operationId: CaseController_requestSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningServiceResponse'
+      tags:
+        - cases
+    get:
+      operationId: CaseController_confirmSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningServiceResponse'
       tags:
         - cases

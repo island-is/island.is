@@ -1,11 +1,9 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
-  CaseState,
-  CaseCustodyRestrictions,
-  CaseCustodyProvisions,
-} from '../models'
+import { CaseState } from '@island.is/judicial-system/types'
+
+import { CaseCustodyRestrictions, CaseCustodyProvisions } from '../models'
 
 export class UpdateCaseDto {
   @IsOptional()
