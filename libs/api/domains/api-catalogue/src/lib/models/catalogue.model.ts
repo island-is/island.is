@@ -26,28 +26,29 @@ registerEnumType(TypeCategory, {
 
 @ObjectType()
 export class PageInfo {
-  @Field()
+  @Field((type) => String, { nullable: true })
   nextCursor: string
 }
 
 @ObjectType()
 export class ApiService implements Service {
   @Field((type) => ID)
+  @IsString()
   id: string
 
-  @Field()
+  @Field((type) => String)
   @IsString()
   owner: string
 
-  @Field()
+  @Field((type) => String)
   @IsString()
   name: string
 
-  @Field()
+  @Field((type) => String)
   @IsString()
   description: string
 
-  @Field()
+  @Field((type) => String)
   @IsString()
   url: string
 

@@ -31,7 +31,7 @@ export class ApiCatalogueService {
         name: 'SecondService',
         description: 'Second service description',
         url: 'www.secondService.is',
-        pricing: PricingCategory.MONTHLY,
+        pricing: PricingCategory.FREE,
         data: [DataCategory.PERSONAL],
         type: TypeCategory.REST,
         access: [AccessCategory.XROAD],
@@ -43,7 +43,7 @@ export class ApiCatalogueService {
         name: 'ThirdService',
         description: 'Third service description',
         url: 'www.ThirdService.is',
-        pricing: PricingCategory.MONTHLY,
+        pricing: PricingCategory.PAID,
         data: [DataCategory.PERSONAL],
         type: TypeCategory.REST,
         access: [AccessCategory.XROAD],
@@ -55,7 +55,7 @@ export class ApiCatalogueService {
         name: 'FourthService',
         description: 'Fourth service description',
         url: 'www.FourthService.is',
-        pricing: PricingCategory.MONTHLY,
+        pricing: PricingCategory.PAID,
         data: [DataCategory.PERSONAL],
         type: TypeCategory.REST,
         access: [AccessCategory.XROAD],
@@ -68,7 +68,7 @@ export class ApiCatalogueService {
         name: 'FifthService',
         description: 'Fifth service description',
         url: 'www.FifthService.is',
-        pricing: PricingCategory.MONTHLY,
+        pricing: PricingCategory.FREE,
         data: [DataCategory.PERSONAL],
         type: TypeCategory.REST,
         access: [AccessCategory.XROAD],
@@ -80,7 +80,7 @@ export class ApiCatalogueService {
         name: 'SixthService',
         description: 'Sixth service description',
         url: 'www.sixthService.is',
-        pricing: PricingCategory.MONTHLY,
+        pricing: PricingCategory.PAID,
         data: [DataCategory.PERSONAL],
         type: TypeCategory.REST,
         access: [AccessCategory.XROAD],
@@ -91,16 +91,49 @@ export class ApiCatalogueService {
   }
 
   getCatalogues(input: GetApiCataloguesInput): ApiCatalogue {
-    if (input.cursor !== null) {
-      //find the next objects
-    } else {
-      //find limit number of objects
+    const res: ApiCatalogue = {
+      services: [],
+      pageInfo: {
+        nextCursor: null,
+      },
     }
 
-    return this.catalogues
+    let item: ApiService[] = this.catalogues.services
+    if (input.cursor !== null) {
+      const temp = Buffer.from(input.cursor, 'base64')
+        .toString()
+        .split('=')
+      const field = temp[0]
+      const id = temp[1]
+      const index = item.findIndex((c) => c[field] === id)
+      item = item.slice(index)
+    }
+
+    //find limit number of objects, ask for one extra for cursor
+    item = item.slice(0, input.limit + 1)
+
+    //only set the cursor when we have the extra item to point to
+    if (item.length > input.limit) {
+      res.pageInfo.nextCursor = Buffer.from(
+        `id=${item[item.length - 1].id}`,
+      ).toString('base64')
+    }
+    res.services = item.slice(0, input.limit)
+
+    return res
   }
 
-  getCatalogueById(id: string): ApiService {
-    return this.catalogues.services.find((c) => c.id === id)
+  getCatalogueById(id: string): ApiCatalogue {
+    const res: ApiCatalogue = {
+      services: [],
+    }
+
+    const item: ApiService = this.catalogues.services.find((c) => c.id === id)
+
+    if (item) {
+      res.services = [item]
+    }
+
+    return res
   }
 }

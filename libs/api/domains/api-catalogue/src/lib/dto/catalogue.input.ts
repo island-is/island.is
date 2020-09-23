@@ -16,20 +16,21 @@ export class GetApiServiceInput {
 
 @InputType()
 export class GetApiCataloguesInput {
-  @Field()
+  @Field((type) => Number)
   @IsNumber()
   limit: number
 
-  @Field({ nullable: true })
+  @Field((type) => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  cursor: string
+  cursor?: string
 
-  @Field({ nullable: true })
+  @Field((type) => String, { nullable: true })
   @IsOptional()
   @IsString()
   owner?: string
 
-  @Field({ nullable: true })
+  @Field((type) => String, { nullable: true })
   @IsOptional()
   @IsString()
   name?: string

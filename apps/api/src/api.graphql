@@ -646,7 +646,7 @@ type DocumentCategory {
 }
 
 type PageInfo {
-  nextCursor: String!
+  nextCursor: String
 }
 
 type ApiService {
@@ -665,11 +665,7 @@ type ApiService {
 
 enum PricingCategoryEnum {
   FREE
-  USAGE
-  DAILY
-  MONTHLY
-  YEARLY
-  CUSTOM
+  PAID
 }
 
 enum DataCategoryEnum {
@@ -738,7 +734,7 @@ type Query {
   getDocumentCategories: [DocumentCategory!]
   getTranslations(input: GetTranslationsInput!): JSON
   getApiCatalogues(input: GetApiCataloguesInput!): ApiCatalogue!
-  getApiCatalogueById(input: GetApiServiceInput!): ApiService!
+  getApiCatalogueById(input: GetApiServiceInput!): ApiCatalogue!
 }
 
 input GetAdgerdirNewsListInput {

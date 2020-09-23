@@ -760,7 +760,7 @@ export type DocumentCategory = {
 
 export type PageInfo = {
   __typename?: 'PageInfo'
-  nextCursor: Scalars['String']
+  nextCursor?: Maybe<Scalars['String']>
 }
 
 export type ApiService = {
@@ -780,11 +780,7 @@ export type ApiService = {
 
 export enum PricingCategoryEnum {
   FREE = 'FREE',
-  USAGE = 'USAGE',
-  DAILY = 'DAILY',
-  MONTHLY = 'MONTHLY',
-  YEARLY = 'YEARLY',
-  CUSTOM = 'CUSTOM',
+  PAID = 'PAID',
 }
 
 export enum DataCategoryEnum {
@@ -855,7 +851,7 @@ export type Query = {
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
   getTranslations?: Maybe<Scalars['JSON']>
   getApiCatalogues: ApiCatalogue
-  getApiCatalogueById: ApiService
+  getApiCatalogueById: ApiCatalogue
 }
 
 export type QueryGetAdgerdirNewsListArgs = {
@@ -3163,7 +3159,11 @@ export type PageInfoResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']
 > = {
-  nextCursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  nextCursor?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3464,7 +3464,7 @@ export type QueryResolvers<
     RequireFields<QueryGetApiCataloguesArgs, 'input'>
   >
   getApiCatalogueById?: Resolver<
-    ResolversTypes['ApiService'],
+    ResolversTypes['ApiCatalogue'],
     ParentType,
     ContextType,
     RequireFields<QueryGetApiCatalogueByIdArgs, 'input'>
