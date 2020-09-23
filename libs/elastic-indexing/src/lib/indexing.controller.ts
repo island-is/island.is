@@ -1,11 +1,12 @@
-import { Controller, Get, Query } from '@nestjs/common'
+import { Controller, Get, HttpException, HttpStatus, Query } from '@nestjs/common'
 import { IndexingService } from './indexing.service'
 import { logger } from '@island.is/logging'
-import { SearchIndexes } from '@island.is/api/content-search'
+import { environment } from '../environments/environment'
+import { SyncInput } from './dto/syncInput.input'
 
 @Controller('')
 export class IndexingController {
-  constructor(private readonly indexingService: IndexingService) {}
+  constructor(private readonly indexingService: IndexingService) { }
 
   @Get('/')
   async hello() {
@@ -20,7 +21,12 @@ export class IndexingController {
   }
 
   @Get('sync')
-  async sync(@Query('locale') locale: keyof typeof SearchIndexes = 'is') {
+  async sync(@Query() { locale = 'is', token = '' }: SyncInput) {
+    if (environment.syncToken !== token) {
+      logger.warn('Failed to validate sync access token', { recivedToken: token })
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+    }
+
     logger.info('Doing sync')
     await this.indexingService.doSync({ fullSync: false, locale })
     return {
@@ -29,7 +35,12 @@ export class IndexingController {
   }
 
   @Get('re-sync')
-  async resync(@Query('locale') locale: keyof typeof SearchIndexes = 'is') {
+  async resync(@Query() { locale = 'is', token = '' }: SyncInput) {
+    if (environment.syncToken !== token) {
+      logger.warn('Failed to validate sync access token', { recivedToken: token })
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+    }
+
     logger.info('Doing re-sync')
     await this.indexingService.doSync({ fullSync: true, locale })
     return {
