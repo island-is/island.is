@@ -188,6 +188,13 @@ const Category: Screen<CategoryProps> = ({
 
   const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
     Object.keys(articlesBySubgroup).sort((a, b) => {
+      // 'undefined' is a valid subgroup key but we'll sort it to the bottom
+      if (a === 'undefined') {
+        return 1
+      } else if (b === 'undefined') {
+        return -1
+      }
+
       // Look up the subgroups being sorted and find+compare their importance.
       // If their importance is equal we sort alphabetically.
       const foundA = availableSubgroups.find((subgroup) => subgroup.title === a)
