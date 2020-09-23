@@ -10,6 +10,7 @@ import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'ProcessEntry',
   'SectionWithImage',
+  'TeamList',
 ]
 
 const renderComponent = (slice: Slice, config: RenderConfig) => {

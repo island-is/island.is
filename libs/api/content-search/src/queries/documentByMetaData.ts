@@ -17,7 +17,7 @@ interface RequiredTags extends MetaPropsBase {
 
 export type DocumentByMetaDataInput = RequiredTypes | RequiredTags
 
-const tagQuery = (tag) => ({
+export const tagQuery = (tag) => ({
   nested: {
     path: 'tags',
     query: {

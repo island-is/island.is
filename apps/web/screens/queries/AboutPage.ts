@@ -27,3 +27,18 @@ export const GET_ABOUT_PAGE_QUERY = gql`
   }
   ${slices}
 `
+
+export const GET_ABOUT_PAGE_NAVIGATION = gql`
+  query GetAboutPageNavigation($input: GetAboutPageInput!) {
+    getAboutPage(input: $input) {
+      title
+      pageHeader {
+        navigationText
+        links {
+          text
+          url
+        }
+      }
+    }
+  }
+`

@@ -343,6 +343,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                   const visible = currentIndex === index
                   const isTabletOrMobile = width < theme.breakpoints.lg
+
                   return (
                     <TabPanel
                       key={index}

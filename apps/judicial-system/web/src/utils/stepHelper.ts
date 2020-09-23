@@ -1,12 +1,9 @@
-import {
-  CreateDetentionReqStepOneCase,
-  CaseCustodyRestrictions,
-} from '../types'
+import { Case, CustodyRestrictions } from '../types'
 import * as api from '../api'
 import { parseString } from './formatters'
 
 export const updateState = (
-  state: CreateDetentionReqStepOneCase,
+  state: Case,
   fieldToUpdate: string,
   fieldValue: string | string[] | Date,
   stateSetter: (state: any) => void,
@@ -15,11 +12,7 @@ export const updateState = (
   const copyOfState = Object.assign({}, state)
 
   // Update the copy of the state
-  if (fieldToUpdate === 'id') {
-    copyOfState.id = fieldValue.toString()
-  } else {
-    copyOfState.case[fieldToUpdate] = fieldValue
-  }
+  copyOfState[fieldToUpdate] = fieldValue
 
   // Set the copy of the state as the state
   stateSetter(copyOfState)
@@ -28,7 +21,7 @@ export const updateState = (
 }
 
 export const autoSave = async (
-  state: CreateDetentionReqStepOneCase,
+  state: Case,
   caseField: string,
   caseFieldValue: string | Date,
   stateSetter: (state: any) => void,
@@ -50,15 +43,15 @@ export const autoSave = async (
   }
 }
 
-export const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
+export const getRestrictionByValue = (value: CustodyRestrictions) => {
   switch (value) {
-    case CaseCustodyRestrictions.COMMUNICATION:
+    case CustodyRestrictions.COMMUNICATION:
       return 'D - Bréfskoðun, símabann'
-    case CaseCustodyRestrictions.ISOLATION:
+    case CustodyRestrictions.ISOLATION:
       return 'B - Einangrun'
-    case CaseCustodyRestrictions.MEDIA:
+    case CustodyRestrictions.MEDIA:
       return 'E - Fjölmiðlabann'
-    case CaseCustodyRestrictions.VISITAION:
+    case CustodyRestrictions.VISITAION:
       return 'C - Heimsóknarbann'
   }
 }

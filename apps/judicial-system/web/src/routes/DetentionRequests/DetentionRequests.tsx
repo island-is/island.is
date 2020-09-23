@@ -9,15 +9,24 @@ import {
   Typography,
   Tag,
   TagVariant,
+  Box,
 } from '@island.is/island-ui/core'
-import { Case, CaseState, User } from '../../types'
+import { DetentionRequest, CaseState, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
 import { hasRole, UserRole } from '../../utils/authenticate'
 import * as Constants from '../../utils/constants'
+import { Link } from 'react-router-dom'
+import { userContext } from '../../utils/userContext'
 
-export const DetentionRequests: React.FC = () => {
-  const [cases, setCases] = useState<Case[]>(null)
+interface DetentionRequestsProps {
+  onGetUser: (user: User) => void
+}
+
+export const DetentionRequests: React.FC<DetentionRequestsProps> = (
+  props: DetentionRequestsProps,
+) => {
+  const [cases, setCases] = useState<DetentionRequest[]>(null)
   const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
@@ -30,6 +39,11 @@ export const DetentionRequests: React.FC = () => {
 
       if (isMounted && casesResponse) {
         setUser({
+          nationalId: userResponse.nationalId,
+          roles: userResponse.roles,
+        })
+
+        props.onGetUser({
           nationalId: userResponse.nationalId,
           roles: userResponse.roles,
         })
@@ -76,13 +90,14 @@ export const DetentionRequests: React.FC = () => {
         <Logo />
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
-        <Button
-          icon="plus"
-          href={Constants.STEP_ONE_ROUTE}
-          onClick={() => window.localStorage.removeItem('workingCase')}
-        >
-          Stofna nýja kröfu
-        </Button>
+        <Link to={Constants.STEP_ONE_ROUTE}>
+          <Button
+            icon="plus"
+            onClick={() => window.localStorage.removeItem('workingCase')}
+          >
+            Stofna nýja kröfu
+          </Button>
+        </Link>
       </div>
       {isLoading ? null : cases ? (
         <table
@@ -90,7 +105,7 @@ export const DetentionRequests: React.FC = () => {
           data-testid="detention-requests-table"
         >
           <Typography as="caption" variant="h3">
-            Gæsluvarðhaldskröfur
+            <Box marginBottom={2}>Gæsluvarðhaldskröfur</Box>
           </Typography>
           <thead>
             <tr>
@@ -117,63 +132,21 @@ export const DetentionRequests: React.FC = () => {
                   </Tag>
                 </td>
                 <td>
-                  <Button
-                    href={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`}
-                    icon="arrowRight"
-                    variant="text"
-                    onClick={async () => {
-                      const workingCase = await api.getCaseById(c.id)
-                      console.log(workingCase)
-                      window.localStorage.setItem(
-                        'workingCase',
-                        JSON.stringify({
-                          id: workingCase.case.id,
-                          case: {
-                            policeCaseNumber: workingCase.case.policeCaseNumber,
-                            suspectNationalId:
-                              workingCase.case.suspectNationalId,
-                            suspectName: workingCase.case.suspectName,
-                            suspectAddress: workingCase.case.suspectAddress,
-                            court: workingCase.case.court,
-                            arrestDate: workingCase.case.arrestDate,
-                            arrestTime: format(
-                              getTime(
-                                parseISO(
-                                  workingCase.case.arrestDate.toString(),
-                                ),
-                              ),
-                              'hh:mm',
-                            ),
-                            requestedCourtDate:
-                              workingCase.case.requestedCourtDate,
-                            requestedCourtTime: format(
-                              getTime(
-                                parseISO(
-                                  workingCase.case.requestedCourtDate.toString(),
-                                ),
-                              ),
-                              'hh:mm',
-                            ),
-                            requestedCustodyEndDate:
-                              workingCase.case.requestedCustodyEndDate,
-                            requestedCustodyEndTime: '',
-                            lawsBroken: workingCase.case.lawsBroken,
-                            caseCustodyProvisions:
-                              workingCase.case.custodyProvisions,
-                            restrictions: workingCase.case.custodyRestrictions,
-                            caseFacts: workingCase.case.caseFacts,
-                            witnessAccounts: workingCase.case.witnessAccounts,
-                            investigationProgress:
-                              workingCase.case.investigationProgress,
-                            legalArguments: workingCase.case.legalArguments,
-                            comments: workingCase.case.comments,
-                          },
-                        }),
-                      )
-                    }}
-                  >
-                    Opna kröfu
-                  </Button>
+                  <userContext.Consumer>
+                    {(user) => (
+                      <Link
+                        to={
+                          user.user.roles.indexOf(UserRole.JUDGE) > -1
+                            ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
+                            : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
+                        }
+                      >
+                        <Button icon="arrowRight" variant="text">
+                          Opna kröfu
+                        </Button>
+                      </Link>
+                    )}
+                  </userContext.Consumer>
                 </td>
               </tr>
             ))}
