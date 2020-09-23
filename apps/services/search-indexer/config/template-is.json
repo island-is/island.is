@@ -43,7 +43,7 @@
             "icelandicStemmer"
           ]
         },
-        "compound": {
+        "compoundIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": [
@@ -80,7 +80,7 @@
           },
           "compound": {
             "type": "text",
-            "analyzer": "compound"
+            "analyzer": "compoundIcelandic"
           }
         }
       },
