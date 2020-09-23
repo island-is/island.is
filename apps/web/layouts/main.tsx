@@ -86,7 +86,7 @@ const Layout: NextComponentType<
     {
       title: t.siteTitle,
       links: topMenuCustomLinks,
-      externalLinksHeading: t.siteTitle,
+      externalLinksHeading: t.siteExternalTitle,
       externalLinks: footerLowerMenu,
     },
   ]

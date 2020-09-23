@@ -1,8 +1,9 @@
 import React, { FC } from 'react'
-import { Button, Typography, Stack, Link } from '@island.is/island-ui/core'
+import { Button, Typography, Stack } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
+import { ContentLink } from '@island.is/web/components'
+
 import * as styles from './StoryList.treat'
-import makeLinkObject from '@island.is/web/i18n/makeLinkObject'
 
 export interface StoryProps {
   logoUrl: string
@@ -43,12 +44,6 @@ const Story: FC<StoryProps> = ({
   linkedPage,
   link,
 }) => {
-  const linkObject = makeLinkObject({ pageData: linkedPage })
-
-  const linkProps = linkObject ?? {
-    href: link,
-  }
-
   return (
     <div className={styles.margin}>
       <div className={styles.icon}>
@@ -64,12 +59,12 @@ const Story: FC<StoryProps> = ({
         <Typography variant="p" color="white">
           {intro}
         </Typography>
-        {!!linkProps.href && (
-          <Link {...linkProps} pureChildren passHref>
+        {!!(linkedPage || link) && (
+          <ContentLink pageData={linkedPage} fallbackLink={link}>
             <Button variant="text" size="medium" white icon="arrowRight">
               {readMoreText}
             </Button>
-          </Link>
+          </ContentLink>
         )}
       </Stack>
     </div>
