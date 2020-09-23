@@ -23,7 +23,17 @@ type FormState = {
 
 export const RenderForm: React.FC<{
   namespace: GetNamespaceQuery['getNamespace']
-}> = ({ namespace }) => {
+  heading?: string
+  text?: string
+  submitButtonText?: string
+  inputLabel?: string
+}> = ({
+  namespace,
+  heading = 'Default heading',
+  text = 'Default text',
+  submitButtonText = 'Submit',
+  inputLabel = 'Email',
+}) => {
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
     type: '',
@@ -119,44 +129,33 @@ export const RenderForm: React.FC<{
     }
   }, [status.type, formik.values.email])
 
-  const heading =
+  const headingByStatus =
     status.type === 'success'
       ? n('formThankYou', 'Skráning tókst. Takk fyrir.')
-      : n('formCtaHeading', 'Vertu með')
-  const text =
+      : heading
+  const textByStatus =
     status.type === 'success'
       ? n(
           'formCheckYourEmail',
           'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina',
         )
-      : n(
-          'formCtaText',
-          'Skráðu þig á póstlista Stafræns Íslands og fylgstu með því nýjasta í stafrænni opinberri þjónustu.',
-        )
+      : text
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '1/12']}
-            span={['12/12', '12/12', '10/12', '10/12', '7/10']}
-          >
-            <NewsletterSignup
-              id="email"
-              heading={heading}
-              text={text}
-              placeholder="Netfangið þitt"
-              label="Netfang"
-              buttonText="Skrá mig á póstlista"
-              onChange={formik.handleChange}
-              value={formik.values.email}
-              errorMessage={formatMessage(status.message)}
-              state={status.type || 'default'}
-            />
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <NewsletterSignup
+        id="email"
+        heading={headingByStatus}
+        text={textByStatus}
+        placeholder="Netfangið þitt"
+        label={inputLabel}
+        variant="blue"
+        buttonText={submitButtonText}
+        onChange={formik.handleChange}
+        value={formik.values.email}
+        errorMessage={formatMessage(status.message)}
+        state={status.type || 'default'}
+      />
     </form>
   )
 }

@@ -11,7 +11,6 @@ import {
   Timeline,
   StoryList,
   AboutLatestNews,
-  EmailSignup,
   LogoList,
   BulletList,
   DrawerMenu,
@@ -249,9 +248,10 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
 
 interface SectionProps {
   slice: AvailableSlices
+  namespace?: GetNamespaceQuery['getNamespace']
 }
 
-const Section: FC<SectionProps> = ({ slice }) => {
+const Section: FC<SectionProps> = ({ slice, namespace }) => {
   switch (slice.__typename) {
     case 'TimelineSlice':
       return (
@@ -290,7 +290,13 @@ const Section: FC<SectionProps> = ({ slice }) => {
         <Box key={slice.id} id={slice.id} background="blue100">
           <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
             <Box paddingTop={10} paddingBottom={7}>
-              <EmailSignup {...slice} />
+              <RenderForm
+                namespace={namespace}
+                heading={slice.title}
+                text={slice.description}
+                submitButtonText={slice.buttonText}
+                inputLabel={slice.inputLabel}
+              />
             </Box>
           </Layout>
         </Box>
@@ -412,10 +418,9 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
       <Box position="relative">
         <PageHeader page={page} />
         {(page.slices as AvailableSlices[]).map((slice) => (
-          <Section key={slice.id} slice={slice} />
+          <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
       </Box>
-      <RenderForm namespace={namespace} />
     </>
   )
 }
