@@ -29,7 +29,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
   label,
 }) => {
   const newsItems = items.slice(0, 3)
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalNamespaceContext)
   const n = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
@@ -64,6 +64,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 subtitle={newsItem.subtitle}
                 introduction={newsItem.intro}
                 slug={newsItem.slug}
+                readMoreText={t.readMore}
                 image={newsItem.image}
                 as={makePath('news', newsItem.slug)}
                 url={makePath('news', '[slug]')}

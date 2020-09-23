@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 7,
+  "version": 8,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -25,8 +25,8 @@
         },
         "icelandicDeCompounded": {
           "type": "hyphenation_decompounder",
-          "word_list_path": "analyzers/{HYPHEN-WHITELIST}",
-          "hyphenation_patterns_path": "analyzers/{HYPHEN-PATTERNS}",
+          "word_list_path": "analyzers/{HYPHENWHITELIST}",
+          "hyphenation_patterns_path": "analyzers/{HYPHENPATTERNS}",
           "max_subword_size": 18,
           "min_subword_size": 4
         }

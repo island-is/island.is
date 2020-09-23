@@ -69,7 +69,8 @@ const Search: Screen<CategoryProps> = ({
   }
 
   useEffect(() => {
-    if (searchRef.current) {
+    const hasMatch = Router.asPath.includes('focus=true')
+    if (hasMatch) {
       searchRef.current.focus()
     }
   }, [searchRef])
@@ -158,6 +159,8 @@ const Search: Screen<CategoryProps> = ({
 
   const filteredItems = items.filter(byCategory)
 
+  const totalSearchResults = searchResults.total
+
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
     ?.category?.title
 
@@ -183,7 +186,7 @@ const Search: Screen<CategoryProps> = ({
 
   const resultsCountToShow = categoryTitle
     ? filteredItems.length
-    : searchResults.total
+    : totalSearchResults
   return (
     <>
       <Head>
@@ -197,46 +200,53 @@ const Search: Screen<CategoryProps> = ({
                 position: 'relative',
               }}
             >
-              <div
-                style={{
-                  right: 40,
-                  position: 'absolute',
-                  left: '0',
-                  top: '-4px',
-                  zIndex: 10, // to accommodate for being absolute
-                }}
-              >
-                <Filter
-                  truncate
-                  selected={!filters.category}
-                  onClick={() => onSelectCategory(null)}
-                  text={`${n('allCategories', 'Allir flokkar')} (${
-                    searchResults.total
-                  })`}
-                />
-              </div>
+              {totalSearchResults > 0 && (
+                <>
+                  <div
+                    style={{
+                      right: 40,
+                      position: 'absolute',
+                      left: '0',
+                      top: '-4px',
+                      zIndex: 10, // to accommodate for being absolute
+                    }}
+                  >
+                    <Filter
+                      truncate
+                      selected={!filters.category}
+                      onClick={() => onSelectCategory(null)}
+                      text={`${n(
+                        'allCategories',
+                        'Allir flokkar',
+                      )} (${totalSearchResults})`}
+                    />
+                  </div>
+                  <SidebarAccordion
+                    id="sidebar_accordion_categories"
+                    label={''}
+                  >
+                    <Stack space={[1, 1, 2]}>
+                      {sidebarCategories.map((c, index) => {
+                        const selected = c.key === filters.category
+                        const text = `${c.title} (${c.total})`
 
-              <SidebarAccordion id="sidebar_accordion_categories" label={''}>
-                <Stack space={[1, 1, 2]}>
-                  {sidebarCategories.map((c, index) => {
-                    const selected = c.key === filters.category
-                    const text = `${c.title} (${c.total})`
+                        if (c.key === 'uncategorized') {
+                          return null
+                        }
 
-                    if (c.key === 'uncategorized') {
-                      return null
-                    }
-
-                    return (
-                      <Filter
-                        key={index}
-                        selected={selected}
-                        onClick={() => onSelectCategory(c.key)}
-                        text={text}
-                      />
-                    )
-                  })}
-                </Stack>
-              </SidebarAccordion>
+                        return (
+                          <Filter
+                            key={index}
+                            selected={selected}
+                            onClick={() => onSelectCategory(c.key)}
+                            text={text}
+                          />
+                        )
+                      })}
+                    </Stack>
+                  </SidebarAccordion>
+                </>
+              )}
             </div>
           </Sidebar>
         }
@@ -265,22 +275,24 @@ const Search: Screen<CategoryProps> = ({
                 )
               },
             )}
-            <Box paddingTop={8}>
-              <Pagination
-                page={page}
-                totalPages={Math.ceil(searchResults.total / PerPage)}
-                renderLink={(page, className, children) => (
-                  <Link
-                    href={{
-                      pathname: makePath('search'),
-                      query: { ...Router.query, page },
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </Link>
-                )}
-              />
-            </Box>
+            {totalSearchResults > 0 && (
+              <Box paddingTop={8}>
+                <Pagination
+                  page={page}
+                  totalPages={Math.ceil(totalSearchResults / PerPage)}
+                  renderLink={(page, className, children) => (
+                    <Link
+                      href={{
+                        pathname: makePath('search'),
+                        query: { ...Router.query, page },
+                      }}
+                    >
+                      <span className={className}>{children}</span>
+                    </Link>
+                  )}
+                />
+              </Box>
+            )}
           </Stack>
         }
       >

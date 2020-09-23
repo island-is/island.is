@@ -6,7 +6,7 @@ import { Slice, mapDocument } from './slice.model'
 
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
-import { ArticleSubgroup } from './articleSubgroup.model'
+import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
 
@@ -66,7 +66,7 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   category: fields?.category ? mapArticleCategory(fields.category) : null,
   group: fields?.group ? mapArticleGroup(fields.group) : null,
-  subgroup: fields.subgroup?.fields,
+  subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
   organization: (fields?.organization ?? [])
     .filter((doc) => !isEmpty(doc))
     .map(mapOrganization),
