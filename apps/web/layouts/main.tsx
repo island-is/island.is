@@ -163,6 +163,10 @@ const Layout: NextComponentType<
             tagLinks={footerTagsMenu}
             middleLinksTitle={String(namespace.footerMiddleLabel)}
             tagLinksTitle={String(namespace.footerRightLabel)}
+            languageSwitchLink={{
+              title: activeLocale === 'en' ? 'Íslenska' : 'English',
+              href: activeLocale === 'en' ? '/' : '/en',
+            }}
             showMiddleLinks
             showTagLinks
           />
