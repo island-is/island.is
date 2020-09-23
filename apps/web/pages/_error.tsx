@@ -7,7 +7,6 @@ import { withApollo } from '../graphql/withApollo'
 
 import {
   Article,
-  ArticleCategory,
   LifeEventPage,
   News,
   GetUrlQuery,
@@ -58,7 +57,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   static async getInitialProps(props /*: NextPageContext*/) {
-    const { err, res, asPath } = props
+    const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
 

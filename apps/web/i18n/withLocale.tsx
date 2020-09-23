@@ -6,7 +6,7 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
 
-export const getLocaleFromPath = (path: string): Locale => {
+export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
   return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
 }
