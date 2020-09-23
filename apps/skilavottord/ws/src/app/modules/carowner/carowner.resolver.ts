@@ -24,4 +24,12 @@ export class CarownerResolver {
   ): boolean {
     return dereginput.permno === '1'
   }
+
+  @Mutation((returns) => Boolean)
+  requestPayment(
+    @Args('permno') permno: string,
+    @Args('nationalid') nationalid: string,
+  ): boolean {
+    return permno === '1'
+  }
 }

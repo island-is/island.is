@@ -35,6 +35,7 @@ type Query {
 
 type Mutation {
   deregisterCar(deregisterCarInput: DeregisterCarInput!): Boolean!
+  requestPayment(nationalid: String!, permno: String!): Boolean!
 }
 
 input DeregisterCarInput {
