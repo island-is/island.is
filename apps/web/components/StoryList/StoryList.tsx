@@ -25,13 +25,13 @@ export const StoryList: FC<StoryListProps> = ({ readMoreText, stories }) => (
     {stories.map((story, i) => (
       <Story key={i} {...story} />
     ))}
-    {stories.length > 0 && (
+    {/* stories.length > 0 && (
       <div className={styles.margin}>
         <Button variant="ghost" white>
           {readMoreText}
         </Button>
       </div>
-    )}
+    ) */}
   </Stack>
 )
 
