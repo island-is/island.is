@@ -9,7 +9,7 @@ export class GetArticlesInput {
 
   @Field()
   @IsString()
-  category: string = ''
+  category: string
 
   @Field(() => Int, { nullable: true })
   @IsInt()

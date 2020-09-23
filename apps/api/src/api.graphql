@@ -771,7 +771,7 @@ input GetSingleArticleInput {
 
 input GetArticlesInput {
   lang: String!
-  category: String = ""
+  category: String!
   size: Int = 100
 }
 

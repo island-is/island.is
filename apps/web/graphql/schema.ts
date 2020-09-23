@@ -1013,7 +1013,7 @@ export type GetSingleArticleInput = {
 
 export type GetArticlesInput = {
   lang: Scalars['String']
-  category?: Maybe<Scalars['String']>
+  category: Scalars['String']
   size?: Maybe<Scalars['Int']>
 }
 
