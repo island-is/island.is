@@ -1,6 +1,7 @@
 # Getting started
 
-This library defines a service that is derived from Apollo's RESTDataSource.
+This library defines nova-sms, a service that is derived from Apollo's RESTDataSource.
+The service allows its users to send sms messages on behalf of Island.is via Nova.
 
 ### NestJS GraphQLModule
 
