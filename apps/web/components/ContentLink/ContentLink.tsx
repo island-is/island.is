@@ -15,7 +15,7 @@ interface ContentLinkProps {
 export const ContentLink: FC<ContentLinkProps> = ({
   pageData = null,
   href = '[slug]',
-  fallbackLink = '#',
+  fallbackLink,
   children,
 }) => {
   const Router = useRouter()
@@ -36,6 +36,10 @@ export const ContentLink: FC<ContentLinkProps> = ({
   const slug = data?.fields?.slug ?? ''
 
   if (!contentType || !slug) {
+    if (!fallbackLink) {
+      return null
+    }
+
     return (
       <Link href={fallbackLink} passHref pureChildren>
         {children}
