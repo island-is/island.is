@@ -54,6 +54,12 @@ export interface Case {
   comments?: string
   notifications?: Notification[]
   courtCaseNumber?: string
+  courtStartTime?: Date
+  courtEndTime?: Date
+  courtAttendees?: string
+  policeDemands?: string
+  suspectPlea?: string
+  litigationPresentations?: string
 }
 
 export interface Notification {
