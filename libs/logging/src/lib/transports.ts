@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/node'
-import Transport from 'winston-transport'
+// @ts-ignore The problem is that winston-transport defines the export of TransportStream via `export =`
+import TransportStream = require('winston-transport')
 
-export class SentryTransport extends Transport {
+export class SentryTransport extends TransportStream {
   constructor() {
     super({ level: 'error' })
   }
