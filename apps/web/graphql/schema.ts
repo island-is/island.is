@@ -546,7 +546,6 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
-<<<<<<< HEAD
 export type AboutSubPage = {
   __typename?: 'AboutSubPage'
   id: Scalars['ID']
@@ -555,13 +554,13 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
-=======
+}
+
 export type TagCount = {
   __typename?: 'TagCount'
   key: Scalars['String']
   value: Scalars['String']
   count: Scalars['Int']
->>>>>>> 24d81753... gst
 }
 
 export type SearchResult = {

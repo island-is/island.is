@@ -462,9 +462,25 @@ type Url {
 
 union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+type AboutSubPage {
+  id: ID!
+  title: String!
+  slug: String!
+  description: String!
+  subDescription: String!
+  slices: [Slice!]!
+}
+
+type TagCount {
+  key: String!
+  value: String!
+  count: Int!
+}
+
 type SearchResult {
   total: Int!
   items: [Items!]!
+  tagCounts: [TagCount!]
 }
 
 union Items = Article | LifeEventPage | News | AboutPage
@@ -555,6 +571,7 @@ type Query {
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
+  getAboutSubPage(input: GetAboutSubPageInput!): AboutSubPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
@@ -615,6 +632,11 @@ input GetNamespaceInput {
 }
 
 input GetAboutPageInput {
+  lang: String!
+}
+
+input GetAboutSubPageInput {
+  slug: String!
   lang: String!
 }
 
@@ -725,6 +747,8 @@ input SearcherInput {
   language: ContentLanguage = is
   size: Int
   page: Int
+  tags: [Tag!]
+  countTag: SearchableTags
 }
 
 enum SearchableContentTypes {
@@ -737,6 +761,15 @@ enum SearchableContentTypes {
 enum ContentLanguage {
   is
   en
+}
+
+input Tag {
+  type: SearchableTags!
+  key: String!
+}
+
+enum SearchableTags {
+  category
 }
 
 input ItemInput {
