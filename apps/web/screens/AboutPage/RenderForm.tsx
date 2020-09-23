@@ -38,20 +38,20 @@ export const RenderForm: React.FC<{
   })
 
   const formatMessage = (message) => {
+    // These messages come from Mailchimp's API and contain links and other stuff we don't want.
     if (!message) {
       return
     }
     const msg = message.toLowerCase()
 
-    if (msg.includes('is already subscribed')) {
+    if (
+      msg.includes('is already subscribed') ||
+      msg.includes('er nú þegar skráður')
+    ) {
       return n('formEmailAlreadyRegistered', 'Þetta netfang er þegar á skrá')
     }
 
-    if (msg.includes('something went wrong')) {
-      return n('formError', 'Það kom upp villa. Vinsamlegast reyndu aftur.')
-    }
-
-    if (msg.includes('invalid email')) {
+    if (msg.includes('invalid email') || msg.includes('ógilt netfang')) {
       return n('formInvalidEmail', 'Þetta er ógilt netfang.')
     }
 
