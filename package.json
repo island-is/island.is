@@ -37,7 +37,7 @@
     "storybook:island-ui": "nx run island-ui-storybook:storybook",
     "ts-node": "node -r ./scripts/ts-node",
     "schemas": "test -f libs/api/schema/src/lib/schema.d.ts || echo 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && yarn nx run api:contentful-types && yarn affected:schemas",
-    "postinstall": "./scripts/run-postinstall.sh"
+    "postinstall": "echo \"---- $CI\" && if [[ ! -z $CI ]]; then exit 0; else yarn schemas; fi"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",
