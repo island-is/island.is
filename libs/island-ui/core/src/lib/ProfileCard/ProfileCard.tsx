@@ -27,7 +27,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   description,
 }) => {
   return (
-    <Box borderRadius="large" overflow="hidden" background="white">
+    <Box
+      borderRadius="large"
+      overflow="hidden"
+      background="white"
+      boxShadow="subtle"
+    >
       {image && (
         <Box
           className={styles.image}

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, Fragment } from 'react'
+import React, { ReactNode, Fragment } from 'react'
 import {
   Document,
   Block,
@@ -24,6 +24,7 @@ import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
 import StaticHtml from './StaticHtml/StaticHtml'
 import slugify from '@sindresorhus/slugify'
 import { SectionWithImage } from './SectionWithImage/SectionWithImage'
+import { TeamList } from './TeamList/TeamList'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
@@ -69,6 +70,9 @@ export const defaultRenderComponent = (
 
     case 'SectionWithImage':
       return <SectionWithImage {...slice} />
+
+    case 'TeamList':
+      return <TeamList {...slice} />
 
     default:
       // TODO: this should be an exhaustive list of slice types, but some slice
