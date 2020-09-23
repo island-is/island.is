@@ -459,7 +459,7 @@ type LifeEventPage {
   id: ID!
   title: String!
   slug: String!
-  intro: String!
+  intro: String
   image: Image
   thumbnail: Image
   content: [Slice!]!

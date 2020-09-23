@@ -545,7 +545,7 @@ export type LifeEventPage = {
   id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
-  intro: Scalars['String']
+  intro?: Maybe<Scalars['String']>
   image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
@@ -1731,7 +1731,7 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'title' | 'slug' | 'containsApplicationForm'
+            'id' | 'title' | 'slug' | 'intro' | 'containsApplicationForm'
           > & {
               group?: Maybe<
                 { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
@@ -1814,7 +1814,7 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'title' | 'slug' | 'containsApplicationForm'
+            'id' | 'title' | 'slug' | 'intro' | 'containsApplicationForm'
           > & {
               group?: Maybe<
                 { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>

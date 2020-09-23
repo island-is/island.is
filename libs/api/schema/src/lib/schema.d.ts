@@ -556,7 +556,7 @@ export type LifeEventPage = {
   id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
-  intro: Scalars['String']
+  intro?: Maybe<Scalars['String']>
   image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
@@ -2575,7 +2575,7 @@ export type LifeEventPageResolvers<
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>

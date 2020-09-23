@@ -9,6 +9,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+          intro
           containsApplicationForm
           group {
             title
@@ -81,6 +82,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
+          intro
           containsApplicationForm
           group {
             title
