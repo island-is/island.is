@@ -80,7 +80,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const [initialClientX, setInitialClientX] = useState<number>(0)
   const [finalClientX, setFinalClientX] = useState<number>(0)
-  const [initialClientY, setInitialClientY] = useState<number>(0)
   const [finalClientY, setFinalClientY] = useState<number>(0)
 
   const tab = useTabState({
@@ -202,6 +201,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft':
+        goTo('prev')
+        break
+      case 'arrowright':
+        goTo('prev')
+        break
+    }
+  }
+
   const getDirection = (absX: number, absY: number, deltaX, deltaY) => {
     if (absX > absY) {
       if (deltaX > 0) {
@@ -228,7 +238,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     const x = isMouseEvent(e) ? e.clientX : e.targetTouches[0].pageX
     const y = isMouseEvent(e) ? e.clientY : e.targetTouches[0].pageY
     setInitialClientX(x)
-    setInitialClientY(y)
   }
 
   const handleTouchMove = (
@@ -345,6 +354,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                       className={cn(styles.tabPanel, {
                         [styles.tabPanelVisible]: visible,
                       })}
+                      onKeyDown={onKeyDown}
                     >
                       <Box
                         paddingY={3}
