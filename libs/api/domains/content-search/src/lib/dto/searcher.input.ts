@@ -20,20 +20,6 @@ export class Tag {
   key: string
 }
 
-/*
-@Scalar('Tag', type => Tag)
-export class TagScalar implements CustomScalar<string, Tag> {
-  description = 'Date custom scalar type';
-
-  parseValue(value: string): Tag {
-    return JSON.parse(value)
-  }
-
-  serialize(value: Tag): string {
-    return JSON.stringify(value)
-  }
-}*/
-
 @InputType()
 export class SearcherInput {
   @Field(() => String)
