@@ -43,8 +43,11 @@ export const RenderForm: React.FC<{
       return
     }
     const msg = message.toLowerCase()
-    
-    if (msg.includes('is already subscribed') || msg.includes('er nú þegar skráður')) {
+
+    if (
+      msg.includes('is already subscribed') ||
+      msg.includes('er nú þegar skráður')
+    ) {
       return n('formEmailAlreadyRegistered', 'Þetta netfang er þegar á skrá')
     }
 
