@@ -45,6 +45,7 @@ export interface GetServicesParameters {
     data:Array<string>
     type:Array<string>
     access:Array<string>,
+    text:string
 }
 
 const enumToArray = (enumObject) => {
@@ -56,7 +57,7 @@ const enumToArray = (enumObject) => {
 }
 
 export enum PRICING_CATEGORY {
-    FREE   ='free',
+    FREE  ='free',
     PAID  ='paid',
 }
 
@@ -88,13 +89,13 @@ const OrgServices:Array<ServiceDetails> =[
         access: [ACCESS_CATEGORY.X_ROAD] },
     { id:'1', owner:"Þjóðskrá", name:"Einstaklingsskrá", url:"http://einstaklingskra.thodskra.is:4700", description:"Einstaklingarskráarlýsing",
         status:SERVICE_STATUS.WARNING,
-        pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.PAID],                           
+        pricing:[PRICING_CATEGORY.PAID],                           
         data:   [DATA_CATEGORY.PERSONAL],                         
         type:   [TYPE_CATEGORY.REACT],
         access: [ACCESS_CATEGORY.X_ROAD] },
     { id:'2', owner:"Þjóðskrá", name:"Staðfangaskrá", url:"http://stadfangaskra.thodskra.is:4700", description:"Staðfangaskráarlýsing", 
         status:SERVICE_STATUS.ERROR, 
-        pricing:[PRICING_CATEGORY.PAID],                                                   
+        pricing:[PRICING_CATEGORY.FREE],                                                   
         data:   [DATA_CATEGORY.PUBLIC],                           
         type:[TYPE_CATEGORY.REACT],
         access:[ACCESS_CATEGORY.X_ROAD]},
@@ -117,11 +118,11 @@ const OrgServices:Array<ServiceDetails> =[
         access: [ACCESS_CATEGORY.API_GW]},
     { id:'6', owner:"Samgöngustofa", name:"Ökutækjaskrá", url:"http://okutaeki.samgongustofa.is:74200", description:"Ökutækjaskráarlýsing",
         status:SERVICE_STATUS.UNKNOWN,     
-        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.PAID],  
+        pricing:[PRICING_CATEGORY.FREE],  
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
         type:   [TYPE_CATEGORY.SOAP], 
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:'7', owner:"Dúddi í bæ", name:"Monthly free service", url:"http://asdf.asdf:74200", description:"MonthlyFreeServiceLýsing",
+    { id:'7', owner:"Dúddi í bæ", name:"Free and paid service", url:"http://asdf.asdf:74200", description:"MonthlyFreeServiceLýsing",
         status:SERVICE_STATUS.UNKNOWN, 
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.PAID],                           
         data:   [DATA_CATEGORY.PUBLIC, DATA_CATEGORY.OFFICIAL, DATA_CATEGORY.PERSONAL,DATA_CATEGORY.HEALTH, DATA_CATEGORY.PUBLIC], 
@@ -194,7 +195,7 @@ export async function getService(id: string):Promise<ServiceResult> {
 }
 
 export async function getServices(parameters:GetServicesParameters):Promise<ServicesResult> {
-    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null};
+    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null, text:null};
     let filtered = OrgServices;
     if (isValidString(params.name)) {
         filtered = filtered.filter(e => e.name.includes(params.name));
@@ -217,7 +218,11 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         params.limit = null;
     }
     
-
+    if (parameters.text !== undefined && parameters.text !== null && parameters.text.length > 0) {
+        filtered = filtered.filter( e => 
+            e.name.includes(parameters.text) || e.owner.includes(parameters.text)
+        )
+    }
 
     //Convert to ServiceCardInformation
     const limited = await limitServices(filtered, params.cursor, params.limit);

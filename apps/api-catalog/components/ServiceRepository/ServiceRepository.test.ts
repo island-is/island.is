@@ -15,7 +15,7 @@ describe('ServiceRepository', ()=>{
         data:null,
         type:null,
         access:null,
-        searchMethod:null
+        text:null
       }
       const ret = await getServices(params);
       expect(ret.result[0].id).toBe('0');

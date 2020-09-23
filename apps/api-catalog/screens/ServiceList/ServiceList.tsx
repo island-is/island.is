@@ -1,7 +1,6 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import {  Box,  
           Button, 
-          AsyncSearchOption,
           ContentBlock, 
           GridRow, 
           GridColumn,
@@ -56,23 +55,6 @@ function ServiceLayout({ top, bottom, left, right }: PropTypes) {
     </Box>
   )
 }
-const SearchInput = (items) => {
-  const [options, setOptions] = useState<AsyncSearchOption[]>([])
-  const [value, setValue] = useState('')
-  const [loading, setLoading] = useState<boolean>(false)
-  
-  return (
-        <Box className={cn(styles.inputSearch)}>
-          <AsyncSearch 
-            options={options}
-            size='medium'
-            placeholder="Leita"
-            onInputValueChange={(inputValue) => setValue(inputValue)}
-            loading={loading}
-          />
-        </Box>
-    )
-  }
 
 export interface ServiceListProps {
   nextCursor: string
@@ -93,7 +75,8 @@ export default function ServiceList(props:ServiceListProps) {
       pricing:[], 
       data:[], 
       type:[], 
-      access:[]};
+      access:[],
+      text:null};
   }
  
   const onPageMoreButtonClick = () => {
@@ -148,6 +131,7 @@ export default function ServiceList(props:ServiceListProps) {
 
   const createStatusQueryString = ():string => {
     let str:string = props.parameters.cursor ===null? 'null':props.parameters.cursor.toString();
+    str+=`|${props.parameters.text}`
     str+= `|${props.parameters.pricing.sort().join()}|${props.parameters.data.sort().join()}|${props.parameters.type.sort().join()}|${props.parameters.access.sort().join()}`;
     return str;  
   }
@@ -157,8 +141,16 @@ export default function ServiceList(props:ServiceListProps) {
   const [nextCursor,  setNextCursor] = useState<string>(props.nextCursor);
   const [nextFetch,   setNextFetch] = useState<string>(null);
   const [firstGet,    setFirstGet] = useState<boolean>(true);
+  const [searchValue, setSearchValue] = useState('');
   const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
-    
+  
+  const onSearchChange = function(inputValue: string){
+    props.parameters.text = inputValue;
+    setSearchValue(inputValue);
+    setStatusQueryString(createStatusQueryString());
+    setFirstGet(true);
+  }
+  
   useEffect(() => {
     
     const appendData = async () => {
@@ -166,7 +158,7 @@ export default function ServiceList(props:ServiceListProps) {
       const response = await getServices(props.parameters);
       services.push(...response.result);    
       setNextCursor(response.nextCursor);
-      setLoading(false);
+      setLoading(false); 
     }
 
     if (!firstGet && nextFetch) {
@@ -187,9 +179,8 @@ export default function ServiceList(props:ServiceListProps) {
       }
       if (firstGet)
         loadData();
-    }, [firstGet, StatusQueryString, props.parameters]); 
-    
-    
+    }, [firstGet, StatusQueryString, props.parameters]);
+
   return (   
       <ServiceLayout 
       top={
@@ -223,12 +214,17 @@ export default function ServiceList(props:ServiceListProps) {
         </div>
       }
       right={
-        <Box  className={cn(styles.filter, "filter")}>
-              <div>
-              <SearchInput 
-              items={ [{ label:'blue', value: 'bull' }]}
-              ></SearchInput>
-              </div>
+              <Box  className={cn(styles.filter, "filter")}>
+                <Box className={cn(styles.inputSearch)}>
+                  <AsyncSearch 
+                    options={[]}
+                    size='medium'
+                    placeholder="Leita"
+                    inputValue={searchValue}
+                    onInputValueChange={(inputValue) => onSearchChange(inputValue)}
+                    loading={isLoading}
+                  />
+              </Box>
               <div className={cn(styles.filterItem)}>
                 <AccordionItem  id="pricing_category" label="Pricing" labelVariant="sideMenu" iconVariant="default">
                   <CategoryCheckBox label={PRICING_CATEGORY.FREE}   value={PRICING_CATEGORY.FREE}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
@@ -267,7 +263,6 @@ ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
   const client = new ContentfulApi();
 
   const pageContent = await client.fetchStaticPageBySlug('services', 'is-IS');
-  console.log(pageContent);
 
   const params:GetServicesParameters = { 
     cursor:null, 
@@ -277,7 +272,8 @@ ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
     pricing:[], 
     data:[],
     type:[],    
-    access:[]
+    access:[],
+    text:''
   };
 return { 
   parameters:params, 

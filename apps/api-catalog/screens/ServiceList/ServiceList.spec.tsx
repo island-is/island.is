@@ -19,6 +19,7 @@ describe(' ServiceList ', () => {
     data:[],
     access:[],
     type:[],
+    text:null
   };
 
     
