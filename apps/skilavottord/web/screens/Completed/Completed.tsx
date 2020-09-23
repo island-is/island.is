@@ -9,7 +9,7 @@ import {
   Link,
   Box,
 } from '@island.is/island-ui/core'
-import { ProcessPageLayout } from '../Layouts'
+import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
@@ -131,7 +131,7 @@ const Completed = (props) => {
   )
 }
 
-Completed.getInitialProps = async (ctx) => {
+Completed.getInitialProps = (ctx) => {
   const { apolloClient, query } = ctx
   const {
     cache: {

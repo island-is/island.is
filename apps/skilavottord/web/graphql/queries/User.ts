@@ -1,6 +1,5 @@
 import gql from 'graphql-tag'
 
-
 export const GET_USER = gql`
   query getCarownerByNationalId($nationalId: String!) {
     getCarownerByNationalId(nationalId: $nationalId) {

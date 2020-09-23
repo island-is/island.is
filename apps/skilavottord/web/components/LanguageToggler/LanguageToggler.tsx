@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { Button, Hidden } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-
 export const LanguageToggler: FC<{
   hideWhenMobile?: boolean
 }> = ({ hideWhenMobile }) => {

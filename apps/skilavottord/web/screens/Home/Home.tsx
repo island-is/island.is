@@ -6,13 +6,12 @@ import {
   Box,
   Stack,
   Button,
-  ContentBlock,
   BulletList,
   Bullet,
   ArrowLink,
 } from '@island.is/island-ui/core'
 import { BorderedContent } from '@island.is/island-ui/contentful'
-import { PageLayout } from '../Layouts'
+import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import FAQ from './components/FAQ'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
@@ -20,7 +19,10 @@ import { useRouter } from 'next/router'
 
 const Home: FC = () => {
   const router = useRouter()
-  const { activeLocale, t: { home: t } } = useI18n()
+  const {
+    activeLocale,
+    t: { home: t },
+  } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
 
   return (
@@ -66,7 +68,7 @@ const Home: FC = () => {
               <Button
                 onClick={() => {
                   router.push({
-                    pathname: makePath('myCars')
+                    pathname: makePath('myCars'),
                   })
                 }}
               >
@@ -94,14 +96,7 @@ const Home: FC = () => {
           }
           bottomContent={
             <Box padding={3}>
-              <Button
-                variant="text"
-                onClick={() => {
-                  router.push({
-                    pathname: makePath('recyclingCompanies')
-                  })
-                }}
-              >
+              <Button variant="text">
                 <ArrowLink href={''}>
                   Find connected car recycling company
                 </ArrowLink>

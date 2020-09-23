@@ -282,16 +282,6 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  Translation: o(
-    [
-      { json: 'home', js: 'home', typ: r('Home') },
-    ],
-    false,
-  ),
-  Home: o(
-    [
-      { json: 'title', js: 'title', typ: '' },
-    ],
-    false,
-  )
+  Translation: o([{ json: 'home', js: 'home', typ: r('Home') }], false),
+  Home: o([{ json: 'title', js: 'title', typ: '' }], false),
 }

@@ -2,13 +2,13 @@ import React, { FC, ReactNode } from 'react'
 import Head from 'next/head'
 import { Header } from '../../components'
 
-import { Page } from '@island.is/island-ui/core'
+import { Page, GridContainer } from '@island.is/island-ui/core'
 
 interface LayoutProps {
   children: ReactNode
 }
 
-export const MainLayout: FC<LayoutProps> = ({ children }) => (
+export const AppLayout: FC<LayoutProps> = ({ children }) => (
   <Page>
     <Head>
       <link
@@ -38,7 +38,9 @@ export const MainLayout: FC<LayoutProps> = ({ children }) => (
       />
       <title>Ísland.is - Skilavottord</title>
     </Head>
-    <Header />
+    <GridContainer>
+      <Header />
+    </GridContainer>
     {children}
   </Page>
 )

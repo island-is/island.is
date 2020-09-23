@@ -26,9 +26,10 @@ export const CompanyListItem: FC<CompanyProps> = ({
   phone,
   website,
 }: CompanyProps) => {
+  const {
+    t: { handover: t },
+  } = useI18n()
 
-  const { t: { handover: t } } = useI18n()
-  
   return (
     <Box padding={3} className={styles.container}>
       <Stack space={2}>
@@ -52,7 +53,13 @@ export const CompanyListItem: FC<CompanyProps> = ({
                 height="full"
               >
                 <Link href={website} passHref>
-                  <Button size="small" variant="ghost" width={isMobile() ? 'fluid': 'normal'}>{t.buttons.website}</Button>
+                  <Button
+                    size="small"
+                    variant="ghost"
+                    width={isMobile() ? 'fluid' : 'normal'}
+                  >
+                    {t.buttons.website}
+                  </Button>
                 </Link>
               </Box>
             </GridColumn>

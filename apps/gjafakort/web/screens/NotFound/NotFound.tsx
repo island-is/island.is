@@ -14,7 +14,9 @@ import {
 import { useI18n } from '../../i18n'
 
 function NotFound() {
-  const {t: { notFound: t }} = useI18n()
+  const {
+    t: { notFound: t },
+  } = useI18n()
 
   return (
     <ContentBlock width="large">

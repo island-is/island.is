@@ -10,20 +10,19 @@ import {
   Tooltip,
   Inline,
 } from '@island.is/island-ui/core'
-import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 interface MockCar {
   id: string
   name: string
-  brand: string
   model: string
   year: number
   color: number
   recyclable: boolean
-  status: string
-  hasCoOwner?: boolean
+  status?: string
+  isCoOwned?: boolean
 }
 
 interface ActionCardProps {
@@ -33,7 +32,7 @@ interface ActionCardProps {
 
 export const ActionCard: FC<ActionCardProps> = ({
   onContinue,
-  car: { id, name, model, year, color, recyclable, status, hasCoOwner = false },
+  car: { id, name, model, year, recyclable, isCoOwned = false },
 }: ActionCardProps) => {
   const {
     t: { myCars: t },
@@ -56,7 +55,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 </Box>
               </GridColumn>
               <GridColumn span={['4/10', '2/10', '2/10', '3/10']}>
-                {hasCoOwner && (
+                {isCoOwned && (
                   <ColumnBox width="full" paddingRight={[4, 4, 4, 1]}>
                     <Typography variant="h5">{t.status.coOwned}</Typography>
                   </ColumnBox>

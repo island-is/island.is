@@ -6,7 +6,7 @@ import { AppProps } from 'next/app'
 import { ApolloProvider } from '@apollo/client'
 
 import { client as initApollo } from '../graphql'
-import { MainLayout as Layout } from '../screens/Layouts'
+import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
 
 class SupportApplication extends App<AppProps> {
@@ -31,9 +31,9 @@ class SupportApplication extends App<AppProps> {
     const { Component, pageProps } = this.props
     return (
       <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <Layout>
+        <AppLayout>
           <Component {...pageProps} />
-        </Layout>
+        </AppLayout>
       </ApolloProvider>
     )
   }

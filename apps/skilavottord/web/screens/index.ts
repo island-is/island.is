@@ -1,6 +1,5 @@
 export * from './Home'
 export * from './Overview'
-export * from './Companies'
 export * from './Confirm'
 export * from './Handover'
 export * from './Completed'

@@ -10,17 +10,19 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import ProgressBar from '../ProgressBar/ProgressBar'
-import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 interface MockCar {
   id: string
-  brand: string
+  name: string
   model: string
   year: number
-  status: string
-  hasCoOwner?: boolean
+  color: number
+  recyclable: boolean
+  status?: string
+  isCoOwned?: boolean
 }
 
 interface ProgressCardProps {
@@ -30,7 +32,7 @@ interface ProgressCardProps {
 
 export const ProgressCard: FC<ProgressCardProps> = ({
   onClick,
-  car: { id, brand, model, year, status, hasCoOwner = false },
+  car: { id, name, model, year, status = 'pending' },
 }: ProgressCardProps) => {
   const {
     t: { myCars: t },
@@ -47,7 +49,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
             <Stack space={2}>
               <Stack space={1}>
                 <Typography variant="h5">{id}</Typography>
-                <Typography variant="p">{`${brand} ${model}, ${year}`}</Typography>
+                <Typography variant="p">{`${name} ${model}, ${year}`}</Typography>
               </Stack>
               <Box paddingRight={[0, 0, 0, 4]}>
                 <ProgressBar progress={status === 'pending' ? 50 : 100} />
@@ -62,7 +64,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
                 >
                   <Tag
-                    variant={status === 'pending' ? 'rose' : 'darkerMint'}
+                    variant={status === 'pending' ? 'red' : 'darkerMint'}
                     label
                   >
                     {status === 'pending'

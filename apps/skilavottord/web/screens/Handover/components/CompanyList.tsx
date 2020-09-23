@@ -1,5 +1,4 @@
 import React from 'react'
-import { Stack, Typography } from '@island.is/island-ui/core'
 import CompanyListItem from './CompanyListItem'
 
 const CompanyList = ({ companies }) => {

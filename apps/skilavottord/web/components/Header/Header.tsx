@@ -1,77 +1,46 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
-  Logo,
-  Columns,
-  Column,
-  Box,
-  Button,
-  Hidden,
   ResponsiveSpace,
   GridContainer,
-  GridColumn,
-  GridRow,
+  Header as IslandUIHeader,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
-import { LanguageToggler } from '../'
 
-const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
+const mockUser = {
+  name: 'Mock User',
+  nationalId: '123456',
+  mobile: '0123',
+  role: '',
+}
 
 export const Header: FC = () => {
   const router = useRouter()
+  // const { setUser, isAuthenticated } = useContext(UserContext)
+  const isAuthenticated = true
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
-          <Columns alignY="center" space={2}>
-            <Column width="content">
-              <Link href={activeLocale === 'is' ? './' : './en'} passHref>
-                <a>
-                  <Hidden above="md">
-                    <Logo width={40} iconOnly />
-                  </Hidden>
-                  <Hidden below="lg">
-                    <Logo width={160} />
-                  </Hidden>
-                </a>
-              </Link>
-            </Column>
-            <Column>
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="flexEnd"
-                width="full"
-              >
-                <Box marginLeft={marginLeft}>
-                  <Button
-                    variant="menu"
-                    leftIcon="user"
-                    onClick={() => {
-                      router.push({
-                        pathname: makePath('myCars')
-                      })
-                    }}
-                  >
-                    Login
-                  </Button>
-                </Box>
-                <Box marginLeft={marginLeft}>
-                  <LanguageToggler hideWhenMobile />
-                </Box>
-              </Box>
-            </Column>
-          </Columns>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+    <IslandUIHeader
+      logoRender={(logo) => (
+        <Link href={activeLocale === 'is' ? '/' : '/en'}>
+          <a>{logo}</a>
+        </Link>
+      )}
+      logoutText={'Log out'}
+      userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
+      language={activeLocale.toUpperCase()}
+      switchLanguage={() => {}}
+      userName={mockUser?.name ?? ''}
+      authenticated={isAuthenticated}
+      onLogout={() => {
+        router.push(makePath('home'))
+      }}
+    />
   )
 }
 

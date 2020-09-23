@@ -1,10 +1,8 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
 import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
-import { PageLayout } from '../Layouts'
+import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { ActionCard, ProgressCard } from './components'
-
-import { carsMock } from './cars.json'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
 import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
@@ -25,25 +23,26 @@ const Overview: FC = () => {
   const { makePath } = useRouteNames()
 
   if (error || (loading && !data)) {
-    return <>ERROR</>
+    return <>Loading</>
   }
+
   const { cars } = data.getCarownerByNationalId || {}
 
-  const onRecycleCar = (id) => {
+  const onRecycleCar = (id: string) => {
     router.push(
       '/recycle-vehicle/[id]/confirm',
       makePath('recycleVehicle', id, 'confirm'),
     )
   }
 
-  const onOpenProcess = (id) => {
+  const onOpenProcess = (id: string) => {
     router.push(
       '/recycle-vehicle/[id]/handover',
       makePath('recycleVehicle', id, 'handover'),
     )
   }
 
-  const onSeeDetails = (id) => {
+  const onSeeDetails = (id: string) => {
     router.push(
       '/recycle-vehicle/[id]/completed',
       makePath('recycleVehicle', id, 'completed'),
@@ -67,49 +66,41 @@ const Overview: FC = () => {
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.pending}</Typography>
-          {carsMock
-            .filter((car) => {
-              if (car.status === 'pending') {
-                return car
-              }
-            })
-            .map((car, index) => (
-              <ProgressCard
-                key={index}
-                car={car}
-                onClick={() => onOpenProcess(car.id)}
-              />
-            ))}
-        </Stack>
-      </Box>
-      <Box paddingBottom={10}>
-        <Stack space={[2, 2]}>
-          <Typography variant="h3">{t.subTitles.active}</Typography>
-          {cars.map((car) => (
-            <ActionCard
-              key={car.id}
+          {cars.map((car, index) => (
+            <ProgressCard
+              key={index}
               car={car}
-              onContinue={() => onRecycleCar(car.id)}
+              onClick={() => onOpenProcess(car.id)}
             />
           ))}
         </Stack>
       </Box>
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
-          <Typography variant="h3">{t.subTitles.done}</Typography>
-          {carsMock
-            .filter((car) => {
-              if (car.status === 'recycled') {
-                return car
-              }
-            })
-            .map((car) => (
-              <ProgressCard
+          <Typography variant="h3">{t.subTitles.active}</Typography>
+          {cars.length > 0 ? (
+            cars.map((car) => (
+              <ActionCard
                 key={car.id}
                 car={car}
-                onClick={() => onSeeDetails(car.id)}
+                onContinue={() => onRecycleCar(car.id)}
               />
-            ))}
+            ))
+          ) : (
+            <Typography variant="p">{t.info.noCarsAvailable}</Typography>
+          )}
+        </Stack>
+      </Box>
+      <Box paddingBottom={10}>
+        <Stack space={[2, 2]}>
+          <Typography variant="h3">{t.subTitles.done}</Typography>
+          {cars.map((car) => (
+            <ProgressCard
+              key={car.id}
+              car={{ ...car, status: 'done' }}
+              onClick={() => onSeeDetails(car.id)}
+            />
+          ))}
         </Stack>
       </Box>
     </PageLayout>

@@ -7,7 +7,7 @@ import {
   GridColumn,
   Footer,
 } from '@island.is/island-ui/core'
-import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { OutlinedBox } from '@island.is/skilavottord-web/components'
 
 interface PageProps {
   children: ReactNode

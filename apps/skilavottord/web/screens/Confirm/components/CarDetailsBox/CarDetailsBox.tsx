@@ -1,8 +1,7 @@
 import React, { FC } from 'react'
 import { Box, Typography, Stack } from '@island.is/island-ui/core'
-import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { OutlinedBox } from '@island.is/skilavottord-web/components'
 
-//TODO: Move to graphql schema (see air-discount-scheme)
 interface Car {
   id: string
   name: string

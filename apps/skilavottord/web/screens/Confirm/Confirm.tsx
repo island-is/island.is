@@ -8,12 +8,12 @@ import {
   Inline,
   Link,
 } from '@island.is/island-ui/core'
-import { ProcessPageLayout } from '../Layouts'
+import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
-import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
 
 const Confirm = (props) => {
@@ -121,7 +121,7 @@ const Confirm = (props) => {
   )
 }
 
-Confirm.getInitialProps = async (ctx) => {
+Confirm.getInitialProps = (ctx) => {
   const { apolloClient, query } = ctx
   const {
     cache: {
