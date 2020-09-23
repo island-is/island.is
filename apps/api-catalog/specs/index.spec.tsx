@@ -1,23 +1,26 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import Index from '../pages/index'
+import Home from '../pages/index'
 
-describe('Index', () => {
-  const cards = [
-    { title: "Services", slug: "/services" },
-    { title: "Data Models", slug: "/data-models" },
-    { title: "API Design Guide", slug: "/design-guide" }
-  ];
+describe('Home', () => {
+
+  const pageContent = {
+    title:"The title",
+    introText: "the intro text",
+    buttons: [
+      {label:"Button1", linkUrl:"http://button1"}
+    ]
+  }
   
   it('should render successfully', () => {
-    const { baseElement } = render(<Index cards={cards} />)
+    const { baseElement } = render(<Home  pageContent={pageContent} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have a greeting as the title', () => {
-    const { getByText } = render(<Index cards={cards}/>)
-    expect(getByText('Viskuausan')).toBeTruthy() 
+    const { getByText } = render(<Home pageContent={pageContent}/>)
+    expect(getByText(pageContent.title)).toBeTruthy() 
     
   })
 })
