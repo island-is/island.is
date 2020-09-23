@@ -58,6 +58,9 @@
           },
           {
             "name": "Image"
+          },
+          {
+            "name": "Asset"
           }
         ]
       },

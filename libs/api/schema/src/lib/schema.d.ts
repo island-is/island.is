@@ -78,6 +78,8 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
+  link: Scalars['String']
+  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -200,6 +202,7 @@ export type Slice =
   | ContactUs
   | Html
   | Image
+  | Asset
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
@@ -352,6 +355,15 @@ export type ContactUs = {
   submitButtonText: Scalars['String']
   successMessage: Scalars['String']
   errorMessage: Scalars['String']
+}
+
+export type Asset = {
+  __typename?: 'Asset'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
 }
 
 export type Article = {
@@ -1366,6 +1378,7 @@ export type ResolversTypes = {
     | ResolversTypes['ContactUs']
     | ResolversTypes['Html']
     | ResolversTypes['Image']
+    | ResolversTypes['Asset']
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
@@ -1390,6 +1403,7 @@ export type ResolversTypes = {
   TabSection: ResolverTypeWrapper<TabSection>
   TeamList: ResolverTypeWrapper<TeamList>
   ContactUs: ResolverTypeWrapper<ContactUs>
+  Asset: ResolverTypeWrapper<Asset>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1563,6 +1577,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ContactUs']
     | ResolversParentTypes['Html']
     | ResolversParentTypes['Image']
+    | ResolversParentTypes['Asset']
   MailingListSignupSlice: MailingListSignupSlice
   HeadingSlice: HeadingSlice
   LinkCardSlice: LinkCardSlice
@@ -1585,6 +1600,7 @@ export type ResolversParentTypes = {
   TabSection: TabSection
   TeamList: TeamList
   ContactUs: ContactUs
+  Asset: Asset
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1782,6 +1798,12 @@ export type StoryResolvers<
   readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  linkedPage?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1967,7 +1989,8 @@ export type SliceResolvers<
     | 'TeamList'
     | 'ContactUs'
     | 'Html'
-    | 'Image',
+    | 'Image'
+    | 'Asset',
     ParentType,
     ContextType
   >
@@ -2207,6 +2230,18 @@ export type ContactUsResolvers<
   submitButtonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   successMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   errorMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AssetResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3179,6 +3214,7 @@ export type Resolvers<ContextType = Context> = {
   TabSection?: TabSectionResolvers<ContextType>
   TeamList?: TeamListResolvers<ContextType>
   ContactUs?: ContactUsResolvers<ContextType>
+  Asset?: AssetResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -3302,6 +3338,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'Image',
+          },
+          {
+            name: 'Asset',
           },
         ],
       },
