@@ -12,6 +12,15 @@ export const slices = gql`
     height
   }
 
+  fragment AssetFields on Asset {
+    __typename
+    typename
+    id
+    title
+    url
+    contentType
+  }
+
   fragment TimelineFields on TimelineSlice {
     __typename
     typename
@@ -248,6 +257,7 @@ export const slices = gql`
     ...ProcessEntryFields
     ...HtmlFields
     ...ImageFields
+    ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
     ...TabSectionFields

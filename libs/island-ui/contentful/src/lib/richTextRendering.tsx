@@ -5,13 +5,16 @@ import {
   Inline,
   BLOCKS,
   INLINES,
+  AssetHyperlink,
 } from '@contentful/rich-text-types'
+import { Asset } from 'contentful'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import Image from './Image/Image'
 import FaqList from './FaqList/FaqList'
 import { Slice } from '@island.is/api/schema'
 import { Statistics } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
+import AssetLink from './AssetLink/AssetLink'
 import {
   Typography,
   Blockquote,
@@ -31,7 +34,12 @@ export interface RenderNode {
 }
 
 type SliceType = Slice['__typename']
-type Ordered = 'ordered' | 'unordered'
+
+export interface PaddingConfig {
+  sorted?: boolean
+  space: ResponsiveSpace
+  types: [SliceType, SliceType]
+}
 
 export interface RenderConfig {
   renderComponent: (slice: Slice, config: RenderConfig) => ReactNode
@@ -39,7 +47,7 @@ export interface RenderConfig {
   renderNode: RenderNode
   htmlClassName?: string
   defaultPadding: ResponsiveSpace
-  padding: Readonly<Array<[SliceType, SliceType, ResponsiveSpace, Ordered?]>>
+  padding: Readonly<Array<PaddingConfig>>
 }
 
 export const defaultRenderComponent = (
@@ -61,6 +69,9 @@ export const defaultRenderComponent = (
 
     case 'Image':
       return <Image type="apiImage" image={slice} />
+
+    case 'Asset':
+      return <AssetLink {...slice}>{slice.title}</AssetLink>
 
     case 'ProcessEntry':
       return <ProcessEntry {...slice} />
@@ -108,6 +119,15 @@ export const defaultRenderNode: Readonly<RenderNode> = {
   [INLINES.HYPERLINK]: (node: Inline, children: ReactNode): ReactNode => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
+  [INLINES.ASSET_HYPERLINK]: (
+    node: AssetHyperlink,
+    children: ReactNode,
+  ): ReactNode => {
+    const asset = (node.data.target as unknown) as Asset
+    return asset.fields.file?.url ? (
+      <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
+    ) : null
+  },
 }
 
 export const renderHtml = (
@@ -127,17 +147,19 @@ export const renderHtml = (
   )
 }
 
-const matches = (name: string, type: string) => name === '*' || name === type
-
 export const defaultRenderPadding = (
   { __typename: above }: Slice,
   { __typename: below }: Slice,
   config: RenderConfig,
 ): ReactNode => {
-  for (const [a, b, space, order = 'unordered'] of config.padding) {
+  for (const {
+    sorted = false,
+    space,
+    types: [a, b],
+  } of config.padding) {
     if (
-      (matches(a, above) && matches(b, below)) ||
-      (order === 'unordered' && matches(a, below) && matches(b, above))
+      (a === above && b === below) ||
+      (!sorted && a === below && b === above)
     ) {
       return <Box paddingTop={space} />
     }

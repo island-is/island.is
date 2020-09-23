@@ -3,7 +3,6 @@ import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 
 import {
-  IPageHeader,
   ITimeline,
   IMailingListSignup,
   ISectionHeading,
@@ -22,6 +21,7 @@ import {
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
+import { Asset, mapAsset } from './asset.model'
 import {
   MailingListSignupSlice,
   mapMailingListSignup,
@@ -80,6 +80,7 @@ export const Slice = createUnionType({
     TeamList,
     Html,
     Image,
+    Asset,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -156,7 +157,11 @@ export const mapDocument = (
         slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        slices.push(mapImage(block.data.target))
+        if (block.data.target.fields.file) {
+          block.data.target.fields.file.details?.image
+            ? slices.push(mapImage(block.data.target))
+            : slices.push(mapAsset(block.data.target))
+        }
         break
       default: {
         // ignore last empty paragraph because of this annoying bug:

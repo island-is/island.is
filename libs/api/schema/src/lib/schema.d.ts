@@ -199,6 +199,7 @@ export type Slice =
   | TeamList
   | Html
   | Image
+  | Asset
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
@@ -333,6 +334,15 @@ export type TeamList = {
   typename: Scalars['String']
   id: Scalars['ID']
   teamMembers: Array<TeamMember>
+}
+
+export type Asset = {
+  __typename?: 'Asset'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
 }
 
 export type Article = {
@@ -1328,6 +1338,7 @@ export type ResolversTypes = {
     | ResolversTypes['TeamList']
     | ResolversTypes['Html']
     | ResolversTypes['Image']
+    | ResolversTypes['Asset']
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
@@ -1351,6 +1362,7 @@ export type ResolversTypes = {
   SectionWithImage: ResolverTypeWrapper<SectionWithImage>
   TabSection: ResolverTypeWrapper<TabSection>
   TeamList: ResolverTypeWrapper<TeamList>
+  Asset: ResolverTypeWrapper<Asset>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1521,6 +1533,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['TeamList']
     | ResolversParentTypes['Html']
     | ResolversParentTypes['Image']
+    | ResolversParentTypes['Asset']
   MailingListSignupSlice: MailingListSignupSlice
   HeadingSlice: HeadingSlice
   LinkCardSlice: LinkCardSlice
@@ -1542,6 +1555,7 @@ export type ResolversParentTypes = {
   SectionWithImage: SectionWithImage
   TabSection: TabSection
   TeamList: TeamList
+  Asset: Asset
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1921,7 +1935,8 @@ export type SliceResolvers<
     | 'TabSection'
     | 'TeamList'
     | 'Html'
-    | 'Image',
+    | 'Image'
+    | 'Asset',
     ParentType,
     ContextType
   >
@@ -2140,6 +2155,18 @@ export type TeamListResolvers<
     ParentType,
     ContextType
   >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AssetResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3097,6 +3124,7 @@ export type Resolvers<ContextType = Context> = {
   SectionWithImage?: SectionWithImageResolvers<ContextType>
   TabSection?: TabSectionResolvers<ContextType>
   TeamList?: TeamListResolvers<ContextType>
+  Asset?: AssetResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -3216,6 +3244,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'Image',
+          },
+          {
+            name: 'Asset',
           },
         ],
       },
