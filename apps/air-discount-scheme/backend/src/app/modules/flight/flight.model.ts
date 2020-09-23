@@ -77,7 +77,7 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
 
   // eslint-disable-next-line
   @BelongsTo(() => Flight)
-  flight
+  flight: any
 
   @Column({
     type: DataType.STRING,

@@ -20,7 +20,7 @@ export class PrivateDiscountController {
   @ApiExcludeEndpoint()
   getCurrentDiscountByNationalId(
     @Param() params: GetCurrentDiscountByNationalIdParams,
-  ): Promise<Discount> {
+  ): Promise<Discount | null> {
     return this.discountService.getDiscountByNationalId(params.nationalId)
   }
 

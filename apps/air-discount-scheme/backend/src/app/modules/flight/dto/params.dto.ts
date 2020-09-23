@@ -1,13 +1,5 @@
 import { IsString, IsUUID, Length } from 'class-validator'
-import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
-
-import {
-  Travel,
-  RangeInput,
-  PeriodInput,
-  FlightLegsInput,
-} from '@island.is/air-discount-scheme/types'
 
 export class GetFlightParams {
   @IsUUID()

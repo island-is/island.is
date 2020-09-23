@@ -1,14 +1,14 @@
 import { setup } from '../../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
-import CacheManger from 'cache-manager'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
+import { Flight } from '../../flight.model'
 
 let app: INestApplication
-let cacheManager: CacheManger
+let cacheManager: CacheManager
 let nationalRegistryService: NationalRegistryService
 const user: NationalRegistryUser = {
   nationalId: '1234567890',
@@ -23,8 +23,8 @@ const user: NationalRegistryUser = {
 
 beforeAll(async () => {
   app = await setup()
-  cacheManager = app.get<CacheManger>(CACHE_MANAGER)
-  cacheManager.ttl = () => ''
+  cacheManager = app.get<CacheManager>(CACHE_MANAGER)
+  cacheManager.ttl = () => Promise.resolve('')
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )
@@ -37,7 +37,9 @@ describe('Create Flight', () => {
   it(`POST /api/public/discounts/:discountCode/flights should create a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
-      .mockImplementation(() => ({ nationalId: user.nationalId }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId: user.nationalId }),
+      )
     const response = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer ernir')
@@ -104,7 +106,9 @@ describe('Delete Flight', () => {
   it(`DELETE /api/public/flights/:flightId should delete a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
-      .mockImplementation(() => ({ nationalId: user.nationalId }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId: user.nationalId }),
+      )
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer icelandair')
@@ -160,7 +164,9 @@ describe('Delete Flight', () => {
     // Arrange
     const spy = jest
       .spyOn(cacheManager, 'get')
-      .mockImplementation(() => ({ nationalId: user.nationalId }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId: user.nationalId }),
+      )
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer icelandair')
@@ -200,8 +206,8 @@ describe('Delete Flight', () => {
       `/api/private/flights`,
     )
     expect(
-      getRes.body.find((flight) => flight.id === createRes.body.id).flightLegs
-        .length,
+      getRes.body.find((flight: Flight) => flight.id === createRes.body.id)
+        .flightLegs.length,
     ).toBe(1)
   })
 })
