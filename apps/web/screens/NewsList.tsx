@@ -40,7 +40,6 @@ const PERPAGE = 10
 
 interface NewsListProps {
   newsList: GetNewsListQuery['getNewsList']['news']
-  allNews: GetNewsListQuery['getNewsList']['news']
   page: GetNewsListQuery['getNewsList']['page']
   dateRange: string[]
   selectedYear: number
@@ -50,7 +49,6 @@ interface NewsListProps {
 
 const NewsList: Screen<NewsListProps> = ({
   newsList,
-  allNews, // temp fix for launch, get length of total news
   page,
   dateRange,
   selectedYear,
@@ -211,8 +209,7 @@ const NewsList: Screen<NewsListProps> = ({
           ))}
           <Box paddingTop={[4, 4, 8]}>
             <Pagination
-              page={page.page}
-              totalPages={Math.ceil(allNews.length / PERPAGE)}
+              {...page}
               renderLink={(page, className, children) => (
                 <Link
                   href={{
@@ -252,11 +249,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         getNewsList: { news: newsList, page },
       },
     },
-    {
-      data: {
-        getNewsList: { news: allNews },
-      },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
@@ -288,14 +280,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
-      query: GET_NEWS_LIST_QUERY,
-      variables: {
-        input: {
-          perPage: 100,
-        },
-      },
-    }),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -318,7 +302,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     newsList,
-    allNews,
     page,
     selectedYear: year ?? null,
     selectedMonth: month,
