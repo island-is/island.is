@@ -6,7 +6,7 @@ export class SentryTransport extends Transport {
     super({ level: 'error' })
   }
 
-  log(info, callback) {
+  log(info: any, callback: () => void) {
     // Checks whether sentry has been initialized
     // https://github.com/getsentry/sentry-go/issues/9
     if (Sentry.getCurrentHub()?.getClient()) {
