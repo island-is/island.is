@@ -24,6 +24,8 @@ import {
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -34,6 +36,16 @@ type TabsProps = {
   link?: string
   animationJson?: string
 }
+
+type LinkUrls = {
+  href: string
+  as: string
+}
+
+export const LEFT = 'Left'
+export const RIGHT = 'Right'
+export const UP = 'Up'
+export const DOWN = 'Down'
 
 export interface FrontpageTabsProps {
   tabs: TabsProps[]
@@ -66,11 +78,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
+  const [initialClientX, setInitialClientX] = useState<number>(0)
+  const [finalClientX, setFinalClientX] = useState<number>(0)
+  const [finalClientY, setFinalClientY] = useState<number>(0)
+
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
+  const { width } = useWindowSize()
 
   useEffect(() => {
     if (!animationDataLoaded.current) {
@@ -108,7 +125,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
     itemsRef.current.forEach((x) => {
       if (x) {
-        height = Math.max(height, x.offsetHeight)
+        height =
+          width < theme.breakpoints.md
+            ? Math.min(height, x.offsetHeight)
+            : Math.max(height, x.offsetHeight)
       }
     })
 
@@ -168,6 +188,25 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }, [selectedIndex, animations])
 
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown, false)
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, false)
+    }
+  }, [])
+
+  const onKeyDown = useCallback((event) => {
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft':
+        goTo('prev')
+        break
+      case 'arrowright':
+        goTo('prev')
+        break
+    }
+  }, [])
+
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
@@ -178,6 +217,91 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         break
       default:
         break
+    }
+  }
+
+  const getDirection = (absX: number, absY: number, deltaX, deltaY) => {
+    if (absX > absY) {
+      if (deltaX > 0) {
+        return LEFT
+      }
+      return RIGHT
+    } else if (deltaY > 0) {
+      return UP
+    }
+    return DOWN
+  }
+
+  const isMouseEvent = <T extends HTMLElement>(
+    event: React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>,
+  ): event is React.MouseEvent<T, MouseEvent> => {
+    return event.nativeEvent instanceof MouseEvent
+  }
+
+  const handleTouchStart = (
+    e:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
+  ) => {
+    const x = isMouseEvent(e) ? e.clientX : e.targetTouches[0].pageX
+    const y = isMouseEvent(e) ? e.clientY : e.targetTouches[0].pageY
+    setInitialClientX(x)
+  }
+
+  const handleTouchMove = (
+    e:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
+  ) => {
+    const x = isMouseEvent(e) ? e.clientX : e.targetTouches[0].pageX
+    const y = isMouseEvent(e) ? e.clientY : e.targetTouches[0].pageY
+
+    setFinalClientX(x)
+    setFinalClientY(y)
+  }
+
+  const handleTouchEnd = (
+    e:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
+  ) => {
+    if (e.cancelable) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
+    const deltaX = finalClientX - initialClientX
+    const deltaY = finalClientY - initialClientX
+    const absX = Math.abs(deltaX)
+    const absY = Math.abs(deltaY)
+
+    if (finalClientX > 10) {
+      if (getDirection(absX, absY, deltaX, deltaY) === LEFT) {
+        goTo('prev')
+      }
+      if (getDirection(absX, absY, deltaX, deltaY) === RIGHT) {
+        goTo('next')
+      }
+    }
+
+    setFinalClientX(0)
+    setInitialClientX(0)
+  }
+
+  const generateUrls = (link: string): LinkUrls => {
+    if (link) {
+      const linkData = JSON.parse(link)
+      const contentId = linkData.sys?.contentType?.sys?.id
+
+      const slug = linkData.fields?.slug
+
+      if (slug && ['article', 'category', 'news'].includes(contentId)) {
+        return {
+          href: makePath(contentId, '/[slug]'),
+          as: makePath(contentId, slug),
+        }
+      }
+      return { href: null, as: null }
     }
   }
 
@@ -219,31 +343,14 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               </TabList>
               <Box className={styles.tabPanelWrapper}>
                 {tabs.map(({ title, subtitle, content, link }, index) => {
-                  let href = null
-                  let as = null
+                  const linkUrls = generateUrls(link)
 
                   const currentIndex = tab.items.findIndex(
                     (x) => x.id === tab.currentId,
                   )
 
                   const visible = currentIndex === index
-
-                  if (link) {
-                    const linkData = JSON.parse(link)
-                    const contentId = linkData.sys?.contentType?.sys?.id
-
-                    const slug = linkData.fields?.slug
-
-                    if (
-                      slug &&
-                      ['article', 'category', 'news', 'page'].includes(
-                        contentId,
-                      )
-                    ) {
-                      href = makePath(contentId, '/[slug]')
-                      as = makePath(contentId, slug)
-                    }
-                  }
+                  const isTabletOrMobile = width < theme.breakpoints.lg
 
                   return (
                     <TabPanel
@@ -261,6 +368,15 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         paddingY={3}
                         ref={(el) => (itemsRef.current[index] = el)}
                         style={{ minHeight: `${minHeight}px` }}
+                        onTouchStart={(e) =>
+                          isTabletOrMobile ? handleTouchStart(e) : null
+                        }
+                        onTouchEnd={(e) =>
+                          isTabletOrMobile ? handleTouchEnd(e) : null
+                        }
+                        onTouchMove={(e) =>
+                          isTabletOrMobile ? handleTouchMove(e) : null
+                        }
                       >
                         <Stack space={3}>
                           <Typography
@@ -276,8 +392,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <Typography variant="p" as="p">
                             <span className={styles.textItem}>{content}</span>
                           </Typography>
-                          {href ? (
-                            <Link as={as} href={href} passHref>
+                          {linkUrls.href ? (
+                            <Link
+                              as={linkUrls.as}
+                              href={linkUrls.href}
+                              passHref
+                            >
                               <Button
                                 variant="text"
                                 icon="arrowRight"
