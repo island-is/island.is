@@ -85,10 +85,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
       >
         <>
           <GridRow>
-            <GridColumn
-              span={'9/9'}
-              paddingBottom={2}
-            >
+            <GridColumn span={'9/9'} paddingBottom={2}>
               <Box marginBottom={2} display="inlineBlock" width="full">
                 <BackgroundImage
                   ratio="12:4"
