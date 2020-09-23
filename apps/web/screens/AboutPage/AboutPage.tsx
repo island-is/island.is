@@ -1,12 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-  FC,
-  ReactNode,
-  useMemo,
-  forwardRef,
-  useState,
-  useEffect,
-} from 'react'
+import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -37,7 +30,6 @@ import {
   GridRow,
   SpanType,
   Tabs,
-  NewsletterSignup,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
