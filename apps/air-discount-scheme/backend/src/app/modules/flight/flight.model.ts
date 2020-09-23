@@ -50,7 +50,7 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   // eslint-disable-next-line
   @ForeignKey(() => Flight)
@@ -58,7 +58,7 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
     type: DataType.UUID,
     allowNull: false,
   })
-  flightId: string
+  flightId!: string
 
   @Column({
     type: DataType.ENUM,
@@ -66,14 +66,14 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
     allowNull: false,
   })
   @ApiProperty()
-  airline: string
+  airline!: string
 
   @Column({
     type: DataType.ENUM,
     values: Object.values(Airlines),
   })
   @ApiProperty()
-  cooperation: string
+  cooperation?: string
 
   // eslint-disable-next-line
   @BelongsTo(() => Flight)
@@ -84,28 +84,28 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
     allowNull: false,
   })
   @ApiProperty()
-  origin: string
+  origin!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  destination: string
+  destination!: string
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   @ApiProperty()
-  originalPrice: number
+  originalPrice!: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   @ApiProperty()
-  discountPrice: number
+  discountPrice!: number
 
   @Column({
     type: DataType.ENUM,
@@ -114,22 +114,22 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
     defaultValue: financialStateMachine.initialState.value,
   })
   @ApiProperty()
-  financialState: string
+  financialState!: string
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
   @ApiProperty()
-  readonly date: Date
+  readonly date!: Date
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }
 
 @Table({ tableName: 'flight' })
@@ -141,37 +141,37 @@ export class Flight extends Model<Flight> implements TFlight {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @Column({
     type: DataType.JSONB,
     allowNull: false,
   })
-  userInfo: UserInfo
+  userInfo!: UserInfo
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  nationalId: string
+  nationalId!: string
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
   @ApiProperty()
-  readonly bookingDate: Date
+  readonly bookingDate!: Date
 
   @HasMany(() => FlightLeg)
   @ApiProperty({ type: [FlightLeg] })
-  flightLegs: FlightLeg[]
+  flightLegs!: FlightLeg[]
 
   @CreatedAt
   @ApiProperty()
-  readonly created: Date
+  readonly created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  readonly modified: Date
+  readonly modified!: Date
 }

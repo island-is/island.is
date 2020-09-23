@@ -3,8 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "types": ["node", "jest", "./types"],
-    "strict": true,
-    "strictPropertyInitialization": false
+    "strict": true
   },
   "include": ["**/*.ts"]
 }
