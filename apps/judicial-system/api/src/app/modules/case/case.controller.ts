@@ -115,7 +115,6 @@ export class CaseController {
   async requestSignature(
     @Param('id') id: string,
     @Req() req,
-    documentToken: string,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 

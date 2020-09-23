@@ -221,5 +221,7 @@ export class CaseService {
   // Not implemented yet
   private sendRulingAsSignedPdf(
     signedPdf: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ) {}
+  ) {
+    // eslint-disable-line @typescript-eslint/no-empty-function
+  }
 }
