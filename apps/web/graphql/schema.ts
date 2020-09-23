@@ -67,6 +67,8 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
+  link: Scalars['String']
+  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -1939,7 +1941,14 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
     stories: Array<
       { __typename?: 'Story' } & Pick<
         Story,
-        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body'
+        | 'title'
+        | 'intro'
+        | 'label'
+        | 'readMoreText'
+        | 'date'
+        | 'body'
+        | 'linkedPage'
+        | 'link'
       > & { logo: { __typename?: 'Image' } & ImageFieldsFragment }
     >
   }
