@@ -139,7 +139,7 @@ export const RenderForm: React.FC<{
       <GridContainer>
         <GridRow>
           <GridColumn
-            offset="1/12"
+            offset={['0', '0', '1/12']}
             span={['12/12', '12/12', '10/12', '10/12', '7/10']}
           >
             <NewsletterSignup

@@ -44,7 +44,7 @@ const NewsletterSignup: React.FC<Props> = ({
       <Typography variant="p" paddingBottom={3}>
         {text}
       </Typography>
-      <Box display="flex">
+      <Box display="flex" flexDirection={['column', 'column', 'row']}>
         <Box className={styles.inputWrap}>
           <Input
             id={id}
@@ -60,8 +60,8 @@ const NewsletterSignup: React.FC<Props> = ({
         </Box>
         <Box
           className={styles.buttonWrap}
-          paddingTop={1}
-          marginLeft={[4, 4, 8]}
+          paddingTop={[2, 2, 1]}
+          marginLeft={[0, 0, 8]}
         >
           <Button variant="text" htmlType="submit">
             {buttonText}
