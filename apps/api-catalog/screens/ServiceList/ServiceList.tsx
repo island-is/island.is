@@ -109,11 +109,7 @@ export default function ServiceList(props:ServiceListProps) {
     let filter:Array<string>;
     switch(categoryValue){
       case PRICING_CATEGORY.FREE:
-      case PRICING_CATEGORY.USAGE:
-      case PRICING_CATEGORY.DAILY:
-      case PRICING_CATEGORY.MONTHLY:
-      case PRICING_CATEGORY.YEARLY: 
-      case PRICING_CATEGORY.CUSTOM: filter = props.parameters.pricing; 
+      case PRICING_CATEGORY.PAID:   filter = props.parameters.pricing; 
                                     break;
       case DATA_CATEGORY.PUBLIC:
       case DATA_CATEGORY.OFFICIAL:
@@ -235,12 +231,8 @@ export default function ServiceList(props:ServiceListProps) {
               </div>
               <div className={cn(styles.filterItem)}>
                 <AccordionItem  id="pricing_category" label="Pricing" labelVariant="sideMenu" iconVariant="default">
-                  <CategoryCheckBox label={PRICING_CATEGORY.FREE}    value={PRICING_CATEGORY.FREE}    checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={PRICING_CATEGORY.USAGE}   value={PRICING_CATEGORY.USAGE}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.USAGE)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={PRICING_CATEGORY.DAILY}   value={PRICING_CATEGORY.DAILY}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.DAILY)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={PRICING_CATEGORY.MONTHLY} value={PRICING_CATEGORY.MONTHLY} checked={props.parameters.pricing.includes(PRICING_CATEGORY.MONTHLY)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={PRICING_CATEGORY.YEARLY}  value={PRICING_CATEGORY.YEARLY}  checked={props.parameters.pricing.includes(PRICING_CATEGORY.YEARLY)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={PRICING_CATEGORY.CUSTOM}  value={PRICING_CATEGORY.CUSTOM}  checked={props.parameters.pricing.includes(PRICING_CATEGORY.CUSTOM)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
+                  <CategoryCheckBox label={PRICING_CATEGORY.FREE}   value={PRICING_CATEGORY.FREE}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
+                  <CategoryCheckBox label={PRICING_CATEGORY.PAID}   value={PRICING_CATEGORY.PAID}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.PAID)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
                 </AccordionItem>
               </div>
               <div className={cn(styles.filterItem)}>
