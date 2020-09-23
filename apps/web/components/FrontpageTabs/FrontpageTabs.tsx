@@ -392,7 +392,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <Typography variant="p" as="p">
                             <span className={styles.textItem}>{content}</span>
                           </Typography>
-                          {linkUrls.href ? (
+                          {linkUrls?.href ? (
                             <Link
                               as={linkUrls.as}
                               href={linkUrls.href}
