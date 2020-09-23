@@ -261,19 +261,19 @@ export const variants = styleMap({
         borderColor: theme.color.blue300,
       },
       [`&${sizes.small}`]: {
-        height: 24,
+        minHeight: 24,
         fontSize: 14,
         lineHeight: 1.142857,
         padding: 0,
       },
       [`&${sizes.medium}`]: {
-        height: 36,
+        minHeight: 36,
         fontSize: 18,
         lineHeight: 1.555555,
         padding: 0,
       },
       [`&${sizes.large}`]: {
-        height: 42,
+        minHeight: 42,
         fontSize: 24,
         lineHeight: 1.416666,
         padding: 0,
