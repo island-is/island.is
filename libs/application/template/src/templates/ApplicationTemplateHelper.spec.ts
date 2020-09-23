@@ -1,8 +1,6 @@
 import * as z from 'zod'
-import {
-  ApplicationTemplate,
-  ApplicationTemplateHelper,
-} from './ApplicationTemplate'
+import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
+import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import {
@@ -34,7 +32,7 @@ const createMockApplication = (
 
 type TestEvents = { type: 'APPROVE' } | { type: 'REJECT' } | { type: 'SUBMIT' }
 
-const TestApplicationTemplate: ApplicationTemplate<
+const testApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<TestEvents>,
   TestEvents
@@ -123,21 +121,21 @@ describe('ApplicationTemplate', () => {
   const application = createMockApplication()
   const templateHelper = new ApplicationTemplateHelper(
     application,
-    TestApplicationTemplate,
+    testApplicationTemplate,
   )
   describe(' getApplicationStateInformation', () => {
     it('should return correct meta data depending on application state', () => {
       expect(templateHelper.getApplicationStateInformation('draft')).toEqual(
-        TestApplicationTemplate.stateMachineConfig.states.draft.meta,
+        testApplicationTemplate.stateMachineConfig.states.draft.meta,
       )
       expect(templateHelper.getApplicationStateInformation('inReview')).toEqual(
-        TestApplicationTemplate.stateMachineConfig.states.inReview.meta,
+        testApplicationTemplate.stateMachineConfig.states.inReview.meta,
       )
       expect(templateHelper.getApplicationStateInformation('approved')).toEqual(
-        TestApplicationTemplate.stateMachineConfig.states.approved.meta,
+        testApplicationTemplate.stateMachineConfig.states.approved.meta,
       )
       expect(templateHelper.getApplicationStateInformation('rejected')).toEqual(
-        TestApplicationTemplate.stateMachineConfig.states.rejected.meta,
+        testApplicationTemplate.stateMachineConfig.states.rejected.meta,
       )
     })
 
@@ -194,7 +192,7 @@ describe('ApplicationTemplate', () => {
       })
       const helper = new ApplicationTemplateHelper(
         applicationWithAnswersAndExternalData,
-        TestApplicationTemplate,
+        testApplicationTemplate,
       )
       const result = helper.getPermittedAnswersAndExternalData('applicant')
       expect(result.answers).toEqual({
@@ -224,7 +222,7 @@ describe('ApplicationTemplate', () => {
       })
       const helper = new ApplicationTemplateHelper(
         applicationWithAnswersAndExternalData,
-        TestApplicationTemplate,
+        testApplicationTemplate,
       )
       expect(
         helper.getPermittedAnswersAndExternalData('noRoleInDraftState'),
@@ -238,7 +236,7 @@ describe('ApplicationTemplate', () => {
       })
       const helper = new ApplicationTemplateHelper(
         applicationWithAnswersAndExternalData,
-        TestApplicationTemplate,
+        testApplicationTemplate,
       )
       expect(helper.getPermittedAnswersAndExternalData('applicant')).toEqual({
         answers: {},
@@ -253,7 +251,7 @@ describe('ApplicationTemplate', () => {
       })
       const helper = new ApplicationTemplateHelper(
         applicationWithAnswersAndExternalData,
-        TestApplicationTemplate,
+        testApplicationTemplate,
       )
       expect(helper.getPermittedAnswersAndExternalData('reviewer')).toEqual({
         answers,
@@ -268,7 +266,7 @@ describe('ApplicationTemplate', () => {
       })
       const helper = new ApplicationTemplateHelper(
         applicationWithAnswersAndExternalData,
-        TestApplicationTemplate,
+        testApplicationTemplate,
       )
       expect(helper.getPermittedAnswersAndExternalData('applicant')).toEqual({
         answers,

@@ -91,7 +91,7 @@ describe('extractPartialSchemaForValues', () => {
     ).not.toThrow()
 
     const badFormValue = {
-      requiredString: null,
+      requiredString: false,
       nested: { deep: { soDeep: { id: 1 } } },
     }
     expect(() =>
@@ -145,7 +145,7 @@ describe('extractPartialSchemaForValues', () => {
     ).not.toThrow()
 
     const badFormValue = {
-      requiredString: null,
+      requiredString: false,
       person: [{ name: 'Name', age: '25' }],
     }
     expect(() =>

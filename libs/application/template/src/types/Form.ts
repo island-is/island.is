@@ -57,6 +57,7 @@ export interface SubSection extends FormItem {
 }
 
 export interface Repeater extends FormItem {
+  readonly id: string
   type: FormItemTypes.REPEATER
   children: FormLeaf[]
   condition?: Condition

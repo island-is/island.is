@@ -8,14 +8,13 @@ export function useNamespaces(namespaces?: string | string[]) {
     loadingMessages,
     messages,
     changeLanguage,
-    lang,
   } = useContext(LocaleContext)
 
   useEffect(() => {
     if (!isEmpty(namespaces)) {
-      loadMessages(namespaces)
+      loadMessages(namespaces as string | string[])
     }
-  }, [])
+  }, [loadMessages, namespaces])
 
   return {
     loadingMessages,

@@ -19,8 +19,8 @@ describe(' ApplicationForm', () => {
     applicant,
     externalId: '123123123',
     state: 'draft',
-    modified: null,
-    created: null,
+    modified: new Date(),
+    created: new Date(),
   }
 
   it('should render successfully', async () => {
@@ -42,7 +42,6 @@ describe(' ApplicationForm', () => {
   })
 
   it('should render the application title', async () => {
-    let getByText
     await act(async () => {
       const wrapper = await render(
         <ApolloProvider client={client}>
@@ -54,8 +53,7 @@ describe(' ApplicationForm', () => {
           </LocaleProvider>
         </ApolloProvider>,
       )
-      getByText = wrapper.getByText
+      expect(wrapper.getByText(`Fæðingarorlof`)).toBeInTheDocument()
     })
-    expect(getByText(`Fæðingarorlof`)).toBeInTheDocument()
   })
 })

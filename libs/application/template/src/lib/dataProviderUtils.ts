@@ -30,7 +30,7 @@ function callProvider(
 
 export async function callDataProviders(
   dataProviders: DataProvider[],
-  application: Application | undefined,
+  application: Application,
 ): Promise<DataProviderResult[]> {
   // TODO what about options to pass to each data provider?
   const promises = dataProviders.map((p) =>

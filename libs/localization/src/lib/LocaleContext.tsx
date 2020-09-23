@@ -10,7 +10,7 @@ export type Locale = 'is' | 'en'
 export const supportedLocales = ['is', 'en']
 export const defaultLanguage: Locale = 'is'
 
-interface MessagesDict {
+export interface MessagesDict {
   [key: string]: string
 }
 
@@ -29,7 +29,14 @@ interface LocaleProviderProps {
   children: React.ReactElement
 }
 
-export const LocaleContext = createContext<LocaleContextType | null>(null)
+export const LocaleContext = createContext<LocaleContextType>({
+  lang: 'is',
+  loadMessages: () => undefined,
+  changeLanguage: () => undefined,
+  loadingMessages: true,
+  loadedNamespaces: [],
+  messages: {},
+})
 
 const GET_TRANSLATIONS = gql`
   query GetTranslations($input: GetTranslationsInput!) {

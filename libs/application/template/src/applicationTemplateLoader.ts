@@ -1,5 +1,6 @@
 import * as templates from './templates/'
 import { ApplicationTypes } from './types/ApplicationTypes'
+import { ApplicationTemplate } from './types/ApplicationTemplate'
 import { Application } from './types/Application'
 import {
   ApplicationContext,
@@ -7,10 +8,7 @@ import {
   ApplicationStateSchema,
 } from './types/StateMachine'
 import { EventObject } from 'xstate'
-import {
-  ApplicationTemplate,
-  ApplicationTemplateHelper,
-} from './templates/ApplicationTemplate'
+import { ApplicationTemplateHelper } from './templates/ApplicationTemplateHelper'
 
 export function getApplicationTemplateByTypeId<
   TContext extends ApplicationContext,
@@ -19,7 +17,11 @@ export function getApplicationTemplateByTypeId<
 >(
   templateId: ApplicationTypes,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> | null {
-  return templates[templateId] || null
+  return (
+    (templates as {
+      [key: string]: ApplicationTemplate<TContext, TStateSchema, TEvents>
+    })[templateId] || null
+  )
 }
 
 export function getApplicationStateInformation(
@@ -30,5 +32,5 @@ export function getApplicationStateInformation(
     return null
   }
   const helper = new ApplicationTemplateHelper(application, template)
-  return helper.getApplicationStateInformation()
+  return helper.getApplicationStateInformation() || null
 }

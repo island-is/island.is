@@ -178,7 +178,7 @@ describe('reducerUtils', () => {
     })
   })
   describe('find current screen', () => {
-    const buildIntroScreen = (id, isNavigable = true) => ({
+    const buildIntroScreen = (id: string, isNavigable = true) => ({
       ...buildIntroductionField({
         id,
         name: 'Introduction',
@@ -186,7 +186,7 @@ describe('reducerUtils', () => {
       }),
       isNavigable,
     })
-    const buildTextScreen = (id, isNavigable = true) => ({
+    const buildTextScreen = (id: string, isNavigable = true) => ({
       ...buildTextField({
         id: id,
         name: 'What is the family name?',

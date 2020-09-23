@@ -39,7 +39,6 @@ export function buildCheckboxField(data: {
   } = data
   return {
     children: undefined,
-    isQuestion: true,
     required,
     disabled,
     width,
@@ -74,7 +73,6 @@ export function buildDateField(data: {
   } = data
   return {
     children: undefined,
-    isQuestion: true,
     condition,
     id,
     required,
@@ -126,7 +124,6 @@ export function buildRadioField(data: {
   } = data
   return {
     children: undefined,
-    isQuestion: true,
     required,
     disabled,
     width,
@@ -161,7 +158,6 @@ export function buildSelectField(data: {
   } = data
   return {
     children: undefined,
-    isQuestion: true,
     placeholder,
     required,
     disabled,
@@ -196,7 +192,6 @@ export function buildTextField(data: {
     required,
     disabled,
     width,
-    isQuestion: true,
     condition,
     id,
     name,
@@ -219,7 +214,6 @@ export function buildCustomField(
   return {
     children: undefined,
     required,
-    isQuestion: true,
     condition,
     id,
     name,
@@ -256,7 +250,6 @@ export function buildFileUploadField(data: {
   return {
     children: undefined,
     required,
-    isQuestion: true,
     condition,
     id,
     name,

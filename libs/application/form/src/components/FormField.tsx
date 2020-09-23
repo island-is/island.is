@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { FieldDef } from '../types'
+import { FieldComponentProps, FieldDef } from '../types'
 import { getValueViaPath } from '../utils'
 import { getComponentByName } from './componentLoader'
 import { FormValue } from '@island.is/application/template'
@@ -33,7 +33,9 @@ const FormField: FC<{
     showFieldName,
   }
 
-  const Component = getComponentByName(field.component)
+  const Component = getComponentByName(field.component) as FC<
+    FieldComponentProps
+  > | null
   if (Component === null) {
     return <p>We have not implemented this field yet {field.type}</p>
   }
