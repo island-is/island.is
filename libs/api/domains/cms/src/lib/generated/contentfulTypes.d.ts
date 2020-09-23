@@ -13,6 +13,9 @@ export interface IAboutSubPageFields {
   /** Description */
   description?: string | undefined
 
+  /** subDescription */
+  subDescription?: string | undefined
+
   /** Content */
   content: Document
 }
@@ -1457,6 +1460,58 @@ export interface ITabSection extends Entry<ITabSectionFields> {
   }
 }
 
+export interface ITeamListFields {
+  /** Team members */
+  teamMembers?: ITeamMember[] | undefined
+}
+
+/** list of team members */
+
+export interface ITeamList extends Entry<ITeamListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'teamList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITeamMemberFields {
+  /** Name */
+  name: string
+
+  /** Title */
+  title: string
+
+  /** Mynd */
+  mynd: Asset
+}
+
+export interface ITeamMember extends Entry<ITeamMemberFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'teamMember'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -1927,6 +1982,8 @@ export type CONTENT_TYPE =
   | 'subArticle'
   | 'tabContent'
   | 'tabSection'
+  | 'teamList'
+  | 'teamMember'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
