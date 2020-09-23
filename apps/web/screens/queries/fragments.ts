@@ -14,6 +14,7 @@ export const slices = gql`
 
   fragment AssetFields on Asset {
     __typename
+    typename
     id
     title
     url

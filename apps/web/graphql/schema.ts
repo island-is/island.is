@@ -1903,7 +1903,7 @@ export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
 
 export type AssetFieldsFragment = { __typename: 'Asset' } & Pick<
   Asset,
-  'id' | 'title' | 'url' | 'contentType'
+  'typename' | 'id' | 'title' | 'url' | 'contentType'
 >
 
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
