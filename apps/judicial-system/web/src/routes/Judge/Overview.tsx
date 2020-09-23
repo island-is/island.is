@@ -41,7 +41,6 @@ export const JudgeOverview: React.FC = () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
       setWorkingCase(currentCase.case)
-      console.log(currentCase.case)
     }
 
     if (id) {
@@ -57,7 +56,9 @@ export const JudgeOverview: React.FC = () => {
             <Logo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1">Krafa um gæsluvarðhald</Typography>
+            <Typography as="h1" variant="h1">
+              Krafa um gæsluvarðhald
+            </Typography>
           </GridColumn>
         </GridRow>
         <GridRow>
@@ -202,13 +203,14 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {workingCase?.custodyRestrictions
-                      .map(
-                        (restriction: CustodyRestrictions) =>
-                          `${getRestrictionByValue(restriction)}`,
-                      )
-                      .toString()
-                      .replace(',', ', ')}
+                    {workingCase?.custodyRestrictions?.length > 0 &&
+                      workingCase?.custodyRestrictions
+                        .map(
+                          (restriction: CustodyRestrictions) =>
+                            `${getRestrictionByValue(restriction)}`,
+                        )
+                        .toString()
+                        .replace(',', ', ')}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem

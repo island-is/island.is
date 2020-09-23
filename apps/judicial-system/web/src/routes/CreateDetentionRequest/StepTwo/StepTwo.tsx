@@ -196,17 +196,9 @@ export const StepTwo: React.FC = () => {
   ]
 
   useEffect(() => {
-    api.saveCase(
-      window.localStorage.getItem('caseId'),
-      parseString('state', CaseState.SUBMITTED),
-    )
-    updateState(
-      workingCase,
-      'id',
-      window.localStorage.getItem('caseId'),
-      setWorkingCase,
-    )
-  }, [])
+    const caseId = workingCase.id
+    api.saveCase(caseId, parseString('state', CaseState.SUBMITTED))
+  }, [workingCase.id])
 
   return (
     <Box marginTop={7} marginBottom={30}>
