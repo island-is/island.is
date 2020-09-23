@@ -3,12 +3,9 @@ import { Injectable } from '@nestjs/common'
 import { Role, AuthUser } from './auth.types'
 
 const DEVELOPERS = [
-  /* Vice Versa */
-  '1501933119', // Darri
-  '2101932009', // David
-
-  /* Kosmos & Kaos */
-  '2501893469', // Brian
+  /* Deloitte */
+  '2811638099', // Tómas
+  '0301665909', // Sigurgeir
 ]
 
 const ADMINS = [
