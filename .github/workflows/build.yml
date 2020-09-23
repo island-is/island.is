@@ -157,14 +157,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files-23092020-1135
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**') }}-generated-files
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
-
-      - name: debug directory
-        run: ls apps/air-discount-scheme/web/graphql/
 
       - name: Security audit Node modules
         run: yarn run security-audit
@@ -276,7 +273,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files-23092020-1135
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -288,12 +285,10 @@ jobs:
           buildx-version: v0.4.1
           qemu-version: latest
 
-      - name: debug directory
-        run: ls apps/air-discount-scheme/web/graphql/
-
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh test
+
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
 
@@ -341,7 +336,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files-23092020-1135
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz

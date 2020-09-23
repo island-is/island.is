@@ -8,4 +8,4 @@ shift
 
 $CMD "$@" 1>&2
 
-find $DIR/apps -type f -newer $marker
+find $DIR/apps $DIR/libs -type f -newer $marker
