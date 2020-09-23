@@ -4,6 +4,8 @@ const routes = {
   is: {
     article: '',
     Article: '',
+    page: 'stofnanir', // quick fix for launch
+    Page: 'stofnanir',
     category: 'flokkur',
     ArticleCategory: 'flokkur',
     ContentCategory: 'flokkur',
@@ -16,6 +18,8 @@ const routes = {
   en: {
     article: '',
     Article: '',
+    page: 'organizations',
+    Page: 'organizations',
     category: 'category',
     ArticleCategory: 'category',
     ContentCategory: 'category',
