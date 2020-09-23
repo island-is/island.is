@@ -12,11 +12,16 @@ export const FixedNav: FC = () => {
 
   useScrollPosition(
     ({ prevPos, currPos }) => {
-      if (prevPos.y > currPos.y) {
-        setShow(false)
-      } else {
-        setShow(-100 > currPos.y)
+      let px = -600
+
+      if (typeof window !== `undefined`) {
+        px = window.innerHeight * -1
       }
+
+      const goingDown = currPos.y < prevPos.y
+      const canShow = px > currPos.y
+
+      setShow(canShow && !goingDown)
     },
     [setShow],
     null,

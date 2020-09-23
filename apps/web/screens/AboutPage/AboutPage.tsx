@@ -14,6 +14,7 @@ import {
   EmailSignup,
   LogoList,
   BulletList,
+  DrawerMenu,
 } from '@island.is/web/components'
 import {
   Typography,
@@ -145,8 +146,25 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [currentSliceId, navigate] = useScrollSpy(ids, { marginTop: 220 })
 
+  const mobileNavigation = navigation.map((x) => ({
+    title: x.text,
+    url: '#' + x.id,
+  }))
+
   return (
     <Background id={slice.id} theme={page.theme}>
+      {!!mobileNavigation.length && (
+        <Box display={['block', 'block', 'block', 'none']} paddingBottom={4}>
+          <DrawerMenu
+            categories={[
+              {
+                title: 'Efnisyfirlit',
+                items: mobileNavigation,
+              },
+            ]}
+          />
+        </Box>
+      )}
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Box marginBottom={[8, 8, 8, 15]}>

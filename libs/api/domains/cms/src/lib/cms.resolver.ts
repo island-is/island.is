@@ -58,6 +58,8 @@ import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.inpu
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
 import { GetSingleArticleInput } from './dto/getSingleArticle.input'
+import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
+import { AboutSubPage } from './models/aboutSubPage.model'
 
 const { cacheTime } = environment
 
@@ -102,6 +104,14 @@ export class CmsResolver {
     @Args('input') input: GetAboutPageInput,
   ): Promise<AboutPage | null> {
     return this.cmsContentfulService.getAboutPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => AboutSubPage, { nullable: true })
+  getAboutSubPage(
+    @Args('input') input: GetAboutSubPageInput,
+  ): Promise<AboutSubPage | null> {
+    return this.cmsContentfulService.getAboutSubPage(input)
   }
 
   @Directive(cacheControlDirective())

@@ -48,6 +48,9 @@
             "name": "TabSection"
           },
           {
+            "name": "TeamList"
+          },
+          {
             "name": "Html"
           },
           {

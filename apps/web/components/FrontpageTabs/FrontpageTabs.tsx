@@ -236,7 +236,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                     if (
                       slug &&
-                      ['article', 'category', 'news'].includes(contentId)
+                      ['article', 'category', 'news', 'page'].includes(
+                        contentId,
+                      )
                     ) {
                       href = makePath(contentId, '/[slug]')
                       as = makePath(contentId, slug)

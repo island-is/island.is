@@ -22,6 +22,16 @@ export class UserService {
       {
         nationalId: '2408783999',
         name: 'Baldur Kristjánsson',
+        roles: [UserRole.PROSECUTOR],
+      },
+      {
+        nationalId: '1010882949',
+        name: 'Ingunn Róbertsdóttir',
+        roles: [UserRole.PROSECUTOR, UserRole.JUDGE],
+      },
+      {
+        nationalId: '1103862819',
+        name: 'Anna Signý Guðbjörnsdóttir',
         roles: [UserRole.PROSECUTOR, UserRole.JUDGE],
       },
     ]
