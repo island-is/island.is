@@ -18,11 +18,11 @@ class Cache {
     this.client = client
   }
 
-  get(key: string): Promise<string> {
+  get(key: string): Promise<string | null> {
     return this.client.get(key)
   }
 
-  set(key: string, value: string): Promise<string> {
+  set(key: string, value: string): Promise<string | null> {
     return this.client.set(key, value)
   }
 
@@ -45,7 +45,7 @@ const parseNodes = (nodes: string[]): ClusterNode[] =>
 const getRedisClusterOptions = (
   options: Options,
 ): RedisOptions | ClusterOptions => {
-  const redisOptions = {}
+  const redisOptions: RedisOptions = {}
   if (options.ssl) {
     redisOptions['tls'] = {}
   }
@@ -54,7 +54,7 @@ const getRedisClusterOptions = (
     keyPrefix: `${options.name}:`,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
-    dnsLookup: (address, callback) => callback(null, address, null),
+    dnsLookup: (address, callback) => callback(null, address, 0),
     redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
@@ -63,6 +63,7 @@ const getRedisClusterOptions = (
         // Only reconnect when the error starts with "READONLY"
         return true
       }
+      return false
     },
     retryStrategy: (times) => {
       logger.info(`Redis Retry: ${times}`)
