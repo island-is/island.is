@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { logger } from '@island.is/logging'
+
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { TagCount } from './models/tagCount'
 import { ContentLanguage } from './enums/contentLanguage.enum'
-import { SearcherService } from '@island.is/api/schema'
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
-import { logger } from '@island.is/logging'
 
 @Injectable()
-export class ContentSearchService implements SearcherService {
+export class ContentSearchService {
   constructor(private elasticService: ElasticService) {}
 
   private getIndex(lang: ContentLanguage) {
@@ -31,6 +32,19 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
+  mapFindAggregations(aggregations): TagCount[] {
+    if (!aggregations) {
+      return null
+    }
+    return aggregations.groupBy.filtered.groupByCount.buckets.map(
+      (tagObject) => ({
+        key: tagObject.key,
+        count: tagObject.doc_count,
+        value: tagObject.groupByValue.buckets?.[0]?.key ?? '', // value of tag is allways the first value here we provide default value since value is optional
+      }),
+    )
+  }
+
   async find(query: SearcherInput): Promise<SearchResult> {
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
@@ -41,6 +55,7 @@ export class ContentSearchService implements SearcherService {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
+      tagCounts: this.mapFindAggregations(body.aggregations),
     }
   }
 

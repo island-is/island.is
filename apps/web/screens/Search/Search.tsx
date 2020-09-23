@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Screen } from '../../types'
@@ -40,6 +40,7 @@ import {
   Article,
   LifeEventPage,
   SearchableContentTypes,
+  SearchableTags,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 
@@ -62,6 +63,11 @@ const Search: Screen<CategoryProps> = ({
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const [sidebarCategories, setSidebarCategories] = useState([])
+  const [
+    grandTotalSearchResultCount,
+    setGrandTotalSearchResultCount,
+  ] = useState(10)
   const { makePath } = routeNames(activeLocale)
 
   const filters = {
@@ -75,31 +81,20 @@ const Search: Screen<CategoryProps> = ({
     }
   }, [searchRef])
 
-  const sidebarCategories = (searchResults.items as Article[]).reduce(
-    (all, cur) => {
-      const key = cur.category?.slug ?? 'uncategorized'
-      const item = all.find((x) => x.key === key)
-
-      if (!item) {
-        all.push({
+  useEffect(() => {
+    // we only update the tagCount results when we get new tag count results
+    if (Array.isArray(searchResults.tagCounts)) {
+      const newTagCountResults = searchResults.tagCounts.map(
+        ({ key, count: total, value: title }) => ({
           key,
-          total: 1,
-          title: cur.category.title ?? '',
-        })
-      } else {
-        item.total += 1
-      }
-
-      return all
-    },
-    [
-      {
-        key: 'uncategorized',
-        total: 0,
-        title: n('uncategorized'),
-      },
-    ],
-  )
+          total,
+          title,
+        }),
+      )
+      setSidebarCategories(newTagCountResults)
+      setGrandTotalSearchResultCount(searchResults.total)
+    }
+  }, [searchResults.tagCounts])
 
   const getLabels = (item) => {
     const labels = []
@@ -184,9 +179,7 @@ const Search: Screen<CategoryProps> = ({
     ? { label: categoryTitle, value: categorySlug }
     : { label: 'Allir flokkar', value: '' }
 
-  const resultsCountToShow = categoryTitle
-    ? filteredItems.length
-    : totalSearchResults
+  const resultsCountToShow = totalSearchResults
   return (
     <>
       <Head>
@@ -218,7 +211,7 @@ const Search: Screen<CategoryProps> = ({
                       text={`${n(
                         'allCategories',
                         'Allir flokkar',
-                      )} (${totalSearchResults})`}
+                      )} (${grandTotalSearchResultCount})`}
                     />
                   </div>
                   <SidebarAccordion
@@ -360,7 +353,16 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
+  const category = single(query.category) || ''
   const page = Number(single(query.page)) || 1
+
+  let tags = {}
+  let countTag = {}
+  if (category) {
+    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
+  } else {
+    countTag = { countTag: 'category' as SearchableTags }
+  }
 
   const [
     {
@@ -375,10 +377,12 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types: [
-            SearchableContentTypes['WebArticle'],
-            SearchableContentTypes['WebLifeEventPage'],
+            'webArticle' as SearchableContentTypes,
+            'webLifeEventPage' as SearchableContentTypes,
           ],
           size: PerPage,
+          ...tags,
+          ...countTag,
           page,
         },
       },

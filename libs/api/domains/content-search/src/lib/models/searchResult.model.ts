@@ -5,6 +5,7 @@ import {
   LifeEventPage,
   News,
 } from '@island.is/api/domains/cms'
+import { TagCount } from './tagCount'
 
 const types = {
   webArticle: Article,
@@ -26,6 +27,9 @@ export class SearchResult {
 
   @Field(() => [Items])
   items: Array<typeof Items>
+
+  @Field(() => [TagCount], { nullable: true })
+  tagCounts?: TagCount[]
 }
 
 // TODO: Classes form multiple classes can conflict here, look into adding namespace prefixes to classes

@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 8,
+  "version": 9,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -89,7 +89,12 @@
           },
           "value": {
             "type": "text",
-            "analyzer": "baseIcelandic"
+            "analyzer": "baseIcelandic",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "type": {
             "type": "keyword"
