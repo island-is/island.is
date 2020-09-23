@@ -22,7 +22,7 @@ export interface ApplicationTemplate<
   readonly dataSchema: Schema
   readonly dataProviders: DataProvider[]
   readonly stateMachineConfig: MachineConfig<TContext, TStateSchema, TEvents>
-  mapNationalRegistryIdToRole(id: string, state: string): ApplicationRole
+  mapUserToRole(id: string, state: string): ApplicationRole
 }
 
 export class ApplicationTemplateHelper<
