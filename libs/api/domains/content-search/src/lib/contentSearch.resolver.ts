@@ -9,7 +9,7 @@ import { SearcherInput } from './dto/searcher.input'
 
 @Resolver()
 export class ContentSearchResolver {
-  constructor(private contentSearchService: ContentSearchService) { }
+  constructor(private contentSearchService: ContentSearchService) {}
 
   @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
