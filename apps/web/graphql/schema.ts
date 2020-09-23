@@ -188,6 +188,7 @@ export type Slice =
   | TeamList
   | Html
   | Image
+  | Asset
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
@@ -322,6 +323,15 @@ export type TeamList = {
   typename: Scalars['String']
   id: Scalars['ID']
   teamMembers: Array<TeamMember>
+}
+
+export type Asset = {
+  __typename?: 'Asset'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
 }
 
 export type Article = {
@@ -1202,6 +1212,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
         | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
         | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+        | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
       >
     }
 }
@@ -1255,6 +1266,7 @@ export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1320,6 +1332,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1376,6 +1389,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                 | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
                 | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
                 | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+                | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
               >
             }
         >
@@ -1487,6 +1501,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1529,6 +1544,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1885,6 +1901,11 @@ export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
   'typename' | 'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
 >
 
+export type AssetFieldsFragment = { __typename: 'Asset' } & Pick<
+  Asset,
+  'id' | 'title' | 'url' | 'contentType'
+>
+
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
   TimelineSlice,
   'typename' | 'id' | 'title'
@@ -2114,6 +2135,10 @@ export type AllSlicesImageFragment = {
   __typename?: 'Image'
 } & ImageFieldsFragment
 
+export type AllSlicesAssetFragment = {
+  __typename?: 'Asset'
+} & AssetFieldsFragment
+
 export type AllSlicesFragment =
   | AllSlicesTimelineSliceFragment
   | AllSlicesMailingListSignupSliceFragment
@@ -2132,3 +2157,4 @@ export type AllSlicesFragment =
   | AllSlicesTeamListFragment
   | AllSlicesHtmlFragment
   | AllSlicesImageFragment
+  | AllSlicesAssetFragment

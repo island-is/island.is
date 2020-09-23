@@ -143,7 +143,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | Html | Image
+union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | Html | Image | Asset
 
 type MailingListSignupSlice {
   typename: String!
@@ -262,6 +262,14 @@ type TeamList {
   typename: String!
   id: ID!
   teamMembers: [TeamMember!]!
+}
+
+type Asset {
+  typename: String!
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
 }
 
 type Article {
