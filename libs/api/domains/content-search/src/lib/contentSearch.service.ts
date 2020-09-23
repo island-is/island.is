@@ -5,15 +5,15 @@ import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
 import {
-  SearcherService,
   WebSearchAutocompleteInput,
 } from '@island.is/api/schema'
 import { SearcherInput } from './dto/searcher.input'
 import { logger } from '@island.is/logging'
+import { TagCount } from './models/tagCount'
 
 @Injectable()
-export class ContentSearchService implements SearcherService {
-  constructor(private elasticService: ElasticService) {}
+export class ContentSearchService {
+  constructor(private elasticService: ElasticService) { }
 
   private getIndex(lang: ContentLanguage) {
     const languageCode = ContentLanguage[lang]
@@ -33,6 +33,17 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
+  mapFindAggregations(aggregations): TagCount[] {
+    if (!aggregations) {
+      return null
+    }
+    return aggregations.groupBy.filtered.groupByCount.buckets.map((tagObject) => ({
+      key: tagObject.key,
+      count: tagObject.doc_count,
+      value: tagObject.groupByValue.buckets?.[0]?.key ?? '' // value of tag is allways the first value here we provide default value since value is optional
+    }))
+  }
+
   async find(query: SearcherInput): Promise<SearchResult> {
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
@@ -43,6 +54,7 @@ export class ContentSearchService implements SearcherService {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
+      tagCounts: this.mapFindAggregations(body.aggregations)
     }
   }
 

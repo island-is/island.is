@@ -142,14 +142,14 @@ export class ElasticService {
   }
 
   async search(index: SearchIndexes, query: SearcherInput) {
-    const { queryString, size, page, types } = query
+    const { queryString, size, page, types, tags, countTag } = query
 
-    const requestBody = searchQuery({ queryString, size, page, types })
-    const data = await this.findByQuery<
+    const requestBody = searchQuery({ queryString, size, page, types, tags, countTag })
+
+    return this.findByQuery<
       SearchResponse<MappedData>,
       typeof requestBody
     >(index, requestBody)
-    return data
   }
 
   async fetchAutocompleteTerm(

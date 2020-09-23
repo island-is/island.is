@@ -462,15 +462,6 @@ type Url {
 
 union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
-type AboutSubPage {
-  id: ID!
-  title: String!
-  slug: String!
-  description: String!
-  subDescription: String!
-  slices: [Slice!]!
-}
-
 type SearchResult {
   total: Int!
   items: [Items!]!
@@ -564,7 +555,6 @@ type Query {
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
-  getAboutSubPage(input: GetAboutSubPageInput!): AboutSubPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
@@ -625,11 +615,6 @@ input GetNamespaceInput {
 }
 
 input GetAboutPageInput {
-  lang: String!
-}
-
-input GetAboutSubPageInput {
-  slug: String!
   lang: String!
 }
 

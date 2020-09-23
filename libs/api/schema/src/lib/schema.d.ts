@@ -557,6 +557,7 @@ export type Url = {
 
 export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
+<<<<<<< HEAD
 export type AboutSubPage = {
   __typename?: 'AboutSubPage'
   id: Scalars['ID']
@@ -565,12 +566,20 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
+=======
+export type TagCount = {
+  __typename?: 'TagCount'
+  key: Scalars['String']
+  value: Scalars['String']
+  count: Scalars['Int']
+>>>>>>> 24d81753... gst
 }
 
 export type SearchResult = {
   __typename?: 'SearchResult'
   total: Scalars['Int']
   items: Array<Items>
+  tagCounts?: Maybe<Array<TagCount>>
 }
 
 export type Items = Article | LifeEventPage | News | AboutPage
@@ -980,6 +989,8 @@ export type SearcherInput = {
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
+  tags?: Maybe<Array<Tag>>
+  countTag?: Maybe<SearchableTags>
 }
 
 export enum SearchableContentTypes {
@@ -992,6 +1003,15 @@ export enum SearchableContentTypes {
 export enum ContentLanguage {
   is = 'is',
   en = 'en',
+}
+
+export type Tag = {
+  type: SearchableTags
+  key: Scalars['String']
+}
+
+export enum SearchableTags {
+  category = 'category',
 }
 
 export type ItemInput = {
@@ -1364,9 +1384,13 @@ export type ResolversTypes = {
     | ResolversTypes['ArticleCategory']
     | ResolversTypes['News']
     | ResolversTypes['LifeEventPage']
+<<<<<<< HEAD
   AboutSubPage: ResolverTypeWrapper<
     Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
+=======
+  TagCount: ResolverTypeWrapper<TagCount>
+>>>>>>> 24d81753... gst
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
@@ -1415,6 +1439,8 @@ export type ResolversTypes = {
   SearcherInput: SearcherInput
   SearchableContentTypes: SearchableContentTypes
   ContentLanguage: ContentLanguage
+  Tag: Tag
+  SearchableTags: SearchableTags
   ItemInput: ItemInput
   ItemType: ItemType
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
@@ -1545,9 +1571,13 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ArticleCategory']
     | ResolversParentTypes['News']
     | ResolversParentTypes['LifeEventPage']
+<<<<<<< HEAD
   AboutSubPage: Omit<AboutSubPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
+=======
+  TagCount: TagCount
+>>>>>>> 24d81753... gst
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
@@ -1593,6 +1623,7 @@ export type ResolversParentTypes = {
   GetSingleNewsInput: GetSingleNewsInput
   GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
+  Tag: Tag
   ItemInput: ItemInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
@@ -2529,6 +2560,7 @@ export type UrlPageResolvers<
   >
 }
 
+<<<<<<< HEAD
 export type AboutSubPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AboutSubPage'] = ResolversParentTypes['AboutSubPage']
@@ -2539,6 +2571,15 @@ export type AboutSubPageResolvers<
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   subDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+=======
+export type TagCountResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TagCount'] = ResolversParentTypes['TagCount']
+> = {
+  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+>>>>>>> 24d81753... gst
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2548,6 +2589,11 @@ export type SearchResultResolvers<
 > = {
   total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   items?: Resolver<Array<ResolversTypes['Items']>, ParentType, ContextType>
+  tagCounts?: Resolver<
+    Maybe<Array<ResolversTypes['TagCount']>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3039,7 +3085,11 @@ export type Resolvers<ContextType = Context> = {
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
   Url?: UrlResolvers<ContextType>
   UrlPage?: UrlPageResolvers<ContextType>
+<<<<<<< HEAD
   AboutSubPage?: AboutSubPageResolvers<ContextType>
+=======
+  TagCount?: TagCountResolvers<ContextType>
+>>>>>>> 24d81753... gst
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>

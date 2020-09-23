@@ -1,7 +1,9 @@
 {
   "order": 0,
-  "version": 8,
-  "index_patterns": ["island-is-v*"],
+  "version": 9,
+  "index_patterns": [
+    "island-is-v*"
+  ],
   "settings": {
     "analysis": {
       "filter": {
@@ -47,7 +49,10 @@
         "termIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": ["lowercase", "icelandicSynonym"]
+          "filter": [
+            "lowercase",
+            "icelandicSynonym"
+          ]
         }
       }
     }
@@ -89,7 +94,12 @@
           },
           "value": {
             "type": "text",
-            "analyzer": "baseIcelandic"
+            "analyzer": "baseIcelandic",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "type": {
             "type": "keyword"

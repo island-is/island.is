@@ -132,6 +132,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           }
         }
       }
+      tagCounts {
+        key
+        value
+        count
+      }
     }
   }
 `
