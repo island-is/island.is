@@ -266,7 +266,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
               }}
             </Sidebar>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+          <GridColumn span={mainContentSpanFull}>
             {(slice.slices as AvailableSlices[]).map((slice) => (
               <Section key={slice.id} slice={slice} />
             ))}
