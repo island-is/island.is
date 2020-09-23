@@ -14,7 +14,7 @@ const guessVisibleSection = (
 
   return ids.reduce((match, id) => {
     const el = document.getElementById(id)
-    // so we dlont throw an error if the element is not found
+    // so we dont throw an error if the element is not found
     if (!el) {
       return '0'
     }
