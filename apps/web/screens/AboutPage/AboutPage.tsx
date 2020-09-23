@@ -48,10 +48,13 @@ import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { RenderForm } from './RenderForm'
 
+const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
 const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
 const mainContentIndent: SpanType = [null, null, null, '1/12']
 const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
+const nestedSpanWithOffset: SpanType = ['9/9', '9/9', '9/9', '7/9']
+const nestedOffset: SpanType = [null, null, null, '1/9']
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -174,71 +177,99 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
           </Box>
         </ColorSchemeContext.Provider>
         <GridRow>
-          <GridColumn
-            offset={mainContentIndent}
-            span={mainContentSpanWithIndent}
-          >
-            <Stack space={2}>
-              <Breadcrumbs color="blue300" separatorColor="blue300">
-                <Link href={makePath()}>Ísland.is</Link>
-                <span>{page.title}</span>
-              </Breadcrumbs>
-              <Typography variant="h1" as="h1" color="white">
-                {slice.title}
-              </Typography>
-              <Typography variant="p" as="p" color="white">
-                {slice.introduction}
-              </Typography>
-            </Stack>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
-            {(slice.slices as AvailableSlices[]).map((slice) => (
-              <Section key={slice.id} slice={slice} />
-            ))}
+          <GridColumn span={mainContentSpanFull}>
+            <GridRow>
+              <GridColumn offset={nestedOffset} span={nestedSpanWithOffset}>
+                <Stack space={2}>
+                  <Breadcrumbs color="blue300" separatorColor="blue300">
+                    <Link href={makePath()}>Ísland.is</Link>
+                    <span>{page.title}</span>
+                  </Breadcrumbs>
+                  <Typography variant="h1" as="h1" color="white">
+                    {slice.title}
+                  </Typography>
+                  <Typography variant="p" as="p" color="white">
+                    {slice.introduction}
+                  </Typography>
+                </Stack>
+              </GridColumn>
+            </GridRow>
           </GridColumn>
           <GridColumn span={sidebarContentSpan} position="none">
             <Sidebar
               title={page.title}
               type={decideSidebarType(page, currentSliceId)}
             >
-              {({ bulletRef, colors }) => (
-                <>
-                  {navigation.map(({ id, text }, index) => (
-                    <Box key={index} paddingBottom={index === 0 ? 2 : 0}>
-                      <a
-                        ref={id === currentSliceId ? bulletRef : null}
-                        href={'#' + id}
-                        onClick={() => navigate(id)}
-                      >
-                        <Typography
-                          variant={index === 0 ? 'p' : 'pSmall'}
-                          as="p"
-                          color={colors.main}
-                        >
-                          {id === currentSliceId ? <b>{text}</b> : text}
-                        </Typography>
-                      </a>
+              {({ bulletRef, colors }) => {
+                const [navigationTitle, ...navigationList] = navigation
+                return (
+                  <>
+                    {}
+                    <Box
+                      component="a"
+                      ref={
+                        navigationTitle.id === currentSliceId ? bulletRef : null
+                      }
+                      href={'#' + navigationTitle.id}
+                      onClick={() => navigate(navigationTitle.id)}
+                      paddingBottom={2}
+                      display="inlineBlock"
+                    >
+                      <Typography variant="p" color={colors.main}>
+                        {navigationTitle.id === currentSliceId ? (
+                          <b>{navigationTitle.text}</b>
+                        ) : (
+                          navigationTitle.text
+                        )}
+                      </Typography>
                     </Box>
-                  ))}
-                  {slice.links.map(({ url, text }, index) => (
-                    <span key={index}>
-                      <Box paddingY={2}>
-                        <Divider weight={colors.divider} />
-                      </Box>
-                      <Link href={url}>
-                        <Typography
-                          variant="p"
-                          as="div"
-                          color={colors.secondary}
-                        >
-                          {text}
-                        </Typography>
-                      </Link>
-                    </span>
-                  ))}
-                </>
-              )}
+                    <Box
+                      borderLeftWidth="standard"
+                      borderColor={colors.subNavBorder}
+                      paddingLeft={2}
+                    >
+                      {navigationList.map(({ id, text }, index) => (
+                        <Box key={index} paddingBottom={1}>
+                          <a
+                            ref={id === currentSliceId ? bulletRef : null}
+                            href={'#' + id}
+                            onClick={() => navigate(id)}
+                          >
+                            <Typography
+                              variant="pSmall"
+                              as="p"
+                              color={colors.main}
+                            >
+                              {id === currentSliceId ? <b>{text}</b> : text}
+                            </Typography>
+                          </a>
+                        </Box>
+                      ))}
+                    </Box>
+                    {slice.links.map(({ url, text }, index) => (
+                      <span key={index}>
+                        <Box paddingY={1}>
+                          <Link href={url}>
+                            <Typography
+                              variant="p"
+                              as="div"
+                              color={colors.secondary}
+                            >
+                              {text}
+                            </Typography>
+                          </Link>
+                        </Box>
+                      </span>
+                    ))}
+                  </>
+                )
+              }}
             </Sidebar>
+          </GridColumn>
+          <GridColumn span={mainContentSpanFull}>
+            {(slice.slices as AvailableSlices[]).map((slice) => (
+              <Section key={slice.id} slice={slice} />
+            ))}
           </GridColumn>
         </GridRow>
       </GridContainer>

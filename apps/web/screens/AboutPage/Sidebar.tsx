@@ -13,6 +13,7 @@ import * as styles from './Sidebar.treat'
 type ColorConfig = {
   main: Colors
   secondary: Colors
+  subNavBorder: Colors
   divider: DividerProps['weight']
 }
 
@@ -21,11 +22,13 @@ const ColorConfig: { [key: string]: ColorConfig } = {
     main: 'blue400',
     secondary: 'dark400',
     divider: 'regular',
+    subNavBorder: 'blue200',
   },
   gradient: {
     main: 'white',
     secondary: 'blue100',
     divider: 'purple400',
+    subNavBorder: 'blue400',
   },
 }
 
