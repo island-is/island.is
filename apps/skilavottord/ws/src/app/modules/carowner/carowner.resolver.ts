@@ -1,3 +1,4 @@
+import { HttpException } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Carowner } from './models'
 import { CarownerService } from './models/carowner.service'
@@ -22,7 +23,10 @@ export class CarownerResolver {
   deregisterCar(
     @Args('deregisterCarInput') dereginput: DeregisterCarInput,
   ): boolean {
-    return dereginput.permno === '1'
+    if (dereginput.permno === '1') {
+      throw new HttpException("can't derigiesterCar", 400)
+    }
+    return true
   }
 
   @Mutation((returns) => Boolean)
@@ -30,6 +34,9 @@ export class CarownerResolver {
     @Args('permno') permno: string,
     @Args('nationalid') nationalid: string,
   ): boolean {
-    return permno === '1'
+    if (permno === '1') {
+      throw new HttpException('requestPayment error!', 400)
+    }
+    return true
   }
 }
