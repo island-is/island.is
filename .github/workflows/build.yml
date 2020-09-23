@@ -157,7 +157,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files-23092020-1135
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
@@ -276,7 +276,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files-23092020-1135
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -341,7 +341,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files-23092020-1135
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
