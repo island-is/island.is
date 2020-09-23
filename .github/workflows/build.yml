@@ -276,7 +276,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -341,7 +341,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
