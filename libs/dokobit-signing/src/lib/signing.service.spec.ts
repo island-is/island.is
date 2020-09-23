@@ -22,7 +22,7 @@ const testDocumentContent = 'Test Document Content'
 const testSignPath = `sign.json?access_token=${testOptions.accessToken}`
 const testSignResponse = {
   status: 'ok',
-  control_code: 'Test Control Code',
+  control_code: 'Test Control Code', // eslint-disable-line @typescript-eslint/camelcase
   token: 'Test Document Token',
 }
 const testStatusPath = `sign/status/${testSignResponse.token}.json?access_token=${testOptions.accessToken}`
@@ -39,8 +39,8 @@ const testStatusResponse = {
 }
 const postMock = jest.fn(function(
   path: string,
-  body?: Body,
-  init?: RequestInit,
+  body?: Body, // eslint-disable-line @typescript-eslint/no-unused-vars
+  init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
   switch (path) {
     case testSignPath:

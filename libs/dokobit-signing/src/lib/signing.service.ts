@@ -21,6 +21,7 @@ export class SigningServiceError extends Error {
     super()
 
     this.name = 'DokobitError'
+    this.message = `${code}: ${message}`
   }
 }
 
