@@ -178,7 +178,7 @@
     "swagger-ui-express": "4.1.4",
     "timeout-signal": "1.0.0",
     "to-querystring": "^1.1.1",
-    "treat": "1.4.1",
+    "treat": "1.6.0",
     "ts-node": "9.0.0",
     "turndown": "6.0.0",
     "uuidv4": "6.0.8",
@@ -269,7 +269,7 @@
     "jest-mock-extended": "^1.0.10",
     "jest-transform-stub": "2.0.0",
     "license-checker": "^25.0.1",
-    "next-transpile-modules": "^3.3.0",
+    "next-transpile-modules": "4.1.0",
     "node-sass": "4.14.1",
     "prettier": "2.0.4",
     "quicktype": "15.0.245",
@@ -280,7 +280,7 @@
     "eslint-plugin-cypress": "^2.10.3"
   },
   "resolutions": {
-    "webpack": "4.42.0",
+    "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
     "http-proxy": "1.18.1"
   }
