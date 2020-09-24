@@ -39,6 +39,7 @@ export const container = {
 }
 
 export const input = {
+  appearance: 'none',
   caretColor: theme.color.blue400,
   fontFamily: theme.typography.fontFamily,
   fontWeight: theme.typography.medium,
