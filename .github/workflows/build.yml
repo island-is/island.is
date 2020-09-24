@@ -159,6 +159,11 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
 
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
@@ -276,6 +281,11 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
 
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
@@ -339,6 +349,11 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
 
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
@@ -367,6 +382,11 @@ jobs:
         with:
           path: generated_files.tar.gz
           key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
+
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -426,6 +446,11 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
 
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
@@ -483,6 +508,11 @@ jobs:
         with:
           path: generated_files.tar.gz
           key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
+
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
