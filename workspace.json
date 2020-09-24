@@ -2967,6 +2967,58 @@
           }
         }
       }
+    },
+    "skilavottord-const": {
+      "root": "libs/skilavottord/const",
+      "sourceRoot": "libs/skilavottord/const/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/skilavottord/const/tsconfig.lib.json",
+              "libs/skilavottord/const/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/const/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/skilavottord/const/jest.config.js",
+            "tsConfig": "libs/skilavottord/const/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "skilavottord-types": {
+      "root": "libs/skilavottord/types",
+      "sourceRoot": "libs/skilavottord/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/skilavottord/types/tsconfig.lib.json",
+              "libs/skilavottord/types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/types/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/skilavottord/types/jest.config.js",
+            "tsConfig": "libs/skilavottord/types/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

@@ -230,6 +230,12 @@
     },
     "skilavottord": {
       "tags": []
+    },
+    "skilavottord-const": {
+      "tags": []
+    },
+    "skilavottord-types": {
+      "tags": []
     }
   }
 }
