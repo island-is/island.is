@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class HelloWorldInput {
   @Field({ defaultValue: 'World' })
   @IsString()
-  name: string
+  name!: string
 }

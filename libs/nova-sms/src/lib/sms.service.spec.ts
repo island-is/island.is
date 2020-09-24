@@ -25,12 +25,12 @@ const postMock = jest.fn(function(
       throw new Error()
   }
 })
-jest.mock('apollo-datasource-rest', function() {
+jest.mock('apollo-datasource-rest', () => {
+  class MockRESTDataSource {
+    post = postMock
+  }
   return {
-    RESTDataSource: function() {
-      this.post = postMock
-      return this
-    },
+    RESTDataSource: MockRESTDataSource,
   }
 })
 

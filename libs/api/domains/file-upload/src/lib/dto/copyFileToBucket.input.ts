@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class CopyFileToBucketInput {
   @Field()
   @IsString()
-  key: string
+  key!: string
 
   @Field()
   @IsString()
-  bucket: string
+  bucket!: string
 }
