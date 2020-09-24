@@ -13,6 +13,7 @@ import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, NotificationType } from './models'
+import { getDummyPdf, writeDummySignedPdf } from './case.dummy.pdf'
 
 @Injectable()
 export class CaseService {
@@ -127,7 +128,7 @@ export class CaseService {
     // This method should only be called if the csae state is ACCEPTED or REJECTED
 
     // Production, or development with signing service access token
-    if (environment.production && environment.signingOptions.accessToken) {
+    if (environment.production || environment.signingOptions.accessToken) {
       const pdf = this.getRulingAsPdf()
 
       return this.signingService.requestSignature(
@@ -150,7 +151,7 @@ export class CaseService {
   async confirrmSignature(
     existingCase: Case,
     documentToken: string,
-  ): Promise<void> {
+  ): Promise<Case> {
     this.logger.debug(
       `Confirming signature of ruling for case with id "${existingCase.id}"`,
     )
@@ -159,7 +160,7 @@ export class CaseService {
     // requestSignature has previously been called for the same case
 
     // Production, or development with signing service access token
-    if (environment.production && environment.signingOptions.accessToken) {
+    if (environment.production || environment.signingOptions.accessToken) {
       const signedPdf = await this.signingService.getSignedDocument(
         'ruling.pdf',
         documentToken,
@@ -167,6 +168,8 @@ export class CaseService {
 
       this.sendRulingAsSignedPdf(signedPdf)
     }
+
+    return existingCase
   }
 
   private constructHeadsUpSmsText(existingCase: Case, user: User): string {
@@ -214,14 +217,14 @@ export class CaseService {
   }
 
   // Not implemented yet
-  private getRulingAsPdf() {
-    return 'dummy'
+  private getRulingAsPdf(): string {
+    return getDummyPdf()
   }
 
   // Not implemented yet
   private sendRulingAsSignedPdf(
     signedPdf: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ) {
-    // eslint-disable-line @typescript-eslint/no-empty-function
+  ): void {
+    writeDummySignedPdf(signedPdf)
   }
 }
