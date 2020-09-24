@@ -1,13 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import {
-  render,
-  fireEvent,
-  waitForElement,
-  screen,
-  act,
-  waitFor,
-} from '@testing-library/react'
+import { render, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StepOne from './StepOne'
 import { Router } from 'react-router-dom'

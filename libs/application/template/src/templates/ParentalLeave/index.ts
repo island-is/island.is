@@ -13,7 +13,7 @@ type Events =
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
 
-export const ParentalLeave: ApplicationTemplate<
+const ParentalLeave: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -115,3 +115,5 @@ export const ParentalLeave: ApplicationTemplate<
     return 'applicant'
   },
 }
+
+export default ParentalLeave
