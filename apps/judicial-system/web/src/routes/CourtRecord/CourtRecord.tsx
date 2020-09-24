@@ -12,6 +12,7 @@ import CourtDocument from '../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { Logo } from '../../shared-components/Logo/Logo'
 import { GetCaseByIdResponse } from '../../types'
+import { getTimeFromDate } from '../../utils/formatters'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import { autoSave } from '../../utils/stepHelper'
 import { validate } from '../../utils/validate'
@@ -75,17 +76,9 @@ export const CourtRecord: React.FC = () => {
                         name="courtStartTime"
                         label="Þinghald hefst"
                         placeholder="Veldu tíma"
-                        defaultValue={
-                          workingCase.courtStartTime &&
-                          isValid(
-                            parseISO(workingCase.courtStartTime.toString()),
-                          )
-                            ? format(
-                                parseISO(workingCase.courtStartTime.toString()),
-                                'hh:mm',
-                              )
-                            : null
-                        }
+                        defaultValue={getTimeFromDate(
+                          workingCase.courtStartTime,
+                        )}
                         onBlur={(evt) => {
                           const validateTimeEmpty = validate(
                             evt.target.value,
@@ -138,15 +131,7 @@ export const CourtRecord: React.FC = () => {
                       name="courtEndTime"
                       label="Þinghald lýkur"
                       placeholder="Veldu tíma"
-                      defaultValue={
-                        workingCase.courtEndTime &&
-                        isValid(parseISO(workingCase.courtEndTime.toString()))
-                          ? format(
-                              parseISO(workingCase.courtEndTime.toString()),
-                              'hh:mm',
-                            )
-                          : null
-                      }
+                      defaultValue={getTimeFromDate(workingCase.courtEndTime)}
                       onBlur={(evt) => {
                         const validateTimeEmpty = validate(
                           evt.target.value,

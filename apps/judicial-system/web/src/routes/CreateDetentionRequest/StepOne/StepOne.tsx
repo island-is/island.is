@@ -18,18 +18,12 @@ import { Case } from '../../../types'
 import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import { updateState, autoSave } from '../../../utils/stepHelper'
-import {
-  setHours,
-  setMinutes,
-  isValid,
-  parseISO,
-  getTime,
-  format,
-} from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
+import { getTimeFromDate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -393,14 +387,7 @@ export const StepOne: React.FC = () => {
                       disabled={!workingCase.arrestDate}
                       errorMessage={arrestTimeErrorMessage}
                       hasError={arrestTimeErrorMessage !== ''}
-                      defaultValue={
-                        caseDraftJSON.arrestDate
-                          ? format(
-                              getTime(parseISO(caseDraftJSON.arrestDate)),
-                              'hh:mm',
-                            )
-                          : null
-                      }
+                      defaultValue={getTimeFromDate(workingCase.arrestDate)}
                       ref={arrestTimeRef}
                       onBlur={(evt) => {
                         const validateTimeEmpty = validate(

@@ -19,18 +19,12 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  setHours,
-  setMinutes,
-  isValid,
-  parseISO,
-  format,
-  getTime,
-} from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
 import {
+  getTimeFromDate,
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -265,14 +259,9 @@ export const StepTwo: React.FC = () => {
                     name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
-                    defaultValue={
-                      caseDraftJSON.requestedCustodyEndDate
-                        ? format(
-                            getTime(parseISO(caseDraftJSON.arrestDate)),
-                            'hh:mm',
-                          )
-                        : null
-                    }
+                    defaultValue={getTimeFromDate(
+                      caseDraftJSON.requestedCustodyEndDate,
+                    )}
                     disabled={!workingCase.requestedCustodyEndDate}
                     errorMessage={requestedCustodyEndTimeErrorMessage}
                     hasError={requestedCustodyEndTimeErrorMessage !== ''}

@@ -1,4 +1,5 @@
-import { isValid, format, parseISO } from 'date-fns'
+import { isValid, format, parse, parseISO } from 'date-fns'
+import { is } from 'date-fns/locale'
 
 export const parseArray = (property: string, array: string[]) => {
   try {
@@ -36,4 +37,12 @@ export const formatDate = (
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
 export const capitalize = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+export const getTimeFromDate = (date: Date) => {
+  if (date && isValid(date) && isValid(parseISO(date.toISOString()))) {
+    return format(parseISO(date.toISOString()), 'HH:m')
+  } else {
+    return null
+  }
 }

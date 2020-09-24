@@ -1,5 +1,5 @@
 import { UserRole, hasRole } from './authenticate'
-import { parseArray, parseString } from './formatters'
+import { getTimeFromDate, parseArray, parseString } from './formatters'
 
 describe('Authenticate utils', () => {
   describe('HasRole util', () => {
@@ -50,6 +50,44 @@ describe('Formatters utils', () => {
 
       // Assert
       expect(parsedString).toEqual({ test: 'lorem' })
+    })
+  })
+
+  describe('getTimeFromDate', () => {
+    test('should return null if date parameter is not provided', () => {
+      // Arrange
+      const date = null
+
+      // Act
+      const time = getTimeFromDate(date)
+
+      // Assert
+      expect(time).toBeNull()
+    })
+
+    test('should return null if date parameter is not valid', () => {
+      // Arrange
+      const date = new Date('21-03-1988') // Invalid date
+
+      // Act
+      const time = getTimeFromDate(date)
+
+      // Assert
+      expect(time).toBeNull()
+    })
+
+    test('should return the time with 24h format', () => {
+      // Arrange
+      const date = new Date('2020-09-10T09:36:57.287Z')
+      const date2 = new Date('2020-09-23T23:36:57.287Z')
+
+      // Act
+      const time = getTimeFromDate(date)
+      const time2 = getTimeFromDate(date2)
+
+      // Assert
+      expect(time).toEqual('09:36')
+      expect(time2).toEqual('23:36')
     })
   })
 })

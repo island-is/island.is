@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { format, parseISO, getTime } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import localeIS from 'date-fns/locale/is'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
