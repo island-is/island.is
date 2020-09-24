@@ -262,6 +262,7 @@ jobs:
         with:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
@@ -360,6 +361,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
       - name: Cache for dependencies Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
@@ -367,6 +378,7 @@ jobs:
         with:
           path: cache_output
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
@@ -407,6 +419,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
       - name: Cache for dependencies Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
@@ -414,6 +436,7 @@ jobs:
         with:
           path: cache_output
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
@@ -454,6 +477,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for generated files
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', '**/models/**', '**/dto/**', '**/enums/**', '**/queries/**', '**/air-discount-scheme/web/**', '**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
       - name: Cache for dependencies Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
@@ -461,6 +494,7 @@ jobs:
         with:
           path: cache_output
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2

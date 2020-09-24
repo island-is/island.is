@@ -714,7 +714,7 @@ export interface ILinkFields {
   url: string
 
   /** Page */
-  page?: (IArticle | IArticleCategory | INews)[] | undefined
+  page?: IArticle | IArticleCategory | INews | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
