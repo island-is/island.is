@@ -142,7 +142,10 @@ export const JudgeOverview: React.FC = () => {
                     formatDate(workingCase?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(workingCase?.arrestDate, 'hh:mm')}`}
+                  )} kl. ${formatDate(
+                    workingCase?.arrestDate,
+                    Constants.TIME_FORMAT,
+                  )}`}
               </Typography>
             </Box>
             {workingCase?.requestedCourtDate && (
@@ -159,7 +162,7 @@ export const JudgeOverview: React.FC = () => {
                     }),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
-                    'hh:mm',
+                    Constants.TIME_FORMAT,
                   )}`}
                 </Typography>
               </Box>
@@ -182,7 +185,7 @@ export const JudgeOverview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
-                          'hh:mm',
+                          Constants.TIME_FORMAT,
                         )}`}
                     </strong>
                   </Typography>

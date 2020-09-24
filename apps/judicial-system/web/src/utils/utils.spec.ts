@@ -1,5 +1,6 @@
 import { UserRole, hasRole } from './authenticate'
-import { getTimeFromDate, parseArray, parseString } from './formatters'
+import { formatDate, parseArray, parseString } from './formatters'
+import * as Constants from './constants'
 
 describe('Authenticate utils', () => {
   describe('HasRole util', () => {
@@ -53,37 +54,29 @@ describe('Formatters utils', () => {
     })
   })
 
-  describe('getTimeFromDate', () => {
-    test('should return null if date parameter is not provided', () => {
+  describe('formatDate', () => {
+    test('should return null if date parameter is not provided or is invalid', () => {
       // Arrange
       const date = null
+      const date2 = undefined
 
       // Act
-      const time = getTimeFromDate(date)
+      const time = formatDate(date, Constants.TIME_FORMAT)
+      const time2 = formatDate(date2, Constants.TIME_FORMAT)
 
       // Assert
       expect(time).toBeNull()
-    })
-
-    test('should return null if date parameter is not valid', () => {
-      // Arrange
-      const date = new Date('21-03-1988') // Invalid date
-
-      // Act
-      const time = getTimeFromDate(date)
-
-      // Assert
-      expect(time).toBeNull()
+      expect(time2).toBeNull()
     })
 
     test('should return the time with 24h format', () => {
       // Arrange
-      const date = new Date('2020-09-10T09:36:57.287Z')
-      const date2 = new Date('2020-09-23T23:36:57.287Z')
+      const date = '2020-09-10T09:36:57.287Z'
+      const date2 = '2020-09-23T23:36:57.287Z'
 
       // Act
-      const time = getTimeFromDate(date)
-      const time2 = getTimeFromDate(date2)
+      const time = formatDate(date, Constants.TIME_FORMAT)
+      const time2 = formatDate(date2, Constants.TIME_FORMAT)
 
       // Assert
       expect(time).toEqual('09:36')

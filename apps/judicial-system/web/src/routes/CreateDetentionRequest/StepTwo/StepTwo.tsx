@@ -24,7 +24,7 @@ import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
 import {
-  getTimeFromDate,
+  formatDate,
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -259,8 +259,9 @@ export const StepTwo: React.FC = () => {
                     name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
-                    defaultValue={getTimeFromDate(
+                    defaultValue={formatDate(
                       caseDraftJSON.requestedCustodyEndDate,
+                      Constants.TIME_FORMAT,
                     )}
                     disabled={!workingCase.requestedCustodyEndDate}
                     errorMessage={requestedCustodyEndTimeErrorMessage}
@@ -285,7 +286,7 @@ export const StepTwo: React.FC = () => {
                         )
 
                         const requestedCustodyEndDateHours = setHours(
-                          workingCase.requestedCustodyEndDate,
+                          new Date(workingCase.requestedCustodyEndDate),
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 

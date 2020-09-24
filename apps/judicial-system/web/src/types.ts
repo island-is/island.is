@@ -41,9 +41,9 @@ export interface Case {
   suspectName?: string
   suspectAddress?: string
   court?: string
-  arrestDate?: Date
-  requestedCourtDate?: Date
-  requestedCustodyEndDate?: Date
+  arrestDate?: string
+  requestedCourtDate?: string
+  requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CustodyProvisions[]
   custodyRestrictions?: CustodyRestrictions[]
@@ -54,8 +54,8 @@ export interface Case {
   comments?: string
   notifications?: Notification[]
   courtCaseNumber?: string
-  courtStartTime?: Date
-  courtEndTime?: Date
+  courtStartTime?: string
+  courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
   suspectPlea?: string
@@ -64,7 +64,7 @@ export interface Case {
 
 export interface Notification {
   id: string
-  created: Date
+  created: string
   caseId: string
   type: NotificationType
   message: string

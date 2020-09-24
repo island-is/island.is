@@ -23,7 +23,7 @@ import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
-import { getTimeFromDate } from '@island.is/judicial-system-web/src/utils/formatters'
+import { formatDate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -387,7 +387,10 @@ export const StepOne: React.FC = () => {
                       disabled={!workingCase.arrestDate}
                       errorMessage={arrestTimeErrorMessage}
                       hasError={arrestTimeErrorMessage !== ''}
-                      defaultValue={getTimeFromDate(workingCase.arrestDate)}
+                      defaultValue={formatDate(
+                        workingCase.arrestDate,
+                        Constants.TIME_FORMAT,
+                      )}
                       ref={arrestTimeRef}
                       onBlur={(evt) => {
                         const validateTimeEmpty = validate(
@@ -409,7 +412,7 @@ export const StepOne: React.FC = () => {
                           )
 
                           const arrestDateHours = setHours(
-                            workingCase.arrestDate,
+                            new Date(workingCase.arrestDate),
                             parseInt(timeWithoutColon.substr(0, 2)),
                           )
 
@@ -482,7 +485,7 @@ export const StepOne: React.FC = () => {
                         )
 
                         const requestedCourtDateHours = setHours(
-                          workingCase.requestedCourtDate,
+                          new Date(workingCase.requestedCourtDate),
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 

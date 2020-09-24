@@ -21,14 +21,12 @@ export const parseString = (property: string, value: string | Date) => {
 }
 
 export const formatDate = (
-  date: Date,
+  date: string,
   formatPattern: string,
   options?: any,
 ) => {
-  if (isValid(date)) {
-    return format(date, formatPattern, options)
-  } else if (isValid(parseISO(date.toString()))) {
-    return format(parseISO(date.toString()), formatPattern, options)
+  if (isValid(parseISO(date))) {
+    return format(parseISO(date), formatPattern, options)
   } else {
     return null
   }
@@ -37,12 +35,4 @@ export const formatDate = (
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
 export const capitalize = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1)
-}
-
-export const getTimeFromDate = (date: Date) => {
-  if (date && isValid(date) && isValid(parseISO(date.toISOString()))) {
-    return format(parseISO(date.toISOString()), 'HH:m')
-  } else {
-    return null
-  }
 }
