@@ -52,7 +52,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
     <>
       <div className={styles.indent}>
         {Boolean(title) && (
-          <Box paddingBottom={8}>
+          <Box paddingBottom={[4, 4, 8]}>
             <Typography variant="h1" as="h2">
               {title}
             </Typography>
@@ -69,7 +69,11 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
       </div>
       <GridRow>
         {rest.map((newsItem, index) => (
-          <GridColumn key={index} span={['1/1', '1/1', '1/2']} paddingTop={15}>
+          <GridColumn
+            key={index}
+            span={['1/1', '1/1', '1/2']}
+            paddingTop={[7, 7, 15]}
+          >
             <NewsCard
               key={index}
               title={newsItem.title}
