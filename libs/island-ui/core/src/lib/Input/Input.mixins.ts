@@ -39,7 +39,6 @@ export const container = {
 }
 
 export const input = {
-  appearance: 'none',
   caretColor: theme.color.blue400,
   fontFamily: theme.typography.fontFamily,
   fontWeight: theme.typography.medium,
@@ -50,6 +49,7 @@ export const input = {
   width: '100%',
   background: 'none',
   boxShadow: 'none',
+  appearance: 'none' as const,
   ...themeUtils.responsiveStyle({
     xs: {
       fontSize: 20,
