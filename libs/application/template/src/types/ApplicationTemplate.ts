@@ -24,5 +24,5 @@ export interface ApplicationTemplate<
   > & {
     states: StatesConfig<TContext, TStateSchema, TEvents>
   }
-  mapNationalRegistryIdToRole(id: string, state: string): ApplicationRole
+  mapUserToRole(id: string, state: string): ApplicationRole
 }

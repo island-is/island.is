@@ -76,7 +76,7 @@ const answerAndGoNextScreen = (
     )
   }
   if (
-    currentScreen.repeaterIndex &&
+    currentScreen.repeaterIndex !== undefined &&
     currentScreen.repeaterIndex >= 0 &&
     nextScreen.repeaterIndex === undefined
   ) {
@@ -97,7 +97,7 @@ export const ApplicationReducer = (
       return answerAndGoNextScreen(state, action.payload)
     case ActionTypes.PREV_SCREEN:
       if (
-        prevScreen.repeaterIndex &&
+        prevScreen.repeaterIndex !== undefined &&
         prevScreen.repeaterIndex >= 0 &&
         currentScreen.repeaterIndex === undefined
       ) {

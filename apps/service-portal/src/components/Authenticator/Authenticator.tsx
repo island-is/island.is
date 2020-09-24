@@ -8,7 +8,7 @@ export const Authenticator: FC = ({ children }) => {
 
   useEffect(() => {
     if (
-      (userInfo === null || userInfo.user === null) &&
+      (userInfo === undefined || userInfo.user === null) &&
       userInfoState === 'passive'
     ) {
       MOCK_AUTHENTICATION ? mockSignIn() : signInUser()

@@ -7,7 +7,7 @@ export const ProtectedRoute: FC<RouteProps> = (props) => {
   const { userInfo, userInfoState, signInUser } = useAuth()
 
   useEffect(() => {
-    if (userInfo === null && userInfoState === 'passive') {
+    if (userInfo === undefined && userInfoState === 'passive') {
       signInUser()
     }
   }, [userInfo, userInfoState, signInUser])

@@ -8,8 +8,8 @@ import {
 
 const typeMap = {
   [DataProviderTypes.ExpectedDateOfBirth]: ExpectedDateOfBirth,
-  [DataProviderTypes.ExampleFails]: ExampleSucceeds,
-  [DataProviderTypes.ExampleSucceeds]: ExampleFails,
+  [DataProviderTypes.ExampleFails]: ExampleFails,
+  [DataProviderTypes.ExampleSucceeds]: ExampleSucceeds,
 }
 
 export function getDataProviderByType(

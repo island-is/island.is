@@ -28,7 +28,7 @@ interface DatePickerProps {
   errorMessage?: string
   handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
-  handleCloseCalander?: (date: Date) => void
+  handleCloseCalander?: (date: Date | null) => void
   handleOpenCalander?: () => void
   required?: boolean
 }
@@ -68,15 +68,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
   }, [locale])
 
-  const getLocale = (locale: Locale) => {
+  const getLocale = (locale?: Locale) => {
     return locale === 'is' ? is : locale === 'pl' ? pl : en
   }
 
   const CustomInput = React.forwardRef<
     HTMLButtonElement,
-    { value: string; onClick: () => void; placeholderText: string }
-  >(({ value, onClick, placeholderText }, ref) => {
-    const valueAsDate = new Date(value)
+    { value?: string; onClick?: () => void; placeholderText?: string }
+  >(({ value, onClick = () => undefined, placeholderText }, ref) => {
+    const valueAsDate = value === undefined ? new Date() : new Date(value)
 
     return (
       <button className={className} onClick={onClick}>
@@ -144,6 +144,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             />
           }
           renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
             const month = format(date, 'MMMM', { locale: getLocale(locale) })
             const capitalizedMonth = `${month
               .charAt(0)
