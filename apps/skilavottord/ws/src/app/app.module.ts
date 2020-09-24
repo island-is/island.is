@@ -4,8 +4,8 @@ import { GraphQLModule } from '@nestjs/graphql'
 //import { UserModule, CarModule, RecyclingPartner } from './modules'
 import { CarownerModule } from './modules/carowner'
 import { RecyclingPartnerModule } from './modules/recyclingPartner'
-import { AuthModule, UserModule } from './modules'
-
+import { AuthModule } from './modules/auth'
+import { UserModule } from './modules/user'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
