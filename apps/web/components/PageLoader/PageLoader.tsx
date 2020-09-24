@@ -9,10 +9,12 @@ export const PageLoader = () => {
 
   useEffect(() => {
     const start = () => {
+      document.querySelector('html').style.scrollBehavior = 'initial'
       ref.current.continuousStart()
     }
     const done = () => {
       ref.current.complete()
+      document.querySelector('html').style.scrollBehavior = 'smooth'
     }
     router.events.on('routeChangeStart', start)
     router.events.on('routeChangeComplete', done)
