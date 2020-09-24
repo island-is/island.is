@@ -180,10 +180,14 @@ export const Footer = ({
                   <Inline space={2}>
                     {tagLinks.map(({ title, href, linkProps }, index) => {
                       return (
-                        <Link href={href} {...linkProps} passHref pureChildren>
-                          <Tag key={index} href={href} variant="white">
-                            {title}
-                          </Tag>
+                        <Link
+                          key={index}
+                          href={href}
+                          {...linkProps}
+                          passHref
+                          pureChildren
+                        >
+                          <Tag variant="white">{title}</Tag>
                         </Link>
                       )
                     })}
