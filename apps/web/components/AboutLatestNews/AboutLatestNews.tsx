@@ -16,7 +16,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import Link from 'next/link'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
