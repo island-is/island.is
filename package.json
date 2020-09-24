@@ -276,7 +276,8 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "sequelize-cli": "5.5.1",
     "ts-jest": "26.1.4",
-    "typescript": "3.9.7"
+    "typescript": "3.9.7",
+    "eslint-plugin-cypress": "^2.10.3"
   },
   "resolutions": {
     "webpack": "4.42.0",

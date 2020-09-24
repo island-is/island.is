@@ -1,0 +1,144 @@
+{
+  "migrations": [
+    {
+      "version": "9.3.0-beta.1",
+      "description": "Update prettier to v2",
+      "factory": "./src/migrations/update-9-3-0/update-9-3-0",
+      "package": "@nrwl/workspace",
+      "name": "update-9-3-0"
+    },
+    {
+      "version": "9.4.0-beta.1",
+      "description": "Remove config builder option when using eslint to enable automatic detection",
+      "factory": "./src/migrations/update-9-4-0/update-eslint-config",
+      "package": "@nrwl/workspace",
+      "name": "update-eslint-config"
+    },
+    {
+      "version": "9.4.0-beta.1",
+      "description": "Fix exclude patterns in tslint and eslint to ensure it does not break linting when a files option is defined",
+      "factory": "./src/migrations/update-9-4-0/update-linters-exclude",
+      "package": "@nrwl/workspace",
+      "name": "update-linters-exclude"
+    },
+    {
+      "version": "9.4.0-beta.1",
+      "description": "Decorate cli to enable computation caching",
+      "factory": "./src/migrations/update-9-4-0/add-decorate-cli",
+      "package": "@nrwl/workspace",
+      "name": "add-decorate-cli"
+    },
+    {
+      "version": "10.0.0-beta.0",
+      "description": "Add default branch to nx.json",
+      "factory": "./src/migrations/update-10-0-0/update-10-0-0",
+      "package": "@nrwl/workspace",
+      "name": "add-default-branch-to-nx-json"
+    },
+    {
+      "version": "10.0.0-beta.0",
+      "description": "Migrate tsconfigs to solution style tsconfigs",
+      "factory": "./src/migrations/update-10-0-0/solution-tsconfigs",
+      "package": "@nrwl/workspace",
+      "name": "solution-tsconfigs"
+    },
+    {
+      "version": "10.0.1-beta.0",
+      "description": "Migrate .eslintrc files to reference new tsconfig",
+      "factory": "./src/migrations/update-10-0-1/migrate-eslintrc",
+      "package": "@nrwl/workspace",
+      "name": "migrate-eslintrc-tsconfig"
+    },
+    {
+      "version": "10.1.0-beta.0",
+      "description": "Migrate .eslintrc files to use tsconfig with a wildcard",
+      "factory": "./src/migrations/update-10-1-0/migrate-eslintrc-tsconfig-wildcard",
+      "package": "@nrwl/workspace",
+      "name": "migrate-eslintrc-tsconfig-wildcard"
+    },
+    {
+      "version": "9.4.0-beta.1",
+      "description": "Add Cypress ESLint plugin",
+      "factory": "./src/migrations/update-9-4-0/add-cypress-eslint-plugin-9-4-0",
+      "package": "@nrwl/cypress",
+      "name": "add-cypress-eslint-plugin-9.4.0"
+    },
+    {
+      "version": "10.0.0-beta.2",
+      "description": "update jest configs to include setup env files",
+      "factory": "./src/migrations/update-10-0-0/update-jest-configs",
+      "package": "@nrwl/jest",
+      "name": "update-10.0.0"
+    },
+    {
+      "version": "10.1.0-beta.4",
+      "description": "Update jest to v26",
+      "factory": "./src/migrations/update-10-1-0/update-10-1-0",
+      "package": "@nrwl/jest",
+      "name": "update-10.1.0"
+    },
+    {
+      "version": "10.2.0",
+      "description": "Remove deprecated jest builder options",
+      "factory": "./src/migrations/update-10-2-0/update-10-2-0",
+      "package": "@nrwl/jest",
+      "name": "update-10.2.0"
+    },
+    {
+      "version": "10.0.0-beta.1",
+      "description": "Update Nest.js libraries",
+      "factory": "./src/migrations/update-10-0-0/update-10-0-0",
+      "package": "@nrwl/nest",
+      "name": "update-10-0-0"
+    },
+    {
+      "version": "9.3.1-beta.1",
+      "description": "Rename @nrwl/next:dev-server to @nrwl/next:server",
+      "factory": "./src/migrations/update-9-3-1/update-9-3-1",
+      "package": "@nrwl/next",
+      "name": "update-9.3.1"
+    },
+    {
+      "version": "10.1.0-beta.1",
+      "description": "Removes rootDir from node libs' tsconfig",
+      "factory": "./src/migrations/update-10-1-0/remove-root-dir",
+      "package": "@nrwl/node",
+      "name": "remove-root-dir"
+    },
+    {
+      "version": "9.4.0-beta.1",
+      "description": "Update libraries",
+      "factory": "./src/migrations/update-9-4-0/update-9-4-0",
+      "package": "@nrwl/react",
+      "name": "update-9.4.0"
+    },
+    {
+      "version": "9.4.0-beta.1",
+      "description": "Migrate to new babel setup for greater flexibility",
+      "factory": "./src/migrations/update-9-4-0/babelrc-9-4-0",
+      "package": "@nrwl/react",
+      "name": "babelrc-9.4.0"
+    },
+    {
+      "version": "9.5.0-beta.1",
+      "description": "Update libraries",
+      "factory": "./src/migrations/update-9-5-0/update-9-5-0",
+      "package": "@nrwl/react",
+      "name": "update-9.5.0"
+    },
+    {
+      "version": "10.0.12",
+      "description": "Add missing storybook config to lint target",
+      "factory": "./src/migrations/update-10-0-12/update-10-0-12",
+      "package": "@nrwl/storybook",
+      "name": "update-10.0.12"
+    },
+    {
+      "version": "10.2.1-beta.1",
+      "description": "Adjusts the tsconfig mapping",
+      "factory": "./src/migrations/update-10-2-1/update-10-2-1",
+      "package": "@nrwl/storybook",
+      "name": "update-10.2.1"
+    }
+  ]
+}

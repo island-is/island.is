@@ -6,7 +6,11 @@
     "jest": true,
     "node": true
   },
-  "settings": { "react": { "version": "detect" } },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "plugins": ["import", "jsx-a11y", "react", "react-hooks"],
   "rules": {
     "array-callback-return": "warn",
@@ -34,7 +38,13 @@
     "no-invalid-regexp": "warn",
     "no-iterator": "warn",
     "no-label-var": "warn",
-    "no-labels": ["warn", { "allowLoop": true, "allowSwitch": false }],
+    "no-labels": [
+      "warn",
+      {
+        "allowLoop": true,
+        "allowSwitch": false
+      }
+    ],
     "no-lone-blocks": "warn",
     "no-loop-func": "warn",
     "no-mixed-operators": [
@@ -180,12 +190,23 @@
     "import/first": "error",
     "import/no-amd": "error",
     "import/no-webpack-loader-syntax": "error",
-    "react/forbid-foreign-prop-types": ["warn", { "allowInPropTypes": true }],
+    "react/forbid-foreign-prop-types": [
+      "warn",
+      {
+        "allowInPropTypes": true
+      }
+    ],
     "react/jsx-no-comment-textnodes": "warn",
     "react/jsx-no-duplicate-props": "warn",
     "react/jsx-no-target-blank": "warn",
     "react/jsx-no-undef": "error",
-    "react/jsx-pascal-case": ["warn", { "allowAllCaps": true, "ignore": [] }],
+    "react/jsx-pascal-case": [
+      "warn",
+      {
+        "allowAllCaps": true,
+        "ignore": []
+      }
+    ],
     "react/jsx-uses-react": "warn",
     "react/jsx-uses-vars": "warn",
     "react/no-danger-with-children": "warn",
@@ -200,7 +221,9 @@
     "jsx-a11y/anchor-has-content": "warn",
     "jsx-a11y/anchor-is-valid": [
       "warn",
-      { "aspects": ["noHref", "invalidHref"] }
+      {
+        "aspects": ["noHref", "invalidHref"]
+      }
     ],
     "jsx-a11y/aria-activedescendant-has-tabindex": "warn",
     "jsx-a11y/aria-props": "warn",
@@ -237,7 +260,10 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",
-      { "args": "none", "ignoreRestSiblings": true }
+      {
+        "args": "none",
+        "ignoreRestSiblings": true
+      }
     ],
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": "warn"

@@ -2,4 +2,6 @@
   "extends": ["../../../.eslintrc.react.json"],
   "rules": {
     "react-hooks/exhaustive-deps": "error"
-  }, "ignorePatterns": ["!**/*"] }
+  },
+  "ignorePatterns": ["!**/*"]
+}

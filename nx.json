@@ -6,8 +6,8 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    "tsconfig.base.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -252,5 +252,8 @@
     "judicial-system-types": {
       "tags": []
     }
+  },
+  "affected": {
+    "defaultBase": "master"
   }
 }
