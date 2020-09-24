@@ -18,7 +18,7 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   SSN_IS_NOT_A_PERSON,
-} from '@island.is/air-discount-scheme/consts'
+} from '@island.is/@island.is/skilavottord/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 
