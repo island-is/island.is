@@ -135,6 +135,7 @@ const decideSidebarType = (
 
 interface PageHeaderProps {
   page: GetAboutPageQuery['getAboutPage']
+  namespace?: GetNamespaceQuery['getNamespace']
 }
 
 const PageHeader: FC<PageHeaderProps> = ({ page }) => {
@@ -353,7 +354,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
         <div key={slice.id} id={slice.id}>
           <Layout width={mainContentSpan}>
             <Box paddingTop={15} paddingBottom={12}>
-              <AboutLatestNews {...slice} />
+              <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
           </Layout>
         </div>
