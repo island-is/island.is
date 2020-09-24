@@ -203,7 +203,6 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
             >
               {({ bulletRef, colors }) => {
                 const [navigationTitle, ...navigationList] = navigation
-                console.log(navigationList)
                 return (
                   <>
                     <Box
@@ -248,7 +247,6 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       ))}
                     </Box>
                     {slice.links.map(({ url, text }, index) => {
-                      console.log(url, text)
                       return (
                         <span key={index}>
                           <Box paddingY={1}>
