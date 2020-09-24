@@ -9,7 +9,7 @@ import {
   AccordionItem,
   Input,
 } from '@island.is/island-ui/core'
-import { Logo } from '../../shared-components/Logo/Logo'
+import { JudgeLogo } from '../../shared-components/Logos'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
 import { autoSave, getRestrictionByValue } from '../../utils/stepHelper'
@@ -54,7 +54,7 @@ export const JudgeOverview: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <Logo />
+            <JudgeLogo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1" variant="h1">

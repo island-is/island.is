@@ -10,7 +10,7 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Logo } from '../../shared-components/Logo/Logo'
+import { ProsecutorLogo } from '../../shared-components/Logos'
 import Modal from '../../shared-components/Modal/Modal'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
@@ -60,7 +60,7 @@ export const Overview: React.FC = () => {
         <GridContainer>
           <GridRow>
             <GridColumn span={'3/12'}>
-              <Logo />
+              <ProsecutorLogo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">

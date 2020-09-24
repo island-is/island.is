@@ -6,6 +6,7 @@ import { UserRole } from '../../utils/authenticate'
 import { CaseState } from '@island.is/judicial-system/types'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
+import { userContext } from '../../utils/userContext'
 
 const mockDetensionRequests = [
   {
@@ -60,6 +61,44 @@ describe('Detention requests route', () => {
         return dr.state === CaseState.SUBMITTED
       }).length,
     )
+  })
+
+  test('should display the judge logo if you are a judge', async () => {
+    const history = createMemoryHistory()
+
+    const { getByTestId } = render(
+      <userContext.Provider
+        value={{ user: { nationalId: '0123456789', roles: [UserRole.JUDGE] } }}
+      >
+        <Router history={history}>
+          <DetentionRequests onGetUser={() => console.log('get user cb')} />
+        </Router>
+      </userContext.Provider>,
+    )
+
+    await waitFor(() => getByTestId('judge-logo'))
+
+    expect(getByTestId('judge-logo')).toBeTruthy()
+  })
+
+  test('should display the prosecutor logo if you are a prosecutor', async () => {
+    const history = createMemoryHistory()
+
+    const { getByTestId } = render(
+      <userContext.Provider
+        value={{
+          user: { nationalId: '0123456789', roles: [UserRole.PROSECUTOR] },
+        }}
+      >
+        <Router history={history}>
+          <DetentionRequests onGetUser={() => console.log('get user cb')} />
+        </Router>
+      </userContext.Provider>,
+    )
+
+    await waitFor(() => getByTestId('prosecutor-logo'))
+
+    expect(getByTestId('prosecutor-logo')).toBeTruthy()
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {
