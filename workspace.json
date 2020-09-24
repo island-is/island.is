@@ -3312,7 +3312,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "docker-next": {}
     },
     "skilavottord/web-e2e": {
       "root": "apps/skilavottord/web-e2e",

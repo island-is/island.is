@@ -11,7 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './CompanyListItem.treat'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 export interface CompanyProps {
   name?: string
@@ -29,6 +30,9 @@ export const CompanyListItem: FC<CompanyProps> = ({
   const {
     t: { handover: t },
   } = useI18n()
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   return (
     <Box padding={3} className={styles.container}>
@@ -56,7 +60,7 @@ export const CompanyListItem: FC<CompanyProps> = ({
                   <Button
                     size="small"
                     variant="ghost"
-                    width={isMobile() ? 'fluid' : 'normal'}
+                    width={isMobile ? 'fluid' : 'normal'}
                   >
                     {t.buttons.website}
                   </Button>

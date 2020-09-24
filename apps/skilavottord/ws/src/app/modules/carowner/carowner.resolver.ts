@@ -2,7 +2,6 @@ import { Query, Resolver, Args } from '@nestjs/graphql'
 import { Carowner } from './models'
 import { CarownerService } from './models/carowner.service'
 
-
 @Resolver(() => Carowner)
 export class CarownerResolver {
   carownerService: CarownerService

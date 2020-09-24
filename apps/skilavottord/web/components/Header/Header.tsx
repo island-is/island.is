@@ -1,11 +1,7 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {
-  ResponsiveSpace,
-  GridContainer,
-  Header as IslandUIHeader,
-} from '@island.is/island-ui/core'
+import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
@@ -34,7 +30,7 @@ export const Header: FC = () => {
       logoutText={'Log out'}
       userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
       language={activeLocale.toUpperCase()}
-      switchLanguage={() => {}}
+      switchLanguage={() => console.log(activeLocale)}
       userName={mockUser?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {

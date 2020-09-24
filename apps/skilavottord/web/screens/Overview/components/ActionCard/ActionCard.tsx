@@ -11,8 +11,9 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
-import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface MockCar {
   id: string
@@ -37,6 +38,9 @@ export const ActionCard: FC<ActionCardProps> = ({
   const {
     t: { myCars: t },
   } = useI18n()
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   return (
     <OutlinedBox backgroundColor="white">
@@ -75,7 +79,7 @@ export const ActionCard: FC<ActionCardProps> = ({
               >
                 <Button
                   size="small"
-                  width={isMobile() ? 'fluid' : 'normal'}
+                  width={isMobile ? 'fluid' : 'normal'}
                   onClick={onContinue}
                 >
                   {t.actions.valid}
@@ -84,8 +88,8 @@ export const ActionCard: FC<ActionCardProps> = ({
             ) : (
               <ColumnBox
                 borderColor="blue200"
-                borderTopWidth={isMobile() ? 'standard' : 'none'}
-                borderLeftWidth={isMobile() ? 'none' : 'standard'}
+                borderTopWidth={isMobile ? 'standard' : 'none'}
+                borderLeftWidth={isMobile ? 'none' : 'standard'}
                 borderStyle="solid"
                 borderRadius="large"
                 padding={4}

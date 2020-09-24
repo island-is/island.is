@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC } from 'react'
 import {
   Button,
   Box,
@@ -26,13 +26,6 @@ export const Modal: FC<ModalProps> = ({
   const {
     t: { cancelModal: t },
   } = useI18n()
-
-  document.body.style.overflowY = 'auto'
-
-  if (show) {
-    window.scrollTo(0, 0)
-    document.body.style.overflowY = 'hidden'
-  }
 
   return (
     <>

@@ -1,6 +1,5 @@
-import { style, styleMap } from 'treat'
+import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { mapToStyleProperty } from 'libs/island-ui/core/src/utils'
 
 export const container = style({
   width: '100%',
@@ -13,10 +12,3 @@ export const container = style({
     },
   },
 })
-
-export const backgroundColors = styleMap(
-  mapToStyleProperty(theme.color, 'backgroundColor'),
-)
-export const borderColors = styleMap(
-  mapToStyleProperty(theme.color, 'borderColor'),
-)

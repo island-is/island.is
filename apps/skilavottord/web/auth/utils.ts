@@ -1,6 +1,6 @@
 import cookies from 'next-cookies'
 
-import { CSRF_COOKIE_NAME } from '@island.is/gjafakort/consts'
+const CSRF_COOKIE_NAME = 'skilavottord.csrf'
 
 type CookieContext = { req?: { headers: { cookie?: string } } }
 

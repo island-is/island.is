@@ -5,7 +5,7 @@ import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
 export interface OutlinedBoxProps {
-  children?: React.ReactNode
+  children: React.ReactNode
   backgroundColor?: Colors
   borderColor?: Colors
   padding?: ResponsiveSpace
@@ -25,11 +25,9 @@ export const OutlinedBox: FC<OutlinedBoxProps> = ({
     padding={padding}
     paddingX={paddingX}
     paddingY={paddingY}
-    className={cn(
-      backgroundColor ? styles.backgroundColors[backgroundColor] : null,
-      styles.container,
-      borderColor ? styles.borderColors[borderColor] : null,
-    )}
+    className={cn(styles.container)}
+    background={backgroundColor ? backgroundColor : null}
+    borderColor={borderColor ? backgroundColor : 'blue200'}
   >
     {children}
   </Box>

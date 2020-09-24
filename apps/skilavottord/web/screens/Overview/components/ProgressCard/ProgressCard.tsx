@@ -11,8 +11,9 @@ import {
 } from '@island.is/island-ui/core'
 import ProgressBar from '../ProgressBar/ProgressBar'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
-import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface MockCar {
   id: string
@@ -37,12 +38,12 @@ export const ProgressCard: FC<ProgressCardProps> = ({
   const {
     t: { myCars: t },
   } = useI18n()
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+
   return (
-    <OutlinedBox
-      paddingY={4}
-      paddingX={4}
-      borderColor={status === 'pending' ? 'blue200' : 'dark200'}
-    >
+    <OutlinedBox paddingY={4} paddingX={4}>
       <GridContainer>
         <GridRow>
           <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
@@ -61,7 +62,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
               <Stack space={2}>
                 <Box
                   display="flex"
-                  justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
+                  justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
                 >
                   <Tag
                     variant={status === 'pending' ? 'red' : 'darkerMint'}
@@ -74,7 +75,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                 </Box>
                 <Box
                   display="flex"
-                  justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
+                  justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
                   paddingTop={[0, 0, 0, 3]}
                 >
                   <Button

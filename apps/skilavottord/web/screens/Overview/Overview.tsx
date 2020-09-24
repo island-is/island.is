@@ -5,14 +5,14 @@ import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { ActionCard, ProgressCard } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
-import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
+import { GET_CAR_OWNER } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 
 const nationalId = '2222222222'
 
 const Overview: FC = () => {
-  const { data, loading, error } = useQuery(GET_USER, {
+  const { data, loading, error } = useQuery(GET_CAR_OWNER, {
     variables: { nationalId },
   })
 
