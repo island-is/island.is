@@ -1,23 +1,9 @@
-export type Post = {
+export type Page = {
   id: string,
-  title: string,
-  date: string,
-  alt: string,
-  image: string,
-  url: string
+  strings: Array<ContentfulString>
 }
 
-export type StaticPage = {
+export type ContentfulString = {
   id: string,
-  title: string,
-  slug: string,
-  introText: string,
-  body: any,
-  buttons: any
-}
-
-export type Button = {
-  id: string,
-  label: string,
-  linkUrl: string
+  text: string
 }

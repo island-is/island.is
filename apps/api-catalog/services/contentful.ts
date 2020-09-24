@@ -1,5 +1,5 @@
 import { ContentfulClientApi, createClient } from 'contentful';
-import { Button, StaticPage } from './contentful.types'
+import { Page, ContentfulString } from './contentful.types'
 
 class ContentfulApi {
   client: ContentfulClientApi;
@@ -12,11 +12,11 @@ class ContentfulApi {
   }
 
   /* PUBLIC FUNCTIONS */
-  public async fetchStaticPageBySlug(slug, locale): Promise<StaticPage> {
+  public async fetchPageBySlug(slug, locale): Promise<Page> {
     return await this.client.getEntries({
-      content_type: 'staticPage',
+      content_type: 'page',
       locale: locale,
-      'fields.slug': slug
+      'fields.pageId': slug
     })
     .then(entries => {
       return this.convertPage(entries.items[0]);
@@ -24,26 +24,21 @@ class ContentfulApi {
   }
   
   /* HELPER FUNCTIONS */
-  private convertPage = (rawData): StaticPage => {
+  private convertPage = (rawData): Page => {
     const rawPage = rawData.fields;
 
     return {
-      id: rawData.sys.id,
-      title: rawPage.title,
-      slug: rawPage.slug,
-      introText: ('introText' in rawPage) ? rawPage.introText : null,
-      body: ('body' in rawPage) ? rawPage.body : null,
-      buttons: ('buttons' in rawPage) ? rawPage.buttons.map(button => this.convertButton(button)) : null
+      id: rawPage.pageId,
+      strings: rawPage.pageStrings.map(st => this.convertString(st))
     }
   }
 
-  private convertButton = (rawData): Button => {
-    const rawButton = rawData.fields;
+  private convertString = (rawData): ContentfulString => {
+    const rawString = rawData.fields;
 
     return {
-      id: rawButton.id,
-      label: rawButton.label,
-      linkUrl: rawButton.linkUrl
+      id: rawString.customId,
+      text: rawString.text
     }
   }
 }
