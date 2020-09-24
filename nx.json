@@ -248,6 +248,13 @@
     },
     "judicial-system-types": {
       "tags": []
+    },
+    "skilavottord-web": {
+      "tags": []
+    },
+    "skilavottord/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["skilavottord-web"]
     }
   }
 }

@@ -27,16 +27,21 @@ export class DiscountService {
   ) {}
 
   private getRandomRange(min: number, max: number): number {
-    return Math.random() * (max - min) + min
+    return Math.random() * (max + 1 - min) + min
   }
 
   private generateDiscountCode(): string {
     return [...Array(DISCOUNT_CODE_LENGTH)]
       .map(() => {
-        const rand = Math.round(Math.random())
-        const digits = this.getRandomRange(48, 57)
-        const upperLetters = this.getRandomRange(65, 90)
-        return String.fromCharCode(rand > 0.5 ? upperLetters : digits)
+        // We are excluding 0 and O because users mix them up
+        const charCodes = [
+          this.getRandomRange(49, 57), // 1 - 9
+          this.getRandomRange(65, 78), // A - N
+          this.getRandomRange(80, 90), // P - Z
+        ]
+        const randomCharCode =
+          charCodes[Math.floor(Math.random() * charCodes.length)]
+        return String.fromCharCode(randomCharCode)
       })
       .join('')
   }
