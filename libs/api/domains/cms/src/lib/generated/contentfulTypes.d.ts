@@ -712,6 +712,9 @@ export interface ILinkFields {
 
   /** URL */
   url: string
+
+  /** Page */
+  page?: (IArticle | IArticleCategory | INews)[] | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {

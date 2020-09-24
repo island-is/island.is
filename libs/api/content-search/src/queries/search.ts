@@ -1,4 +1,4 @@
-import { Tag } from '@island.is/api/domains/content-search'
+import { Tag } from '../dto/searcher.input'
 
 import { tagQuery } from './documentByMetaData'
 

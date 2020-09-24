@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import {
+  ContentLanguage,
+  ElasticService,
+  SearcherInput,
+  SearchIndexes,
+  WebSearchAutocompleteInput,
+} from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { TagCount } from './models/tagCount'
-import { ContentLanguage } from './enums/contentLanguage.enum'
-import { SearcherInput } from './dto/searcher.input'
-import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 
 @Injectable()
 export class ContentSearchService {

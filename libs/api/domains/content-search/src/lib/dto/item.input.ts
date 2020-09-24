@@ -1,7 +1,6 @@
+import { ContentLanguage, ItemType } from '@island.is/api/content-search'
 import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
-import { ItemType } from '../enums/itemType.enum'
-import { ContentLanguage } from '../enums/contentLanguage.enum'
 
 @InputType()
 export class ItemInput {

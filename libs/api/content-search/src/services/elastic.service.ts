@@ -4,10 +4,6 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import {
-  SearcherInput,
-  WebSearchAutocompleteInput,
-} from '@island.is/api/domains/content-search'
 
 import {
   autocompleteTermQuery,
@@ -20,6 +16,8 @@ import {
 } from '../queries/documentByMetaData'
 import { MappedData, SearchIndexes, SearchResponse } from '../types'
 import { environment } from '../environments/environment'
+import { SearcherInput } from '../dto/searcher.input'
+import { WebSearchAutocompleteInput } from '../dto/webSearchAutocomplete.input'
 
 const { elastic } = environment
 interface SyncRequest {
