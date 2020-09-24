@@ -1,34 +1,8 @@
-/*import { Module } from '@nestjs/common'
-
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { GraphQLModule } from '@nestjs/graphql'
-//import { join } from 'path'
-import { ItemModule } from '../item/item.module'
-
-@Module({
-  imports: [
-    GraphQLModule.forRoot({
-      definitions: {
-        path: 'apps/skilavottord/ws/src/graphql.schema.d.ts',
-        outputAs: 'class',
-      },*/
-//      typePaths: ['../**/*.graphql'],
-/*      resolverValidationOptions: {
-        requireResolversForResolveType: false,
-      },
-    }),
-    ItemModule,
-  ],
-})*/
-
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-//import { CmsModule } from '@island.is/api/domains/cms'
 
-//import { AuthModule, UserModule, DiscountModule, FlightModule } from './modules'
-//import { BackendAPI } from '../services'
-import { UserModule } from './modules'
+import { UserModule, CarModule } from './modules'
+import { CarownerModule } from './modules/carowner'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -39,10 +13,8 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       debug,
       playground,
       autoSchemaFile: 'apps/skilavottord/ws/src/app/api.graphql',
-      //     path: '/api/graphql',
-      //     context: ({ req }) => ({ req })
     }),
-    UserModule,
+    CarownerModule,
   ],
   //providers: [BackendAPI],
 })
