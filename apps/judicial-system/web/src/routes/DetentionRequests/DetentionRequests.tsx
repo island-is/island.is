@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { format, parseISO, getTime } from 'date-fns'
+import { format, parseISO } from 'date-fns'
+
 import localeIS from 'date-fns/locale/is'
 
 import {

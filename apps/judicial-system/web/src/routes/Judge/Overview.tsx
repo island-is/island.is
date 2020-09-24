@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom'
 import * as api from '../../api'
 import { validate } from '../../utils/validate'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
+import * as Constants from '../../utils/constants'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -48,7 +49,7 @@ export const JudgeOverview: React.FC = () => {
     }
   }, [])
 
-  return (
+  return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
@@ -77,7 +78,7 @@ export const JudgeOverview: React.FC = () => {
                   data-testid="courtCaseNumber"
                   name="courtCaseNumber"
                   label="Slá inn málsnúmer"
-                  // defaultValue={workingCase.courtCaseNumber} TODO
+                  defaultValue={workingCase?.courtCaseNumber}
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={courtCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
@@ -141,7 +142,10 @@ export const JudgeOverview: React.FC = () => {
                     formatDate(workingCase?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(workingCase?.arrestDate, 'hh:mm')}`}
+                  )} kl. ${formatDate(
+                    workingCase?.arrestDate,
+                    Constants.TIME_FORMAT,
+                  )}`}
               </Typography>
             </Box>
             {workingCase?.requestedCourtDate && (
@@ -158,7 +162,7 @@ export const JudgeOverview: React.FC = () => {
                     }),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
-                    'hh:mm',
+                    Constants.TIME_FORMAT,
                   )}`}
                 </Typography>
               </Box>
@@ -181,7 +185,7 @@ export const JudgeOverview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
-                          'hh:mm',
+                          Constants.TIME_FORMAT,
                         )}`}
                     </strong>
                   </Typography>
@@ -259,14 +263,14 @@ export const JudgeOverview: React.FC = () => {
               </Accordion>
             </Box>
             <FormFooter
-              nextUrl="/"
+              nextUrl={Constants.COURT_DOCUMENT_ROUTE}
               nextIsDisabled={workingCase?.courtCaseNumber === ''}
             />
           </GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
-  )
+  ) : null
 }
 
 export default JudgeOverview
