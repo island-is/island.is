@@ -21,14 +21,13 @@ import {
   Box,
   FocusableBox,
   Logo,
-  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'
-import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
+import * as styles from './SideMenu.treat'
 
 interface TabLink {
   title: string
@@ -56,7 +55,6 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   const tabRefs = useRef<Array<HTMLElement | null>>([])
   const isMobile = width < theme.breakpoints.md
   const { menuTabs } = useContext(MenuTabsContext)
-  const { colorScheme } = useContext(ColorSchemeContext)
 
   const tabList = menuTabs || tabs
 
@@ -88,180 +86,176 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   }, [isVisible, ref, handleClickOutside])
 
   return (
-    <ColorSchemeContext.Provider
-      value={{ colorScheme: isMobile ? null : 'white' }}
-    >
-      <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
-        <FocusLock>
+    <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
+      <FocusLock>
+        <Box
+          className={cn(styles.root, {
+            [styles.isVisible]: isVisible,
+          })}
+          background="white"
+          borderRadius="large"
+          height="full"
+        >
           <Box
-            className={cn(styles.root, {
-              [styles.isVisible]: isVisible,
-            })}
-            background="white"
-            borderRadius="large"
-            height="full"
+            display="flex"
+            alignItems="center"
+            paddingBottom={3}
+            justifyContent="spaceBetween"
           >
-            <Box
-              display="flex"
-              alignItems="center"
-              paddingBottom={3}
-              justifyContent="spaceBetween"
-            >
-              <Logo width={isMobile ? 30 : 40} iconOnly id="sideMenuLogo" />
-              <Box display="flex" alignItems="center">
-                <FocusableBox
-                  component="button"
-                  onClick={handleClose}
-                  tabIndex={-1}
-                  padding={1}
-                >
-                  <Icon type="close" />
-                </FocusableBox>
-              </Box>
+            <Logo width={isMobile ? 30 : 40} iconOnly id="sideMenuLogo" />
+            <Box display="flex" alignItems="center">
+              <FocusableBox
+                component="button"
+                onClick={handleClose}
+                tabIndex={-1}
+                padding={1}
+              >
+                <Icon type="close" />
+              </FocusableBox>
             </Box>
-            <Hidden above="sm">
-              <GridContainer>
-                <GridRow>
-                  <GridColumn span="12/12">
-                    <SearchInput
-                      id="search_input_side_menu"
-                      activeLocale={activeLocale}
-                      placeholder={t.searchPlaceholder}
-                      size="medium"
-                    />
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
-                  <GridColumn
-                    span="8/12"
-                    paddingTop={[2, 2, 3]}
-                    paddingBottom={[2, 2, 3]}
-                  >
-                    <Button
-                      href="https://minarsidur.island.is/"
-                      variant="menu"
-                      leftIcon="user"
-                      width="fluid"
-                    >
-                      {t.login}
-                    </Button>
-                  </GridColumn>
-                  <GridColumn
-                    span="4/12"
-                    paddingTop={[2, 2, 3]}
-                    paddingBottom={[2, 2, 3]}
-                  >
-                    <LanguageToggler />
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </Hidden>
-
-            <div className={styles.tabBar}>
-              {tabList.map((tab, index) => (
-                <div key={index} className={styles.tabContainer}>
-                  <FocusableBox
-                    ref={(el) => (tabRefs.current[index] = el)}
-                    component="button"
-                    role="tab"
-                    aria-controls={`tab-content-${index}`}
-                    aria-selected={activeTab === index}
-                    onClick={() => setActiveTab(index)}
-                    className={styles.tabButton}
-                  >
-                    {({ isFocused }) => (
-                      <div
-                        className={cn(styles.tab, {
-                          [styles.tabActive]: activeTab === index,
-                          [styles.tabFocused]: isFocused,
-                        })}
-                      >
-                        <Typography
-                          variant="menuTab"
-                          fontWeight={activeTab === index ? 'medium' : 'light'}
-                          color="blue400"
-                        >
-                          {tab.title}
-                        </Typography>
-                      </div>
-                    )}
-                  </FocusableBox>
-                </div>
-              ))}
-            </div>
-            {tabList.map((tab, index) => {
-              const hasExternalLinks =
-                tab.externalLinks && tab.externalLinks.length
-              return (
-                <div
-                  key={index}
-                  aria-labelledby={`tab${index}`}
-                  role="tabpanel"
-                  className={styles.content}
-                  hidden={activeTab !== index}
+          </Box>
+          <Hidden above="sm">
+            <GridContainer>
+              <GridRow>
+                <GridColumn span="12/12">
+                  <SearchInput
+                    id="search_input_side_menu"
+                    activeLocale={activeLocale}
+                    placeholder={t.searchPlaceholder}
+                    size="medium"
+                  />
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn
+                  span="8/12"
+                  paddingTop={[2, 2, 3]}
+                  paddingBottom={[2, 2, 3]}
                 >
-                  <div className={styles.linksContent}>
-                    {tab.links.map((link, index) => {
-                      const props = {
-                        ...(link.href && { href: link.href }),
-                        ...(link.as && { as: link.as }),
-                      }
+                  <Button
+                    href="https://minarsidur.island.is/"
+                    variant="menu"
+                    leftIcon="user"
+                    width="fluid"
+                  >
+                    {t.login}
+                  </Button>
+                </GridColumn>
+                <GridColumn
+                  span="4/12"
+                  paddingTop={[2, 2, 3]}
+                  paddingBottom={[2, 2, 3]}
+                >
+                  <LanguageToggler />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </Hidden>
 
-                      return (
+          <div className={styles.tabBar}>
+            {tabList.map((tab, index) => (
+              <div key={index} className={styles.tabContainer}>
+                <FocusableBox
+                  ref={(el) => (tabRefs.current[index] = el)}
+                  component="button"
+                  role="tab"
+                  aria-controls={`tab-content-${index}`}
+                  aria-selected={activeTab === index}
+                  onClick={() => setActiveTab(index)}
+                  className={styles.tabButton}
+                >
+                  {({ isFocused }) => (
+                    <div
+                      className={cn(styles.tab, {
+                        [styles.tabActive]: activeTab === index,
+                        [styles.tabFocused]: isFocused,
+                      })}
+                    >
+                      <Typography
+                        variant="menuTab"
+                        fontWeight={activeTab === index ? 'medium' : 'light'}
+                        color="blue400"
+                      >
+                        {tab.title}
+                      </Typography>
+                    </div>
+                  )}
+                </FocusableBox>
+              </div>
+            ))}
+          </div>
+          {tabList.map((tab, index) => {
+            const hasExternalLinks =
+              tab.externalLinks && tab.externalLinks.length
+            return (
+              <div
+                key={index}
+                aria-labelledby={`tab${index}`}
+                role="tabpanel"
+                className={styles.content}
+                hidden={activeTab !== index}
+              >
+                <div className={styles.linksContent}>
+                  {tab.links.map((link, index) => {
+                    const props = {
+                      ...(link.href && { href: link.href }),
+                      ...(link.as && { as: link.as }),
+                    }
+
+                    return (
+                      <Typography
+                        key={index}
+                        variant="sideMenu"
+                        color="blue400"
+                        paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+                      >
+                        <Box
+                          component="span"
+                          display="inlineBlock"
+                          width="full"
+                          onClick={handleClose}
+                        >
+                          <FocusableBox {...props}>{link.title}</FocusableBox>
+                        </Box>
+                      </Typography>
+                    )
+                  })}
+                </div>
+                {hasExternalLinks && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    flexDirection="column"
+                  >
+                    <Typography
+                      variant="menuTab"
+                      color="blue400"
+                      paddingTop={3}
+                      paddingBottom={3}
+                    >
+                      {tab.externalLinksHeading}
+                    </Typography>
+                    <div className={styles.linksContent}>
+                      {tab.externalLinks.map((link, index) => (
                         <Typography
                           key={index}
                           variant="sideMenu"
                           color="blue400"
-                          paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+                          paddingBottom={2}
                         >
-                          <Box
-                            component="span"
-                            display="inlineBlock"
-                            width="full"
-                            onClick={handleClose}
-                          >
-                            <FocusableBox {...props}>{link.title}</FocusableBox>
-                          </Box>
+                          <FocusableBox href={link.href}>
+                            {link.title}
+                          </FocusableBox>
                         </Typography>
-                      )
-                    })}
-                  </div>
-                  {hasExternalLinks && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      flexDirection="column"
-                    >
-                      <Typography
-                        variant="menuTab"
-                        color="blue400"
-                        paddingTop={3}
-                        paddingBottom={3}
-                      >
-                        {tab.externalLinksHeading}
-                      </Typography>
-                      <div className={styles.linksContent}>
-                        {tab.externalLinks.map((link, index) => (
-                          <Typography
-                            key={index}
-                            variant="sideMenu"
-                            color="blue400"
-                            paddingBottom={2}
-                          >
-                            <FocusableBox href={link.href}>
-                              {link.title}
-                            </FocusableBox>
-                          </Typography>
-                        ))}
-                      </div>
-                    </Box>
-                  )}
-                </div>
-              )
-            })}
-          </Box>
-        </FocusLock>
-      </RemoveScroll>
-    </ColorSchemeContext.Provider>
+                      ))}
+                    </div>
+                  </Box>
+                )}
+              </div>
+            )
+          })}
+        </Box>
+      </FocusLock>
+    </RemoveScroll>
   )
 }
