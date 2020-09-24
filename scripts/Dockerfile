@@ -7,7 +7,7 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock ./
-RUN yarn install --frozen-lockfile && rm -rf /root/.cache
+RUN DOCKER_BUILD=true yarn install --frozen-lockfile && rm -rf /root/.cache
 
 FROM deps as src
 # image with the source code
