@@ -8,8 +8,6 @@ import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
 import { Colors } from '@island.is/island-ui/theme'
 
-const TAB_ID_PREFIX = 'tab'
-
 type TabType = {
   label: string
   content: ReactNode
