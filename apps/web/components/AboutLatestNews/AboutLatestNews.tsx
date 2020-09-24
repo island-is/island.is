@@ -16,7 +16,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import Link from 'next/link'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
@@ -52,7 +51,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
     <>
       <div className={styles.indent}>
         {Boolean(title) && (
-          <Box paddingBottom={8}>
+          <Box paddingBottom={[4, 4, 8]}>
             <Typography variant="h1" as="h2">
               {title}
             </Typography>
@@ -69,7 +68,11 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
       </div>
       <GridRow>
         {rest.map((newsItem, index) => (
-          <GridColumn key={index} span={['1/1', '1/1', '1/2']} paddingTop={15}>
+          <GridColumn
+            key={index}
+            span={['1/1', '1/1', '1/2']}
+            paddingTop={[7, 7, 15]}
+          >
             <NewsCard
               key={index}
               title={newsItem.title}
