@@ -28,6 +28,7 @@ import {
   GridRow,
   SpanType,
   Tabs,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -159,7 +160,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
   return (
     <Background id={slice.id} theme={page.theme}>
       {!!mobileNavigation.length && (
-        <Box display={['block', 'block', 'block', 'none']} paddingBottom={4}>
+        <Hidden above="md">
           <DrawerMenu
             categories={[
               {
@@ -168,11 +169,11 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
               },
             ]}
           />
-        </Box>
+        </Hidden>
       )}
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-          <Box marginBottom={[8, 8, 8, 15]}>
+          <Box marginBottom={[0, 0, 8, 15]}>
             <Header />
           </Box>
         </ColorSchemeContext.Provider>
