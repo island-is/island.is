@@ -37,7 +37,7 @@ export async function getApplicationTemplateByTypeId<
 
 export async function getApplicationStateInformation(
   application: Application,
-): Promise<ApplicationStateMeta> | null {
+): Promise<ApplicationStateMeta | null> {
   const template = await getApplicationTemplateByTypeId(application.typeId)
   if (!template) {
     return null
