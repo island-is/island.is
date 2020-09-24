@@ -486,6 +486,7 @@ export type Link = {
   __typename?: 'Link'
   text: Scalars['String']
   url: Scalars['String']
+  page?: Maybe<Scalars['String']>
 }
 
 export type PageHeader = {
@@ -1651,7 +1652,9 @@ export type GetMenuQueryVariables = Exact<{
 export type GetMenuQuery = { __typename?: 'Query' } & {
   getMenu?: Maybe<
     { __typename?: 'Menu' } & Pick<Menu, 'title'> & {
-        links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
+        links: Array<
+          { __typename?: 'Link' } & Pick<Link, 'text' | 'url' | 'page'>
+        >
       }
   >
 }

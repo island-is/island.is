@@ -9,13 +9,15 @@ import { Inline } from '../Inline/Inline'
 import { Tag } from '../Tag/Tag'
 import { Icon } from '../Icon/Icon'
 import { GridContainer, GridRow, GridColumn } from '../Grid'
+import { ExternalLink, Link } from '../Link'
+import { LinkProps } from '../Link/Link'
 
 import * as styles from './Footer.treat'
-import { ExternalLink, Link } from '../Link'
 
 export interface FooterLinkProps {
   title: string
   href: string
+  linkProps?: LinkProps
   className?: string
 }
 
@@ -64,7 +66,7 @@ export const Footer = ({
               className={styles.withDecorator}
             >
               <Box paddingRight={[0, 0, 1]}>
-                {topLinks.map(({ title, href }, index) => {
+                {topLinks.map(({ title, href, linkProps }, index) => {
                   const isLast = index + 1 === topLinks.length
                   return (
                     <Typography
@@ -72,7 +74,12 @@ export const Footer = ({
                       variant="intro"
                       paddingBottom={isLast ? 5 : 2}
                     >
-                      <Link href={href} color="blue600" withUnderline>
+                      <Link
+                        href={href}
+                        color="blue600"
+                        withUnderline
+                        {...linkProps}
+                      >
                         {title}
                       </Link>
                     </Typography>
@@ -137,10 +144,15 @@ export const Footer = ({
                     </Typography>
                   ) : null}
                   <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
-                    {middleLinks.map(({ title, href }, index) => {
+                    {middleLinks.map(({ title, href, linkProps }, index) => {
                       return (
                         <Typography key={index} variant="h5" fontWeight="light">
-                          <Link href={href} color="blue400" withUnderline>
+                          <Link
+                            href={href}
+                            color="blue400"
+                            withUnderline
+                            {...linkProps}
+                          >
                             {title}
                           </Link>
                         </Typography>
@@ -166,11 +178,13 @@ export const Footer = ({
                     </Typography>
                   ) : null}
                   <Inline space={2}>
-                    {tagLinks.map(({ title, href }, index) => {
+                    {tagLinks.map(({ title, href, linkProps }, index) => {
                       return (
-                        <Tag key={index} href={href} variant="white">
-                          {title}
-                        </Tag>
+                        <Link href={href} {...linkProps} passHref pureChildren>
+                          <Tag key={index} href={href} variant="white">
+                            {title}
+                          </Tag>
+                        </Link>
                       )
                     })}
                   </Inline>

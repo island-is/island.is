@@ -1,5 +1,5 @@
 import React from 'react'
-import NextLink, { LinkProps } from 'next/link'
+import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.treat'
 
@@ -11,7 +11,7 @@ const isLinkInternal = (href: string) => {
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
 
-interface Props extends LinkProps {
+export interface LinkProps extends NextLinkProps {
   color?: LinkColor
   className?: string
   withUnderline?: boolean
@@ -20,7 +20,7 @@ interface Props extends LinkProps {
 }
 
 // Next link that can handle external urls
-const Link: React.FC<Props> = ({
+const Link: React.FC<LinkProps> = ({
   children,
   href,
   as,

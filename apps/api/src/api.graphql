@@ -407,6 +407,7 @@ type Namespace {
 type Link {
   text: String!
   url: String!
+  page: String
 }
 
 type PageHeader {

@@ -497,6 +497,7 @@ export type Link = {
   __typename?: 'Link'
   text: Scalars['String']
   url: Scalars['String']
+  page?: Maybe<Scalars['String']>
 }
 
 export type PageHeader = {
@@ -2517,6 +2518,7 @@ export type LinkResolvers<
 > = {
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  page?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

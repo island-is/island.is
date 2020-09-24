@@ -7,7 +7,9 @@ const routes = {
     page: 'stofnanir', // quick fix for launch
     Page: 'stofnanir',
     category: 'flokkur',
+    articleCategory: 'flokkur',
     ArticleCategory: 'flokkur',
+    contentCategory: 'flokkur',
     ContentCategory: 'flokkur',
     news: 'frett',
     News: 'frett',
@@ -21,7 +23,9 @@ const routes = {
     page: 'organizations',
     Page: 'organizations',
     category: 'category',
+    articleCategory: 'category',
     ArticleCategory: 'category',
+    contentCategory: 'category',
     ContentCategory: 'category',
     news: 'news',
     News: 'news',
@@ -35,7 +39,9 @@ export type PathTypes =
   | 'article'
   | 'Article'
   | 'category'
+  | 'contentCategory'
   | 'ContentCategory'
+  | 'articleCategory'
   | 'ArticleCategory'
   | 'news'
   | 'News'

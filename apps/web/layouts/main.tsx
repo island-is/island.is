@@ -13,7 +13,13 @@ import { Screen, GetInitialPropsContext } from '../types'
 import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
 
-import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
+import {
+  Header,
+  PageLoader,
+  FixedNav,
+  SkipToMainContent,
+  getLink,
+} from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -323,27 +329,32 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     categories,
     topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
-      ({ text, url }) => ({
+      ({ text, url, page }) => ({
         title: text,
         href: url,
+        ...(page && { linkProps: getLink({ pageData: page }) }),
       }),
     ),
     alertBannerContent: alertBanner,
-    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
+    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
+      ...(page && { linkProps: getLink({ pageData: page }) }),
     })),
-    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url }) => ({
+    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
+      ...(page && { linkProps: getLink({ pageData: page }) }),
     })),
-    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url }) => ({
+    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
+      ...(page && { linkProps: getLink({ pageData: page }) }),
     })),
-    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url }) => ({
+    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
+      ...(page && { linkProps: getLink({ pageData: page }) }),
     })),
     namespace,
   }

@@ -12,6 +12,35 @@ interface ContentLinkProps {
   children: ReactNode
 }
 
+export const getLink = ({
+  pageData = '',
+  locale = defaultLanguage,
+  href = '[slug]',
+}) => {
+  if (!pageData) {
+    return null
+  }
+
+  const { makePath } = routeNames(locale)
+
+  const data = pageData && JSON.parse(pageData)
+
+  const contentType = data?.sys?.contentType?.sys?.id ?? ''
+  const slug = data?.fields?.slug ?? ''
+
+  if (!contentType || !slug) {
+    return null
+  }
+
+  const newHref = makePath(contentType, href)
+  const as = makePath(contentType, slug)
+
+  return {
+    href: newHref,
+    as,
+  }
+}
+
 export const ContentLink: FC<ContentLinkProps> = ({
   pageData = null,
   href = '[slug]',
@@ -28,14 +57,9 @@ export const ContentLink: FC<ContentLinkProps> = ({
     locale = getLocaleFromPath(asPath)
   }
 
-  const { makePath } = routeNames(locale)
+  const linkProps = getLink({ locale, pageData, href })
 
-  const data = pageData && JSON.parse(pageData)
-
-  const contentType = data?.sys?.contentType?.sys?.id ?? ''
-  const slug = data?.fields?.slug ?? ''
-
-  if (!contentType || !slug) {
+  if (!linkProps) {
     if (!fallbackLink) {
       return null
     }
@@ -45,14 +69,6 @@ export const ContentLink: FC<ContentLinkProps> = ({
         {children}
       </Link>
     )
-  }
-
-  const newHref = makePath(contentType, href)
-  const as = makePath(contentType, slug)
-
-  const linkProps = {
-    href: newHref,
-    as,
   }
 
   return (
