@@ -8,17 +8,6 @@ import Document, {
 } from 'next/document'
 import { getLocaleFromPath } from '../i18n/withLocale'
 
-const getDomain = (host: string): string => {
-  if (typeof host === 'string') {
-    host = host.split(':')[0]
-    if (host.match(/\.?island\.is$/)) {
-      return host.replace(/^www\./, '')
-    }
-  }
-
-  return ''
-}
-
 interface Props {
   lang: Locale
   domain: string
@@ -27,7 +16,7 @@ interface Props {
 class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
-    const domain = getDomain(ctx.req.headers.host)
+    const domain = process.env.TRACKING_DOMAIN ?? ''
     const lang = getLocaleFromPath(ctx.req.url)
 
     return { ...initialProps, lang, domain }
