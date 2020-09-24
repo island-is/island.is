@@ -47,7 +47,7 @@ export type RangeInput = {
 export type FlightLegsInput = {
   airline?: string
   flightLeg?: Travel
-  period: PeriodInput
+  period?: PeriodInput
   state?: string[]
   age?: RangeInput
   gender?: 'kk' | 'kvk'

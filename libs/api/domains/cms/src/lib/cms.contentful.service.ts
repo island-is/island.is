@@ -120,7 +120,9 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizations'))
 
     return {
-      items: result.items.map(mapOrganization),
+      items: result.items
+        .map(mapOrganization)
+        .filter((organization) => organization.title && organization.slug),
     }
   }
 

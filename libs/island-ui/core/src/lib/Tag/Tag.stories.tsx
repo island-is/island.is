@@ -22,6 +22,7 @@ export const Basic = () => (
         <Tag variant="white" label>
           Færnimat
         </Tag>
+        <Tag variant="rose">Færnimat</Tag>
         <Tag variant="red" attention>
           Mikilvægt
         </Tag>

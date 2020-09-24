@@ -11,11 +11,11 @@ import {
   Input,
   Checkbox,
 } from '@island.is/island-ui/core'
+import { CaseState } from '@island.is/judicial-system/types'
 import {
   CustodyProvisions,
   CustodyRestrictions,
   Case,
-  CaseState,
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'

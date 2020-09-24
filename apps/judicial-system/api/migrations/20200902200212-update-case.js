@@ -19,11 +19,17 @@ module.exports = {
         allowNull: false,
         defaultValue: 'MISSING',
       }),
-      queryInterface.changeColumn('case', 'suspect_name', {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'MISSING',
-      }),
+      queryInterface.sequelize
+        .query(
+          `UPDATE "case" SET suspect_name = 'MISSING' WHERE suspect_name IS NULL;`,
+        )
+        .then(() =>
+          queryInterface.changeColumn('case', 'suspect_name', {
+            type: Sequelize.STRING,
+            allowNull: false,
+            defaultValue: 'MISSING',
+          }),
+        ),
     ])
   },
 }

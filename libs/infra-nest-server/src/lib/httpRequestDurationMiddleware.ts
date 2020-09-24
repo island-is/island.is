@@ -1,3 +1,4 @@
+import { Request, Response } from 'express'
 import { Histogram } from 'prom-client'
 
 export const httpRequestDurationMiddleware = () => {
@@ -8,7 +9,7 @@ export const httpRequestDurationMiddleware = () => {
     buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500], // buckets for response time from 0.1ms to 500ms
   })
 
-  return (req, res, next) => {
+  return (req: Request, res: Response, next: Function) => {
     res.locals.startEpoch = Date.now()
     res.on('finish', function() {
       const responseTimeInMs = Date.now() - res.locals.startEpoch

@@ -28,6 +28,7 @@ import StaticHtml from './StaticHtml/StaticHtml'
 import slugify from '@sindresorhus/slugify'
 import { SectionWithImage } from './SectionWithImage/SectionWithImage'
 import { TeamList } from './TeamList/TeamList'
+import { ContactUs } from './ContactUs/ContactUs'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
@@ -84,6 +85,16 @@ export const defaultRenderComponent = (
 
     case 'TeamList':
       return <TeamList {...slice} />
+
+    case 'ContactUs':
+      // NB: ContactUs needs to be connected with submit logic higher up
+      return (
+        <ContactUs
+          {...slice}
+          onSubmit={async (data) => console.warn(data)}
+          state="edit"
+        />
+      )
 
     default:
       // TODO: this should be an exhaustive list of slice types, but some slice

@@ -295,7 +295,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
       const slug = linkData.fields?.slug
 
-      if (slug && ['article', 'category', 'news'].includes(contentId)) {
+      if (slug && ['article', 'category', 'news', 'page'].includes(contentId)) {
         return {
           href: makePath(contentId, '/[slug]'),
           as: makePath(contentId, slug),
@@ -392,7 +392,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <Typography variant="p" as="p">
                             <span className={styles.textItem}>{content}</span>
                           </Typography>
-                          {linkUrls.href ? (
+                          {linkUrls?.href ? (
                             <Link
                               as={linkUrls.as}
                               href={linkUrls.href}

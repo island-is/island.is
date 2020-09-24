@@ -85,11 +85,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
       >
         <>
           <GridRow>
-            <GridColumn
-              offset={['0', '0', '0', '0', '1/9']}
-              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-              paddingBottom={2}
-            >
+            <GridColumn span={'9/9'} paddingBottom={2}>
               <Box marginBottom={2} display="inlineBlock" width="full">
                 <BackgroundImage
                   ratio="12:4"
@@ -98,12 +94,6 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   image={image}
                 />
               </Box>
-              <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
-                <Tag variant="blue" label>
-                  {n('lifeEventTitle', 'Lífsviðburður')}
-                </Tag>
-              </Breadcrumbs>
             </GridColumn>
           </GridRow>
           {!!mobileNavigation.length && (
@@ -127,6 +117,12 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               offset={['0', '0', '0', '0', '1/9']}
               span={['9/9', '9/9', '9/9', '9/9', '7/9']}
             >
+              <Breadcrumbs>
+                <Link href={makePath()}>Ísland.is</Link>
+                <Tag variant="blue" label>
+                  {n('lifeEventTitle', 'Lífsviðburður')}
+                </Tag>
+              </Breadcrumbs>
               <Typography variant="h1" as="h1">
                 <span id={slugify(title)}>{title}</span>
               </Typography>
