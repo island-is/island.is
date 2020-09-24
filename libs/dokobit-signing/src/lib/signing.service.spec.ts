@@ -39,6 +39,7 @@ const testStatusResponse = {
 }
 const postMock = jest.fn(function(
   path: string,
+  // The body and init arguments are needed for the mock to work
   body?: Body, // eslint-disable-line @typescript-eslint/no-unused-vars
   init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
@@ -119,7 +120,7 @@ describe('SigningService', () => {
   })
 
   it('should get a signed document', async () => {
-    const res = await signingService.getDocument(
+    const res = await signingService.getSignedDocument(
       testDocumentName,
       testSignResponse.token,
     )

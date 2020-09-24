@@ -1,3 +1,5 @@
+import { CaseState } from '@island.is/judicial-system/types'
+
 export enum CustodyProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
@@ -12,14 +14,6 @@ export enum CustodyRestrictions {
   VISITAION = 'VISITAION',
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
-}
-
-export enum CaseState {
-  UNKNOWN = 'UNKNOWN',
-  DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
 }
 
 export enum NotificationType {

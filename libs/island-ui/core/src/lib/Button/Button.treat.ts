@@ -59,14 +59,14 @@ export const noWrap = style({
 })
 
 const sizeMenuDesktop = {
-  height: 48,
+  minHeight: 48,
   padding: '0 12px',
   fontSize: 14,
   lineHeight: 1.142857,
 }
 
 const sizeMenuMobile = {
-  height: 40,
+  minHeight: 40,
   padding: '0 12px',
   fontSize: 12,
   lineHeight: 1.333333,
@@ -75,28 +75,28 @@ const sizeMenuMobile = {
 const sizeMediumDesktop = {
   fontSize: 18,
   lineHeight: 1.555555,
-  height: 64,
+  minHeight: 64,
   padding: '0 24px',
 }
 
 const sizeLargeDesktop = {
   fontSize: 24,
   lineHeight: 1.416666,
-  height: 80,
+  minHeight: 80,
   padding: '0 24px',
 }
 
 const sizeMediumMobile = {
   fontSize: 15,
   lineHeight: 2.75,
-  height: 64,
+  minHeight: 64,
   padding: '0 24px',
 }
 
 const sizeLargeMobile = {
   fontSize: 20,
   lineHeight: 1.4,
-  height: 72,
+  minHeight: 72,
   padding: '0 24px',
 }
 
@@ -261,19 +261,19 @@ export const variants = styleMap({
         borderColor: theme.color.blue300,
       },
       [`&${sizes.small}`]: {
-        height: 24,
+        minHeight: 24,
         fontSize: 14,
         lineHeight: 1.142857,
         padding: 0,
       },
       [`&${sizes.medium}`]: {
-        height: 36,
+        minHeight: 36,
         fontSize: 18,
         lineHeight: 1.555555,
         padding: 0,
       },
       [`&${sizes.large}`]: {
-        height: 42,
+        minHeight: 42,
         fontSize: 24,
         lineHeight: 1.416666,
         padding: 0,
@@ -375,7 +375,7 @@ export const white = style({
     backgroundColor: theme.color.transparent,
   },
   selectors: {
-    [`&:hover:focus`]: {
+    [`&:focus:hover`]: {
       borderColor: theme.color.transparent,
       backgroundColor: theme.color.transparent,
     },
@@ -384,6 +384,41 @@ export const white = style({
     },
     [`&:focus:after`]: {
       borderColor: theme.color.mint400,
+      opacity: 1,
+    },
+    [`&${variants.text}:focus`]: {
+      backgroundColor: theme.color.mint400,
+      color: theme.color.dark400,
+    },
+    [`&${variants.text}:focus:hover`]: {
+      backgroundColor: theme.color.mint400,
+      color: theme.color.dark400,
+    },
+    [`&${variants.text}:after`]: {
+      borderColor: theme.color.white,
+    },
+    [`&${variants.text}:hover:after`]: {
+      borderColor: theme.color.white,
+    },
+    [`&${variants.text}:focus:active`]: {
+      backgroundColor: theme.color.mint400,
+      color: theme.color.blue400,
+    },
+    [`&${variants.text}:active`]: {
+      backgroundColor: theme.color.mint400,
+      color: theme.color.blue400,
+    },
+    [`&${variants.text}:focus:after`]: {
+      borderColor: theme.color.dark400,
+    },
+    [`&${variants.text}:focus:active:after`]: {
+      borderWidth: 1,
+      borderColor: theme.color.white,
+      opacity: 1,
+    },
+    [`&${variants.text}:hover:active:after`]: {
+      borderWidth: 1,
+      borderColor: theme.color.white,
       opacity: 1,
     },
   },
@@ -425,18 +460,30 @@ globalStyle(`${variants.ghost}:active path`, {
 })
 
 // Text icon colors
+globalStyle(`${white}${variants.text} path`, {
+  fill: theme.color.white,
+})
 globalStyle(`${variants.text} path`, {
   fill: theme.color.blue400,
+})
+globalStyle(`${white}${variants.text}:hover path`, {
+  fill: theme.color.white,
 })
 globalStyle(`${variants.text}:hover path`, {
   fill: theme.color.blueberry400,
 })
-globalStyle(`${variants.text}:focus path`, {
-  fill: theme.color.dark400,
-})
-globalStyle(`${variants.text}:active path`, {
-  fill: theme.color.blue400,
-})
+globalStyle(
+  `${white}${variants.text}:focus path, ${variants.text}:focus path`,
+  {
+    fill: theme.color.dark400,
+  },
+)
+globalStyle(
+  `${white}${variants.text}:active path, ${variants.text}:active path`,
+  {
+    fill: theme.color.blue400,
+  },
+)
 
 // Menu icon colors
 globalStyle(`${variants.menu} path`, {

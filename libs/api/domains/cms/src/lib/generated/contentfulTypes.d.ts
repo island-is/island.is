@@ -674,7 +674,7 @@ export interface ILifeEventPageFields {
   slug: string
 
   /** intro */
-  intro: string
+  intro?: string | undefined
 
   /** image */
   image?: Asset | undefined

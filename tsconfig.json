@@ -123,7 +123,10 @@
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
       ],
-      "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"]
+      "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
+      "@island.is/judicial-system/types": [
+        "libs/judicial-system/types/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -69,6 +69,7 @@ const ArticleFields = [
   'sys',
   'fields.slug',
   'fields.title',
+  'fields.shortTitle',
   'fields.content',
   'fields.subgroup',
   'fields.group',
@@ -119,7 +120,9 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizations'))
 
     return {
-      items: result.items.map(mapOrganization),
+      items: result.items
+        .map(mapOrganization)
+        .filter((organization) => organization.title && organization.slug),
     }
   }
 

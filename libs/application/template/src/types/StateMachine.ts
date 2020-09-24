@@ -25,7 +25,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
         answers?: string[]
         externalData?: string[]
       }
-  form?: Form
+  formLoader?: () => Promise<Form>
   actions?: CallToAction<T>[]
 }
 

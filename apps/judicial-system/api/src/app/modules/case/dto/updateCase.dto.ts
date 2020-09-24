@@ -1,11 +1,9 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
-  CaseState,
-  CaseCustodyRestrictions,
-  CaseCustodyProvisions,
-} from '../models'
+import { CaseState } from '@island.is/judicial-system/types'
+
+import { CaseCustodyRestrictions, CaseCustodyProvisions } from '../models'
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -97,4 +95,34 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseNumber: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtStartTime: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtEndTime: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtAttendees: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly policeDemands: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly suspectPlea: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly litigationPresentations: string
 }

@@ -245,6 +245,9 @@
     },
     "dokobit-signing": {
       "tags": []
+    },
+    "judicial-system-types": {
+      "tags": []
     }
   }
 }

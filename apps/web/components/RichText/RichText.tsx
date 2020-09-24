@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react'
+import React, { FC, memo, ReactNode } from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
 import {
   renderSlices,
@@ -6,15 +6,24 @@ import {
   RenderConfig,
 } from '@island.is/island-ui/contentful'
 import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
+import ContactUs from '../ContactUs/ContactUs'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'ProcessEntry',
   'SectionWithImage',
   'TeamList',
+  'ContactUs',
 ]
 
 const renderComponent = (slice: Slice, config: RenderConfig) => {
-  let children = defaultRenderComponent(slice, config)
+  let children: ReactNode = null
+  switch (slice.__typename) {
+    case 'ContactUs':
+      children = <ContactUs {...slice} />
+      break
+    default:
+      children = defaultRenderComponent(slice, config)
+  }
 
   if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.

@@ -36,6 +36,7 @@ import {
   AutocompleteTermResultsQuery,
   Article,
   SearchableContentTypes,
+  LifeEventPage,
 } from '@island.is/web/graphql/schema'
 
 const DEBOUNCE_TIMER = 150
@@ -377,7 +378,7 @@ const Results: FC<{
               <Typography variant="eyebrow" color="purple400">
                 Beint að efninu
               </Typography>
-              {(search.results.items as Article[])
+              {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
                   <div key={id} {...getItemProps({ item: '' })}>

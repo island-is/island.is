@@ -3,6 +3,7 @@ import { Base64 } from 'js-base64'
 import { createHash } from 'crypto'
 
 import { Injectable, Inject } from '@nestjs/common'
+import { ApiProperty } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -12,7 +13,10 @@ export interface SigningServiceOptions {
 }
 
 export class SigningServiceResponse {
+  @ApiProperty()
   controlCode: string
+
+  @ApiProperty()
   documentToken: string
 }
 
@@ -48,7 +52,8 @@ interface DokobitStatusResponse {
 @Injectable()
 export class SigningService extends RESTDataSource {
   constructor(
-    @Inject('SIGNING_OPTIONS') private options: SigningServiceOptions,
+    @Inject('SIGNING_OPTIONS')
+    private options: SigningServiceOptions,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
@@ -80,6 +85,8 @@ export class SigningService extends RESTDataSource {
 
     const body = new FormData()
     body.append('phone', mobileNumber)
+    // We need the extra space at the end to separate the message from
+    // the four digit control code displayed on the mobile screen
     body.append('message', `${message} `)
     body.append('timestamp', 'true')
     body.append('language', 'IS')
@@ -105,14 +112,17 @@ export class SigningService extends RESTDataSource {
     }
   }
 
-  async getDocument(
+  async getSignedDocument(
     documentName: string,
     documentToken: string,
   ): Promise<string> {
     let resStatus: DokobitStatusResponse
 
     // Try to retrieve the signed document
-    // Need to try longer than the mobile signature timeout, but not too long
+    // The Dokobit API returns pretty much immediatly from the status call
+    // At the same time, the mobile user gets a long time to complete the signature
+    // We need to try longer than the mobile signature timeout, but not too long
+    // Later, we may decide to return ater one call and let the caller handle retries
     for (let i = 1; i < 120; i++) {
       resStatus = await this.post(
         `sign/status/${documentToken}.json?access_token=${this.options.accessToken}`,
