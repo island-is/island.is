@@ -61,15 +61,22 @@ export const LocaleProvider = ({
   )
 
   useEffect(() => {
+    let mounted = true
     async function prepare() {
       await polyfill(locale)
-      setReady(true)
     }
 
     if (!ready) {
-      prepare()
+      prepare().then(() => {
+        if (mounted) {
+          setReady(true)
+        }
+      })
     }
-  }, [])
+    return () => {
+      mounted = false
+    }
+  }, [locale, ready])
 
   useEffect(() => {
     setActiveLocale(locale)

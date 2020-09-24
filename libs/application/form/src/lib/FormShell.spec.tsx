@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, render } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as z from 'zod'
 
@@ -64,7 +64,7 @@ describe(' FormShell', () => {
 
   it('should render the application title', async () => {
     await act(async () => {
-      const wrapper = await render(
+      await render(
         <ApolloProvider client={client}>
           <LocaleProvider locale="is" messages={{}}>
             <FormShell
@@ -76,7 +76,7 @@ describe(' FormShell', () => {
           </LocaleProvider>
         </ApolloProvider>,
       )
-      expect(wrapper.getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
     })
+    expect(screen.getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
   })
 })

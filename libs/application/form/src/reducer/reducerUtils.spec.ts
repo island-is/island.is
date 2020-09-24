@@ -165,16 +165,16 @@ describe('reducerUtils', () => {
       expect(newerScreens[5].id).toBe('familyName')
     })
 
-    it('should return undefined if the desired index is not representing a repeater', () => {
+    it('should return empty arrays if the desired index is not representing a repeater', () => {
       const leaves: FormLeaf[] = [repeater, randomField]
       const screens: FormScreen[] = convertLeavesToScreens(leaves, {})
       const [newLeaves, newScreens] = expandRepeater(1, leaves, screens, {})
-      expect(newLeaves).toBeUndefined()
-      expect(newScreens).toBeUndefined()
+      expect(newLeaves.length).toBe(0)
+      expect(newScreens.length).toBe(0)
 
       const [newerLeaves, newerScreens] = expandRepeater(6, leaves, screens, {})
-      expect(newerLeaves).toBeUndefined()
-      expect(newerScreens).toBeUndefined()
+      expect(newerLeaves.length).toBe(0)
+      expect(newerScreens.length).toBe(0)
     })
   })
   describe('find current screen', () => {

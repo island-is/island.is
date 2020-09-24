@@ -18,7 +18,7 @@ export function getApplicationTemplateByTypeId<
   templateId: ApplicationTypes,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> | null {
   return (
-    (templates as Record<
+    ((templates as unknown) as Record<
       string,
       ApplicationTemplate<TContext, TStateSchema, TEvents>
     >)[templateId] || null
