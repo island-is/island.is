@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
@@ -18,37 +18,35 @@ type TabType = {
 
 interface TabInterface {
   label: string
-  selected?: number
+  selected?: string
   tabs: TabType[]
   contentBackground?: Colors
 }
 
 export const Tabs: FC<TabInterface> = ({
   label,
-  selected = 0,
+  selected = '0',
   tabs,
   contentBackground = 'purple100',
 }) => {
-  const [selectedIndex, setSelectedIndex] = useState(selected)
-
   const tab = useTabState({
-    selectedId: `${TAB_ID_PREFIX}-${selectedIndex}`,
+    selectedId: selected,
   })
-
-  const onChange = (value: ValueType<Option>) => {
-    const e = value as Option
-    setSelectedIndex(parseInt(e?.value?.toString() || '', 10))
-    const id = `${TAB_ID_PREFIX}-${e?.value}`
-    tab.move(id)
-  }
+  console.log(tab)
 
   const selectOptions = tabs.map(({ label, disabled }, index) => {
     return {
       label,
       disabled: disabled,
-      value: index,
+      value: index.toString(),
     }
   })
+
+  const onChange = (option: ValueType<Option>) => {
+    const tabOption = option as Option
+    tab.setCurrentId(tabOption?.value as string)
+    tab.move(tabOption?.value as string)
+  }
 
   return (
     <Box position="relative">
@@ -60,8 +58,7 @@ export const Tabs: FC<TabInterface> = ({
             label={label}
             onChange={onChange}
             options={selectOptions}
-            value={selectOptions[selectedIndex]}
-            defaultValue={selectOptions[selectedIndex]}
+            defaultValue={selectOptions[parseInt(selected)]}
           />
         </div>
         <TabList className={styles.tabList} {...tab} aria-label={label}>
@@ -70,10 +67,9 @@ export const Tabs: FC<TabInterface> = ({
               {...tab}
               key={index}
               disabled={disabled}
-              onClick={() => setSelectedIndex(index)}
-              id={`${TAB_ID_PREFIX}-${index}`}
+              id={`${index}`}
               className={cn(styles.tab, {
-                [styles.tabSelected]: index === selectedIndex,
+                [styles.tabSelected]: index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
               })}
             >
