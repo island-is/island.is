@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
+import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   Typography,
   GridContainer,
@@ -205,7 +205,7 @@ export const StepTwo: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <Logo />
+            <ProsecutorLogo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1" variant="h1">

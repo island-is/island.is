@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Logo } from '../../../shared-components/Logo/Logo'
+import { ProsecutorLogo } from '../../../shared-components/Logos'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
   Typography,
@@ -35,6 +35,7 @@ export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
     window.localStorage.setItem('workingCase', JSON.stringify({}))
   }
+
   const history = useHistory()
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
@@ -186,7 +187,7 @@ export const StepOne: React.FC = () => {
         <GridContainer>
           <GridRow>
             <GridColumn span={'3/12'}>
-              <Logo />
+              <ProsecutorLogo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">
