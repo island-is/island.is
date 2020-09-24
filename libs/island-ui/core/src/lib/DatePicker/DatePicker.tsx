@@ -144,8 +144,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             />
           }
           renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-            // @ts-ignore
             const month = format(date, 'MMMM', { locale: getLocale(locale) })
             const capitalizedMonth = `${month
               .charAt(0)
