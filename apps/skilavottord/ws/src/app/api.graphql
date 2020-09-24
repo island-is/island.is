@@ -2,21 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Fund {
-  nationalId: ID!
-  credit: Float!
-  used: Float!
-  total: Float!
+type Car {
+  id: ID!
+  name: String!
+  model: String!
+  color: String!
+  year: String!
+  recyclable: Boolean!
 }
 
-type User {
+type Carowner {
   nationalId: ID!
   name: String!
   mobile: String
-  fund: Fund
-  meetsADSRequirements: Boolean!
+  cars: [Car!]
 }
 
 type Query {
-  getUser(id: Float!): User
+  getCarownerByNationalId(nationalId: String!): Carowner!
 }
