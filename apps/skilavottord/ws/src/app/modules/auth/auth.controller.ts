@@ -18,7 +18,7 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   SSN_IS_NOT_A_PERSON,
-} from '@island.is/@island.is/skilavottord/consts'
+} from '@island.is/skilavottord/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 
@@ -26,7 +26,7 @@ const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 1800
 const ONE_HOUR = 60 * 60 * 1000
-const REDIRECT_COOKIE_NAME = 'ads.redirect'
+const REDIRECT_COOKIE_NAME = 'skilavottord.redirect'
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
@@ -63,7 +63,7 @@ const loginIS = new IslandisLogin({
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  @Post('/callback')
+  @Post('/citizen/callback')
   async callback(@Body('token') token, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
     try {
