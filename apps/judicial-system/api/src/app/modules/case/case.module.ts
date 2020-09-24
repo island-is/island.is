@@ -5,6 +5,10 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService, SmsServiceOptions } from '@island.is/nova-sms'
+import {
+  SigningService,
+  SigningServiceOptions,
+} from '@island.is/dokobit-signing'
 
 import { environment } from '../../../environments'
 import { AuthModule } from '../auth'
@@ -34,6 +38,19 @@ import { CaseService } from './case.service'
         return smsService
       },
       inject: ['SMS_OPTIONS', LOGGER_PROVIDER],
+    },
+    {
+      provide: 'SIGNING_OPTIONS',
+      useValue: environment.signingOptions,
+    },
+    {
+      provide: SigningService,
+      useFactory: (options: SigningServiceOptions, logger: Logger) => {
+        const signingService = new SigningService(options, logger)
+        signingService.initialize({} as DataSourceConfig<{}>)
+        return signingService
+      },
+      inject: ['SIGNING_OPTIONS', LOGGER_PROVIDER],
     },
   ],
 })

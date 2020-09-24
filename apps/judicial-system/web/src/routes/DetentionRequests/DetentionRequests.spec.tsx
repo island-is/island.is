@@ -3,7 +3,7 @@ import fetchMock from 'fetch-mock'
 import { render, waitFor } from '@testing-library/react'
 import { DetentionRequests } from './'
 import { UserRole } from '../../utils/authenticate'
-import { CaseState } from '../../types'
+import { CaseState } from '@island.is/judicial-system/types'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 

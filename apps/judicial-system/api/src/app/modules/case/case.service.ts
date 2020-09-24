@@ -3,16 +3,22 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
+import {
+  SigningService,
+  SigningServiceResponse,
+} from '@island.is/dokobit-signing'
+import { CaseState } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, Notification, NotificationType, CaseState } from './models'
+import { Case, Notification, NotificationType } from './models'
 
 @Injectable()
 export class CaseService {
   constructor(
     private readonly smsService: SmsService,
+    private readonly signingService: SigningService,
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     @InjectModel(Notification)
@@ -83,6 +89,8 @@ export class CaseService {
       `Sending a notification for case with id "${existingCase.id}"`,
     )
 
+    // This method should only be called if the case state is DRAFT or SUBMITTED
+
     const smsText =
       existingCase.state === CaseState.DRAFT
         ? this.constructHeadsUpSmsText(existingCase, user)
@@ -106,6 +114,59 @@ export class CaseService {
             NotificationType.READY_FOR_COURT,
       message: smsText,
     })
+  }
+
+  async requestSignature(
+    existingCase: Case,
+    user: User,
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting signature of ruling for case with id "${existingCase.id}"`,
+    )
+
+    // This method should only be called if the csae state is ACCEPTED or REJECTED
+
+    // Production, or development with signing service access token
+    if (environment.production && environment.signingOptions.accessToken) {
+      const pdf = this.getRulingAsPdf()
+
+      return this.signingService.requestSignature(
+        user.mobileNumber,
+        'Undirrita dóm',
+        existingCase.suspectName,
+        'Ísland',
+        'ruling.pdf',
+        pdf,
+      )
+    }
+
+    // Development without signing service access token
+    return {
+      controlCode: '0000',
+      documentToken: 'DEVELOPEMNT',
+    }
+  }
+
+  async confirrmSignature(
+    existingCase: Case,
+    documentToken: string,
+  ): Promise<void> {
+    this.logger.debug(
+      `Confirming signature of ruling for case with id "${existingCase.id}"`,
+    )
+
+    // This method should only be called if the csae state is ACCEPTED or REJECTED and
+    // requestSignature has previously been called for the same case
+
+    // Production, or development with signing service access token
+    if (environment.production && environment.signingOptions.accessToken) {
+      const signedPdf = await this.signingService.getSignedDocument(
+        'ruling.pdf',
+        documentToken,
+      )
+
+      this.sendRulingAsSignedPdf(signedPdf)
+    }
   }
 
   private constructHeadsUpSmsText(existingCase: Case, user: User): string {
@@ -136,7 +197,7 @@ export class CaseService {
         )}:${cd.substring(14, 16)}.`
       : ''
 
-    return `Ný gæsluvarðhaldskrafa í vinnslu.${adText}${cdText}`
+    return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutor}${adText}${cdText}`
   }
 
   private constructReadyForCourtpSmsText(
@@ -150,5 +211,17 @@ export class CaseService {
     const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
 
     return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
+  }
+
+  // Not implemented yet
+  private getRulingAsPdf() {
+    return 'dummy'
+  }
+
+  // Not implemented yet
+  private sendRulingAsSignedPdf(
+    signedPdf: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) {
+    // eslint-disable-line @typescript-eslint/no-empty-function
   }
 }

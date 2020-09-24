@@ -144,7 +144,7 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    lineHeight: 1.142857,
+    lineHeight: { xs: 1.5, md: 1.142857 },
   },
   menuTab: {
     fontSize: {

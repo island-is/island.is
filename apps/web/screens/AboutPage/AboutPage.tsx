@@ -17,7 +17,6 @@ import {
 } from '@island.is/web/components'
 import {
   Typography,
-  Divider,
   Box,
   BoxProps,
   Breadcrumbs,
@@ -29,6 +28,7 @@ import {
   GridRow,
   SpanType,
   Tabs,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -135,6 +135,7 @@ const decideSidebarType = (
 
 interface PageHeaderProps {
   page: GetAboutPageQuery['getAboutPage']
+  namespace?: GetNamespaceQuery['getNamespace']
 }
 
 const PageHeader: FC<PageHeaderProps> = ({ page }) => {
@@ -159,7 +160,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
   return (
     <Background id={slice.id} theme={page.theme}>
       {!!mobileNavigation.length && (
-        <Box display={['block', 'block', 'block', 'none']} paddingBottom={4}>
+        <Hidden above="md">
           <DrawerMenu
             categories={[
               {
@@ -168,11 +169,11 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
               },
             ]}
           />
-        </Box>
+        </Hidden>
       )}
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-          <Box marginBottom={[8, 8, 8, 15]}>
+          <Box marginBottom={[0, 0, 8, 15]}>
             <Header />
           </Box>
         </ColorSchemeContext.Provider>
@@ -204,7 +205,6 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                 const [navigationTitle, ...navigationList] = navigation
                 return (
                   <>
-                    {}
                     <Box
                       component="a"
                       ref={
@@ -300,7 +300,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
-            <Box paddingTop={15} paddingBottom={10}>
+            <Box paddingTop={[6, 6, 15]} paddingBottom={[5, 5, 10]}>
               <Heading {...slice} />
             </Box>
           </Layout>
@@ -310,7 +310,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={8} paddingBottom={10}>
+            <Box paddingTop={8} paddingBottom={[5, 5, 10]}>
               <LinkCardList {...slice} />
             </Box>
           </Layout>
@@ -320,7 +320,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="blue100">
           <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
-            <Box paddingTop={10} paddingBottom={7}>
+            <Box paddingTop={[4, 4, 10]} paddingBottom={[3, 3, 7]}>
               <RenderForm
                 namespace={namespace}
                 heading={slice.title}
@@ -336,7 +336,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={12} paddingBottom={10}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={[8, 8, 10]}>
               <StoryList
                 {...slice}
                 stories={(slice.stories as any[]).map((story) => ({
@@ -352,8 +352,8 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={15} paddingBottom={12}>
-              <AboutLatestNews {...slice} />
+            <Box paddingTop={[8, 8, 15]} paddingBottom={[6, 6, 12]}>
+              <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
           </Layout>
         </div>
@@ -362,7 +362,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={12} paddingBottom={5}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={5}>
               <LogoList
                 {...slice}
                 images={slice.images.map((img) => img.url)}
@@ -375,7 +375,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div id={slice.id} key={slice.id}>
           <Layout width={mainContentSpan}>
-            <Box paddingBottom={10}>
+            <Box paddingBottom={[5, 5, 10]}>
               <BulletList
                 bullets={slice.bullets.map((bullet) => {
                   switch (bullet.__typename) {
@@ -400,7 +400,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={8} paddingBottom={10}>
+            <Box paddingTop={8} paddingBottom={[5, 5, 10]}>
               <Tabs
                 label={slice?.title}
                 tabs={slice?.tabs.map((tab) => ({
@@ -411,7 +411,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                         span={['9/9', '9/9', '9/9', '7/9']}
                         offset={[null, null, null, '1/9']}
                       >
-                        <Box paddingY={9}>
+                        <Box paddingTop={[4, 4, 9]} paddingBottom={[0, 0, 9]}>
                           <Typography variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}
                           </Typography>

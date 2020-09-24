@@ -144,10 +144,12 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
           </Columns>
         </GridColumn>
       </GridRow>
-      <SideMenu
-        isVisible={sideMenuOpen}
-        handleClose={() => setSideMenuOpen(false)}
-      />
+      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+        <SideMenu
+          isVisible={sideMenuOpen}
+          handleClose={() => setSideMenuOpen(false)}
+        />
+      </ColorSchemeContext.Provider>
     </GridContainer>
   )
 }

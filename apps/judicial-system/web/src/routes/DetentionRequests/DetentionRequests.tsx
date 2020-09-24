@@ -11,7 +11,8 @@ import {
   TagVariant,
   Box,
 } from '@island.is/island-ui/core'
-import { DetentionRequest, CaseState, User } from '../../types'
+import { CaseState } from '@island.is/judicial-system/types'
+import { DetentionRequest, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
 import { hasRole, UserRole } from '../../utils/authenticate'
@@ -75,10 +76,10 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }
-      case CaseState.ACTIVE:
+      case CaseState.ACCEPTED:
         return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
-      case CaseState.COMPLETED:
-        return { color: 'blue', text: 'Gæsluvarðhaldi lokið' }
+      case CaseState.REJECTED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
       default:
         return { color: 'white', text: 'Óþekkt' }
     }
