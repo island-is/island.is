@@ -59,11 +59,11 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-@Controller('/api/auth')
+@Controller('/api/auth/citizen')
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  @Post('/citizen/callback')
+  @Post('/callback')
   async callback(@Body('token') token, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
     try {

@@ -17,6 +17,8 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       playground,
       autoSchemaFile: 'apps/skilavottord/ws/src/app/api.graphql',
     }),
+    AuthModule,
+    UserModule,
     CarownerModule,
     RecyclingPartnerModule,
   ],
