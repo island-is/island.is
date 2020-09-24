@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node'
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore The problem is that winston-transport defines the export of TransportStream via `export =`
 import TransportStream = require('winston-transport')
 
