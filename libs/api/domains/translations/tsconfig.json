@@ -2,7 +2,8 @@
   "extends": "../../../../tsconfig.json",
   "compilerOptions": {
     "types": ["node", "jest"],
-    "target": "es6"
+    "target": "es6",
+    "strict": false
   },
   "include": ["**/*.ts"]
 }
