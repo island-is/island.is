@@ -482,11 +482,19 @@ export type Namespace = {
   fields: Scalars['String']
 }
 
+export type Page = {
+  __typename?: 'Page'
+  title: Scalars['String']
+  slug: Scalars['String']
+  type: Scalars['String']
+}
+
 export type Link = {
   __typename?: 'Link'
+  id: Scalars['ID']
   text: Scalars['String']
   url: Scalars['String']
-  page?: Maybe<Scalars['String']>
+  page?: Maybe<Page>
 }
 
 export type PageHeader = {
@@ -1653,7 +1661,11 @@ export type GetMenuQuery = { __typename?: 'Query' } & {
   getMenu?: Maybe<
     { __typename?: 'Menu' } & Pick<Menu, 'title'> & {
         links: Array<
-          { __typename?: 'Link' } & Pick<Link, 'text' | 'url' | 'page'>
+          { __typename?: 'Link' } & Pick<Link, 'text' | 'url'> & {
+              page?: Maybe<
+                { __typename?: 'Page' } & Pick<Page, 'title' | 'slug' | 'type'>
+              >
+            }
         >
       }
   >

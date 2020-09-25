@@ -90,6 +90,21 @@
       },
       {
         "kind": "UNION",
+        "name": "PageTypes",
+        "possibleTypes": [
+          {
+            "name": "Article"
+          },
+          {
+            "name": "ArticleCategory"
+          },
+          {
+            "name": "News"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
         "name": "UrlPage",
         "possibleTypes": [
           {

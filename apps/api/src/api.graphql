@@ -404,10 +404,17 @@ type Namespace {
   fields: String!
 }
 
+type Page {
+  title: String!
+  slug: String!
+  type: String!
+}
+
 type Link {
+  id: ID!
   text: String!
   url: String!
-  page: String
+  page: Page
 }
 
 type PageHeader {

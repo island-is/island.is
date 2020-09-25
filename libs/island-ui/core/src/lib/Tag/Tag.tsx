@@ -61,6 +61,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     const sharedProps = {
       className,
       ref,
+      onClick,
     }
 
     const content = (
@@ -78,13 +79,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
         {content}
       </a>
     ) : (
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={onClick}
-        {...sharedProps}
-        {...props}
-      >
+      <button type="button" disabled={disabled} {...sharedProps} {...props}>
         {content}
       </button>
     )

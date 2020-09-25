@@ -13,13 +13,7 @@ import { Screen, GetInitialPropsContext } from '../types'
 import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
 
-import {
-  Header,
-  PageLoader,
-  FixedNav,
-  SkipToMainContent,
-  getLink,
-} from '../components'
+import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -35,7 +29,7 @@ import {
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import routeNames from '../i18n/routeNames'
+import routeNames, { PathTypes } from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
@@ -240,6 +234,7 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
+  const { makePath } = routeNames()
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const [
@@ -332,29 +327,54 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       ({ text, url, page }) => ({
         title: text,
         href: url,
-        ...(page && { linkProps: getLink({ pageData: page }) }),
+        ...(page && {
+          linkProps: {
+            href: makePath(page.type as PathTypes, '[slug]'),
+            as: makePath(page.type as PathTypes, page.slug),
+          },
+        }),
       }),
     ),
     alertBannerContent: alertBanner,
     footerUpperMenu: (upperMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
-      ...(page && { linkProps: getLink({ pageData: page }) }),
+      ...(page && {
+        linkProps: {
+          href: makePath(page.type as PathTypes, '[slug]'),
+          as: makePath(page.type as PathTypes, page.slug),
+        },
+      }),
     })),
     footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
-      ...(page && { linkProps: getLink({ pageData: page }) }),
+      ...(page && {
+        linkProps: {
+          href: makePath(page.type as PathTypes, '[slug]'),
+          as: makePath(page.type as PathTypes, page.slug),
+        },
+      }),
     })),
     footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
-      ...(page && { linkProps: getLink({ pageData: page }) }),
+      ...(page && {
+        linkProps: {
+          href: makePath(page.type as PathTypes, '[slug]'),
+          as: makePath(page.type as PathTypes, page.slug),
+        },
+      }),
     })),
     footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url, page }) => ({
       title: text,
       href: url,
-      ...(page && { linkProps: getLink({ pageData: page }) }),
+      ...(page && {
+        linkProps: {
+          href: makePath(page.type as PathTypes, '[slug]'),
+          as: makePath(page.type as PathTypes, page.slug),
+        },
+      }),
     })),
     namespace,
   }
