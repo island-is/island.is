@@ -1,4 +1,4 @@
-import { ApplicationTemplate } from '../ApplicationTemplate'
+import { ApplicationTemplate } from '../../types/ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,

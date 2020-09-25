@@ -12,7 +12,10 @@ const FormRepeater: FC<{
   return (
     <div>
       {items &&
-        (items as Answer[]).map((item) => item[repeater.labelKey]).join(', ')}
+        repeater.labelKey &&
+        (items as Answer[])
+          .map((item) => (item as FormValue)[repeater.labelKey])
+          .join(', ')}
       <Button onClick={() => expandRepeater(repeater)}>Add a new one</Button>
     </div>
   )

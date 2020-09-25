@@ -19,9 +19,9 @@ export interface MessageDict {
 }
 
 const accessToken = process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN
-const space = process.env.CONTENTFUL_SPACE
+const contentfulSpace = process.env.CONTENTFUL_SPACE
 
-if (!space || !accessToken) {
+if (!contentfulSpace || !accessToken) {
   throw new Error(
     'Missing Contentful environment variables: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN or CONTENTFUL_SPACE',
   )
@@ -41,7 +41,12 @@ execFileSync('npx', [
   process.argv[2],
 ])
 
-function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
+function createNamespace(
+  id: string,
+  messages: MessageDict,
+  locales: Locale[],
+  space: string,
+) {
   const emptyObjForEachLocale = locales.reduce(
     (arr, curr) => ({
       ...arr,
@@ -56,10 +61,10 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
       environment.createEntryWithId('namespace', id, {
         fields: {
           namespace: {
-            ['is-IS']: id,
+            'is-IS': id,
           },
           defaults: {
-            ['is-IS']: messages,
+            'is-IS': messages,
           },
           fallback: emptyObjForEachLocale,
           strings: emptyObjForEachLocale,
@@ -95,7 +100,7 @@ function updateNamespace(namespace: Entry, messages: MessageDict) {
     .catch((err) => console.log(err))
 }
 
-function getNamespace(id: string) {
+function getNamespace(id: string, space: string) {
   return client
     .getSpace(space)
     .then((space) => space.getEnvironment('master'))
@@ -103,7 +108,7 @@ function getNamespace(id: string) {
     .catch(() => null)
 }
 
-function getLocales() {
+function getLocales(space: string) {
   return client
     .getSpace(space)
     .then((space) => space.getEnvironment('master'))
@@ -118,14 +123,22 @@ glob
   .forEach((f) => {
     Object.entries<MessageDict>(f).forEach(
       async ([namespaceId, namespaceMessages]) => {
-        const namespace = await getNamespace(namespaceId)
-        const locales = (await getLocales()) as Collection<Locale, LocaleProps>
+        const namespace = await getNamespace(namespaceId, contentfulSpace)
+        const locales = (await getLocales(contentfulSpace)) as Collection<
+          Locale,
+          LocaleProps
+        >
 
         // If namespace does exist we update it, else we create it
         if (namespace) {
           updateNamespace(namespace, namespaceMessages)
         } else {
-          createNamespace(namespaceId, namespaceMessages, locales.items)
+          createNamespace(
+            namespaceId,
+            namespaceMessages,
+            locales.items,
+            contentfulSpace,
+          )
         }
       },
     )

@@ -18,7 +18,7 @@ const useAuth = () => {
         payload: user,
       })
     } catch (exception) {
-      userManager.signinRedirect({ state: { redirect: pathname } })
+      await userManager.signinRedirect({ state: { redirect: pathname } })
     }
   }
 
