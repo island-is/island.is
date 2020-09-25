@@ -10,7 +10,7 @@ import { format, isValid, parseISO, setHours, setMinutes } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../shared-components/FormFooter'
-import { Logo } from '../../shared-components/Logo/Logo'
+import { JudgeLogo } from '../../shared-components/Logos'
 import { GetCaseByIdResponse } from '../../types'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import { autoSave } from '../../utils/stepHelper'
@@ -44,7 +44,7 @@ export const CourtRecord: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <Logo />
+            <JudgeLogo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Box marginBottom={10}>

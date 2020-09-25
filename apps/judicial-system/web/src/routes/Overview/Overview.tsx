@@ -14,7 +14,10 @@ import { ProsecutorLogo } from '../../shared-components/Logos'
 import Modal from '../../shared-components/Modal/Modal'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import { getRestrictionByValue } from '../../utils/stepHelper'
+import {
+  getRestrictionByValue,
+  renderRestrictons,
+} from '../../utils/stepHelper'
 import { CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import * as Constants from '../../utils/constants'
@@ -166,15 +169,7 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
-                      {caseDraftJSON.custodyRestrictions?.length > 0
-                        ? caseDraftJSON.custodyRestrictions
-                            .map(
-                              (restriction: CustodyRestrictions) =>
-                                `${getRestrictionByValue(restriction)}`,
-                            )
-                            .toString()
-                            .replace(',', ', ')
-                        : 'Lausagæsla'}
+                      {renderRestrictons(caseDraftJSON.custodyRestrictions)}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem

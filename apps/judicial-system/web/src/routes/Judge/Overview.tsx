@@ -12,7 +12,11 @@ import {
 import { JudgeLogo } from '../../shared-components/Logos'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import { autoSave, getRestrictionByValue } from '../../utils/stepHelper'
+import {
+  autoSave,
+  getRestrictionByValue,
+  renderRestrictons,
+} from '../../utils/stepHelper'
 import { CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
@@ -216,14 +220,7 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {workingCase?.custodyRestrictions?.length > 0
-                      ? workingCase?.custodyRestrictions
-                          .map((restriction: CustodyRestrictions) =>
-                            getRestrictionByValue(restriction),
-                          )
-                          .toString()
-                          .replace(',', ', ')
-                      : 'Lausagæsla'}
+                    {renderRestrictons(workingCase.custodyRestrictions)}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem
