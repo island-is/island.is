@@ -16,6 +16,7 @@ import { nationalIdRegex } from './constants'
 import { Comparators } from '../../types/Condition'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import { m } from './messages'
+import { FormValue } from '@island.is/application/template'
 
 const ExampleSchema = z.object({
   person: z.object({
@@ -115,8 +116,8 @@ export const ExampleForm: Form = buildForm({
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
               ],
-              condition: (formValue: ExampleSchemaFormValues) => {
-                return formValue?.person?.age >= '18'
+              condition: (formValue: FormValue) => {
+                return (formValue as ExampleSchemaFormValues).person.age >= '18'
               },
             }),
             buildCheckboxField({

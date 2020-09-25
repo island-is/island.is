@@ -1,4 +1,4 @@
-import { ApplicationTemplate } from '../ApplicationTemplate'
+import { ApplicationTemplate } from '../../types/ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
@@ -21,7 +21,7 @@ const ParentalLeave: ApplicationTemplate<
   type: ApplicationTypes.PARENTAL_LEAVE,
   dataProviders: [],
   dataSchema: z.object({
-    approveExternalData: z.boolean().refine((v) => v === true),
+    approveExternalData: z.boolean().refine((v) => v),
     usage: z
       .number()
       .min(0)

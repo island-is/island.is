@@ -1,11 +1,11 @@
 import { UploadFile } from '@island.is/island-ui/core'
-import { S3UploadResponse, ActionTypes } from './types'
+import { S3UploadResponse, ActionTypes, Action } from './types'
 
 export const uploadFileToS3 = (
   file: UploadFile,
-  dispatch,
-  uploadUrl,
-  fields,
+  dispatch: React.Dispatch<Action>,
+  uploadUrl: string,
+  fields: Record<string, any>,
 ): Promise<S3UploadResponse> => {
   return new Promise<S3UploadResponse>((resolve, reject) => {
     const req = new XMLHttpRequest()
@@ -40,7 +40,9 @@ export const uploadFileToS3 = (
 
     const form = new FormData()
     Object.keys(fields).forEach((key) => form.append(key, fields[key]))
-    form.append('file', file.originalFileObj)
+    if (file.originalFileObj) {
+      form.append('file', file.originalFileObj)
+    }
 
     req.open('POST', uploadUrl, true)
     req.send(form)
