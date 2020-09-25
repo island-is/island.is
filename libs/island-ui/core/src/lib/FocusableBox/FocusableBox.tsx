@@ -17,6 +17,9 @@ import {
 
 import * as styles from './FocusableBox.treat'
 
+// TODO fix strict typing
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 interface Props
   extends Omit<UseBoxStylesProps, 'component'>,
     Omit<AllHTMLAttributes<HTMLElement>, 'width' | 'height' | 'className'> {
@@ -52,6 +55,9 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
         display={display}
         className={cn(
           styles.focusable,
+          // TODO fix strict typing
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
           styles.colorSchemes[colorScheme || color],
           className,
         )}

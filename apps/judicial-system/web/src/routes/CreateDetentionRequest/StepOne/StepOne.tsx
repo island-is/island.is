@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Logo } from '../../../shared-components/Logo/Logo'
+import { ProsecutorLogo } from '../../../shared-components/Logos'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
   Typography,
@@ -18,23 +18,18 @@ import { Case } from '../../../types'
 import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import { updateState, autoSave } from '../../../utils/stepHelper'
-import {
-  setHours,
-  setMinutes,
-  isValid,
-  parseISO,
-  getTime,
-  format,
-} from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
+import { formatDate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
     window.localStorage.setItem('workingCase', JSON.stringify({}))
   }
+
   const history = useHistory()
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
@@ -186,7 +181,7 @@ export const StepOne: React.FC = () => {
         <GridContainer>
           <GridRow>
             <GridColumn span={'3/12'}>
-              <Logo />
+              <ProsecutorLogo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">
@@ -393,14 +388,10 @@ export const StepOne: React.FC = () => {
                       disabled={!workingCase.arrestDate}
                       errorMessage={arrestTimeErrorMessage}
                       hasError={arrestTimeErrorMessage !== ''}
-                      defaultValue={
-                        caseDraftJSON.arrestDate
-                          ? format(
-                              getTime(parseISO(caseDraftJSON.arrestDate)),
-                              'hh:mm',
-                            )
-                          : null
-                      }
+                      defaultValue={formatDate(
+                        workingCase.arrestDate,
+                        Constants.TIME_FORMAT,
+                      )}
                       ref={arrestTimeRef}
                       onBlur={(evt) => {
                         const validateTimeEmpty = validate(
@@ -422,7 +413,7 @@ export const StepOne: React.FC = () => {
                           )
 
                           const arrestDateHours = setHours(
-                            workingCase.arrestDate,
+                            new Date(workingCase.arrestDate),
                             parseInt(timeWithoutColon.substr(0, 2)),
                           )
 
@@ -495,7 +486,7 @@ export const StepOne: React.FC = () => {
                         )
 
                         const requestedCourtDateHours = setHours(
-                          workingCase.requestedCourtDate,
+                          new Date(workingCase.requestedCourtDate),
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 

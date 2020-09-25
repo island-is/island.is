@@ -70,10 +70,8 @@ export const findCurrentScreen = (
       if (getValueViaPath(answers, screen.id) !== undefined) {
         currentScreen = index
       }
-    } else {
-      if (getValueViaPath(answers, screen.id) !== undefined) {
-        currentScreen = index + 1
-      }
+    } else if (screen.id && getValueViaPath(answers, screen.id) !== undefined) {
+      currentScreen = index + 1
     }
   })
   return Math.min(currentScreen, screens.length - 1)
@@ -146,7 +144,7 @@ export function expandRepeater(
 ): [FormLeaf[], FormScreen[]] {
   const repeater = formLeaves[repeaterIndex]
   if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
-    return [undefined, undefined]
+    return [[], []]
   }
   const { children, id, repetitions = 0 } = repeater
   let newFormLeaves = immutableSplice(formLeaves, repeaterIndex, 1, {
@@ -211,7 +209,7 @@ export function convertMultiFieldToScreen(
   answers: FormValue,
 ): MultiFieldScreen {
   let isMultiFieldVisible = false
-  const children = []
+  const children: FieldDef[] = []
   multiField.children.forEach((field) => {
     const isFieldVisible = shouldShowFormLeaf(field, answers)
     if (isFieldVisible) {
@@ -230,7 +228,7 @@ function convertRepeaterToScreen(
   repeater: Repeater,
   answers: FormValue,
 ): RepeaterScreen {
-  const children = []
+  const children: FormScreen[] = []
   repeater.children.forEach((field) => {
     children.push(convertLeafToScreen(field, answers))
   })

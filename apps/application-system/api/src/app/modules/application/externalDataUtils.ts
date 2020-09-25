@@ -11,7 +11,7 @@ export function buildDataProviders(
 ): DataProvider[] {
   const providers: DataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
-    const provider = getDataProviderByType(type, undefined)
+    const provider = getDataProviderByType(type)
     providers.push(provider)
   })
   return providers
