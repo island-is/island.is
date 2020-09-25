@@ -211,20 +211,6 @@ jobs:
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
-    services:
-      postgres:
-        image: postgres:11.6
-        env:
-          POSTGRES_DB: application_test
-          POSTGRES_PASSWORD: application_test
-          POSTGRES_USER: application_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     needs: prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 25
@@ -232,11 +218,6 @@ jobs:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      # TODO: make this more generic (workflows should trigger these services)
-      APPLICATION_TEST_DB_USER: application_test
-      APPLICATION_TEST_DB_PASS: application_test
-      APPLICATION_TEST_DB_NAME: application_test
-      APPLICATION_DB_HOST: localhost
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
