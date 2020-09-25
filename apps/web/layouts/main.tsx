@@ -1,5 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
+import { LinkProps } from 'next/link'
+import { NextComponentType, NextPageContext } from 'next'
 import {
   Page,
   Box,
@@ -8,7 +10,6 @@ import {
   AlertBanner,
   AlertBannerVariants,
 } from '@island.is/island-ui/core'
-import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
@@ -26,6 +27,7 @@ import {
   QueryGetAlertBannerArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  Link,
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -321,61 +323,57 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       }),
   ])
 
+  const getLinkProps = (
+    linkedPage: Link['linkedPage'],
+  ): Pick<LinkProps, 'as' | 'href'> | null => {
+    if (linkedPage?.page) {
+      const { slug, type } = linkedPage.page
+
+      return {
+        href: makePath(type as PathTypes, '[slug]'),
+        as: makePath(type as PathTypes, slug),
+      }
+    }
+
+    return null
+  }
+
   return {
     categories,
     topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
-      ({ text, url, page }) => ({
+      ({ text, url, linkedPage }) => ({
         title: text,
         href: url,
-        ...(page && {
-          linkProps: {
-            href: makePath(page.type as PathTypes, '[slug]'),
-            as: makePath(page.type as PathTypes, page.slug),
-          },
-        }),
+        linkProps: getLinkProps(linkedPage),
       }),
     ),
     alertBannerContent: alertBanner,
-    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url, page }) => ({
+    footerUpperMenu: (upperMenu.links ?? []).map(
+      ({ text, url, linkedPage }) => ({
+        title: text,
+        href: url,
+        linkProps: getLinkProps(linkedPage),
+      }),
+    ),
+    footerLowerMenu: (lowerMenu.links ?? []).map(
+      ({ text, url, linkedPage }) => ({
+        title: text,
+        href: url,
+        linkProps: getLinkProps(linkedPage),
+      }),
+    ),
+    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url, linkedPage }) => ({
       title: text,
       href: url,
-      ...(page && {
-        linkProps: {
-          href: makePath(page.type as PathTypes, '[slug]'),
-          as: makePath(page.type as PathTypes, page.slug),
-        },
-      }),
+      linkProps: getLinkProps(linkedPage),
     })),
-    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url, page }) => ({
-      title: text,
-      href: url,
-      ...(page && {
-        linkProps: {
-          href: makePath(page.type as PathTypes, '[slug]'),
-          as: makePath(page.type as PathTypes, page.slug),
-        },
+    footerMiddleMenu: (middleMenu.links ?? []).map(
+      ({ text, url, linkedPage }) => ({
+        title: text,
+        href: url,
+        linkProps: getLinkProps(linkedPage),
       }),
-    })),
-    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url, page }) => ({
-      title: text,
-      href: url,
-      ...(page && {
-        linkProps: {
-          href: makePath(page.type as PathTypes, '[slug]'),
-          as: makePath(page.type as PathTypes, page.slug),
-        },
-      }),
-    })),
-    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url, page }) => ({
-      title: text,
-      href: url,
-      ...(page && {
-        linkProps: {
-          href: makePath(page.type as PathTypes, '[slug]'),
-          as: makePath(page.type as PathTypes, page.slug),
-        },
-      }),
-    })),
+    ),
     namespace,
   }
 }

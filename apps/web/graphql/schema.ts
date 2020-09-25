@@ -489,12 +489,18 @@ export type Page = {
   type: Scalars['String']
 }
 
+export type LinkedPage = {
+  __typename?: 'LinkedPage'
+  title: Scalars['String']
+  page?: Maybe<Page>
+}
+
 export type Link = {
   __typename?: 'Link'
   id: Scalars['ID']
   text: Scalars['String']
   url: Scalars['String']
-  page?: Maybe<Page>
+  linkedPage?: Maybe<LinkedPage>
 }
 
 export type PageHeader = {
@@ -1662,8 +1668,15 @@ export type GetMenuQuery = { __typename?: 'Query' } & {
     { __typename?: 'Menu' } & Pick<Menu, 'title'> & {
         links: Array<
           { __typename?: 'Link' } & Pick<Link, 'text' | 'url'> & {
-              page?: Maybe<
-                { __typename?: 'Page' } & Pick<Page, 'title' | 'slug' | 'type'>
+              linkedPage?: Maybe<
+                { __typename?: 'LinkedPage' } & Pick<LinkedPage, 'title'> & {
+                    page?: Maybe<
+                      { __typename?: 'Page' } & Pick<
+                        Page,
+                        'title' | 'slug' | 'type'
+                      >
+                    >
+                  }
               >
             }
         >

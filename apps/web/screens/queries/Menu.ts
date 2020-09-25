@@ -7,10 +7,13 @@ export const GET_MENU_QUERY = gql`
       links {
         text
         url
-        page {
+        linkedPage {
           title
-          slug
-          type
+          page {
+            title
+            slug
+            type
+          }
         }
       }
     }

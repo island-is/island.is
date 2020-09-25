@@ -715,6 +715,9 @@ export interface ILinkFields {
 
   /** Page */
   page?: IArticle | IArticleCategory | INews | undefined
+
+  /** Linked page */
+  linkedPage?: ILinkedPage | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -727,6 +730,31 @@ export interface ILink extends Entry<ILinkFields> {
     contentType: {
       sys: {
         id: 'link'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILinkedPageFields {
+  /** Title */
+  title: string
+
+  /** page */
+  page: IArticle | IArticleCategory | INews
+}
+
+export interface ILinkedPage extends Entry<ILinkedPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'linkedPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2000,6 +2028,7 @@ export type CONTENT_TYPE =
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'link'
+  | 'linkedPage'
   | 'linkList'
   | 'logoListSlice'
   | 'mailingListSignup'

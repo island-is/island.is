@@ -493,15 +493,26 @@ export type Namespace = {
   fields: Scalars['String']
 }
 
+export type Page = {
+  __typename?: 'Page'
+  title: Scalars['String']
+  slug: Scalars['String']
+  type: Scalars['String']
+}
+
+export type LinkedPage = {
+  __typename?: 'LinkedPage'
+  title: Scalars['String']
+  page?: Maybe<Page>
+}
+
 export type Link = {
   __typename?: 'Link'
   id: Scalars['ID']
   text: Scalars['String']
   url: Scalars['String']
-  page?: Maybe<PageTypes>
+  linkedPage?: Maybe<LinkedPage>
 }
-
-export type PageTypes = Article | ArticleCategory | News
 
 export type PageHeader = {
   __typename?: 'PageHeader'
@@ -1432,13 +1443,9 @@ export type ResolversTypes = {
   Pagination: ResolverTypeWrapper<Pagination>
   PaginatedNews: ResolverTypeWrapper<PaginatedNews>
   Namespace: ResolverTypeWrapper<Namespace>
-  Link: ResolverTypeWrapper<
-    Omit<Link, 'page'> & { page?: Maybe<ResolversTypes['PageTypes']> }
-  >
-  PageTypes:
-    | ResolversTypes['Article']
-    | ResolversTypes['ArticleCategory']
-    | ResolversTypes['News']
+  Page: ResolverTypeWrapper<Page>
+  LinkedPage: ResolverTypeWrapper<LinkedPage>
+  Link: ResolverTypeWrapper<Link>
   PageHeader: ResolverTypeWrapper<PageHeader>
   AboutPage: ResolverTypeWrapper<
     Omit<AboutPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
@@ -1633,11 +1640,9 @@ export type ResolversParentTypes = {
   Pagination: Pagination
   PaginatedNews: PaginatedNews
   Namespace: Namespace
-  Link: Omit<Link, 'page'> & { page?: Maybe<ResolversParentTypes['PageTypes']> }
-  PageTypes:
-    | ResolversParentTypes['Article']
-    | ResolversParentTypes['ArticleCategory']
-    | ResolversParentTypes['News']
+  Page: Page
+  LinkedPage: LinkedPage
+  Link: Link
   PageHeader: PageHeader
   AboutPage: Omit<AboutPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
@@ -2525,6 +2530,25 @@ export type NamespaceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type PageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LinkedPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LinkedPage'] = ResolversParentTypes['LinkedPage']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type LinkResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
@@ -2532,19 +2556,12 @@ export type LinkResolvers<
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  page?: Resolver<Maybe<ResolversTypes['PageTypes']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type PageTypesResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['PageTypes'] = ResolversParentTypes['PageTypes']
-> = {
-  __resolveType: TypeResolveFn<
-    'Article' | 'ArticleCategory' | 'News',
+  linkedPage?: Resolver<
+    Maybe<ResolversTypes['LinkedPage']>,
     ParentType,
     ContextType
   >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type PageHeaderResolvers<
@@ -3257,8 +3274,9 @@ export type Resolvers<ContextType = Context> = {
   Pagination?: PaginationResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
+  Page?: PageResolvers<ContextType>
+  LinkedPage?: LinkedPageResolvers<ContextType>
   Link?: LinkResolvers<ContextType>
-  PageTypes?: PageTypesResolvers<ContextType>
   PageHeader?: PageHeaderResolvers<ContextType>
   AboutPage?: AboutPageResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
@@ -3393,21 +3411,6 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'AdgerdirFeaturedNewsSlice',
-          },
-        ],
-      },
-      {
-        kind: 'UNION',
-        name: 'PageTypes',
-        possibleTypes: [
-          {
-            name: 'Article',
-          },
-          {
-            name: 'ArticleCategory',
-          },
-          {
-            name: 'News',
           },
         ],
       },

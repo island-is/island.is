@@ -410,11 +410,16 @@ type Page {
   type: String!
 }
 
+type LinkedPage {
+  title: String!
+  page: Page
+}
+
 type Link {
   id: ID!
   text: String!
   url: String!
-  page: Page
+  linkedPage: LinkedPage
 }
 
 type PageHeader {
