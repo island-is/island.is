@@ -1,6 +1,8 @@
 import { UserRole, hasRole } from './authenticate'
 import { formatDate, parseArray, parseString } from './formatters'
 import * as Constants from './constants'
+import { renderRestrictons } from './stepHelper'
+import { CustodyRestrictions } from '../types'
 
 describe('Authenticate utils', () => {
   describe('HasRole util', () => {
@@ -81,6 +83,35 @@ describe('Formatters utils', () => {
       // Assert
       expect(time).toEqual('09:36')
       expect(time2).toEqual('23:36')
+    })
+  })
+})
+
+describe('Step helper', () => {
+  describe('renderRestrictions', () => {
+    test('should return a comma separated list of restrictions', () => {
+      // Arrange
+      const restrictions: CustodyRestrictions[] = [
+        CustodyRestrictions.ISOLATION,
+        CustodyRestrictions.COMMUNICATION,
+      ]
+
+      // Act
+      const r = renderRestrictons(restrictions)
+
+      // Assert
+      expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
+    })
+
+    test('should return "Lausgæsla" if no custody restriction is supplyed', () => {
+      // Arrange
+      const restrictions: CustodyRestrictions[] = []
+
+      // Act
+      const r = renderRestrictons(restrictions)
+
+      // Assert
+      expect(r).toEqual('Lausagæsla')
     })
   })
 })
