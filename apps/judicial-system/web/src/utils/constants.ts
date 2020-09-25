@@ -6,6 +6,7 @@ export const DETENTION_REQUESTS_ROUTE = '/gaesluvardhaldskrofur'
 export const SINGLE_REQUEST_BASE_ROUTE = '/krafa'
 export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domari-krafa'
 export const COURT_DOCUMENT_ROUTE = '/domari-krafa/thingbok'
+export const VERDICT_ROUTE = '/domari-krafa/urskurdur'
 
 // Date/time formats
 export const TIME_FORMAT = 'HH:mm'
