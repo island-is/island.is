@@ -13,6 +13,7 @@
     "isolatedModules": true
   },
   "include": [],
+  "exclude": ["node_modules"],
   "files": [],
   "references": [
     {
