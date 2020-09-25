@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
+import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   Typography,
   GridContainer,
@@ -19,18 +19,12 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  setHours,
-  setMinutes,
-  isValid,
-  parseISO,
-  format,
-  getTime,
-} from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
 import {
+  formatDate,
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -205,7 +199,7 @@ export const StepTwo: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <Logo />
+            <ProsecutorLogo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1" variant="h1">
@@ -265,14 +259,10 @@ export const StepTwo: React.FC = () => {
                     name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
-                    defaultValue={
-                      caseDraftJSON.requestedCustodyEndDate
-                        ? format(
-                            getTime(parseISO(caseDraftJSON.arrestDate)),
-                            'hh:mm',
-                          )
-                        : null
-                    }
+                    defaultValue={formatDate(
+                      caseDraftJSON.requestedCustodyEndDate,
+                      Constants.TIME_FORMAT,
+                    )}
                     disabled={!workingCase.requestedCustodyEndDate}
                     errorMessage={requestedCustodyEndTimeErrorMessage}
                     hasError={requestedCustodyEndTimeErrorMessage !== ''}
@@ -296,7 +286,7 @@ export const StepTwo: React.FC = () => {
                         )
 
                         const requestedCustodyEndDateHours = setHours(
-                          workingCase.requestedCustodyEndDate,
+                          new Date(workingCase.requestedCustodyEndDate),
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 

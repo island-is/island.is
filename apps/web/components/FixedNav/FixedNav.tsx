@@ -1,14 +1,22 @@
 import React, { FC, useState } from 'react'
 import cn from 'classnames'
 import * as styles from './FixedNav.treat'
-import { ContentBlock, Box, Icon, Button } from '@island.is/island-ui/core'
+import {
+  ContentBlock,
+  Box,
+  Icon,
+  Button,
+  FocusableBox,
+} from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { useI18n } from '@island.is/web/i18n'
+import routeNames from '@island.is/web/i18n/routeNames'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)
   const { activeLocale, t } = useI18n()
+  const { makePath } = routeNames(activeLocale)
 
   useScrollPosition(
     ({ prevPos, currPos }) => {
@@ -42,9 +50,9 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <Box marginRight={2}>
+          <FocusableBox href={makePath()} marginRight={2}>
             <Icon type="logo" color="white" height="40" />
-          </Box>
+          </FocusableBox>
           <Box
             display="flex"
             height="full"

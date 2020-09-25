@@ -29,8 +29,13 @@ export const ApplicationForm: FC<{
   useEffect(() => {
     async function populateForm() {
       if (application !== undefined && form === undefined) {
-        const template = getApplicationTemplateByTypeId(application.typeId)
-        const stateInformation = getApplicationStateInformation(application)
+        // TODO wrap in try or?
+        const template = await getApplicationTemplateByTypeId(
+          application.typeId,
+        )
+        const stateInformation = await getApplicationStateInformation(
+          application,
+        )
         const role = template.mapUserToRole(
           nationalRegistryId,
           application.state,
