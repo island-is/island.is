@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+  sut:
+    image: ${SUT}
+    networks:
+      - local
+    depends_on:
+      - db_gjafakort_application
+    environment:
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+      - DB_HOST=db_gjafakort_application
+    entrypoint:
+      [
+        'scripts/_wait-for.sh',
+        'db_gjafakort_application:5432',
+        '-t',
+        '5',
+        '--',
+        'yarn',
+        'test',
+        'gjafakort-application',
+      ]
+
+  db_gjafakort_application:
+    ports: []

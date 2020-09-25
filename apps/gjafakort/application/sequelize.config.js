@@ -1,16 +1,17 @@
+/* eslint-env node */
 module.exports = {
   development: {
-    username: process.env.APPLICATION_DB_USER,
-    password: process.env.APPLICATION_DB_PASS,
-    database: process.env.APPLICATION_DB_NAME,
-    host: process.env.APPLICATION_DB_HOST,
+    username: 'dev_db',
+    password: 'dev_db',
+    database: 'dev_db',
+    host: 'localhost',
     dialect: 'postgres',
   },
   test: {
-    username: process.env.APPLICATION_TEST_DB_USER,
-    password: process.env.APPLICATION_TEST_DB_PASS,
-    database: process.env.APPLICATION_TEST_DB_NAME,
-    host: process.env.APPLICATION_DB_HOST,
+    username: 'test_db',
+    password: 'test_db',
+    database: 'test_db',
+    host: process.env.DB_HOST || 'localhost',
     dialect: 'postgres',
   },
   production: {
