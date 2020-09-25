@@ -9,8 +9,7 @@ export const card = style({
     fontFamily:theme.typography.fontFamily,
     borderColor:theme.color.blue200,
     borderWidth:1,
-    borderStyle:'solid'/*,
-    boxSizing:'border-box'*/
+    borderStyle:'solid'
 })
 
 export const name = style({   

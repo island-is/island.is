@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode, useLayoutEffect } from 'react';
 import {  Box,  
           Button, 
           ContentBlock, 
@@ -54,6 +54,19 @@ function ServiceLayout({ top, bottom, left, right }: PropTypes) {
       </ContentBlock>}
     </Box>
   )
+}
+
+function useWindowSize() {
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  return size;
 }
 
 export interface ServiceListProps {
@@ -136,6 +149,14 @@ export default function ServiceList(props:ServiceListProps) {
     return str;  
   }
 
+  const getFilterStyle = (width:number, height:number) => {
+    if (width < 771 || height < 600)
+      return styles.filter;
+    if (height < 960)
+      return styles.filterFixedBottom;
+    return styles.filterFixed;
+  }
+
   const [isLoading,    setLoading]   = useState<boolean>(true);
   const [services,    setServices]   = useState<Array<ServiceCardInformation>>(null);
   const [nextCursor,  setNextCursor] = useState<string>(props.nextCursor);
@@ -143,6 +164,7 @@ export default function ServiceList(props:ServiceListProps) {
   const [firstGet,    setFirstGet] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState('');
   const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
+  const [width, height] = useWindowSize();
   
   const onSearchChange = function(inputValue: string){
     props.parameters.text = inputValue;
@@ -198,23 +220,21 @@ export default function ServiceList(props:ServiceListProps) {
                         return <ServiceCard key={item.id} service={item} />
                       })
                     }
+
+            <Box className={cn(styles.navigation)} borderRadius="large">
+              <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
+                <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
+              </div>
+              <div className={cn(isLoading? styles.displayHidden : {})}>
+                <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
+                  {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
+                </Button>
+              </div>
+            </Box>
           </Box>
       } 
-
-      bottom={
-        <div className={cn(styles.navigation)}>
-          <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
-            <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
-          </div>
-          <div className={cn(isLoading? styles.displayHidden : {})}>
-            <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-              {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
-            </Button>
-          </div>
-        </div>
-      }
       right={
-              <Box  className={cn(styles.filter, "filter")}>
+              <Box  className={cn(getFilterStyle(width, height) , "filter")}>
                 <Box className={cn(styles.inputSearch)}>
                   <AsyncSearch 
                     options={[]}
