@@ -12,7 +12,7 @@ const FormProgress: FC<{
   theme?: ProgressThemes
   tag?: React.ReactNode
   formName: string
-  formIcon: string
+  formIcon?: string
   activeSection: number
   activeSubSection: number
   sections: Section[]

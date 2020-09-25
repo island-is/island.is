@@ -28,11 +28,11 @@ const RadioFormField: FC<Props> = ({
           disabled={disabled}
           error={error}
           name={`${id}`}
-          defaultValue={getValueViaPath(formValue, id)}
+          defaultValue={getValueViaPath(formValue, id) as string[]}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatMessage(label) as string,
-            tooltip: formatMessage(tooltip) as string,
+            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
           }))}
         />
       </Box>
