@@ -9,16 +9,21 @@ import {
   AccordionItem,
   Input,
 } from '@island.is/island-ui/core'
-import { Logo } from '../../shared-components/Logo/Logo'
+import { JudgeLogo } from '../../shared-components/Logos'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import { autoSave, getRestrictionByValue } from '../../utils/stepHelper'
-import { Case, CustodyRestrictions } from '../../types'
+import {
+  autoSave,
+  getRestrictionByValue,
+  renderRestrictons,
+} from '../../utils/stepHelper'
+import { CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../api'
 import { validate } from '../../utils/validate'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
+import * as Constants from '../../utils/constants'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -37,23 +42,32 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
+    let mounted = true
+
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
-      setWorkingCase(currentCase.case)
+
+      if (mounted) {
+        setWorkingCase(currentCase.case)
+      }
     }
 
     if (id) {
       getCurrentCase()
     }
-  }, [])
 
-  return (
+    return () => {
+      mounted = false
+    }
+  }, [id])
+
+  return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <Logo />
+            <JudgeLogo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1" variant="h1">
@@ -77,7 +91,7 @@ export const JudgeOverview: React.FC = () => {
                   data-testid="courtCaseNumber"
                   name="courtCaseNumber"
                   label="Slá inn málsnúmer"
-                  // defaultValue={workingCase.courtCaseNumber} TODO
+                  defaultValue={workingCase?.courtCaseNumber}
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={courtCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
@@ -141,7 +155,10 @@ export const JudgeOverview: React.FC = () => {
                     formatDate(workingCase?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(workingCase?.arrestDate, 'hh:mm')}`}
+                  )} kl. ${formatDate(
+                    workingCase?.arrestDate,
+                    Constants.TIME_FORMAT,
+                  )}`}
               </Typography>
             </Box>
             {workingCase?.requestedCourtDate && (
@@ -158,7 +175,7 @@ export const JudgeOverview: React.FC = () => {
                     }),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
-                    'hh:mm',
+                    Constants.TIME_FORMAT,
                   )}`}
                 </Typography>
               </Box>
@@ -181,7 +198,7 @@ export const JudgeOverview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
-                          'hh:mm',
+                          Constants.TIME_FORMAT,
                         )}`}
                     </strong>
                   </Typography>
@@ -203,14 +220,7 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {workingCase?.custodyRestrictions?.length > 0 &&
-                      workingCase?.custodyRestrictions
-                        .map(
-                          (restriction: CustodyRestrictions) =>
-                            `${getRestrictionByValue(restriction)}`,
-                        )
-                        .toString()
-                        .replace(',', ', ')}
+                    {renderRestrictons(workingCase.custodyRestrictions)}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem
@@ -259,14 +269,14 @@ export const JudgeOverview: React.FC = () => {
               </Accordion>
             </Box>
             <FormFooter
-              nextUrl="/"
+              nextUrl={Constants.COURT_DOCUMENT_ROUTE}
               nextIsDisabled={workingCase?.courtCaseNumber === ''}
             />
           </GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
-  )
+  ) : null
 }
 
 export default JudgeOverview

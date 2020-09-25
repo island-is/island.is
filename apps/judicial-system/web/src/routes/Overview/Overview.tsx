@@ -10,11 +10,14 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Logo } from '../../shared-components/Logo/Logo'
+import { ProsecutorLogo } from '../../shared-components/Logos'
 import Modal from '../../shared-components/Modal/Modal'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import { getRestrictionByValue } from '../../utils/stepHelper'
+import {
+  getRestrictionByValue,
+  renderRestrictons,
+} from '../../utils/stepHelper'
 import { CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import * as Constants from '../../utils/constants'
@@ -60,7 +63,7 @@ export const Overview: React.FC = () => {
         <GridContainer>
           <GridRow>
             <GridColumn span={'3/12'}>
-              <Logo />
+              <ProsecutorLogo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">
@@ -116,7 +119,10 @@ export const Overview: React.FC = () => {
                     formatDate(caseDraftJSON?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(caseDraftJSON?.arrestDate, 'hh:mm')}`}
+                  )} kl. ${formatDate(
+                    caseDraftJSON?.arrestDate,
+                    Constants.TIME_FORMAT,
+                  )}`}
                 </Typography>
               </Box>
               {caseDraftJSON.requestedCourtDate &&
@@ -134,7 +140,7 @@ export const Overview: React.FC = () => {
                         }),
                       )} kl. ${formatDate(
                         caseDraftJSON?.requestedCourtDate,
-                        'hh:mm',
+                        Constants.TIME_FORMAT,
                       )}`}
                     </Typography>
                   </Box>
@@ -151,7 +157,7 @@ export const Overview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           caseDraftJSON?.requestedCustodyEndDate,
-                          'hh:mm',
+                          Constants.TIME_FORMAT,
                         )}`}
                       </strong>
                     </Typography>
@@ -163,13 +169,7 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
-                      {caseDraftJSON.custodyRestrictions
-                        .map(
-                          (restriction: CustodyRestrictions) =>
-                            `${getRestrictionByValue(restriction)}`,
-                        )
-                        .toString()
-                        .replace(',', ', ')}
+                      {renderRestrictons(caseDraftJSON.custodyRestrictions)}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem

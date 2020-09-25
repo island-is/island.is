@@ -33,7 +33,7 @@ export const Timeline: FC<TimelineProps> = ({ title, events }) => {
     <>
       <GridRow>
         <GridColumn offset={[null, null, null, '1/9']}>
-          <Box paddingTop={2} paddingBottom={5}>
+          <Box paddingTop={2} paddingBottom={[0, 0, 5]}>
             <Typography variant="p" as="p" color="white">
               {title}
             </Typography>

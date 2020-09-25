@@ -1,0 +1,86 @@
+{
+  "home": {
+    "title": "Skilavottord"
+  },
+  "myCars": {
+    "title": "Recycle your car",
+    "subTitles": {
+      "pending": "Pending recycle",
+      "active": "Your cars",
+      "done": "Recycled cars"
+    },
+    "info": {
+      "noCarsAvailable": "We cannot find any cars registered to you."
+    },
+    "actions": {
+      "valid": "Recycle car",
+      "invalid": "Cannot be recycled"
+    },
+    "status": {
+      "coOwned": "Co-owned",
+      "recycle": "Take to recycling company",
+      "done": "Recycled"
+    },
+    "buttons": {
+      "openProcess": "Open process",
+      "seeDetails": "See details"
+    },
+    "tooltip": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seiced by the police. Login to see more information at https://innskranning.island.is/?id=mitt.samgongustofa.is"
+  },
+  "confirm": {
+    "title": "Confirm car",
+    "subTitles": {
+      "confirm": "Do you want select this car for recycling?"
+    },
+    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
+    "buttons": {
+      "cancel": "Cancel",
+      "continue": "Login again to sign"
+    },
+    "checkbox": {
+      "label": "I agree to the",
+      "linkLabel": " Terms and conditions"
+    }
+  },
+  "handover": {
+    "title": "Car is ready to be recycled!",
+    "subTitles": {
+      "recycle": "Take the car to any of our connected recycling companies for recycling",
+      "companies": "Recycling companies"
+    },
+    "info": "You can take the car too any of the connected recycling companies for recycling for free. Once the car is handed over you will recive your money within 2 business days.",
+    "buttons": {
+      "cancel": "Cancel recycling",
+      "continue": "Back to my cars",
+      "website": "Go to website"
+    }
+  },
+  "completed": {
+    "title": "Car has been recycled!",
+    "subTitles": {
+      "summary": "Summary",
+      "payment": "Payment"
+    },
+    "info": {
+      "payment": "Money will be payed by Fjársýsla ríkisins to your state collector within 2 days of the payment has been initiated. You will find your payment",
+      "paymentLinkText": "your financial pages"
+    },
+    "confirmedBy": {
+      "user": "Confirmed for recycling by",
+      "company": "Handed over to",
+      "authority": "Car deregistered with Samgöngustofa",
+      "fund": "Car payment inititated by Fjársýsla ríkisins"
+    },
+    "buttons": {
+      "close": "Close"
+    }
+  },
+  "cancelModal": {
+    "title": "Cancel the recycling process for this car",
+    "info": "When you cancel the recycling the car cannot be recycled at the recyclingcompanies untill you mark it for recycling again. You can simply redo the process if change your mind.",
+    "buttons": {
+      "cancel": "No",
+      "continue": "Yes"
+    }
+  }
+}

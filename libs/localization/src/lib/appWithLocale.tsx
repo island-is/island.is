@@ -1,8 +1,15 @@
 import React from 'react'
-import { LocaleProvider } from './LocaleContext'
+import { Locale, LocaleProvider, MessagesDict } from './LocaleContext'
+import { NextComponentType } from 'next'
+import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 
-export const appWithLocale = (WrappedComponent) => {
-  const AppWithLocale = (props) => {
+interface Props {
+  pageProps: { locale: Locale; messages: MessagesDict }
+}
+export const appWithLocale = <C extends BaseContext = NextPageContext, IP = {}>(
+  WrappedComponent: NextComponentType<C, Props, Props>,
+) => {
+  const AppWithLocale = (props: Props) => {
     return (
       <LocaleProvider
         locale={props.pageProps.locale}

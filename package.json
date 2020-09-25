@@ -71,6 +71,7 @@
     "@sentry/react": "^5.22.3",
     "@sentry/tracing": "^5.22.3",
     "@sindresorhus/slugify": "1.0.0",
+    "@types/form-data": "^2.5.0",
     "@xstate/react": "0.8.1",
     "amazon-s3-uri": "^0.0.3",
     "apollo-cache-inmemory": "1.6.6",

@@ -1,4 +1,4 @@
-import { ApplicationTemplate } from '../ApplicationTemplate'
+import { ApplicationTemplate } from '../../types/ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
@@ -37,7 +37,7 @@ const dataSchema = z.object({
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
 
-export const DrivingLessons: ApplicationTemplate<
+const DrivingLessons: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -140,3 +140,5 @@ export const DrivingLessons: ApplicationTemplate<
     return 'applicant'
   },
 }
+
+export default DrivingLessons

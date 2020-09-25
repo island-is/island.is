@@ -19,7 +19,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
         <Box
           className={styles.key}
           style={{ background: theme.color.blue400 }}
-        ></Box>
+        />
         <Typography variant="p">
           Sjálfstæður réttur hvors foreldris fyrir sig er 3 mánuðir (90 dagar).
         </Typography>
@@ -28,7 +28,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
         <Box
           className={styles.key}
           style={{ background: theme.color.mint400 }}
-        ></Box>
+        />
         <Typography variant="p">
           Sameiginlegur réttur foreldra er 3 mánuðir (90 dagar).
         </Typography>

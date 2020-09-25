@@ -4,7 +4,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { CREATE_APPLICATION } from '@island.is/application/graphql'
 import useAuth from '../hooks/useAuth'
 
-export const Applications: FC<{}> = () => {
+export const Applications: FC = () => {
   const { type } = useParams()
   const history = useHistory()
   const { userInfo } = useAuth()
@@ -14,23 +14,25 @@ export const Applications: FC<{}> = () => {
       history.replace(`../application/${createApplication.id}`)
     },
   })
-  const { natreg } = userInfo.profile
+  const nationalRegistryId = userInfo?.profile?.natreg
 
   useEffect(() => {
-    createApplication({
-      variables: {
-        input: {
-          applicant: natreg,
-          state: 'draft',
-          attachments: {},
-          typeId: type,
-          assignee: natreg,
-          externalId: 'some_id',
-          answers: {},
+    if (nationalRegistryId) {
+      createApplication({
+        variables: {
+          input: {
+            applicant: nationalRegistryId,
+            state: 'draft',
+            attachments: {},
+            typeId: type,
+            assignee: nationalRegistryId,
+            externalId: 'some_id',
+            answers: {},
+          },
         },
-      },
-    })
-  }, [createApplication, natreg, type])
+      })
+    }
+  }, [createApplication, nationalRegistryId, type])
 
   if (error) return <p>Error! {error.message}</p>
   return <p>Loading...</p>
