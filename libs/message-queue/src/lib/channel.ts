@@ -93,6 +93,9 @@ class Channel {
         Endpoint: QueueArn,
       })
       .promise()
+    if (!SubscriptionArn) {
+      throw new Error(`Unable to subscribe to SNS exchange ${exchangeId}`)
+    }
 
     if (routingKeys.length > 0) {
       await this.sns
@@ -140,7 +143,7 @@ class Channel {
   }: {
     queueId: string
     messageHandler: (message: Message, routingKey: RoutingKey) => Promise<void>
-    errorHandler?: (error) => void
+    errorHandler?: (error: any) => void // eslint-disable-line  @typescript-eslint/no-explicit-any
   }) {
     const parseMessage = (
       sqsMessage: AWS.SQS.Types.Message,
@@ -148,6 +151,11 @@ class Channel {
       message: Message
       routingKey: RoutingKey
     } => {
+      if (!sqsMessage.Body) {
+        throw new Error(
+          `No Body found on sqs message ${JSON.stringify(sqsMessage)}`,
+        )
+      }
       const parsedBody = JSON.parse(sqsMessage.Body)
       const { Message, MessageAttributes } = parsedBody
       const routingKey = MessageAttributes?.event_type?.Value
@@ -194,7 +202,7 @@ class Channel {
     return consumer
   }
 
-  async publish<Message, RoutingKey>({
+  async publish<Message, RoutingKey extends string>({
     exchangeId,
     message,
     routingKey = undefined,
@@ -203,7 +211,7 @@ class Channel {
     message: Message
     routingKey?: RoutingKey
   }) {
-    const params = {
+    const params: AWS.SNS.Types.PublishInput = {
       Message: JSON.stringify(message),
       TopicArn: exchangeId,
     }
@@ -247,6 +255,9 @@ class Channel {
         AttributeNames: attributes,
       })
       .promise()
+    if (!Attributes) {
+      throw new Error(`Unable to get queue attributes for queue ${queueId}`)
+    }
     return Attributes
   }
 }
