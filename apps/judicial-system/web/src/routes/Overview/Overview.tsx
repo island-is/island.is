@@ -116,7 +116,10 @@ export const Overview: React.FC = () => {
                     formatDate(caseDraftJSON?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(caseDraftJSON?.arrestDate, 'hh:mm')}`}
+                  )} kl. ${formatDate(
+                    caseDraftJSON?.arrestDate,
+                    Constants.TIME_FORMAT,
+                  )}`}
                 </Typography>
               </Box>
               {caseDraftJSON.requestedCourtDate &&
@@ -134,7 +137,7 @@ export const Overview: React.FC = () => {
                         }),
                       )} kl. ${formatDate(
                         caseDraftJSON?.requestedCourtDate,
-                        'hh:mm',
+                        Constants.TIME_FORMAT,
                       )}`}
                     </Typography>
                   </Box>
@@ -151,7 +154,7 @@ export const Overview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           caseDraftJSON?.requestedCustodyEndDate,
-                          'hh:mm',
+                          Constants.TIME_FORMAT,
                         )}`}
                       </strong>
                     </Typography>
