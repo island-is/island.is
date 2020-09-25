@@ -132,8 +132,8 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
             {cases.map((c, i) => (
               <tr key={i} data-testid="detention-requests-table-row">
                 <td>{c.policeCaseNumber || '-'}</td>
-                <td>{c.suspectName}</td>
-                <td>{c.suspectNationalId || '-'}</td>
+                <td>{c.accusedName}</td>
+                <td>{c.accusedNationalId || '-'}</td>
                 <td>
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>

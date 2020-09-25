@@ -58,21 +58,21 @@ export class Case extends Model<Case> {
     allowNull: false,
   })
   @ApiProperty()
-  suspectNationalId: string
+  accusedNationalId: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  suspectName: string
+  accusedName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  suspectAddress: string
+  accusedAddress: string
 
   @Column({
     type: DataType.STRING,
@@ -212,7 +212,7 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   // Afstaða kærða
-  suspectPlea: string
+  accusedPlea: string
 
   @Column({
     type: DataType.STRING,

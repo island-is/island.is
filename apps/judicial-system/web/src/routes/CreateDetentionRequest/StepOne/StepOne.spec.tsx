@@ -21,8 +21,8 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
     const aa = [
       getByTestId(/policeCaseNumber/i),
       getByTestId(/nationalId/i),
-      getByTestId(/suspectName/i),
-      getByTestId(/suspectAddress/i),
+      getByTestId(/accusedName/i),
+      getByTestId(/accusedAddress/i),
       getByTestId(/arrestTime/i),
       getByTestId(/courtDate/i),
     ]
@@ -49,9 +49,9 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
       court: 'string',
       comments: 'string',
       policeCaseNumber: 'string',
-      suspectNationalId: 'string',
-      suspectName: 'string',
-      suspectAddress: 'string',
+      accusedNationalId: 'string',
+      accusedName: 'string',
+      accusedAddress: 'string',
       arrestDate: '2020-09-16T19:51:28.224Z',
       requestedCourtDate: '2020-09-16T19:51:28.224Z',
       requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
@@ -90,8 +90,8 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
       /policeCaseNumber/i,
     ) as HTMLInputElement
     const nationalId = getByTestId(/nationalId/i) as HTMLInputElement
-    const suspectName = getByTestId(/suspectName/i) as HTMLInputElement
-    const suspectAddress = getByTestId(/suspectAddress/i) as HTMLInputElement
+    const accusedName = getByTestId(/accusedName/i) as HTMLInputElement
+    const accusedAddress = getByTestId(/accusedAddress/i) as HTMLInputElement
     const court = getByTestId(/select-court/i) as HTMLSelectElement
 
     act(() => {
@@ -101,10 +101,10 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
       userEvent.type(nationalId, '1234567890')
       userEvent.tab()
 
-      userEvent.type(suspectName, 'Mikki Refur')
+      userEvent.type(accusedName, 'Mikki Refur')
       userEvent.tab()
 
-      userEvent.type(suspectAddress, 'Undraland 2')
+      userEvent.type(accusedAddress, 'Undraland 2')
       userEvent.tab()
     })
 
@@ -113,8 +113,8 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
     // Assert
     expect(policeCaseNumber.value).toEqual('x-007-2')
     await waitFor(() => expect(nationalId.value).toEqual('1234567890'))
-    expect(suspectName.value).toEqual('Mikki Refur')
-    expect(suspectAddress.value).toEqual('Undraland 2')
+    expect(accusedName.value).toEqual('Mikki Refur')
+    expect(accusedAddress.value).toEqual('Undraland 2')
     expect(spy).toHaveBeenCalled()
   })
 })

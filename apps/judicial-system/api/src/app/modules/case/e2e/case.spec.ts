@@ -23,9 +23,9 @@ describe('Case', () => {
   it('POST /api/case should create a case', async () => {
     const data = {
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
-      suspectName: 'Suspect Name',
-      suspectAddress: 'Suspect Address',
+      accusedNationalId: '0101010000',
+      accusedName: 'Accused Name',
+      accusedAddress: 'Accused Address',
       court: 'Court',
       arrestDate: '2020-09-08T08:00:00.000Z',
       requestedCourtDate: '2020-09-08T11:30:00.000Z',
@@ -42,9 +42,9 @@ describe('Case', () => {
         expect(response.body.modified).toBeTruthy()
         expect(response.body.state).toBe(CaseState.DRAFT)
         expect(response.body.policeCaseNumber).toBe(data.policeCaseNumber)
-        expect(response.body.suspectNationalId).toBe(data.suspectNationalId)
-        expect(response.body.suspectName).toBe(data.suspectName)
-        expect(response.body.suspectAddress).toBe(data.suspectAddress)
+        expect(response.body.accusedNationalId).toBe(data.accusedNationalId)
+        expect(response.body.accusedName).toBe(data.accusedName)
+        expect(response.body.accusedAddress).toBe(data.accusedAddress)
         expect(response.body.court).toBe(data.court)
         expect(response.body.arrestDate).toBe(data.arrestDate)
         expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
@@ -62,7 +62,7 @@ describe('Case', () => {
         expect(response.body.courtEndTime).toBeNull()
         expect(response.body.courtAttendees).toBeNull()
         expect(response.body.policeDemands).toBeNull()
-        expect(response.body.suspectPlea).toBeNull()
+        expect(response.body.accusedPlea).toBeNull()
         expect(response.body.litigationPresentations).toBeNull()
         expect(response.body.notifications).toBeUndefined()
 
@@ -76,9 +76,9 @@ describe('Case', () => {
           expect(value.modified.toISOString()).toBe(response.body.modified)
           expect(value.state).toBe(response.body.state)
           expect(value.policeCaseNumber).toBe(data.policeCaseNumber)
-          expect(value.suspectNationalId).toBe(data.suspectNationalId)
-          expect(value.suspectName).toBe(data.suspectName)
-          expect(value.suspectAddress).toBe(data.suspectAddress)
+          expect(value.accusedNationalId).toBe(data.accusedNationalId)
+          expect(value.accusedName).toBe(data.accusedName)
+          expect(value.accusedAddress).toBe(data.accusedAddress)
           expect(value.court).toBe(data.court)
           expect(value.arrestDate.toISOString()).toBe(data.arrestDate)
           expect(value.requestedCourtDate.toISOString()).toBe(
@@ -98,7 +98,7 @@ describe('Case', () => {
           expect(value.courtEndTime).toBeNull()
           expect(value.courtAttendees).toBeNull()
           expect(value.policeDemands).toBeNull()
-          expect(value.suspectPlea).toBeNull()
+          expect(value.accusedPlea).toBeNull()
           expect(value.litigationPresentations).toBeNull()
           expect(value.notifications).toStrictEqual([])
         })
@@ -108,7 +108,7 @@ describe('Case', () => {
   it('POST /api/case with required fields should create a case', async () => {
     const data = {
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
+      accusedNationalId: '0101010000',
     }
 
     await request(app.getHttpServer())
@@ -122,9 +122,9 @@ describe('Case', () => {
         expect(response.body.modified).toBeTruthy()
         expect(response.body.state).toBe(CaseState.DRAFT)
         expect(response.body.policeCaseNumber).toBe(data.policeCaseNumber)
-        expect(response.body.suspectNationalId).toBe(data.suspectNationalId)
-        expect(response.body.suspectName).toBeNull()
-        expect(response.body.suspectAddress).toBeNull()
+        expect(response.body.accusedNationalId).toBe(data.accusedNationalId)
+        expect(response.body.accusedName).toBeNull()
+        expect(response.body.accusedAddress).toBeNull()
         expect(response.body.court).toBeNull()
         expect(response.body.arrestDate).toBeNull()
         expect(response.body.requestedCourtDate).toBeNull()
@@ -142,7 +142,7 @@ describe('Case', () => {
         expect(response.body.courtEndTime).toBeNull()
         expect(response.body.courtAttendees).toBeNull()
         expect(response.body.policeDemands).toBeNull()
-        expect(response.body.suspectPlea).toBeNull()
+        expect(response.body.accusedPlea).toBeNull()
         expect(response.body.litigationPresentations).toBeNull()
         expect(response.body.notifications).toBeUndefined()
 
@@ -156,9 +156,9 @@ describe('Case', () => {
           expect(value.modified.toISOString()).toBe(response.body.modified)
           expect(value.state).toBe(response.body.state)
           expect(value.policeCaseNumber).toBe(data.policeCaseNumber)
-          expect(value.suspectNationalId).toBe(data.suspectNationalId)
-          expect(value.suspectName).toBeNull()
-          expect(value.suspectAddress).toBeNull()
+          expect(value.accusedNationalId).toBe(data.accusedNationalId)
+          expect(value.accusedName).toBeNull()
+          expect(value.accusedAddress).toBeNull()
           expect(value.court).toBeNull()
           expect(value.arrestDate).toBeNull()
           expect(value.requestedCourtDate).toBeNull()
@@ -176,7 +176,7 @@ describe('Case', () => {
           expect(value.courtEndTime).toBeNull()
           expect(value.courtAttendees).toBeNull()
           expect(value.policeDemands).toBeNull()
-          expect(value.suspectPlea).toBeNull()
+          expect(value.accusedPlea).toBeNull()
           expect(value.litigationPresentations).toBeNull()
           expect(value.notifications).toStrictEqual([])
         })
@@ -187,9 +187,9 @@ describe('Case', () => {
     await Case.create({
       state: CaseState.SUBMITTED,
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
-      suspectName: 'Suspect Name',
-      suspectAddress: 'Suspect Address',
+      accusedNationalId: '0101010000',
+      accusedName: 'Accused Name',
+      accusedAddress: 'Accused Address',
       court: 'Court',
       arrestDate: '2020-09-08T08:00:00.000Z',
       requestedCourtDate: '2020-09-08T11:30:00.000Z',
@@ -213,7 +213,7 @@ describe('Case', () => {
       courtEndTime: '2020-09-29T14:00:00.000Z',
       courtAttendees: 'Court Attendees',
       policeDemands: 'Police Demands',
-      suspectPlea: 'Suspect Plea',
+      accusedPlea: 'Accused Plea',
       litigationPresentations: 'Litigation Presentations',
     }).then(async (value) => {
       await request(app.getHttpServer())
@@ -227,9 +227,9 @@ describe('Case', () => {
           expect(response.body.modified).toBe(value.modified.toISOString())
           expect(response.body.state).toBe(value.state)
           expect(response.body.policeCaseNumber).toBe(value.policeCaseNumber)
-          expect(response.body.suspectNationalId).toBe(value.suspectNationalId)
-          expect(response.body.suspectName).toBe(value.suspectName)
-          expect(response.body.suspectAddress).toBe(value.suspectAddress)
+          expect(response.body.accusedNationalId).toBe(value.accusedNationalId)
+          expect(response.body.accusedName).toBe(value.accusedName)
+          expect(response.body.accusedAddress).toBe(value.accusedAddress)
           expect(response.body.court).toBe(value.court)
           expect(response.body.arrestDate).toBe(value.arrestDate.toISOString())
           expect(response.body.requestedCourtDate).toBe(
@@ -261,7 +261,7 @@ describe('Case', () => {
           )
           expect(response.body.courtAttendees).toBe(value.courtAttendees)
           expect(response.body.policeDemands).toBe(value.policeDemands)
-          expect(response.body.suspectPlea).toBe(value.suspectPlea)
+          expect(response.body.accusedPlea).toBe(value.accusedPlea)
           expect(response.body.litigationPresentations).toBe(
             value.litigationPresentations,
           )
@@ -273,14 +273,14 @@ describe('Case', () => {
   it('PUT /api/case/:id should update a case by id', async () => {
     await Case.create({
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
+      accusedNationalId: '0101010000',
     }).then(async (value) => {
       const data = {
         state: CaseState.ACCEPTED,
         policeCaseNumber: 'New Case Number',
-        suspectNationalId: '0101010009',
-        suspectName: 'Suspect Name',
-        suspectAddress: 'Suspect Address',
+        accusedNationalId: '0101010009',
+        accusedName: 'Accused Name',
+        accusedAddress: 'Accused Address',
         court: 'Court',
         arrestDate: '2020-09-08T08:00:00.000Z',
         requestedCourtDate: '2020-09-08T11:30:00.000Z',
@@ -304,7 +304,7 @@ describe('Case', () => {
         courtEndTime: '2020-09-29T14:00:00.000Z',
         courtAttendees: 'Court Attendees',
         policeDemands: 'Police Demands',
-        suspectPlea: 'Suspect Plea',
+        accusedPlea: 'Accused Plea',
         litigationPresentations: 'Litigation Presentations',
       }
 
@@ -319,9 +319,9 @@ describe('Case', () => {
           expect(response.body.modified).not.toBe(value.modified.toISOString())
           expect(response.body.state).toBe(data.state)
           expect(response.body.policeCaseNumber).toBe(data.policeCaseNumber)
-          expect(response.body.suspectNationalId).toBe(data.suspectNationalId)
-          expect(response.body.suspectName).toBe(data.suspectName)
-          expect(response.body.suspectAddress).toBe(data.suspectAddress)
+          expect(response.body.accusedNationalId).toBe(data.accusedNationalId)
+          expect(response.body.accusedName).toBe(data.accusedName)
+          expect(response.body.accusedAddress).toBe(data.accusedAddress)
           expect(response.body.court).toBe(data.court)
           expect(response.body.arrestDate).toBe(data.arrestDate)
           expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
@@ -347,7 +347,7 @@ describe('Case', () => {
           expect(response.body.courtEndTime).toBe(data.courtEndTime)
           expect(response.body.courtAttendees).toBe(data.courtAttendees)
           expect(response.body.policeDemands).toBe(data.policeDemands)
-          expect(response.body.suspectPlea).toBe(data.suspectPlea)
+          expect(response.body.accusedPlea).toBe(data.accusedPlea)
           expect(response.body.litigationPresentations).toBe(
             data.litigationPresentations,
           )
@@ -363,9 +363,9 @@ describe('Case', () => {
             expect(newValue.modified.toISOString()).toBe(response.body.modified)
             expect(newValue.state).toBe(data.state)
             expect(newValue.policeCaseNumber).toBe(data.policeCaseNumber)
-            expect(newValue.suspectNationalId).toBe(data.suspectNationalId)
-            expect(newValue.suspectName).toBe(data.suspectName)
-            expect(newValue.suspectAddress).toBe(data.suspectAddress)
+            expect(newValue.accusedNationalId).toBe(data.accusedNationalId)
+            expect(newValue.accusedName).toBe(data.accusedName)
+            expect(newValue.accusedAddress).toBe(data.accusedAddress)
             expect(newValue.court).toBe(data.court)
             expect(newValue.arrestDate.toISOString()).toBe(data.arrestDate)
             expect(newValue.requestedCourtDate.toISOString()).toBe(
@@ -395,7 +395,7 @@ describe('Case', () => {
             expect(newValue.courtEndTime.toISOString()).toBe(data.courtEndTime)
             expect(newValue.courtAttendees).toBe(data.courtAttendees)
             expect(newValue.policeDemands).toBe(data.policeDemands)
-            expect(newValue.suspectPlea).toBe(data.suspectPlea)
+            expect(newValue.accusedPlea).toBe(data.accusedPlea)
             expect(newValue.litigationPresentations).toBe(
               data.litigationPresentations,
             )
@@ -408,7 +408,7 @@ describe('Case', () => {
   it('POST /api/case/:id/notification should send a notification', async () => {
     await Case.create({
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
+      accusedNationalId: '0101010000',
     }).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/notification`)
@@ -439,7 +439,7 @@ describe('Case', () => {
   it('GET /api/case/:id/notifications should get all notifications by case id', async () => {
     await Case.create({
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
+      accusedNationalId: '0101010000',
     }).then(async (caseValue) => {
       await Notification.create({
         caseId: caseValue.id,
@@ -467,7 +467,7 @@ describe('Case', () => {
   it('GET /api/case/:id should include notifications', async () => {
     await Case.create({
       policeCaseNumber: 'Case Number',
-      suspectNationalId: '0101010000',
+      accusedNationalId: '0101010000',
     }).then(async (caseValue) => {
       await Notification.create({
         caseId: caseValue.id,

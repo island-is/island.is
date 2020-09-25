@@ -19,17 +19,17 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly suspectNationalId: string
+  readonly accusedNationalId: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly suspectName: string
+  readonly accusedName: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly suspectAddress: string
+  readonly accusedAddress: string
 
   @IsOptional()
   @IsString()
@@ -119,7 +119,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly suspectPlea: string
+  readonly accusedPlea: string
 
   @IsOptional()
   @IsString()

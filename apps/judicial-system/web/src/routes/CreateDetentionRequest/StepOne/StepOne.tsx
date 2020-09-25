@@ -40,9 +40,9 @@ export const StepOne: React.FC = () => {
     modified: new Date(),
     state: caseDraftJSON.state ?? '',
     policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-    suspectNationalId: caseDraftJSON.suspectNationalId ?? '',
-    suspectName: caseDraftJSON.suspectName ?? '',
-    suspectAddress: caseDraftJSON.suspectAddress ?? '',
+    accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
+    accusedName: caseDraftJSON.accusedName ?? '',
+    accusedAddress: caseDraftJSON.accusedAddress ?? '',
     court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
     arrestDate: caseDraftJSON.arrestDate ?? null,
     requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
@@ -63,10 +63,10 @@ export const StepOne: React.FC = () => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
   )
-  const [suspectNameErrorMessage, setSuspectNameErrorMessage] = useState<
+  const [accusedNameErrorMessage, setAccusedNameErrorMessage] = useState<
     string
   >('')
-  const [suspectAddressErrorMessage, setSuspectAddressErrorMessage] = useState<
+  const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] = useState<
     string
   >('')
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
@@ -81,14 +81,14 @@ export const StepOne: React.FC = () => {
   const { id } = useParams<{ id: string }>()
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
-  const suspectNationalIdRef = useRef<HTMLInputElement>()
+  const accusedNationalIdRef = useRef<HTMLInputElement>()
   const arrestTimeRef = useRef<HTMLInputElement>()
 
   const requiredFields = [
     workingCase.policeCaseNumber,
-    workingCase.suspectNationalId,
-    workingCase.suspectName,
-    workingCase.suspectAddress,
+    workingCase.accusedNationalId,
+    workingCase.accusedName,
+    workingCase.accusedAddress,
     workingCase.arrestDate,
   ]
 
@@ -135,12 +135,12 @@ export const StepOne: React.FC = () => {
     const isPossibleToSave =
       workingCase.id === '' &&
       policeCaseNumberRef.current.value !== '' &&
-      suspectNationalIdRef.current.value !== ''
+      accusedNationalIdRef.current.value !== ''
 
     if (isPossibleToSave) {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
-        suspectNationalId: suspectNationalIdRef.current.value,
+        accusedNationalId: accusedNationalIdRef.current.value,
       })
 
       window.localStorage.setItem(
@@ -148,14 +148,14 @@ export const StepOne: React.FC = () => {
         JSON.stringify({
           ...workingCase,
           id: caseId,
-          suspectNationalId: suspectNationalIdRef.current.value,
+          accusedNationalId: accusedNationalIdRef.current.value,
           policeCaseNumber: policeCaseNumberRef.current.value,
         }),
       )
       setWorkingCase({
         ...workingCase,
         id: caseId,
-        suspectNationalId: suspectNationalIdRef.current.value,
+        accusedNationalId: accusedNationalIdRef.current.value,
         policeCaseNumber: policeCaseNumberRef.current.value,
       })
     }
@@ -240,8 +240,8 @@ export const StepOne: React.FC = () => {
                     data-testid="nationalId"
                     name="nationalId"
                     label="Kennitala"
-                    defaultValue={workingCase.suspectNationalId}
-                    ref={suspectNationalIdRef}
+                    defaultValue={workingCase.accusedNationalId}
+                    ref={accusedNationalIdRef}
                     errorMessage={nationalIdErrorMessage}
                     hasError={nationalIdErrorMessage !== ''}
                     onBlur={(evt) => {
@@ -251,7 +251,7 @@ export const StepOne: React.FC = () => {
                         createCaseIfPossible()
                         updateState(
                           workingCase,
-                          'suspectNationalId',
+                          'accusedNationalId',
                           evt.target.value,
                           setWorkingCase,
                         )
@@ -265,55 +265,55 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box marginBottom={3}>
                   <Input
-                    data-testid="suspectName"
-                    name="suspectName"
+                    data-testid="accusedName"
+                    name="accusedName"
                     label="Fullt nafn kærða"
-                    defaultValue={workingCase.suspectName}
-                    errorMessage={suspectNameErrorMessage}
-                    hasError={suspectNameErrorMessage !== ''}
+                    defaultValue={workingCase.accusedName}
+                    errorMessage={accusedNameErrorMessage}
+                    hasError={accusedNameErrorMessage !== ''}
                     onBlur={(evt) => {
                       const validateField = validate(evt.target.value, 'empty')
 
                       if (validateField.isValid) {
                         autoSave(
                           workingCase,
-                          'suspectName',
+                          'accusedName',
                           evt.target.value,
                           setWorkingCase,
                         )
                       } else {
-                        setSuspectNameErrorMessage(validateField.errorMessage)
+                        setAccusedNameErrorMessage(validateField.errorMessage)
                       }
                     }}
-                    onFocus={() => setSuspectNameErrorMessage('')}
+                    onFocus={() => setAccusedNameErrorMessage('')}
                     required
                   />
                 </Box>
                 <Box marginBottom={3}>
                   <Input
-                    data-testid="suspectAddress"
-                    name="suspectAddress"
+                    data-testid="accusedAddress"
+                    name="accusedAddress"
                     label="Lögheimili/dvalarstaður"
-                    defaultValue={workingCase.suspectAddress}
-                    errorMessage={suspectAddressErrorMessage}
-                    hasError={suspectAddressErrorMessage !== ''}
+                    defaultValue={workingCase.accusedAddress}
+                    errorMessage={accusedAddressErrorMessage}
+                    hasError={accusedAddressErrorMessage !== ''}
                     onBlur={(evt) => {
                       const validateField = validate(evt.target.value, 'empty')
 
                       if (validateField.isValid) {
                         autoSave(
                           workingCase,
-                          'suspectAddress',
+                          'accusedAddress',
                           evt.target.value,
                           setWorkingCase,
                         )
                       } else {
-                        setSuspectAddressErrorMessage(
+                        setAccusedAddressErrorMessage(
                           validateField.errorMessage,
                         )
                       }
                     }}
-                    onFocus={() => setSuspectAddressErrorMessage('')}
+                    onFocus={() => setAccusedAddressErrorMessage('')}
                     required
                   />
                 </Box>

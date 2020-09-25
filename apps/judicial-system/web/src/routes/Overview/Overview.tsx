@@ -32,15 +32,15 @@ export const Overview: React.FC = () => {
   const caseDraftJSON = JSON.parse(caseDraft)
   const history = useHistory()
 
-  const renderSuspectName = () => (
+  const renderAccusedName = () => (
     <Typography>
       Tilkynning hefur verið send á dómara á vakt.
       <br />
       Dómstóll: {caseDraftJSON.court}.
       <br />
       Sakborningur:
-      <span className={styles.suspectName}>
-        {` ${caseDraftJSON.suspectName}`}
+      <span className={styles.accusedName}>
+        {` ${caseDraftJSON.accusedName}`}
       </span>
       .
     </Typography>
@@ -90,7 +90,7 @@ export const Overview: React.FC = () => {
                     Fullt nafn kærða
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.suspectName}</Typography>
+                <Typography>{caseDraftJSON.accusedName}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -98,7 +98,7 @@ export const Overview: React.FC = () => {
                     Lögheimili/dvalarstaður
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.suspectAddress}</Typography>
+                <Typography>{caseDraftJSON.accusedAddress}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -236,7 +236,7 @@ export const Overview: React.FC = () => {
       {modalVisible && (
         <Modal
           title="Krafa um gæsluvarðhald hefur verið staðfest"
-          text={renderSuspectName() as JSX.Element}
+          text={renderAccusedName() as JSX.Element}
           handleClose={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
           handlePrimaryButtonClick={async () => {
             history.push(Constants.DETENTION_REQUESTS_ROUTE)

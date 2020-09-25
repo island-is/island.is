@@ -85,11 +85,11 @@ components:
             - REJECTED
         policeCaseNumber:
           type: string
-        suspectNationalId:
+        accusedNationalId:
           type: string
-        suspectName:
+        accusedName:
           type: string
-        suspectAddress:
+        accusedAddress:
           type: string
         court:
           type: string
@@ -146,7 +146,7 @@ components:
           type: string
         policeDemands:
           type: string
-        suspectPlea:
+        accusedPlea:
           type: string
         litigationPresentations:
           type: string
@@ -160,9 +160,9 @@ components:
         - modified
         - state
         - policeCaseNumber
-        - suspectNationalId
-        - suspectName
-        - suspectAddress
+        - accusedNationalId
+        - accusedName
+        - accusedAddress
         - court
         - arrestDate
         - requestedCourtDate
@@ -180,7 +180,7 @@ components:
         - courtEndTime
         - courtAttendees
         - policeDemands
-        - suspectPlea
+        - accusedPlea
         - litigationPresentations
         - notifications
     CreateCaseDto:
@@ -188,11 +188,11 @@ components:
       properties:
         policeCaseNumber:
           type: string
-        suspectNationalId:
+        accusedNationalId:
           type: string
-        suspectName:
+        accusedName:
           type: string
-        suspectAddress:
+        accusedAddress:
           type: string
         court:
           type: string
@@ -204,7 +204,7 @@ components:
           type: string
       required:
         - policeCaseNumber
-        - suspectNationalId
+        - accusedNationalId
     UpdateCaseDto:
       type: object
       properties:
@@ -217,11 +217,11 @@ components:
             - REJECTED
         policeCaseNumber:
           type: string
-        suspectNationalId:
+        accusedNationalId:
           type: string
-        suspectName:
+        accusedName:
           type: string
-        suspectAddress:
+        accusedAddress:
           type: string
         court:
           type: string
@@ -278,7 +278,7 @@ components:
           type: string
         policeDemands:
           type: string
-        suspectPlea:
+        accusedPlea:
           type: string
         litigationPresentations:
           type: string
