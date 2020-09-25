@@ -20,15 +20,7 @@ Assuming `environment.signingOptions` implements `SigningServiceOptions`, add th
       provide: 'SIGNING_OPTIONS',
       useValue: environment.signingOptions
     },
-    {
-      provide: SigningService,
-      useFactory: (options: SigningServiceOptions, logger: Logger) => {
-        const signingService = new SigningService(options, logger)
-        signingService.initialize({} as DataSourceConfig<{}>)
-        return signingService
-      },
-      inject: ['SIGNING_OPTIONS', LOGGER_PROVIDER],
-    },
+    SigningService,
   ],
 })
 ```

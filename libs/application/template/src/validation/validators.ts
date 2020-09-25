@@ -16,7 +16,9 @@ export function extractPartialSchemaForValues(
 
     if (typeof value === 'object') {
       if (value.length) {
-        const answerToFocusOn = value[(value as Answer[]).length - 1]
+        const answerToFocusOn = (value as Answer[])[
+          (value as Answer[]).length - 1
+        ]
         if (typeof answerToFocusOn === 'object') {
           returnSchema = returnSchema.merge(
             z.object({
@@ -52,7 +54,7 @@ export function validateAnswers(
   answers: FormValue,
   partialValidation: boolean,
   dataSchema: Schema,
-): z.ZodError {
+): z.ZodError | undefined {
   if (partialValidation) {
     const newSchema = extractPartialSchemaForValues(dataSchema, answers)
     try {

@@ -7,3 +7,9 @@ export enum ActionTypes {
   REMOVE = 'REMOVE',
   UPDATE = 'UPDATE',
 }
+
+export interface Action {
+  type: ActionTypes
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload?: any
+}

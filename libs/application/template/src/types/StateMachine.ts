@@ -47,7 +47,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
   extends StateSchema {
   meta: ApplicationStateMeta<T>
-  states?: {
+  states: {
     [key: string]: ApplicationStateSchema<T>
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, render } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as z from 'zod'
 
@@ -26,8 +26,8 @@ describe(' FormShell', () => {
     applicant,
     externalId: '123123123',
     state: 'draft',
-    modified: null,
-    created: null,
+    modified: new Date(),
+    created: new Date(),
   }
   const form: Form = buildForm({
     id: ApplicationTypes.PARENTAL_LEAVE,
@@ -63,9 +63,8 @@ describe(' FormShell', () => {
   })
 
   it('should render the application title', async () => {
-    let getByText
     await act(async () => {
-      const wrapper = await render(
+      await render(
         <ApolloProvider client={client}>
           <LocaleProvider locale="is" messages={{}}>
             <FormShell
@@ -77,8 +76,7 @@ describe(' FormShell', () => {
           </LocaleProvider>
         </ApolloProvider>,
       )
-      getByText = wrapper.getByText
     })
-    expect(getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
+    expect(screen.getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
   })
 })

@@ -7,13 +7,19 @@ import {
 } from '@island.is/application/template'
 import { FormScreen } from './types'
 
-export const getValueViaPath = (obj, path, defaultValue = undefined) => {
+export const getValueViaPath = (
+  obj: object,
+  path: string,
+  defaultValue?: unknown,
+) => {
   try {
-    const travel = (regexp) =>
+    const travel = (regexp: RegExp) =>
       String.prototype.split
         .call(path, regexp)
         .filter(Boolean)
         .reduce(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
           (res, key) => (res !== null && res !== undefined ? res[key] : res),
           obj,
         )
@@ -38,7 +44,7 @@ export function verifyExternalData(
   return true
 }
 
-export function findReviewField(screen: FormScreen): ReviewField {
+export function findReviewField(screen: FormScreen): ReviewField | undefined {
   if (screen.type === FieldTypes.REVIEW) {
     return screen
   }

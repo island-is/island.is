@@ -572,7 +572,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  trigger-deployments:
+  deploy:
     runs-on: ubuntu-20.04
     needs: [retag-unaffected, prepare]
     env:
@@ -582,6 +582,8 @@ jobs:
     strategy:
       matrix:
         service: [islandis, gjafakort, air-discount-scheme]
+    outputs:
+      TRIGGER_FINISHED: ${{ steps.finished.outputs.TRIGGER_FINISHED }}
     steps:
       - uses: actions/checkout@v2
       - name: Trigger Deployment for service
@@ -597,11 +599,18 @@ jobs:
           "parameters": { "docker_tag": "$DOCKER_TAG" }
           }
           BODY
+      - id: finished
+        run: echo "::set-output name=TRIGGER_FINISHED::yes"
 
   success:
     runs-on: ubuntu-20.04
-    needs: trigger-deployments
+    if: always()
+    needs: deploy
+    env:
+      TRIGGER_FINISHED: ${{ needs.deploy.outputs.TRIGGER_FINISHED }}
     steps:
+      - name: Check success
+        run: '[[ $TRIGGER_FINISHED == "yes" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
 
@@ -616,7 +625,7 @@ jobs:
         prepare,
         linting,
         formatting,
-        trigger-deployments,
+        deploy,
       ]
     env:
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}

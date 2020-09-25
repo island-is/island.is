@@ -56,7 +56,6 @@ export enum FieldComponents {
 }
 
 export interface Question extends BaseField {
-  readonly isQuestion: true
   required?: boolean
   disabled?: boolean
 }
