@@ -1,6 +1,5 @@
-import { Event, EventObject, MachineConfig, State } from 'xstate'
+import { Event, EventObject, State } from 'xstate'
 import { MachineOptions } from 'xstate/lib/types'
-import { ApplicationTypes } from '../types/ApplicationTypes'
 import { Application, ExternalData, FormValue } from '../types/Application'
 import {
   ApplicationContext,
@@ -10,29 +9,20 @@ import {
   ApplicationStateSchema,
   createApplicationMachine,
 } from '../types/StateMachine'
-import { Schema } from '../types/Form'
-import { DataProvider } from '../types/DataProvider'
-
-export interface ApplicationTemplate<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
-> {
-  readonly type: ApplicationTypes
-  readonly dataSchema: Schema
-  readonly dataProviders: DataProvider[]
-  readonly stateMachineConfig: MachineConfig<TContext, TStateSchema, TEvents>
-  mapUserToRole(id: string, state: string): ApplicationRole
-}
+import { ApplicationTemplate } from '../types/ApplicationTemplate'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject
 > {
-  private application: Application
+  private readonly application: Application
   private template: ApplicationTemplate<TContext, TStateSchema, TEvents>
-  private stateMachine: ApplicationStateMachine<TContext, TStateSchema, TEvents>
+  private stateMachine!: ApplicationStateMachine<
+    TContext,
+    TStateSchema,
+    TEvents
+  >
 
   constructor(
     application: Application,
@@ -77,7 +67,10 @@ export class ApplicationTemplateHelper<
   getPermittedAnswersAndExternalData(
     role: ApplicationRole,
   ): { answers: FormValue; externalData: ExternalData } {
-    const returnValue = { answers: {}, externalData: {} }
+    const returnValue: { answers: FormValue; externalData: ExternalData } = {
+      answers: {},
+      externalData: {},
+    }
     const { answers, externalData } = this.application
 
     const stateInformation = this.getApplicationStateInformation(

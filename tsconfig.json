@@ -16,6 +16,7 @@
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
+    "strict": true,
     "paths": {
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],

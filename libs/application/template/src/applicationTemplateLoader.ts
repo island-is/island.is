@@ -1,4 +1,5 @@
 import { ApplicationTypes } from './types/ApplicationTypes'
+import { ApplicationTemplate } from './types/ApplicationTemplate'
 import { Application } from './types/Application'
 import {
   ApplicationContext,
@@ -6,10 +7,7 @@ import {
   ApplicationStateSchema,
 } from './types/StateMachine'
 import { EventObject } from 'xstate'
-import {
-  ApplicationTemplate,
-  ApplicationTemplateHelper,
-} from './templates/ApplicationTemplate'
+import { ApplicationTemplateHelper } from './templates/ApplicationTemplateHelper'
 
 const loadedTemplates: Record<string, unknown> = {}
 
@@ -39,11 +37,11 @@ export async function getApplicationTemplateByTypeId<
 
 export async function getApplicationStateInformation(
   application: Application,
-): Promise<ApplicationStateMeta> | null {
+): Promise<ApplicationStateMeta | null> {
   const template = await getApplicationTemplateByTypeId(application.typeId)
   if (!template) {
     return null
   }
   const helper = new ApplicationTemplateHelper(application, template)
-  return helper.getApplicationStateInformation()
+  return helper.getApplicationStateInformation() || null
 }

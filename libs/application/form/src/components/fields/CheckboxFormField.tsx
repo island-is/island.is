@@ -28,12 +28,12 @@ const CheckboxFormField: FC<Props> = ({
           id={id}
           disabled={disabled}
           name={`${id}`}
-          defaultValue={getValueViaPath(formValue, id, [])}
+          defaultValue={getValueViaPath(formValue, id, []) as string[]}
           error={error}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatMessage(label) as string,
-            tooltip: formatMessage(tooltip) as string,
+            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
           }))}
         />
       </Box>

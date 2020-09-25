@@ -249,7 +249,7 @@ const Slider = ({
               key={index}
               style={{
                 background: isShared ? '#00E4CA' : '#0061FF',
-                opacity: isActive ? 1 : fadeRemainderCells && 0.3,
+                opacity: isActive ? 1 : fadeRemainderCells ? 0.3 : undefined,
               }}
               onClick={(e) => onCellClick(index, e)}
             />

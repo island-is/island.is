@@ -1,4 +1,9 @@
-import { AllOrAny, Comparators, Condition } from '../types/Condition'
+import {
+  AllOrAny,
+  Comparators,
+  Condition,
+  SingleConditionCheck,
+} from '../types/Condition'
 import { FormValue } from '../types/Application'
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormLeaf } from './conditionUtils'
@@ -148,15 +153,15 @@ describe('conditions', () => {
         },
       ],
     })
-    const buildMultiCheckCondition = ({
-      show = true,
-      on = AllOrAny.ALL,
-      check,
+    const buildMultiCheckCondition = (data: {
+      show?: boolean
+      on?: AllOrAny
+      check: SingleConditionCheck[]
     }): Condition => ({
+      show: true,
+      on: AllOrAny.ALL,
       isMultiCheck: true,
-      show,
-      on,
-      check,
+      ...data,
     })
     describe('it should show the field', () => {
       it('if it has an "ALL" condition with no checks', () => {

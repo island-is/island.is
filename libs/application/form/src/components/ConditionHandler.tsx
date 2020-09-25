@@ -6,11 +6,11 @@ import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
 
 // Use this component to optimize performance for applying conditions in response to form value changes for multifields
 export const ConditionHandler: FC<{
-  answerQuestions(Answers): void
+  answerQuestions(answers: FormValue): void
   formValue: FormValue
   screen: MultiFieldScreen
 }> = ({ answerQuestions, formValue, screen }) => {
-  const data = useWatch({ defaultValue: formValue })
+  const data = useWatch({ defaultValue: formValue }) as FormValue
 
   useEffect(() => {
     const newScreen = convertMultiFieldToScreen(screen, {

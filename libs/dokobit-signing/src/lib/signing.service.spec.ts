@@ -1,10 +1,9 @@
-import { mock } from 'jest-mock-extended'
 import { Base64 } from 'js-base64'
 import { createHash } from 'crypto'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
 import { SigningService } from './signing.service'
 
@@ -19,44 +18,63 @@ const testLocation = 'Test Location'
 const testDocumentName = 'Test Document Name'
 const testDocumentContent = 'Test Document Content'
 
-const testSignPath = `sign.json?access_token=${testOptions.accessToken}`
+const testSignUrl = `${testOptions.url}/mobile/sign.json?access_token=${testOptions.accessToken}`
 const testSignResponse = {
   status: 'ok',
   control_code: 'Test Control Code', // eslint-disable-line @typescript-eslint/camelcase
   token: 'Test Document Token',
 }
-const testStatusPath = `sign/status/${testSignResponse.token}.json?access_token=${testOptions.accessToken}`
-const testSignedDocumentContent = 'Test Content'
+
+const testStatusUrl = `${testOptions.url}/mobile/sign/status/${testSignResponse.token}.json?access_token=${testOptions.accessToken}`
+const testSignedDocumentContent = 'Test Signed Document Content'
 const testStatusResponse = {
   status: 'ok',
   file: {
     name: testDocumentName,
-    digest: createHash('sha256')
-      .update(testSignedDocumentContent)
+    digest: createHash('sha1')
+      .update(testSignedDocumentContent, 'ascii')
       .digest('hex'),
-    content: testSignedDocumentContent,
+    content: Base64.btoa(testSignedDocumentContent),
   },
 }
-const postMock = jest.fn(function(
-  path: string,
-  // The body and init arguments are needed for the mock to work
-  body?: Body, // eslint-disable-line @typescript-eslint/no-unused-vars
+
+jest.mock('form-data', function() {
+  return {
+    default: function() {
+      this.append = jest.fn(function(key: string, value: string) {
+        this[key] = value
+      })
+      return this
+    },
+  }
+})
+
+const fetchMock = jest.fn(function(
+  url: RequestInfo,
+  // The init argument is needed for the mock to work
   init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
-  switch (path) {
-    case testSignPath:
-      return testSignResponse
-    case testStatusPath:
-      return testStatusResponse
+  switch (url) {
+    case testSignUrl:
+      return {
+        json: async function() {
+          return testSignResponse
+        },
+      }
+    case testStatusUrl:
+      return {
+        json: async function() {
+          return testStatusResponse
+        },
+      }
     default:
       throw new Error()
   }
 })
-jest.mock('apollo-datasource-rest', function() {
+jest.mock('node-fetch', function() {
   return {
-    RESTDataSource: function() {
-      this.post = postMock
-      return this
+    default: async function(url: RequestInfo, init: RequestInit) {
+      return fetchMock(url, init)
     },
   }
 })
@@ -65,13 +83,13 @@ describe('SigningService', () => {
   let signingService: SigningService
 
   beforeEach(async () => {
-    postMock.mockClear()
+    fetchMock.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: LOGGER_PROVIDER,
-          useValue: mock<Logger>(),
+          useValue: logger,
         },
         {
           provide: 'SIGNING_OPTIONS',
@@ -99,24 +117,26 @@ describe('SigningService', () => {
     expect(res.documentToken).toBe(testSignResponse.token)
 
     // Verify sign
-    const base64 = Base64.encode(testDocumentContent)
-    const digest = createHash('sha256')
-      .update(base64)
-      .digest('hex')
-
-    const body = new FormData()
-    body.append('phone', testMobileNumber)
-    body.append('message', `${testMessage} `)
-    body.append('timestamp', 'true')
-    body.append('language', 'IS')
-    body.append('pdf[contact]', testContact)
-    body.append('pdf[location]', testLocation)
-    body.append('type', 'pdf')
-    body.append('pdf[files][0][name]', testDocumentName)
-    body.append('pdf[files][0][content]', base64)
-    body.append('pdf[files][0][digest]', digest)
-
-    expect(postMock).toHaveBeenCalledWith(testSignPath, body)
+    expect(fetchMock).toHaveBeenCalledWith(
+      testSignUrl,
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.objectContaining({
+          phone: `+354${testMobileNumber}`,
+          message: `${testMessage} `,
+          timestamp: 'true',
+          language: 'IS',
+          'pdf[contact]': testContact,
+          'pdf[location]': testLocation,
+          type: 'pdf',
+          'pdf[files][0][name]': testDocumentName,
+          'pdf[files][0][content]': Base64.btoa(testDocumentContent),
+          'pdf[files][0][digest]': createHash('sha1')
+            .update(testDocumentContent, 'ascii')
+            .digest('hex'),
+        }),
+      }),
+    )
   })
 
   it('should get a signed document', async () => {
@@ -129,6 +149,6 @@ describe('SigningService', () => {
     expect(res).toBe(Base64.atob(testStatusResponse.file.content))
 
     // Verify sign status
-    expect(postMock).toHaveBeenCalledWith(testStatusPath)
+    expect(fetchMock).toHaveBeenCalledWith(testStatusUrl, undefined)
   })
 })

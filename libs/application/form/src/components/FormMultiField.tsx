@@ -10,7 +10,7 @@ const FormMultiField: FC<{
   errors: object
   formValue: FormValue
   multiField: MultiFieldScreen
-  answerQuestions(Answers): void
+  answerQuestions(answers: FormValue): void
 }> = ({ applicationId, answerQuestions, errors, formValue, multiField }) => {
   return (
     <GridRow>

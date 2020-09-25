@@ -135,11 +135,11 @@ export class CaseController {
   }
 
   @Get('case/:id/signature')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: Case })
   async confirmSignature(
     @Param('id') id: string,
     @Query('documentToken') documentToken: string,
-  ): Promise<void> {
+  ): Promise<Case> {
     const existingCase = await this.findCaseById(id)
 
     if (
@@ -151,7 +151,7 @@ export class CaseController {
       )
     }
 
-    this.caseService.confirrmSignature(existingCase, documentToken)
+    return this.caseService.confirrmSignature(existingCase, documentToken)
   }
 
   private async findCaseById(id: string) {
