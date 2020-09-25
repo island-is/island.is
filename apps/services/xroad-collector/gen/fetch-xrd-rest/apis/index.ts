@@ -1,1 +1,1 @@
-export * from './MetaservicesApi';
+export * from './RestMetaservicesApi';

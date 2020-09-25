@@ -31,7 +31,7 @@ export interface MethodList {
      * @type {Array<ServiceId>}
      * @memberof MethodList
      */
-    member?: Array<ServiceId>;
+    service?: Array<ServiceId>;
 }
 
 export function MethodListFromJSON(json: any): MethodList {
@@ -44,7 +44,7 @@ export function MethodListFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     }
     return {
         
-        'member': !exists(json, 'member') ? undefined : ((json['member'] as Array<any>).map(ServiceIdFromJSON)),
+        'service': !exists(json, 'service') ? undefined : ((json['service'] as Array<any>).map(ServiceIdFromJSON)),
     };
 }
 
@@ -57,7 +57,7 @@ export function MethodListToJSON(value?: MethodList | null): any {
     }
     return {
         
-        'member': value.member === undefined ? undefined : ((value.member as Array<any>).map(ServiceIdToJSON)),
+        'service': value.service === undefined ? undefined : ((value.service as Array<any>).map(ServiceIdToJSON)),
     };
 }
 

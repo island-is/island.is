@@ -13,13 +13,6 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import {
-    ServiceIdType,
-    ServiceIdTypeFromJSON,
-    ServiceIdTypeFromJSONTyped,
-    ServiceIdTypeToJSON,
-} from './';
-
 /**
  * 
  * @export
@@ -28,16 +21,16 @@ import {
 export interface ServiceId {
     /**
      * 
-     * @type {ServiceIdType}
+     * @type {string}
      * @memberof ServiceId
      */
-    type?: ServiceIdType;
+    objectType?: ServiceIdObjectTypeEnum;
     /**
      * 
      * @type {string}
      * @memberof ServiceId
      */
-    xRoadInstance?: string;
+    xroadInstance?: string;
     /**
      * 
      * @type {string}
@@ -50,12 +43,6 @@ export interface ServiceId {
      * @memberof ServiceId
      */
     memberCode?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceId
-     */
-    serviceVersion?: string;
     /**
      * 
      * @type {string}
@@ -80,13 +67,12 @@ export function ServiceIdFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
-        'type': !exists(json, 'type') ? undefined : ServiceIdTypeFromJSON(json['type']),
-        'xRoadInstance': !exists(json, 'xRoadInstance') ? undefined : json['xRoadInstance'],
-        'memberClass': !exists(json, 'memberClass') ? undefined : json['memberClass'],
-        'memberCode': !exists(json, 'memberCode') ? undefined : json['memberCode'],
-        'serviceVersion': !exists(json, 'serviceVersion') ? undefined : json['serviceVersion'],
-        'subsystemCode': !exists(json, 'subsystemCode') ? undefined : json['subsystemCode'],
-        'serviceCode': !exists(json, 'serviceCode') ? undefined : json['serviceCode'],
+        'objectType': !exists(json, 'object_type') ? undefined : json['object_type'],
+        'xroadInstance': !exists(json, 'xroad_instance') ? undefined : json['xroad_instance'],
+        'memberClass': !exists(json, 'member_class') ? undefined : json['member_class'],
+        'memberCode': !exists(json, 'member_code') ? undefined : json['member_code'],
+        'subsystemCode': !exists(json, 'subsystem_code') ? undefined : json['subsystem_code'],
+        'serviceCode': !exists(json, 'service_code') ? undefined : json['service_code'],
     };
 }
 
@@ -99,14 +85,28 @@ export function ServiceIdToJSON(value?: ServiceId | null): any {
     }
     return {
         
-        'type': ServiceIdTypeToJSON(value.type),
-        'xRoadInstance': value.xRoadInstance,
-        'memberClass': value.memberClass,
-        'memberCode': value.memberCode,
-        'serviceVersion': value.serviceVersion,
-        'subsystemCode': value.subsystemCode,
-        'serviceCode': value.serviceCode,
+        'object_type': value.objectType,
+        'xroad_instance': value.xroadInstance,
+        'member_class': value.memberClass,
+        'member_code': value.memberCode,
+        'subsystem_code': value.subsystemCode,
+        'service_code': value.serviceCode,
     };
+}
+
+/**
+* @export
+* @enum {string}
+*/
+export enum ServiceIdObjectTypeEnum {
+    MEMBER = 'MEMBER',
+    SUBSYSTEM = 'SUBSYSTEM',
+    SERVER = 'SERVER',
+    GLOBALGROUP = 'GLOBALGROUP',
+    SECURITYCATEGORY = 'SECURITYCATEGORY',
+    SERVICE = 'SERVICE',
+    CENTRALSERVICE = 'CENTRALSERVICE',
+    LOCALGROUP = 'LOCALGROUP'
 }
 
 
