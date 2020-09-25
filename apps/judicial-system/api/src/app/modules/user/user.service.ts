@@ -25,7 +25,7 @@ export class UserService {
         nationalId: '2408783999',
         name: 'Baldur Kristjánsson',
         mobileNumber: '8949946',
-        roles: [UserRole.PROSECUTOR],
+        roles: [UserRole.JUDGE],
       },
       {
         nationalId: '1010882949',
