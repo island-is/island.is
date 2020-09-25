@@ -7,9 +7,11 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { GetApiCataloguesInput } from './dto/catalogue.input'
+import { ElasticService } from '@island.is/api-catalogue/elastic'
 
 @Injectable()
 export class ApiCatalogueService {
+  constructor(private repository: ElasticService) {}
   private catalogues: ApiCatalogue = {
     services: [
       {
@@ -90,7 +92,7 @@ export class ApiCatalogueService {
     ],
   }
 
-  getCatalogues(input: GetApiCataloguesInput): ApiCatalogue {
+  async getCatalogues(input: GetApiCataloguesInput): Promise<ApiCatalogue> {
     const res: ApiCatalogue = {
       services: [],
       pageInfo: {
@@ -123,7 +125,7 @@ export class ApiCatalogueService {
     return res
   }
 
-  getCatalogueById(id: string): ApiCatalogue {
+  async getCatalogueById(id: string): Promise<ApiCatalogue> {
     const res: ApiCatalogue = {
       services: [],
     }

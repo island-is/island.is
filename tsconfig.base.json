@@ -165,6 +165,9 @@
       ],
       "@island.is/api-catalogue/consts": [
         "libs/api-catalogue/consts/src/index.ts"
+      ],
+      "@island.is/api-catalogue/elastic": [
+        "libs/api-catalogue/elastic/src/index.ts"
       ]
     }
   },

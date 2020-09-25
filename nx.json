@@ -307,6 +307,9 @@
     },
     "api-catalogue-consts": {
       "tags": []
+    },
+    "api-catalogue-elastic": {
+      "tags": []
     }
   },
   "affected": {

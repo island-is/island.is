@@ -3693,6 +3693,34 @@
           }
         }
       }
+    },
+    "api-catalogue-elastic": {
+      "root": "libs/api-catalogue/elastic",
+      "sourceRoot": "libs/api-catalogue/elastic/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalogue/elastic/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalogue/elastic/tsconfig.lib.json",
+              "libs/api-catalogue/elastic/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/elastic/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalogue/elastic/jest.config.js",
+            "tsConfig": "libs/api-catalogue/elastic/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
