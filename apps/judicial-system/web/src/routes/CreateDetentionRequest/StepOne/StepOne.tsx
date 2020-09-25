@@ -49,7 +49,7 @@ export const StepOne: React.FC = () => {
     requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
     lawsBroken: caseDraftJSON.lawsBroken ?? '',
     custodyProvisions: caseDraftJSON.caseCustodyProvisions ?? [],
-    custodyRestrictions: caseDraftJSON.restrictions ?? [],
+    requestedCustodyRestrictions: caseDraftJSON.restrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
     witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
     investigationProgress: caseDraftJSON.investigationProgress ?? '',

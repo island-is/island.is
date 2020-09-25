@@ -169,7 +169,9 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
-                      {renderRestrictons(caseDraftJSON.custodyRestrictions)}
+                      {renderRestrictons(
+                        caseDraftJSON.requestedCustodyRestrictions,
+                      )}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem

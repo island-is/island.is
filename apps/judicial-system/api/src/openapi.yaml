@@ -115,7 +115,7 @@ components:
               - _95_1_D
               - _95_2
               - _99_1_B
-        custodyRestrictions:
+        requestedCustodyRestrictions:
           type: array
           items:
             type: string
@@ -150,6 +150,36 @@ components:
           type: string
         litigationPresentations:
           type: string
+        ruling:
+          type: string
+        custodyEndDate:
+          format: date-time
+          type: string
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        accusedAppealDecision:
+          type: array
+          items:
+            type: string
+            enum:
+              - APPEAL
+              - ACCEPT
+              - POSTPONE
+        prosecutorAppealDecision:
+          type: array
+          items:
+            type: string
+            enum:
+              - APPEAL
+              - ACCEPT
+              - POSTPONE
         notifications:
           type: array
           items:
@@ -169,7 +199,7 @@ components:
         - requestedCustodyEndDate
         - lawsBroken
         - custodyProvisions
-        - custodyRestrictions
+        - requestedCustodyRestrictions
         - caseFacts
         - witnessAccounts
         - investigationProgress
@@ -182,6 +212,11 @@ components:
         - policeDemands
         - accusedPlea
         - litigationPresentations
+        - ruling
+        - custodyEndDate
+        - custodyRestrictions
+        - accusedAppealDecision
+        - prosecutorAppealDecision
         - notifications
     CreateCaseDto:
       type: object
@@ -247,7 +282,7 @@ components:
               - _95_1_D
               - _95_2
               - _99_1_B
-        custodyRestrictions:
+        requestedCustodyRestrictions:
           type: array
           items:
             type: string
@@ -282,6 +317,36 @@ components:
           type: string
         litigationPresentations:
           type: string
+        ruling:
+          type: string
+        custodyEndDate:
+          format: date-time
+          type: string
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        accusedAppealDecision:
+          type: array
+          items:
+            type: string
+            enum:
+              - APPEAL
+              - ACCEPT
+              - POSTPONE
+        prosecutorAppealDecision:
+          type: array
+          items:
+            type: string
+            enum:
+              - APPEAL
+              - ACCEPT
+              - POSTPONE
     SigningServiceResponse:
       type: object
       properties:

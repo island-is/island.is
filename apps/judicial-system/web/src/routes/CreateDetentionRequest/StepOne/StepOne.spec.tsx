@@ -57,7 +57,7 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
       requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
       lawsBroken: 'string',
       custodyProvisions: ['_95_1_A'],
-      custodyRestrictions: ['ISOLATION'],
+      requestedCustodyRestrictions: ['ISOLATION'],
       caseFacts: 'string',
       witnessAccounts: 'string',
       investigationProgress: 'string',

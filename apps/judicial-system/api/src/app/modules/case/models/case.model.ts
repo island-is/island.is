@@ -13,7 +13,11 @@ import { ApiProperty } from '@nestjs/swagger'
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { Notification } from './notification.model'
-import { CaseCustodyProvisions, CaseCustodyRestrictions } from './case.types'
+import {
+  CaseAppealDecision,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+} from './case.types'
 
 @Table({
   tableName: 'case',
@@ -126,7 +130,7 @@ export class Case extends Model<Case> {
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
   // Takmarkanir á gæslu
-  custodyRestrictions: CaseCustodyRestrictions[]
+  requestedCustodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
     type: DataType.STRING,
@@ -221,6 +225,48 @@ export class Case extends Model<Case> {
   @ApiProperty()
   // Málflutningsræður
   litigationPresentations: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Niðurstaða úrskurðar
+  ruling: string
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  custodyEndDate: Date
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(CaseCustodyRestrictions),
+  })
+  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
+  // Takmarkanir á gæslu
+  custodyRestrictions: CaseCustodyRestrictions[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(CaseAppealDecision),
+  })
+  @ApiProperty({ enum: CaseAppealDecision, isArray: true })
+  // Ákvörðun um kæru kærða
+  accusedAppealDecision: CaseAppealDecision[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(CaseAppealDecision),
+  })
+  @ApiProperty({ enum: CaseAppealDecision, isArray: true })
+  // Ákvörðun um kæru sækjanda
+  prosecutorAppealDecision: CaseAppealDecision[]
 
   @HasMany(() => Notification)
   @ApiProperty({ type: Notification, isArray: true })

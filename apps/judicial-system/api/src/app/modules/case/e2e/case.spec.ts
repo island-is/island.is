@@ -9,6 +9,7 @@ import {
   Case,
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
+  CaseAppealDecision,
   Notification,
   NotificationType,
 } from '../models'
@@ -51,7 +52,7 @@ describe('Case', () => {
         expect(response.body.requestedCustodyEndDate).toBeNull()
         expect(response.body.lawsBroken).toBeNull()
         expect(response.body.custodyProvisions).toBeNull()
-        expect(response.body.custodyRestrictions).toBeNull()
+        expect(response.body.requestedCustodyRestrictions).toBeNull()
         expect(response.body.caseFacts).toBeNull()
         expect(response.body.witnessAccounts).toBeNull()
         expect(response.body.investigationProgress).toBeNull()
@@ -64,6 +65,11 @@ describe('Case', () => {
         expect(response.body.policeDemands).toBeNull()
         expect(response.body.accusedPlea).toBeNull()
         expect(response.body.litigationPresentations).toBeNull()
+        expect(response.body.ruling).toBeNull()
+        expect(response.body.custodyEndDate).toBeNull()
+        expect(response.body.custodyRestrictions).toBeNull()
+        expect(response.body.accusedAppealDecision).toBeNull()
+        expect(response.body.prosecutorAppealDecision).toBeNull()
         expect(response.body.notifications).toBeUndefined()
 
         // Check the data in the database
@@ -87,7 +93,7 @@ describe('Case', () => {
           expect(value.requestedCustodyEndDate).toBeNull()
           expect(value.lawsBroken).toBeNull()
           expect(value.custodyProvisions).toBeNull()
-          expect(value.custodyRestrictions).toBeNull()
+          expect(value.requestedCustodyRestrictions).toBeNull()
           expect(value.caseFacts).toBeNull()
           expect(value.witnessAccounts).toBeNull()
           expect(value.investigationProgress).toBeNull()
@@ -100,6 +106,11 @@ describe('Case', () => {
           expect(value.policeDemands).toBeNull()
           expect(value.accusedPlea).toBeNull()
           expect(value.litigationPresentations).toBeNull()
+          expect(value.ruling).toBeNull()
+          expect(value.custodyEndDate).toBeNull()
+          expect(value.custodyRestrictions).toBeNull()
+          expect(value.accusedAppealDecision).toBeNull()
+          expect(value.prosecutorAppealDecision).toBeNull()
           expect(value.notifications).toStrictEqual([])
         })
       })
@@ -131,7 +142,7 @@ describe('Case', () => {
         expect(response.body.requestedCustodyEndDate).toBeNull()
         expect(response.body.lawsBroken).toBeNull()
         expect(response.body.custodyProvisions).toBeNull()
-        expect(response.body.custodyRestrictions).toBeNull()
+        expect(response.body.requestedCustodyRestrictions).toBeNull()
         expect(response.body.caseFacts).toBeNull()
         expect(response.body.witnessAccounts).toBeNull()
         expect(response.body.investigationProgress).toBeNull()
@@ -144,6 +155,11 @@ describe('Case', () => {
         expect(response.body.policeDemands).toBeNull()
         expect(response.body.accusedPlea).toBeNull()
         expect(response.body.litigationPresentations).toBeNull()
+        expect(response.body.ruling).toBeNull()
+        expect(response.body.custodyEndDate).toBeNull()
+        expect(response.body.custodyRestrictions).toBeNull()
+        expect(response.body.accusedAppealDecision).toBeNull()
+        expect(response.body.prosecutorAppealDecision).toBeNull()
         expect(response.body.notifications).toBeUndefined()
 
         // Check the data in the database
@@ -165,7 +181,7 @@ describe('Case', () => {
           expect(value.requestedCustodyEndDate).toBeNull()
           expect(value.lawsBroken).toBeNull()
           expect(value.custodyProvisions).toBeNull()
-          expect(value.custodyRestrictions).toBeNull()
+          expect(value.requestedCustodyRestrictions).toBeNull()
           expect(value.caseFacts).toBeNull()
           expect(value.witnessAccounts).toBeNull()
           expect(value.investigationProgress).toBeNull()
@@ -178,6 +194,11 @@ describe('Case', () => {
           expect(value.policeDemands).toBeNull()
           expect(value.accusedPlea).toBeNull()
           expect(value.litigationPresentations).toBeNull()
+          expect(value.ruling).toBeNull()
+          expect(value.custodyEndDate).toBeNull()
+          expect(value.custodyRestrictions).toBeNull()
+          expect(value.accusedAppealDecision).toBeNull()
+          expect(value.prosecutorAppealDecision).toBeNull()
           expect(value.notifications).toStrictEqual([])
         })
       })
@@ -199,7 +220,7 @@ describe('Case', () => {
         CaseCustodyProvisions._95_1_A,
         CaseCustodyProvisions._99_1_B,
       ],
-      custodyRestrictions: [
+      requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ISOLATION,
         CaseCustodyRestrictions.MEDIA,
       ],
@@ -215,6 +236,11 @@ describe('Case', () => {
       policeDemands: 'Police Demands',
       accusedPlea: 'Accused Plea',
       litigationPresentations: 'Litigation Presentations',
+      ruling: 'Ruling',
+      custodyEndDate: '2020-09-28T12:00:00.000Z',
+      custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+      accusedAppealDecision: [CaseAppealDecision.APPEAL],
+      prosecutorAppealDecision: [CaseAppealDecision.ACCEPT],
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
@@ -242,8 +268,8 @@ describe('Case', () => {
           expect(response.body.custodyProvisions).toStrictEqual(
             value.custodyProvisions,
           )
-          expect(response.body.custodyRestrictions).toStrictEqual(
-            value.custodyRestrictions,
+          expect(response.body.requestedCustodyRestrictions).toStrictEqual(
+            value.requestedCustodyRestrictions,
           )
           expect(response.body.caseFacts).toBe(value.caseFacts)
           expect(response.body.witnessAccounts).toBe(value.witnessAccounts)
@@ -264,6 +290,19 @@ describe('Case', () => {
           expect(response.body.accusedPlea).toBe(value.accusedPlea)
           expect(response.body.litigationPresentations).toBe(
             value.litigationPresentations,
+          )
+          expect(response.body.ruling).toBe(value.ruling)
+          expect(response.body.custodyEndDate).toBe(
+            value.custodyEndDate.toISOString(),
+          )
+          expect(response.body.custodyRestrictions).toStrictEqual(
+            value.custodyRestrictions,
+          )
+          expect(response.body.accusedAppealDecision).toStrictEqual(
+            value.accusedAppealDecision,
+          )
+          expect(response.body.prosecutorAppealDecision).toStrictEqual(
+            value.prosecutorAppealDecision,
           )
           expect(response.body.notifications).toStrictEqual([])
         })
@@ -290,7 +329,7 @@ describe('Case', () => {
           CaseCustodyProvisions._95_1_A,
           CaseCustodyProvisions._99_1_B,
         ],
-        custodyRestrictions: [
+        requestedCustodyRestrictions: [
           CaseCustodyRestrictions.ISOLATION,
           CaseCustodyRestrictions.MEDIA,
         ],
@@ -306,6 +345,11 @@ describe('Case', () => {
         policeDemands: 'Police Demands',
         accusedPlea: 'Accused Plea',
         litigationPresentations: 'Litigation Presentations',
+        ruling: 'Ruling',
+        custodyEndDate: '2020-09-28T12:00:00.000Z',
+        custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+        accusedAppealDecision: [CaseAppealDecision.APPEAL],
+        prosecutorAppealDecision: [CaseAppealDecision.ACCEPT],
       }
 
       await request(app.getHttpServer())
@@ -332,8 +376,8 @@ describe('Case', () => {
           expect(response.body.custodyProvisions).toStrictEqual(
             data.custodyProvisions,
           )
-          expect(response.body.custodyRestrictions).toStrictEqual(
-            data.custodyRestrictions,
+          expect(response.body.requestedCustodyRestrictions).toStrictEqual(
+            data.requestedCustodyRestrictions,
           )
           expect(response.body.caseFacts).toBe(data.caseFacts)
           expect(response.body.witnessAccounts).toBe(data.witnessAccounts)
@@ -350,6 +394,19 @@ describe('Case', () => {
           expect(response.body.accusedPlea).toBe(data.accusedPlea)
           expect(response.body.litigationPresentations).toBe(
             data.litigationPresentations,
+          )
+          expect(response.body.ruling).toBe(data.ruling)
+          expect(response.body.custodyEndDate).toStrictEqual(
+            data.custodyEndDate,
+          )
+          expect(response.body.custodyRestrictions).toStrictEqual(
+            data.custodyRestrictions,
+          )
+          expect(response.body.accusedAppealDecision).toStrictEqual(
+            data.accusedAppealDecision,
+          )
+          expect(response.body.prosecutorAppealDecision).toStrictEqual(
+            data.prosecutorAppealDecision,
           )
           expect(response.body.notifications).toBeUndefined()
 
@@ -378,8 +435,8 @@ describe('Case', () => {
             expect(newValue.custodyProvisions).toStrictEqual(
               data.custodyProvisions,
             )
-            expect(newValue.custodyRestrictions).toStrictEqual(
-              data.custodyRestrictions,
+            expect(newValue.requestedCustodyRestrictions).toStrictEqual(
+              data.requestedCustodyRestrictions,
             )
             expect(newValue.caseFacts).toBe(data.caseFacts)
             expect(newValue.witnessAccounts).toBe(data.witnessAccounts)
@@ -398,6 +455,19 @@ describe('Case', () => {
             expect(newValue.accusedPlea).toBe(data.accusedPlea)
             expect(newValue.litigationPresentations).toBe(
               data.litigationPresentations,
+            )
+            expect(newValue.ruling).toBe(data.ruling)
+            expect(newValue.custodyEndDate.toISOString()).toBe(
+              data.custodyEndDate,
+            )
+            expect(newValue.custodyRestrictions).toStrictEqual(
+              data.custodyRestrictions,
+            )
+            expect(newValue.accusedAppealDecision).toStrictEqual(
+              data.accusedAppealDecision,
+            )
+            expect(newValue.prosecutorAppealDecision).toStrictEqual(
+              data.prosecutorAppealDecision,
             )
             expect(newValue.notifications).toStrictEqual([])
           })

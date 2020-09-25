@@ -49,7 +49,7 @@ export const StepTwo: React.FC = () => {
     requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
     lawsBroken: caseDraftJSON.lawsBroken ?? '',
     custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-    custodyRestrictions: caseDraftJSON.restrictions ?? [],
+    requestedCustodyRestrictions: caseDraftJSON.restrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
     witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
     investigationProgress: caseDraftJSON.investigationProgress ?? '',
@@ -87,20 +87,24 @@ export const StepTwo: React.FC = () => {
     caseDraftJSON.custodyProvisions.indexOf(CustodyProvisions._99_1_B) > -1,
   )
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(CustodyRestrictions.ISOLATION) >
-      -1,
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
+      CustodyRestrictions.ISOLATION,
+    ) > -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(CustodyRestrictions.VISITAION) >
-      -1,
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
+      CustodyRestrictions.VISITAION,
+    ) > -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
       CustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(CustodyRestrictions.MEDIA) > -1,
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
+      CustodyRestrictions.MEDIA,
+    ) > -1,
   )
 
   const caseCustodyProvisions = [
@@ -444,14 +448,14 @@ export const StepTwo: React.FC = () => {
 
                             // If the user is checking the box, add the restriction to the state
                             if (target.checked) {
-                              copyOfState.custodyRestrictions.push(
+                              copyOfState.requestedCustodyRestrictions.push(
                                 target.value as CustodyRestrictions,
                               )
                             }
                             // If the user is unchecking the box, remove the restriction from the state
                             else {
                               const restrictions =
-                                copyOfState.custodyRestrictions
+                                copyOfState.requestedCustodyRestrictions
                               restrictions.splice(
                                 restrictions.indexOf(
                                   target.value as CustodyRestrictions,
@@ -467,15 +471,15 @@ export const StepTwo: React.FC = () => {
                             api.saveCase(
                               workingCase.id,
                               parseArray(
-                                'custodyRestrictions',
-                                copyOfState.custodyRestrictions,
+                                'requestedCustodyRestrictions',
+                                copyOfState.requestedCustodyRestrictions,
                               ),
                             )
 
                             updateState(
                               workingCase,
                               'restrictions',
-                              copyOfState.custodyRestrictions,
+                              copyOfState.requestedCustodyRestrictions,
                               setWorkingCase,
                             )
                           }}
@@ -589,7 +593,7 @@ export const StepTwo: React.FC = () => {
               nextUrl={Constants.STEP_THREE_ROUTE}
               nextIsDisabled={
                 workingCase.lawsBroken === '' &&
-                workingCase.custodyRestrictions.length === 0
+                workingCase.requestedCustodyRestrictions.length === 0
               }
             />
           </GridColumn>

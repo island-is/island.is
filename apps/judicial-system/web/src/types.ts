@@ -46,7 +46,7 @@ export interface Case {
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CustodyProvisions[]
-  custodyRestrictions?: CustodyRestrictions[]
+  requestedCustodyRestrictions?: CustodyRestrictions[]
   caseFacts?: string
   witnessAccounts?: string
   investigationProgress?: string

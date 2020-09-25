@@ -220,7 +220,9 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {renderRestrictons(workingCase.custodyRestrictions)}
+                    {renderRestrictons(
+                      workingCase.requestedCustodyRestrictions,
+                    )}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem

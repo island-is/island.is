@@ -3,7 +3,11 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import { CaseState } from '@island.is/judicial-system/types'
 
-import { CaseCustodyRestrictions, CaseCustodyProvisions } from '../models'
+import {
+  CaseCustodyRestrictions,
+  CaseCustodyProvisions,
+  CaseAppealDecision,
+} from '../models'
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -64,7 +68,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
-  readonly custodyRestrictions: CaseCustodyRestrictions[]
+  readonly requestedCustodyRestrictions: CaseCustodyRestrictions[]
 
   @IsOptional()
   @IsString()
@@ -125,4 +129,29 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly litigationPresentations: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly ruling: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly custodyEndDate: Date
+
+  @IsOptional()
+  @IsEnum(CaseCustodyRestrictions, { each: true })
+  @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
+  readonly custodyRestrictions: CaseCustodyRestrictions[]
+
+  @IsOptional()
+  @IsEnum(CaseAppealDecision, { each: true })
+  @ApiPropertyOptional({ enum: CaseAppealDecision, isArray: true })
+  readonly accusedAppealDecision: CaseAppealDecision[]
+
+  @IsOptional()
+  @IsEnum(CaseAppealDecision, { each: true })
+  @ApiPropertyOptional({ enum: CaseAppealDecision, isArray: true })
+  readonly prosecutorAppealDecision: CaseAppealDecision[]
 }
