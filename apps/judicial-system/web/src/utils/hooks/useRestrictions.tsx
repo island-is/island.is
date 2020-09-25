@@ -8,27 +8,22 @@ import * as api from '../../api'
 const useRestrictions = (
   workingCase: Case,
   setWorkingCase: Dispatch<SetStateAction<Case>>,
-  isJudge: boolean,
 ) => {
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    workingCase?.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.ISOLATION,
-    ) > -1,
+    workingCase?.custodyRestrictions?.indexOf(CustodyRestrictions.ISOLATION) >
+      -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    workingCase?.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.VISITAION,
-    ) > -1,
+    workingCase?.custodyRestrictions?.indexOf(CustodyRestrictions.VISITAION) >
+      -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    workingCase?.requestedCustodyRestrictions?.indexOf(
+    workingCase?.custodyRestrictions?.indexOf(
       CustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    workingCase?.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.MEDIA,
-    ) > -1,
+    workingCase?.custodyRestrictions?.indexOf(CustodyRestrictions.MEDIA) > -1,
   )
   const restrictions = [
     {
@@ -81,16 +76,16 @@ const useRestrictions = (
 
                 // Create a copy of the state
                 const copyOfState = Object.assign(workingCase, {})
-
+                console.log(copyOfState)
                 // If the user is checking the box, add the restriction to the state
                 if (target.checked) {
-                  copyOfState.requestedCustodyRestrictions.push(
+                  copyOfState.custodyRestrictions.push(
                     target.value as CustodyRestrictions,
                   )
                 }
                 // If the user is unchecking the box, remove the restriction from the state
                 else {
-                  const restrictions = copyOfState.requestedCustodyRestrictions
+                  const restrictions = copyOfState.custodyRestrictions
                   restrictions.splice(
                     restrictions.indexOf(target.value as CustodyRestrictions),
                     1,
@@ -104,17 +99,15 @@ const useRestrictions = (
                 api.saveCase(
                   workingCase.id,
                   parseArray(
-                    isJudge
-                      ? 'custodyRestrictions'
-                      : 'requestedCustodyRestrictions',
-                    copyOfState.requestedCustodyRestrictions,
+                    'custodyRestrictions',
+                    copyOfState.custodyRestrictions,
                   ),
                 )
 
                 updateState(
                   workingCase,
                   'restrictions',
-                  copyOfState.requestedCustodyRestrictions,
+                  copyOfState.custodyRestrictions,
                   setWorkingCase,
                 )
               }}
