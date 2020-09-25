@@ -71,11 +71,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <div className={cn(styles.content)}>
           <Component {...pageProps} />
         </div>
-        <div className={cn(styles.footer)}>
         <Footer 
           hideLanguageSwith
         />
-        </div>
       </Page>
     </ApolloProvider>
   )

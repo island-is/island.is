@@ -23,22 +23,24 @@ import {  PRICING_CATEGORY,
 
 import ContentfulApi from '../../services/contentful'
 import { StaticPage } from '../../services/contentful.types'
+import { ClassValue } from 'classnames/types';
 
 interface PropTypes {
   top?: ReactNode
   left: ReactNode
   right?: ReactNode
   bottom?: ReactNode
+  classes?: string
 }
 
-function ServiceLayout({ top, bottom, left, right }: PropTypes) {
+function ServiceLayout({ top, bottom, left, right, classes}: PropTypes) {
   return (
     <Box paddingX="gutter">
       {<ContentBlock >
         {top}
       </ContentBlock>}
       <ContentBlock>
-        <GridRow >
+        <GridRow className={classes}>
           <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '8/12']}
                     offset={[    '0',     '0',  '0',    '0', '0']}>
             {left}
@@ -56,15 +58,22 @@ function ServiceLayout({ top, bottom, left, right }: PropTypes) {
   )
 }
 
-function useWindowSize() {
-  const [size, setSize] = useState([0, 0]);
+
+
+function useWindowEvents() {
+  const [size, setSize] = useState([0, 0, 0]);
   useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
+    function updateValues() {
+      setSize([window.innerWidth, window.innerHeight, Math.round(window.scrollY)]);
     }
-    window.addEventListener('resize', updateSize);
-    updateSize();
-    return () => window.removeEventListener('resize', updateSize);
+
+    window.addEventListener('resize', updateValues);
+    window.addEventListener('scroll', updateValues);
+    updateValues();
+    return () => {
+      window.removeEventListener('resize', updateValues);
+      window.removeEventListener('scroll', updateValues);
+    }
   }, []);
   return size;
 }
@@ -149,12 +158,8 @@ export default function ServiceList(props:ServiceListProps) {
     return str;  
   }
 
-  const getFilterStyle = (width:number, height:number) => {
-    if (width < 771 || height < 600)
-      return styles.filter;
-    if (height < 960)
-      return styles.filterFixedBottom;
-    return styles.filterFixed;
+  const isMobile = (width:number) => {
+    return width < 771;
   }
 
   const [isLoading,    setLoading]   = useState<boolean>(true);
@@ -164,7 +169,7 @@ export default function ServiceList(props:ServiceListProps) {
   const [firstGet,    setFirstGet] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState('');
   const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
-  const [width, height] = useWindowSize();
+  const [width] = useWindowEvents();
   
   const onSearchChange = function(inputValue: string){
     props.parameters.text = inputValue;
@@ -204,7 +209,7 @@ export default function ServiceList(props:ServiceListProps) {
     }, [firstGet, StatusQueryString, props.parameters]);
 
   return (   
-      <ServiceLayout 
+      <ServiceLayout  classes={cn(isMobile(width)? styles.serviceLayoutMobile : {})}
       top={
             <div className={cn(styles.topSection)}>
               <Typography variant="h1">{props.pageContent.title}</Typography>
@@ -220,21 +225,10 @@ export default function ServiceList(props:ServiceListProps) {
                         return <ServiceCard key={item.id} service={item} />
                       })
                     }
-
-            <Box className={cn(styles.navigation)} borderRadius="large">
-              <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
-                <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
-              </div>
-              <div className={cn(isLoading? styles.displayHidden : {})}>
-                <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-                  {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
-                </Button>
-              </div>
-            </Box>
           </Box>
-      } 
+      }
       right={
-              <Box  className={cn(getFilterStyle(width, height) , "filter")}>
+              <Box  className={cn(isMobile(width)? styles.filterMobile : styles.filter , "filter")}>
                 <Box className={cn(styles.inputSearch)}>
                   <AsyncSearch 
                     options={[]}
@@ -275,7 +269,21 @@ export default function ServiceList(props:ServiceListProps) {
                 </AccordionItem>
               </div>
           </Box>
-      } />
+      } 
+      
+      bottom = {
+        <Box className={cn(isMobile(width)? styles.navigationMobile : styles.navigation)} borderRadius="large">
+          <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
+            <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
+          </div>
+          <div className={cn(isLoading? styles.displayHidden : {})}>
+            <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
+              {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
+            </Button>
+          </div>
+        </Box>
+      }
+      />
   )
 }
 

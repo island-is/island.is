@@ -13,8 +13,7 @@ const filterOrg = {
   borderRadius:5,
   marginTop:10,
   padding:24,
-  minWidth:220,
-  zIndex:11
+  minWidth:220
 }
 
 export const filter = style({
@@ -23,37 +22,20 @@ export const filter = style({
   borderRadius:filterOrg.borderRadius,
   marginTop:filterOrg.marginTop,
   padding:filterOrg.padding,
-  minWidth:filterOrg.minWidth,
-  zIndex:filterOrg.zIndex,
-  position:'static',
+  minWidth:filterOrg.minWidth
 })
 
-export const filterFixed = style({
+export const filterMobile = style({
   background:filterOrg.background,
   fontFamily:filterOrg.fontFamily,
   borderRadius:filterOrg.borderRadius,
   marginTop:filterOrg.marginTop,
   padding:filterOrg.padding,
   minWidth:filterOrg.minWidth,
-  zIndex:filterOrg.zIndex,
-  position:'fixed',
-  borderStyle:'solid',
-  borderWidth:1,
-  borderColor:theme.color.blue200
-})
-
-export const filterFixedBottom = style({
-  background:filterOrg.background,
-  fontFamily:filterOrg.fontFamily,
-  borderRadius:filterOrg.borderRadius,
-  padding:filterOrg.padding,
-  minWidth:filterOrg.minWidth,
-  zIndex:filterOrg.zIndex,
-  position:'fixed',
-  borderStyle:'solid',
-  borderWidth:1,
-  borderColor:theme.color.blue200,
-  bottom:10,
+  width:432,
+  marginBottom:20,
+  marginLeft:10,
+  marginRight:10,
 })
 
 export const filterItem = style({
@@ -65,11 +47,9 @@ export const inputSearch = style({
 })
 
 export const navigation = style({
-  width:888,
   height:60,
-  marginBottom:20,
+  marginBottom:80,
   marginLeft:10,
-  marginRight:10,
   fontFamily:theme.typography.fontFamily,
   borderColor:theme.color.blue200,
   borderWidth:1,
@@ -78,6 +58,22 @@ export const navigation = style({
   display:'flex',
   justifyContent: 'center',
   flexDirection: 'column'
+})
+
+export const navigationMobile = style({
+  height:60,
+  fontFamily:theme.typography.fontFamily,
+  borderColor:theme.color.blue200,
+  borderWidth:1,
+  borderStyle:'solid',
+  textAlign:'center',
+  display:'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  width:432,
+  marginBottom:20,
+  marginLeft:10,
+  marginRight:10,
 })
 
 export const displayInline = style({
@@ -102,4 +98,8 @@ export const topSectionText = style({
 export const topSection = style({
   marginBottom:40,
   textAlign:'center'
+})
+
+export const serviceLayoutMobile = style({
+  flexDirection:'column-reverse',
 })
