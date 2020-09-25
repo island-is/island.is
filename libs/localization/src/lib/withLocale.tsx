@@ -19,13 +19,13 @@ export const GET_TRANSLATIONS = gql`
 `
 
 export const withLocale = (namespaces: string | string[] = 'global') => (
-  Component,
+  Component: NextComponentType,
 ) => {
   const getInitialProps = Component.getInitialProps
 
   if (!getInitialProps) {
     // For non Nextjs apps
-    const NewComponent = (props) => {
+    const NewComponent = (props: Record<string, any>) => {
       const { loadMessages, loadingMessages } = useContext(LocaleContext)
 
       useEffect(() => {

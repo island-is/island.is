@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { isObject } from 'lodash'
-import { theme } from '@island.is/island-ui/theme'
 import * as CSS from 'csstype'
+import { theme } from './theme'
 
 type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 type ResponsiveProps<T> = {

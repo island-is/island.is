@@ -15,7 +15,7 @@ export function findNode(
   id: string,
   type: FormItemTypes,
   formNode: FormNode,
-): FormNode {
+): FormNode | undefined {
   if (id === formNode.id && type === formNode.type) {
     return formNode
   }
@@ -48,17 +48,10 @@ const isValidScreen = (node: FormNode): boolean => {
   }
 }
 
-export const getFormNodeLeaves = (
-  node: FormNode,
-  onlyQuestions = false,
-): FormLeaf[] => {
+export const getFormNodeLeaves = (node: FormNode): FormLeaf[] => {
   const { children } = node
   if (isValidScreen(node)) {
-    if (onlyQuestions && 'isQuestion' in node && node.isQuestion) {
-      return [node as FormLeaf]
-    } else if (!onlyQuestions) {
-      return [node as FormLeaf]
-    }
+    return [node as FormLeaf]
   }
 
   let leaves: FormLeaf[] = []
@@ -132,7 +125,10 @@ export function findSubSectionIndexForScreen(
   }
   return -1
 }
-const overwriteMerge = (destinationArray, sourceArray) => {
+const overwriteMerge = (
+  destinationArray: unknown[],
+  sourceArray: unknown[],
+) => {
   if (typeof sourceArray[sourceArray.length - 1] !== 'object') {
     return sourceArray
   }

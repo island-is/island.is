@@ -29,23 +29,26 @@ export const ApplicationForm: FC<{
   useEffect(() => {
     async function populateForm() {
       if (application !== undefined && form === undefined) {
-        // TODO wrap in try or?
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
-        const stateInformation = await getApplicationStateInformation(
-          application,
-        )
-        const role = template.mapUserToRole(
-          nationalRegistryId,
-          application.state,
-        )
-        if (stateInformation?.roles?.length) {
-          const currentRole = stateInformation.roles.find((r) => r.id === role)
-          if (currentRole) {
-            const formDescriptor = await currentRole.formLoader()
-            setForm(formDescriptor)
-            setDataSchema(template.dataSchema)
+        if (template !== null) {
+          const stateInformation = await getApplicationStateInformation(
+            application,
+          )
+          const role = template.mapUserToRole(
+            nationalRegistryId,
+            application.state,
+          )
+          if (stateInformation?.roles?.length) {
+            const currentRole = stateInformation.roles.find(
+              (r) => r.id === role,
+            )
+            if (currentRole && currentRole.formLoader) {
+              const formDescriptor = await currentRole.formLoader()
+              setForm(formDescriptor)
+              setDataSchema(template.dataSchema)
+            }
           }
         }
       }
@@ -60,7 +63,7 @@ export const ApplicationForm: FC<{
     return <p>{error}</p>
   }
   // TODO we need better loading states
-  if (loading || !form) {
+  if (loading || !form || !dataSchema) {
     return null
   }
 

@@ -56,10 +56,11 @@ export const FormShell: FC<{
 
   const { mode = FormModes.APPLYING } = state.form
 
-  const progressTheme = {
+  const progressTheme: Record<FormModes, ProgressThemes> = {
     [FormModes.APPLYING]: ProgressThemes.PURPLE,
     [FormModes.APPROVED]: ProgressThemes.GREEN,
     [FormModes.REVIEW]: ProgressThemes.BLUE,
+    [FormModes.PENDING]: ProgressThemes.BLUE,
     [FormModes.REJECTED]: ProgressThemes.RED,
   }
 

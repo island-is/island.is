@@ -4,6 +4,8 @@ import {
   MultiField,
   ExternalDataProvider,
   Repeater,
+  FormNode,
+  Schema,
 } from '@island.is/application/template'
 
 export interface FieldBaseProps {
@@ -56,3 +58,14 @@ export enum ProgressThemes {
   PURPLE = 'purple',
   RED = 'red',
 }
+
+export interface FieldComponentProps {
+  applicationId: string
+  autoFocus?: boolean
+  error?: unknown
+  field: FieldDef
+  formValue: FormValue
+  showFieldName?: boolean
+}
+
+export type ResolverContext = { formNode: FormNode; dataSchema: Schema }

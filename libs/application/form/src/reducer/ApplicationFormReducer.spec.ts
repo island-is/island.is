@@ -7,6 +7,7 @@ import {
   ExternalData,
   Form,
   ApplicationTypes,
+  FormValue,
 } from '@island.is/application/template'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
@@ -72,9 +73,9 @@ const form: Form = buildForm({
         buildTextField({
           id: 'familyName',
           name: 'What is the family name?',
-          condition: (formValue: SchemaFormValues) => {
-            return formValue.person?.length
-              ? formValue.person[0].name !== 'bad name'
+          condition: (formValue: FormValue) => {
+            return (formValue as SchemaFormValues).person?.length
+              ? (formValue as SchemaFormValues).person[0].name !== 'bad name'
               : true
           },
         }),
@@ -104,8 +105,8 @@ const application: Application = {
   applicant: '123123',
   externalId: '123123123',
   state: 'draft',
-  modified: null,
-  created: null,
+  modified: new Date(),
+  created: new Date(),
 }
 
 describe('ApplicationFormReducer', () => {
@@ -122,7 +123,7 @@ describe('ApplicationFormReducer', () => {
     formLeaves: [],
     sections: [],
   }
-  let initializedState
+  let initializedState: ApplicationUIState
   beforeAll(() => {
     initializedState = initializeReducer(initialState)
   })
@@ -385,7 +386,7 @@ describe('ApplicationFormReducer', () => {
     })
   })
   describe('add external data', () => {
-    const action = (payload) => ({
+    const action = (payload: unknown) => ({
       type: ActionTypes.ADD_EXTERNAL_DATA,
       payload,
     })

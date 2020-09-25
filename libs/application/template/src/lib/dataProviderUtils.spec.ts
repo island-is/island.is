@@ -1,8 +1,9 @@
 import { callDataProviders } from './dataProviderUtils'
 import { DataProvider, DataProviderTypes } from '../types/DataProvider'
+import { ApplicationTypes } from '../types/ApplicationTypes'
 
 class ExampleProviderThatAlwaysFails extends DataProvider {
-  readonly type: DataProviderTypes.ExampleFails
+  readonly type = DataProviderTypes.ExampleFails
 
   provide(): Promise<unknown> {
     return Promise.reject('this should reject')
@@ -10,11 +11,24 @@ class ExampleProviderThatAlwaysFails extends DataProvider {
 }
 
 class ExampleProviderThatAlwaysSucceeds extends DataProvider {
-  readonly type: DataProviderTypes.ExampleSucceeds
+  readonly type = DataProviderTypes.ExampleSucceeds
 
   provide(): Promise<string> {
     return Promise.resolve('success')
   }
+}
+
+const application = {
+  id: '123',
+  externalId: '141414',
+  state: 'draft',
+  applicant: '111111-3000',
+  typeId: ApplicationTypes.EXAMPLE,
+  modified: new Date(),
+  created: new Date(),
+  attachments: {},
+  answers: {},
+  externalData: {},
 }
 
 describe('dataProviderUtils', () => {
@@ -23,7 +37,7 @@ describe('dataProviderUtils', () => {
       new ExampleProviderThatAlwaysSucceeds(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders, undefined)
+    const result = await callDataProviders(dataProviders, application)
     expect(result).toEqual([
       expect.objectContaining({
         data: true,
@@ -41,7 +55,7 @@ describe('dataProviderUtils', () => {
       new ExampleProviderThatAlwaysFails(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders, undefined)
+    const result = await callDataProviders(dataProviders, application)
     expect(result).toEqual([
       expect.objectContaining({
         data: true,
