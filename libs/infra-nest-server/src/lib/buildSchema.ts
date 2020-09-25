@@ -14,7 +14,7 @@ export const buildSchema = async ({
   path: string
   resolvers: Function[]
 }) => {
-  logger.info('Starting to build autoSchema file ...', { path })
+  logger.info('Creating autoSchema file ...', { path })
 
   const app = await NestFactory.create(GraphQLSchemaBuilderModule)
   await app.init()

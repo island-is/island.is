@@ -810,6 +810,18 @@
             "cwd": "apps/reference-backend"
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/reference-backend/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn ts-node apps/reference-backend/src/buildOpenApi.ts"
+              }
+            ]
+          }
+        },
         "generate-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -1902,6 +1914,16 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "yarn ts-node apps/air-discount-scheme/backend/src/buildOpenApi.ts"
+              }
+            ]
+          }
+        },
         "generate-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2252,6 +2274,17 @@
               }
             ],
             "cwd": "apps/application-system/api"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node apps/application-system/api/src/buildOpenApi.ts"
+              }
+            ]
           }
         },
         "generate-schema": {
@@ -2628,6 +2661,17 @@
               }
             ],
             "cwd": "apps/judicial-system/api"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node apps/judicial-system/api/src/buildOpenApi.ts"
+              }
+            ]
           }
         },
         "generate-schema": {
@@ -3333,8 +3377,7 @@
             "passWithNoTests": true
           }
         }
-      },
-      "docker-next": {}
+      }
     },
     "skilavottord/web-e2e": {
       "root": "apps/skilavottord/web-e2e",

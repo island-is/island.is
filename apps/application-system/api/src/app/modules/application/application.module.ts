@@ -11,6 +11,7 @@ import { UploadProcessor } from './upload.processor'
   imports: [
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
+    // TODO
     BullModule.registerQueueAsync({
       name: 'upload',
       useFactory: () => ({
