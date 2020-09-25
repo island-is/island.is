@@ -12,6 +12,10 @@ rm apps/gjafakort/web/graphql/possibleTypes.json
 rm apps/air-discount-scheme/api.graphql
 rm apps/air-discount-scheme/web/graphql/schema.tsx
 rm apps/air-discount-scheme/web/graphql/possibleTypes.json
+rm apps/air-discount-scheme/backend/src/openapi.yaml
 rm apps/skilavottord/ws/src/app/api.graphql
-rm libs/api/schema/src/lib/schema.d.ts
+rm apps/judicial-system/api/src/openapi.yaml
+rm apps/application-system/api/src/openapi.yaml
+rm apps/reference-backend/src/openapi.yaml
 # rm libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts
+rm libs/api/schema/src/lib/schema.d.ts
