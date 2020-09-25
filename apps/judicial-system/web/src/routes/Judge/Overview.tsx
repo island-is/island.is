@@ -13,7 +13,7 @@ import { JudgeLogo } from '../../shared-components/Logos'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
 import { autoSave, getRestrictionByValue } from '../../utils/stepHelper'
-import { Case, CustodyRestrictions } from '../../types'
+import { CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../api'
@@ -38,16 +38,25 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
+    let mounted = true
+
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
-      setWorkingCase(currentCase.case)
+
+      if (mounted) {
+        setWorkingCase(currentCase.case)
+      }
     }
 
     if (id) {
       getCurrentCase()
     }
-  }, [])
+
+    return () => {
+      mounted = false
+    }
+  }, [id])
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
@@ -207,14 +216,14 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {workingCase?.custodyRestrictions?.length > 0 &&
-                      workingCase?.custodyRestrictions
-                        .map(
-                          (restriction: CustodyRestrictions) =>
-                            `${getRestrictionByValue(restriction)}`,
-                        )
-                        .toString()
-                        .replace(',', ', ')}
+                    {workingCase?.custodyRestrictions?.length > 0
+                      ? workingCase?.custodyRestrictions
+                          .map((restriction: CustodyRestrictions) =>
+                            getRestrictionByValue(restriction),
+                          )
+                          .toString()
+                          .replace(',', ', ')
+                      : 'Lausagæsla'}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem

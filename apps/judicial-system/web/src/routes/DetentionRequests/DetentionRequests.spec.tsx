@@ -50,7 +50,7 @@ describe('Detention requests route', () => {
 
     const { getAllByTestId } = render(
       <Router history={history}>
-        <DetentionRequests onGetUser={() => console.log('get user cb')} />
+        <DetentionRequests onGetUser={() => undefined} />
       </Router>,
     )
 
@@ -71,7 +71,7 @@ describe('Detention requests route', () => {
         value={{ user: { nationalId: '0123456789', roles: [UserRole.JUDGE] } }}
       >
         <Router history={history}>
-          <DetentionRequests onGetUser={() => console.log('get user cb')} />
+          <DetentionRequests onGetUser={() => undefined} />
         </Router>
       </userContext.Provider>,
     )
@@ -91,7 +91,7 @@ describe('Detention requests route', () => {
         }}
       >
         <Router history={history}>
-          <DetentionRequests onGetUser={() => console.log('get user cb')} />
+          <DetentionRequests onGetUser={() => undefined} />
         </Router>
       </userContext.Provider>,
     )
@@ -115,7 +115,7 @@ describe('Detention requests route', () => {
 
     const { getAllByTestId } = render(
       <Router history={history}>
-        <DetentionRequests onGetUser={() => console.log('get user cb')} />
+        <DetentionRequests onGetUser={() => undefined} />
       </Router>,
     )
 
@@ -133,7 +133,7 @@ describe('Detention requests route', () => {
 
     const { getByTestId, queryByTestId } = render(
       <Router history={history}>
-        <DetentionRequests onGetUser={() => console.log('get user cb')} />
+        <DetentionRequests onGetUser={() => undefined} />
       </Router>,
     )
     await waitFor(() => getByTestId('detention-requests-error'))

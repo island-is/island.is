@@ -166,13 +166,15 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
-                      {caseDraftJSON.custodyRestrictions
-                        .map(
-                          (restriction: CustodyRestrictions) =>
-                            `${getRestrictionByValue(restriction)}`,
-                        )
-                        .toString()
-                        .replace(',', ', ')}
+                      {caseDraftJSON.custodyRestrictions?.length > 0
+                        ? caseDraftJSON.custodyRestrictions
+                            .map(
+                              (restriction: CustodyRestrictions) =>
+                                `${getRestrictionByValue(restriction)}`,
+                            )
+                            .toString()
+                            .replace(',', ', ')
+                        : 'Lausagæsla'}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem
