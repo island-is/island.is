@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { format, parseISO, getTime } from 'date-fns'
+import React, { useEffect, useState, useContext } from 'react'
+import { format, parseISO } from 'date-fns'
+
 import localeIS from 'date-fns/locale/is'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
+import {
+  JudgeLogo,
+  ProsecutorLogo,
+} from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   Alert,
   Button,
@@ -30,6 +34,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   const [cases, setCases] = useState<DetentionRequest[]>(null)
   const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const uContext = useContext(userContext)
 
   useEffect(() => {
     let isMounted = true
@@ -88,7 +93,12 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   return (
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
-        <Logo />
+        {!uContext.user ? null : uContext.user.roles.indexOf(UserRole.JUDGE) >
+          -1 ? (
+          <JudgeLogo />
+        ) : (
+          <ProsecutorLogo />
+        )}
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
         <Link to={Constants.STEP_ONE_ROUTE}>

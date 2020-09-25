@@ -16,16 +16,16 @@ import {
 
 @Injectable()
 export class ApplicationSerializer
-  implements NestInterceptor<Application, BaseApplication> {
+  implements NestInterceptor<Application, Promise<BaseApplication>> {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<BaseApplication> {
+  ): Observable<Promise<BaseApplication>> {
     // code here will be executed before the controller executes
     return next.handle().pipe(
-      map((applicationModel: Application) => {
+      map(async (applicationModel: Application) => {
         const application = applicationModel.toJSON() as BaseApplication
-        const template = getApplicationTemplateByTypeId(
+        const template = await getApplicationTemplateByTypeId(
           application.typeId as ApplicationTypes,
         )
 

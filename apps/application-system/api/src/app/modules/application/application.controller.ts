@@ -87,7 +87,7 @@ export class ApplicationController {
     application: CreateApplicationDto,
   ): Promise<Application> {
     // TODO not post the state, it should follow the initialstate of the machine
-    validateApplicationSchema(
+    await validateApplicationSchema(
       {
         ...application,
         externalData: {},
@@ -117,7 +117,7 @@ export class ApplicationController {
     @Body()
     application: UpdateApplicationDto,
   ): Promise<Application> {
-    validateApplicationSchema(
+    await validateApplicationSchema(
       existingApplication as BaseApplication,
       application.answers as FormValue,
     )
@@ -187,9 +187,10 @@ export class ApplicationController {
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
   ): Promise<Application> {
-    const template = getApplicationTemplateByTypeId(
+    const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
     )
+    // TODO
     if (template === null) {
       throw new BadRequestException(
         `No application template exists for type: ${existingApplication.typeId}`,
