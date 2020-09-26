@@ -1,12 +1,14 @@
+import { HttpService } from '@nestjs/common'
 import { Carowner } from '.'
 import { Car } from '../../car'
 
 export class CarownerService {
   carownerList: Carowner[]
-
+  httpService: HttpService
   carList: Car[]
 
   constructor() {
+    this.httpService = new HttpService()
     this.carownerList = []
     this.carList = []
     this.carList.push(
@@ -49,6 +51,13 @@ export class CarownerService {
 
   getCaronwerList(): Carowner[] {
     return this.carownerList
+  }
+
+  async getRestTest() {
+    const response = await this.httpService
+      .get('https://api.github.com/users/paztek')
+      .toPromise()
+    return response.data
   }
 
   getVehiclesForNationalId(nId: string): Carowner {

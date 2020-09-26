@@ -14,4 +14,5 @@ export class RecyclingPartnerResolver {
   getRecyclingPartner(@Args('id') nid: number): RecyclingPartner {
     return this.RecyclingPartnerService.getRecyclingPartner(nid)
   }
+
 }
