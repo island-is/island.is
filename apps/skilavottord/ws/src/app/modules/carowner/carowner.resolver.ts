@@ -19,7 +19,7 @@ export class CarownerResolver {
     return this.carownerService.getVehiclesForNationalId(nid)
   }
 
-  @Mutation()
+  @Mutation((returns) => Boolean)
   deregisterCar(
     @Args('deregisterCarInput') dereginput: DeregisterCarInput,
   ): boolean {
@@ -29,15 +29,17 @@ export class CarownerResolver {
     return true
   }
 
-  @Mutation()
+  @Mutation((returns) => Boolean)
   requestPayment(
     @Args('permno') permno: string,
     @Args('nationalid') nationalid: string,
   ): boolean {
-    //lintfix
     this.carownerService.getRestTest()
     if (permno === '1') {
-      throw new HttpException('requestPayment error! :nationalid' + nationalid, 400)
+      throw new HttpException(
+        'requestPayment error! nationalId:' + nationalid,
+        400,
+      )
     }
     return true
   }

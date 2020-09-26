@@ -115,7 +115,9 @@
         "libs/judicial-system/consts/src/index.ts"
       ],
       "@island.is/skilavottord": ["libs/skilavottord/src/index.ts"],
-      "@island.is/skilavottord/consts": ["libs/skilavottord/consts/src/index.ts"],
+      "@island.is/skilavottord/consts": [
+        "libs/skilavottord/consts/src/index.ts"
+      ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"]
     }
   },
