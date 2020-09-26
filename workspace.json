@@ -2969,8 +2969,8 @@
       }
     },
     "skilavottord-const": {
-      "root": "libs/skilavottord/const",
-      "sourceRoot": "libs/skilavottord/const/src",
+      "root": "libs/skilavottord/consts",
+      "sourceRoot": "libs/skilavottord/consts/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2978,17 +2978,17 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "libs/skilavottord/const/tsconfig.lib.json",
-              "libs/skilavottord/const/tsconfig.spec.json"
+              "libs/skilavottord/consts/tsconfig.lib.json",
+              "libs/skilavottord/consts/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/skilavottord/const/**"]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/consts/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/skilavottord/const/jest.config.js",
-            "tsConfig": "libs/skilavottord/const/tsconfig.spec.json",
+            "jestConfig": "libs/skilavottord/consts/jest.config.js",
+            "tsConfig": "libs/skilavottord/consts/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
