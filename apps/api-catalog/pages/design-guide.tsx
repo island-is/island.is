@@ -1,17 +1,3 @@
-import { DesignGuide } from '../screens'
-import ContentfulApi from '../services/contentful'
+import { DesignGuide } from '../screens';
 
-export default DesignGuide
-
-export async function getStaticProps() {
-  const client = new ContentfulApi();
-
-  const pageContent = await client.fetchStaticPageBySlug('design-guide', 'is-IS');
-  console.log(pageContent);
-
-  return {
-    props: {
-      pageContent,
-    }
-  };
-}
+export default DesignGuide;

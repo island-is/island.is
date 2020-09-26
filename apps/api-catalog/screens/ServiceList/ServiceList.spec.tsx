@@ -26,7 +26,7 @@ describe(' ServiceList ', () => {
   it('should render successfully', async () => {
     const client = new ContentfulApi();
 
-    const pageContent = await client.fetchStaticPageBySlug('services', 'is-IS');
+    const pageContent = await client.fetchPageBySlug('services', 'is-IS');
     const { baseElement } = render(<ServiceList parameters={params} prevCursor={null} nextCursor={null} pageContent={pageContent} />);
     expect(baseElement).toBeTruthy();
   })

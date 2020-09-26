@@ -19,7 +19,6 @@ import { ApolloProvider } from 'react-apollo';
 import initApollo from '../graphql/client';
 
 
-
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const client = initApollo(pageProps.initialApolloState);
 

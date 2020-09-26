@@ -4,7 +4,7 @@ import {  Box,
           ContentBlock, 
           GridRow, 
           GridColumn,
-          Icon,
+          Icon, 
           Typography, AccordionItem, AsyncSearch
 } from '@island.is/island-ui/core';
 
@@ -22,8 +22,8 @@ import {  PRICING_CATEGORY,
 } from '../../components';
 
 import ContentfulApi from '../../services/contentful'
-import { StaticPage } from '../../services/contentful.types'
 import { ClassValue } from 'classnames/types';
+import { Page } from '../../services/contentful.types'
 
 interface PropTypes {
   top?: ReactNode
@@ -82,7 +82,7 @@ export interface ServiceListProps {
   nextCursor: string
   prevCursor: string
   parameters: GetServicesParameters,
-  pageContent: StaticPage
+  pageContent: Page
 }
 
 
@@ -212,9 +212,9 @@ export default function ServiceList(props:ServiceListProps) {
       <ServiceLayout  classes={cn(isMobile(width)? styles.serviceLayoutMobile : {})}
       top={
             <div className={cn(styles.topSection)}>
-              <Typography variant="h1">{props.pageContent.title}</Typography>
+              <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
               <div className={cn(styles.topSectionText)}>
-                <Typography variant="intro">{props.pageContent.introText}</Typography>
+                <Typography variant="intro">{props.pageContent.strings.find(s => s.id === 'catalog-intro').text}</Typography>
               </div>
             </div>
       }
@@ -278,7 +278,7 @@ export default function ServiceList(props:ServiceListProps) {
           </div>
           <div className={cn(isLoading? styles.displayHidden : {})}>
             <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-              {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
+              {props.pageContent.strings.find(s => s.id === 'catalog-fetch-more-button').text}
             </Button>
           </div>
         </Box>
@@ -287,11 +287,18 @@ export default function ServiceList(props:ServiceListProps) {
   )
 }
 
-ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
+ServiceList.getInitialProps = async (ctx):Promise<ServiceListProps> => {
 
   const client = new ContentfulApi();
+  let locale = 'is-IS';
 
-  const pageContent = await client.fetchStaticPageBySlug('services', 'is-IS');
+  const pathLocale = ctx.pathname.split('/')[1];
+  if (pathLocale === 'en') {
+    locale = 'en-GB';
+  }
+
+  const pageContent = await client.fetchPageBySlug('services', locale);
+  console.log(pageContent);
 
   const params:GetServicesParameters = { 
     cursor:null, 
@@ -304,10 +311,10 @@ ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
     access:[],
     text:''
   };
-return { 
-  parameters:params, 
-  prevCursor:null, 
-  nextCursor:null, 
-  pageContent:pageContent
-};
+  return { 
+    parameters:params, 
+    prevCursor:null, 
+    nextCursor:null, 
+    pageContent:pageContent
+  }
 }
