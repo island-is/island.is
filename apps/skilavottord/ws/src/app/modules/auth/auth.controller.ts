@@ -65,11 +65,13 @@ export class AuthController {
 
   @Post('/callback')
   async callback(@Body('token') token, @Res() res, @Req() req) {
+    console.log("Duddi ralli rai")
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
+      console.log("Duddi ralli rai - error")
       return res.redirect('/error')
     }
 
@@ -77,6 +79,7 @@ export class AuthController {
     const { user } = verifyResult
     if (!user) {
       this.logger.error('Could not verify user authenticity')
+      console.log("Duddi ralli rai - error 2")
       return res.redirect('/error')
     }
 
@@ -119,6 +122,7 @@ export class AuthController {
 
   @Get('/login')
   login(@Res() res, @Query() query) {
+    console.log("Duddi ralli rai 2")
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
@@ -127,6 +131,7 @@ export class AuthController {
       .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(samlEntryPoint)
   }
+  
 
   @Get('/logout')
   logout(@Res() res) {
