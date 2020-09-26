@@ -18,7 +18,7 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   SSN_IS_NOT_A_PERSON,
-} from '@island.is/skilavottord/consts'
+} from '@island.is/skilavottord/const'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 
