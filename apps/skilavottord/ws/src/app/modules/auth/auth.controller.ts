@@ -131,7 +131,6 @@ export class AuthController {
       .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(samlEntryPoint)
   }
-  
 
   @Get('/logout')
   logout(@Res() res) {

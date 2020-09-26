@@ -28,9 +28,16 @@ type Carowner {
   cars: [Car!]
 }
 
+type User {
+  nationalId: ID!
+  name: String!
+  mobile: String
+}
+
 type Query {
   getRecyclingPartner(id: Float!): RecyclingPartner!
   getVehiclesForNationalId(nationalId: String!): Carowner!
+  getUserByNationalId(nationalId: String!): User!
 }
 
 type Mutation {
