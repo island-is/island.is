@@ -29,8 +29,8 @@ gjafakort/                      @island-is/vice-versa
 service-portal*/                @island-is/sendiradid
 /libs/api/domains/documents/    @island-is/sendiradid
 
-/apps/services/search-indexer/  @island-is/stefna @island.is/kosmos-kaos @island-is/aranja
-content-search/                 @island-is/stefna @island.is/kosmos-kaos @island-is/aranja
+/apps/services/search-indexer/  @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
+content-search/                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 
 /.storybook/                    @island-is/island-ui
 /libs/island-ui/                @island-is/island-ui
