@@ -26,11 +26,11 @@ var rl = readline.createInterface({
 
 const shas: string[] = []
 
-rl.on('line', function(line) {
+rl.on('line', function (line) {
   shas.push(line)
 })
 
-rl.on('close', async function() {
+rl.on('close', async function () {
   const result = await findLastGoodBuild(
     shas,
     process.env.BRANCH,

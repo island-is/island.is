@@ -38,10 +38,10 @@ const testStatusResponse = {
   },
 }
 
-jest.mock('form-data', function() {
+jest.mock('form-data', function () {
   return {
-    default: function() {
-      this.append = jest.fn(function(key: string, value: string) {
+    default: function () {
+      this.append = jest.fn(function (key: string, value: string) {
         this[key] = value
       })
       return this
@@ -49,7 +49,7 @@ jest.mock('form-data', function() {
   }
 })
 
-const fetchMock = jest.fn(function(
+const fetchMock = jest.fn(function (
   url: RequestInfo,
   // The init argument is needed for the mock to work
   init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -57,13 +57,13 @@ const fetchMock = jest.fn(function(
   switch (url) {
     case testSignUrl:
       return {
-        json: async function() {
+        json: async function () {
           return testSignResponse
         },
       }
     case testStatusUrl:
       return {
-        json: async function() {
+        json: async function () {
           return testStatusResponse
         },
       }
@@ -71,9 +71,9 @@ const fetchMock = jest.fn(function(
       throw new Error()
   }
 })
-jest.mock('node-fetch', function() {
+jest.mock('node-fetch', function () {
   return {
-    default: async function(url: RequestInfo, init: RequestInit) {
+    default: async function (url: RequestInfo, init: RequestInit) {
       return fetchMock(url, init)
     },
   }

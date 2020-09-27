@@ -6,7 +6,7 @@ import Loading from '../components/Loading'
 // For further optimization it can be minimized into a barebones html file
 export const SilentSignIn: FC = () => {
   useEffect(() => {
-    userManager.signinSilentCallback().catch(function(error) {
+    userManager.signinSilentCallback().catch(function (error) {
       // TODO: Handle error
       console.log(error)
     })

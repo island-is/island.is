@@ -10,7 +10,7 @@ const testLogin = 'Login'
 const testToken = 'Test Token'
 const testSendSms = 'SendSms'
 const testCode = '0'
-const postMock = jest.fn(function(
+const postMock = jest.fn(function (
   path: string,
   // The body and init arguments are needed for the mock to work
   body?: Body, // eslint-disable-line @typescript-eslint/no-unused-vars
