@@ -3015,7 +3015,7 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:dev-server",
+          "builder": "@nrwl/next:server",
           "options": {
             "buildTarget": "skilavottord-web:build",
             "dev": true,
@@ -3038,19 +3038,17 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/skilavottord/web/.eslintrc",
             "tsConfig": [
               "apps/skilavottord/web/tsconfig.json",
               "apps/skilavottord/web/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/skilavottord/web/**"]
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/skilavottord/web/jest.config.js",
-            "tsConfig": "apps/skilavottord/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
         },
@@ -3079,9 +3077,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/skilavottord/web-e2e/.eslintrc",
             "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**"]
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
           }
         }
       }
