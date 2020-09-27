@@ -7,6 +7,7 @@ import { Select, Option } from '../Select/Select'
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
 import { Colors } from '@island.is/island-ui/theme'
+import FocusableBox from '../FocusableBox/FocusableBox'
 
 type TabType = {
   label: string
@@ -27,10 +28,9 @@ export const Tabs: FC<TabInterface> = ({
   tabs,
   contentBackground = 'purple100',
 }) => {
-  const tab = useTabState({
+  const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
   })
-  console.log(tab)
 
   const selectOptions = tabs.map(({ label, disabled }, index) => {
     return {
@@ -59,20 +59,28 @@ export const Tabs: FC<TabInterface> = ({
             defaultValue={selectOptions[parseInt(selected)]}
           />
         </div>
-        <TabList className={styles.tabList} {...tab} aria-label={label}>
+        <TabList
+          className={styles.tabList}
+          {...tab}
+          wrap={wrap}
+          aria-label={label}
+        >
           {tabs.map(({ label, disabled }, index) => (
-            <Tab
+            <FocusableBox
               {...tab}
+              component={Tab}
               key={index}
               disabled={disabled}
               id={`${index}`}
+              justifyContent="center"
+              aria-label={label}
               className={cn(styles.tab, {
                 [styles.tabSelected]: index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
               })}
             >
               {label}
-            </Tab>
+            </FocusableBox>
           ))}
         </TabList>
         {tabs.map(({ content }, index) => (
