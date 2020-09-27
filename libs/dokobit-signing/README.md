@@ -17,7 +17,7 @@ Assuming `environment.signingOptions` implements `SigningServiceOptions`, add th
 @Module({
   providers: [
     {
-      provide: 'SIGNING_OPTIONS',
+      provide: SIGNING_OPTIONS,
       useValue: environment.signingOptions
     },
     SigningService,
