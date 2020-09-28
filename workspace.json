@@ -2609,6 +2609,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/judicial-system/api",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "apps/judicial-system/api/pdf-templates",
+                "output": "./templates"
               }
             ]
           },

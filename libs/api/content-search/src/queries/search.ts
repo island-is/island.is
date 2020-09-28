@@ -63,7 +63,12 @@ export const searchQuery = ({
     // eslint-disable-next-line @typescript-eslint/camelcase
     simple_query_string: {
       query: queryString,
-      fields: ['title.stemmed^20', 'title.compound^3', 'content.stemmed^10'],
+      fields: [
+        'title.stemmed^15',
+        'title.compound',
+        'content.stemmed^5',
+        'termPool^10',
+      ],
       // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
       // eslint-disable-next-line @typescript-eslint/camelcase

@@ -248,14 +248,14 @@ export const CourtRecord: React.FC = () => {
                 </Typography>
               </Box>
               <Input
-                name="suspectPlea"
+                name="accusedPlea"
                 label="Afstaða kærða"
-                defaultValue={workingCase.suspectPlea}
+                defaultValue={workingCase.accusedPlea}
                 placeholder="Skrifa hér..."
                 onBlur={(evt) => {
                   autoSave(
                     workingCase,
-                    'suspectPlea',
+                    'accusedPlea',
                     evt.target.value,
                     setWorkingCase,
                   )
