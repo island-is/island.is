@@ -41,7 +41,10 @@ export const ProcessPageLayout: FC<PageProps> = ({ children, right }) => {
   const isMobile = width < theme.breakpoints.md
 
   return (
-    <Box paddingY={[0, 0, 10, 10]} background={isMobile ? "white" : "purple100"}>
+    <Box
+      paddingY={[0, 0, 10, 10]}
+      background={isMobile ? 'white' : 'purple100'}
+    >
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
