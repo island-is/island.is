@@ -50,7 +50,7 @@ export type ServicePortalRoute = {
   /**
    * The title of this route
    */
-  name: string
+  name: ReactIntlMessage | string
   /**
    * Describes the path or paths used to route to this component
    */
@@ -68,7 +68,7 @@ export type ServicePortalWidget = {
   /**
    * Describes the name of this widget, displayed on the dashboard above it fx.
    */
-  name: string
+  name: ReactIntlMessage | string
   /**
    * Weight determines how widgets are sorted on the dashboard.
    * The lower the weight, the higher up it is
@@ -84,7 +84,7 @@ export interface ServicePortalModule {
   /**
    * The title of this module
    */
-  name: string
+  name: ReactIntlMessage | string
   /**
    * An optional render value of widgets that should
    * be displayed on the dashboard
