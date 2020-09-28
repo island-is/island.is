@@ -23,11 +23,12 @@ interface DatePickerProps {
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
+  selected?: ReactDatePickerProps['selected']
   hasError?: boolean
   errorMessage?: string
   handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
-  handleCloseCalander?: (date: Date) => void
+  handleCloseCalander?: (date: Date | null) => void
   handleOpenCalander?: () => void
   required?: boolean
 }
@@ -38,6 +39,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   locale,
   value,
   minDate,
+  selected,
   hasError = false,
   errorMessage,
   handleChange,
@@ -66,15 +68,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
   }, [locale])
 
-  const getLocale = (locale: Locale) => {
+  const getLocale = (locale?: Locale) => {
     return locale === 'is' ? is : locale === 'pl' ? pl : en
   }
 
   const CustomInput = React.forwardRef<
     HTMLButtonElement,
-    { value: string; onClick: () => void; placeholderText: string }
-  >(({ value, onClick, placeholderText }, ref) => {
-    const valueAsDate = new Date(value)
+    { value?: string; onClick?: () => void; placeholderText?: string }
+  >(({ value, onClick = () => undefined, placeholderText }, ref) => {
+    const valueAsDate = value === undefined ? new Date() : new Date(value)
 
     return (
       <button className={className} onClick={onClick}>
@@ -85,11 +87,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           </p>
           <div className={styles.value}>
             {value ? (
-              <Typography variant="h3">
-                {format(valueAsDate, 'P', {
-                  locale: getLocale(locale),
-                })}
-              </Typography>
+              <span data-testid="datepicker-value">
+                <Typography variant="h3">
+                  {format(valueAsDate, 'P', {
+                    locale: getLocale(locale),
+                  })}
+                </Typography>
+              </span>
             ) : placeholderText ? (
               <Typography as="span" variant="placeholderText" color="dark300">
                 {placeholderText}
@@ -103,10 +107,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   })
 
   return (
-    <div className={coreStyles.root}>
+    <div className={coreStyles.root} data-testid="datepicker">
       <div className={cn(styles.root, 'island-ui-datepicker')}>
         <ReactDatePicker
-          selected={startDate}
+          selected={selected ?? startDate}
           locale={locale}
           minDate={minDate}
           showPopperArrow={false}

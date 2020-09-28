@@ -1,106 +1,80 @@
-import React, { FC, ReactNode } from 'react'
-import slugify from '@sindresorhus/slugify'
-import BorderedContent from '../BorderedContent/BorderedContent'
+import React, { FC } from 'react'
 import {
   Typography,
-  ContentBlock,
   Button,
   Box,
+  GridRow,
+  GridColumn,
   Stack,
 } from '@island.is/island-ui/core'
-import { Html } from '@island.is/api/schema'
-import { renderHtml } from '../richTextRendering'
+import * as styles from './ProcessEntry.treat'
 
-export const ProcessTypes = {
-  Digital: {
-    icon: 'external',
-    title: 'Stafræn umsókn',
-  },
-  'Digital w/login': {
-    icon: 'external',
-    title: 'Aðgangsstýrð stafræn umsókn',
-  },
-  'Not digital': {
-    icon: 'info',
-    title: 'Handvirk umsókn',
-  },
-  'Not digital w/login': {
-    icon: 'external',
-    title: 'Handvirk umsókn með innskráningu',
-  },
-  'No type': {
-    icon: 'external',
-    title: '',
-  },
+export const Titles: { [k: string]: string } = {
+  // TODO: translating these requires some effort
+  Digital: 'Stafræn umsókn',
+  'Digital w/login': 'Aðgangsstýrð stafræn umsókn',
+  'Not digital': 'Handvirk umsókn',
+  'Not digital w/login': 'Handvirk umsókn með innskráningu',
+  'No type': '',
 }
 
 interface ProcessEntryProps {
   processTitle: string
-  processInfo?: Html
   processLink: string
-  buttonText: string
   type: string
-  title: string
-  subtitle?: string
-  details?: Html
+  buttonText: string
 }
 
 export const ProcessEntry: FC<ProcessEntryProps> = ({
   processTitle,
-  processInfo,
   processLink,
-  buttonText,
   type,
-  title,
-  subtitle,
-  details,
+  buttonText,
 }) => {
+  const label = Titles[type]
+
   return (
-    <BorderedContent
-      topContent={
-        <ContentBlock width="small">
-          <Stack space={[2, 2]}>
-            {title && (
-              <Typography variant="h2" as="h3">
-                <span data-sidebar-link={slugify(title)}>{title}</span>
-              </Typography>
-            )}
-            {subtitle && (
-              <Typography variant="intro" as="p">
-                {subtitle}
-              </Typography>
-            )}
-            {details && renderHtml(details.document)}
-          </Stack>
-        </ContentBlock>
-      }
-      bottomContent={
-        <ContentBlock width="small">
-          <Stack space={[2, 2]}>
-            {type !== 'No type' && (
-              <Typography variant="eyebrow" as="h4" color="blue400">
-                {ProcessTypes[type].title}
-              </Typography>
-            )}
-            {processTitle && (
-              <Typography variant="h3" as="h3">
-                {processTitle}
-              </Typography>
-            )}
-            {processInfo && renderHtml(processInfo.document)}
-            <Box paddingTop={[1, 1, 2]}>
-              <Button
-                width="fixed"
-                href={processLink}
-                icon={ProcessTypes[type].icon}
-              >
+    <Box width="full" background="blue100" borderRadius="large">
+      <GridRow className={styles.row}>
+        <GridColumn
+          className={styles.column}
+          span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+          offset={['0', '0', '0', '0', '1/9']}
+        >
+          <Box
+            paddingY={4}
+            paddingX={[3, 3, 3, 3, 0]}
+            display="flex"
+            flexGrow={1}
+            flexDirection={['column', 'column', 'column', 'column', 'row']}
+          >
+            <Box flexGrow={1}>
+              <Stack space={1}>
+                {Boolean(label) && (
+                  <Typography variant="eyebrow" as="p" color="blue400">
+                    {label}
+                  </Typography>
+                )}
+                <Typography variant="h3" as="h3">
+                  {processTitle}
+                </Typography>
+              </Stack>
+            </Box>
+            <Box
+              flexShrink={0}
+              paddingTop={[3, 3, 3, 3, 0]}
+              paddingLeft={[0, 0, 0, 0, 8]}
+              alignItems="flexStart"
+              justifyContent="flexStart"
+            >
+              <Button noWrap href={processLink} icon="external">
                 {buttonText}
               </Button>
             </Box>
-          </Stack>
-        </ContentBlock>
-      }
-    />
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }
 

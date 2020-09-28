@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, {
   ReactNode,
   useState,
@@ -6,8 +7,10 @@ import React, {
   useCallback,
   useMemo,
   Fragment,
+  forwardRef,
 } from 'react'
 import cn from 'classnames'
+import { usePopper } from 'react-popper'
 import { Icon } from '../Icon/Icon'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
@@ -17,24 +20,12 @@ import { Inline } from '../Inline/Inline'
 
 import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
+import ReactDOM from 'react-dom'
+import { Box } from '../Box'
+import Link from 'next/link'
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
-
-const months = [
-  'Janúar',
-  'Febrúar',
-  'Mars',
-  'Apríl',
-  'Maí',
-  'Júní',
-  'Júlí',
-  'Ágúst',
-  'September',
-  'Október',
-  'Nóvember',
-  'Desember',
-]
 
 export type TimelineEvent = {
   date: Date
@@ -51,6 +42,7 @@ export type TimelineEvent = {
 
 export interface TimelineProps {
   events: TimelineEvent[]
+  getMonthByIndex: (idx: number) => string
 }
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
@@ -74,7 +66,7 @@ const mapEvents = (
   return byYear
 }
 
-export const Timeline = ({ events }: TimelineProps) => {
+export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
   const frameRef = useRef<HTMLDivElement>(null)
   const innerContainerRef = useRef<HTMLDivElement>(null)
 
@@ -154,7 +146,7 @@ export const Timeline = ({ events }: TimelineProps) => {
                           timelineStyles.leftLabel,
                         )}
                       >
-                        {months[month]}
+                        {getMonthByIndex(month)}
                       </span>
                     </div>
                     <div className={timelineStyles.right}>&nbsp;</div>
@@ -168,7 +160,12 @@ export const Timeline = ({ events }: TimelineProps) => {
                           const larger = Boolean(event.data)
                           const modalKey = `modal-${year}-${month}-${eventIndex}`
                           const isVisible = visibleModal === modalKey
-
+                          const bulletLineClass = cn(
+                            timelineStyles.bulletLine,
+                            {
+                              [timelineStyles.bulletLineLarger]: larger,
+                            },
+                          )
                           return (
                             <div
                               key={eventIndex}
@@ -176,32 +173,19 @@ export const Timeline = ({ events }: TimelineProps) => {
                             >
                               <div className={timelineStyles.event}>
                                 {larger ? (
-                                  <>
-                                    <EventBar
-                                      onClick={() => {
-                                        setVisibleModal(
-                                          isVisible ? null : modalKey,
-                                        )
-                                      }}
-                                      event={event}
-                                    />
-                                    <EventModal
-                                      event={event}
-                                      visible={isVisible}
-                                      onClose={() => setVisibleModal(null)}
-                                    />
-                                  </>
+                                  <Event
+                                    event={event}
+                                    visibleModal={visibleModal}
+                                    modalKey={modalKey}
+                                    setVisibleModal={setVisibleModal}
+                                  />
                                 ) : (
                                   <span className={timelineStyles.eventSimple}>
                                     {event.title}
                                   </span>
                                 )}
                               </div>
-                              <span
-                                className={cn(timelineStyles.bulletLine, {
-                                  [timelineStyles.bulletLineLarger]: larger,
-                                })}
-                              >
+                              <span className={bulletLineClass}>
                                 <BulletLine selected={isVisible} />
                               </span>
                             </div>
@@ -220,30 +204,92 @@ export const Timeline = ({ events }: TimelineProps) => {
   )
 }
 
+const Event = ({ event, setVisibleModal, visibleModal, modalKey }) => {
+  const portalRef = useRef()
+  const [referenceElement, setReferenceElement] = useState(null)
+  const [popperElement, setPopperElement] = useState(null)
+  const [mounted, setMounted] = useState(false)
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: 'top-start',
+    modifiers: [
+      {
+        name: 'flip',
+        options: {
+          rootBoundary: 'document',
+          flipVariations: false,
+          allowedAutoPlacements: ['top-start'],
+        },
+      },
+    ],
+  })
+  const isVisible = visibleModal === modalKey
+  useEffect(() => {
+    portalRef.current = document.querySelector('#__next')
+    setMounted(true)
+  }, [])
+
+  return (
+    <>
+      <EventBar
+        ref={setReferenceElement}
+        onClick={() => {
+          setVisibleModal(isVisible ? null : modalKey)
+        }}
+        event={event}
+      />
+      {mounted &&
+        isVisible &&
+        ReactDOM.createPortal(
+          <div
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <EventModal event={event} onClose={() => setVisibleModal(null)} />
+          </div>,
+          portalRef.current,
+        )}
+    </>
+  )
+}
+
 interface EventBarProps {
   event: TimelineEvent
   onClick: () => void
 }
 
-const EventBar = ({ event, onClick }: EventBarProps) => {
-  return (
-    <>
-      <button onClick={onClick} className={eventStyles.eventBar}>
-        <div className={eventStyles.eventBarTitle}>
-          <div className={eventStyles.eventBarIcon}>
-            <Icon type="user" color="purple400" width="24" />
-          </div>
-          <span className={eventStyles.title}>{event.title}</span>
-        </div>
-        {event.value && (
+const EventBar = forwardRef(
+  (
+    { event, onClick }: EventBarProps,
+    ref: React.LegacyRef<HTMLButtonElement>,
+  ) => {
+    return (
+      <button onClick={onClick} className={eventStyles.eventBar} ref={ref}>
+        <Box
+          className={eventStyles.eventBarTitle}
+          background="purple100"
+          display="flex"
+        >
+          <Box className={eventStyles.eventBarIcon}>
+            <Icon type="user" color="purple400" width="24" height="24" />
+          </Box>
+          <Box paddingLeft={2} paddingRight={3}>
+            <Typography variant="h5" color="purple400">
+              {event.title}
+            </Typography>
+          </Box>
+        </Box>
+        {!!event.value && (
           <div className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
               <span className={eventStyles.value}>
                 {formatNumber(event.value)}
               </span>
-              <span className={eventStyles.maxValue}>
-                /{formatNumber(event.maxValue || 0)}
-              </span>
+              {!!event.maxValue && (
+                <span className={eventStyles.maxValue}>
+                  /{formatNumber(event.maxValue)}
+                </span>
+              )}
             </span>
             <span className={eventStyles.valueLabel}>
               {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
@@ -256,56 +302,102 @@ const EventBar = ({ event, onClick }: EventBarProps) => {
           </div>
         )}
       </button>
-    </>
-  )
-}
+    )
+  },
+)
 
 interface EventModalProps {
   event: TimelineEvent
-  visible: boolean
   onClose: () => void
 }
 
-const EventModal = ({ event, visible, onClose }: EventModalProps) => {
-  if (!event) {
-    return null
-  }
-
-  return (
-    <div
-      className={cn(eventStyles.eventModal, {
-        [eventStyles.eventModalVisible]: visible,
-      })}
-    >
-      <div className={eventStyles.eventBarIcon}>
-        <Icon type="user" color="purple400" width="24" />
-      </div>
-      <div className={eventStyles.eventModalContent}>
-        <button onClick={onClose} className={eventStyles.eventModalClose}>
-          <Icon type="close" />
-        </button>
-        <Stack space={2}>
-          <Typography variant="h2" as="h3" color="purple400">
-            {event.title}
-          </Typography>
-          {event.data?.labels && (
-            <Inline space={2}>
-              {event.data.labels.map((label, index) => (
-                <Tag key={index} label>
-                  {label}
-                </Tag>
-              ))}
-            </Inline>
+const EventModal = forwardRef(
+  (
+    { event, onClose }: EventModalProps,
+    ref: React.LegacyRef<HTMLDivElement>,
+  ) => {
+    if (!event) {
+      return null
+    }
+    return (
+      <div ref={ref} className={eventStyles.eventModal}>
+        <Box
+          className={eventStyles.eventBarTitle}
+          background="white"
+          display="inlineFlex"
+        >
+          <Box className={eventStyles.eventBarIcon}>
+            <Icon type="user" color="purple400" width="24" height="24" />
+          </Box>
+          {!!event.value && (
+            <Box
+              display="inlineFlex"
+              alignItems="center"
+              className={eventStyles.nowrap}
+              paddingLeft={2}
+              paddingRight={4}
+            >
+              <Typography variant="h2" color="purple400" as="span">
+                {formatNumber(event.value)}
+              </Typography>
+              {!!event.maxValue && (
+                <Typography
+                  variant="h2"
+                  color="purple400"
+                  as="span"
+                  fontWeight="light"
+                >
+                  /{formatNumber(event.maxValue)}
+                </Typography>
+              )}
+              <Box marginLeft={1}>
+                <Typography
+                  variant="eyebrow"
+                  color="purple400"
+                  fontWeight="semiBold"
+                >
+                  {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
+                    <Fragment key={i}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
+                </Typography>
+              </Box>
+            </Box>
           )}
-          {event.data?.text || ''}
-          <Button variant="text" icon="arrowRight">
-            Lesa meira
-          </Button>
-        </Stack>
+        </Box>
+        <Box padding={6}>
+          <button onClick={onClose} className={eventStyles.eventModalClose}>
+            <Icon type="close" />
+          </button>
+          <Stack space={2}>
+            <Typography variant="h2" as="h3" color="purple400">
+              {event.title}
+            </Typography>
+            {event.data?.labels && (
+              <Inline space={2}>
+                {event.data.labels.map((label, index) => (
+                  <Tag key={index} label variant="purple" bordered>
+                    {label}
+                  </Tag>
+                ))}
+              </Inline>
+            )}
+            {Boolean(event.data?.text) && event.data.text}
+            {event.data?.link && (
+              <Link href={event.data.link}>
+                <Button variant="text" icon="arrowRight">
+                  Lesa meira
+                </Button>
+              </Link>
+            )}
+          </Stack>
+        </Box>
       </div>
-    </div>
-  )
-}
+    )
+  },
+)
 
 const BulletLine = ({ selected = false }: { selected?: boolean }) => {
   return (

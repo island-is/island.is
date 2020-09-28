@@ -8,7 +8,7 @@ import * as styles from './Header.treat'
 import { Button } from '../Button/Button'
 import { Hidden } from '../Hidden/Hidden'
 
-export interface HeaderPorps {
+export interface HeaderProps {
   authenticated?: boolean
   language?: string
   logoRender?: (ReactElement: ReactElement) => ReactElement
@@ -34,12 +34,12 @@ export const Header = ({
   authenticated,
   language,
   logoRender,
-  logoutText = 'Útskrá',
+  logoutText,
   onLogout,
   switchLanguage,
   userLogo,
   userName = '',
-}: HeaderPorps) => {
+}: HeaderProps) => {
   const logo = () => {
     if (logoRender) {
       return logoRender(LogoIcon)

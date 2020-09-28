@@ -14,6 +14,5 @@ exec yarn run \
 #   --cache-from=type=local,src=$PROJECT_ROOT/cache \
 #   -f ${DIR}/Dockerfile \
 #   --target=linter \
-#   --build-arg BUILDKIT_INLINE_CACHE=1 \
 #   --build-arg APP=${APP} \
 #   $PROJECT_ROOT

@@ -1,42 +1,50 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
+
 import { Box } from '../../Box/Box'
+import { ResponsiveSpace } from '../../Box/useBoxStyles'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
-import {
-  resolveResponsiveRangeProps,
-  ResponsiveRangeProps,
-} from '../../../utils/responsiveRangeProps'
-
 import * as styles from './GridColumn.treat'
-import { ResponsiveSpace } from '../../Box/useBoxStyles'
-import { GridColumns } from './GridColumn.treat'
+import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
 type Breakpoint = keyof typeof theme['breakpoints']
+type position = 'relative' | 'fixed' | 'absolute'
 
-export interface GridColumnProps extends ResponsiveRangeProps {
-  span?: ResponsiveProp<GridColumns>
-  offset?: ResponsiveProp<GridColumns>
+export type SpanType = ResponsiveProp<styles.GridColumns>
+export interface GridColumnProps {
+  span?: ResponsiveProp<styles.GridColumns>
+  offset?: ResponsiveProp<styles.GridColumns>
+  order?: ResponsiveProp<styles.Order>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
   className?: string
-  hideAbove?: Exclude<Breakpoint, 'xl'>
-  hideBelow?: Exclude<Breakpoint, 'xs'>
+  hiddenAbove?: Exclude<Breakpoint, 'xl'>
+  hiddenBelow?: Exclude<Breakpoint, 'xs'>
+  position?: position | 'none'
 }
 
 export const GridColumn: FC<GridColumnProps> = ({
   children,
   span,
   offset,
+  order,
   paddingBottom,
   paddingTop,
   className,
-  hideAbove: above,
-  hideBelow: below,
+  hiddenAbove: above,
+  hiddenBelow: below,
+  position = 'relative',
 }) => {
+  const pos: { position?: position } = {}
+
+  if (position !== 'none') {
+    pos.position = position
+  }
+
   const [
     hiddenOnXs,
     hiddenOnSm,
@@ -44,8 +52,10 @@ export const GridColumn: FC<GridColumnProps> = ({
     hiddenOnLg,
     hiddenOnXl,
   ] = resolveResponsiveRangeProps({ above, below })
+
   return (
     <Box
+      {...pos}
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       display={[
@@ -75,6 +85,15 @@ export const GridColumn: FC<GridColumnProps> = ({
             styles.offsetMd,
             styles.offsetLg,
             styles.offsetXl,
+          ),
+        order !== undefined &&
+          resolveResponsiveProp(
+            order,
+            styles.orderXs,
+            styles.orderSm,
+            styles.orderMd,
+            styles.orderLg,
+            styles.orderXl,
           ),
       )}
     >

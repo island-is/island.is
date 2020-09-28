@@ -33,7 +33,6 @@ if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
     -f ${DIR}/Dockerfile \
     --target=test \
     --load \
-    --build-arg BUILDKIT_INLINE_CACHE=1 \
     -t ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} \
     $PROJECT_ROOT
 

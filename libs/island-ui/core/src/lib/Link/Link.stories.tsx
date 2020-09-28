@@ -5,7 +5,7 @@ import ExternalLinkComponent from './ExternalLink/ExternalLink'
 import { Box } from '../Box'
 
 export default {
-  title: 'Core/Link',
+  title: 'Components/Link',
   component: Link,
 }
 

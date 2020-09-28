@@ -22,3 +22,11 @@ export const td = style({
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
 })
+
+export const alignRight = style({
+  textAlign: 'right',
+})
+
+export const block = style({
+  display: 'block',
+})

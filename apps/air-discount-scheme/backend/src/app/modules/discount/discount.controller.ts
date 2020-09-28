@@ -5,10 +5,9 @@ import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
-} from './discount.validator'
+} from './dto'
 import { DiscountService } from './discount.service'
 import { NationalRegistryService } from '../nationalRegistry'
-import { AuthGuard } from '../common'
 
 @Controller('api/private')
 export class PrivateDiscountController {
@@ -21,7 +20,7 @@ export class PrivateDiscountController {
   @ApiExcludeEndpoint()
   getCurrentDiscountByNationalId(
     @Param() params: GetCurrentDiscountByNationalIdParams,
-  ): Promise<Discount> {
+  ): Promise<Discount | null> {
     return this.discountService.getDiscountByNationalId(params.nationalId)
   }
 

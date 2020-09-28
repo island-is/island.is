@@ -16,12 +16,14 @@
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
+    "strict": true,
     "paths": {
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/adgerdir/*": ["apps/adgerdir/*"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
+      "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -107,6 +109,10 @@
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],
+      "@island.is/api/domains/translations": [
+        "libs/api/domains/translations/src/index.ts"
+      ],
+      "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
@@ -119,6 +125,15 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"]
+      "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
+      "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
+      "@island.is/service-portal/assets": [
+        "libs/service-portal/assets/src/index.ts"
+      ],
+      "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
+      "@island.is/judicial-system/types": [
+        "libs/judicial-system/types/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

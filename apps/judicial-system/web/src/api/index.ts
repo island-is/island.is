@@ -1,31 +1,21 @@
 import 'isomorphic-fetch'
-import { Case, CreateCaseRequest } from '../types'
+import {
+  DetentionRequest,
+  CreateCaseRequest,
+  Case,
+  GetCaseByIdResponse,
+  Notification,
+  SendNotificationResponse,
+} from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
-// const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
-//   caseId: string,
-// ) => {
-//   const response = await fetch(`/api/case/${caseId}`)
-
-//   if (response.ok) {
-//     const theCase: Case = await response.json()
-//     return {
-//       httpStatusCode: response.status,
-//       case: theCase,
-//     }
-//   } else {
-//     return {
-//       httpStatusCode: response.status,
-//     }
-//   }
-// }
 const csrfToken = getCookie('judicial-system.csrf')
 
 const { API_URL = '' } = process.env
 
 export const apiUrl = API_URL
 
-export const getCases: () => Promise<Case[]> = async () => {
+export const getCases: () => Promise<DetentionRequest[]> = async () => {
   try {
     const response = await fetch(`${apiUrl}/api/cases`, {
       method: 'get',
@@ -44,7 +34,24 @@ export const getCases: () => Promise<Case[]> = async () => {
     }
   } catch (ex) {
     // TODO: Log error
-    console.log(ex)
+  }
+}
+
+export const getCaseById: (
+  caseId: string,
+) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
+  const response = await fetch(`/api/case/${caseId}`)
+
+  if (response.ok) {
+    const theCase: Case = await response.json()
+    return {
+      httpStatusCode: response.status,
+      case: theCase,
+    }
+  } else {
+    return {
+      httpStatusCode: response.status,
+    }
   }
 }
 
@@ -62,7 +69,7 @@ export const createCase: (
     })
 
     if (response.ok) {
-      const responseJSON: Case = await response.json()
+      const responseJSON: DetentionRequest = await response.json()
       return responseJSON.id
     } else if (response.status === 401) {
       window.location.assign('/?error=true')
@@ -77,15 +84,9 @@ export const createCase: (
 
 export const saveCase: (
   caseId: string,
-  caseField: string,
-  caseFieldValue: string | Date,
-) => Promise<number> = async (
-  caseId: string,
-  caseField: string,
-  caseFieldValue: string | Date,
-) => {
+  propertyChange: string,
+) => Promise<number> = async (caseId: string, propertyChange: string) => {
   if (caseId !== '') {
-    const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
     const response = await fetch(`/api/case/${caseId}`, {
       method: 'put',
       headers: {
@@ -105,6 +106,16 @@ export const saveCase: (
   }
 }
 
+export const getUser = async () => {
+  const response = await fetch('/api/user', {
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  return response.json()
+}
+
 export const logOut = async () => {
   const response = await fetch('/api/auth/logout', {
     headers: {
@@ -117,5 +128,35 @@ export const logOut = async () => {
     window.location.assign('/')
   } else {
     // TODO: Handle error
+  }
+}
+
+/**
+ * 
+ * export const getCaseById: (
+  caseId: string,
+) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
+ */
+
+export const sendNotification: (
+  caseId: string,
+) => Promise<SendNotificationResponse> = async (caseId: string) => {
+  const response = await fetch(`/api/case/${caseId}/notification`, {
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  if (response.ok) {
+    const a: Notification = await response.json()
+    return {
+      httpStatusCode: response.status,
+      response: a,
+    }
+  } else {
+    return {
+      httpStatusCode: response.status,
+    }
   }
 }

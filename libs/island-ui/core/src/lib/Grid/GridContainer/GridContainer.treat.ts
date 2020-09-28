@@ -8,7 +8,6 @@ export const root = style({
   maxWidth: theme.breakpoints.xl,
   paddingLeft: theme.grid.gutter.mobile * 2,
   paddingRight: theme.grid.gutter.mobile * 2,
-  position: 'relative',
   width: '100%',
   selectors: {
     // Opt out of horizontal padding on nested grids

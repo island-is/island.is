@@ -1,7 +1,10 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { Car } from './models'
 import { CarService } from './models/car.service'
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 @Resolver(() => Car)
 export class CarResolver {
   carService: CarService
@@ -16,6 +19,7 @@ export class CarResolver {
   getCar(@Args('id') nid: string): Car {
     return this.carService.getCarById(nid)
   }
+<<<<<<< HEAD
 
   //deregisterVehicle
   @Query(() => Car)
@@ -23,4 +27,6 @@ export class CarResolver {
     //car.recyclingStatus = "Done"
     return car
   }
+=======
+>>>>>>> master
 }

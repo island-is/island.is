@@ -26,6 +26,7 @@ interface FooterProps {
   tagLinks?: FooterLinkProps[]
   middleLinksTitle?: string
   tagLinksTitle?: string
+  bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
   hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
@@ -40,6 +41,7 @@ export const Footer = ({
   tagLinks = defaultBottomLinks,
   middleLinksTitle = 'Tenglar',
   tagLinksTitle = 'Flýtileiðir',
+  bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   showTagLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
@@ -61,16 +63,23 @@ export const Footer = ({
               paddingBottom={[4, 4, 0]}
               className={styles.withDecorator}
             >
-              <div>
-                {topLinks.map(({ title, href }, index) => (
-                  <Typography key={index} variant="h3" paddingBottom={3}>
-                    <Link href={href} color="blue400" withUnderline>
-                      {title}
-                    </Link>
-                  </Typography>
-                ))}
+              <Box paddingRight={[0, 0, 1]}>
+                {topLinks.map(({ title, href }, index) => {
+                  const isLast = index + 1 === topLinks.length
+                  return (
+                    <Typography
+                      key={index}
+                      variant="intro"
+                      paddingBottom={isLast ? 5 : 2}
+                    >
+                      <Link href={href} color="blue600" withUnderline>
+                        {title}
+                      </Link>
+                    </Typography>
+                  )
+                })}
                 {!hideLanguageSwith && (
-                  <Box paddingBottom={3}>
+                  <Box paddingBottom={2}>
                     <Inline space={1} alignY="center">
                       <Icon
                         height="15"
@@ -78,7 +87,7 @@ export const Footer = ({
                         type="globe"
                         color="blue400"
                       />
-                      <Typography variant="h5">
+                      <Typography variant="h5" fontWeight="light">
                         <Link
                           color="blue400"
                           href={languageSwitchLink.href}
@@ -90,7 +99,7 @@ export const Footer = ({
                     </Inline>
                   </Box>
                 )}
-                <Box paddingBottom={3}>
+                <Box paddingBottom={2}>
                   <Inline space={1} alignY="center">
                     <Icon
                       height="15"
@@ -98,7 +107,7 @@ export const Footer = ({
                       type="facebook"
                       color="blue400"
                     />
-                    <Typography variant="h5">
+                    <Typography variant="h5" fontWeight="light">
                       <Link
                         color="blue400"
                         href="https://www.facebook.com/islandid"
@@ -108,7 +117,7 @@ export const Footer = ({
                     </Typography>
                   </Inline>
                 </Box>
-              </div>
+              </Box>
             </GridColumn>
             {showMiddleLinks ? (
               <GridColumn
@@ -117,11 +126,11 @@ export const Footer = ({
                 paddingTop={[6, 6, 0]}
                 className={styles.withDecorator}
               >
-                <div>
+                <Box paddingX={[0, 0, 1]}>
                   {middleLinksTitle ? (
                     <Typography
                       variant="eyebrow"
-                      color="purple400"
+                      color="blue400"
                       paddingBottom={3}
                     >
                       {middleLinksTitle}
@@ -130,7 +139,7 @@ export const Footer = ({
                   <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
                     {middleLinks.map(({ title, href }, index) => {
                       return (
-                        <Typography key={index} variant="h5">
+                        <Typography key={index} variant="h5" fontWeight="light">
                           <Link href={href} color="blue400" withUnderline>
                             {title}
                           </Link>
@@ -138,7 +147,7 @@ export const Footer = ({
                       )
                     })}
                   </Tiles>
-                </div>
+                </Box>
               </GridColumn>
             ) : null}
             {showTagLinks ? (
@@ -146,35 +155,37 @@ export const Footer = ({
                 span={['12/12', '12/12', '3/12']}
                 paddingTop={[6, 6, 0]}
               >
-                {tagLinksTitle ? (
-                  <Typography
-                    variant="eyebrow"
-                    color="purple400"
-                    paddingBottom={3}
-                  >
-                    {tagLinksTitle}
-                  </Typography>
-                ) : null}
-                <Inline space={2}>
-                  {tagLinks.map(({ title, href }, index) => {
-                    return (
-                      <Tag key={index} href={href} variant="white">
-                        {title}
-                      </Tag>
-                    )
-                  })}
-                </Inline>
+                <Box paddingX={[0, 0, 1]}>
+                  {tagLinksTitle ? (
+                    <Typography
+                      variant="eyebrow"
+                      color="blue400"
+                      paddingBottom={3}
+                    >
+                      {tagLinksTitle}
+                    </Typography>
+                  ) : null}
+                  <Inline space={2}>
+                    {tagLinks.map(({ title, href }, index) => {
+                      return (
+                        <Tag key={index} href={href} variant="white">
+                          {title}
+                        </Tag>
+                      )
+                    })}
+                  </Inline>
+                </Box>
               </GridColumn>
             ) : null}
           </GridRow>
         </GridContainer>
       </Box>
-      <Box background="blue400" paddingTop={6} paddingBottom={4}>
+      <Box paddingTop={4} paddingBottom={4}>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
-              <Typography variant="eyebrow" color="white" paddingBottom={3}>
-                Aðrir opinberir vefir
+              <Typography variant="eyebrow" color="blue400" paddingBottom={3}>
+                {bottomLinksTitle}
               </Typography>
             </GridColumn>
           </GridRow>
@@ -187,8 +198,14 @@ export const Footer = ({
                       key={href}
                       span={['12/12', '6/12', '4/12', '3/12']}
                     >
-                      <Typography variant="h5" color="white" paddingBottom={3}>
-                        <ExternalLink href={href}> {title}</ExternalLink>
+                      <Typography
+                        variant="h5"
+                        fontWeight="light"
+                        paddingBottom={2}
+                      >
+                        <ExternalLink href={href} color="blue600">
+                          {title}
+                        </ExternalLink>
                       </Typography>
                     </GridColumn>
                   )
@@ -208,7 +225,7 @@ const defaultTopLinks = [
   },
   {
     title: 'Stofnanir',
-    href: '#',
+    href: '/stofnanir',
   },
   {
     title: 'Hafa samband',

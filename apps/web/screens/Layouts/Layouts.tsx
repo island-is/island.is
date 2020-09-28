@@ -7,6 +7,43 @@ import {
 } from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
 
+export interface StandardLayoutProps {
+  sidebar: {
+    position: 'left' | 'right'
+    node: ReactNode
+  }
+}
+
+export const StandardLayout: FC<StandardLayoutProps> = ({
+  sidebar,
+  children,
+}) => {
+  const columns = [
+    <GridColumn
+      key="sidebar"
+      hiddenBelow="md"
+      span={['0', '0', '4/12', '4/12', '3/12']}
+    >
+      <Sticky>{sidebar.node}</Sticky>
+    </GridColumn>,
+    <GridColumn key="content" span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
+      <Box>{children}</Box>
+    </GridColumn>,
+  ]
+
+  if (sidebar.position === 'right') {
+    columns.reverse()
+  }
+
+  return (
+    <GridContainer>
+      <Box paddingY={[2, 2, 10]}>
+        <GridRow>{columns}</GridRow>
+      </Box>
+    </GridContainer>
+  )
+}
+
 interface CategoryProps {
   sidebar: ReactNode
   belowContent?: ReactNode
@@ -20,7 +57,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
         <GridColumn
@@ -43,14 +80,10 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+        <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn
-          hideBelow="md"
-          span={['0', '0', '4/12', '3/12']}
-          offset={['0', '0', '0', '1/12']}
-        >
+        <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>
@@ -66,7 +99,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={[2, 2, 6]} paddingBottom={[5, 5, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
@@ -85,7 +118,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
 )
 
 interface NewsItemProps {
-  sidebar: ReactNode
+  sidebar?: ReactNode
 }
 
 export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
@@ -102,11 +135,13 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
           span={['12/12', '12/12', '4/12', '3/12']}
           offset={['0', '0', '0', '1/12']}
         >
-          <Sticky>
-            <Box background="purple100" padding={4}>
-              {sidebar}
-            </Box>
-          </Sticky>
+          {sidebar && (
+            <Sticky>
+              <Box background="purple100" padding={4}>
+                {sidebar}
+              </Box>
+            </Sticky>
+          )}
         </GridColumn>
       </GridRow>
     </Box>

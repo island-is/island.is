@@ -1,14 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Logo, Typography, Box, Button } from '@island.is/island-ui/core'
 import * as api from '../../api'
 
 import * as styles from './Header.treat'
+import { userContext } from '../../utils/userContext'
 
-export interface HeaderProps {
-  loggedInUser?: string
-}
+const Header: React.FC = () => {
+  const uContext = useContext(userContext)
 
-const Header: React.FC<HeaderProps> = ({ loggedInUser }: HeaderProps) => {
   return (
     <header className={`${styles.header}`}>
       <Box display="flex" alignItems="center">
@@ -19,18 +18,11 @@ const Header: React.FC<HeaderProps> = ({ loggedInUser }: HeaderProps) => {
           </Typography>
         </Box>
       </Box>
-      {loggedInUser && (
-        <Box display="flex" alignItems="center">
-          <Box marginRight={[1, 2, 4]}>
-            <Typography as="p" variant="h5">
-              {loggedInUser}
-            </Typography>
-          </Box>
-        </Box>
+      {uContext.user && (
+        <Button variant="text" size="small" onClick={() => api.logOut()}>
+          Útskráning
+        </Button>
       )}
-      <Button variant="text" size="small" onClick={() => api.logOut()}>
-        Útskráning
-      </Button>
     </header>
   )
 }

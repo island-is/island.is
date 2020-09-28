@@ -10,7 +10,7 @@ export const thumbnail = style({
   flex: 'none',
   display: 'none',
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       display: 'block',
     },
   },
@@ -18,10 +18,12 @@ export const thumbnail = style({
 
 export const card = style({
   position: 'relative',
+  borderRadius: theme.border.radius.large,
+  boxShadow: `0px 4px 30px ${theme.color.blue100}`,
 
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      borderRadius: theme.border.radius.large,
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      boxShadow: 'none',
     },
   },
 })
@@ -35,7 +37,7 @@ export const image = style({
   paddingBottom: '100%',
 
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       display: 'none',
     },
   },

@@ -7,6 +7,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { ApplicationApi, ApplicationTypeIdEnum } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
+import { SubmitApplicationInput } from './dto/submitApplication.input'
 
 const handleError = (error) => {
   logger.error(error)
@@ -76,6 +77,14 @@ export class ApplicationService {
     return this.applicationApi.applicationControllerUpdateExternalData({
       id,
       populateExternalDataDto,
+    })
+  }
+
+  async submitApplication(input: SubmitApplicationInput) {
+    const { id, ...updateApplicationStateDto } = input
+    return this.applicationApi.applicationControllerSubmitApplication({
+      id,
+      updateApplicationStateDto,
     })
   }
 }

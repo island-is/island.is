@@ -1,17 +1,6 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import {
-  IsString,
-  IsArray,
-  IsOptional,
-  IsEnum,
-  IsObject,
-} from 'class-validator'
-import { UpdateApplicationDtoStateEnum } from '../../../gen/fetch'
-
-registerEnumType(UpdateApplicationDtoStateEnum, {
-  name: 'UpdateApplicationDtoStateEnum',
-})
+import { IsString, IsOptional, IsObject } from 'class-validator'
 
 @InputType()
 export class UpdateApplicationInput {
@@ -33,11 +22,6 @@ export class UpdateApplicationInput {
   @IsString()
   @IsOptional()
   externalId?: string
-
-  @Field((type) => UpdateApplicationDtoStateEnum, { nullable: true })
-  @IsEnum(UpdateApplicationDtoStateEnum)
-  @IsOptional()
-  state?: UpdateApplicationDtoStateEnum
 
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()

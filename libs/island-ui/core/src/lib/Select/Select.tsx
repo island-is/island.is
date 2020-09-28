@@ -59,7 +59,7 @@ export const Select = ({
   icon = 'cheveron',
 }: SelectProps) => {
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid={`select-${name}`}>
       <ReactSelect
         instanceId={id}
         noOptionsMessage={() => noOptionsMessage || null}

@@ -1,19 +1,19 @@
 import {
   Application,
-  ApplicationState,
   buildForm,
   buildRepeater,
   buildSection,
   buildTextField,
   ExternalData,
   Form,
-  FormType,
+  ApplicationTypes,
+  FormValue,
 } from '@island.is/application/template'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'
 
-const FamilyAndPetsSchema = z.object({
+const dataSchema = z.object({
   person: z
     .array(
       z.object({
@@ -43,12 +43,11 @@ const FamilyAndPetsSchema = z.object({
   familyName: z.string().nonempty(),
   house: z.string().optional(),
 })
-type FamilyAndPetsSchemaFormValues = z.infer<typeof FamilyAndPetsSchema>
-const FamilyAndPets: Form = buildForm({
-  id: FormType.FAMILY_AND_PETS,
+type SchemaFormValues = z.infer<typeof dataSchema>
+const form: Form = buildForm({
+  id: ApplicationTypes.EXAMPLE,
   ownerId: 'Aranja',
   name: 'Family and pets',
-  schema: FamilyAndPetsSchema,
   children: [
     buildSection({
       id: 'family',
@@ -74,9 +73,9 @@ const FamilyAndPets: Form = buildForm({
         buildTextField({
           id: 'familyName',
           name: 'What is the family name?',
-          condition: (formValue: FamilyAndPetsSchemaFormValues) => {
-            return formValue.person?.length
-              ? formValue.person[0].name !== 'bad name'
+          condition: (formValue: FormValue) => {
+            return (formValue as SchemaFormValues).person?.length
+              ? (formValue as SchemaFormValues).person[0].name !== 'bad name'
               : true
           },
         }),
@@ -99,15 +98,15 @@ const FamilyAndPets: Form = buildForm({
 
 const application: Application = {
   id: '12315151515',
-  typeId: FormType.FAMILY_AND_PETS,
+  typeId: ApplicationTypes.EXAMPLE,
   attachments: {},
   externalData: {},
   answers: {},
   applicant: '123123',
   externalId: '123123123',
-  state: ApplicationState.DRAFT,
-  modified: null,
-  created: null,
+  state: 'draft',
+  modified: new Date(),
+  created: new Date(),
 }
 
 describe('ApplicationFormReducer', () => {
@@ -116,19 +115,21 @@ describe('ApplicationFormReducer', () => {
     activeScreen: 0,
     activeSection: 0,
     activeSubSection: -1,
-    form: FamilyAndPets,
+    dataSchema,
+    form,
+    nationalRegistryId: '1111112199',
     screens: [],
     progress: 0,
     formLeaves: [],
     sections: [],
   }
-  let initializedState
+  let initializedState: ApplicationUIState
   beforeAll(() => {
     initializedState = initializeReducer(initialState)
   })
   describe('initialize reducer', () => {
     it('should convert the form into valid leaves, screens, and sections', () => {
-      expect(initializedState.form).toBe(FamilyAndPets)
+      expect(initializedState.form).toBe(form)
       expect(initializedState.screens.length).toBe(4)
       expect(initializedState.screens[0].isNavigable).toBe(true)
       expect(initializedState.screens[1].isNavigable).toBe(true)
@@ -168,6 +169,23 @@ describe('ApplicationFormReducer', () => {
       const initializedState = initializeReducer(state)
       expect(initializedState.activeScreen).toBe(2)
       expect(initializedState.activeSection).toBe(1)
+    })
+    it('should go to the first screen although there are answers, if and only if the current form is in review mode', () => {
+      const answers = {
+        person: [{ age: '19', name: 'Ingolfur' }],
+        familyName: 'Arnarson',
+      }
+      const state = {
+        ...initialState,
+        form: { ...form, mode: 'review' as const },
+        application: {
+          ...application,
+          answers,
+        },
+      }
+      const initializedState = initializeReducer(state)
+      expect(initializedState.activeScreen).toBe(0)
+      expect(initializedState.activeSection).toBe(0)
     })
   })
   describe('next screen', () => {
@@ -287,9 +305,9 @@ describe('ApplicationFormReducer', () => {
     })
     it('should use the newest value of an array and not merge the previous value', () => {
       const initialState = {
+        dataSchema: z.object({ text: z.string() }),
         form: buildForm({
-          schema: z.object({ text: z.string() }),
-          id: FormType.FAMILY_AND_PETS,
+          id: ApplicationTypes.EXAMPLE,
           name: 'Test',
           ownerId: '222',
           children: [],
@@ -302,6 +320,7 @@ describe('ApplicationFormReducer', () => {
         activeSection: 0,
         activeSubSection: 0,
         activeScreen: 0,
+        nationalRegistryId: '1111112199',
         progress: 0,
         screens: [],
         sections: [],
@@ -367,7 +386,7 @@ describe('ApplicationFormReducer', () => {
     })
   })
   describe('add external data', () => {
-    const action = (payload) => ({
+    const action = (payload: unknown) => ({
       type: ActionTypes.ADD_EXTERNAL_DATA,
       payload,
     })

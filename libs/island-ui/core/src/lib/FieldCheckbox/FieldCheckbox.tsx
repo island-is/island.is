@@ -2,6 +2,7 @@ import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
 import { Checkbox, CheckboxProps } from '../Checkbox/Checkbox'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export interface FieldCheckboxProps extends CheckboxProps {
   field: FieldInputProps<boolean>
@@ -14,6 +15,8 @@ export const FieldCheckbox = ({
   onChange: customOnChange,
   ...props
 }: FieldCheckboxProps) => {
+  useDeprecatedComponent('FieldCheckbox')
+
   const nameArray = (field.name && field.name.split('.')) || []
   return (
     <Checkbox

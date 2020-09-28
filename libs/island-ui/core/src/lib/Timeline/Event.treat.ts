@@ -21,17 +21,18 @@ export const eventBarIcon = style({
   height: 64,
   width: 64,
   borderRadius: 50,
-  marginRight: 15,
   backgroundColor: theme.color.white,
+  boxShadow: '0px 4px 30px rgba(0, 0, 0, 0.05)',
 })
 
 export const eventBarTitle = style({
-  display: 'flex',
   alignItems: 'center',
   height: 64,
-  paddingRight: 25,
   borderRadius: 50,
-  backgroundColor: theme.color.purple100,
+})
+
+export const nowrap = style({
+  whiteSpace: 'nowrap',
 })
 
 export const eventBarStats = style({
@@ -86,25 +87,24 @@ export const maxValue = style({
 // Modal
 export const eventModal = style({
   position: 'absolute',
-  transition: `all 300ms ease`,
-  opacity: 0,
-  visibility: 'hidden',
   zIndex: 1,
   top: 0,
   left: 0,
-  borderRadius: `50px 5px 5px 5px`,
+  borderRadius: `32px 5px 5px 5px`,
   boxSizing: 'border-box',
-  maxWidth: '660px',
-  minWidth: '660px',
-  width: '100%',
+  width: '660px',
   whiteSpace: 'normal',
   backgroundColor: theme.color.purple100,
-})
-
-export const eventModalVisible = style({
-  opacity: 1,
-  visibility: 'initial',
-  zIndex: 1,
+  '@keyframes': {
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
+  },
+  animationTimingFunction: 'ease-out',
+  animationDuration: '0.25s',
 })
 
 export const eventModalContent = style({

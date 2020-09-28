@@ -1,11 +1,11 @@
-import { CacheModule as NestCacheModule } from '@nestjs/common'
+import { CacheModule as NestCacheModule, DynamicModule } from '@nestjs/common'
 import * as redisStore from 'cache-manager-ioredis'
 import { createNestJSCache } from '@island.is/cache'
 import { environment } from '../../../environments'
 
 const { redis, production } = environment
 
-let CacheModule = null
+let CacheModule: DynamicModule
 if (process.env.NODE_ENV === 'test') {
   CacheModule = NestCacheModule.register()
 } else {

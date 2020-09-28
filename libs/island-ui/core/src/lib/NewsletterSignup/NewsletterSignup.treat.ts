@@ -2,8 +2,11 @@ import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const buttonWrap = style({
-  display: 'flex',
-  justifyContent: 'flex-end',
+  flex: '1 0 auto',
+})
+
+export const inputWrap = style({
+  flex: '0 1 70%',
 })
 
 export const variants = styleMap({

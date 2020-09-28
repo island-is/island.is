@@ -18,10 +18,7 @@ interface PromiseStatus {
 
 class App {
   async run() {
-    logger.info(
-      'Starting migration of dictionaries and ES config',
-      environment.migrate,
-    )
+    logger.info('Starting migration of dictionaries and ES config', environment)
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
@@ -78,7 +75,7 @@ class App {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
     const processedMigrations: RollbackInfo = {} // to rollback changes on failure
-    const locales = environment.migrate.locales
+    const locales = environment.locales
     const requests = locales.map(
       async (locale): Promise<PromiseStatus> => {
         const oldIndexVersion = await elastic.getCurrentVersionFromIndices(

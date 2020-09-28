@@ -35,6 +35,6 @@ export const mapIconBullet = ({ fields, sys }: IIconBullet): IconBullet =>
     title: fields.title,
     body: fields.body,
     icon: mapImage(fields.icon),
-    url: fields.url,
+    url: fields.url ?? '',
     linkText: fields.linkText,
   })

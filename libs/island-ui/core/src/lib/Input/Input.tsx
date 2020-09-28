@@ -9,6 +9,7 @@ type InputBackgroundColor = 'white' | 'blue'
 interface InputComponentProps {
   name: string
   value?: string | number
+  defaultValue?: string | number
   id?: string
   className?: string
   disabled?: boolean
@@ -77,9 +78,10 @@ export const Input = forwardRef(
     const {
       name,
       label,
-      hasError = false,
-      value,
       errorMessage = '',
+      hasError = Boolean(errorMessage),
+      value,
+      defaultValue,
       id = name,
       disabled,
       required,
@@ -137,15 +139,20 @@ export const Input = forwardRef(
             )}
           </label>
           <InputComponent
-            className={cn(styles.input, {
-              [styles.textarea]: textarea,
-            })}
+            className={cn(
+              styles.input,
+              styles.inputBackground[backgroundColor],
+              {
+                [styles.textarea]: textarea,
+              },
+            )}
             id={id}
             disabled={disabled}
             name={name}
             ref={mergedRefs}
             placeholder={placeholder}
             value={value}
+            defaultValue={defaultValue}
             onFocus={(e) => {
               setHasFocus(true)
               if (onFocus) {

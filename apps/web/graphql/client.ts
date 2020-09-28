@@ -1,11 +1,16 @@
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
+import {
+  InMemoryCache,
+  NormalizedCacheObject,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
+import introspectionQueryResultData from './fragmentTypes.json'
 
+const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
@@ -37,7 +42,11 @@ function create(initialState?: any) {
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: httpLink,
-    cache: new InMemoryCache().restore(initialState || {}),
+    cache: new InMemoryCache({
+      fragmentMatcher: new IntrospectionFragmentMatcher({
+        introspectionQueryResultData,
+      }),
+    }).restore(initialState || {}),
   })
 }
 

@@ -9,13 +9,14 @@ const isLinkInternal = (href: string) => {
   return true
 }
 
-export type LinkColor = 'white' | 'blue400'
+export type LinkColor = 'white' | 'blue400' | 'blue600'
 
 interface Props extends LinkProps {
   color?: LinkColor
   className?: string
   withUnderline?: boolean
   onClick?: () => void
+  pureChildren?: boolean
 }
 
 // Next link that can handle external urls
@@ -31,6 +32,7 @@ const Link: React.FC<Props> = ({
   color,
   className,
   withUnderline,
+  pureChildren,
   ...linkProps
 }) => {
   const isInternal = isLinkInternal(href as string)
@@ -43,6 +45,10 @@ const Link: React.FC<Props> = ({
     },
   )
 
+  // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be
+  // optiona - but as things stand, as is needed if you have a dynamic href
+  const prefetchDefault = !as ? false : prefetch
+
   if (isInternal) {
     return (
       <NextLink
@@ -51,11 +57,15 @@ const Link: React.FC<Props> = ({
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}
-        prefetch={prefetch}
+        prefetch={prefetchDefault}
       >
-        <a className={classNames} {...linkProps}>
-          {children}
-        </a>
+        {pureChildren ? (
+          children
+        ) : (
+          <a className={classNames} {...linkProps}>
+            {children}
+          </a>
+        )}
       </NextLink>
     )
   } else {

@@ -1,26 +1,27 @@
 import {
-  FormType,
+  Application,
   FormValue,
-  getFormByTypeId,
+  getApplicationTemplateByTypeId,
   validateAnswers,
 } from '@island.is/application/template'
 import { BadRequestException } from '@nestjs/common'
 
-export function validateApplicationSchema(
-  typeId: FormType,
-  answers: FormValue,
-  partialValidation: boolean,
-): void {
-  const applicationForm = getFormByTypeId(typeId)
-  if (applicationForm === null) {
+export async function validateApplicationSchema(
+  application: Application,
+  newAnswers: FormValue,
+) {
+  const applicationTemplate = await getApplicationTemplateByTypeId(
+    application.typeId,
+  )
+  if (applicationTemplate === null) {
     throw new BadRequestException(
-      `No application form definition exists for type: ${typeId}`,
+      `No template exists for type: ${application.typeId}`,
     )
   }
   const schemaFormValidation = validateAnswers(
-    answers,
-    partialValidation,
-    applicationForm.schema,
+    newAnswers,
+    true,
+    applicationTemplate.dataSchema,
   )
 
   if (schemaFormValidation) {

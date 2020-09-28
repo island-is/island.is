@@ -1,3 +1,5 @@
+import { Airlines } from '@island.is/air-discount-scheme/consts'
+
 export default {
   production: false,
   environment: 'local',
@@ -10,8 +12,8 @@ export default {
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
   },
   airlineApiKeys: {
-    icelandair: 'icelandair',
-    ernir: 'ernir',
+    [Airlines.icelandair]: Airlines.icelandair,
+    [Airlines.ernir]: Airlines.ernir,
   },
   redis: {
     urls: [

@@ -9,6 +9,8 @@ export interface Document {
   category_slug: string
   category_description: string
   subgroup: string
+  containsApplicationForm: boolean
+  importance: number
   group: string
   group_slug: string
   group_description: string

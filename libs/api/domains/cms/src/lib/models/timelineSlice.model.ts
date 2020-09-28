@@ -6,9 +6,8 @@ import { TimelineEvent, mapTimelineEvent } from './timelineEvent.model'
 
 @ObjectType()
 export class TimelineSlice {
-  constructor(initializer: TimelineSlice) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -20,9 +19,12 @@ export class TimelineSlice {
   events: TimelineEvent[]
 }
 
-export const mapTimelineSlice = ({ fields, sys }: ITimeline): TimelineSlice =>
-  new TimelineSlice({
-    id: sys.id,
-    title: fields.title ?? '',
-    events: fields.events.map(mapTimelineEvent),
-  })
+export const mapTimelineSlice = ({
+  fields,
+  sys,
+}: ITimeline): TimelineSlice => ({
+  typename: 'TimelineSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  events: fields.events.map(mapTimelineEvent),
+})

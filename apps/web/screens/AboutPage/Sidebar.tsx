@@ -7,12 +7,13 @@ import {
   DividerProps,
 } from '@island.is/island-ui/core'
 import Bullet from '../../components/Bullet/Bullet'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import * as styles from './Sidebar.treat'
 
 type ColorConfig = {
   main: Colors
   secondary: Colors
+  subNavBorder: Colors
   divider: DividerProps['weight']
 }
 
@@ -21,11 +22,13 @@ const ColorConfig: { [key: string]: ColorConfig } = {
     main: 'blue400',
     secondary: 'dark400',
     divider: 'regular',
+    subNavBorder: 'blue200',
   },
   gradient: {
     main: 'white',
     secondary: 'blue100',
     divider: 'purple400',
+    subNavBorder: 'blue400',
   },
 }
 
@@ -52,7 +55,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
             top: container.offsetTop + 'px',
             left: container.offsetLeft + 'px',
             width: container.offsetWidth + 'px',
-            bottom: 0,
+            bottom: theme.spacing[12] + 'px',
           }
         }
       >

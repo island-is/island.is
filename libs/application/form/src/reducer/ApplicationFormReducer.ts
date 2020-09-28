@@ -2,7 +2,6 @@ import {
   FormItemTypes,
   FormLeaf,
   FormValue,
-  getFormByTypeId,
   getFormLeaves,
   getSectionsInForm,
   mergeAnswers,
@@ -14,22 +13,22 @@ import {
   findCurrentScreen,
   moveToScreen,
 } from './reducerUtils'
+import { FormModes } from '../types'
 
 export function initializeReducer(
   state: ApplicationUIState,
 ): ApplicationUIState {
-  const { application } = state
-  const { typeId, answers } = application
-  const form = state.form ? state.form : getFormByTypeId(typeId)
+  const { application, form } = state
+  const { answers } = application
   const formLeaves: FormLeaf[] = getFormLeaves(form) // todo add conditions here to set isVisible: true/false
   const sections = getSectionsInForm(form)
   const screens = convertLeavesToScreens(formLeaves, answers)
-  const currentScreen = findCurrentScreen(screens, answers)
+  const currentScreen =
+    form.mode === FormModes.REVIEW ? 0 : findCurrentScreen(screens, answers)
 
   return moveToScreen(
     {
       ...state,
-      form,
       formLeaves,
       screens,
       sections,
@@ -77,6 +76,7 @@ const answerAndGoNextScreen = (
     )
   }
   if (
+    currentScreen.repeaterIndex !== undefined &&
     currentScreen.repeaterIndex >= 0 &&
     nextScreen.repeaterIndex === undefined
   ) {
@@ -97,6 +97,7 @@ export const ApplicationReducer = (
       return answerAndGoNextScreen(state, action.payload)
     case ActionTypes.PREV_SCREEN:
       if (
+        prevScreen.repeaterIndex !== undefined &&
         prevScreen.repeaterIndex >= 0 &&
         currentScreen.repeaterIndex === undefined
       ) {
@@ -113,7 +114,7 @@ export const ApplicationReducer = (
         state.screens,
         state.application.answers,
       )
-      if (!newFormLeaves) {
+      if (!newFormLeaves.length || !newScreens.length) {
         // the current screen is not a repeater
         return state
       }

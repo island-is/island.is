@@ -1,31 +1,47 @@
+import { MessageDescriptor } from 'react-intl'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   CustomField,
   CustomFieldComponents,
   DateField,
+  DividerField,
   FieldComponents,
   FieldTypes,
+  FieldWidth,
+  FileUploadField,
   IntroductionField,
   Option,
   RadioField,
+  ReviewField,
   SelectField,
   TextField,
-  FileUploadField,
 } from '../types/Fields'
+import { CallToAction } from '../types/StateMachine'
 
 export function buildCheckboxField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   options: Option[]
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): CheckboxField {
-  const { condition, id, name, options, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    options,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
-    isQuestion: true,
-    required: required,
+    required,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -38,18 +54,30 @@ export function buildCheckboxField(data: {
 export function buildDateField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   maxDate?: Date
   minDate?: Date
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): DateField {
-  const { condition, id, name, maxDate, minDate, required = false } = data
-  return {
-    children: undefined,
-    isQuestion: true,
+  const {
     condition,
     id,
-    required: required,
+    name,
+    maxDate,
+    minDate,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
+  return {
+    children: undefined,
+    condition,
+    id,
+    required,
+    disabled,
+    width,
     name,
     maxDate,
     minDate,
@@ -61,8 +89,8 @@ export function buildDateField(data: {
 export function buildIntroductionField(data: {
   condition?: Condition
   id: string
-  name: string
-  introduction: string
+  name: MessageDescriptor | string
+  introduction: MessageDescriptor | string
 }): IntroductionField {
   const { condition, id, name, introduction } = data
   return {
@@ -79,15 +107,26 @@ export function buildIntroductionField(data: {
 export function buildRadioField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   options: Option[]
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): RadioField {
-  const { condition, id, name, options, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    options,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
-    isQuestion: true,
     required,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -100,17 +139,29 @@ export function buildRadioField(data: {
 export function buildSelectField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   placeholder?: string
   options: Option[]
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): SelectField {
-  const { condition, id, name, options, placeholder, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    options,
+    placeholder,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
-    isQuestion: true,
     placeholder,
     required,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -123,14 +174,24 @@ export function buildSelectField(data: {
 export function buildTextField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): TextField {
-  const { condition, id, name, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
     required,
-    isQuestion: true,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -143,7 +204,7 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
-    name: string
+    name: MessageDescriptor | string
     required?: boolean
     component: CustomFieldComponents
   },
@@ -153,7 +214,6 @@ export function buildCustomField(
   return {
     children: undefined,
     required,
-    isQuestion: true,
     condition,
     id,
     name,
@@ -166,11 +226,11 @@ export function buildCustomField(
 export function buildFileUploadField(data: {
   condition?: Condition
   id: string
-  name: string
-  introduction: string
+  name: MessageDescriptor | string
+  introduction: MessageDescriptor | string
   uploadHeader?: string
   uploadDescription?: string
-  upploadButtonLabel?: string
+  uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
   required?: boolean
@@ -182,7 +242,7 @@ export function buildFileUploadField(data: {
     introduction,
     uploadHeader,
     uploadDescription,
-    upploadButtonLabel,
+    uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
     required = false,
@@ -190,17 +250,43 @@ export function buildFileUploadField(data: {
   return {
     children: undefined,
     required,
-    isQuestion: true,
     condition,
     id,
     name,
     introduction,
     uploadHeader,
     uploadDescription,
-    upploadButtonLabel,
+    uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
+  }
+}
+
+export function buildDividerField(data: { name: string }): DividerField {
+  const { name } = data
+  return {
+    children: undefined,
+    type: FieldTypes.DIVIDER,
+    component: FieldComponents.DIVIDER,
+    id: name,
+    name,
+  }
+}
+
+export function buildReviewField(data: {
+  id: string
+  name: string
+  actions: CallToAction[]
+}): ReviewField {
+  const { id, name, actions } = data
+  return {
+    children: undefined,
+    id,
+    name,
+    actions,
+    type: FieldTypes.REVIEW,
+    component: FieldComponents.REVIEW,
   }
 }

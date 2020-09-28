@@ -8,21 +8,22 @@ import {
   MultiField,
   ExternalDataProvider,
   Repeater,
-  Schema,
   Section,
   SectionChildren,
   SubSection,
   DataProviderItem,
+  FormMode,
 } from '../types/Form'
-import { FormType } from '../forms'
+import { ApplicationTypes } from '../types/ApplicationTypes'
 import { DataProviderTypes } from '../types/DataProvider'
+import { MessageDescriptor } from 'react-intl'
 
 export function buildForm(data: {
-  id: FormType
+  id: ApplicationTypes
   ownerId: string
   name: string
+  mode?: FormMode
   children: FormChildren[]
-  schema: Schema
   icon?: string
 }): Form {
   return { ...data, type: FormItemTypes.FORM }
@@ -31,16 +32,16 @@ export function buildForm(data: {
 export function buildMultiField(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: Field[]
 }): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }
 }
 
 export function buildRepeater(data: {
-  id?: string
+  id: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: FormLeaf[]
   labelKey: string
 }): Repeater {
@@ -50,7 +51,7 @@ export function buildRepeater(data: {
 export function buildSection(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: SectionChildren[]
 }): Section {
   return { ...data, type: FormItemTypes.SECTION }
@@ -59,14 +60,14 @@ export function buildSection(data: {
 export function buildSubSection(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: FormLeaf[]
 }): SubSection {
   return { ...data, type: FormItemTypes.SUB_SECTION }
 }
 
 export function buildExternalDataProvider(data: {
-  name: string
+  name: MessageDescriptor | string
   id: string
   dataProviders: DataProviderItem[]
 }): ExternalDataProvider {
@@ -81,8 +82,8 @@ export function buildExternalDataProvider(data: {
 export function buildDataProviderItem(data: {
   id: string
   type: DataProviderTypes
-  title: string
-  subTitle?: string
+  title: MessageDescriptor | string
+  subTitle?: MessageDescriptor | string
   source?: string
 }): DataProviderItem {
   return data

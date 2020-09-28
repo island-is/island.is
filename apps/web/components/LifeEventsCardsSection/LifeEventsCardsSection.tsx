@@ -8,71 +8,78 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { LifeEventCard } from './components/LifeEventCard'
-import { GetLifeEventsQuery } from '../../graphql/schema'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { GetLifeEventsQuery } from '@island.is/web/graphql/schema'
+import { Sleeve } from '@island.is/island-ui/core'
+import { Card } from '@island.is/web/components'
 
 interface LifeEventsSectionProps {
   title?: string
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
+  showSleeve?: boolean
 }
 
-const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
+export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
   lifeEvents = [],
+  showSleeve = false,
 }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
-  return (
+  const renderLifeEventCard = (lifeEvent) => (
+    <Card
+      key={lifeEvent.title}
+      title={lifeEvent.title}
+      description={lifeEvent.intro}
+      href={makePath('lifeEvent', '[slug]')}
+      as={makePath('lifeEvent', lifeEvent.slug)}
+      image={lifeEvent.thumbnail ? lifeEvent.thumbnail : lifeEvent.image}
+    />
+  )
+
+  const renderDesktopView = (lifeEvents) => (
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
+          <Typography variant="h3" as="h2" paddingBottom={4}>
             {title}
           </Typography>
         </GridColumn>
       </GridRow>
-      <Hidden below="md">
-        <GridRow>
-          {lifeEvents.map((lifeEvent) => (
+      <GridRow>
+        {lifeEvents
+          .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
+          .map((lifeEvent) => (
             <GridColumn
-              span={['12/12', '12/12', '6/12', '6/12', '4/12']}
+              span={['12/12', '6/12', '6/12', '6/12', '4/12']}
               paddingBottom={3}
               key={lifeEvent.title}
             >
-              <LifeEventCard
-                title={lifeEvent.title}
-                intro={lifeEvent.intro}
-                url={makePath('lifeEvent', lifeEvent.slug)}
-                image={
-                  lifeEvent.thumbnail
-                    ? lifeEvent.thumbnail.url
-                    : lifeEvent.image.url
-                }
-              />
+              {renderLifeEventCard(lifeEvent)}
             </GridColumn>
           ))}
-        </GridRow>
-      </Hidden>
-      <Hidden above="md">
-        <Swiper>
-          {lifeEvents.map((lifeEvent) => (
-            <LifeEventCard
-              key={lifeEvent.title}
-              title={lifeEvent.title}
-              intro={lifeEvent.intro}
-              url={lifeEvent.slug}
-              image={
-                lifeEvent.thumbnail
-                  ? lifeEvent.thumbnail.url
-                  : lifeEvent.image.url
-              }
-            />
-          ))}
-        </Swiper>
-      </Hidden>
+      </GridRow>
     </GridContainer>
+  )
+
+  return (
+    <>
+      <Hidden below="lg">
+        {showSleeve ? (
+          <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
+        ) : (
+          renderDesktopView(lifeEvents)
+        )}
+      </Hidden>
+      <GridContainer>
+        <Hidden above="md">
+          <Swiper>
+            {lifeEvents.map((lifeEvent) => renderLifeEventCard(lifeEvent))}
+          </Swiper>
+        </Hidden>
+      </GridContainer>
+    </>
   )
 }
 

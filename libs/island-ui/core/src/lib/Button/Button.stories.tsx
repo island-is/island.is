@@ -69,7 +69,19 @@ const makeMenuButton = (text = '', props: Partial<ButtonProps>) => {
 }
 
 export const Normal = () => makeButton('normal', 'Normal button')
-export const Ghost = () => makeButton('ghost', 'Ghost button')
+export const Ghost = () => {
+  const ghostButtons = [
+    () => makeButton('ghost', 'Ghost button'),
+    () => makeButton('redGhost', 'Red ghost button'),
+  ]
+  return (
+    <Inline space={2}>
+      {ghostButtons.map((Cmp, index) => (
+        <Cmp key={index} />
+      ))}
+    </Inline>
+  )
+}
 export const Text = () => makeButton('text', 'Text button')
 export const Menu = () => makeButton('menu', 'Text button')
 export const MenuVariations = () => {

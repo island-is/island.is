@@ -138,9 +138,9 @@ export interface InputFileUploadProps {
 export const InputFileUpload = ({
   name,
   id,
-  header = 'Dragðu skjöl hingað til að hlaða upp',
-  description = 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
-  buttonLabel = 'Velja skjöl til að hlaða upp',
+  header,
+  description,
+  buttonLabel,
   disabled = false,
   accept,
   multiple = true,

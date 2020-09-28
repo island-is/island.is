@@ -154,15 +154,27 @@ async function main() {
   )
 
   // 6. Re-generate the api codegen
-  await execShellCommand(`yarn nx run api:codegen`)
+  try {
+    await execShellCommand(`yarn nx run api:codegen`)
+  } catch (e) {
+    console.log(`'yarn nx run api:codegen' has an error ${e.message}`)
+  }
 
   // 7. Re-generate the web codegen
-  await execShellCommand(`yarn nx run web:codegen`)
+  try {
+    await execShellCommand(`yarn nx run web:codegen`)
+  } catch (e) {
+    console.log(`'yarn nx run web:codegen' has an error ${e.message}`)
+  }
 
   // 8. We run prettier on all new files so it looks good
-  await execShellCommand(
-    'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
-  )
+  try {
+    await execShellCommand(
+      'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
+    )
+  } catch (e) {
+    console.log(`prettier has an error ${e}`)
+  }
 
   // We don't want the main contentType to appear in the logs for the linkContentType
   const linkTypes = generatedFiles.filter((type) => type !== contentType.sys.id)

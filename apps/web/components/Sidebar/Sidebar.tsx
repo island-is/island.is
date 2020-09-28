@@ -174,7 +174,7 @@ export const Sidebar: FC<SidebarProps> = ({
         </span>
       )}
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         {headingLinks && links.length ? (
@@ -211,7 +211,7 @@ export const Sidebar: FC<SidebarProps> = ({
               <span
                 className={cn(styles.bullet, {
                   [styles.bulletRight]: bullet === 'right',
-                  [styles.hidden]: bullet == 'none',
+                  [styles.hidden]: bullet === 'none',
                 })}
               >
                 <Icon type="bullet" color="red400" />

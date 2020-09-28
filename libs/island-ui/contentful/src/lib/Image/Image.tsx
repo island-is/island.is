@@ -65,7 +65,7 @@ export const Image: FC<AnyImageType> = (image) => {
         src={thumbnail}
         alt=""
         className={cn(styles.image, styles.thumbnail, {
-          [styles.show]: thumbLoaded && !imageLoaded,
+          [styles.hide]: imageLoaded,
         })}
       />
       <img

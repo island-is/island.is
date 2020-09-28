@@ -1,7 +1,19 @@
 import { Sequelize } from 'sequelize'
-import { environment } from '../environments'
+import * as databaseConfig from '../../sequelize.config.js'
 
-const { databaseUri } = environment
+let config
+switch (process.env.NODE_ENV) {
+  case 'test':
+    config = databaseConfig.test
+    break
+  case 'production':
+    config = databaseConfig.production
+    break
+  default:
+    config = databaseConfig.development
+}
+
+const databaseUri = `postgres://${config.username}:${config.password}@${config.host}:5432/${config.database}`
 
 export default new Sequelize(databaseUri, {
   define: {

@@ -2,6 +2,7 @@ import {
   Application,
   Form,
   FormLeaf,
+  Schema,
   Section,
 } from '@island.is/application/template'
 import { FormScreen } from '../types'
@@ -11,8 +12,10 @@ export interface ApplicationUIState {
   activeSection: number
   activeSubSection: number
   activeScreen: number
+  dataSchema: Schema
   form: Form
   formLeaves: FormLeaf[]
+  nationalRegistryId: string
   progress: number
   screens: FormScreen[]
   sections: Section[]

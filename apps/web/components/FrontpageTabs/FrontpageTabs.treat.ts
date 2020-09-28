@@ -3,6 +3,21 @@ import { ThemeOrAny } from 'treat/theme'
 import { ThemedStyle, Style } from 'treat/lib/types/types'
 import { theme } from '@island.is/island-ui/theme'
 
+export const animationContainer = style({
+  position: 'absolute',
+  display: 'inline-block',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  opacity: 1,
+  transition: `opacity 400ms ease`,
+})
+
+export const animationContainerHidden = style({
+  opacity: 0,
+})
+
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
@@ -15,13 +30,6 @@ export const link = style({
   ':hover': {
     textDecoration: 'none',
   },
-})
-
-export const removeMobileSpacing = style({
-  ...whenMobile({
-    paddingLeft: theme.grid.gutter.mobile / 2,
-    paddingRight: theme.grid.gutter.mobile / 2,
-  }),
 })
 
 export const tabWrapper = style({
@@ -104,11 +112,10 @@ export const dots = style({
 
 export const imageContainer = style({
   position: 'relative',
-  display: 'flex',
+  display: 'inline-block',
   overflow: 'hidden',
+  height: '100%',
   width: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
 })
 
 export const arrowButton = style({
@@ -137,7 +144,11 @@ export const arrowButtonDisabled = style({
 })
 
 export const searchContentContainer = style({
+  borderRadius: theme.border.radius.large,
   ...whenMobile({
     borderRadius: 0,
+    marginLeft: -24,
+    marginRight: -24,
+    width: `calc(100% + ${24 * 2}px)`,
   }),
 })

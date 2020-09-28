@@ -13,18 +13,19 @@ import { getValueViaPath } from '../../../utils'
 import { useMutation } from '@apollo/client'
 
 import { uploadFileToS3 } from './utils'
-import { ActionTypes } from './types'
+import { Action, ActionTypes } from './types'
 
 import {
   CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
+import { useLocale } from '@island.is/localization'
 
 type UploadFileAnswer = {
   name: string
-  key: string
-  url: string
+  key?: string
+  url?: string
 }
 
 // Transform an uploaded file to an form answer.
@@ -37,7 +38,7 @@ const answerToUploadFile = (a: UploadFile): UploadFile => {
   return { name: a.name, key: a.key, url: a.url, status: 'done' }
 }
 
-function reducer(state, action) {
+function reducer(state: UploadFile[], action: Action) {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)
@@ -72,10 +73,17 @@ const FileUploadFormField: FC<Props> = ({
   field,
   formValue,
 }) => {
-  const { id, introduction } = field
+  const {
+    id,
+    introduction,
+    uploadDescription = 'Documents accepted with extension: .pdf, .docx, .rtf',
+    uploadHeader = 'Drag documents here to upload',
+    uploadButtonLabel = 'Select documents to upload',
+  } = field
   const { clearErrors, setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const [uploadError, setUploadError] = useState<string | undefined>(undefined)
-  const val = getValueViaPath(formValue, id, [])
+  const val = getValueViaPath(formValue, id, []) as UploadFile[]
 
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
 
@@ -216,7 +224,7 @@ const FileUploadFormField: FC<Props> = ({
 
   return (
     <Box>
-      <Typography variant="p">{introduction}</Typography>
+      <Typography variant="p">{formatMessage(introduction)}</Typography>
       <Controller
         name={`${id}`}
         defaultValue={initialUploadFiles}
@@ -225,9 +233,9 @@ const FileUploadFormField: FC<Props> = ({
             <Box paddingTop={2}>
               <InputFileUpload
                 fileList={state}
-                header="Drag documents here to upload"
-                description="Documents accepted with extension: .pdf, .docx, .rtf"
-                buttonLabel="Select documents to upload"
+                header={uploadHeader}
+                description={uploadDescription}
+                buttonLabel={uploadButtonLabel}
                 onChange={onFileChange}
                 onRemove={onRemoveFile}
                 errorMessage={error || uploadError}

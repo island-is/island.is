@@ -133,6 +133,42 @@ export const borderWidth = styleMap(
   'borderWidth',
 )
 
+export const borderRightWidth = styleMap(
+  mapToStyleProperty(theme.border.width, 'borderRightWidth'),
+  'borderRightWidth',
+)
+
+export const borderTopWidth = styleMap(
+  mapToStyleProperty(theme.border.width, 'borderTopWidth'),
+  'borderTopWidth',
+)
+
+export const borderLeftWidth = styleMap(
+  mapToStyleProperty(theme.border.width, 'borderLeftWidth'),
+  'borderLeftWidth',
+)
+
+export const borderBottomWidth = styleMap(
+  mapToStyleProperty(theme.border.width, 'borderBottomWidth'),
+  'borderBottomWidth',
+)
+
+export const borderXWidth = styleMap(
+  {
+    ...mapToStyleProperty(theme.border.width, 'borderLeftWidth'),
+    ...mapToStyleProperty(theme.border.width, 'borderRightWidth'),
+  },
+  'borderXWidth',
+)
+
+export const borderYWidth = styleMap(
+  {
+    ...mapToStyleProperty(theme.border.width, 'borderTopWidth'),
+    ...mapToStyleProperty(theme.border.width, 'borderBottomWidth'),
+  },
+  'borderYWidth',
+)
+
 export const borderStyle = styleMap(
   mapToStyleProperty(theme.border.style, 'borderStyle'),
   'borderStyle',
@@ -456,6 +492,7 @@ export const minWidth = styleMap(
 
 const relativePositionRules = {
   0: 0,
+  4: '32px',
   20: '20px',
 }
 // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers,
@@ -485,4 +522,5 @@ export const outline = styleMap({
 
 export const opacity = styleMap({
   0: { opacity: 0 },
+  1: { opacity: 1 },
 })

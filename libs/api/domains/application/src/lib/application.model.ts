@@ -1,10 +1,6 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import { ApplicationStateEnum, ApplicationTypeIdEnum } from '../../gen/fetch'
-
-registerEnumType(ApplicationStateEnum, {
-  name: 'ApplicationStateEnum',
-})
+import { ApplicationTypeIdEnum } from '../../gen/fetch'
 
 registerEnumType(ApplicationTypeIdEnum, {
   name: 'ApplicationTypeIdEnum',
@@ -30,8 +26,8 @@ export class Application {
   @Field((type) => String, { nullable: true })
   externalId?: string
 
-  @Field((type) => ApplicationStateEnum)
-  state: ApplicationStateEnum
+  @Field((type) => String)
+  state: string
 
   @Field((type) => graphqlTypeJson, { nullable: true })
   attachments?: object

@@ -39,12 +39,6 @@ export interface UpdateApplicationDto {
     externalId?: string;
     /**
      * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
-    state?: UpdateApplicationDtoStateEnum;
-    /**
-     * 
      * @type {object}
      * @memberof UpdateApplicationDto
      */
@@ -70,7 +64,6 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
         'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
-        'state': !exists(json, 'state') ? undefined : json['state'],
         'answers': !exists(json, 'answers') ? undefined : json['answers'],
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
     };
@@ -88,25 +81,9 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
         'applicant': value.applicant,
         'assignee': value.assignee,
         'externalId': value.externalId,
-        'state': value.state,
         'answers': value.answers,
         'attachments': value.attachments,
     };
-}
-
-/**
-* @export
-* @enum {string}
-*/
-export enum UpdateApplicationDtoStateEnum {
-    DRAFT = 'DRAFT',
-    BEINGPROCESSED = 'BEING_PROCESSED',
-    NEEDSINFORMATION = 'NEEDS_INFORMATION',
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    MANUALAPPROVED = 'MANUAL_APPROVED',
-    REJECTED = 'REJECTED',
-    UNKNOWN = 'UNKNOWN'
 }
 
 

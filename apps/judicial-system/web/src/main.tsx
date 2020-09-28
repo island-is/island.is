@@ -1,15 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+
+import App from './shared-components/App/App'
 // import * as Sentry from '@sentry/react'
 // import { Integrations } from '@sentry/tracing'
-
-import { Header } from './shared-components/Header'
-import { Login } from './routes/Login'
-import { CreateDetentionRequest } from './routes/CreateDetentionRequest'
-import { DetentionRequests } from './routes/DetentionRequests'
-
-import * as styles from './main.treat'
 
 // Sentry.init({
 //   dsn:
@@ -18,22 +12,4 @@ import * as styles from './main.treat'
 //   tracesSampleRate: 1.0,
 // })
 
-ReactDOM.render(
-  <BrowserRouter>
-    <Header />
-    <main className={styles.mainConainer}>
-      <Switch>
-        <Route path="/stofna-krofu">
-          <CreateDetentionRequest />
-        </Route>
-        <Route path="/gaesluvardhaldskrofur">
-          <DetentionRequests />
-        </Route>
-        <Route path="/">
-          <Login />
-        </Route>
-      </Switch>
-    </main>
-  </BrowserRouter>,
-  document.getElementById('root'),
-)
+ReactDOM.render(<App />, document.getElementById('root'))

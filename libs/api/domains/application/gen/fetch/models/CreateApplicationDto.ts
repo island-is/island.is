@@ -48,7 +48,7 @@ export interface CreateApplicationDto {
      * @type {string}
      * @memberof CreateApplicationDto
      */
-    state: CreateApplicationDtoStateEnum;
+    state: string;
     /**
      * 
      * @type {object}
@@ -108,24 +108,8 @@ export function CreateApplicationDtoToJSON(value?: CreateApplicationDto | null):
 */
 export enum CreateApplicationDtoTypeIdEnum {
     ExampleForm = 'ExampleForm',
-    ExampleForm2 = 'ExampleForm2',
-    ExampleForm3 = 'ExampleForm3',
-    FamilyAndPets = 'FamilyAndPets',
+    DrivingLessons = 'DrivingLessons',
     ParentalLeave = 'ParentalLeave'
-}
-/**
-* @export
-* @enum {string}
-*/
-export enum CreateApplicationDtoStateEnum {
-    DRAFT = 'DRAFT',
-    BEINGPROCESSED = 'BEING_PROCESSED',
-    NEEDSINFORMATION = 'NEEDS_INFORMATION',
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    MANUALAPPROVED = 'MANUAL_APPROVED',
-    REJECTED = 'REJECTED',
-    UNKNOWN = 'UNKNOWN'
 }
 
 

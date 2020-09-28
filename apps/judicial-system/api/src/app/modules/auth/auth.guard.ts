@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+
 import { AuthUser } from './auth.types'
 
 @Injectable()

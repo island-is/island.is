@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import * as kennitala from 'kennitala'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto, FlightLegDto, GetFlightsBody } from './dto'
+import { CreateFlightBody, CreateFlightLegBody, GetFlightLegsBody } from './dto'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
@@ -20,7 +21,7 @@ export const ADS_POSTAL_CODES = {
   Vestmannaeyjar: 900,
 }
 const DEFAULT_AVAILABLE_LEGS = 6
-const AVAILABLE_FLIGHT_LEGS = {
+const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,
 }
@@ -57,10 +58,14 @@ export class FlightService {
     return false
   }
 
-  private getAirline(
-    flightLeg: FlightLegDto,
+  private getCooperatingAirline(
+    flightLeg: CreateFlightLegBody,
     airline: ValueOf<typeof Airlines>,
-  ): ValueOf<typeof Airlines> {
+  ): ValueOf<typeof Airlines> | null {
+    if (flightLeg.cooperation) {
+      return flightLeg.cooperation
+    }
+    // TODO: remove when icelandair has fixed their POST parameters
     if (airline === Airlines.icelandair) {
       if (
         NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||
@@ -70,7 +75,7 @@ export class FlightService {
       }
     }
 
-    return airline
+    return null
   }
 
   async countFlightLegsByNationalId(
@@ -109,31 +114,48 @@ export class FlightService {
     })
   }
 
-  findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
-    return this.flightModel.findAll({
+  findAllLegsByFilter(body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
+    return this.flightLegModel.findAll({
       where: {
-        ...(body.period
-          ? {
-              bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
-            }
+        ...(body.airline ? { airline: body.airline } : {}),
+        ...(body.cooperation ? { cooperation: body.cooperation } : {}),
+        ...(body.state && body.state.length > 0
+          ? { financialState: body.state }
           : {}),
-        ...(body.age
-          ? {
-              'userInfo.age': { '&gte': body.age.from, '&lte': body.age.to },
-            }
-          : {}),
-        ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
-        ...(body.postalCode ? { 'userInfo.postalCode': body.postalCode } : {}),
+        ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
+        ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
       },
       include: [
         {
-          model: this.flightLegModel,
-          where: {
-            ...(body.airline ? { airline: body.airline } : {}),
-            ...(body.state ? { financialState: body.state } : {}),
-            ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
-            ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
-          },
+          model: this.flightModel,
+          where: Sequelize.and(
+            Sequelize.where(
+              Sequelize.fn('date', Sequelize.col('booking_date')),
+              '>=',
+              body.period.from,
+            ),
+            Sequelize.where(
+              Sequelize.fn('date', Sequelize.col('booking_date')),
+              '<=',
+              body.period.to,
+            ),
+            Sequelize.where(
+              Sequelize.literal("(user_info->>'age')::numeric"),
+              '>=',
+              body.age.from,
+            ),
+            Sequelize.where(
+              Sequelize.literal("(user_info->>'age')::numeric"),
+              '<=',
+              body.age.to,
+            ),
+            {
+              ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+              ...(body.postalCode
+                ? { 'userInfo.postalCode': body.postalCode }
+                : {}),
+            },
+          ),
         },
       ],
     })
@@ -152,9 +174,9 @@ export class FlightService {
   }
 
   async create(
-    flight: FlightDto,
+    flight: CreateFlightBody,
     user: NationalRegistryUser,
-    airline: string,
+    airline: ValueOf<typeof Airlines>,
   ): Promise<Flight> {
     const nationalId = user.nationalId
     return this.flightModel.create(
@@ -162,7 +184,8 @@ export class FlightService {
         ...flight,
         flightLegs: flight.flightLegs.map((flightLeg) => ({
           ...flightLeg,
-          airline: this.getAirline(flightLeg, airline),
+          airline,
+          cooperation: this.getCooperatingAirline(flightLeg, airline),
         })),
         nationalId,
         userInfo: {
@@ -175,7 +198,10 @@ export class FlightService {
     )
   }
 
-  async findOne(flightId: string, airline: string): Promise<Flight> {
+  async findOne(
+    flightId: string,
+    airline: ValueOf<typeof Airlines>,
+  ): Promise<Flight | null> {
     return this.flightModel.findOne({
       where: {
         id: flightId,
@@ -185,10 +211,7 @@ export class FlightService {
           model: this.flightLegModel,
           where: {
             financialState: availableFinancialStates,
-            airline:
-              airline === Airlines.icelandair
-                ? [Airlines.icelandair, Airlines.norlandair]
-                : airline,
+            airline,
           },
         },
       ],

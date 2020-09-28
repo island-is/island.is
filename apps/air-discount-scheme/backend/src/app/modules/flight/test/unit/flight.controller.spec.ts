@@ -3,7 +3,7 @@ import { getModelToken } from '@nestjs/sequelize'
 
 import { PublicFlightController } from '../../flight.controller'
 import { FlightService } from '../../flight.service'
-import { FlightDto } from '../../dto/flight.dto'
+import { CreateFlightBody } from '../../dto'
 import { Flight } from '../../flight.model'
 import { DiscountService, Discount } from '../../../discount'
 import {
@@ -21,8 +21,6 @@ describe('PublicFlightController', () => {
   const nationalId = '1234567890'
   const flight = {
     id: '70de7be1-6b6d-4ec3-8063-be55e241d488',
-    nationalId,
-    airline,
     bookingDate: new Date('2020-10-05T14:48:00.000Z'),
     flightLegs: [
       {
@@ -60,6 +58,7 @@ describe('PublicFlightController', () => {
           useClass: jest.fn(() => ({
             getDiscountByDiscountCode: () => ({}),
             useDiscount: () => ({}),
+            reactivateDiscount: () => ({}),
           })),
         },
         {
@@ -84,7 +83,7 @@ describe('PublicFlightController', () => {
   describe('create', () => {
     const discountCode = 'ABCDEFG'
     const discount = new Discount(discountCode, nationalId, 0)
-    const flightDto: FlightDto = {
+    const flightDto: CreateFlightBody = {
       bookingDate: new Date('2020-10-05T14:48:00.000Z'),
       flightLegs: [
         {
@@ -93,6 +92,7 @@ describe('PublicFlightController', () => {
           originalPrice: 100000,
           discountPrice: 60000,
           date: new Date('2021-10-05T14:48:00.000Z'),
+          cooperation: '',
         },
       ],
     }
@@ -114,6 +114,7 @@ describe('PublicFlightController', () => {
     }
 
     it('should create flight', async () => {
+      const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
@@ -134,22 +135,29 @@ describe('PublicFlightController', () => {
       const result = await publicFlightController.create(
         { discountCode },
         flightDto,
-        { airline },
+        request,
       )
 
-      expect(useDiscountSpy).toHaveBeenCalledWith(discountCode, nationalId)
+      expect(useDiscountSpy).toHaveBeenCalledWith(
+        discountCode,
+        nationalId,
+        flight.id,
+      )
       expect(result).toEqual(flight)
     })
 
     it('should fail if discountCode is invalid', async () => {
+      const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
         .mockImplementation(() => Promise.resolve(null))
 
       try {
-        await publicFlightController.create({ discountCode }, flightDto, {
-          airline,
-        })
+        await publicFlightController.create(
+          { discountCode },
+          flightDto,
+          request,
+        )
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({
@@ -161,6 +169,7 @@ describe('PublicFlightController', () => {
     })
 
     it('should fail if user is not found', async () => {
+      const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
@@ -169,20 +178,23 @@ describe('PublicFlightController', () => {
         .mockImplementation(() => Promise.resolve(null))
 
       try {
-        await publicFlightController.create({ discountCode }, flightDto, {
-          airline,
-        })
+        await publicFlightController.create(
+          { discountCode },
+          flightDto,
+          request,
+        )
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
-          message: `User<${nationalId}> not found`,
+          message: `User not found`,
         })
       }
     })
 
     it('should fail if user postalcode does not meet conditions', async () => {
+      const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
@@ -194,9 +206,11 @@ describe('PublicFlightController', () => {
         .mockImplementation(() => false)
 
       try {
-        await publicFlightController.create({ discountCode }, flightDto, {
-          airline,
-        })
+        await publicFlightController.create(
+          { discountCode },
+          flightDto,
+          request,
+        )
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({
@@ -208,6 +222,7 @@ describe('PublicFlightController', () => {
     })
 
     it('should fail if user does not have flight quota', async () => {
+      const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
@@ -222,9 +237,11 @@ describe('PublicFlightController', () => {
         .mockImplementation(() => Promise.resolve({ ...flightLegs, unused: 0 }))
 
       try {
-        await publicFlightController.create({ discountCode }, flightDto, {
-          airline,
-        })
+        await publicFlightController.create(
+          { discountCode },
+          flightDto,
+          request,
+        )
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({
@@ -238,26 +255,30 @@ describe('PublicFlightController', () => {
 
   describe('delete', () => {
     it('should delete flight', async () => {
+      const request: any = { airline }
       jest
         .spyOn(flightService as any, 'findOne')
         .mockImplementation(() => Promise.resolve(flight))
       const deleteSpy = jest.spyOn(flightService, 'delete')
+      const reactivateDiscountSpy = jest.spyOn(
+        discountService,
+        'reactivateDiscount',
+      )
 
-      await publicFlightController.delete({ flightId: flight.id }, { airline })
+      await publicFlightController.delete({ flightId: flight.id }, request)
 
+      expect(reactivateDiscountSpy).toHaveBeenCalledWith(flight.id)
       expect(deleteSpy).toHaveBeenCalledWith(flight)
     })
 
     it('should fail if flight is not found', async () => {
+      const request: any = { airline }
       jest
         .spyOn(flightService, 'findOne')
         .mockImplementation(() => Promise.resolve(null))
 
       try {
-        await publicFlightController.delete(
-          { flightId: flight.id },
-          { airline },
-        )
+        await publicFlightController.delete({ flightId: flight.id }, request)
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({
@@ -271,6 +292,7 @@ describe('PublicFlightController', () => {
 
   describe('deleteFlightLeg', () => {
     it('should delete flight', async () => {
+      const request: any = { airline }
       jest
         .spyOn(flightService as any, 'findOne')
         .mockImplementation(() => Promise.resolve(flight))
@@ -278,13 +300,14 @@ describe('PublicFlightController', () => {
 
       await publicFlightController.deleteFlightLeg(
         { flightId: flight.id, flightLegId: flight.flightLegs[0].id },
-        { airline },
+        request,
       )
 
       expect(deleteFlightLegSpy).toHaveBeenCalledWith(flight.flightLegs[0])
     })
 
     it('should fail if flight is not found', async () => {
+      const request: any = { airline }
       jest
         .spyOn(flightService, 'findOne')
         .mockImplementation(() => Promise.resolve(null))
@@ -292,7 +315,7 @@ describe('PublicFlightController', () => {
       try {
         await publicFlightController.deleteFlightLeg(
           { flightId: flight.id, flightLegId: flight.flightLegs[0].id },
-          { airline },
+          request,
         )
         expect('This should not happen').toEqual('')
       } catch (e) {
@@ -305,6 +328,7 @@ describe('PublicFlightController', () => {
     })
 
     it('should fail if flightLeg is not found', async () => {
+      const request: any = { airline }
       jest
         .spyOn(flightService, 'findOne')
         .mockImplementation(() => Promise.resolve(null))
@@ -315,7 +339,7 @@ describe('PublicFlightController', () => {
             flightId: flight.id,
             flightLegId: '585b38d3-1695-40d9-9f09-305e3b6c96f7',
           },
-          { airline },
+          request,
         )
         expect('This should not happen').toEqual('')
       } catch (e) {

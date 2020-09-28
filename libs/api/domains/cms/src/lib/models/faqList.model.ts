@@ -9,9 +9,8 @@ import {
 
 @ObjectType()
 export class FaqList {
-  constructor(initializer: FaqList) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -23,9 +22,9 @@ export class FaqList {
   questions: QuestionAndAnswer[]
 }
 
-export const mapFaqList = ({ fields, sys }: IFaqList): FaqList =>
-  new FaqList({
-    id: sys.id,
-    title: fields.title,
-    questions: (fields.questions ?? []).map(mapQuestionAndAnswer),
-  })
+export const mapFaqList = ({ fields, sys }: IFaqList): FaqList => ({
+  typename: 'FaqList',
+  id: sys.id,
+  title: fields.title,
+  questions: (fields.questions ?? []).map(mapQuestionAndAnswer),
+})

@@ -81,12 +81,17 @@ const ColumnRange = [
   '2/2',
   '1/2',
   '1/1',
-  '0',
 ] as const
-export type GridColumns = typeof ColumnRange[number]
+const orderRange = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const
+export type Order = typeof orderRange[number]
+export type GridColumns = typeof ColumnRange[number] | '0'
 type Columns = Record<GridColumns, string>
+type Orders = Record<Order, string>
 type Breakpoint = keyof Theme['breakpoints']
-
+const order = orderRange.reduce((acc: Record<string, number>, o) => {
+  acc[o.toString()] = o
+  return acc
+}, {})
 const columns = ColumnRange.reduce((acc, column) => {
   const range = column.split('/')
   if (range.length !== 2 || isNaN(parseInt(range[0]) / parseInt(range[1]))) {
@@ -126,13 +131,26 @@ export const offsetMd = makeOffset('md')
 export const offsetLg = makeOffset('lg')
 export const offsetXl = makeOffset('xl')
 
+const makeOrder = (breakpoint: Breakpoint) =>
+  styleMap(
+    mapValues(order, (order) =>
+      themeUtils.responsiveStyle({ [breakpoint]: { order } }),
+    ),
+    `order_${breakpoint}:${order}`,
+  ) as Orders
+
+export const orderXs = makeOrder('xs')
+export const orderSm = makeOrder('sm')
+export const orderMd = makeOrder('md')
+export const orderLg = makeOrder('lg')
+export const orderXl = makeOrder('xl')
+
 // Treat gotcha:
 // The style order matters.
 // `base` has to be at the bottom because it uses a media query.
 export const base = style({
   paddingRight: theme.grid.gutter.mobile / 2,
   paddingLeft: theme.grid.gutter.mobile / 2,
-  position: 'relative',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {

@@ -11,5 +11,4 @@ exec docker buildx build \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
   -f ${DIR}/Dockerfile \
   --target=security-audit \
-  --build-arg BUILDKIT_INLINE_CACHE=1 \
   $PROJECT_ROOT

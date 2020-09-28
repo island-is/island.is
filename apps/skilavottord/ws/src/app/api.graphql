@@ -28,10 +28,11 @@ type Carowner {
   cars: [Car!]
 }
 
-type User {
+type Carowner {
   nationalId: ID!
   name: String!
   mobile: String
+<<<<<<< HEAD
 }
 
 type Query {
@@ -51,4 +52,11 @@ input DeregisterCarInput {
   recyclingCompanyId: Float!
   recyclingCompanyName: String!
   deregisterDescription: String
+=======
+  cars: [Car!]
+}
+
+type Query {
+  getCarownerByNationalId(nationalId: String!): Carowner!
+>>>>>>> master
 }

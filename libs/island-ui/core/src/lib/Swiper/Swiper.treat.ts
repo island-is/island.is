@@ -30,7 +30,7 @@ export const slide = style({
   scrollSnapAlign: 'center',
   flexShrink: 0,
   // Space between each slide
-  marginLeft: theme.spacing[4],
+  marginLeft: theme.spacing[3],
   // Breathing space for box-shadow etc
   marginTop: theme.spacing[2],
   marginBottom: theme.spacing[2],

@@ -17,8 +17,14 @@ describe('Auth Controller', () => {
       providers: [
         AuthService,
         UserService,
-        { provide: 'IslandisLogin', useValue: {} },
-        { provide: LOGGER_PROVIDER, useValue: mock<Logger>() },
+        {
+          provide: 'IslandisLogin',
+          useValue: {},
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: mock<Logger>(),
+        },
       ],
     }).compile()
 

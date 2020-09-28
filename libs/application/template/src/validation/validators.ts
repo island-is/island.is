@@ -7,25 +7,31 @@ export function extractPartialSchemaForValues(
   values: FormValue,
 ): Schema {
   let returnSchema = z.object({})
+  if (!schema) {
+    //todo this could be dangerous right?
+    return returnSchema
+  }
   Object.keys(values).forEach((key) => {
     const value = values[key]
 
     if (typeof value === 'object') {
       if (value.length) {
-        const answerToFocusOn = value[(value as Answer[]).length - 1]
+        const answerToFocusOn = (value as Answer[])[
+          (value as Answer[]).length - 1
+        ]
         if (typeof answerToFocusOn === 'object') {
           returnSchema = returnSchema.merge(
             z.object({
               [key]: z.array(
                 extractPartialSchemaForValues(
-                  schema.shape[key]._def.type,
+                  schema?.shape[key]?._def?.type,
                   answerToFocusOn as FormValue,
                 ),
               ),
             }),
           )
         } else {
-          returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
+          returnSchema = returnSchema.merge(schema?.pick({ [key]: true }))
         }
       } else {
         returnSchema = returnSchema.merge(
@@ -38,7 +44,7 @@ export function extractPartialSchemaForValues(
         )
       }
     } else {
-      returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
+      returnSchema = returnSchema.merge(schema?.pick({ [key]: true }))
     }
   })
   return returnSchema
@@ -48,7 +54,7 @@ export function validateAnswers(
   answers: FormValue,
   partialValidation: boolean,
   dataSchema: Schema,
-): z.ZodError {
+): z.ZodError | undefined {
   if (partialValidation) {
     const newSchema = extractPartialSchemaForValues(dataSchema, answers)
     try {

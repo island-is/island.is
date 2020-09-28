@@ -1,0 +1,6 @@
+export enum CaseState {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+}

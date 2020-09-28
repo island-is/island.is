@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 import { HttpException } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Carowner } from './models'
 import { CarownerService } from './models/carowner.service'
 import { DeregisterCarInput } from './models/dto'
+=======
+import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Carowner } from './models'
+import { CarownerService } from './models/carowner.service'
+>>>>>>> master
 
 @Resolver(() => Carowner)
 export class CarownerResolver {
@@ -13,6 +19,7 @@ export class CarownerResolver {
   }
 
   //query b {getUserByNationalId(nationalId: "2222222222"){name, mobile}}
+<<<<<<< HEAD
   //getCarownerByNationalId(@Args('nationalId') nid: string): Carowner {
   @Query(() => Carowner)
   getVehiclesForNationalId(@Args('nationalId') nid: string): Carowner {
@@ -42,5 +49,10 @@ export class CarownerResolver {
       )
     }
     return true
+=======
+  @Query(() => Carowner)
+  getCarownerByNationalId(@Args('nationalId') nid: string): Carowner {
+    return this.carownerService.getCarownerBynationalId(nid)
+>>>>>>> master
   }
 }

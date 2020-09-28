@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export const slices = gql`
   fragment ImageFields on Image {
     __typename
+    typename
     id
     title
     url
@@ -11,23 +12,18 @@ export const slices = gql`
     height
   }
 
-  fragment PageHeaderFields on PageHeaderSlice {
+  fragment AssetFields on Asset {
     __typename
+    typename
     id
     title
-    introduction
-    navigationText
-    links {
-      text
-      url
-    }
-    slices {
-      ...TimelineFields
-    }
+    url
+    contentType
   }
 
   fragment TimelineFields on TimelineSlice {
     __typename
+    typename
     id
     title
     events {
@@ -37,7 +33,9 @@ export const slices = gql`
       numerator
       denominator
       label
-      body
+      body {
+        ...HtmlFields
+      }
       tags
       link
     }
@@ -45,6 +43,7 @@ export const slices = gql`
 
   fragment MailingListSignupFields on MailingListSignupSlice {
     __typename
+    typename
     id
     title
     description
@@ -54,25 +53,33 @@ export const slices = gql`
 
   fragment StoryFields on StorySlice {
     __typename
+    typename
     id
     readMoreText
     stories {
       title
       intro
       label
+      readMoreText
+      date
       logo {
         ...ImageFields
       }
       body
+      linkedPage
+      link
     }
   }
 
   fragment LatestNewsFields on LatestNewsSlice {
     __typename
+    typename
     id
     title
     news {
+      id
       title
+      subtitle
       slug
       date
       intro
@@ -85,6 +92,7 @@ export const slices = gql`
 
   fragment LinkCardFields on LinkCardSlice {
     __typename
+    typename
     id
     title
     cards {
@@ -97,6 +105,7 @@ export const slices = gql`
 
   fragment HeadingFields on HeadingSlice {
     __typename
+    typename
     id
     title
     body
@@ -104,6 +113,7 @@ export const slices = gql`
 
   fragment LogoListFields on LogoListSlice {
     __typename
+    typename
     id
     title
     body
@@ -114,6 +124,7 @@ export const slices = gql`
 
   fragment BulletListFields on BulletListSlice {
     __typename
+    typename
     id
     bullets {
       ... on IconBullet {
@@ -132,6 +143,7 @@ export const slices = gql`
         id
         defaultVisible
         bullets {
+          id
           title
           body
         }
@@ -141,9 +153,11 @@ export const slices = gql`
 
   fragment FaqListFields on FaqList {
     __typename
+    typename
     id
     title
     questions {
+      id
       question
       answer {
         ...HtmlFields
@@ -153,6 +167,7 @@ export const slices = gql`
 
   fragment StatisticsFields on Statistics {
     __typename
+    typename
     id
     title
     statistics {
@@ -163,30 +178,92 @@ export const slices = gql`
   }
 
   fragment ProcessEntryFields on ProcessEntry {
+    __typename
+    typename
     id
-    title
-    subtitle
-    details {
-      ...HtmlFields
-    }
     type
     processTitle
-    processDescription
-    processInfo {
-      ...HtmlFields
-    }
     processLink
     buttonText
   }
 
   fragment HtmlFields on Html {
     __typename
+    typename
     id
     document
   }
 
+  fragment EmbeddedVideoFields on EmbeddedVideo {
+    __typename
+    typename
+    id
+    title
+    url
+  }
+
+  fragment SectionWithImageFields on SectionWithImage {
+    __typename
+    typename
+    id
+    title
+    image {
+      ...ImageFields
+    }
+    html {
+      ...HtmlFields
+    }
+  }
+
+  fragment TabSectionFields on TabSection {
+    __typename
+    typename
+    id
+    title
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...HtmlFields
+      }
+    }
+  }
+
+  fragment TeamListFields on TeamList {
+    __typename
+    typename
+    id
+    teamMembers {
+      name
+      title
+      image {
+        ...ImageFields
+      }
+    }
+  }
+
+  fragment ContactUsFields on ContactUs {
+    __typename
+    typename
+    id
+    title
+    required
+    invalidPhone
+    invalidEmail
+    labelName
+    labelPhone
+    labelEmail
+    labelSubject
+    labelMessage
+    submitButtonText
+    successMessage
+    errorMessage
+  }
+
   fragment AllSlices on Slice {
-    ...PageHeaderFields
     ...TimelineFields
     ...MailingListSignupFields
     ...StoryFields
@@ -199,5 +276,12 @@ export const slices = gql`
     ...StatisticsFields
     ...ProcessEntryFields
     ...HtmlFields
+    ...ImageFields
+    ...AssetFields
+    ...EmbeddedVideoFields
+    ...SectionWithImageFields
+    ...TabSectionFields
+    ...TeamListFields
+    ...ContactUsFields
   }
 `

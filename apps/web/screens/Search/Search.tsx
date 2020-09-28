@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Screen } from '../../types'
@@ -16,7 +16,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  Divider,
   Option,
   SidebarAccordion,
   Pagination,
@@ -29,15 +28,21 @@ import {
   GET_SEARCH_RESULTS_QUERY_DETAILED,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetSearchResultsDetailedQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
+  Article,
+  LifeEventPage,
+  SearchableContentTypes,
+  SearchableTags,
 } from '../../graphql/schema'
+import { Image } from '@island.is/web/graphql/schema'
 
 const PerPage = 10
 
@@ -58,47 +63,79 @@ const Search: Screen<CategoryProps> = ({
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const [sidebarCategories, setSidebarCategories] = useState([])
+  const [
+    grandTotalSearchResultCount,
+    setGrandTotalSearchResultCount,
+  ] = useState(10)
+  const { makePath } = routeNames(activeLocale)
 
   const filters = {
     category: Router.query.category,
   }
 
   useEffect(() => {
-    if (searchRef.current) {
+    const hasMatch = Router.asPath.includes('focus=true')
+    if (hasMatch) {
       searchRef.current.focus()
     }
   }, [searchRef])
 
-  const sidebarCategories = searchResults.items.reduce((all, cur) => {
-    const key = cur.categorySlug
+  useEffect(() => {
+    // we only update the tagCount results when we get new tag count results
+    if (Array.isArray(searchResults.tagCounts)) {
+      const newTagCountResults = searchResults.tagCounts.map(
+        ({ key, count: total, value: title }) => ({
+          key,
+          total,
+          title,
+        }),
+      )
+      setSidebarCategories(newTagCountResults)
+      setGrandTotalSearchResultCount(searchResults.total)
+    }
+  }, [searchResults.tagCounts])
 
-    const item = all.find((x) => x.key === key)
+  const getLabels = (item) => {
+    const labels = []
 
-    if (!item) {
-      all.push({
-        key,
-        total: 1,
-        title: cur.category || '',
-      })
-    } else {
-      item.total += 1
+    switch (item.__typename as LifeEventPage['__typename']) {
+      case 'LifeEventPage':
+        labels.push(n('lifeEvent'))
+        break
+      default:
+        break
     }
 
-    return all
-  }, [])
+    if (item.containsApplicationForm) {
+      labels.push(n('applicationForm'))
+    }
 
-  const items = searchResults.items.map((item) => {
-    return {
+    if (item.group) {
+      labels.push(item.group.title)
+    }
+
+    if (item.organization?.length) {
+      labels.push(item.organization[0].title)
+    }
+
+    return labels
+  }
+
+  const items = (searchResults.items as Array<Article & LifeEventPage>).map(
+    (item) => ({
       title: item.title,
-      description: item.content,
-      href: makePath('article', '[slug]'),
-      as: makePath('article', item.slug),
-      categorySlug: item.categorySlug,
+      description: item.intro,
+      href: makePath(item.__typename, '[slug]'),
+      as: makePath(item.__typename, item.slug),
+      categorySlug: item.category?.slug,
       category: item.category,
       group: item.group,
-    }
-  })
+      ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+      labels: getLabels(item),
+    }),
+  )
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -107,13 +144,20 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
-  const byCategory = (item) =>
-    !filters.category || filters.category === item.categorySlug
+  const byCategory = (item) => {
+    if (!item.category && filters.category === 'uncategorized') {
+      return true
+    }
+
+    return !filters.category || filters.category === item.categorySlug
+  }
 
   const filteredItems = items.filter(byCategory)
 
+  const totalSearchResults = searchResults.total
+
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
-    ?.category
+    ?.category?.title
 
   const categorySlug = items.find((x) => x.categorySlug === filters.category)
     ?.categorySlug
@@ -135,6 +179,7 @@ const Search: Screen<CategoryProps> = ({
     ? { label: categoryTitle, value: categorySlug }
     : { label: 'Allir flokkar', value: '' }
 
+  const resultsCountToShow = totalSearchResults
   return (
     <>
       <Head>
@@ -143,74 +188,110 @@ const Search: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Sidebar title={n('sidebarHeader')}>
-            <Filter
-              selected={!filters.category}
-              onClick={() => onSelectCategory(null)}
-              text={`${n('allCategories', 'Allir flokkar')} (${
-                searchResults.total
-              })`}
-            />
-            <Divider weight="alternate" />
-            <SidebarAccordion
-              id="sidebar_accordion_categories"
-              label={n('seeCategories', 'Sjá flokka')}
+            <div
+              style={{
+                position: 'relative',
+              }}
             >
-              <Stack space={[1, 1, 2]}>
-                {sidebarCategories.map((c, index) => {
-                  const selected = c.key === filters.category
-                  const text = `${c.title} (${c.total})`
-
-                  return (
+              {totalSearchResults > 0 && (
+                <>
+                  <div
+                    style={{
+                      right: 40,
+                      position: 'absolute',
+                      left: '0',
+                      top: '-4px',
+                      zIndex: 10, // to accommodate for being absolute
+                    }}
+                  >
                     <Filter
-                      key={index}
-                      selected={selected}
-                      onClick={() => onSelectCategory(c.key)}
-                      text={text}
+                      truncate
+                      selected={!filters.category}
+                      onClick={() => onSelectCategory(null)}
+                      text={`${n(
+                        'allCategories',
+                        'Allir flokkar',
+                      )} (${grandTotalSearchResultCount})`}
                     />
-                  )
-                })}
-              </Stack>
-            </SidebarAccordion>
+                  </div>
+                  <SidebarAccordion
+                    id="sidebar_accordion_categories"
+                    label={''}
+                  >
+                    <Stack space={[1, 1, 2]}>
+                      {sidebarCategories.map((c, index) => {
+                        const selected = c.key === filters.category
+                        const text = `${c.title} (${c.total})`
+
+                        if (c.key === 'uncategorized') {
+                          return null
+                        }
+
+                        return (
+                          <Filter
+                            key={index}
+                            selected={selected}
+                            onClick={() => onSelectCategory(c.key)}
+                            text={text}
+                          />
+                        )
+                      })}
+                    </Stack>
+                  </SidebarAccordion>
+                </>
+              )}
+            </div>
           </Sidebar>
         }
         belowContent={
           <Stack space={2}>
-            {filteredItems.map((item, index) => {
-              const tags: Array<CardTagsProps> = []
+            {filteredItems.map(
+              ({ image, thumbnail, labels, ...rest }, index) => {
+                const tags: Array<CardTagsProps> = []
 
-              if (item.group) {
-                tags.push({
-                  title: item.group,
-                  tagProps: {
-                    label: true,
-                  },
+                labels.forEach((label) => {
+                  tags.push({
+                    title: label,
+                    tagProps: {
+                      label: true,
+                    },
+                  })
                 })
-              }
 
-              return <Card key={index} icon="article" tags={tags} {...item} />
-            })}
-            <Box paddingTop={8}>
-              <Pagination
-                page={page}
-                totalPages={Math.ceil(searchResults.total / PerPage)}
-                renderLink={(page, className, children) => (
-                  <Link
-                    href={{
-                      pathname: makePath('search'),
-                      query: { ...Router.query, page },
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </Link>
-                )}
-              />
-            </Box>
+                return (
+                  <Card
+                    key={index}
+                    tags={tags}
+                    image={thumbnail ? thumbnail : image}
+                    {...rest}
+                  />
+                )
+              },
+            )}
+            {totalSearchResults > 0 && (
+              <Box paddingTop={8}>
+                <Pagination
+                  page={page}
+                  totalPages={Math.ceil(totalSearchResults / PerPage)}
+                  renderLink={(page, className, children) => (
+                    <Link
+                      href={{
+                        pathname: makePath('search'),
+                        query: { ...Router.query, page },
+                      }}
+                    >
+                      <span className={className}>{children}</span>
+                    </Link>
+                  )}
+                />
+              </Box>
+            )}
           </Stack>
         }
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href="/">Ísland.is</Link>
+            <Link href={makePath()}>Ísland.is</Link>
           </Breadcrumbs>
           <SearchInput
             id="search_input_search_page"
@@ -229,34 +310,39 @@ const Search: Screen<CategoryProps> = ({
               name="content-overview"
             />
           </Hidden>
-          <Typography variant="intro" as="p">
-            {filteredItems.length === 0 ? (
-              <span>
+
+          {filteredItems.length === 0 ? (
+            <>
+              <Typography variant="intro" as="p">
                 {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
                 <strong>{q}</strong>
-              </span>
-            ) : (
-              <span>
-                {filteredItems.length}{' '}
-                {filteredItems.length === 1
-                  ? n('searchResult', 'leitarniðurstaða')
-                  : n('searchResults', 'leitarniðurstöður')}
-                {filters.category && (
-                  <>
-                    {' '}
-                    {n('inCategory', 'í flokki')}
-                    {categoryTitle ? (
-                      <>
-                        : <strong>{categoryTitle}</strong>
-                      </>
-                    ) : (
-                      '.'
-                    )}
-                  </>
-                )}
-              </span>
-            )}
-          </Typography>
+              </Typography>
+
+              <Typography variant="intro" as="p">
+                {n('nothingFoundExtendedExplanation')}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="intro" as="p">
+              {resultsCountToShow}{' '}
+              {resultsCountToShow === 1
+                ? n('searchResult', 'leitarniðurstaða')
+                : n('searchResults', 'leitarniðurstöður')}
+              {filters.category && (
+                <>
+                  {' '}
+                  {n('inCategory', 'í flokki')}
+                  {categoryTitle ? (
+                    <>
+                      : <strong>{categoryTitle}</strong>
+                    </>
+                  ) : (
+                    '.'
+                  )}
+                </>
+              )}
+            </Typography>
+          )}
         </Stack>
       </CategoryLayout>
     </>
@@ -267,7 +353,16 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
+  const category = single(query.category) || ''
   const page = Number(single(query.page)) || 1
+
+  let tags = {}
+  let countTag = {}
+  if (category) {
+    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
+  } else {
+    countTag = { countTag: 'category' as SearchableTags }
+  }
 
   const [
     {
@@ -281,7 +376,13 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
+          types: [
+            'webArticle' as SearchableContentTypes,
+            'webLifeEventPage' as SearchableContentTypes,
+          ],
           size: PerPage,
+          ...tags,
+          ...countTag,
           page,
         },
       },
@@ -315,21 +416,23 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-const Filter = ({ selected, text, onClick, ...props }) => {
+const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
   return (
     <Box
+      display="inlineBlock"
       component="button"
       type="button"
       textAlign="left"
       outline="none"
+      width="full"
       onClick={onClick}
       {...props}
     >
-      <Typography variant="p" as="span">
+      <Typography variant="p" as="div" truncate={truncate}>
         {selected ? <strong>{text}</strong> : text}
       </Typography>
     </Box>
   )
 }
 
-export default Search
+export default withMainLayout(Search)

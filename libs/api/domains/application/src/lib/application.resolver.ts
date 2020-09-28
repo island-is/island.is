@@ -8,6 +8,7 @@ import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
+import { SubmitApplicationInput } from './dto/submitApplication.input'
 
 @Resolver()
 export class ApplicationResolver {
@@ -60,5 +61,12 @@ export class ApplicationResolver {
     @Args('input') input: DeleteAttachmentInput,
   ): Promise<Application> {
     return this.applicationService.deleteAttachment(input)
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  async submitApplication(
+    @Args('input') input: SubmitApplicationInput,
+  ): Promise<Application> {
+    return this.applicationService.submitApplication(input)
   }
 }

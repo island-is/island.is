@@ -16,7 +16,6 @@ import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
-import * as Sentry from '@sentry/node'
 
 type RunServerOptions = {
   /**
@@ -65,7 +64,7 @@ const createApp = async (options: RunServerOptions) => {
 }
 
 const startServer = async (app: INestApplication, port = 3333) => {
-  const servicePort = parseInt(process.env.PORT) || port
+  const servicePort = parseInt(process.env.PORT || '') || port
   const metricsPort = servicePort + 1
   await app.listen(servicePort, () => {
     logger.info(`Service listening at http://localhost:${servicePort}`, {
@@ -75,9 +74,13 @@ const startServer = async (app: INestApplication, port = 3333) => {
   await runMetricServer(metricsPort)
 }
 
-function setupOpenApi(app: INestApplication, options: RunServerOptions) {
-  const document = SwaggerModule.createDocument(app, options.openApi)
-  SwaggerModule.setup(options.swaggerPath ?? 'swagger', app, document)
+function setupOpenApi(
+  app: INestApplication,
+  openApi: Omit<OpenAPIObject, 'paths'>,
+  swaggerPath?: string,
+) {
+  const document = SwaggerModule.createDocument(app, openApi)
+  SwaggerModule.setup(swaggerPath ?? 'swagger', app, document)
   return document
 }
 
@@ -97,7 +100,7 @@ export const bootstrap = async (options: RunServerOptions) => {
 
   const app = await createApp(options)
   if (options.openApi) {
-    const document = setupOpenApi(app, options)
+    const document = setupOpenApi(app, options.openApi, options.swaggerPath)
 
     if (argv.generateSchema) {
       generateSchema(argv.generateSchema, document)

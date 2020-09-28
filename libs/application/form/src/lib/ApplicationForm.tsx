@@ -1,100 +1,78 @@
-import React, { FC, useReducer } from 'react'
-import { Application } from '@island.is/application/template'
-import FormProgress from '../components/FormProgress/'
-import ApplicationName from '../components/ApplicationName/'
-import Sidebar from '../components/Sidebar'
-import Screen from '../components/Screen'
+import React, { FC, useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { GET_APPLICATION } from '@island.is/application/graphql'
 import {
-  ApplicationReducer,
-  initializeReducer,
-} from '../reducer/ApplicationFormReducer'
-import { ActionTypes } from '../reducer/ReducerTypes'
-import { Box } from '@island.is/island-ui/core'
-import * as styles from './ApplicationForm.treat'
-import ProgressIndicator from '../components/ProgressIndicator'
+  Form,
+  getApplicationStateInformation,
+  getApplicationTemplateByTypeId,
+  Schema,
+} from '@island.is/application/template'
+import { FormShell } from './FormShell'
 
-export const ApplicationForm: FC<{ application: Application }> = ({
-  application,
-}) => {
-  const [state, dispatch] = useReducer(
-    ApplicationReducer,
-    {
-      application,
-      form: undefined,
-      formLeaves: [],
-      activeSection: 0,
-      activeSubSection: 0,
-      activeScreen: 0,
-      progress: 0,
-      screens: [],
-      sections: [],
+export const ApplicationForm: FC<{
+  applicationId: string
+  nationalRegistryId: string
+}> = ({ applicationId, nationalRegistryId }) => {
+  const [dataSchema, setDataSchema] = useState<Schema>()
+  const [form, setForm] = useState<Form>()
+  const { data, error, loading } = useQuery(GET_APPLICATION, {
+    variables: {
+      input: {
+        id: applicationId,
+      },
     },
-    initializeReducer,
-  )
-  const {
-    activeSection,
-    activeSubSection,
-    activeScreen,
-    application: storedApplication,
-    form,
-    progress,
-    sections,
-    screens,
-  } = state
+    skip: !applicationId,
+  })
+
+  const application = data?.getApplication
+
+  useEffect(() => {
+    async function populateForm() {
+      if (application !== undefined && form === undefined) {
+        const template = await getApplicationTemplateByTypeId(
+          application.typeId,
+        )
+        if (template !== null) {
+          const stateInformation = await getApplicationStateInformation(
+            application,
+          )
+          const role = template.mapUserToRole(
+            nationalRegistryId,
+            application.state,
+          )
+          if (stateInformation?.roles?.length) {
+            const currentRole = stateInformation.roles.find(
+              (r) => r.id === role,
+            )
+            if (currentRole && currentRole.formLoader) {
+              const formDescriptor = await currentRole.formLoader()
+              setForm(formDescriptor)
+              setDataSchema(template.dataSchema)
+            }
+          }
+        }
+      }
+    }
+    populateForm()
+  }, [application, form, nationalRegistryId])
+
+  if (!applicationId) {
+    return <p>Error there is no id</p>
+  }
+  if (error) {
+    return <p>{error}</p>
+  }
+  // TODO we need better loading states
+  if (loading || !form || !dataSchema) {
+    return null
+  }
 
   return (
-    <Box display="flex" flexGrow={1}>
-      <Box
-        display="flex"
-        flexGrow={1}
-        flexDirection="row"
-        className={styles.applicationContainer}
-      >
-        <Box className={styles.sidebarContainer}>
-          <Sidebar>
-            <ApplicationName name={form.name} icon={form.icon} />
-            <Box display="flex" flexDirection={['column', 'columnReverse']}>
-              <FormProgress
-                sections={sections}
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
-              <ProgressIndicator progress={progress} />
-            </Box>
-          </Sidebar>
-        </Box>
-
-        <Box
-          paddingX={[3, 3, 12]}
-          paddingTop={4}
-          height="full"
-          className={styles.screenContainer}
-        >
-          <Screen
-            addExternalData={(payload) =>
-              dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-            }
-            answerQuestions={(payload) =>
-              dispatch({ type: ActionTypes.ANSWER, payload })
-            }
-            dataSchema={form.schema}
-            externalData={storedApplication.externalData}
-            formTypeId={form.id}
-            formValue={storedApplication.answers}
-            expandRepeater={() =>
-              dispatch({ type: ActionTypes.EXPAND_REPEATER })
-            }
-            answerAndGoToNextScreen={(payload) =>
-              dispatch({ type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload })
-            }
-            prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-            shouldSubmit={activeScreen === screens.length - 1}
-            screen={screens[activeScreen]}
-            section={sections[activeSection]}
-            applicationId={storedApplication.id}
-          />
-        </Box>
-      </Box>
-    </Box>
+    <FormShell
+      application={application}
+      dataSchema={dataSchema}
+      form={form}
+      nationalRegistryId={nationalRegistryId}
+    />
   )
 }

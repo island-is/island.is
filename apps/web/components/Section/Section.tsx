@@ -19,7 +19,7 @@ interface SectionProps {
   backgroundBleed?: BackgroundBleed
 }
 
-const Section: React.FC<SectionProps> = ({
+export const Section: React.FC<SectionProps> = ({
   as = 'section',
   children,
   paddingY,

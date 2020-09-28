@@ -14,7 +14,18 @@ Then run the migrations:
 
 You can serve this service locally by running:
 
-`yarn nx serve judicial-system-api`
+`yarn nx serve judicial-system-api --ssl`
+
+To skip authentication at innskraning.island.is run:
+
+`AUTH_USER=<national id> yarn nx serve judicial-system-api`
+
+where `<national id>` is the national id of a known user.
+
+Similarly, you can enable SMS notifications to an on-call judge by providing a password for the SMS service and
+a judge phone number:
+
+`NOVA_PASSWORD=<SMS password> JUDGE_PHONE_NUMBER=<judge phone number>`
 
 ## Graphql - not yet implemented
 

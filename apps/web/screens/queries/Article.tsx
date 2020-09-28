@@ -1,12 +1,19 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
 export const GET_ARTICLE_QUERY = gql`
-  query GetArticle($input: GetArticleInput!) {
-    getArticle(input: $input) {
+  query GetSingleArticle($input: GetSingleArticleInput!) {
+    getSingleArticle(input: $input) {
       id
       slug
       title
-      content
+      shortTitle
+      intro
+      containsApplicationForm
+      importance
+      body {
+        ...AllSlices
+      }
       group {
         title
         slug
@@ -21,6 +28,14 @@ export const GET_ARTICLE_QUERY = gql`
         title
         slug
       }
+      subArticles {
+        title
+        slug
+        body {
+          ...AllSlices
+        }
+      }
     }
   }
+  ${slices}
 `

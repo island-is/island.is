@@ -14,67 +14,67 @@ export const Default = () => (
       {
         title: 'Þjónustuflokkar',
         links: [
-          { title: 'Fjölskyldumál', url: '/fjolskyldumal' },
+          { title: 'Fjölskyldumál', href: '/fjolskyldumal' },
           {
             title: 'Eldri borgarar',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Bætur',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Málefni fatlaðra',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Menntun',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Ferðalög og búseta erlendis',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Innflytjendur',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Umhverfismál',
-            url: '/',
+            href: '/',
           },
           {
             title: 'Húsnæðismál',
-            url: '/',
+            href: '/',
           },
         ],
       },
       {
         title: 'Stafrænt Ísland',
         links: [
-          { title: 'Um Ísland.is', url: '/' },
+          { title: 'Um Ísland.is', href: '/' },
           {
             title: 'Stofnanir',
-            url: '/',
+            href: '/',
           },
         ],
         externalLinksHeading: 'Aðrir opinberir vefir',
         externalLinks: [
           {
             title: 'Heilsuvera',
-            url: 'https://heilsuvera.is',
+            href: 'https://heilsuvera.is',
           },
           {
             title: 'Samráðsgátt',
-            url: 'https://samradsgatt.island.is',
+            href: 'https://samradsgatt.island.is',
           },
           {
             title: 'Mannanöfn',
-            url: 'https://vefur.island.is/mannanofn/',
+            href: 'https://vefur.island.is/mannanofn/',
           },
           {
             title: 'Undirskriftalistar',
-            url: 'https://vefur.island.is/undirskriftalistar/',
+            href: 'https://vefur.island.is/undirskriftalistar/',
           },
         ],
       },

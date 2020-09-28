@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import { Typography, Button, Box, Alert } from '@island.is/island-ui/core'
 import { apiUrl } from '../../api'
 import * as styles from './Login.treat'
@@ -10,9 +9,6 @@ export const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
-      <div className={styles.logoContainer}>
-        <Logo />
-      </div>
       {urlParams.has('error') && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
@@ -39,7 +35,7 @@ export const Login = () => {
       </div>
       <div className={styles.buttonContainer}>
         <Button
-          href={`${apiUrl}/api/auth/login?returnUrl=gaesluvardhaldskrofur`}
+          href={`${apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
           width="fluid"
         >
           Innskráning

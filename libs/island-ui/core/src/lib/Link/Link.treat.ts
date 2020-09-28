@@ -26,6 +26,12 @@ export const colors = styleMap({
       color: theme.color.blueberry400,
     },
   },
+  blue600: {
+    color: theme.color.blue600,
+    ':hover': {
+      color: theme.color.blueberry600,
+    },
+  },
   white: {
     color: theme.color.white,
     ':hover': {

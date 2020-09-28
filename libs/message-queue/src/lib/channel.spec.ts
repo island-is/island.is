@@ -1,8 +1,9 @@
 import Channel from './channel'
 
-const mockReturn = (fn) => jest.fn().mockReturnValue({ promise: fn })
+const mockReturn = (fn: Function) => jest.fn().mockReturnValue({ promise: fn })
 
-const mockReturnPromise = (obj) => mockReturn(() => Promise.resolve(obj))
+const mockReturnPromise = (obj: object) =>
+  mockReturn(() => Promise.resolve(obj))
 
 describe('Channel', () => {
   describe('#declareExchange', () => {

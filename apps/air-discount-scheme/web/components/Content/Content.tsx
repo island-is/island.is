@@ -85,7 +85,7 @@ const embeddedNodes = () => ({
     component: Box,
     children: (node) => {
       const title = node.data?.target?.fields?.title ?? ''
-      const links = node.data?.target?.fields?.links
+      const links = node.data?.target?.fields?.links ?? []
       return (
         <Box
           background="purple100"

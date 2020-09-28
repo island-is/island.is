@@ -31,16 +31,7 @@ module.exports = {
           type: Sequelize.STRING,
         },
         state: {
-          type: Sequelize.ENUM(
-            'DRAFT',
-            'BEING_PROCESSED',
-            'NEEDS_INFORMATION',
-            'PENDING',
-            'APPROVED',
-            'MANUAL_APPROVED',
-            'REJECTED',
-            'UNKNOWN',
-          ),
+          type: Sequelize.STRING,
           allowNull: false,
         },
         attachments: {

@@ -3,6 +3,7 @@ import { FieldInputProps, FormikState } from 'formik'
 import { ValueType } from 'react-select'
 import get from 'lodash/get'
 import { Select, SelectProps, Option } from '../Select/Select'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export interface FieldSelectProps extends SelectProps {
   form: FormikState<string | number>
@@ -14,6 +15,7 @@ export const FieldSelect = ({
   form: { touched, errors },
   ...props
 }: FieldSelectProps) => {
+  useDeprecatedComponent('FieldSelect')
   const nameArray = (field.name && field.name.split('.')) || []
   return (
     <Select

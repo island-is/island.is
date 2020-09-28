@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApplicationState, FormType } from '@island.is/application/template'
+import { ApplicationTypes } from '@island.is/application/template'
 
 @Table({
   tableName: 'application',
@@ -56,11 +56,9 @@ export class Application extends Model<Application> {
   externalId: string
 
   @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(ApplicationState),
+    type: DataType.STRING,
   })
-  @ApiProperty({ enum: ApplicationState })
+  @ApiProperty()
   state: string
 
   @Column({
@@ -73,9 +71,9 @@ export class Application extends Model<Application> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(FormType),
+    values: Object.values(ApplicationTypes),
   })
-  @ApiProperty({ enum: FormType })
+  @ApiProperty({ enum: ApplicationTypes })
   typeId: string
 
   @Column({

@@ -63,8 +63,8 @@ export const AppLayout: NextComponentType<
   const noEmptyOrHash = ({ href }) => href && href !== '#'
   const footerUpperMenuFiltered = footerUpperMenu.filter(noEmptyOrHash)
   const footerLowerMenuFiltered = footerLowerMenu.filter(noEmptyOrHash)
-  const footerMiddleMenuFiltered = footerMiddleMenu.filter(noEmptyOrHash)
-  const footerTagsMenuFiltered = footerTagsMenu.filter(noEmptyOrHash)
+  const footerMiddleMenuFiltered = [] // footerMiddleMenu.filter(noEmptyOrHash)
+  const footerTagsMenuFiltered = [] // footerTagsMenu.filter(noEmptyOrHash)
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>

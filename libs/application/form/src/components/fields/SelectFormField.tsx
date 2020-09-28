@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
 import { SelectField } from '@island.is/application/template'
-import { Typography, Select, Option, Box } from '@island.is/island-ui/core'
+import { SelectController, Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
+import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
   field: SelectField
@@ -12,33 +12,26 @@ const SelectFormField: FC<Props> = ({
   showFieldName = false,
   field,
 }) => {
-  const { id, name, options, placeholder } = field
+  const { id, name, options, placeholder, disabled } = field
+  const { formatMessage } = useLocale()
 
-  const { clearErrors } = useFormContext()
   return (
     <div>
-      {showFieldName && <Typography variant="p">{name}</Typography>}
-      <Controller
-        defaultValue=""
-        name={id}
-        render={({ onChange, value }) => (
-          <Box paddingTop={2}>
-            <Select
-              hasError={error !== undefined}
-              errorMessage={error}
-              name={id}
-              options={options}
-              label={name}
-              placeholder={placeholder}
-              value={options.find((option) => option.value === value)}
-              onChange={(newVal) => {
-                clearErrors(id)
-                onChange((newVal as Option).value)
-              }}
-            />
-          </Box>
-        )}
-      />
+      <Box paddingTop={2}>
+        <SelectController
+          label={formatMessage(name) as string}
+          name={id}
+          disabled={disabled}
+          error={error}
+          id={id}
+          options={options.map(({ label, tooltip, ...o }) => ({
+            ...o,
+            label: formatMessage(label) as string,
+            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
+          }))}
+          placeholder={placeholder}
+        />
+      </Box>
     </div>
   )
 }

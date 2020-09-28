@@ -3,9 +3,118 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
+export interface IAboutSubPageFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Description */
+  description?: string | undefined
+
+  /** subDescription */
+  subDescription?: string | undefined
+
+  /** Content */
+  content: Document
+}
+
+/** sub-page of the about-page */
+
+export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'aboutSubPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAlertBannerFields {
+  /** Show Alert Banner */
+  showAlertBanner: boolean
+
+  /** Banner variant */
+  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+
+  /** Title */
+  title?: string | undefined
+
+  /** description */
+  description?: string | undefined
+
+  /** link */
+  link?: ILink | undefined
+
+  /** Is dismissable */
+  isDismissable: boolean
+
+  /** dismissed for days */
+  dismissedForDays: number
+}
+
+/** Alert banner will show on top of all pages */
+
+export interface IAlertBanner extends Entry<IAlertBannerFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnimationsJsonFields {
+  /** Title */
+  title: string
+
+  /** JSON */
+  json: Record<string, any>
+}
+
+export interface IAnimationsJson extends Entry<IAnimationsJsonFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'animationsJson'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IArticleFields {
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
 
   /** Title */
   title: string
@@ -13,11 +122,17 @@ export interface IArticleFields {
   /** Short title */
   shortTitle?: string | undefined
 
+  /** Summary */
+  intro?: string | undefined
+
   /** Slug */
   slug: string
 
   /** Content */
   content?: Document | undefined
+
+  /** Contains application form? */
+  containsApplicationForm?: boolean | undefined
 
   /** Category */
   category?: IArticleCategory | undefined
@@ -36,6 +151,9 @@ export interface IArticleFields {
 
   /** Baby Articles */
   subArticles?: ISubArticle[] | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -92,9 +210,6 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
-
-  /** Sort by */
-  sortBy?: 'A to Z' | 'Subgroups' | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -120,6 +235,9 @@ export interface IArticleSubgroupFields {
 
   /** Slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Used inside groups to further categorize articles by subject */
@@ -224,6 +342,61 @@ export interface ICardSection extends Entry<ICardSectionFields> {
   }
 }
 
+export interface IContactUsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Required */
+  required: string
+
+  /** Invalid Phone */
+  invalidPhone: string
+
+  /** Invalid Email */
+  invalidEmail: string
+
+  /** Label Name */
+  labelName: string
+
+  /** Label Phone */
+  labelPhone: string
+
+  /** Label Email */
+  labelEmail: string
+
+  /** Label Subject */
+  labelSubject: string
+
+  /** Label Message */
+  labelMessage: string
+
+  /** Submit button text */
+  submitButtonText: string
+
+  /** Success message */
+  successMessage: string
+
+  /** Error message */
+  errorMessage: string
+}
+
+export interface IContactUs extends Entry<IContactUsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEmbeddedVideoFields {
   /** Title */
   title: string
@@ -286,9 +459,6 @@ export interface IFrontpageSliderFields {
   /** Texti */
   content: string
 
-  /** Image */
-  image?: Asset | undefined
-
   /** Efnisstengill */
   link?:
     | IArticle
@@ -298,6 +468,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Animation (JSON) */
+  animationJson?: Record<string, any> | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -320,11 +493,11 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
 }
 
 export interface IFrontpageSliderListFields {
-  /** items */
-  items: IFrontpageSlider[]
-
   /** Titill */
   titill: string
+
+  /** items */
+  items: IFrontpageSlider[]
 }
 
 /** Listi af efniseiningum sem hægt er að fletta á milli og birtast efst á forsíðu Ísland.is. */
@@ -422,7 +595,13 @@ export interface IIconBullet extends Entry<IIconBulletFields> {
 
 export interface ILandingPageFields {
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
 
   /** Title */
   title: string
@@ -495,7 +674,7 @@ export interface ILifeEventPageFields {
   slug: string
 
   /** intro */
-  intro: string
+  intro?: string | undefined
 
   /** image */
   image?: Asset | undefined
@@ -505,6 +684,9 @@ export interface ILifeEventPageFields {
 
   /** content */
   content: Document
+
+  /** category */
+  category?: IArticleCategory | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -660,6 +842,39 @@ export interface IMenu extends Entry<IMenuFields> {
   }
 }
 
+export interface INamespaceFields {
+  /** Namespace */
+  namespace?: string | undefined
+
+  /** Strings */
+  strings?: Record<string, any> | undefined
+
+  /** Defaults */
+  defaults?: Record<string, any> | undefined
+
+  /** Fallback */
+  fallback?: Record<string, any> | undefined
+}
+
+/** Namespace containing translations */
+
+export interface INamespace extends Entry<INamespaceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'namespace'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -668,7 +883,7 @@ export interface INewsFields {
   title: string
 
   /** Subtitle */
-  subtitle?: string | undefined
+  subtitle: string
 
   /** Slug */
   slug: string
@@ -680,7 +895,7 @@ export interface INewsFields {
   intro: string
 
   /** Featured image */
-  image?: Asset | undefined
+  image: Asset
 
   /** Content */
   content?: Document | undefined
@@ -764,8 +979,17 @@ export interface IOrganizationFields {
   /** Title */
   title: string
 
+  /** Description */
+  description?: string | undefined
+
   /** Slug */
   slug: string
+
+  /** Tag */
+  tag?: IOrganizationTag[] | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -785,9 +1009,37 @@ export interface IOrganization extends Entry<IOrganizationFields> {
   }
 }
 
+export interface IOrganizationTagFields {
+  /** Title */
+  title: string
+}
+
+export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IPageFields {
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
 
   /** Page title */
   title: string
@@ -801,6 +1053,9 @@ export interface IPageFields {
   /** theme */
   theme?: 'nautral' | 'red' | 'blue' | 'gradient' | undefined
 
+  /** header */
+  header: IPageHeader
+
   /** Slices */
   slices: (
     | IBigBulletList
@@ -811,6 +1066,7 @@ export interface IPageFields {
     | ILogoListSlice
     | IPageHeader
     | IStorySection
+    | ITabSection
     | ITimeline
   )[]
 }
@@ -999,6 +1255,39 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISideMenuFields {
+  /** Internal links */
+  internalLinks: (
+    | IArticle
+    | IArticleCategory
+    | IGenericPage
+    | ILandingPage
+    | ILifeEventPage
+    | IOrganization
+    | IPage
+  )[]
+
+  /** Title */
+  title?: string | undefined
+}
+
+export interface ISideMenu extends Entry<ISideMenuFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sideMenu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IStatisticFields {
   /** Value */
   value: string
@@ -1056,9 +1345,6 @@ export interface IStoryFields {
   /** Label */
   label: string
 
-  /** readMoreText */
-  readMoreText: string
-
   /** Introduction */
   intro: string
 
@@ -1067,6 +1353,15 @@ export interface IStoryFields {
 
   /** Logo */
   logo: Asset
+
+  /** Link button text */
+  readMoreText: string
+
+  /** Linked page */
+  linkedPage?: IArticle | INews | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {
@@ -1137,6 +1432,118 @@ export interface ISubArticle extends Entry<ISubArticleFields> {
     contentType: {
       sys: {
         id: 'subArticle'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITabContentFields {
+  /** tab title */
+  tabTitle: string
+
+  /** content title */
+  contentTitle?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** Body */
+  body?: Document | undefined
+}
+
+/** Tab with content */
+
+export interface ITabContent extends Entry<ITabContentFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tabContent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITabSectionFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Tabs */
+  tabs?: ITabContent[] | undefined
+}
+
+/** List of tab contents */
+
+export interface ITabSection extends Entry<ITabSectionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'tabSection'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITeamListFields {
+  /** Team members */
+  teamMembers?: ITeamMember[] | undefined
+}
+
+/** list of team members */
+
+export interface ITeamList extends Entry<ITeamListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'teamList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ITeamMemberFields {
+  /** Name */
+  name: string
+
+  /** Title */
+  title: string
+
+  /** Mynd */
+  mynd: Asset
+}
+
+export interface ITeamMember extends Entry<ITeamMemberFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'teamMember'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1243,14 +1650,18 @@ export interface IUiConfiguration extends Entry<IUiConfigurationFields> {
   }
 }
 
-export interface IUrlsFields {
-  /** slug */
-  slug?: string | undefined
+export interface IUrlFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Page */
+  page: IArticle | IArticleCategory | ILifeEventPage | INews
+
+  /** Urls list */
+  urlsList: string[]
 }
 
-/** List of urls */
-
-export interface IUrls extends Entry<IUrlsFields> {
+export interface IUrl extends Entry<IUrlFields> {
   sys: {
     id: string
     type: string
@@ -1259,7 +1670,7 @@ export interface IUrls extends Entry<IUrlsFields> {
     locale: string
     contentType: {
       sys: {
-        id: 'urls'
+        id: 'url'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1565,6 +1976,9 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
+  | 'aboutSubPage'
+  | 'alertBanner'
+  | 'animationsJson'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -1572,6 +1986,7 @@ export type CONTENT_TYPE =
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
+  | 'contactUs'
   | 'embeddedVideo'
   | 'faqList'
   | 'frontpageSlider'
@@ -1586,25 +2001,32 @@ export type CONTENT_TYPE =
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'
+  | 'namespace'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
+  | 'organizationTag'
   | 'page'
   | 'pageHeader'
   | 'processEntry'
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sideMenu'
   | 'statistic'
   | 'statistics'
   | 'story'
   | 'storySection'
   | 'subArticle'
+  | 'tabContent'
+  | 'tabSection'
+  | 'teamList'
+  | 'teamMember'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
-  | 'urls'
+  | 'url'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
   | 'vidspyrna-process-entry'

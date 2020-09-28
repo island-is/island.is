@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { Fund } from './fund.model'
-import { Flight } from '../../flight'
+import { FlightLeg } from '../../flightLeg'
 import { Role } from '../../auth'
 
 @ObjectType()
@@ -24,6 +24,6 @@ export class User {
   @Field(() => Boolean, { defaultValue: false })
   meetsADSRequirements?: boolean
 
-  @Field(() => [Flight], { nullable: true })
-  flights?: Flight[]
+  @Field(() => [FlightLeg], { nullable: true })
+  flightLegs?: FlightLeg[]
 }

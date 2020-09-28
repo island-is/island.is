@@ -1,8 +1,9 @@
 import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
-import { FormType } from '../forms'
+import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderTypes } from './DataProvider'
+import { MessageDescriptor } from 'react-intl'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -16,11 +17,18 @@ export enum FormItemTypes {
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Schema = ZodObject<any>
 
+export type FormMode =
+  | 'review'
+  | 'applying'
+  | 'approved'
+  | 'rejected'
+  | 'pending'
+
 export interface Form {
-  id: FormType
+  id: ApplicationTypes
   name: string
-  schema: Schema
   type: FormItemTypes.FORM
+  mode?: FormMode
   icon?: string
   ownerId: string
   children: FormChildren[]
@@ -35,7 +43,7 @@ export type SectionChildren = SubSection | FormLeaf
 export interface FormItem {
   readonly id?: string
   readonly type: string
-  readonly name: string
+  readonly name: MessageDescriptor | string
 }
 
 export interface Section extends FormItem {
@@ -49,6 +57,7 @@ export interface SubSection extends FormItem {
 }
 
 export interface Repeater extends FormItem {
+  readonly id: string
   type: FormItemTypes.REPEATER
   children: FormLeaf[]
   condition?: Condition
@@ -78,7 +87,7 @@ export interface ExternalDataProvider extends FormItem {
 export interface DataProviderItem {
   readonly id: string
   readonly type: DataProviderTypes
-  readonly title: string
-  readonly subTitle?: string
+  readonly title: MessageDescriptor | string
+  readonly subTitle?: MessageDescriptor | string
   readonly source?: string
 }

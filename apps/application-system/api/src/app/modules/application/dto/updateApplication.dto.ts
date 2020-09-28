@@ -1,5 +1,4 @@
-import { IsEnum, IsObject, IsString, IsOptional } from 'class-validator'
-import { ApplicationState } from '@island.is/application/template'
+import { IsObject, IsString, IsOptional } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
@@ -17,11 +16,6 @@ export class UpdateApplicationDto {
   @IsString()
   @ApiPropertyOptional()
   readonly externalId?: string
-
-  @IsOptional()
-  @IsEnum(ApplicationState)
-  @ApiPropertyOptional({ enum: ApplicationState })
-  readonly state?: ApplicationState
 
   @IsOptional()
   @IsObject()

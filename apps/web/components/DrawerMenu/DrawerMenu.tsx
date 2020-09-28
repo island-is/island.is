@@ -11,6 +11,7 @@ import { theme } from '@island.is/island-ui/theme'
 type CategoryItem = {
   title: string
   url: string
+  as?: string
 }
 
 type Category = {
@@ -31,7 +32,6 @@ interface DrawerMenuCategoryProps extends Category {
 const MainCategoryHeader = ({ title, onClick, isOpen }) => (
   <Box
     display="flex"
-    component="button"
     alignItems="center"
     justifyContent="spaceBetween"
     className={cn(styles.top, styles.mainHeader)}
@@ -76,13 +76,20 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
       </Box>
     )}
     <Box component="ul" padding={3} position="relative">
-      {items.map((item) => (
-        <Box component="li">
-          <Typography as="p" paddingBottom={2}>
-            <Link href={item.url}>{item.title}</Link>
-          </Typography>
-        </Box>
-      ))}
+      {items.map((item, id) => {
+        const linkProps = {
+          ...(item.url && { href: item.url }),
+          ...(item.as && { as: item.as }),
+        }
+
+        return (
+          <Box key={id} component="li">
+            <Typography as="p" paddingBottom={2}>
+              <Link {...linkProps}>{item.title}</Link>
+            </Typography>
+          </Box>
+        )
+      })}
     </Box>
   </Box>
 )
