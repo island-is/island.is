@@ -154,7 +154,7 @@ const Category: Screen<CategoryProps> = ({
 
   const handleAccordionClick = (groupSlug: string) => {
     let newHash = hash.replace('#', '')
-    let hashArray = newHash.split(',')
+    const hashArray = newHash.split(',')
 
     if (hash === '') {
       newHash = `${groupSlug}`
