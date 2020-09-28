@@ -5,6 +5,7 @@ import App from 'next/app'
 import { AppProps } from 'next/app'
 import { ApolloProvider } from '@apollo/client'
 
+import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
@@ -39,4 +40,9 @@ class SupportApplication extends App<AppProps> {
   }
 }
 
-export default appWithTranslation(SupportApplication)
+// TODO: Add api endpoint? Other external dependencies?
+const externalEndpointDependencies = []
+
+export default appWithTranslation(
+  withHealthchecks(externalEndpointDependencies)(SupportApplication),
+)
