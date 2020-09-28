@@ -1,5 +1,7 @@
 import { OnQueueCompleted, Process, Processor } from '@nestjs/bull'
 import { Job } from 'bull'
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 import * as AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationService } from './application.service'
 import { FileStorageService } from '@island.is/file-storage'
@@ -43,6 +45,7 @@ export class UploadProcessor {
     )
 
     if (
+      existingApplication &&
       !Object.prototype.hasOwnProperty.call(
         existingApplication.attachments,
         key,
@@ -54,7 +57,7 @@ export class UploadProcessor {
     // Update application attatchments
     return await this.applicationService.update(job.data.applicationId, {
       attachments: {
-        ...existingApplication.attachments,
+        ...(existingApplication?.attachments ?? {}),
         [key]: url,
       },
     })
