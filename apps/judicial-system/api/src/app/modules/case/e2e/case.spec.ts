@@ -240,8 +240,8 @@ describe('Case', () => {
       ruling: 'Ruling',
       custodyEndDate: '2020-09-28T12:00:00.000Z',
       custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-      accusedAppealDecision: [CaseAppealDecision.APPEAL],
-      prosecutorAppealDecision: [CaseAppealDecision.ACCEPT],
+      accusedAppealDecision: CaseAppealDecision.APPEAL,
+      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
@@ -299,10 +299,10 @@ describe('Case', () => {
           expect(response.body.custodyRestrictions).toStrictEqual(
             value.custodyRestrictions,
           )
-          expect(response.body.accusedAppealDecision).toStrictEqual(
+          expect(response.body.accusedAppealDecision).toBe(
             value.accusedAppealDecision,
           )
-          expect(response.body.prosecutorAppealDecision).toStrictEqual(
+          expect(response.body.prosecutorAppealDecision).toBe(
             value.prosecutorAppealDecision,
           )
           expect(response.body.notifications).toStrictEqual([])
@@ -349,8 +349,8 @@ describe('Case', () => {
         ruling: 'Ruling',
         custodyEndDate: '2020-09-28T12:00:00.000Z',
         custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-        accusedAppealDecision: [CaseAppealDecision.APPEAL],
-        prosecutorAppealDecision: [CaseAppealDecision.ACCEPT],
+        accusedAppealDecision: CaseAppealDecision.APPEAL,
+        prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
       }
 
       await request(app.getHttpServer())
@@ -403,10 +403,10 @@ describe('Case', () => {
           expect(response.body.custodyRestrictions).toStrictEqual(
             data.custodyRestrictions,
           )
-          expect(response.body.accusedAppealDecision).toStrictEqual(
+          expect(response.body.accusedAppealDecision).toBe(
             data.accusedAppealDecision,
           )
-          expect(response.body.prosecutorAppealDecision).toStrictEqual(
+          expect(response.body.prosecutorAppealDecision).toBe(
             data.prosecutorAppealDecision,
           )
           expect(response.body.notifications).toBeUndefined()
@@ -464,10 +464,10 @@ describe('Case', () => {
             expect(newValue.custodyRestrictions).toStrictEqual(
               data.custodyRestrictions,
             )
-            expect(newValue.accusedAppealDecision).toStrictEqual(
+            expect(newValue.accusedAppealDecision).toBe(
               data.accusedAppealDecision,
             )
-            expect(newValue.prosecutorAppealDecision).toStrictEqual(
+            expect(newValue.prosecutorAppealDecision).toBe(
               data.prosecutorAppealDecision,
             )
             expect(newValue.notifications).toStrictEqual([])

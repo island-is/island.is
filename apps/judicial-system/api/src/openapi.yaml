@@ -178,21 +178,17 @@ components:
               - COMMUNICATION
               - MEDIA
         accusedAppealDecision:
-          type: array
-          items:
-            type: string
-            enum:
-              - APPEAL
-              - ACCEPT
-              - POSTPONE
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
         prosecutorAppealDecision:
-          type: array
-          items:
-            type: string
-            enum:
-              - APPEAL
-              - ACCEPT
-              - POSTPONE
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
         notifications:
           type: array
           items:
@@ -345,21 +341,17 @@ components:
               - COMMUNICATION
               - MEDIA
         accusedAppealDecision:
-          type: array
-          items:
-            type: string
-            enum:
-              - APPEAL
-              - ACCEPT
-              - POSTPONE
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
         prosecutorAppealDecision:
-          type: array
-          items:
-            type: string
-            enum:
-              - APPEAL
-              - ACCEPT
-              - POSTPONE
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
     SigningServiceResponse:
       type: object
       properties:

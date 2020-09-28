@@ -55,7 +55,7 @@ module.exports = {
           ),
         queryInterface.sequelize.query(
           'CREATE TYPE "enum_case_appeal_decision" AS ENUM (\'APPEAL\', \'ACCEPT\', \'POSTPONE\');\
-          ALTER TABLE "case" ADD COLUMN "accused_appeal_decision" "enum_case_appeal_decision"[];',
+           ALTER TABLE "case" ADD COLUMN "accused_appeal_decision" "enum_case_appeal_decision"[];',
           { transaction: t },
         ),
         queryInterface.sequelize.query(

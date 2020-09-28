@@ -251,22 +251,22 @@ export class Case extends Model<Case> {
   custodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
+    type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),
   })
-  @ApiProperty({ enum: CaseAppealDecision, isArray: true })
+  @ApiProperty({ enum: CaseAppealDecision })
   // Ákvörðun um kæru kærða
-  accusedAppealDecision: CaseAppealDecision[]
+  accusedAppealDecision: CaseAppealDecision
 
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
+    type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),
   })
-  @ApiProperty({ enum: CaseAppealDecision, isArray: true })
+  @ApiProperty({ enum: CaseAppealDecision })
   // Ákvörðun um kæru sækjanda
-  prosecutorAppealDecision: CaseAppealDecision[]
+  prosecutorAppealDecision: CaseAppealDecision
 
   @HasMany(() => Notification)
   @ApiProperty({ type: Notification, isArray: true })
