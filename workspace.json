@@ -361,7 +361,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node apps/api/src/buildSchema.ts"
+                "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
               },
               {
                 "command": "yarn nx run api:codegen"
@@ -817,7 +817,7 @@
             "outputPath": "apps/reference-backend/src/openapi.yaml",
             "commands": [
               {
-                "command": "yarn ts-node apps/reference-backend/src/buildOpenApi.ts"
+                "command": "yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
               }
             ]
           }
@@ -1702,7 +1702,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node apps/air-discount-scheme/api/src/buildSchema.ts"
+                "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts"
               },
               {
                 "command": "yarn nx run air-discount-scheme-api:codegen"
@@ -1919,7 +1919,7 @@
           "options": {
             "commands": [
               {
-                "command": "NODE_ENV=test yarn ts-node apps/air-discount-scheme/backend/src/buildOpenApi.ts"
+                "command": "NODE_ENV=test yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
               }
             ]
           }
@@ -2282,7 +2282,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "NODE_ENV=test yarn ts-node apps/application-system/api/src/buildOpenApi.ts"
+                "command": "NODE_ENV=test yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
               }
             ]
           }
@@ -2674,7 +2674,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node apps/judicial-system/api/src/buildOpenApi.ts"
+                "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildOpenApi.ts"
               }
             ]
           }
@@ -2981,7 +2981,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node apps/skilavottord/ws/src/buildSchema.ts"
+                "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
               }
             ]
           }

@@ -35,7 +35,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "storybook:island-ui": "nx run island-ui-storybook:storybook",
-    "ts-node": "node -r ./scripts/ts-node",
+    "ts-node": "ts-node -r tsconfig-paths/register -O '{\"module\":\"commonjs\",\"esModuleInterop\":true}'",
     "schemas": "test -f libs/api/schema/src/lib/schema.d.ts || echo 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && yarn nx run api:contentful-types && yarn affected:schemas",
     "postinstall": "if [[ ! -z $DOCKER_BUILD ]]; then exit 0; else yarn schemas; fi"
   },
