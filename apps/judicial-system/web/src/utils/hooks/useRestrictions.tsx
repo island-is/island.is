@@ -10,20 +10,24 @@ const useRestrictions = (
   setWorkingCase: Dispatch<SetStateAction<Case>>,
 ) => {
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    workingCase?.custodyRestrictions?.indexOf(CustodyRestrictions.ISOLATION) >
-      -1,
+    workingCase?.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.ISOLATION,
+    ) > -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    workingCase?.custodyRestrictions?.indexOf(CustodyRestrictions.VISITAION) >
-      -1,
+    workingCase?.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.VISITAION,
+    ) > -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    workingCase?.custodyRestrictions?.indexOf(
+    workingCase?.requestedCustodyRestrictions?.indexOf(
       CustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    workingCase?.custodyRestrictions?.indexOf(CustodyRestrictions.MEDIA) > -1,
+    workingCase?.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.MEDIA,
+    ) > -1,
   )
   const restrictions = [
     {
@@ -79,13 +83,13 @@ const useRestrictions = (
                 console.log(copyOfState)
                 // If the user is checking the box, add the restriction to the state
                 if (target.checked) {
-                  copyOfState.custodyRestrictions.push(
+                  copyOfState.requestedCustodyRestrictions.push(
                     target.value as CustodyRestrictions,
                   )
                 }
                 // If the user is unchecking the box, remove the restriction from the state
                 else {
-                  const restrictions = copyOfState.custodyRestrictions
+                  const restrictions = copyOfState.requestedCustodyRestrictions
                   restrictions.splice(
                     restrictions.indexOf(target.value as CustodyRestrictions),
                     1,
@@ -100,14 +104,14 @@ const useRestrictions = (
                   workingCase.id,
                   parseArray(
                     'custodyRestrictions',
-                    copyOfState.custodyRestrictions,
+                    copyOfState.requestedCustodyRestrictions,
                   ),
                 )
 
                 updateState(
                   workingCase,
                   'restrictions',
-                  copyOfState.custodyRestrictions,
+                  copyOfState.requestedCustodyRestrictions,
                   setWorkingCase,
                 )
               }}
