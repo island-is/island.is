@@ -76,10 +76,6 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true)
 
-    if (tabRefs.current && !isMobile) {
-      tabRefs.current[0] && tabRefs.current[0].focus()
-    }
-
     return () => {
       document.removeEventListener('click', handleClickOutside, true)
     }
