@@ -31,11 +31,7 @@ describe('Resource', () => {
       statusCode: 400,
       error: 'Bad Request',
       message: [
-        {
-          value: '123456123',
-          property: 'nationalId',
-          constraints: { length: expect.stringContaining('longer than') },
-        },
+        "nationalId must be longer than or equal to 10 characters",
       ],
     })
   })
