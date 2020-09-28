@@ -19,7 +19,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 import { DetentionRequest, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
-import { hasRole, UserRole } from '../../utils/authenticate'
+import { UserRole } from '../../utils/authenticate'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
 import { userContext } from '../../utils/userContext'
@@ -46,15 +46,15 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
       if (isMounted && casesResponse) {
         setUser({
           nationalId: userResponse.nationalId,
-          roles: userResponse.roles,
+          role: userResponse.role,
         })
 
         props.onGetUser({
           nationalId: userResponse.nationalId,
-          roles: userResponse.roles,
+          role: userResponse.role,
         })
 
-        if (hasRole(userResponse.roles, UserRole.JUDGE)) {
+        if (userResponse.role === UserRole.JUDGE) {
           const judgeCases = casesResponse.filter((c) => {
             return c.state === CaseState.SUBMITTED
           })
@@ -93,8 +93,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   return (
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
-        {!uContext.user ? null : uContext.user.roles.indexOf(UserRole.JUDGE) >
-          -1 ? (
+        {!uContext.user ? null : uContext.user.role === UserRole.JUDGE ? (
           <JudgeLogo />
         ) : (
           <ProsecutorLogo />
@@ -147,7 +146,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
                     {(user) => (
                       <Link
                         to={
-                          user.user.roles.indexOf(UserRole.JUDGE) > -1
+                          user.user.role === UserRole.JUDGE
                             ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                             : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         }

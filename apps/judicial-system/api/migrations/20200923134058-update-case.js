@@ -4,12 +4,12 @@ const replaceEnum = require('sequelize-replace-enum-postgres').default
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.sequelize.transaction((t) => {
-      return queryInterface.sequelize.query(
+    await queryInterface.sequelize.transaction((t) =>
+      queryInterface.sequelize.query(
         `UPDATE "case" SET state = 'DRAFT' WHERE state = 'UNKNOWN' or state = 'ACTIVE' or state = 'COMPLETED';`,
         { transaction: t },
-      )
-    })
+      ),
+    )
     // replaceEnum does not support transactions
     return replaceEnum({
       queryInterface,
@@ -22,12 +22,12 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.sequelize.transaction((t) => {
-      return queryInterface.sequelize.query(
+    await queryInterface.sequelize.transaction((t) =>
+      queryInterface.sequelize.query(
         `UPDATE "case" SET state = 'DRAFT' WHERE state = 'ACCEPTED' or state = 'REJECTED';`,
         { transaction: t },
-      )
-    })
+      ),
+    )
     // replaceEnum does not support transactions
     return replaceEnum({
       queryInterface,
