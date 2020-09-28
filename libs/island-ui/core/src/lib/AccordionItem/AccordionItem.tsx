@@ -88,7 +88,6 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
 
     const handleOpen = () => {
       const newValue = !expanded
-
       if (typeof setToggledId === 'function' && newValue) {
         setToggledId(id)
       }
@@ -104,11 +103,26 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
+    const handleClose = () => {
+      expanded = false
+      setHeight(0)
+
+      if (expandedProp === undefined) {
+        setExpandedFallback(false)
+      }
+
+      if (typeof onToggle === 'function') {
+        onToggle(false)
+      }
+    }
+
     const onHandleOpen = useCallback(handleOpen, [])
 
     useEffect(() => {
       if (startExpanded) {
         onHandleOpen()
+      } else {
+        handleClose()
       }
     }, [onHandleOpen, startExpanded])
 
