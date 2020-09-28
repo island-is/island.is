@@ -168,7 +168,7 @@ const Category: Screen<CategoryProps> = ({
     }
 
     setHash(newHash)
-    Router.push(makePath('ArticleCategory', category.slug + `#${newHash}`))
+    Router.replace(makePath('ArticleCategory', category.slug + `#${newHash}`))
   }
 
   const sortArticles = (articles: Articles) => {
