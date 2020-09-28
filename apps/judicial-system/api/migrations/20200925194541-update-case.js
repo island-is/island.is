@@ -2,8 +2,8 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.renameColumn(
           'case',
           'suspect_national_id',
@@ -62,13 +62,13 @@ module.exports = {
           'ALTER TABLE "case" ADD COLUMN "prosecutor_appeal_decision" "enum_case_appeal_decision"[];',
           { transaction: t },
         ),
-      ])
-    })
+      ]),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.renameColumn(
           'case',
           'accused_national_id',
@@ -118,7 +118,7 @@ module.exports = {
               { transaction: t },
             ),
           ),
-      ])
-    })
+      ]),
+    )
   },
 }

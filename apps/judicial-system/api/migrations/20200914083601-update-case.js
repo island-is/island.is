@@ -2,8 +2,8 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.addColumn(
           'case',
           'requested_custody_end_date',
@@ -77,13 +77,13 @@ module.exports = {
           },
           { transaction: t },
         ),
-      ])
-    })
+      ]),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.removeColumn('case', 'requested_custody_end_date', {
           transaction: t,
         }),
@@ -115,7 +115,7 @@ module.exports = {
           transaction: t,
         }),
         queryInterface.removeColumn('case', 'comments', { transaction: t }),
-      ])
-    })
+      ]),
+    )
   },
 }
