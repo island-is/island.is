@@ -57,3 +57,23 @@ export const Checked = () => {
     </ContentBlock>
   )
 }
+
+export const Large = () => {
+  const [radioButton, setRadioButton] = useState('')
+  return (
+    <ContentBlock>
+      <Box padding={[1, 2, 3]}>
+        <RadioButton
+          name="RadioButton2"
+          label="Checkbox"
+          value="1"
+          onChange={({ target }) => {
+            setRadioButton(target.value)
+          }}
+          checked={radioButton === '1'}
+          large
+        />
+      </Box>
+    </ContentBlock>
+  )
+}
