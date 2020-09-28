@@ -17,7 +17,7 @@ Assuming `environment.smsOptions` implements `SmsServiceOptions`, add the servic
 @Module({
   providers: [
     {
-      provide: 'SMS_OPTIONS',
+      provide: SMS_OPTIONS,
       useValue: environment.smsOptions
     },
     {
@@ -27,7 +27,7 @@ Assuming `environment.smsOptions` implements `SmsServiceOptions`, add the servic
         smsService.initialize({} as DataSourceConfig<{}>)
         return smsService
       },
-      inject: ['SMS_OPTIONS', LOGGER_PROVIDER],
+      inject: [SMS_OPTIONS, LOGGER_PROVIDER],
     },
   ],
 })

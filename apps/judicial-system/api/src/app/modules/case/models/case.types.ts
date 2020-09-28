@@ -13,3 +13,9 @@ export enum CaseCustodyRestrictions {
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
 }
+
+export enum CaseAppealDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
+  POSTPONE = 'POSTPONE',
+}
