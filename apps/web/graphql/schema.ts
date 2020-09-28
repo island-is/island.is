@@ -1954,17 +1954,17 @@ export type GetUrlQuery = { __typename?: 'Query' } & {
 
 export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
   Image,
-  'typename' | 'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
+  'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
 >
 
 export type AssetFieldsFragment = { __typename: 'Asset' } & Pick<
   Asset,
-  'typename' | 'id' | 'title' | 'url' | 'contentType'
+  'id' | 'title' | 'url' | 'contentType'
 >
 
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
   TimelineSlice,
-  'typename' | 'id' | 'title'
+  'id' | 'title'
 > & {
     events: Array<
       { __typename?: 'TimelineEvent' } & Pick<
@@ -1985,12 +1985,12 @@ export type MailingListSignupFieldsFragment = {
   __typename: 'MailingListSignupSlice'
 } & Pick<
   MailingListSignupSlice,
-  'typename' | 'id' | 'title' | 'description' | 'inputLabel' | 'buttonText'
+  'id' | 'title' | 'description' | 'inputLabel' | 'buttonText'
 >
 
 export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
   StorySlice,
-  'typename' | 'id' | 'readMoreText'
+  'id' | 'readMoreText'
 > & {
     stories: Array<
       { __typename?: 'Story' } & Pick<
@@ -2009,7 +2009,7 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
 
 export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
   LatestNewsSlice,
-  'typename' | 'id' | 'title'
+  'id' | 'title'
 > & {
     news: Array<
       { __typename?: 'News' } & Pick<
@@ -2021,7 +2021,7 @@ export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
 
 export type LinkCardFieldsFragment = { __typename: 'LinkCardSlice' } & Pick<
   LinkCardSlice,
-  'typename' | 'id' | 'title'
+  'id' | 'title'
 > & {
     cards: Array<
       { __typename?: 'LinkCard' } & Pick<
@@ -2033,17 +2033,17 @@ export type LinkCardFieldsFragment = { __typename: 'LinkCardSlice' } & Pick<
 
 export type HeadingFieldsFragment = { __typename: 'HeadingSlice' } & Pick<
   HeadingSlice,
-  'typename' | 'id' | 'title' | 'body'
+  'id' | 'title' | 'body'
 >
 
 export type LogoListFieldsFragment = { __typename: 'LogoListSlice' } & Pick<
   LogoListSlice,
-  'typename' | 'id' | 'title' | 'body'
+  'id' | 'title' | 'body'
 > & { images: Array<{ __typename?: 'Image' } & ImageFieldsFragment> }
 
 export type BulletListFieldsFragment = { __typename: 'BulletListSlice' } & Pick<
   BulletListSlice,
-  'typename' | 'id'
+  'id'
 > & {
     bullets: Array<
       | ({ __typename: 'IconBullet' } & Pick<
@@ -2066,7 +2066,7 @@ export type BulletListFieldsFragment = { __typename: 'BulletListSlice' } & Pick<
 
 export type FaqListFieldsFragment = { __typename: 'FaqList' } & Pick<
   FaqList,
-  'typename' | 'id' | 'title'
+  'id' | 'title'
 > & {
     questions: Array<
       { __typename?: 'QuestionAndAnswer' } & Pick<
@@ -2078,7 +2078,7 @@ export type FaqListFieldsFragment = { __typename: 'FaqList' } & Pick<
 
 export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
   Statistics,
-  'typename' | 'id' | 'title'
+  'id' | 'title'
 > & {
     statistics: Array<
       { __typename?: 'Statistic' } & Pick<Statistic, 'id' | 'value' | 'label'>
@@ -2087,28 +2087,28 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
 
 export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
-  'typename' | 'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
+  'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
 >
 
 export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,
-  'typename' | 'id' | 'document'
+  'id' | 'document'
 >
 
 export type EmbeddedVideoFieldsFragment = {
   __typename: 'EmbeddedVideo'
-} & Pick<EmbeddedVideo, 'typename' | 'id' | 'title' | 'url'>
+} & Pick<EmbeddedVideo, 'id' | 'title' | 'url'>
 
 export type SectionWithImageFieldsFragment = {
   __typename: 'SectionWithImage'
-} & Pick<SectionWithImage, 'typename' | 'id' | 'title'> & {
+} & Pick<SectionWithImage, 'id' | 'title'> & {
     image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
     html: { __typename?: 'Html' } & HtmlFieldsFragment
   }
 
 export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
   TabSection,
-  'typename' | 'id' | 'title'
+  'id' | 'title'
 > & {
     tabs: Array<
       { __typename?: 'TabContent' } & Pick<
@@ -2123,7 +2123,7 @@ export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
 
 export type TeamListFieldsFragment = { __typename: 'TeamList' } & Pick<
   TeamList,
-  'typename' | 'id'
+  'id'
 > & {
     teamMembers: Array<
       { __typename?: 'TeamMember' } & Pick<TeamMember, 'name' | 'title'> & {
@@ -2134,7 +2134,6 @@ export type TeamListFieldsFragment = { __typename: 'TeamList' } & Pick<
 
 export type ContactUsFieldsFragment = { __typename: 'ContactUs' } & Pick<
   ContactUs,
-  | 'typename'
   | 'id'
   | 'title'
   | 'required'

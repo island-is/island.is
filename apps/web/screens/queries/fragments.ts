@@ -3,7 +3,6 @@ import gql from 'graphql-tag'
 export const slices = gql`
   fragment ImageFields on Image {
     __typename
-    typename
     id
     title
     url
@@ -14,7 +13,6 @@ export const slices = gql`
 
   fragment AssetFields on Asset {
     __typename
-    typename
     id
     title
     url
@@ -23,7 +21,6 @@ export const slices = gql`
 
   fragment TimelineFields on TimelineSlice {
     __typename
-    typename
     id
     title
     events {
@@ -43,7 +40,6 @@ export const slices = gql`
 
   fragment MailingListSignupFields on MailingListSignupSlice {
     __typename
-    typename
     id
     title
     description
@@ -53,7 +49,6 @@ export const slices = gql`
 
   fragment StoryFields on StorySlice {
     __typename
-    typename
     id
     readMoreText
     stories {
@@ -73,7 +68,6 @@ export const slices = gql`
 
   fragment LatestNewsFields on LatestNewsSlice {
     __typename
-    typename
     id
     title
     news {
@@ -92,7 +86,6 @@ export const slices = gql`
 
   fragment LinkCardFields on LinkCardSlice {
     __typename
-    typename
     id
     title
     cards {
@@ -105,7 +98,6 @@ export const slices = gql`
 
   fragment HeadingFields on HeadingSlice {
     __typename
-    typename
     id
     title
     body
@@ -113,7 +105,6 @@ export const slices = gql`
 
   fragment LogoListFields on LogoListSlice {
     __typename
-    typename
     id
     title
     body
@@ -124,7 +115,6 @@ export const slices = gql`
 
   fragment BulletListFields on BulletListSlice {
     __typename
-    typename
     id
     bullets {
       ... on IconBullet {
@@ -153,7 +143,6 @@ export const slices = gql`
 
   fragment FaqListFields on FaqList {
     __typename
-    typename
     id
     title
     questions {
@@ -167,7 +156,6 @@ export const slices = gql`
 
   fragment StatisticsFields on Statistics {
     __typename
-    typename
     id
     title
     statistics {
@@ -179,7 +167,6 @@ export const slices = gql`
 
   fragment ProcessEntryFields on ProcessEntry {
     __typename
-    typename
     id
     type
     processTitle
@@ -189,14 +176,12 @@ export const slices = gql`
 
   fragment HtmlFields on Html {
     __typename
-    typename
     id
     document
   }
 
   fragment EmbeddedVideoFields on EmbeddedVideo {
     __typename
-    typename
     id
     title
     url
@@ -204,7 +189,6 @@ export const slices = gql`
 
   fragment SectionWithImageFields on SectionWithImage {
     __typename
-    typename
     id
     title
     image {
@@ -217,7 +201,6 @@ export const slices = gql`
 
   fragment TabSectionFields on TabSection {
     __typename
-    typename
     id
     title
     tabs {
@@ -234,7 +217,6 @@ export const slices = gql`
 
   fragment TeamListFields on TeamList {
     __typename
-    typename
     id
     teamMembers {
       name
@@ -247,7 +229,6 @@ export const slices = gql`
 
   fragment ContactUsFields on ContactUs {
     __typename
-    typename
     id
     title
     required
