@@ -1,13 +1,9 @@
-<<<<<<< HEAD
 import { HttpService } from '@nestjs/common'
-=======
->>>>>>> master
 import { Carowner } from '.'
 import { Car } from '../../car'
 
 export class CarownerService {
   carownerList: Carowner[]
-<<<<<<< HEAD
   httpService: HttpService
   carList: Car[]
 
@@ -17,16 +13,6 @@ export class CarownerService {
     this.carList = []
     this.carList.push(
       new Car('Jkd-912', 'Nissan leaf', 'white', '20-03-2015', false),
-=======
-
-  carList: Car[]
-
-  constructor() {
-    this.carownerList = []
-    this.carList = []
-    this.carList.push(
-      new Car('Jkd-912', 'Nissan', 'Arya', 'white', '2020', false),
->>>>>>> master
     )
     this.carownerList.push(
       new Carowner('1111111111', 'Óðinn Jónsson', '1111111', this.carList),

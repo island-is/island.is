@@ -3279,7 +3279,7 @@
           }
         }
       }
-    },    
+    },
     "skilavottord-const": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",

@@ -12,9 +12,17 @@ type RecyclingPartner {
   active: Boolean
 }
 
+type User {
+  nationalId: ID!
+  name: String!
+  mobile: String
+}
+
 type Car {
   permno: ID!
   type: String!
+  name: String!
+  model: String!
   color: String!
   newregdate: String!
   recyclable: Boolean!
@@ -28,17 +36,10 @@ type Carowner {
   cars: [Car!]
 }
 
-type Carowner {
-  nationalId: ID!
-  name: String!
-  mobile: String
-<<<<<<< HEAD
-}
-
 type Query {
   getRecyclingPartner(id: Float!): RecyclingPartner!
-  getVehiclesForNationalId(nationalId: String!): Carowner!
   getUserByNationalId(nationalId: String!): User!
+  getVehiclesForNationalId(nationalId: String!): Carowner!
 }
 
 type Mutation {
@@ -52,11 +53,4 @@ input DeregisterCarInput {
   recyclingCompanyId: Float!
   recyclingCompanyName: String!
   deregisterDescription: String
-=======
-  cars: [Car!]
-}
-
-type Query {
-  getCarownerByNationalId(nationalId: String!): Carowner!
->>>>>>> master
 }

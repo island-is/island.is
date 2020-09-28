@@ -7,12 +7,7 @@ export class CarService {
     return this.carList
   }
 
-<<<<<<< HEAD
   getCarById(permno: string): Car {
     return this.carList.find((e) => e.permno === permno)
-=======
-  getCarById(id: string): Car {
-    return this.carList.find((e) => e.id === id)
->>>>>>> master
   }
 }

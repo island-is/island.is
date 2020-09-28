@@ -1,8 +1,4 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-<<<<<<< HEAD
-=======
-import { Car } from '../../car'
->>>>>>> master
 
 @ObjectType()
 export class User {
