@@ -25,7 +25,6 @@ export const formatDate = (
   formatPattern: string,
   options?: any,
 ) => {
-  console.log(date)
   if (isValid(parseISO(date))) {
     return format(parseISO(date), formatPattern, options)
   } else {

@@ -8,6 +8,7 @@ import * as api from '../../api'
 const useRestrictions = (
   workingCase: Case,
   setWorkingCase: Dispatch<SetStateAction<Case>>,
+  isJudge: boolean,
 ) => {
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
     workingCase?.requestedCustodyRestrictions?.indexOf(
@@ -103,7 +104,9 @@ const useRestrictions = (
                 api.saveCase(
                   workingCase.id,
                   parseArray(
-                    'custodyRestrictions',
+                    isJudge
+                      ? 'custodyRestrictions'
+                      : 'requestedCustodyRestrictions',
                     copyOfState.requestedCustodyRestrictions,
                   ),
                 )
