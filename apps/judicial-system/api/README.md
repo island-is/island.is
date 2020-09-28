@@ -6,9 +6,10 @@ First, make sure you have docker, then run:
 
 `yarn nx dev-services judicial-system-api`
 
-Then run the migrations:
+Then run the migrations and seed the database:
 
 `yarn nx run judicial-system-api:migrate`
+`yarn nx run judicial-system-api:seed:all`
 
 ## Running locally
 

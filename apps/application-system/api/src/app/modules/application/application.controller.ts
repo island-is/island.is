@@ -28,6 +28,7 @@ import {
   FormValue,
   getApplicationTemplateByTypeId,
   ApplicationTemplateHelper,
+  ExternalData,
 } from '@island.is/application/template'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -88,13 +89,7 @@ export class ApplicationController {
   ): Promise<Application> {
     // TODO not post the state, it should follow the initialstate of the machine
     await validateApplicationSchema(
-      {
-        ...application,
-        externalData: {},
-        id: undefined,
-        modified: new Date(),
-        created: new Date(),
-      } as BaseApplication,
+      application,
       application.answers as FormValue,
     )
 
@@ -123,7 +118,7 @@ export class ApplicationController {
     )
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
-      application.answers,
+      application.answers as FormValue,
     )
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
@@ -161,6 +156,7 @@ export class ApplicationController {
       updatedApplication,
     } = await this.applicationService.updateExternalData(
       existingApplication.id,
+      existingApplication.externalData as ExternalData,
       buildExternalData(externalDataDto, results),
     )
     if (!updatedApplication) {

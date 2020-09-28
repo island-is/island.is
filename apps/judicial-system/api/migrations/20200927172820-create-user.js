@@ -4,7 +4,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'notification',
+        'user',
         {
           id: {
             type: Sequelize.UUID,
@@ -17,20 +17,26 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          case_id: {
-            type: Sequelize.UUID,
-            references: {
-              model: 'case',
-              key: 'id',
-            },
+          modified: {
+            type: 'TIMESTAMP WITH TIME ZONE',
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          type: {
-            type: Sequelize.ENUM('HEADS_UP', 'READY_FOR_COURT'),
-            allowNull: false,
-          },
-          message: {
+          national_id: {
             type: Sequelize.STRING,
+            unique: true,
+            allowNull: false,
+          },
+          name: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
+          mobile_number: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
+          role: {
+            type: Sequelize.ENUM('PROSECUTOR', 'REGISTRAR', 'JUDGE'),
             allowNull: false,
           },
         },
@@ -42,10 +48,10 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface
-        .dropTable('notification', { transaction: t })
+        .dropTable('user', { transaction: t })
         .then(() =>
           queryInterface.sequelize.query(
-            'DROP TYPE IF EXISTS "enum_notification_type";',
+            'DROP TYPE IF EXISTS "enum_user_role";',
             { transaction: t },
           ),
         ),
