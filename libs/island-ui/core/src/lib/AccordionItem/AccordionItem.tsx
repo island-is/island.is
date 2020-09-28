@@ -173,7 +173,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                       styles.plusIcon,
                       styles.iconVariants[iconVariant],
                       {
-                        [styles.plusIconActive]: expanded,
+                        [styles.plusIconActive]: startExpanded,
                       },
                     )}
                     viewBox="0 0 20 20"
@@ -183,7 +183,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     <path
                       d="M11.4286 11.4286H18.5714C19.3571 11.4286 20 10.7857 20 9.99998C20 9.21427 19.3571 8.57141 18.5714 8.57141H11.4286H8.57143H1.42857C0.642857 8.57141 0 9.21427 0 9.99998C0 10.7857 0.642857 11.4286 1.42857 11.4286H8.57143H11.4286Z"
                       className={cn(styles.plusIconX, {
-                        [styles.plusIconXActive]: expanded,
+                        [styles.plusIconXActive]: startExpanded,
                       })}
                     />
                     <path
