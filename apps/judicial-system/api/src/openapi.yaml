@@ -27,21 +27,34 @@ components:
     User:
       type: object
       properties:
+        id:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
         nationalId:
           type: string
         name:
           type: string
         mobileNumber:
           type: string
-        roles:
-          type: array
-          items:
-            type: string
+        role:
+          type: string
+          enum:
+            - PROSECUTOR
+            - REGISTRAR
+            - JUDGE
       required:
+        - id
+        - created
+        - modified
         - nationalId
         - name
         - mobileNumber
-        - roles
+        - role
     Notification:
       type: object
       properties:

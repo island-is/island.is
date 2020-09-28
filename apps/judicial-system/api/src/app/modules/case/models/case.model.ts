@@ -48,7 +48,7 @@ export class Case extends Model<Case> {
     defaultValue: CaseState.DRAFT,
   })
   @ApiProperty({ enum: CaseState })
-  state: string
+  state: CaseState
 
   @Column({
     type: DataType.STRING,

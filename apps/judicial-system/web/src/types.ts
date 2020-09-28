@@ -87,5 +87,5 @@ export interface CreateCaseRequest {
 
 export interface User {
   nationalId: string
-  roles: string[]
+  role: string
 }
