@@ -5,7 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
-import { SigningService } from './signing.service'
+import { SigningService, SIGNING_OPTIONS } from './signing.service'
 
 const testOptions = {
   url: 'Test Url',
@@ -92,7 +92,7 @@ describe('SigningService', () => {
           useValue: logger,
         },
         {
-          provide: 'SIGNING_OPTIONS',
+          provide: SIGNING_OPTIONS,
           useValue: testOptions,
         },
         SigningService,

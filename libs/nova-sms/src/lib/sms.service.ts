@@ -35,6 +35,8 @@ export class NovaError extends Error {
 
 let token: string
 
+export const SMS_OPTIONS = 'SMS_OPTIONS'
+
 export interface SmsServiceOptions {
   url: string
   username: string
@@ -44,7 +46,7 @@ export interface SmsServiceOptions {
 @Injectable()
 export class SmsService extends RESTDataSource {
   constructor(
-    @Inject('SMS_OPTIONS')
+    @Inject(SMS_OPTIONS)
     private options: SmsServiceOptions,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,

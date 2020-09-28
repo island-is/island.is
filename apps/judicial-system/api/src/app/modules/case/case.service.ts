@@ -13,7 +13,8 @@ import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, NotificationType } from './models'
-import { getDummyPdf, writeDummySignedPdf } from './case.dummy.pdf'
+import { getPdf } from './case.pdf'
+import { writeDummySignedPdf } from './case.dummy.pdf'
 
 @Injectable()
 export class CaseService {
@@ -129,12 +130,12 @@ export class CaseService {
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
-      const pdf = this.getRulingAsPdf()
+      const pdf = await this.getRulingAsPdf()
 
       return this.signingService.requestSignature(
         user.mobileNumber,
         'Undirrita dóm',
-        existingCase.suspectName,
+        existingCase.accusedName,
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -217,8 +218,8 @@ export class CaseService {
   }
 
   // Not implemented yet
-  private getRulingAsPdf(): string {
-    return getDummyPdf()
+  private getRulingAsPdf(): Promise<string> {
+    return getPdf()
   }
 
   // Not implemented yet

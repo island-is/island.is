@@ -20,7 +20,7 @@ import {
 import { Filters, Panel, Summary } from './components'
 import { FilterInput } from './consts'
 import { Screen } from '../../types'
-import { downloadCSV } from './utils'
+import { isCSVAvailable, downloadCSV } from './utils'
 
 const FlightLegsQuery = gql`
   query FlightLegsQuery($input: FlightLegsInput!) {
@@ -139,6 +139,7 @@ const Admin: Screen = ({}) => {
                   width="fluid"
                   variant="ghost"
                   onClick={() => downloadCSV(flightLegs, filters)}
+                  disabled={!isCSVAvailable(filters)}
                 >
                   Prenta yfirlit
                 </Button>

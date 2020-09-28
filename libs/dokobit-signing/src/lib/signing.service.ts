@@ -9,6 +9,8 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+export const SIGNING_OPTIONS = 'SIGNING_OPTIONS'
+
 export interface SigningServiceOptions {
   url: string
   accessToken: string
@@ -54,7 +56,7 @@ interface DokobitStatusResponse {
 @Injectable() // extends RESTDataSource
 export class SigningService extends DataSource {
   constructor(
-    @Inject('SIGNING_OPTIONS')
+    @Inject(SIGNING_OPTIONS)
     private options: SigningServiceOptions,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
