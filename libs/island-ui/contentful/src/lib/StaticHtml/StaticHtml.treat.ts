@@ -19,20 +19,25 @@ globalStyle(`${container} > *:last-child`, {
   marginBottom: 0,
 })
 
+globalStyle(`${container} ol`, {
+  counterReset: 'section',
+})
+
 globalStyle(`${container} ol li`, {
   listStyle: 'none',
-  counterIncrement: 'section',
   position: 'relative',
+  margin: `${theme.spacing[1]}px 0`,
+})
+
+globalStyle(`${container} ol ol li`, {
   paddingLeft: theme.spacing[3],
-  paddingBottom: theme.spacing[1],
 })
 
 globalStyle(`${container} ol li:before`, {
-  position: 'absolute',
-  top: '2px',
-  left: 0,
-  display: 'inline-block',
-  content: 'counter(section)',
+  float: 'left',
+  margin: `2px 12px 0 0`,
+  counterIncrement: 'section',
+  content: 'counters(section, ".") " "',
   color: theme.color.red400,
   fontWeight: theme.typography.semiBold,
 })
