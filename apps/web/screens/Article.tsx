@@ -460,7 +460,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       href={processEntry.processLink}
                       withUnderline
                     >
-                      <span>{processEntry.buttonText || n('processLinkButtonText')}</span>
+                      <span>
+                        {processEntry.buttonText || n('processLinkButtonText')}
+                      </span>
                       <Box component="span" marginLeft={2}>
                         <Icon type="external" width="15" />
                       </Box>

@@ -5,7 +5,7 @@ import { theme, Colors } from '@island.is/island-ui/theme'
 import * as styles from './BackgroundImage.treat'
 
 export type BackgroundImageProps = {
-  image: { url: string, title: string }
+  image: { url: string; title: string }
   ratio?: string
   width?: number
   height?: number
