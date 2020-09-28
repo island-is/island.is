@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { SmsService } from './sms.service'
+import { SmsService, SMS_OPTIONS } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
@@ -55,7 +55,7 @@ describe('SmsService', () => {
           useValue: mock<Logger>(),
         },
         {
-          provide: 'SMS_OPTIONS',
+          provide: SMS_OPTIONS,
           useValue: testOptions,
         },
         SmsService,
