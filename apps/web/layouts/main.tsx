@@ -47,7 +47,7 @@ export interface LayoutProps {
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
-  alertBannerContent?: AlertBannerSchema
+  alertBannerContent?: GetAlertBannerQuery["getAlertBanner"]
 }
 
 const Layout: NextComponentType<
