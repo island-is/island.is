@@ -21,7 +21,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 import { autoSave, updateState } from '../../utils/stepHelper'
 import * as api from '../../api'
 
-export const Verdict: React.FC = () => {
+export const Ruling: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
   const [requestRecjected, setRequestRejected] = useState(
     workingCase?.state === CaseState.REJECTED,
@@ -73,7 +73,7 @@ export const Verdict: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Input
-                  name="verdict"
+                  name="Ruling"
                   label="Niðurstaða úrskurðar"
                   placeholder="Skrifa hér..."
                   textarea
@@ -364,4 +364,4 @@ export const Verdict: React.FC = () => {
   ) : null
 }
 
-export default Verdict
+export default Ruling

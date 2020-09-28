@@ -11,7 +11,7 @@ import { User } from '../../types'
 import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview'
 import CourtRecord from '../../routes/CourtRecord/CourtRecord'
-import Verdict from '../../routes/Verdict/Verdict'
+import Ruling from '../../routes/Ruling/Ruling'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
@@ -25,8 +25,8 @@ const App: React.FC = () => {
         <Header />
         <main className={styles.mainConainer}>
           <Switch>
-            <Route path={Constants.VERDICT_ROUTE}>
-              <Verdict />
+            <Route path={Constants.RULING_ROUTE}>
+              <Ruling />
             </Route>
             <Route path={Constants.COURT_DOCUMENT_ROUTE}>
               <CourtRecord />
