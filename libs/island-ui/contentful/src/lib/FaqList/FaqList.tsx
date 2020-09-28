@@ -1,20 +1,20 @@
 import React, { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
-import { Html } from '@island.is/api/schema'
 import {
   Stack,
   Typography,
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { renderSlices } from '../richTextRendering'
+import { renderHtml } from '../richTextRendering'
+import { Document } from '@contentful/rich-text-types'
 
 export interface FaqListProps {
   title: string
   questions: {
     id: string
     question: string
-    answer?: Html
+    answer?: { document: Document }
   }[]
 }
 
@@ -27,7 +27,7 @@ export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
       <Accordion>
         {questions.map(({ id, question, answer }) => (
           <AccordionItem key={id} id={`faq_${id}`} label={question}>
-            {renderSlices(answer)}
+            {renderHtml(answer?.document)}
           </AccordionItem>
         ))}
       </Accordion>
