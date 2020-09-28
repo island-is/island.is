@@ -6,7 +6,9 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { Service } from '@island.is/api-catalogue/types'
-import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { PageInfo } from './pageInfo.model'
+import { XroadInfo } from './xroadIdentifier.model'
 
 registerEnumType(AccessCategory, {
   name: 'accessCategoryEnum',
@@ -23,12 +25,6 @@ registerEnumType(DataCategory, {
 registerEnumType(TypeCategory, {
   name: 'TypeCategoryEnum',
 })
-
-@ObjectType()
-export class PageInfo {
-  @Field((type) => String, { nullable: true })
-  nextCursor: string
-}
 
 @ObjectType()
 export class ApiService implements Service {
@@ -48,33 +44,25 @@ export class ApiService implements Service {
   @IsString()
   description: string
 
-  @Field((type) => String)
-  @IsString()
-  url: string
-
-  @Field((type) => PricingCategory)
+  @Field((type) => [PricingCategory])
   @IsEnum(PricingCategory)
-  pricing: PricingCategory
+  pricing: Array<PricingCategory>
 
   @Field((type) => [DataCategory])
   @IsEnum(DataCategory)
   data: Array<DataCategory>
 
-  @Field((type) => TypeCategory)
+  @Field((type) => [TypeCategory])
   @IsEnum(TypeCategory)
-  type: TypeCategory
+  type: Array<TypeCategory>
 
   @Field((type) => [AccessCategory])
   @IsEnum(AccessCategory)
   access: Array<AccessCategory>
 
-  @Field((type) => Date)
-  @IsDate()
-  created: Date
-
-  @Field((type) => Date, { nullable: true })
-  @IsDate()
-  updated?: Date
+  @Field((type) => [XroadInfo], { nullable: true })
+  @IsOptional()
+  xroadIdentifier?: Array<XroadInfo>
 }
 
 @ObjectType()

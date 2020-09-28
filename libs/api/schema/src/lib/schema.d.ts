@@ -763,19 +763,26 @@ export type PageInfo = {
   nextCursor?: Maybe<Scalars['String']>
 }
 
+export type XroadInfo = {
+  __typename?: 'XroadInfo'
+  instance: Scalars['String']
+  memberClass: Scalars['String']
+  memberCode: Scalars['String']
+  subsystemCode: Scalars['String']
+  serviceCode: Scalars['String']
+}
+
 export type ApiService = {
   __typename?: 'ApiService'
   id: Scalars['ID']
   owner: Scalars['String']
   name: Scalars['String']
   description: Scalars['String']
-  url: Scalars['String']
-  pricing: PricingCategoryEnum
+  pricing: Array<PricingCategoryEnum>
   data: Array<DataCategoryEnum>
-  type: TypeCategoryEnum
+  type: Array<TypeCategoryEnum>
   access: Array<AccessCategoryEnum>
-  created: Scalars['DateTime']
-  updated?: Maybe<Scalars['DateTime']>
+  xroadIdentifier?: Maybe<Array<XroadInfo>>
 }
 
 export enum PricingCategoryEnum {
@@ -1639,6 +1646,7 @@ export type ResolversTypes = {
   DocumentDetails: ResolverTypeWrapper<DocumentDetails>
   DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   PageInfo: ResolverTypeWrapper<PageInfo>
+  XroadInfo: ResolverTypeWrapper<XroadInfo>
   ApiService: ResolverTypeWrapper<ApiService>
   PricingCategoryEnum: PricingCategoryEnum
   DataCategoryEnum: DataCategoryEnum
@@ -1851,6 +1859,7 @@ export type ResolversParentTypes = {
   DocumentDetails: DocumentDetails
   DocumentCategory: DocumentCategory
   PageInfo: PageInfo
+  XroadInfo: XroadInfo
   ApiService: ApiService
   ApiCatalogue: ApiCatalogue
   Query: {}
@@ -3167,6 +3176,18 @@ export type PageInfoResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type XroadInfoResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['XroadInfo'] = ResolversParentTypes['XroadInfo']
+> = {
+  instance?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  memberClass?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  memberCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subsystemCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  serviceCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ApiServiceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ApiService'] = ResolversParentTypes['ApiService']
@@ -3175,9 +3196,8 @@ export type ApiServiceResolvers<
   owner?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   pricing?: Resolver<
-    ResolversTypes['PricingCategoryEnum'],
+    Array<ResolversTypes['PricingCategoryEnum']>,
     ParentType,
     ContextType
   >
@@ -3186,14 +3206,21 @@ export type ApiServiceResolvers<
     ParentType,
     ContextType
   >
-  type?: Resolver<ResolversTypes['TypeCategoryEnum'], ParentType, ContextType>
+  type?: Resolver<
+    Array<ResolversTypes['TypeCategoryEnum']>,
+    ParentType,
+    ContextType
+  >
   access?: Resolver<
     Array<ResolversTypes['accessCategoryEnum']>,
     ParentType,
     ContextType
   >
-  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
-  updated?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>
+  xroadIdentifier?: Resolver<
+    Maybe<Array<ResolversTypes['XroadInfo']>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3613,6 +3640,7 @@ export type Resolvers<ContextType = Context> = {
   DocumentDetails?: DocumentDetailsResolvers<ContextType>
   DocumentCategory?: DocumentCategoryResolvers<ContextType>
   PageInfo?: PageInfoResolvers<ContextType>
+  XroadInfo?: XroadInfoResolvers<ContextType>
   ApiService?: ApiServiceResolvers<ContextType>
   ApiCatalogue?: ApiCatalogueResolvers<ContextType>
   Query?: QueryResolvers<ContextType>

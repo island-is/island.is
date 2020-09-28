@@ -28,6 +28,21 @@ export class ElasticService {
     }
   }
 
+  async bulk(service: Service) {
+    console.log('service', service)
+
+    try {
+      const client = await this.getClient()
+      return await client.index({
+        id: service.id,
+        index: this.indexName,
+        body: service,
+      })
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2))
+    }
+  }
+
   async search<ResponseBody, RequestBody>(query: RequestBody) {
     try {
       console.log(query)

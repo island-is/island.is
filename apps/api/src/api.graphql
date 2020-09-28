@@ -649,18 +649,24 @@ type PageInfo {
   nextCursor: String
 }
 
+type XroadInfo {
+  instance: String!
+  memberClass: String!
+  memberCode: String!
+  subsystemCode: String!
+  serviceCode: String!
+}
+
 type ApiService {
   id: ID!
   owner: String!
   name: String!
   description: String!
-  url: String!
-  pricing: PricingCategoryEnum!
+  pricing: [PricingCategoryEnum!]!
   data: [DataCategoryEnum!]!
-  type: TypeCategoryEnum!
+  type: [TypeCategoryEnum!]!
   access: [accessCategoryEnum!]!
-  created: DateTime!
-  updated: DateTime
+  xroadIdentifier: [XroadInfo!]
 }
 
 enum PricingCategoryEnum {

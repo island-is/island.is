@@ -4,17 +4,16 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Service {
   id: string
   name: string
   description: string
   owner: string
-  url: string
-  pricing: PricingCategory
+  pricing: Array<PricingCategory>
   data: Array<DataCategory>
-  type: TypeCategory
+  type: Array<TypeCategory>
   access: Array<AccessCategory>
-  created: Date
-  updated?: Date | null
+  xroadIdentifier?: Array<XroadIdentifier>
 }
