@@ -30,9 +30,7 @@ describe('Resource', () => {
     expect(response.body).toMatchObject({
       statusCode: 400,
       error: 'Bad Request',
-      message: [
-        "nationalId must be longer than or equal to 10 characters",
-      ],
+      message: ['nationalId must be longer than or equal to 10 characters'],
     })
   })
 })
