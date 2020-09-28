@@ -199,21 +199,51 @@ const ButtonContent: FC<ButtonContentProps> = ({
       ) : leftIcon ? (
         <LeftIcon leftIcon={leftIcon} />
       ) : null}
-      {children ? children : null}
-      {icon ? (
-        <Icon
-          showRightIcon={showRightIcon}
-          icon={icon}
-          loading={!!loading}
-          isExternal={!!isExternal}
-        />
-      ) : null}
+      {children ? (
+        <span>
+          {children}
+          <span
+            style={{
+              whiteSpace: 'nowrap',
+            }}
+          >
+            &nbsp;&nbsp;
+            {icon ? (
+              <Icon
+                showRightIcon={showRightIcon}
+                icon={icon}
+                loading={!!loading}
+                isExternal={!!isExternal}
+              />
+            ) : null}
+          </span>
+        </span>
+      ) : (
+        <>
+          {icon ? (
+            <Icon
+              showRightIcon={showRightIcon}
+              icon={icon}
+              loading={!!loading}
+              isExternal={!!isExternal}
+            />
+          ) : null}
+        </>
+      )}
     </Inline>
   )
 }
 
 const IconContainer: FC = ({ children }) => (
-  <Box display="flex" height="full" alignItems="center">
+  <Box
+    display="inlineBlock"
+    textAlign="center"
+    height="full"
+    alignItems="center"
+    style={{
+      verticalAlign: 'middle',
+    }}
+  >
     {children}
   </Box>
 )
