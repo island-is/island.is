@@ -3,9 +3,11 @@ import { Box, Typography, Stack, Divider } from '@island.is/island-ui/core'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { useLocale } from '@island.is/localization'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
+  const { formatMessage } = useLocale()
 
   return (
     <aside className={styles.sidebar}>
@@ -18,16 +20,10 @@ export const Sidebar: FC<{}> = () => {
             borderRadius="large"
             key={index}
           >
-            <Stack space={2}>
-              <Typography variant="h3" as="h3">
-                {rootItem.name}
-              </Typography>
-              <Divider weight="alternate" />
-              <Stack space={3}>
-                {rootItem.children?.map((navRoot, index) => (
-                  <ModuleNavigation key={index} nav={navRoot} />
-                ))}
-              </Stack>
+            <Stack space={3}>
+              {rootItem.children?.map((navRoot, index) => (
+                <ModuleNavigation key={index} nav={navRoot} />
+              ))}
             </Stack>
           </Box>
         ))}

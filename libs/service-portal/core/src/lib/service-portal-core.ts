@@ -4,11 +4,19 @@ import { User } from 'oidc-client'
 import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
+export interface ReactIntlMessage {
+  id: string
+  defaultMessage: string
+  description?: string
+  values?: {
+    [key: string]: string | number
+  }
+}
 /**
  * A navigational item used by the service portal
  */
 export interface ServicePortalNavigationItem {
-  name: string
+  name: ReactIntlMessage | string
   path?: ServicePortalPath
   external?: boolean
   icon?: IconTypes
@@ -110,5 +118,3 @@ export interface UserWithMeta {
   user: User
   mockSubjects: MockSubject[]
 }
-
-export type LanguageCode = 'is' | 'en'

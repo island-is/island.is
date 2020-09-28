@@ -13,47 +13,50 @@ import * as styles from './App.treat'
 import OidcSignIn from '../components/Authenticator/OidcSignIn'
 import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
 
 export const App = () => {
   makeServer()
   return (
     <div className={styles.page}>
-      <Router>
-        <ApolloProvider client={client}>
-          <StateProvider
-            initialState={store.initialState}
-            reducer={store.reducer}
-          >
-            <Switch>
-              <Route
-                exact
-                path={ServicePortalPath.MinarSidurSignInOidc}
-                component={OidcSignIn}
-              />
-              <Route
-                exact
-                path={ServicePortalPath.MinarSidurSilentSignInOidc}
-                component={OidcSilentSignIn}
-              />
-              <Route>
-                <Authenticator>
-                  <Layout>
-                    <Switch>
-                      <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                        <Dashboard />
-                      </Route>
-                      <Route>
-                        <Modules />
-                      </Route>
-                    </Switch>
-                  </Layout>
-                </Authenticator>
-              </Route>
-            </Switch>
-          </StateProvider>
-        </ApolloProvider>
-      </Router>
+      <ApolloProvider client={client}>
+        <StateProvider
+          initialState={store.initialState}
+          reducer={store.reducer}
+        >
+          <LocaleProvider locale={defaultLanguage} messages={{}}>
+            <Router>
+              <Switch>
+                <Route
+                  exact
+                  path={ServicePortalPath.MinarSidurSignInOidc}
+                  component={OidcSignIn}
+                />
+                <Route
+                  exact
+                  path={ServicePortalPath.MinarSidurSilentSignInOidc}
+                  component={OidcSilentSignIn}
+                />
+                <Route>
+                  <Authenticator>
+                    <Layout>
+                      <Switch>
+                        <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                          <Dashboard />
+                        </Route>
+                        <Route>
+                          <Modules />
+                        </Route>
+                      </Switch>
+                    </Layout>
+                  </Authenticator>
+                </Route>
+              </Switch>
+            </Router>
+          </LocaleProvider>
+        </StateProvider>
+      </ApolloProvider>
     </div>
   )
 }

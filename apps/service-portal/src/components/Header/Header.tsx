@@ -11,21 +11,16 @@ import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
 import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/NotificationMenuTrigger'
-import { ServicePortalPath, LanguageCode } from '@island.is/service-portal/core'
-import { useStore } from '../../store/stateProvider'
-import { ActionType } from '../../store/actions'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 
 const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<{}> = () => {
-  const [{ lang }, dispatch] = useStore()
+  const { lang } = useLocale()
+  const { changeLanguage } = useNamespaces()
 
-  const handleLangClick = (value: LanguageCode) => {
-    dispatch({
-      type: ActionType.SetLanguage,
-      payload: value,
-    })
-  }
+  const handleLangClick = (value: Locale) => changeLanguage(value)
 
   return (
     <>
