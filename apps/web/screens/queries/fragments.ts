@@ -77,7 +77,6 @@ export const slices = gql`
       slug
       date
       intro
-      content
       image {
         ...ImageFields
       }

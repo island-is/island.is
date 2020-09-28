@@ -89,87 +89,7 @@ export type News = {
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
-  content?: Maybe<Scalars['String']>
-}
-
-export type NumberBullet = {
-  __typename?: 'NumberBullet'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-}
-
-export type Statistic = {
-  __typename?: 'Statistic'
-  id: Scalars['ID']
-  value: Scalars['String']
-  label: Scalars['String']
-}
-
-export type QuestionAndAnswer = {
-  __typename?: 'QuestionAndAnswer'
-  id: Scalars['ID']
-  question: Scalars['String']
-  answer?: Maybe<Html>
-}
-
-export type TabContent = {
-  __typename?: 'TabContent'
-  tabTitle: Scalars['String']
-  contentTitle?: Maybe<Scalars['String']>
-  image?: Maybe<Image>
-  body?: Maybe<Html>
-}
-
-export type TeamMember = {
-  __typename?: 'TeamMember'
-  name: Scalars['String']
-  title: Scalars['String']
-  image: Image
-}
-
-export type ArticleCategory = {
-  __typename?: 'ArticleCategory'
-  title: Scalars['String']
-  slug: Scalars['String']
-  description?: Maybe<Scalars['String']>
-}
-
-export type ArticleGroup = {
-  __typename?: 'ArticleGroup'
-  title: Scalars['String']
-  slug: Scalars['String']
-  description?: Maybe<Scalars['String']>
-}
-
-export type ArticleSubgroup = {
-  __typename?: 'ArticleSubgroup'
-  title: Scalars['String']
-  importance?: Maybe<Scalars['Float']>
-  slug: Scalars['String']
-}
-
-export type OrganizationTag = {
-  __typename?: 'OrganizationTag'
-  id: Scalars['ID']
-  title: Scalars['String']
-}
-
-export type Organization = {
-  __typename?: 'Organization'
-  id: Scalars['ID']
-  title: Scalars['String']
-  description?: Maybe<Scalars['String']>
-  slug: Scalars['String']
-  tag?: Maybe<Array<OrganizationTag>>
-  link?: Maybe<Scalars['String']>
-}
-
-export type SubArticle = {
-  __typename?: 'SubArticle'
-  title: Scalars['String']
-  slug: Scalars['String']
-  body: Array<Slice>
+  content?: Maybe<Array<Slice>>
 }
 
 export type Slice =
@@ -353,6 +273,86 @@ export type Asset = {
   url: Scalars['String']
   title: Scalars['String']
   contentType: Scalars['String']
+}
+
+export type NumberBullet = {
+  __typename?: 'NumberBullet'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type Statistic = {
+  __typename?: 'Statistic'
+  id: Scalars['ID']
+  value: Scalars['String']
+  label: Scalars['String']
+}
+
+export type QuestionAndAnswer = {
+  __typename?: 'QuestionAndAnswer'
+  id: Scalars['ID']
+  question: Scalars['String']
+  answer?: Maybe<Html>
+}
+
+export type TabContent = {
+  __typename?: 'TabContent'
+  tabTitle: Scalars['String']
+  contentTitle?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  body?: Maybe<Html>
+}
+
+export type TeamMember = {
+  __typename?: 'TeamMember'
+  name: Scalars['String']
+  title: Scalars['String']
+  image: Image
+}
+
+export type ArticleCategory = {
+  __typename?: 'ArticleCategory'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+}
+
+export type ArticleGroup = {
+  __typename?: 'ArticleGroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+}
+
+export type ArticleSubgroup = {
+  __typename?: 'ArticleSubgroup'
+  title: Scalars['String']
+  importance?: Maybe<Scalars['Float']>
+  slug: Scalars['String']
+}
+
+export type OrganizationTag = {
+  __typename?: 'OrganizationTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
+export type Organization = {
+  __typename?: 'Organization'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  slug: Scalars['String']
+  tag?: Maybe<Array<OrganizationTag>>
+  link?: Maybe<Scalars['String']>
+}
+
+export type SubArticle = {
+  __typename?: 'SubArticle'
+  title: Scalars['String']
+  slug: Scalars['String']
+  body: Array<Slice>
 }
 
 export type Article = {
@@ -1698,8 +1698,47 @@ export type GetSingleNewsItemQuery = { __typename?: 'Query' } & {
   getSingleNews?: Maybe<
     { __typename?: 'News' } & Pick<
       News,
-      'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro' | 'content'
+      'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro'
     > & {
+        content?: Maybe<
+          Array<
+            | ({
+                __typename?: 'TimelineSlice'
+              } & AllSlicesTimelineSliceFragment)
+            | ({
+                __typename?: 'MailingListSignupSlice'
+              } & AllSlicesMailingListSignupSliceFragment)
+            | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+            | ({
+                __typename?: 'LinkCardSlice'
+              } & AllSlicesLinkCardSliceFragment)
+            | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+            | ({
+                __typename?: 'LogoListSlice'
+              } & AllSlicesLogoListSliceFragment)
+            | ({
+                __typename?: 'LatestNewsSlice'
+              } & AllSlicesLatestNewsSliceFragment)
+            | ({
+                __typename?: 'BulletListSlice'
+              } & AllSlicesBulletListSliceFragment)
+            | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+            | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+            | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+            | ({
+                __typename?: 'EmbeddedVideo'
+              } & AllSlicesEmbeddedVideoFragment)
+            | ({
+                __typename?: 'SectionWithImage'
+              } & AllSlicesSectionWithImageFragment)
+            | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+            | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+            | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+            | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+            | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+            | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
+          >
+        >
         image?: Maybe<
           { __typename?: 'Image' } & Pick<
             Image,
@@ -2014,7 +2053,7 @@ export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
     news: Array<
       { __typename?: 'News' } & Pick<
         News,
-        'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro' | 'content'
+        'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro'
       > & { image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment> }
     >
   }
