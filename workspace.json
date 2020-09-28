@@ -2569,7 +2569,7 @@
               },
               {
                 "glob": "*",
-                "input": "apps/judicial-system/api/pdf-templates",
+                "input": "apps/judicial-system/api/templates",
                 "output": "./templates"
               }
             ]
