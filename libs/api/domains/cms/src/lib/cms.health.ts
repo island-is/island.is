@@ -1,43 +1,57 @@
-import { Injectable } from '@nestjs/common';
-import { HealthIndicator, HealthIndicatorResult, HealthCheckError, DNSHealthIndicator, HealthCheckService, HealthCheckResult } from '@nestjs/terminus';
-import dns from 'dns';
-import { logger } from '@island.is/logging';
+import { Injectable } from '@nestjs/common'
+import {
+  HealthIndicator,
+  HealthIndicatorResult,
+  HealthCheckError,
+  DNSHealthIndicator,
+  HealthCheckService,
+  HealthCheckResult,
+} from '@nestjs/terminus'
+import dns from 'dns'
 
 @Injectable()
 export class CmsHealthIndicator extends HealthIndicator {
-  constructor(private dns: DNSHealthIndicator, private health: HealthCheckService) { super() }
+  constructor(
+    private dns: DNSHealthIndicator,
+    private health: HealthCheckService,
+  ) {
+    super()
+  }
 
+  /*
+  we only check dns resolve to prevent cascading failures when a single service goes down
+  a ping test here might cause such failures
+  e.g. contentful starts to timeout our ping test gets 504 response and fails the readiness check and the whole api goes into standby and stops accepting traffic
+  */
   canUrlBeResolved(key: string, url: string): Promise<HealthIndicatorResult> {
     return new Promise((resolve, reject) => {
-      logger.info('key', { key })
-      logger.info('url', { url })
       dns.lookup(url, (err) => {
-        if (err) throw new HealthCheckError('Cms failed to resolve url', this.getStatus('cms', false))
+        if (err)
+          reject(
+            new HealthCheckError(
+              'Cms failed to resolve url',
+              this.getStatus(key, false),
+            ),
+          )
         resolve(this.getStatus(key, true))
       })
     })
   }
 
   async isHealthy(): Promise<HealthIndicatorResult> {
-    // we run this in the cluster, we only need the healthchecks to pass there
-    // so we listen to the raw environment variables
     const requiredUrls = {
-      'contentful': process.env.CONTENTFUL_HOST,
-      'elasticsearch': new URL(process.env.ELASTIC_NODE).hostname,
-      'tetser': 'asdfasdasdafsdfs.com'
+      contentful: process.env.CONTENTFUL_HOST,
+      elasticsearch: new URL(process.env.ELASTIC_NODE).hostname,
     }
 
-    let healthResponse: HealthCheckResult
-    try {
-      healthResponse = await this.health.check(
-        Object.entries(requiredUrls).map(([key, url]) => () => this.canUrlBeResolved(key, url))
-      )
-    } catch (error) {
-      healthResponse = { status: 'error', details: {} }
-    }
+    const response = await this.health.check(
+      Object.entries(requiredUrls).map(([key, url]) => () =>
+        this.canUrlBeResolved(key, url),
+      ),
+    )
 
-    const isHealthy = healthResponse.status === 'ok'
-    const result = this.getStatus('cms', isHealthy, healthResponse)
+    const isHealthy = response.status === 'ok'
+    const result = this.getStatus('cms', isHealthy, response)
 
     if (isHealthy) {
       return result

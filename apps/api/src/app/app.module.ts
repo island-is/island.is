@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { TerminusModule } from '@nestjs/terminus';
+import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { HelloWorldModule } from '@island.is/api/domains/hello-world'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
@@ -9,7 +9,7 @@ import { ApplicationModule } from '@island.is/api/domains/application'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { TranslationsModule } from '@island.is/api/domains/translations'
-import { HealthController } from './health.controller';
+import { HealthController } from './health.controller'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -42,8 +42,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     FileUploadModule,
     DocumentModule,
     TranslationsModule,
-    TerminusModule
+    TerminusModule,
   ],
 })
-export class AppModule { }
-
+export class AppModule {}

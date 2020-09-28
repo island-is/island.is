@@ -23,8 +23,8 @@ import { CmsHealthIndicator } from './cms.health'
     CmsElasticsearchService,
     MailService,
     ContentfulRepository,
-    CmsHealthIndicator
+    CmsHealthIndicator,
   ],
   exports: [ContentfulRepository, CmsHealthIndicator],
 })
-export class CmsModule { }
+export class CmsModule {}
