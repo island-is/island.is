@@ -6,6 +6,7 @@ export { CategoryCheckBox } from './CategoryCheckBox'
 export { ServiceStatus, SERVICE_STATUS } from './ServiceStatus'
 export type  { ServiceStatusProps } from './ServiceStatus'
 export { ServiceSection } from './ServiceSection'
+export { ServiceFilter } from './ServiceFilter'
 export { InputSearch } from './InputSearch'
 
 export { 

@@ -18,7 +18,7 @@ import {  PRICING_CATEGORY,
           getServices, 
           ServiceCardInformation, 
           ServiceCard, 
-          CategoryCheckBox, InputSearch
+          ServiceFilter
 } from '../../components';
 
 import ContentfulApi from '../../services/contentful'
@@ -234,46 +234,33 @@ export default function ServiceList(props:ServiceListProps) {
           </Box>
       }
       right={
-              <Box  className={cn(isMobile(width)? styles.filterMobile : styles.filter , "filter")}>
-                <Box className={cn(styles.inputSearch)}>
-                  <InputSearch 
-                    name="text-search"
-                    value={searchValue}
-                    loading={isLoading}
-                    placeholder="Leita"
-                    colored={ searchValue.length < 1 }
-                    onChange={input => onSearchChange(input.target.value)}
+              isMobile(width)? (
+                <div className={cn(styles.accordionMobile)}>
+                  <AccordionItem  id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="sidebar">
+                    <ServiceFilter
+                      iconVariant="sidebar"
+                      rootClasses={cn(styles.filterMobile, "filter")}
+                      searchValue={searchValue}
+                      isLoading={isLoading}
+                      parameters={props.parameters}
+                      onInputChange={input => onSearchChange(input.target.value)}
+                      onCheckCategoryChanged={({target})=>{updateCategoryCheckBox(target)}}
+                      />
+                    </AccordionItem>
+                  </div>
+                ) 
+                : 
+                (
+                  <ServiceFilter
+                  rootClasses={cn(styles.filter , "filter")}
+                  searchValue={searchValue}
+                  isLoading={isLoading}
+                  parameters={props.parameters}
+                  onInputChange={input => onSearchChange(input.target.value)}
+                  onCheckCategoryChanged={({target})=>{updateCategoryCheckBox(target)}}
                   />
-              </Box>
-              <div className={cn(styles.filterItem)}>
-                <AccordionItem  id="pricing_category" label="Pricing" labelVariant="sideMenu" iconVariant="default">
-                  <CategoryCheckBox label={PRICING_CATEGORY.FREE}   value={PRICING_CATEGORY.FREE}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={PRICING_CATEGORY.PAID}   value={PRICING_CATEGORY.PAID}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.PAID)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </AccordionItem>
-              </div>
-              <div className={cn(styles.filterItem)}>
-              <AccordionItem  id="data_category" label="Data" labelVariant="sideMenu" iconVariant="default">
-                  <CategoryCheckBox label={DATA_CATEGORY.PUBLIC}    value={DATA_CATEGORY.PUBLIC}    checked={props.parameters.data.includes(DATA_CATEGORY.PUBLIC)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={DATA_CATEGORY.OFFICIAL}  value={DATA_CATEGORY.OFFICIAL}  checked={props.parameters.data.includes(DATA_CATEGORY.OFFICIAL)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={DATA_CATEGORY.PERSONAL}  value={DATA_CATEGORY.PERSONAL}  checked={props.parameters.data.includes(DATA_CATEGORY.PERSONAL)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={DATA_CATEGORY.HEALTH}    value={DATA_CATEGORY.HEALTH}    checked={props.parameters.data.includes(DATA_CATEGORY.HEALTH)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={DATA_CATEGORY.FINANCIAL} value={DATA_CATEGORY.FINANCIAL} checked={props.parameters.data.includes(DATA_CATEGORY.FINANCIAL)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </AccordionItem>
-              </div>
-              <div className={cn(styles.filterItem)}>
-                <AccordionItem  id="type_category" label="Type" labelVariant="sideMenu" iconVariant="default">
-                  <CategoryCheckBox label={TYPE_CATEGORY.REACT}   value={TYPE_CATEGORY.REACT}   checked={props.parameters.type.includes(TYPE_CATEGORY.REACT)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={TYPE_CATEGORY.SOAP}    value={TYPE_CATEGORY.SOAP}    checked={props.parameters.type.includes(TYPE_CATEGORY.SOAP)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={TYPE_CATEGORY.GRAPHQL} value={TYPE_CATEGORY.GRAPHQL} checked={props.parameters.type.includes(TYPE_CATEGORY.GRAPHQL)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </AccordionItem>
-              </div>
-              <div className={cn(styles.filterItem)}>
-                <AccordionItem  id="access_category" label="Access" labelVariant="sideMenu" iconVariant="default">
-                  <CategoryCheckBox label={ACCESS_CATEGORY.X_ROAD} value={ACCESS_CATEGORY.X_ROAD}  checked={props.parameters.access.includes(ACCESS_CATEGORY.X_ROAD)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                  <CategoryCheckBox label={ACCESS_CATEGORY.API_GW} value={ACCESS_CATEGORY.API_GW}  checked={props.parameters.access.includes(ACCESS_CATEGORY.API_GW)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
-                </AccordionItem>
-              </div>
-          </Box>
+                )
+
       } 
       
       bottom = {

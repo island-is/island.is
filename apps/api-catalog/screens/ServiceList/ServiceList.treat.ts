@@ -24,6 +24,10 @@ export const filter = style({
   padding:filterOrg.padding,
   minWidth:filterOrg.minWidth
 })
+export const accordionMobile = style({
+  marginLeft:20,
+  width:412
+})
 
 export const filterMobile = style({
   background:filterOrg.background,
@@ -34,7 +38,7 @@ export const filterMobile = style({
   minWidth:filterOrg.minWidth,
   width:432,
   marginBottom:20,
-  marginLeft:10,
+  marginLeft:-10,
   marginRight:10,
 })
 
