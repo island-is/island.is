@@ -6,24 +6,31 @@ import {
   GridContainer,
   GridRow,
   Input,
+  RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { JudgeLogo } from '../../shared-components/Logos'
-import { GetCaseByIdResponse } from '../../types'
+import { AppealDecision, GetCaseByIdResponse } from '../../types'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import * as Constants from '../../utils/constants'
-import { formatDate } from '../../utils/formatters'
+import { formatDate, parseArray, parseString } from '../../utils/formatters'
 import useRestrictions from '../../utils/hooks/useRestrictions'
 import { CaseState } from '@island.is/judicial-system/types'
+import { autoSave, updateState } from '../../utils/stepHelper'
+import * as api from '../../api'
 
 export const Verdict: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
   const [requestRecjected, setRequestRejected] = useState(
     workingCase?.state === CaseState.REJECTED,
   )
-  const restrictions = useRestrictions(workingCase, setWorkingCase)
+  const [accusedAppealDecition, setAccusedAppealDecition] = useState<
+    AppealDecision
+  >(null)
+  const [prosecutorAppealDecition, setProsecutorAppealDecition] = useState(null)
+  const restrictions = useRestrictions(workingCase, setWorkingCase, true)
 
   useEffect(() => {
     const wc: GetCaseByIdResponse = JSON.parse(
@@ -34,7 +41,6 @@ export const Verdict: React.FC = () => {
       setWorkingCase(wc.case)
     }
   }, [])
-
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -75,7 +81,7 @@ export const Verdict: React.FC = () => {
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
-                      'courtCaseNumber',
+                      'ruling',
                       evt.target.value,
                       setWorkingCase,
                     )
@@ -89,6 +95,25 @@ export const Verdict: React.FC = () => {
                     label="Hafna kröfu"
                     onChange={({ target }) => {
                       setRequestRejected(target.checked)
+                      // Save case
+                      api.saveCase(
+                        workingCase.id,
+                        parseString(
+                          'state',
+                          target.checked
+                            ? CaseState.REJECTED
+                            : CaseState.ACCEPTED,
+                        ),
+                      )
+
+                      updateState(
+                        workingCase,
+                        'state',
+                        target.checked
+                          ? CaseState.REJECTED
+                          : CaseState.ACCEPTED,
+                        setWorkingCase,
+                      )
                     }}
                     checked={requestRecjected}
                     large
@@ -103,14 +128,28 @@ export const Verdict: React.FC = () => {
                 </Typography>
               </Box>
               <GridRow>
-                <GridColumn span="3/7">
+                <GridColumn span="5/8">
                   <DatePicker
                     label="Gæsluvarðhald til"
-                    placeholderText=""
-                    selected={new Date(workingCase.requestedCustodyEndDate)}
+                    placeholderText="Veldu dagsetningu"
+                    selected={
+                      workingCase.custodyEndDate
+                        ? new Date(workingCase.custodyEndDate)
+                        : workingCase.requestedCustodyEndDate
+                        ? new Date(workingCase.requestedCustodyEndDate)
+                        : null
+                    }
+                    handleChange={(date) => {
+                      updateState(
+                        workingCase,
+                        'custodyEndDate',
+                        date,
+                        setWorkingCase,
+                      )
+                    }}
                   />
                 </GridColumn>
-                <GridColumn span="3/7">
+                <GridColumn span="3/8">
                   <Input
                     name="requestedCustodyEndTime"
                     defaultValue={formatDate(
@@ -152,15 +191,123 @@ export const Verdict: React.FC = () => {
                 <Typography as="h4" variant="h4">
                   Kærði
                 </Typography>
+                <div>
+                  <RadioButton
+                    name="accused-appeal-decition"
+                    id="accused-appeal"
+                    label="Kærði kærir málið"
+                    value={AppealDecision.APPEAL}
+                    checked={accusedAppealDecition === AppealDecision.APPEAL}
+                    onChange={() => {
+                      setAccusedAppealDecition(AppealDecision.APPEAL)
+                      api.saveCase(
+                        workingCase.id,
+                        parseArray('accusedAppealDecision', [
+                          AppealDecision.APPEAL,
+                        ]),
+                      )
+                    }}
+                  />
+                  <RadioButton
+                    name="accused-appeal-decition"
+                    id="accused-accept"
+                    label="Kærði unir úrskurðinum"
+                    value={AppealDecision.ACCEPT}
+                    checked={accusedAppealDecition === AppealDecision.ACCEPT}
+                    onChange={() => {
+                      setAccusedAppealDecition(AppealDecision.ACCEPT)
+
+                      api.saveCase(
+                        workingCase.id,
+                        parseArray('accusedAppealDecision', [
+                          AppealDecision.ACCEPT,
+                        ]),
+                      )
+                    }}
+                  />
+                  <RadioButton
+                    name="accused-appeal-decition"
+                    id="accused-postpone"
+                    label="Kærði tekur sér lögboðinn frest"
+                    value={AppealDecision.POSTPONE}
+                    checked={accusedAppealDecition === AppealDecision.POSTPONE}
+                    onChange={() => {
+                      setAccusedAppealDecition(AppealDecision.POSTPONE)
+
+                      api.saveCase(
+                        workingCase.id,
+                        parseArray('accusedAppealDecision', [
+                          AppealDecision.POSTPONE,
+                        ]),
+                      )
+                    }}
+                  />
+                </div>
+              </Box>
+              <Box marginBottom={2}>
                 <Typography>
                   Dómari bendir kærða á að honum sé heimilt að bera atriði er
                   lúta að framkvæmd gæsluvarðhaldsins undir dómara.
                 </Typography>
               </Box>
-              <Box marginBottom={2}>
+              <Box>
                 <Typography as="h4" variant="h4">
                   Sækjandi
                 </Typography>
+                <div>
+                  <RadioButton
+                    name="prosecutor-appeal-decition"
+                    id="prosecutor-appeal"
+                    label="Sækjandi kærir málið"
+                    value={AppealDecision.APPEAL}
+                    checked={prosecutorAppealDecition === AppealDecision.APPEAL}
+                    onChange={() => {
+                      setProsecutorAppealDecition(AppealDecision.APPEAL)
+                      api.saveCase(
+                        workingCase.id,
+                        parseArray('prosecutorAppealDecision', [
+                          AppealDecision.APPEAL,
+                        ]),
+                      )
+                    }}
+                  />
+                  <RadioButton
+                    name="prosecutor-appeal-decition"
+                    id="prosecutor-accept"
+                    label="Sækjandi unir úrskurðinum"
+                    value={AppealDecision.ACCEPT}
+                    checked={prosecutorAppealDecition === AppealDecision.ACCEPT}
+                    onChange={() => {
+                      setProsecutorAppealDecition(AppealDecision.ACCEPT)
+
+                      api.saveCase(
+                        workingCase.id,
+                        parseArray('prosecutorAppealDecision', [
+                          AppealDecision.ACCEPT,
+                        ]),
+                      )
+                    }}
+                  />
+                  <RadioButton
+                    name="prosecutor-appeal-decition"
+                    id="prosecutor-postpone"
+                    label="Sækjandi tekur sér lögboðinn frest"
+                    value={AppealDecision.POSTPONE}
+                    checked={
+                      prosecutorAppealDecition === AppealDecision.POSTPONE
+                    }
+                    onChange={() => {
+                      setProsecutorAppealDecition(AppealDecision.POSTPONE)
+
+                      api.saveCase(
+                        workingCase.id,
+                        parseArray('prosecutorAppealDecision', [
+                          AppealDecision.POSTPONE,
+                        ]),
+                      )
+                    }}
+                  />
+                </div>
               </Box>
             </Box>
             <FormFooter
