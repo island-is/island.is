@@ -2,8 +2,8 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return queryInterface.createTable(
+    return queryInterface.sequelize.transaction((t) =>
+      queryInterface.createTable(
         'case',
         {
           id: {
@@ -28,13 +28,13 @@ module.exports = {
           },
         },
         { transaction: t },
-      )
-    })
+      ),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return queryInterface.dropTable('case', { transaction: t })
-    })
+    return queryInterface.sequelize.transaction((t) =>
+      queryInterface.dropTable('case', { transaction: t }),
+    )
   },
 }
