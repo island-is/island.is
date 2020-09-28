@@ -80,7 +80,7 @@ const useRestrictions = (
 
                 // Create a copy of the state
                 const copyOfState = Object.assign(workingCase, {})
-                console.log(copyOfState)
+
                 // If the user is checking the box, add the restriction to the state
                 if (target.checked) {
                   copyOfState.requestedCustodyRestrictions.push(

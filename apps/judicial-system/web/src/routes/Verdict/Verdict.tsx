@@ -9,32 +9,21 @@ import {
   RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
-<<<<<<< HEAD
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { JudgeLogo } from '../../shared-components/Logos'
 import { AppealDecision, GetCaseByIdResponse } from '../../types'
-=======
-import React, { useEffect, useState } from 'react'
-import { FormFooter } from '../../shared-components/FormFooter'
-import { JudgeLogo } from '../../shared-components/Logos'
-import { GetCaseByIdResponse } from '../../types'
->>>>>>> Verdict page work
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import * as Constants from '../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../utils/formatters'
 import useRestrictions from '../../utils/hooks/useRestrictions'
 import { CaseState } from '@island.is/judicial-system/types'
-<<<<<<< HEAD
 import { autoSave, updateState } from '../../utils/stepHelper'
 import * as api from '../../api'
-=======
->>>>>>> Verdict page work
 
 export const Verdict: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
   const [requestRecjected, setRequestRejected] = useState(
-<<<<<<< HEAD
     workingCase?.state === CaseState.REJECTED,
   )
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
@@ -42,11 +31,6 @@ export const Verdict: React.FC = () => {
   >(null)
   const [prosecutorAppealDecition, setProsecutorAppealDecition] = useState(null)
   const restrictions = useRestrictions(workingCase, setWorkingCase, true)
-=======
-    workingCase?.state === CaseState.REJECTED || false,
-  )
-  const restrictions = useRestrictions(workingCase, setWorkingCase)
->>>>>>> Verdict page work
 
   useEffect(() => {
     const wc: GetCaseByIdResponse = JSON.parse(
@@ -57,10 +41,6 @@ export const Verdict: React.FC = () => {
       setWorkingCase(wc.case)
     }
   }, [])
-<<<<<<< HEAD
-=======
-  console.log(workingCase)
->>>>>>> Verdict page work
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -111,7 +91,6 @@ export const Verdict: React.FC = () => {
               <GridRow>
                 <GridColumn span="3/7">
                   <Checkbox
-<<<<<<< HEAD
                     name="rejectRequest"
                     label="Hafna kröfu"
                     onChange={({ target }) => {
@@ -135,15 +114,6 @@ export const Verdict: React.FC = () => {
                           : CaseState.ACCEPTED,
                         setWorkingCase,
                       )
-=======
-                    label="Hafna kröfu"
-                    onBlur={() => {
-                      console.log('here')
-                    }}
-                    onChange={({ target }) => {
-                      console.log(target)
-                      setRequestRejected(!target.checked)
->>>>>>> Verdict page work
                     }}
                     checked={requestRecjected}
                     large
