@@ -135,7 +135,7 @@ export class CaseService {
       return this.signingService.requestSignature(
         user.mobileNumber,
         'Undirrita dóm',
-        existingCase.suspectName,
+        existingCase.accusedName,
         'Ísland',
         'ruling.pdf',
         pdf,

@@ -125,7 +125,7 @@ export const JudgeOverview: React.FC = () => {
                   Fullt nafn kærða
                 </Typography>
               </Box>
-              <Typography>{workingCase?.suspectName}</Typography>
+              <Typography>{workingCase?.accusedName}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -133,7 +133,7 @@ export const JudgeOverview: React.FC = () => {
                   Lögheimili/dvalarstaður
                 </Typography>
               </Box>
-              <Typography>{workingCase?.suspectAddress}</Typography>
+              <Typography>{workingCase?.accusedAddress}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -220,7 +220,9 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {renderRestrictons(workingCase.custodyRestrictions)}
+                    {renderRestrictons(
+                      workingCase.requestedCustodyRestrictions,
+                    )}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem
