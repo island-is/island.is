@@ -8,27 +8,33 @@ import {
   Input,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { JudgeLogo } from '../../shared-components/Logos'
-import { Case, GetCaseByIdResponse } from '../../types'
+import { GetCaseByIdResponse } from '../../types'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import * as Constants from '../../utils/constants'
 import { formatDate } from '../../utils/formatters'
 import useRestrictions from '../../utils/hooks/useRestrictions'
+import { CaseState } from '@island.is/judicial-system/types'
 
 export const Verdict: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
+  const [requestRecjected, setRequestRejected] = useState(
+    workingCase?.state === CaseState.REJECTED || false,
+  )
   const restrictions = useRestrictions(workingCase, setWorkingCase)
 
   useEffect(() => {
-    const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
+    const wc: GetCaseByIdResponse = JSON.parse(
+      window.localStorage.getItem('workingCase'),
+    )
 
     if (wc) {
-      setWorkingCase(wc)
+      setWorkingCase(wc.case)
     }
   }, [])
-
+  console.log(workingCase)
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -70,7 +76,18 @@ export const Verdict: React.FC = () => {
               </Box>
               <GridRow>
                 <GridColumn span="3/7">
-                  <Checkbox label="Hafna kröfu" large />
+                  <Checkbox
+                    label="Hafna kröfu"
+                    onBlur={() => {
+                      console.log('here')
+                    }}
+                    onChange={({ target }) => {
+                      console.log(target)
+                      setRequestRejected(!target.checked)
+                    }}
+                    checked={requestRecjected}
+                    large
+                  />
                 </GridColumn>
               </GridRow>
             </Box>
