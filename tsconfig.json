@@ -124,7 +124,7 @@
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
-      "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"]
+      "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
       "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/service-portal/assets": [
