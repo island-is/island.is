@@ -5,14 +5,16 @@ import {
 import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
 
+const rootName = defineMessage({
+  id: 'sp:applications',
+  defaultMessage: 'Umsóknir',
+})
+
 export const applicationsModule: ServicePortalModule = {
-  name: 'Umsóknir',
+  name: rootName,
   widgets: () => [
     {
-      name: defineMessage({
-        id: 'sp:applications',
-        defaultMessage: 'Umsóknir',
-      }),
+      name: rootName,
       weight: 0,
       render: () => lazy(() => import('./widgets')),
     },
@@ -20,10 +22,7 @@ export const applicationsModule: ServicePortalModule = {
   routes: () => {
     const applicationRoutes = [
       {
-        name: defineMessage({
-          id: 'sp:applications',
-          defaultMessage: 'Umsóknir',
-        }),
+        name: rootName,
         path: ServicePortalPath.UmsoknirRoot,
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),
