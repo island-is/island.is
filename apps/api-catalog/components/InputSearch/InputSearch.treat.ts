@@ -45,6 +45,9 @@ export const wrapper = style({
         borderColor: theme.color.transparent,
       },
     },
+    borderTopColor:'transparent',
+    borderLeftColor:'transparent',
+    borderRightColor:'transparent',
   })
 
   export const loadingIcon = style({

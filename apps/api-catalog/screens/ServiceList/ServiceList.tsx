@@ -59,24 +59,6 @@ function ServiceLayout({ top, bottom, left, right, classes}: PropTypes) {
 
 
 
-function useWindowEvents() {
-  const [size, setSize] = useState([0, 0, 0]);
-  useLayoutEffect(() => {
-    function updateValues() {
-      setSize([window.innerWidth, window.innerHeight, Math.round(window.scrollY)]);
-    }
-
-    window.addEventListener('resize', updateValues);
-    window.addEventListener('scroll', updateValues);
-    updateValues();
-    return () => {
-      window.removeEventListener('resize', updateValues);
-      window.removeEventListener('scroll', updateValues);
-    }
-  }, []);
-  return size;
-}
-
 export interface ServiceListProps {
   nextCursor: string
   prevCursor: string
@@ -161,6 +143,36 @@ export default function ServiceList(props:ServiceListProps) {
     return width < 771;
   }
 
+  function useWindowEvents() {
+    const [size, setSize] = useState([0, 0, 0]);
+    useLayoutEffect(() => {
+      function updateValues() {
+        setSize([window.innerWidth, window.innerHeight, Math.round(window.scrollY)]);
+      }
+  
+      window.addEventListener('resize', updateValues);
+      window.addEventListener('scroll', updateValues);
+      updateValues();
+      return () => {
+        window.removeEventListener('resize', updateValues);
+        window.removeEventListener('scroll', updateValues);
+      }
+    }, []);
+    return size;
+  }
+
+  const onSearchChange = function(inputValue: string){
+    props.parameters.text = inputValue;
+    setSearchValue(inputValue);
+    if (timer !== null ) {
+      clearTimeout(timer);
+    }
+    setTimer(setTimeout(function(){
+      setStatusQueryString(createStatusQueryString());
+      setFirstGet(true);
+    }, 600)) 
+  }
+
   const [isLoading,    setLoading]   = useState<boolean>(true);
   const [services,    setServices]   = useState<Array<ServiceCardInformation>>(null);
   const [nextCursor,  setNextCursor] = useState<string>(props.nextCursor);
@@ -171,20 +183,6 @@ export default function ServiceList(props:ServiceListProps) {
   const [timer, setTimer] = useState(null);
   const [width] = useWindowEvents();
   
-  const onSearchChange = function(inputValue: string){
-
-    props.parameters.text = inputValue;
-    setSearchValue(inputValue);
-    if (timer !== null ) {
-      clearTimeout(timer);
-    }
-    setTimer(setTimeout(function(){
-      setStatusQueryString(createStatusQueryString());
-      setFirstGet(true);
-    }, 600))
-
-    
-  }
 
   useEffect(() => {
     
