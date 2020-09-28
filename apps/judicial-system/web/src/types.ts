@@ -24,8 +24,8 @@ export enum NotificationType {
 export interface DetentionRequest {
   id: string
   policeCaseNumber: string
-  suspectName: string
-  suspectNationalId: string
+  accusedName: string
+  accusedNationalId: string
   created: string
   modified: string
   state: CaseState
@@ -37,16 +37,16 @@ export interface Case {
   modified: Date
   state: CaseState
   policeCaseNumber: string
-  suspectNationalId: string
-  suspectName?: string
-  suspectAddress?: string
+  accusedNationalId: string
+  accusedName?: string
+  accusedAddress?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CustodyProvisions[]
-  custodyRestrictions?: CustodyRestrictions[]
+  requestedCustodyRestrictions?: CustodyRestrictions[]
   caseFacts?: string
   witnessAccounts?: string
   investigationProgress?: string
@@ -58,7 +58,7 @@ export interface Case {
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
-  suspectPlea?: string
+  accusedPlea?: string
   litigationPresentations?: string
 }
 
@@ -82,7 +82,7 @@ export interface SendNotificationResponse {
 
 export interface CreateCaseRequest {
   policeCaseNumber: string
-  suspectNationalId: string
+  accusedNationalId: string
 }
 
 export interface User {

@@ -8,4 +8,4 @@ export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domari-krafa'
 export const COURT_DOCUMENT_ROUTE = '/domari-krafa/thingbok'
 
 // Date/time formats
-export const TIME_FORMAT = 'HH:m'
+export const TIME_FORMAT = 'HH:mm'

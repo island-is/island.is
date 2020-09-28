@@ -16,7 +16,7 @@ interface NovaAuthResponse extends NovaResponse {
 export class NovaError extends Error {
   constructor(code: number, message: string) {
     super()
-    const errorCodes = {
+    const errorCodes: { [errorCode: string]: string } = {
       '0': 'Code 0: Operation Successful',
       '1': 'Code 1: Action failed',
       '10': 'Code 10: Authentication Failure',
@@ -33,7 +33,9 @@ export class NovaError extends Error {
   }
 }
 
-let token: string = undefined
+let token: string
+
+export const SMS_OPTIONS = 'SMS_OPTIONS'
 
 export interface SmsServiceOptions {
   url: string
@@ -44,7 +46,7 @@ export interface SmsServiceOptions {
 @Injectable()
 export class SmsService extends RESTDataSource {
   constructor(
-    @Inject('SMS_OPTIONS')
+    @Inject(SMS_OPTIONS)
     private options: SmsServiceOptions,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
