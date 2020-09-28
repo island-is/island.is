@@ -21,7 +21,7 @@ export const ServiceCard = (props: ServiceCardProps) => {
         <div className={cn(styles.cardTexts)}>
           
           <div className={cn(styles.name)}>{props.service.name}</div>
-          <ServiceStatus className={styles.serviceStatus} status={props.service.status}/>
+          {/*<ServiceStatus className={styles.serviceStatus} status={props.service.status}/>*/}
           <div className={cn(styles.owner)}>{props.service.owner}</div>
         </div>
         <div className={cn(styles.category)}>

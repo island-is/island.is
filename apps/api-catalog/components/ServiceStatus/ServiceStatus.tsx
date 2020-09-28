@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Icon } from '@island.is/island-ui/core'
-import { Colors, } from '@island.is/island-ui/theme'
+import { Colors } from '@island.is/island-ui/theme'
 
 export enum SERVICE_STATUS {
     UNKNOWN,
@@ -26,7 +26,7 @@ export const ServiceStatus:FC<ServiceStatusProps> = ({className, status}) => {
             case SERVICE_STATUS.ERROR   : return 'red400';
         }
       
-        return 'dark300';
+        return 'transparent';
     }
 
     return (
