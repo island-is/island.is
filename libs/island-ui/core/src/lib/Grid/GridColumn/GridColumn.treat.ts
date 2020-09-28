@@ -88,7 +88,7 @@ export type GridColumns = typeof ColumnRange[number] | '0'
 type Columns = Record<GridColumns, string>
 type Orders = Record<Order, string>
 type Breakpoint = keyof Theme['breakpoints']
-const order = orderRange.reduce((acc, o) => {
+const order = orderRange.reduce((acc: Record<string, number>, o) => {
   acc[o.toString()] = o
   return acc
 }, {})

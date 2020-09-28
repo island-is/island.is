@@ -30,7 +30,9 @@ const ProviderItem: FC<{
       <Typography variant="h4" color="blue400">
         {formatMessage(title)}
       </Typography>
-      <Typography variant="p">{formatMessage(subTitle)}</Typography>
+      {subTitle && (
+        <Typography variant="p">{formatMessage(subTitle)}</Typography>
+      )}
       {dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
@@ -90,7 +92,7 @@ const FormExternalDataProvider: FC<{
       </Box>
       <Controller
         name={`${id}`}
-        defaultValue={getValueViaPath(formValue, id, false)}
+        defaultValue={getValueViaPath(formValue, id as string, false)}
         rules={{ required: true }}
         render={({ value, onChange }) => {
           return (
@@ -106,7 +108,7 @@ const FormExternalDataProvider: FC<{
                 <Checkbox
                   onChange={(e) => {
                     onChange(e.target.checked)
-                    setValue(id, e.target.checked)
+                    setValue(id as string, e.target.checked)
 
                     // TODO: Move this to the continue button click
                     if (e.target.checked) {

@@ -19,19 +19,29 @@ export interface ProfileCardProps {
    * Usually job description
    */
   description?: string
+  /**
+   * 100% height
+   */
+  heightFull?: boolean
 }
 
 export const ProfileCard: FC<ProfileCardProps> = ({
   image,
   title,
   description,
+  heightFull,
 }) => {
+  const conditionalProps: { height?: 'full' } = {}
+  if (heightFull) {
+    conditionalProps.height = 'full'
+  }
   return (
     <Box
       borderRadius="large"
       overflow="hidden"
       background="white"
       boxShadow="subtle"
+      {...conditionalProps}
     >
       {image && (
         <Box

@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { format, parseISO, getTime } from 'date-fns'
+import React, { useEffect, useState, useContext } from 'react'
+import { format, parseISO } from 'date-fns'
+
 import localeIS from 'date-fns/locale/is'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
+import {
+  JudgeLogo,
+  ProsecutorLogo,
+} from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   Alert,
   Button,
@@ -11,7 +15,8 @@ import {
   TagVariant,
   Box,
 } from '@island.is/island-ui/core'
-import { DetentionRequest, CaseState, User } from '../../types'
+import { CaseState } from '@island.is/judicial-system/types'
+import { DetentionRequest, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
 import { hasRole, UserRole } from '../../utils/authenticate'
@@ -29,6 +34,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   const [cases, setCases] = useState<DetentionRequest[]>(null)
   const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const uContext = useContext(userContext)
 
   useEffect(() => {
     let isMounted = true
@@ -75,10 +81,10 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }
-      case CaseState.ACTIVE:
+      case CaseState.ACCEPTED:
         return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
-      case CaseState.COMPLETED:
-        return { color: 'blue', text: 'Gæsluvarðhaldi lokið' }
+      case CaseState.REJECTED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
       default:
         return { color: 'white', text: 'Óþekkt' }
     }
@@ -87,7 +93,12 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   return (
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
-        <Logo />
+        {!uContext.user ? null : uContext.user.roles.indexOf(UserRole.JUDGE) >
+          -1 ? (
+          <JudgeLogo />
+        ) : (
+          <ProsecutorLogo />
+        )}
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
         <Link to={Constants.STEP_ONE_ROUTE}>
@@ -121,8 +132,8 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
             {cases.map((c, i) => (
               <tr key={i} data-testid="detention-requests-table-row">
                 <td>{c.policeCaseNumber || '-'}</td>
-                <td>{c.suspectName}</td>
-                <td>{c.suspectNationalId || '-'}</td>
+                <td>{c.accusedName}</td>
+                <td>{c.accusedNationalId || '-'}</td>
                 <td>
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>

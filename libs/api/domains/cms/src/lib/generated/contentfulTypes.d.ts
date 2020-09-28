@@ -345,6 +345,39 @@ export interface ICardSection extends Entry<ICardSectionFields> {
 export interface IContactUsFields {
   /** Title */
   title?: string | undefined
+
+  /** Required */
+  required: string
+
+  /** Invalid Phone */
+  invalidPhone: string
+
+  /** Invalid Email */
+  invalidEmail: string
+
+  /** Label Name */
+  labelName: string
+
+  /** Label Phone */
+  labelPhone: string
+
+  /** Label Email */
+  labelEmail: string
+
+  /** Label Subject */
+  labelSubject: string
+
+  /** Label Message */
+  labelMessage: string
+
+  /** Submit button text */
+  submitButtonText: string
+
+  /** Success message */
+  successMessage: string
+
+  /** Error message */
+  errorMessage: string
 }
 
 export interface IContactUs extends Entry<IContactUsFields> {
@@ -641,7 +674,7 @@ export interface ILifeEventPageFields {
   slug: string
 
   /** intro */
-  intro: string
+  intro?: string | undefined
 
   /** image */
   image?: Asset | undefined
@@ -1312,9 +1345,6 @@ export interface IStoryFields {
   /** Label */
   label: string
 
-  /** readMoreText */
-  readMoreText: string
-
   /** Introduction */
   intro: string
 
@@ -1323,6 +1353,15 @@ export interface IStoryFields {
 
   /** Logo */
   logo: Asset
+
+  /** Link button text */
+  readMoreText: string
+
+  /** Linked page */
+  linkedPage?: IArticle | INews | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {

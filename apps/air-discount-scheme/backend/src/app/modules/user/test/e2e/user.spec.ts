@@ -1,17 +1,16 @@
 import { setup } from '../../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
-import CacheManger from 'cache-manager'
 import { NationalRegistryService } from '../../../nationalRegistry'
 
 let app: INestApplication
-let cacheManager: CacheManger
+let cacheManager: CacheManager
 let nationalRegistryService: NationalRegistryService
 
 beforeAll(async () => {
   app = await setup()
-  cacheManager = app.get<CacheManger>(CACHE_MANAGER)
-  cacheManager.ttl = () => ''
+  cacheManager = app.get<CacheManager>(CACHE_MANAGER)
+  cacheManager.ttl = () => Promise.resolve('')
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )

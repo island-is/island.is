@@ -36,7 +36,9 @@ import {
   AutocompleteTermResultsQuery,
   Article,
   SearchableContentTypes,
+  LifeEventPage,
 } from '@island.is/web/graphql/schema'
+import { theme } from '@island.is/island-ui/theme'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -218,10 +220,29 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ) => {
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
+
+    const scrollTo = (ref) => {
+      if (ref && ref.current) {
+        if (window.innerWidth < theme.breakpoints.md) {
+          const positionRelativeToWindow = ref.current.getBoundingClientRect()
+            .top
+          const positionOfParent = ref.current.offsetParent.offsetTop
+          const windowPos = window.pageYOffset
+
+          const scrollPos =
+            positionRelativeToWindow + windowPos - positionOfParent
+          window.scrollTo(0, scrollPos)
+        }
+      }
+    }
+
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
-    const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
+    const onFocus = useCallback(() => {
+      setHasFocus(true)
+      scrollTo(ref)
+    }, [setHasFocus])
 
     return (
       <Downshift<string>
@@ -293,6 +314,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               colored,
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
+                  onBlur()
                   closeMenu()
                   onSubmit(e.currentTarget.value)
                 }
@@ -377,7 +399,7 @@ const Results: FC<{
               <Typography variant="eyebrow" color="purple400">
                 Beint að efninu
               </Typography>
-              {(search.results.items as Article[])
+              {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
                   <div key={id} {...getItemProps({ item: '' })}>

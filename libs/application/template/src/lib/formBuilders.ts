@@ -39,7 +39,7 @@ export function buildMultiField(data: {
 }
 
 export function buildRepeater(data: {
-  id?: string
+  id: string
   condition?: Condition
   name: MessageDescriptor | string
   children: FormLeaf[]

@@ -65,11 +65,12 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
   ): Promise<User[]> {
     const relations = await this.userService.getRelations(params.nationalId)
-    return Promise.all([
+    const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),
       ...relations.map((nationalId) =>
         this.userService.getUserInfoByNationalId(nationalId),
       ),
     ])
+    return users.filter((user) => user) as User[]
   }
 }

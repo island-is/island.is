@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { FormModes, FormScreen } from '../types'
+import { FormModes, FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
@@ -26,10 +26,10 @@ import * as styles from './Screen.treat'
 import { useLocale } from '@island.is/localization'
 
 type ScreenProps = {
-  answerAndGoToNextScreen(Answers): void
+  answerAndGoToNextScreen(answers: FormValue): void
   formValue: FormValue
   addExternalData(data: ExternalData): void
-  answerQuestions(Answers): void
+  answerQuestions(answers: FormValue): void
   dataSchema: Schema
   externalData: ExternalData
   shouldSubmit?: boolean
@@ -38,7 +38,7 @@ type ScreenProps = {
   prevScreen(): void
   screen: FormScreen
   mode?: FormMode
-  applicationId?: string
+  applicationId: string
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -57,7 +57,7 @@ const Screen: FC<ScreenProps> = ({
   applicationId,
 }) => {
   const { formatMessage } = useLocale()
-  const hookFormData = useForm<FormValue>({
+  const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
@@ -83,7 +83,10 @@ const Screen: FC<ScreenProps> = ({
     if (shouldSubmit) {
       const finalAnswers = { ...formValue, ...data }
       const reviewField = findReviewField(screen)
-      const event = finalAnswers[reviewField?.id] || 'SUBMIT'
+
+      const event = reviewField
+        ? finalAnswers[reviewField.id] ?? 'SUBMIT'
+        : 'SUBMIT'
       await submitApplication({
         variables: {
           input: {
@@ -131,7 +134,7 @@ const Screen: FC<ScreenProps> = ({
       >
         <GridColumn
           span={['12/12', '12/12', '7/9', '7/9']}
-          offset={[null, null, '1/9']}
+          offset={['0', '0', '1/9']}
         >
           <Typography variant="h2">{formatMessage(screen.name)}</Typography>
           <Box>
@@ -173,7 +176,7 @@ const Screen: FC<ScreenProps> = ({
             <Box marginTop={3} className={styles.buttonContainer}>
               <GridColumn
                 span={['12/12', '12/12', '7/9', '7/9']}
-                offset={[null, null, '1/9']}
+                offset={['0', '0', '1/9']}
               >
                 <Box
                   display="flex"

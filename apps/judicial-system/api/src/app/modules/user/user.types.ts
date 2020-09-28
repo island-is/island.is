@@ -13,5 +13,8 @@ export class User {
   name: string
 
   @ApiProperty()
+  mobileNumber: string
+
+  @ApiProperty()
   roles: UserRole[]
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { NewsletterSignup } from './NewsletterSignup'
+import NewsletterSignup from './NewsletterSignup'
 
 export default {
   title: 'Components/NewsletterSignup',
@@ -15,7 +15,8 @@ export const Default = () => {
       buttonText="Skrá mig"
       placeholder="Settu inn netfangið þitt"
       label="Netfang"
-      onClickSubmit={() => console.log('submit')}
+      onChange={() => console.log('change')}
+      value=""
     />
   )
 }
@@ -30,7 +31,8 @@ export const BlueVariant = () => {
       placeholder="Settu inn netfangið þitt"
       label="Netfang"
       variant="blue"
-      onClickSubmit={() => console.log('submit')}
+      onChange={() => console.log('change')}
+      value=""
     />
   )
 }

@@ -24,13 +24,14 @@ import ReactDOM from 'react-dom'
 import { Box } from '../Box'
 import Link from 'next/link'
 
+const formatNumber = (value: number) =>
+  value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+
 export type TimelineEvent = {
   date: Date
   title: string
   value?: number
-  valueFormatted?: string
   maxValue?: number
-  maxValueFormatted?: string
   valueLabel?: string
   data?: {
     labels: string[]
@@ -281,10 +282,12 @@ const EventBar = forwardRef(
         {!!event.value && (
           <div className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
-              <span className={eventStyles.value}>{event.valueFormatted}</span>
+              <span className={eventStyles.value}>
+                {formatNumber(event.value)}
+              </span>
               {!!event.maxValue && (
                 <span className={eventStyles.maxValue}>
-                  /{event.maxValueFormatted}
+                  /{formatNumber(event.maxValue)}
                 </span>
               )}
             </span>
@@ -316,7 +319,6 @@ const EventModal = forwardRef(
     if (!event) {
       return null
     }
-
     return (
       <div ref={ref} className={eventStyles.eventModal}>
         <Box
@@ -336,7 +338,7 @@ const EventModal = forwardRef(
               paddingRight={4}
             >
               <Typography variant="h2" color="purple400" as="span">
-                {event.valueFormatted}
+                {formatNumber(event.value)}
               </Typography>
               {!!event.maxValue && (
                 <Typography
@@ -345,7 +347,7 @@ const EventModal = forwardRef(
                   as="span"
                   fontWeight="light"
                 >
-                  /{event.maxValueFormatted}
+                  /{formatNumber(event.maxValue)}
                 </Typography>
               )}
               <Box marginLeft={1}>

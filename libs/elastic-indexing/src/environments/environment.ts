@@ -1,3 +1,3 @@
 export const environment = {
-  syncToken: '',
+  syncToken: process.env.API_CMS_SYNC_TOKEN ?? '',
 }

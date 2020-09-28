@@ -27,7 +27,7 @@ const SelectFormField: FC<Props> = ({
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatMessage(label) as string,
-            tooltip: formatMessage(tooltip) as string,
+            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
           }))}
           placeholder={placeholder}
         />

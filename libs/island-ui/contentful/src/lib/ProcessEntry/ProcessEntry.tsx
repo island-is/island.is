@@ -67,7 +67,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
               alignItems="flexStart"
               justifyContent="flexStart"
             >
-              <Button width="fixed" noWrap href={processLink} icon="external">
+              <Button noWrap href={processLink} icon="external">
                 {buttonText}
               </Button>
             </Box>

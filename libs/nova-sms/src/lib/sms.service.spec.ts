@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { SmsService } from './sms.service'
+import { SmsService, SMS_OPTIONS } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
@@ -12,6 +12,7 @@ const testSendSms = 'SendSms'
 const testCode = '0'
 const postMock = jest.fn(function(
   path: string,
+  // The body and init arguments are needed for the mock to work
   body?: Body, // eslint-disable-line @typescript-eslint/no-unused-vars
   init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
@@ -24,12 +25,12 @@ const postMock = jest.fn(function(
       throw new Error()
   }
 })
-jest.mock('apollo-datasource-rest', function() {
+jest.mock('apollo-datasource-rest', () => {
+  class MockRESTDataSource {
+    post = postMock
+  }
   return {
-    RESTDataSource: function() {
-      this.post = postMock
-      return this
-    },
+    RESTDataSource: MockRESTDataSource,
   }
 })
 
@@ -54,7 +55,7 @@ describe('SmsService', () => {
           useValue: mock<Logger>(),
         },
         {
-          provide: 'SMS_OPTIONS',
+          provide: SMS_OPTIONS,
           useValue: testOptions,
         },
         SmsService,

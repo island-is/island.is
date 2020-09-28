@@ -39,8 +39,8 @@ export class UserService {
 
   private async getUserByNationalId<T>(
     nationalId: string,
-    model: new (fund, user) => T,
-  ): Promise<T> {
+    model: new (user: NationalRegistryUser, fund: Fund) => T,
+  ): Promise<T | null> {
     const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
       return null
@@ -52,11 +52,11 @@ export class UserService {
 
   async getAirlineUserInfoByNationalId(
     nationalId: string,
-  ): Promise<AirlineUser> {
+  ): Promise<AirlineUser | null> {
     return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
   }
 
-  async getUserInfoByNationalId(nationalId: string): Promise<User> {
+  async getUserInfoByNationalId(nationalId: string): Promise<User | null> {
     return this.getUserByNationalId<User>(nationalId, User)
   }
 }

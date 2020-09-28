@@ -1,11 +1,10 @@
 import React, { createContext, useContext, useReducer } from 'react'
 import { User } from 'oidc-client'
 
-export const AuthContext = createContext(null)
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export interface AuthReducerState {
-  userInfo: User
+  userInfo?: User
   userInfoState: AsyncActionState
   isAuthenticated: boolean
 }
@@ -23,10 +22,18 @@ interface Action {
 }
 
 const initialState: AuthReducerState = {
-  userInfo: null,
+  userInfo: undefined,
   userInfoState: 'passive',
   isAuthenticated: false,
 }
+export const AuthContext = createContext<
+  [AuthReducerState, (action: Action) => void]
+>([
+  initialState,
+  () => {
+    return undefined
+  },
+])
 
 const reducer = (state: AuthReducerState, action: Action): AuthReducerState => {
   switch (action.type) {

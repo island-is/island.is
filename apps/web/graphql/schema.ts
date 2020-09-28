@@ -67,6 +67,8 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
+  link: Scalars['String']
+  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -186,8 +188,10 @@ export type Slice =
   | SectionWithImage
   | TabSection
   | TeamList
+  | ContactUs
   | Html
   | Image
+  | Asset
 
 export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
@@ -322,6 +326,33 @@ export type TeamList = {
   typename: Scalars['String']
   id: Scalars['ID']
   teamMembers: Array<TeamMember>
+}
+
+export type ContactUs = {
+  __typename?: 'ContactUs'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  required: Scalars['String']
+  invalidPhone: Scalars['String']
+  invalidEmail: Scalars['String']
+  labelName: Scalars['String']
+  labelPhone: Scalars['String']
+  labelEmail: Scalars['String']
+  labelSubject: Scalars['String']
+  labelMessage: Scalars['String']
+  submitButtonText: Scalars['String']
+  successMessage: Scalars['String']
+  errorMessage: Scalars['String']
+}
+
+export type Asset = {
+  __typename?: 'Asset'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
 }
 
 export type Article = {
@@ -533,7 +564,7 @@ export type LifeEventPage = {
   id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
-  intro: Scalars['String']
+  intro?: Maybe<Scalars['String']>
   image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
@@ -569,6 +600,11 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
+}
+
+export type ContactUsPayload = {
+  __typename?: 'ContactUsPayload'
+  success: Scalars['Boolean']
 }
 
 export type TagCount = {
@@ -1063,6 +1099,7 @@ export type GetTranslationsInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  contactUs: ContactUsPayload
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
   updateApplicationExternalData?: Maybe<Application>
@@ -1070,6 +1107,10 @@ export type Mutation = {
   deleteAttachment?: Maybe<Application>
   submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
+}
+
+export type MutationContactUsArgs = {
+  input: ContactUsInput
 }
 
 export type MutationCreateApplicationArgs = {
@@ -1098,6 +1139,14 @@ export type MutationSubmitApplicationArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type ContactUsInput = {
+  name: Scalars['String']
+  phone: Scalars['String']
+  email: Scalars['String']
+  subject: Scalars['String']
+  message: Scalars['String']
 }
 
 export type CreateApplicationInput = {
@@ -1200,8 +1249,10 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
           } & AllSlicesSectionWithImageFragment)
         | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
         | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+        | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
         | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
         | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+        | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
       >
     }
 }
@@ -1253,8 +1304,10 @@ export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1318,8 +1371,10 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1374,8 +1429,10 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                   } & AllSlicesSectionWithImageFragment)
                 | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
                 | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+                | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
                 | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
                 | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+                | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
               >
             }
         >
@@ -1422,6 +1479,17 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
           >
         >
       }
+  >
+}
+
+export type ContactUsMutationVariables = Exact<{
+  input: ContactUsInput
+}>
+
+export type ContactUsMutation = { __typename?: 'Mutation' } & {
+  contactUs: { __typename?: 'ContactUsPayload' } & Pick<
+    ContactUsPayload,
+    'success'
   >
 }
 
@@ -1485,8 +1553,10 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1527,8 +1597,10 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
             } & AllSlicesSectionWithImageFragment)
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1713,7 +1785,7 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'title' | 'slug' | 'containsApplicationForm'
+            'id' | 'title' | 'slug' | 'intro' | 'containsApplicationForm'
           > & {
               group?: Maybe<
                 { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
@@ -1796,7 +1868,7 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'title' | 'slug' | 'containsApplicationForm'
+            'id' | 'title' | 'slug' | 'intro' | 'containsApplicationForm'
           > & {
               group?: Maybe<
                 { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
@@ -1885,6 +1957,11 @@ export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
   'typename' | 'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
 >
 
+export type AssetFieldsFragment = { __typename: 'Asset' } & Pick<
+  Asset,
+  'typename' | 'id' | 'title' | 'url' | 'contentType'
+>
+
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
   TimelineSlice,
   'typename' | 'id' | 'title'
@@ -1918,7 +1995,14 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
     stories: Array<
       { __typename?: 'Story' } & Pick<
         Story,
-        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body'
+        | 'title'
+        | 'intro'
+        | 'label'
+        | 'readMoreText'
+        | 'date'
+        | 'body'
+        | 'linkedPage'
+        | 'link'
       > & { logo: { __typename?: 'Image' } & ImageFieldsFragment }
     >
   }
@@ -2048,6 +2132,24 @@ export type TeamListFieldsFragment = { __typename: 'TeamList' } & Pick<
     >
   }
 
+export type ContactUsFieldsFragment = { __typename: 'ContactUs' } & Pick<
+  ContactUs,
+  | 'typename'
+  | 'id'
+  | 'title'
+  | 'required'
+  | 'invalidPhone'
+  | 'invalidEmail'
+  | 'labelName'
+  | 'labelPhone'
+  | 'labelEmail'
+  | 'labelSubject'
+  | 'labelMessage'
+  | 'submitButtonText'
+  | 'successMessage'
+  | 'errorMessage'
+>
+
 export type AllSlicesTimelineSliceFragment = {
   __typename?: 'TimelineSlice'
 } & TimelineFieldsFragment
@@ -2108,11 +2210,19 @@ export type AllSlicesTeamListFragment = {
   __typename?: 'TeamList'
 } & TeamListFieldsFragment
 
+export type AllSlicesContactUsFragment = {
+  __typename?: 'ContactUs'
+} & ContactUsFieldsFragment
+
 export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
 
 export type AllSlicesImageFragment = {
   __typename?: 'Image'
 } & ImageFieldsFragment
+
+export type AllSlicesAssetFragment = {
+  __typename?: 'Asset'
+} & AssetFieldsFragment
 
 export type AllSlicesFragment =
   | AllSlicesTimelineSliceFragment
@@ -2130,5 +2240,7 @@ export type AllSlicesFragment =
   | AllSlicesSectionWithImageFragment
   | AllSlicesTabSectionFragment
   | AllSlicesTeamListFragment
+  | AllSlicesContactUsFragment
   | AllSlicesHtmlFragment
   | AllSlicesImageFragment
+  | AllSlicesAssetFragment

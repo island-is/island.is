@@ -1,5 +1,5 @@
 import { FormLeaf } from '../types/Form'
-import { FormValue } from '../types/Application'
+import { Answer, FormValue } from '../types/Application'
 import {
   AllOrAny,
   Comparators,
@@ -7,13 +7,19 @@ import {
   StaticCheck,
 } from '../types/Condition'
 
-const getValueViaPath = (obj, path, defaultValue = undefined) => {
+const getValueViaPath = (
+  obj: {},
+  path: string,
+  defaultValue = undefined,
+): Answer | undefined => {
   try {
-    const travel = (regexp) =>
+    const travel = (regexp: RegExp) =>
       String.prototype.split
         .call(path, regexp)
         .filter(Boolean)
         .reduce(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
           (res, key) => (res !== null && res !== undefined ? res[key] : res),
           obj,
         )
@@ -39,16 +45,24 @@ function applyStaticConditionalCheck(
       isValid = answer !== value
       break
     case Comparators.GT:
-      isValid = answer > value
+      if (answer) {
+        isValid = answer > value
+      }
       break
     case Comparators.GTE:
-      isValid = answer >= value
+      if (answer) {
+        isValid = answer >= value
+      }
       break
     case Comparators.LT:
-      isValid = answer < value
+      if (answer) {
+        isValid = answer < value
+      }
       break
     case Comparators.LTE:
-      isValid = answer <= value
+      if (answer) {
+        isValid = answer <= value
+      }
       break
   }
   return isValid

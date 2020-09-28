@@ -95,7 +95,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
             </Stack>
           </GridColumn>
         </GridRow>
-        <Box paddingTop={8}>
+        <Box paddingTop={10}>
           <RichText body={page.slices} />
         </Box>
       </StandardLayout>

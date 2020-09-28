@@ -1,5 +1,4 @@
 import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
-import CacheManager from 'cache-manager'
 import * as kennitala from 'kennitala'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -122,7 +121,7 @@ export class NationalRegistryService {
 
   private createNationalRegistryUser(
     response: NationalRegistryGeneralLookupResponse,
-  ): NationalRegistryUser {
+  ): NationalRegistryUser | null {
     if (response.error) {
       return null
     }
@@ -140,7 +139,7 @@ export class NationalRegistryService {
     }
   }
 
-  async getUser(nationalId: string): Promise<NationalRegistryUser> {
+  async getUser(nationalId: string): Promise<NationalRegistryUser | null> {
     if (environment.environment !== 'prod') {
       const testUser = TEST_USERS.find(
         (testUser) => testUser.nationalId === nationalId,
@@ -219,7 +218,14 @@ export class NationalRegistryService {
 
     const family = data.results
     const user = family.find((person) => person.ssn === nationalId)
-    let children = []
+    if (!user) {
+      this.logger.error(
+        `Could not find User<${nationalId}> in list of family members`,
+      )
+      return []
+    }
+
+    let children: string[] = []
     if (this.isParent(user)) {
       children = family
         .filter((person) => person.ssn !== nationalId && this.isChild(person))

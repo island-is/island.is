@@ -1,4 +1,4 @@
-import { ApplicationTemplate } from '../ApplicationTemplate'
+import { ApplicationTemplate } from '../../types/ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
@@ -6,12 +6,7 @@ import {
   ApplicationStateSchema,
 } from '../../types/StateMachine'
 import * as z from 'zod'
-import { DrivingLessonsApplication } from './forms/DrivingLessonsApplication'
 import { nationalIdRegex } from '../examples/constants'
-import { ReviewApplication } from './forms/ReviewApplication'
-import { Approved } from './forms/Approved'
-import { Rejected } from './forms/Rejected'
-import { PendingReview } from './forms/PendingReview'
 
 type Events =
   | { type: 'APPROVE' }
@@ -42,7 +37,7 @@ const dataSchema = z.object({
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
 
-export const DrivingLessons: ApplicationTemplate<
+const DrivingLessons: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -59,7 +54,10 @@ export const DrivingLessons: ApplicationTemplate<
           roles: [
             {
               id: 'applicant',
-              form: DrivingLessonsApplication,
+              formLoader: () =>
+                import('./forms/DrivingLessonsApplication').then((val) =>
+                  Promise.resolve(val.DrivingLessonsApplication),
+                ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
@@ -79,7 +77,10 @@ export const DrivingLessons: ApplicationTemplate<
           roles: [
             {
               id: 'reviewer',
-              form: ReviewApplication,
+              formLoader: () =>
+                import('./forms/ReviewApplication').then((val) =>
+                  Promise.resolve(val.ReviewApplication),
+                ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
@@ -88,7 +89,10 @@ export const DrivingLessons: ApplicationTemplate<
             },
             {
               id: 'applicant',
-              form: PendingReview,
+              formLoader: () =>
+                import('./forms/PendingReview').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
               read: 'all',
             },
           ],
@@ -101,22 +105,40 @@ export const DrivingLessons: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
-          roles: [{ id: 'applicant', form: Approved }],
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('./forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
+                ),
+            },
+          ],
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
-          roles: [{ id: 'applicant', form: Rejected }],
+          roles: [
+            {
+              id: 'applicant',
+              formLoader: () =>
+                import('./forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+            },
+          ],
         },
       },
     },
   },
-  mapNationalRegistryIdToRole(id: string, state: string): ApplicationRole {
+  mapUserToRole(id: string, state: string): ApplicationRole {
     if (state === 'inReview') {
       return 'reviewer'
     }
     return 'applicant'
   },
 }
+
+export default DrivingLessons

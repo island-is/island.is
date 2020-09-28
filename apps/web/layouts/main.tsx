@@ -86,7 +86,7 @@ const Layout: NextComponentType<
     {
       title: t.siteTitle,
       links: topMenuCustomLinks,
-      externalLinksHeading: t.siteTitle,
+      externalLinksHeading: t.siteExternalTitle,
       externalLinks: footerLowerMenu,
     },
   ]
@@ -160,9 +160,14 @@ const Layout: NextComponentType<
             topLinks={footerUpperMenu}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
+            bottomLinksTitle={t.siteExternalTitle}
             tagLinks={footerTagsMenu}
             middleLinksTitle={String(namespace.footerMiddleLabel)}
             tagLinksTitle={String(namespace.footerRightLabel)}
+            languageSwitchLink={{
+              title: activeLocale === 'en' ? 'Íslenska' : 'English',
+              href: activeLocale === 'en' ? '/' : '/en',
+            }}
             showMiddleLinks
             showTagLinks
           />
