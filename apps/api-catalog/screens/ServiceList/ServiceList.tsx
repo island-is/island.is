@@ -5,7 +5,7 @@ import {  Box,
           GridRow, 
           GridColumn,
           Icon, 
-          Typography, AccordionItem, AsyncSearch
+          Typography, AccordionItem
 } from '@island.is/island-ui/core';
 
 import * as styles from './ServiceList.treat';
@@ -18,11 +18,10 @@ import {  PRICING_CATEGORY,
           getServices, 
           ServiceCardInformation, 
           ServiceCard, 
-          CategoryCheckBox
+          CategoryCheckBox, InputSearch
 } from '../../components';
 
 import ContentfulApi from '../../services/contentful'
-import { ClassValue } from 'classnames/types';
 import { Page } from '../../services/contentful.types'
 
 interface PropTypes {
@@ -169,13 +168,22 @@ export default function ServiceList(props:ServiceListProps) {
   const [firstGet,    setFirstGet] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState('');
   const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
+  const [timer, setTimer] = useState(null);
   const [width] = useWindowEvents();
   
   const onSearchChange = function(inputValue: string){
+
     props.parameters.text = inputValue;
     setSearchValue(inputValue);
-    setStatusQueryString(createStatusQueryString());
-    setFirstGet(true);
+    if (timer !== null ) {
+      clearTimeout(timer);
+    }
+    setTimer(setTimeout(function(){
+      setStatusQueryString(createStatusQueryString());
+      setFirstGet(true);
+    }, 600))
+
+    
   }
 
   useEffect(() => {
@@ -230,14 +238,13 @@ export default function ServiceList(props:ServiceListProps) {
       right={
               <Box  className={cn(isMobile(width)? styles.filterMobile : styles.filter , "filter")}>
                 <Box className={cn(styles.inputSearch)}>
-                  <AsyncSearch 
-                    options={[]}
-                    size='medium'
-                    placeholder="Leita"
-                    inputValue ={searchValue}
-                    onInputValueChange={(inputValue) => onSearchChange(inputValue)}
+                  <InputSearch 
+                    name="text-search"
+                    value={searchValue}
                     loading={isLoading}
-                    colored={searchValue.length < 1}
+                    placeholder="Leita"
+                    colored={ searchValue.length < 1 }
+                    onChange={input => onSearchChange(input.target.value)}
                   />
               </Box>
               <div className={cn(styles.filterItem)}>
@@ -298,7 +305,6 @@ ServiceList.getInitialProps = async (ctx):Promise<ServiceListProps> => {
   }
 
   const pageContent = await client.fetchPageBySlug('services', locale);
-  console.log(pageContent);
 
   const params:GetServicesParameters = { 
     cursor:null, 
