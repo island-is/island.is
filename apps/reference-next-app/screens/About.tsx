@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl'
 import { withLocale } from '@island.is/localization'
 import { Page, Box, Header } from '@island.is/island-ui/core'
 
-const About = (props) => (
+const About = () => (
   <div>
     <Page>
       <Box padding="containerGutter">
@@ -31,8 +31,8 @@ const About = (props) => (
   </div>
 )
 
-About.getInitialProps = async (props) => {
+About.getInitialProps = async () => {
   return {}
 }
 
-export default withLocale('global')(About)
+export default withLocale('referance.nextjs')(About)
