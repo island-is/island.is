@@ -64,7 +64,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
                 >
                   <Tag
-                    variant={status === 'pending' ? 'red' : 'darkerMint'}
+                    variant={status === 'pending' ? 'rose' : 'darkerMint'}
                     label
                   >
                     {status === 'pending'
