@@ -16,7 +16,7 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'

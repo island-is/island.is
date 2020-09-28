@@ -1,7 +1,7 @@
 import { LinkProps } from 'next/link'
 import { Link } from '@island.is/web/graphql/schema'
-import routeNames, { PathTypes } from '@island.is/web/i18n/routeNames'
-import { defaultLanguage } from '@island.is/web/i18n/I18n'
+import { defaultLanguage } from '@island.is/web/types'
+import routeNames, { PathTypes } from '@island.is/web/routes'
 
 export const getLink = ({
   pageData = '',
@@ -30,21 +30,4 @@ export const getLink = ({
     href: newHref,
     as,
   }
-}
-
-export const getLinkProps = (
-  linkedPage: Link['linkedPage'],
-): Pick<LinkProps, 'as' | 'href'> | null => {
-  const { makePath } = routeNames()
-
-  if (linkedPage?.page) {
-    const { slug, type } = linkedPage.page
-
-    return {
-      href: makePath(type as PathTypes, '[slug]'),
-      as: makePath(type as PathTypes, slug),
-    }
-  }
-
-  return null
 }

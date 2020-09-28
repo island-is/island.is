@@ -10,7 +10,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { NewsCard } from '../NewsCard'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsListQuery } from '@island.is/web/graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'

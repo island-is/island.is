@@ -4,7 +4,7 @@ import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,

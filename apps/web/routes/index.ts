@@ -1,4 +1,5 @@
-import { Locale, defaultLanguage } from './I18n'
+import { LinkReference } from '../graphql/schema'
+import { Locale, defaultLanguage } from '../types'
 
 const routes = {
   is: {
@@ -73,8 +74,23 @@ export const routeNames = (locale: Locale = defaultLanguage) => {
     return path ? path.replace(/\/\/+/g, '/') : '/'
   }
 
+  const getLinkProps = ({
+    type,
+    slug = '',
+  }: Pick<LinkReference, 'type' | 'slug'>) => {
+    if (!type) {
+      return null
+    }
+
+    return {
+      href: makePath(type as PathTypes, '[slug]'),
+      as: makePath(type as PathTypes, slug),
+    }
+  }
+
   return {
     makePath,
+    getLinkProps,
   }
 }
 

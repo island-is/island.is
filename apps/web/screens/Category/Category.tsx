@@ -19,7 +19,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {

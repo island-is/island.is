@@ -1,5 +1,6 @@
 import React from 'react'
-import I18n, { Locale, isLocale, defaultLanguage } from './I18n'
+import I18n, { isLocale } from './I18n'
+import { Locale, defaultLanguage } from '../types'
 import { NextPage, NextPageContext, NextComponentType } from 'next'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'

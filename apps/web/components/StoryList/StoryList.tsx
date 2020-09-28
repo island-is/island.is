@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
 import { Button, Typography, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
-import { getLinkProps } from '@island.is/web/utils/links'
-import { LinkedPage } from '@island.is/web/graphql/schema'
+import { Link as LinkType } from '@island.is/web/graphql/schema'
 
 import * as styles from './StoryList.treat'
+import { useI18n } from '@island.is/web/i18n'
+import routeNames from '@island.is/web/routes'
 
 export interface StoryProps {
   logoUrl: string
@@ -13,7 +14,8 @@ export interface StoryProps {
   intro: string
   readMoreText: string
   link?: string
-  page?: LinkedPage
+  linkedPage?: string
+  storyLink?: LinkType
 }
 
 export interface StoryListProps {
@@ -21,18 +23,11 @@ export interface StoryListProps {
   stories: StoryProps[]
 }
 
-export const StoryList: FC<StoryListProps> = ({ readMoreText, stories }) => (
+export const StoryList: FC<StoryListProps> = ({ stories }) => (
   <Stack space={8}>
     {stories.map((story, i) => (
       <Story key={i} {...story} />
     ))}
-    {/* stories.length > 0 && (
-      <div className={styles.margin}>
-        <Button variant="ghost" white>
-          {readMoreText}
-        </Button>
-      </div>
-    ) */}
   </Stack>
 )
 
@@ -42,15 +37,20 @@ const Story: FC<StoryProps> = ({
   title,
   intro,
   readMoreText,
-  page,
+  linkedPage,
   link,
+  storyLink,
 }) => {
-  const linkProps = page ? getLinkProps(page) : null
+  const { activeLocale } = useI18n()
+  const { getLinkProps } = routeNames(activeLocale)
 
-  const props = {
-    ...(link && { href: link }),
-    ...(linkProps && { ...linkProps }),
-  }
+  const linkProps = storyLink?.linkReference
+    ? getLinkProps(storyLink.linkReference)
+    : null
+
+  const href = storyLink?.url
+
+  console.log(linkProps, href)
 
   return (
     <div className={styles.margin}>
@@ -67,8 +67,8 @@ const Story: FC<StoryProps> = ({
         <Typography variant="p" color="white">
           {intro}
         </Typography>
-        {!!(link || linkProps) && (
-          <Link {...props} passHref pureChildren>
+        {!!(href || linkProps) && (
+          <Link href={href} {...linkProps} passHref pureChildren>
             <Button variant="text" size="medium" white icon="arrowRight">
               {readMoreText}
             </Button>

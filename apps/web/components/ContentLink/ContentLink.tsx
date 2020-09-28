@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { Link } from '@island.is/island-ui/core'
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
-import { defaultLanguage } from '@island.is/web/i18n/I18n'
+import { defaultLanguage } from '@island.is/web/types'
 import { getLink } from '@island.is/web/utils/links'
 
 interface ContentLinkProps {

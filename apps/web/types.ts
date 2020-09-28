@@ -13,3 +13,6 @@ export type Screen<Props = {}> = NextComponentType<
   Props,
   Props
 >
+
+export type Locale = 'is' | 'en'
+export const defaultLanguage: Locale = 'is'

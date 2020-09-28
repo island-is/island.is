@@ -2,7 +2,8 @@ import React from 'react'
 import ErrorScreen from '../screens/Error/Error'
 import { getLocaleFromPath } from '../i18n/withLocale'
 import Layout, { LayoutProps } from '../layouts/main'
-import I18n, { Locale } from '../i18n/I18n'
+import I18n from '../i18n/I18n'
+import { Locale } from '../types'
 import { withApollo } from '../graphql/withApollo'
 
 import {
@@ -15,7 +16,7 @@ import {
 import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import routeNames, { PathTypes } from '../i18n/routeNames'
+import routeNames, { PathTypes } from '@island.is/web/routes'
 
 type ErrorPageProps = {
   statusCode: number

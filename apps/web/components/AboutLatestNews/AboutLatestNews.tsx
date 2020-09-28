@@ -13,7 +13,7 @@ import { Image } from '../../graphql/schema'
 import * as styles from './AboutLatestNews.treat'
 import NewsCard from '../NewsCard/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 

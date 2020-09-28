@@ -19,7 +19,7 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
-import routeNames from '../../i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,

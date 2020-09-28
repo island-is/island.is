@@ -29,12 +29,11 @@ import {
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import routeNames from '../i18n/routeNames'
+import routeNames, { PathTypes } from '@island.is/web/routes'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { useNamespace } from '../hooks'
-import { getLinkProps } from '@island.is/web/utils/links'
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
@@ -236,6 +235,7 @@ const Layout: NextComponentType<
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
+  const { getLinkProps } = routeNames(lang as ContentLanguage)
 
   const [
     categories,
@@ -324,37 +324,39 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     categories,
     topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
-      ({ text, url, linkedPage }) => ({
+      ({ text, url, linkReference }) => ({
         title: text,
         href: url,
-        linkProps: getLinkProps(linkedPage),
+        linkProps: linkReference ? getLinkProps(linkReference) : null,
       }),
     ),
     alertBannerContent: alertBanner,
     footerUpperMenu: (upperMenu.links ?? []).map(
-      ({ text, url, linkedPage }) => ({
+      ({ text, url, linkReference }) => ({
         title: text,
         href: url,
-        linkProps: getLinkProps(linkedPage),
+        linkProps: linkReference ? getLinkProps(linkReference) : null,
       }),
     ),
     footerLowerMenu: (lowerMenu.links ?? []).map(
-      ({ text, url, linkedPage }) => ({
+      ({ text, url, linkReference }) => ({
         title: text,
         href: url,
-        linkProps: getLinkProps(linkedPage),
+        linkProps: linkReference ? getLinkProps(linkReference) : null,
       }),
     ),
-    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url, linkedPage }) => ({
-      title: text,
-      href: url,
-      linkProps: getLinkProps(linkedPage),
-    })),
-    footerMiddleMenu: (middleMenu.links ?? []).map(
-      ({ text, url, linkedPage }) => ({
+    footerTagsMenu: (tagsMenu.links ?? []).map(
+      ({ text, url, linkReference }) => ({
         title: text,
         href: url,
-        linkProps: getLinkProps(linkedPage),
+        linkProps: linkReference ? getLinkProps(linkReference) : null,
+      }),
+    ),
+    footerMiddleMenu: (middleMenu.links ?? []).map(
+      ({ text, url, linkReference }) => ({
+        title: text,
+        href: url,
+        linkProps: linkReference ? getLinkProps(linkReference) : null,
       }),
     ),
     namespace,

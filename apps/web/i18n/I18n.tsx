@@ -1,8 +1,6 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
-import rosetta, { Rosetta } from 'rosetta'
-
-export type Locale = 'is' | 'en'
-export const defaultLanguage: Locale = 'is'
+import rosetta from 'rosetta'
+import { Locale, defaultLanguage } from '../types'
 
 export const isLocale = (x: string): x is Locale => {
   return x === 'is' || x === 'en'

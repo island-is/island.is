@@ -70,6 +70,22 @@ export type TimelineSlice = {
   events: Array<TimelineEvent>
 }
 
+export type LinkReference = {
+  __typename?: 'LinkReference'
+  title?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
+  url?: Maybe<Scalars['String']>
+}
+
+export type Link = {
+  __typename?: 'Link'
+  id: Scalars['ID']
+  text: Scalars['String']
+  url: Scalars['String']
+  linkReference?: Maybe<LinkReference>
+}
+
 export type Page = {
   __typename?: 'Page'
   title: Scalars['String']
@@ -94,6 +110,7 @@ export type Story = {
   link: Scalars['String']
   body?: Maybe<Scalars['String']>
   page?: Maybe<LinkedPage>
+  storyLink?: Maybe<Link>
 }
 
 export type LinkCard = {
@@ -470,14 +487,6 @@ export type AdgerdirFeaturedNewsSlice = {
   id: Scalars['ID']
   title: Scalars['String']
   featured: Array<AdgerdirNews>
-}
-
-export type Link = {
-  __typename?: 'Link'
-  id: Scalars['ID']
-  text: Scalars['String']
-  url: Scalars['String']
-  linkedPage?: Maybe<LinkedPage>
 }
 
 export type FrontpageSlider = {
@@ -1357,6 +1366,8 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']>
   TimelineEvent: ResolverTypeWrapper<TimelineEvent>
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
+  LinkReference: ResolverTypeWrapper<LinkReference>
+  Link: ResolverTypeWrapper<Link>
   Page: ResolverTypeWrapper<Page>
   LinkedPage: ResolverTypeWrapper<LinkedPage>
   Story: ResolverTypeWrapper<Story>
@@ -1440,7 +1451,6 @@ export type ResolversTypes = {
     | ResolversTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: ResolverTypeWrapper<AdgerdirGroupSlice>
   AdgerdirFeaturedNewsSlice: ResolverTypeWrapper<AdgerdirFeaturedNewsSlice>
-  Link: ResolverTypeWrapper<Link>
   FrontpageSlider: ResolverTypeWrapper<FrontpageSlider>
   FrontpageSliderList: ResolverTypeWrapper<FrontpageSliderList>
   Pagination: ResolverTypeWrapper<Pagination>
@@ -1558,6 +1568,8 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON']
   TimelineEvent: TimelineEvent
   TimelineSlice: TimelineSlice
+  LinkReference: LinkReference
+  Link: Link
   Page: Page
   LinkedPage: LinkedPage
   Story: Story
@@ -1637,7 +1649,6 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: AdgerdirGroupSlice
   AdgerdirFeaturedNewsSlice: AdgerdirFeaturedNewsSlice
-  Link: Link
   FrontpageSlider: FrontpageSlider
   FrontpageSliderList: FrontpageSliderList
   Pagination: Pagination
@@ -1807,6 +1818,32 @@ export type TimelineSliceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LinkReferenceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LinkReference'] = ResolversParentTypes['LinkReference']
+> = {
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LinkResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  linkReference?: Resolver<
+    Maybe<ResolversTypes['LinkReference']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type PageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']
@@ -1839,6 +1876,7 @@ export type StoryResolvers<
   link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   page?: Resolver<Maybe<ResolversTypes['LinkedPage']>, ParentType, ContextType>
+  storyLink?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2482,21 +2520,6 @@ export type AdgerdirFeaturedNewsSliceResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   featured?: Resolver<
     Array<ResolversTypes['AdgerdirNews']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type LinkResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  linkedPage?: Resolver<
-    Maybe<ResolversTypes['LinkedPage']>,
     ParentType,
     ContextType
   >
@@ -3221,6 +3244,8 @@ export type Resolvers<ContextType = Context> = {
   JSON?: GraphQLScalarType
   TimelineEvent?: TimelineEventResolvers<ContextType>
   TimelineSlice?: TimelineSliceResolvers<ContextType>
+  LinkReference?: LinkReferenceResolvers<ContextType>
+  Link?: LinkResolvers<ContextType>
   Page?: PageResolvers<ContextType>
   LinkedPage?: LinkedPageResolvers<ContextType>
   Story?: StoryResolvers<ContextType>
@@ -3267,7 +3292,6 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirSlice?: AdgerdirSliceResolvers<ContextType>
   AdgerdirGroupSlice?: AdgerdirGroupSliceResolvers<ContextType>
   AdgerdirFeaturedNewsSlice?: AdgerdirFeaturedNewsSliceResolvers<ContextType>
-  Link?: LinkResolvers<ContextType>
   FrontpageSlider?: FrontpageSliderResolvers<ContextType>
   FrontpageSliderList?: FrontpageSliderListResolvers<ContextType>
   Pagination?: PaginationResolvers<ContextType>

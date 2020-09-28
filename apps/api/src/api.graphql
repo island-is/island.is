@@ -46,6 +46,20 @@ type TimelineSlice {
   events: [TimelineEvent!]!
 }
 
+type LinkReference {
+  title: String
+  slug: String
+  type: String
+  url: String
+}
+
+type Link {
+  id: ID!
+  text: String!
+  url: String!
+  linkReference: LinkReference
+}
+
 type Page {
   title: String!
   slug: String!
@@ -67,6 +81,7 @@ type Story {
   link: String!
   body: String
   page: LinkedPage
+  storyLink: Link
 }
 
 type LinkCard {
@@ -384,13 +399,6 @@ type AdgerdirFeaturedNewsSlice {
   id: ID!
   title: String!
   featured: [AdgerdirNews!]!
-}
-
-type Link {
-  id: ID!
-  text: String!
-  url: String!
-  linkedPage: LinkedPage
 }
 
 type FrontpageSlider {

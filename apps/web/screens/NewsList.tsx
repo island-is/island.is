@@ -8,7 +8,7 @@ import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import {
   Box,
   Typography,

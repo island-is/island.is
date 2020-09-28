@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'

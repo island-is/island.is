@@ -59,6 +59,22 @@ export type TimelineSlice = {
   events: Array<TimelineEvent>
 }
 
+export type LinkReference = {
+  __typename?: 'LinkReference'
+  title?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+  type?: Maybe<Scalars['String']>
+  url?: Maybe<Scalars['String']>
+}
+
+export type Link = {
+  __typename?: 'Link'
+  id: Scalars['ID']
+  text: Scalars['String']
+  url: Scalars['String']
+  linkReference?: Maybe<LinkReference>
+}
+
 export type Page = {
   __typename?: 'Page'
   title: Scalars['String']
@@ -83,6 +99,7 @@ export type Story = {
   link: Scalars['String']
   body?: Maybe<Scalars['String']>
   page?: Maybe<LinkedPage>
+  storyLink?: Maybe<Link>
 }
 
 export type LinkCard = {
@@ -459,14 +476,6 @@ export type AdgerdirFeaturedNewsSlice = {
   id: Scalars['ID']
   title: Scalars['String']
   featured: Array<AdgerdirNews>
-}
-
-export type Link = {
-  __typename?: 'Link'
-  id: Scalars['ID']
-  text: Scalars['String']
-  url: Scalars['String']
-  linkedPage?: Maybe<LinkedPage>
 }
 
 export type FrontpageSlider = {
@@ -1521,19 +1530,12 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
           'subtitle' | 'title' | 'content' | 'animationJson'
         > & {
             slideLink?: Maybe<
-              { __typename?: 'Link' } & Pick<Link, 'text' | 'url'> & {
-                  linkedPage?: Maybe<
-                    { __typename?: 'LinkedPage' } & Pick<
-                      LinkedPage,
-                      'title'
-                    > & {
-                        page?: Maybe<
-                          { __typename?: 'Page' } & Pick<
-                            Page,
-                            'title' | 'slug' | 'type'
-                          >
-                        >
-                      }
+              { __typename?: 'Link' } & Pick<Link, 'id' | 'text' | 'url'> & {
+                  linkReference?: Maybe<
+                    { __typename?: 'LinkReference' } & Pick<
+                      LinkReference,
+                      'type' | 'slug' | 'url'
+                    >
                   >
                 }
             >
@@ -1686,15 +1688,11 @@ export type GetMenuQuery = { __typename?: 'Query' } & {
     { __typename?: 'Menu' } & Pick<Menu, 'title'> & {
         links: Array<
           { __typename?: 'Link' } & Pick<Link, 'text' | 'url'> & {
-              linkedPage?: Maybe<
-                { __typename?: 'LinkedPage' } & Pick<LinkedPage, 'title'> & {
-                    page?: Maybe<
-                      { __typename?: 'Page' } & Pick<
-                        Page,
-                        'title' | 'slug' | 'type'
-                      >
-                    >
-                  }
+              linkReference?: Maybe<
+                { __typename?: 'LinkReference' } & Pick<
+                  LinkReference,
+                  'slug' | 'type'
+                >
               >
             }
         >
@@ -2050,6 +2048,16 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
                   { __typename?: 'Page' } & Pick<
                     Page,
                     'title' | 'slug' | 'type'
+                  >
+                >
+              }
+          >
+          storyLink?: Maybe<
+            { __typename?: 'Link' } & Pick<Link, 'id' | 'text' | 'url'> & {
+                linkReference?: Maybe<
+                  { __typename?: 'LinkReference' } & Pick<
+                    LinkReference,
+                    'type' | 'slug' | 'url'
                   >
                 >
               }

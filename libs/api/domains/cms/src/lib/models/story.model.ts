@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IStory } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
+import { Link, mapLink } from './link.model'
 import { LinkedPage, mapLinkedPage } from './linkedPage.model'
 
 @ObjectType()
@@ -31,6 +32,9 @@ export class Story {
 
   @Field(() => LinkedPage, { nullable: true })
   page?: LinkedPage
+
+  @Field(() => Link, { nullable: true })
+  storyLink?: Link
 }
 
 export const mapStory = ({ fields, sys }: IStory): Story => ({
@@ -43,4 +47,5 @@ export const mapStory = ({ fields, sys }: IStory): Story => ({
   link: fields.link ?? '',
   body: fields.body && JSON.stringify(fields.body),
   page: fields.page ? mapLinkedPage(fields.page) : null,
+  storyLink: fields.storyLink ? mapLink(fields.storyLink) : null,
 })

@@ -21,13 +21,12 @@ import {
   Icon,
   Link,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
+import { Locale } from '@island.is/web/types'
 import { Link as LinkType } from '@island.is/web/graphql/schema'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { getLinkProps } from '@island.is/web/utils/links'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -83,7 +82,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     baseId: 'frontpage-tab',
   })
   const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale as Locale)
+  const { getLinkProps } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
 
   useEffect(() => {
@@ -261,15 +260,19 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                   const visible = currentIndex === index
 
-                  const linkedPage = slideLink?.linkedPage
-                  const href = slideLink?.url
-                  const linkProps = linkedPage ? getLinkProps(linkedPage) : null
+                  const linkReference = slideLink?.linkReference
+                  const href = linkReference?.url || slideLink.url
+
+                  const linkProps = linkReference
+                    ? getLinkProps(linkReference)
+                    : null
 
                   const props = {
                     href,
                     ...(linkProps && { ...linkProps, prefetch: true }),
                   }
 
+                  console.log('props', props)
                   return (
                     <TabPanel
                       key={index}

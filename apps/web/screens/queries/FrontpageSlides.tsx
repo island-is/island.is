@@ -9,15 +9,13 @@ export const GET_FRONTPAGE_SLIDES_QUERY = gql`
         content
         animationJson
         slideLink {
+          id
           text
           url
-          linkedPage {
-            title
-            page {
-              title
-              slug
-              type
-            }
+          linkReference {
+            type
+            slug
+            url
           }
         }
       }

@@ -11,7 +11,7 @@ import {
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)

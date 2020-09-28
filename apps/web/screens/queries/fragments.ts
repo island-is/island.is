@@ -75,6 +75,16 @@ export const slices = gql`
         }
       }
       link
+      storyLink {
+        id
+        text
+        url
+        linkReference {
+          type
+          slug
+          url
+        }
+      }
     }
   }
 

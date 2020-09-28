@@ -25,9 +25,9 @@ import {
   Typography,
   Stack,
 } from '@island.is/island-ui/core'
-import routeNames from '@island.is/web/i18n/routeNames'
+import routeNames from '@island.is/web/routes'
 import * as styles from './SearchInput.treat'
-import { Locale } from '@island.is/web/i18n/I18n'
+import { Locale } from '@island.is/web/types'
 import {
   GetSearchResultsQuery,
   QuerySearchResultsArgs,
