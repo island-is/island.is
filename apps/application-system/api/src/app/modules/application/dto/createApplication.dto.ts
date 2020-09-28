@@ -12,7 +12,7 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   @IsEnum(ApplicationTypes)
   @ApiProperty({ enum: ApplicationTypes })
-  readonly typeId: ApplicationTypes = ApplicationTypes.EXAMPLE
+  readonly typeId!: ApplicationTypes
 
   @IsNotEmpty()
   @IsString()
