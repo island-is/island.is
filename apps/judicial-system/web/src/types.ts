@@ -21,6 +21,12 @@ export enum NotificationType {
   READY_FOR_COURT = 'READY_FOR_COURT',
 }
 
+export enum AppealDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
+  POSTPONE = 'POSTPONE',
+}
+
 export interface DetentionRequest {
   id: string
   policeCaseNumber: string
@@ -60,6 +66,11 @@ export interface Case {
   policeDemands?: string
   accusedPlea?: string
   litigationPresentations?: string
+  ruling?: string
+  custodyEndDate?: string
+  custodyRestrictions?: CustodyRestrictions[]
+  accusedAppealDecision?: AppealDecision
+  prosecutorAppealDecision?: AppealDecision
 }
 
 export interface Notification {
