@@ -44,7 +44,7 @@ describe('Detention requests route', () => {
 
     fetchMock.mock('/api/user', {
       nationalId: '1112902539',
-      roles: [UserRole.JUDGE],
+      role: UserRole.JUDGE,
     })
     fetchMock.mock('/api/cases', mockDetensionRequests)
 
@@ -68,7 +68,7 @@ describe('Detention requests route', () => {
 
     const { getByTestId } = render(
       <userContext.Provider
-        value={{ user: { nationalId: '0123456789', roles: [UserRole.JUDGE] } }}
+        value={{ user: { nationalId: '0123456789', role: UserRole.JUDGE } }}
       >
         <Router history={history}>
           <DetentionRequests onGetUser={() => undefined} />
@@ -87,7 +87,7 @@ describe('Detention requests route', () => {
     const { getByTestId } = render(
       <userContext.Provider
         value={{
-          user: { nationalId: '0123456789', roles: [UserRole.PROSECUTOR] },
+          user: { nationalId: '0123456789', role: UserRole.PROSECUTOR },
         }}
       >
         <Router history={history}>
@@ -108,7 +108,7 @@ describe('Detention requests route', () => {
       '/api/user',
       {
         nationalId: '1112902539',
-        roles: [UserRole.PROSECUTOR],
+        role: UserRole.PROSECUTOR,
       },
       { overwriteRoutes: true },
     )
