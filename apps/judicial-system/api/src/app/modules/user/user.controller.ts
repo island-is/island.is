@@ -9,7 +9,7 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
 import { AuthUser } from '../auth/auth.types'
 import { JwtAuthGuard } from '../auth/auth.guard'
-import { User } from './user.types'
+import { User } from './user.model'
 import { UserService } from './user.service'
 
 @UseGuards(JwtAuthGuard)
