@@ -5,7 +5,7 @@ export class UpdateApplicationStateDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly event: string
+  readonly event!: string
 
   @IsOptional()
   @IsObject()
