@@ -181,133 +181,173 @@ export const Verdict: React.FC = () => {
                   Ákvörðun um kæru
                 </Typography>
               </Box>
-              <Box marginBottom={1}>
+              <Box marginBottom={3}>
                 <Typography>
                   Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
                   úrskurð þennan til Landsréttar innan þriggja sólarhringa.
                 </Typography>
               </Box>
-              <Box marginBottom={2}>
-                <Typography as="h4" variant="h4">
-                  Kærði
-                </Typography>
-                <div>
-                  <RadioButton
-                    name="accused-appeal-decition"
-                    id="accused-appeal"
-                    label="Kærði kærir málið"
-                    value={AppealDecision.APPEAL}
-                    checked={accusedAppealDecition === AppealDecision.APPEAL}
-                    onChange={() => {
-                      setAccusedAppealDecition(AppealDecision.APPEAL)
-                      api.saveCase(
-                        workingCase.id,
-                        parseArray('accusedAppealDecision', [
-                          AppealDecision.APPEAL,
-                        ]),
-                      )
-                    }}
-                  />
-                  <RadioButton
-                    name="accused-appeal-decition"
-                    id="accused-accept"
-                    label="Kærði unir úrskurðinum"
-                    value={AppealDecision.ACCEPT}
-                    checked={accusedAppealDecition === AppealDecision.ACCEPT}
-                    onChange={() => {
-                      setAccusedAppealDecition(AppealDecision.ACCEPT)
+              <Box marginBottom={3}>
+                <Box marginBottom={2}>
+                  <Typography as="h4" variant="h4">
+                    Kærði
+                  </Typography>
+                </Box>
+                <Box marginBottom={3}>
+                  <GridRow>
+                    <GridColumn span="3/7">
+                      <RadioButton
+                        name="accused-appeal-decition"
+                        id="accused-appeal"
+                        label="Kærði kærir málið"
+                        value={AppealDecision.APPEAL}
+                        checked={
+                          accusedAppealDecition === AppealDecision.APPEAL
+                        }
+                        onChange={() => {
+                          setAccusedAppealDecition(AppealDecision.APPEAL)
+                          api.saveCase(
+                            workingCase.id,
+                            parseArray('accusedAppealDecision', [
+                              AppealDecision.APPEAL,
+                            ]),
+                          )
+                        }}
+                        large
+                      />
+                    </GridColumn>
+                    <GridColumn span="3/7">
+                      <RadioButton
+                        name="accused-appeal-decition"
+                        id="accused-accept"
+                        label="Kærði unir úrskurðinum"
+                        value={AppealDecision.ACCEPT}
+                        checked={
+                          accusedAppealDecition === AppealDecision.ACCEPT
+                        }
+                        onChange={() => {
+                          setAccusedAppealDecition(AppealDecision.ACCEPT)
 
-                      api.saveCase(
-                        workingCase.id,
-                        parseArray('accusedAppealDecision', [
-                          AppealDecision.ACCEPT,
-                        ]),
-                      )
-                    }}
-                  />
-                  <RadioButton
-                    name="accused-appeal-decition"
-                    id="accused-postpone"
-                    label="Kærði tekur sér lögboðinn frest"
-                    value={AppealDecision.POSTPONE}
-                    checked={accusedAppealDecition === AppealDecision.POSTPONE}
-                    onChange={() => {
-                      setAccusedAppealDecition(AppealDecision.POSTPONE)
+                          api.saveCase(
+                            workingCase.id,
+                            parseArray('accusedAppealDecision', [
+                              AppealDecision.ACCEPT,
+                            ]),
+                          )
+                        }}
+                        large
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <GridRow>
+                  <GridColumn span="4/7">
+                    <RadioButton
+                      name="accused-appeal-decition"
+                      id="accused-postpone"
+                      label="Kærði tekur sér lögboðinn frest"
+                      value={AppealDecision.POSTPONE}
+                      checked={
+                        accusedAppealDecition === AppealDecision.POSTPONE
+                      }
+                      onChange={() => {
+                        setAccusedAppealDecition(AppealDecision.POSTPONE)
 
-                      api.saveCase(
-                        workingCase.id,
-                        parseArray('accusedAppealDecision', [
-                          AppealDecision.POSTPONE,
-                        ]),
-                      )
-                    }}
-                  />
-                </div>
+                        api.saveCase(
+                          workingCase.id,
+                          parseArray('accusedAppealDecision', [
+                            AppealDecision.POSTPONE,
+                          ]),
+                        )
+                      }}
+                      large
+                    />
+                  </GridColumn>
+                </GridRow>
               </Box>
-              <Box marginBottom={2}>
+              <Box marginBottom={3}>
                 <Typography>
                   Dómari bendir kærða á að honum sé heimilt að bera atriði er
                   lúta að framkvæmd gæsluvarðhaldsins undir dómara.
                 </Typography>
               </Box>
               <Box>
-                <Typography as="h4" variant="h4">
-                  Sækjandi
-                </Typography>
-                <div>
-                  <RadioButton
-                    name="prosecutor-appeal-decition"
-                    id="prosecutor-appeal"
-                    label="Sækjandi kærir málið"
-                    value={AppealDecision.APPEAL}
-                    checked={prosecutorAppealDecition === AppealDecision.APPEAL}
-                    onChange={() => {
-                      setProsecutorAppealDecition(AppealDecision.APPEAL)
-                      api.saveCase(
-                        workingCase.id,
-                        parseArray('prosecutorAppealDecision', [
-                          AppealDecision.APPEAL,
-                        ]),
-                      )
-                    }}
-                  />
-                  <RadioButton
-                    name="prosecutor-appeal-decition"
-                    id="prosecutor-accept"
-                    label="Sækjandi unir úrskurðinum"
-                    value={AppealDecision.ACCEPT}
-                    checked={prosecutorAppealDecition === AppealDecision.ACCEPT}
-                    onChange={() => {
-                      setProsecutorAppealDecition(AppealDecision.ACCEPT)
+                <Box marginBottom={2}>
+                  <Typography as="h4" variant="h4">
+                    Sækjandi
+                  </Typography>
+                </Box>
+                <Box marginBottom={3}>
+                  <GridRow>
+                    <GridColumn span="3/7">
+                      <RadioButton
+                        name="prosecutor-appeal-decition"
+                        id="prosecutor-appeal"
+                        label="Sækjandi kærir málið"
+                        value={AppealDecision.APPEAL}
+                        checked={
+                          prosecutorAppealDecition === AppealDecision.APPEAL
+                        }
+                        onChange={() => {
+                          setProsecutorAppealDecition(AppealDecision.APPEAL)
+                          api.saveCase(
+                            workingCase.id,
+                            parseArray('prosecutorAppealDecision', [
+                              AppealDecision.APPEAL,
+                            ]),
+                          )
+                        }}
+                        large
+                      />
+                    </GridColumn>
+                    <GridColumn>
+                      <RadioButton
+                        name="prosecutor-appeal-decition"
+                        id="prosecutor-accept"
+                        label="Sækjandi unir úrskurðinum"
+                        value={AppealDecision.ACCEPT}
+                        checked={
+                          prosecutorAppealDecition === AppealDecision.ACCEPT
+                        }
+                        onChange={() => {
+                          setProsecutorAppealDecition(AppealDecision.ACCEPT)
 
-                      api.saveCase(
-                        workingCase.id,
-                        parseArray('prosecutorAppealDecision', [
-                          AppealDecision.ACCEPT,
-                        ]),
-                      )
-                    }}
-                  />
-                  <RadioButton
-                    name="prosecutor-appeal-decition"
-                    id="prosecutor-postpone"
-                    label="Sækjandi tekur sér lögboðinn frest"
-                    value={AppealDecision.POSTPONE}
-                    checked={
-                      prosecutorAppealDecition === AppealDecision.POSTPONE
-                    }
-                    onChange={() => {
-                      setProsecutorAppealDecition(AppealDecision.POSTPONE)
+                          api.saveCase(
+                            workingCase.id,
+                            parseArray('prosecutorAppealDecision', [
+                              AppealDecision.ACCEPT,
+                            ]),
+                          )
+                        }}
+                        large
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <GridRow>
+                  <GridColumn span="4/7">
+                    <RadioButton
+                      name="prosecutor-appeal-decition"
+                      id="prosecutor-postpone"
+                      label="Sækjandi tekur sér lögboðinn frest"
+                      value={AppealDecision.POSTPONE}
+                      checked={
+                        prosecutorAppealDecition === AppealDecision.POSTPONE
+                      }
+                      onChange={() => {
+                        setProsecutorAppealDecition(AppealDecision.POSTPONE)
 
-                      api.saveCase(
-                        workingCase.id,
-                        parseArray('prosecutorAppealDecision', [
-                          AppealDecision.POSTPONE,
-                        ]),
-                      )
-                    }}
-                  />
-                </div>
+                        api.saveCase(
+                          workingCase.id,
+                          parseArray('prosecutorAppealDecision', [
+                            AppealDecision.POSTPONE,
+                          ]),
+                        )
+                      }}
+                      large
+                    />
+                  </GridColumn>
+                </GridRow>
               </Box>
             </Box>
             <FormFooter
