@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
+import { Link, mapLink } from './link.model'
 import { IFrontpageSlider } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class FrontpageSlider {
@@ -15,10 +14,10 @@ export class FrontpageSlider {
   content: string
 
   @Field({ nullable: true })
-  link?: string
-
-  @Field({ nullable: true })
   animationJson?: string
+
+  @Field(() => Link, { nullable: true })
+  slideLink?: Link
 }
 
 export const mapFrontpageSlider = ({
@@ -27,8 +26,8 @@ export const mapFrontpageSlider = ({
   title: fields.title,
   subtitle: fields.subtitle,
   content: fields.content,
-  link: fields.link && JSON.stringify(fields.link),
   animationJson: fields.animationJson
     ? JSON.stringify(fields.animationJson)
     : '',
+  slideLink: fields.slideLink ? mapLink(fields.slideLink) : null,
 })

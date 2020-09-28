@@ -59,6 +59,19 @@ export type TimelineSlice = {
   events: Array<TimelineEvent>
 }
 
+export type Page = {
+  __typename?: 'Page'
+  title: Scalars['String']
+  slug: Scalars['String']
+  type: Scalars['String']
+}
+
+export type LinkedPage = {
+  __typename?: 'LinkedPage'
+  title: Scalars['String']
+  page?: Maybe<Page>
+}
+
 export type Story = {
   __typename?: 'Story'
   label: Scalars['String']
@@ -68,8 +81,8 @@ export type Story = {
   date: Scalars['String']
   intro: Scalars['String']
   link: Scalars['String']
-  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
+  page?: Maybe<LinkedPage>
 }
 
 export type LinkCard = {
@@ -448,13 +461,21 @@ export type AdgerdirFeaturedNewsSlice = {
   featured: Array<AdgerdirNews>
 }
 
+export type Link = {
+  __typename?: 'Link'
+  id: Scalars['ID']
+  text: Scalars['String']
+  url: Scalars['String']
+  linkedPage?: Maybe<LinkedPage>
+}
+
 export type FrontpageSlider = {
   __typename?: 'FrontpageSlider'
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  link?: Maybe<Scalars['String']>
   animationJson?: Maybe<Scalars['String']>
+  slideLink?: Maybe<Link>
 }
 
 export type FrontpageSliderList = {
@@ -480,27 +501,6 @@ export type Namespace = {
   __typename?: 'Namespace'
   namespace: Scalars['String']
   fields: Scalars['String']
-}
-
-export type Page = {
-  __typename?: 'Page'
-  title: Scalars['String']
-  slug: Scalars['String']
-  type: Scalars['String']
-}
-
-export type LinkedPage = {
-  __typename?: 'LinkedPage'
-  title: Scalars['String']
-  page?: Maybe<Page>
-}
-
-export type Link = {
-  __typename?: 'Link'
-  id: Scalars['ID']
-  text: Scalars['String']
-  url: Scalars['String']
-  linkedPage?: Maybe<LinkedPage>
 }
 
 export type PageHeader = {
@@ -1518,8 +1518,26 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
       items: Array<
         { __typename?: 'FrontpageSlider' } & Pick<
           FrontpageSlider,
-          'subtitle' | 'title' | 'content' | 'link' | 'animationJson'
-        >
+          'subtitle' | 'title' | 'content' | 'animationJson'
+        > & {
+            slideLink?: Maybe<
+              { __typename?: 'Link' } & Pick<Link, 'text' | 'url'> & {
+                  linkedPage?: Maybe<
+                    { __typename?: 'LinkedPage' } & Pick<
+                      LinkedPage,
+                      'title'
+                    > & {
+                        page?: Maybe<
+                          { __typename?: 'Page' } & Pick<
+                            Page,
+                            'title' | 'slug' | 'type'
+                          >
+                        >
+                      }
+                  >
+                }
+            >
+          }
       >
     }
   >
@@ -2023,15 +2041,20 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
     stories: Array<
       { __typename?: 'Story' } & Pick<
         Story,
-        | 'title'
-        | 'intro'
-        | 'label'
-        | 'readMoreText'
-        | 'date'
-        | 'body'
-        | 'linkedPage'
-        | 'link'
-      > & { logo: { __typename?: 'Image' } & ImageFieldsFragment }
+        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body' | 'link'
+      > & {
+          logo: { __typename?: 'Image' } & ImageFieldsFragment
+          page?: Maybe<
+            { __typename?: 'LinkedPage' } & Pick<LinkedPage, 'title'> & {
+                page?: Maybe<
+                  { __typename?: 'Page' } & Pick<
+                    Page,
+                    'title' | 'slug' | 'type'
+                  >
+                >
+              }
+          >
+        }
     >
   }
 

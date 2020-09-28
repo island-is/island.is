@@ -46,6 +46,17 @@ type TimelineSlice {
   events: [TimelineEvent!]!
 }
 
+type Page {
+  title: String!
+  slug: String!
+  type: String!
+}
+
+type LinkedPage {
+  title: String!
+  page: Page
+}
+
 type Story {
   label: String!
   title: String!
@@ -54,8 +65,8 @@ type Story {
   date: String!
   intro: String!
   link: String!
-  linkedPage: String
   body: String
+  page: LinkedPage
 }
 
 type LinkCard {
@@ -375,12 +386,19 @@ type AdgerdirFeaturedNewsSlice {
   featured: [AdgerdirNews!]!
 }
 
+type Link {
+  id: ID!
+  text: String!
+  url: String!
+  linkedPage: LinkedPage
+}
+
 type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
-  link: String
   animationJson: String
+  slideLink: Link
 }
 
 type FrontpageSliderList {
@@ -402,24 +420,6 @@ type PaginatedNews {
 type Namespace {
   namespace: String!
   fields: String!
-}
-
-type Page {
-  title: String!
-  slug: String!
-  type: String!
-}
-
-type LinkedPage {
-  title: String!
-  page: Page
-}
-
-type Link {
-  id: ID!
-  text: String!
-  url: String!
-  linkedPage: LinkedPage
 }
 
 type PageHeader {

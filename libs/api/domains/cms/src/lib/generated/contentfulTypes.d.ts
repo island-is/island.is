@@ -471,6 +471,9 @@ export interface IFrontpageSliderFields {
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
+
+  /** Slide link */
+  slideLink?: ILink | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -712,9 +715,6 @@ export interface ILinkFields {
 
   /** URL */
   url: string
-
-  /** Page */
-  page?: IArticle | IArticleCategory | INews | undefined
 
   /** Linked page */
   linkedPage?: ILinkedPage | undefined
@@ -1393,6 +1393,9 @@ export interface IStoryFields {
 
   /** Link */
   link?: string | undefined
+
+  /** Linked page (new) */
+  page?: ILinkedPage | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {

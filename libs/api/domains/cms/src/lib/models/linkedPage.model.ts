@@ -1,15 +1,12 @@
-import { Field, ObjectType, createUnionType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 import {
   IArticle,
+  IPage,
   IArticleCategory,
   INews,
   ILinkedPage,
 } from '../generated/contentfulTypes'
-
-import { Article } from './article.model'
-import { ArticleCategory } from './articleCategory.model'
-import { News } from './news.model'
 
 @ObjectType()
 export class Page {
@@ -23,13 +20,9 @@ export class Page {
   type: string
 }
 
-export const PageTypes = createUnionType({
-  name: 'PageTypes',
-  types: () => [Article, ArticleCategory, News],
-  resolveType: () => Page,
-})
-
-export const mapPage = (page: IArticle | INews | IArticleCategory): Page => {
+export const mapPage = (
+  page: IPage | IArticle | INews | IArticleCategory,
+): Page => {
   return {
     title: page.fields.title,
     slug: page.fields.slug,

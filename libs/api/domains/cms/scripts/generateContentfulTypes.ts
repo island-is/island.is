@@ -2,7 +2,7 @@ import { codegen } from '@jeremybarbet/contentful-typescript-codegen'
 import { createClient } from 'contentful-management'
 
 const client = createClient({
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
+  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN as string,
 })
 
 async function main() {

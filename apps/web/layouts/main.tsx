@@ -1,6 +1,5 @@
 import React from 'react'
 import Head from 'next/head'
-import { LinkProps } from 'next/link'
 import { NextComponentType, NextPageContext } from 'next'
 import {
   Page,
@@ -27,15 +26,15 @@ import {
   QueryGetAlertBannerArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
-  Link,
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import routeNames, { PathTypes } from '../i18n/routeNames'
+import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { useNamespace } from '../hooks'
+import { getLinkProps } from '@island.is/web/utils/links'
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
@@ -236,7 +235,6 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
-  const { makePath } = routeNames()
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const [
@@ -322,21 +320,6 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         return JSON.parse(res.data.getNamespace.fields)
       }),
   ])
-
-  const getLinkProps = (
-    linkedPage: Link['linkedPage'],
-  ): Pick<LinkProps, 'as' | 'href'> | null => {
-    if (linkedPage?.page) {
-      const { slug, type } = linkedPage.page
-
-      return {
-        href: makePath(type as PathTypes, '[slug]'),
-        as: makePath(type as PathTypes, slug),
-      }
-    }
-
-    return null
-  }
 
   return {
     categories,

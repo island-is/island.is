@@ -7,8 +7,19 @@ export const GET_FRONTPAGE_SLIDES_QUERY = gql`
         subtitle
         title
         content
-        link
         animationJson
+        slideLink {
+          text
+          url
+          linkedPage {
+            title
+            page {
+              title
+              slug
+              type
+            }
+          }
+        }
       }
     }
   }

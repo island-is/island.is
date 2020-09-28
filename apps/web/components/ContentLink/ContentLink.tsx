@@ -1,44 +1,15 @@
 import React, { FC, ReactNode } from 'react'
 import { useRouter } from 'next/router'
 import { Link } from '@island.is/island-ui/core'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
 import { defaultLanguage } from '@island.is/web/i18n/I18n'
+import { getLink } from '@island.is/web/utils/links'
 
 interface ContentLinkProps {
   pageData: string
   href?: string
   fallbackLink?: string
   children: ReactNode
-}
-
-export const getLink = ({
-  pageData = '',
-  locale = defaultLanguage,
-  href = '[slug]',
-}) => {
-  if (!pageData) {
-    return null
-  }
-
-  const { makePath } = routeNames(locale)
-
-  const data = pageData && JSON.parse(pageData)
-
-  const contentType = data?.sys?.contentType?.sys?.id ?? ''
-  const slug = data?.fields?.slug ?? ''
-
-  if (!contentType || !slug) {
-    return null
-  }
-
-  const newHref = makePath(contentType, href)
-  const as = makePath(contentType, slug)
-
-  return {
-    href: newHref,
-    as,
-  }
 }
 
 export const ContentLink: FC<ContentLinkProps> = ({

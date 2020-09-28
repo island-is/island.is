@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
-import { Button, Typography, Stack } from '@island.is/island-ui/core'
+import { Button, Typography, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
-import { ContentLink } from '@island.is/web/components'
+import { getLinkProps } from '@island.is/web/utils/links'
+import { LinkedPage } from '@island.is/web/graphql/schema'
 
 import * as styles from './StoryList.treat'
 
@@ -12,7 +13,7 @@ export interface StoryProps {
   intro: string
   readMoreText: string
   link?: string
-  linkedPage?: string
+  page?: LinkedPage
 }
 
 export interface StoryListProps {
@@ -41,9 +42,16 @@ const Story: FC<StoryProps> = ({
   title,
   intro,
   readMoreText,
-  linkedPage,
+  page,
   link,
 }) => {
+  const linkProps = page ? getLinkProps(page) : null
+
+  const props = {
+    ...(link && { href: link }),
+    ...(linkProps && { ...linkProps }),
+  }
+
   return (
     <div className={styles.margin}>
       <div className={styles.icon}>
@@ -59,12 +67,12 @@ const Story: FC<StoryProps> = ({
         <Typography variant="p" color="white">
           {intro}
         </Typography>
-        {!!(linkedPage || link) && (
-          <ContentLink pageData={linkedPage} fallbackLink={link}>
+        {!!(link || linkProps) && (
+          <Link {...props} passHref pureChildren>
             <Button variant="text" size="medium" white icon="arrowRight">
               {readMoreText}
             </Button>
-          </ContentLink>
+          </Link>
         )}
       </Stack>
     </div>

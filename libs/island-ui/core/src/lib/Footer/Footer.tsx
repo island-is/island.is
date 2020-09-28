@@ -179,7 +179,6 @@ export const Footer = ({
                   ) : null}
                   <Inline space={2}>
                     {tagLinks.map(({ title, href, linkProps }, index) => {
-                      console.log('linkProps', linkProps)
                       return (
                         <Link
                           key={index}

@@ -66,7 +66,14 @@ export const slices = gql`
         ...ImageFields
       }
       body
-      linkedPage
+      page {
+        title
+        page {
+          title
+          slug
+          type
+        }
+      }
       link
     }
   }

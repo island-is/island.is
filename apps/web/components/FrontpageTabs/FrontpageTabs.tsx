@@ -8,7 +8,6 @@ import React, {
   useEffect,
 } from 'react'
 import bodymovin from 'lottie-web'
-import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import {
@@ -20,12 +19,15 @@ import {
   GridRow,
   GridColumn,
   Icon,
+  Link,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
+import { Link as LinkType } from '@island.is/web/graphql/schema'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
+import { getLinkProps } from '@island.is/web/utils/links'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -33,13 +35,8 @@ type TabsProps = {
   subtitle?: string
   title?: string
   content?: string
-  link?: string
   animationJson?: string
-}
-
-type LinkUrls = {
-  href: string
-  as: string
+  slideLink?: LinkType
 }
 
 export const LEFT = 'Left'
@@ -220,23 +217,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
-  const generateUrls = (link: string): LinkUrls => {
-    if (link) {
-      const linkData = JSON.parse(link)
-      const contentId = linkData.sys?.contentType?.sys?.id
-
-      const slug = linkData.fields?.slug
-
-      if (slug && ['article', 'category', 'news', 'page'].includes(contentId)) {
-        return {
-          href: makePath(contentId, '/[slug]'),
-          as: makePath(contentId, slug),
-        }
-      }
-      return { href: null, as: null }
-    }
-  }
-
   return (
     <GridContainer>
       <GridRow>
@@ -274,15 +254,21 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 })}
               </TabList>
               <Box className={styles.tabPanelWrapper}>
-                {tabs.map(({ title, subtitle, content, link }, index) => {
-                  const linkUrls = generateUrls(link)
-
+                {tabs.map(({ title, subtitle, content, slideLink }, index) => {
                   const currentIndex = tab.items.findIndex(
                     (x) => x.id === tab.currentId,
                   )
 
                   const visible = currentIndex === index
-                  const isTabletOrMobile = width < theme.breakpoints.lg
+
+                  const linkedPage = slideLink?.linkedPage
+                  const href = slideLink?.url
+                  const linkProps = linkedPage ? getLinkProps(linkedPage) : null
+
+                  const props = {
+                    href,
+                    ...(linkProps && { ...linkProps, prefetch: true }),
+                  }
 
                   return (
                     <TabPanel
@@ -315,12 +301,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <Typography variant="p" as="p">
                             <span className={styles.textItem}>{content}</span>
                           </Typography>
-                          {linkUrls?.href ? (
-                            <Link
-                              as={linkUrls.as}
-                              href={linkUrls.href}
-                              passHref
-                            >
+                          {props.href ? (
+                            <Link {...props} pureChildren passHref>
                               <Button
                                 variant="text"
                                 icon="arrowRight"
