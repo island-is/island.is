@@ -21,7 +21,7 @@ import { CaseState } from '@island.is/judicial-system/types'
 export const Verdict: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
   const [requestRecjected, setRequestRejected] = useState(
-    workingCase?.state === CaseState.REJECTED || false,
+    workingCase?.state === CaseState.REJECTED,
   )
   const restrictions = useRestrictions(workingCase, setWorkingCase)
 
@@ -34,7 +34,7 @@ export const Verdict: React.FC = () => {
       setWorkingCase(wc.case)
     }
   }, [])
-  console.log(workingCase)
+
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -72,18 +72,23 @@ export const Verdict: React.FC = () => {
                   placeholder="Skrifa hér..."
                   textarea
                   rows={3}
+                  onBlur={(evt) => {
+                    autoSave(
+                      workingCase,
+                      'courtCaseNumber',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  }}
                 />
               </Box>
               <GridRow>
                 <GridColumn span="3/7">
                   <Checkbox
+                    name="rejectRequest"
                     label="Hafna kröfu"
-                    onBlur={() => {
-                      console.log('here')
-                    }}
                     onChange={({ target }) => {
-                      console.log(target)
-                      setRequestRejected(!target.checked)
+                      setRequestRejected(target.checked)
                     }}
                     checked={requestRecjected}
                     large

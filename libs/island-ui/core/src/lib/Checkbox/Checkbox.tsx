@@ -13,7 +13,6 @@ export interface CheckboxProps {
   checked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  onBlur?: (event: React.SyntheticEvent<HTMLInputElement>) => void
   tooltip?: string
   hasError?: boolean
   errorMessage?: string
@@ -28,7 +27,6 @@ export const Checkbox = ({
   checked,
   disabled,
   onChange,
-  onBlur,
   tooltip,
   hasError,
   errorMessage,
@@ -54,7 +52,6 @@ export const Checkbox = ({
         disabled={disabled}
         id={id}
         onChange={onChange}
-        onBlur={onBlur}
         value={value}
         {...ariaError}
       />
