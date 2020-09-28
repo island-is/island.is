@@ -12,35 +12,35 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   @IsEnum(ApplicationTypes)
   @ApiProperty({ enum: ApplicationTypes })
-  readonly typeId: ApplicationTypes
+  readonly typeId: ApplicationTypes = ApplicationTypes.EXAMPLE
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly applicant: string
+  readonly applicant!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly assignee: string
+  readonly assignee!: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly externalId: string
+  readonly externalId?: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly state: string
+  readonly state!: string
 
   @IsNotEmpty()
   @IsObject()
   @ApiProperty()
-  readonly answers: object
+  readonly answers!: object
 
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: object
+  readonly attachments?: object
 }
