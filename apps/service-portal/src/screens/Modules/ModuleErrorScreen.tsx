@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
 import { Box, Typography } from '@island.is/island-ui/core'
+import { ReactIntlMessage } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
-  name: string
+  name: string | ReactIntlMessage
 }
 
 export class ModuleErrorBoundary extends React.Component<
@@ -29,10 +31,19 @@ export class ModuleErrorBoundary extends React.Component<
 }
 
 const ModuleErrorScreen: FC<Props> = ({ name }) => {
+  const { formatMessage } = useLocale()
   return (
     <Box padding={8}>
       <Typography variant="h2" as="h2">
-        Tókst ekki að sækja {name}, eitthvað fór úrskeiðis
+        {formatMessage({
+          id: 'sp:could-not-fetch',
+          defaultMessage: 'Tókst ekki að sækja',
+        })}
+        {formatMessage(name)},
+        {formatMessage({
+          id: 'sp:something-went-wrong',
+          defaultMessage: 'eitthvað fór úrskeiðis',
+        })}
       </Typography>
     </Box>
   )
