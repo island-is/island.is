@@ -120,25 +120,10 @@ const Category: Screen<CategoryProps> = ({
   const category = categories.find((x) => x.slug === slug)
 
   useEffect(() => {
-    const hashMatch = Router.asPath.match(/#([a-z0-9_-]+)/gi)
-    setHash((hashMatch && hashMatch[0]) ?? '')
+    const hashMatch = window.location.hash ?? ''
+    const hashString = hashMatch.replace('#', '')
+    setHash(hashString)
   }, [Router])
-
-  useEffect(() => {
-    const groupSlug = Object.keys(groups).find(
-      (x) => x === hash.replace('#', ''),
-    )
-
-    if (groupSlug) {
-      const el = itemsRef.current.find(
-        (x) => x.getAttribute('data-slug') === groupSlug,
-      )
-
-      if (el) {
-        window.scrollTo(0, el.offsetTop)
-      }
-    }
-  }, [itemsRef, groups, hash])
 
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
@@ -165,6 +150,25 @@ const Category: Screen<CategoryProps> = ({
     )
 
     return { articlesBySubgroup }
+  }
+
+  const handleAccordionClick = (groupSlug: string) => {
+    let newHash = hash.replace('#', '')
+    const hashArray = newHash.split(',')
+
+    if (hash === '') {
+      newHash = `${groupSlug}`
+    } else {
+      if (hashArray.indexOf(groupSlug) > -1) {
+        hashArray.splice(hashArray.indexOf(groupSlug), 1)
+        newHash = hashArray.join(',')
+      } else {
+        newHash = newHash.concat(`,${groupSlug}`)
+      }
+    }
+
+    setHash(newHash)
+    Router.replace(makePath('ArticleCategory', category.slug + `#${newHash}`))
   }
 
   const sortArticles = (articles: Articles) => {
@@ -235,17 +239,17 @@ const Category: Screen<CategoryProps> = ({
                 dividerOnBottom={false}
                 dividerOnTop={false}
                 dividers={false}
+                singleExpand={false}
               >
                 {sortedGroups.map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
-
-                  const expanded = groupSlug === hash.replace('#', '')
 
                   const { articlesBySubgroup } = groupArticlesBySubgroup(
                     articles,
                   )
 
                   const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
+                  const expanded = hash.includes(groupSlug)
 
                   return (
                     <div
@@ -259,6 +263,9 @@ const Category: Screen<CategoryProps> = ({
                         labelUse="h2"
                         startExpanded={expanded}
                         visibleContent={description}
+                        onClick={() => {
+                          handleAccordionClick(groupSlug)
+                        }}
                       >
                         <Box paddingY={2}>
                           {sortedSubgroupKeys.map((subgroup, index) => {
