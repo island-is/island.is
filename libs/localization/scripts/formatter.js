@@ -1,4 +1,4 @@
-exports.format = function(msgs) {
+exports.format = function (msgs) {
   return Object.entries(msgs).reduce((arr, [id, msg], i) => {
     const namespace = id.substring(0, id.lastIndexOf(':'))
 

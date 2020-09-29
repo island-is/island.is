@@ -105,7 +105,7 @@ export class CaseController {
 
     const authUser: AuthUser = req.user
 
-    const user = await this.userService.findByNationalId(authUser)
+    const user = await this.userService.findByNationalId(authUser.nationalId)
 
     return this.caseService.sendNotificationByCaseId(existingCase, user)
   }
@@ -129,7 +129,7 @@ export class CaseController {
 
     const authUser: AuthUser = req.user
 
-    const user = await this.userService.findByNationalId(authUser)
+    const user = await this.userService.findByNationalId(authUser.nationalId)
 
     return this.caseService.requestSignature(existingCase, user)
   }

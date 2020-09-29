@@ -6,8 +6,8 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    "tsconfig.base.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -256,5 +256,8 @@
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
     }
+  },
+  "affected": {
+    "defaultBase": "master"
   }
 }
