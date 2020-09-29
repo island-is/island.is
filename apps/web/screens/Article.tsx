@@ -36,9 +36,8 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  SubArticle,
-  Slice,
-  ProcessEntry,
+  AllSlicesFragment as Slice,
+  AllSlicesProcessEntryFragment as ProcessEntry,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
@@ -46,6 +45,7 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
+type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
 
 const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
   condition ? <b>{content}</b> : content
@@ -362,10 +362,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
     : []
 
-  const processEntry = processEntries.length
-    ? (processEntries[0] as ProcessEntry)
-    : null
-  const { buttonText, processLink } = processEntry
+  const processEntry =
+    processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
 
   return (
     <>
@@ -462,7 +460,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       href={processEntry.processLink}
                       withUnderline
                     >
-                      <span>{buttonText || n('processLinkButtonText')}</span>
+                      <span>
+                        {processEntry.buttonText || n('processLinkButtonText')}
+                      </span>
                       <Box component="span" marginLeft={2}>
                         <Icon type="external" width="15" />
                       </Box>
