@@ -6,6 +6,7 @@ import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { ApplicationTypes } from '@island.is/application/template'
+import { FindOptions } from 'sequelize/types'
 
 @Injectable()
 export class ApplicationService {
@@ -23,8 +24,8 @@ export class ApplicationService {
     })
   }
 
-  async findAll(): Promise<Application[]> {
-    return this.applicationModel.findAll()
+  async findAll(options?: FindOptions): Promise<Application[]> {
+    return this.applicationModel.findAll(options)
   }
 
   async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {

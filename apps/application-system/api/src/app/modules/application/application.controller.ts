@@ -20,6 +20,7 @@ import {
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger'
 import {
   Application as BaseApplication,
@@ -43,9 +44,11 @@ import { ApplicationByIdPipe } from './tools/applicationById.pipe'
 import { validateApplicationSchema } from './schemaValidationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
+import { Filterable, FindOptions } from 'sequelize/types'
+import { Where } from 'sequelize/types/lib/utils'
 
-@ApiTags('application')
-@Controller('application')
+@ApiTags('applications')
+@Controller()
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -53,7 +56,7 @@ export class ApplicationController {
     private readonly uploadQueue: Queue,
   ) {}
 
-  @Get(':id')
+  @Get('applications/:id')
   @ApiOkResponse({ type: Application })
   @UseInterceptors(ApplicationSerializer)
   async findOne(
@@ -69,6 +72,7 @@ export class ApplicationController {
 
     return application
   }
+
   // TODO REMOVE
   @Get()
   @ApiOkResponse({ type: Application, isArray: true })
@@ -80,7 +84,45 @@ export class ApplicationController {
     }
   }
 
-  @Post()
+  @Get('applicants/:nationalRegistryId/applications')
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    type: String,
+  })
+  @ApiOkResponse({ type: Application, isArray: true })
+  async findApplicantApplications(
+    @Param('nationalRegistryId') nationalRegistryId: string,
+    @Query('typeId') typeId?: string,
+  ): Promise<Application[]> {
+    return this.applicationService.findAll({
+      where: {
+        applicant: nationalRegistryId,
+        typeId: typeId || null,
+      },
+    })
+  }
+
+  @Get('reviewers/:nationalRegistryId/applications')
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    type: String,
+  })
+  @ApiOkResponse({ type: Application, isArray: true })
+  async findAssigneeApplications(
+    @Param('nationalRegistryId') nationalRegistryId: string,
+    @Query('typeId') typeId?: string,
+  ): Promise<Application[]> {
+    return this.applicationService.findAll({
+      where: {
+        assignee: nationalRegistryId,
+        typeId: typeId || null,
+      },
+    })
+  }
+
+  @Post('applications')
   @ApiCreatedResponse({ type: Application })
   @UseInterceptors(ApplicationSerializer)
   async create(
@@ -96,7 +138,7 @@ export class ApplicationController {
     return this.applicationService.create(application)
   }
 
-  @Put(':id')
+  @Put('applications/:id')
   @ApiParam({
     name: 'id',
     type: String,
@@ -131,7 +173,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put(':id/externalData')
+  @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
     type: String,
@@ -168,7 +210,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put(':id/submit')
+  @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
     type: String,
@@ -216,7 +258,7 @@ export class ApplicationController {
     return existingApplication
   }
 
-  @Put(':id/attachments')
+  @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -251,7 +293,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Delete(':id/attachments')
+  @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,

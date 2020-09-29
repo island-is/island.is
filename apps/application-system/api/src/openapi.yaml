@@ -181,7 +181,7 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  '/application/{id}':
+  '/applications/{id}':
     get:
       operationId: ApplicationController_findOne
       parameters:
@@ -198,7 +198,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
+        - applications
     put:
       operationId: ApplicationController_update
       parameters:
@@ -223,8 +223,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
-  /application:
+        - applications
+  /:
     get:
       operationId: ApplicationController_findAll
       parameters:
@@ -243,7 +243,58 @@ paths:
                 items:
                   $ref: '#/components/schemas/Application'
       tags:
-        - application
+        - applications
+  '/applicants/{nationalRegistryId}/applications':
+    get:
+      operationId: ApplicationController_findApplicantApplications
+      parameters:
+        - name: nationalRegistryId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: typeId
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+      tags:
+        - applications
+  '/reviewers/{nationalRegistryId}/applications':
+    get:
+      operationId: ApplicationController_findAssigneeApplications
+      parameters:
+        - name: nationalRegistryId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: typeId
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+      tags:
+        - applications
+  /applications:
     post:
       operationId: ApplicationController_create
       parameters: []
@@ -261,8 +312,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
-  '/application/{id}/externalData':
+        - applications
+  '/applications/{id}/externalData':
     put:
       operationId: ApplicationController_updateExternalData
       parameters:
@@ -287,8 +338,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
-  '/application/{id}/submit':
+        - applications
+  '/applications/{id}/submit':
     put:
       operationId: ApplicationController_submitApplication
       parameters:
@@ -313,8 +364,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
-  '/application/{id}/attachments':
+        - applications
+  '/applications/{id}/attachments':
     put:
       operationId: ApplicationController_addAttachment
       parameters:
@@ -339,7 +390,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
+        - applications
     delete:
       operationId: ApplicationController_deleteAttachment
       parameters:
@@ -364,4 +415,4 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
       tags:
-        - application
+        - applications

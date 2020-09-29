@@ -9,6 +9,7 @@ import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExter
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
+import { GetApplicationsByUserInput } from './dto/getApplicationByUser.input'
 
 @Resolver()
 export class ApplicationResolver {
@@ -26,6 +27,20 @@ export class ApplicationResolver {
     @Args('input') input: GetApplicationsByTypeInput,
   ): Promise<Application[] | null> {
     return this.applicationService.findAllByType(input.typeId)
+  }
+
+  @Query(() => [Application], { nullable: true })
+  async getApplicationsByApplicant(
+    @Args('input') input: GetApplicationsByUserInput,
+  ): Promise<Application[] | null> {
+    return this.applicationService.findAllByApplicant(input)
+  }
+
+  @Query(() => [Application], { nullable: true })
+  async getApplicationsByAssignee(
+    @Args('input') input: GetApplicationsByUserInput,
+  ): Promise<Application[] | null> {
+    return this.applicationService.findAllByAssignee(input)
   }
 
   @Mutation(() => Application, { nullable: true })

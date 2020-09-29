@@ -641,6 +641,8 @@ type Query {
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
+  getApplicationsByApplicant(input: GetApplicationsByUserInput!): [Application!]
+  getApplicationsByAssignee(input: GetApplicationsByUserInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
@@ -839,6 +841,11 @@ input GetApplicationInput {
 
 input GetApplicationsByTypeInput {
   typeId: ApplicationTypeIdEnum!
+}
+
+input GetApplicationsByUserInput {
+  nationalRegistryId: String!
+  typeId: ApplicationTypeIdEnum
 }
 
 input GetDocumentInput {

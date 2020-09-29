@@ -3,7 +3,7 @@
   "compilerOptions": {
     "types": ["node", "jest"],
     "target": "es6",
-    "strict": false
+    "strict": true
   },
   "include": ["**/*.ts"]
 }
