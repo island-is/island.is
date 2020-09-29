@@ -114,7 +114,7 @@ export class AuthController {
   @Get('login')
   @ApiQuery({ name: 'returnUrl' })
   login(@Res() res, @Query('returnUrl') returnUrl) {
-    this.logger.debug('Received login request' + returnUrl)
+    this.logger.debug(`Received login request with return url ${returnUrl}`)
 
     const { name, options } = REDIRECT_COOKIE
 

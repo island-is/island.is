@@ -76,9 +76,7 @@ router.put(
   [
     param('applicationId').isUUID(),
     body('authorSSN').isLength({ min: 10, max: 10 }),
-    body('state')
-      .optional()
-      .isIn(Object.values(ApplicationStates)),
+    body('state').optional().isIn(Object.values(ApplicationStates)),
     body('data')
       .optional()
       .custom((value) => {
@@ -132,12 +130,8 @@ router.post(
   '/:applicationId/auditLog',
   [
     param('applicationId').isUUID(),
-    body('authorSSN')
-      .optional()
-      .isLength({ min: 10, max: 10 }),
-    body('title')
-      .not()
-      .isEmpty(),
+    body('authorSSN').optional().isLength({ min: 10, max: 10 }),
+    body('title').not().isEmpty(),
     body('data').custom((value) => {
       if (typeof value !== 'object' || value === null) {
         return Promise.reject('Must provide data as an object')

@@ -14,10 +14,10 @@ export function fixSvgUrls() {
   function fixForAttribute(attrib: string) {
     const baseUrl = window.location.href
 
-      /**
-       * Find all svg elements with the given attribute, e.g. for `mask`.
-       * See: http://stackoverflow.com/a/23047888/796152
-       */
+    /**
+     * Find all svg elements with the given attribute, e.g. for `mask`.
+     * See: http://stackoverflow.com/a/23047888/796152
+     */
     ;[].slice
       .call(document.querySelectorAll(`svg [${attrib}]`))
       // filter out all elements whose attribute doesn't start with `url(#`

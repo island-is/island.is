@@ -16,7 +16,7 @@ export class ApplicationService {
     private logger: Logger,
   ) {}
 
-  async findById(id: string): Promise<Application> {
+  async findById(id: string): Promise<Application | null> {
     this.logger.debug(`Finding application by id - "${id}"`)
     return this.applicationModel.findOne({
       where: { id },
@@ -64,18 +64,17 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
-  async updateExternalData(id: string, externalData: ExternalData) {
-    const existingApplication = await this.applicationModel.findOne({
-      where: { id },
-    })
-
+  async updateExternalData(
+    id: string,
+    oldExternalData: ExternalData,
+    externalData: ExternalData,
+  ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
       {
-        ...existingApplication,
-        externalData: { ...existingApplication.externalData, ...externalData },
+        externalData: { ...oldExternalData, ...externalData },
       },
       { where: { id }, returning: true },
     )

@@ -2,8 +2,8 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return queryInterface.createTable(
+    return queryInterface.sequelize.transaction((t) =>
+      queryInterface.createTable(
         'notification',
         {
           id: {
@@ -35,20 +35,20 @@ module.exports = {
           },
         },
         { transaction: t },
-      )
-    })
+      ),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return queryInterface
+    return queryInterface.sequelize.transaction((t) =>
+      queryInterface
         .dropTable('notification', { transaction: t })
         .then(() =>
           queryInterface.sequelize.query(
             'DROP TYPE IF EXISTS "enum_notification_type";',
             { transaction: t },
           ),
-        )
-    })
+        ),
+    )
   },
 }

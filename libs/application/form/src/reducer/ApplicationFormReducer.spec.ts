@@ -24,10 +24,7 @@ const dataSchema = z.object({
           }
           return asNumber > 15
         }),
-        name: z
-          .string()
-          .nonempty()
-          .max(256), // unique in the repeater hmm?
+        name: z.string().nonempty().max(256), // unique in the repeater hmm?
         pets: z
           .array(
             z.object({
