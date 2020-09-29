@@ -5,6 +5,7 @@ on:
     branches:
       - 'master'
       - 'release/**'
+      - 'hotfix/**'
     paths-ignore:
       - '**/*.md'
   pull_request:
