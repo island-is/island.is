@@ -1,48 +1,44 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { AuthUser } from '../auth/auth.types'
-import { User, UserRole } from './user.types'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { User } from './user.model'
+import { UserRole } from './user.types'
 
 @Injectable()
 export class UserService {
-  private readonly users: User[]
+  constructor(
+    @InjectModel(User)
+    private readonly userModel: typeof User,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
 
-  constructor() {
-    this.users = [
-      {
-        nationalId: '2510654469',
-        name: 'Guðjón Guðjónsson',
-        mobileNumber: '8589030',
-        roles: [UserRole.PROSECUTOR],
-      },
-      {
-        nationalId: '1112902539',
-        name: 'Ívar Oddsson',
-        mobileNumber: '6904031',
-        roles: [UserRole.JUDGE],
-      },
-      {
-        nationalId: '2408783999',
-        name: 'Baldur Kristjánsson',
-        mobileNumber: '8949946',
-        roles: [UserRole.JUDGE],
-      },
-      {
-        nationalId: '1010882949',
-        name: 'Ingunn Róbertsdóttir',
-        mobileNumber: '6908439',
-        roles: [UserRole.PROSECUTOR, UserRole.JUDGE],
-      },
-      {
-        nationalId: '1103862819',
-        name: 'Anna Signý Guðbjörnsdóttir',
-        mobileNumber: '6947640',
-        roles: [UserRole.PROSECUTOR, UserRole.JUDGE],
-      },
-    ]
+  findByNationalId(nationalId: string): Promise<User> {
+    this.logger.debug(`Getting user with national id ${nationalId}`)
+
+    return this.userModel.findOne({
+      where: { nationalId },
+    })
   }
 
-  async findByNationalId(authUser: AuthUser): Promise<User | undefined> {
-    return this.users.find((user) => user.nationalId === authUser?.nationalId)
+  async setRoleByNationalId(
+    nationalId: string,
+    role: UserRole,
+  ): Promise<{ numberOfAffectedRows: number; updatedUser: User }> {
+    this.logger.debug(
+      `Setting role to ${role} for user with national id ${nationalId}`,
+    )
+
+    const [numberOfAffectedRows, [updatedUser]] = await this.userModel.update(
+      { role },
+      {
+        where: { nationalId },
+        returning: true,
+      },
+    )
+
+    return { numberOfAffectedRows, updatedUser }
   }
 }

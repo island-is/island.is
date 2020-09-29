@@ -1,30 +1,7 @@
-import { UserRole, hasRole } from './authenticate'
 import { formatDate, parseArray, parseString } from './formatters'
 import * as Constants from './constants'
 import { renderRestrictons } from './stepHelper'
 import { CustodyRestrictions } from '../types'
-
-describe('Authenticate utils', () => {
-  describe('HasRole util', () => {
-    test('should accurately determine if a role is in a list of roles', () => {
-      // Arrange
-      const procAndJudge = [UserRole.PROSECUTOR, UserRole.JUDGE]
-      const judge = [UserRole.JUDGE]
-
-      // Act
-      const hasProsecutorRole = hasRole(procAndJudge, UserRole.PROSECUTOR)
-      const hasJudgeRole = hasRole(procAndJudge, UserRole.JUDGE)
-      const judgeHasProcRole = hasRole(judge, UserRole.PROSECUTOR)
-      const hasNoRole = hasRole([], UserRole.PROSECUTOR)
-
-      // Assert
-      expect(hasProsecutorRole).toBeTruthy()
-      expect(hasJudgeRole).toBeTruthy()
-      expect(judgeHasProcRole).toBeFalsy()
-      expect(hasNoRole).toBeFalsy()
-    })
-  })
-})
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
