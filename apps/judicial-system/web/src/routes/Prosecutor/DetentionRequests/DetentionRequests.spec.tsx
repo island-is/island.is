@@ -2,11 +2,11 @@ import React from 'react'
 import fetchMock from 'fetch-mock'
 import { render, waitFor } from '@testing-library/react'
 import { DetentionRequests } from './'
-import { UserRole } from '../../utils/authenticate'
+import { UserRole } from '../../../utils/authenticate'
 import { CaseState } from '@island.is/judicial-system/types'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
-import { userContext } from '../../utils/userContext'
+import { userContext } from '../../../utils/userContext'
 
 const mockDetensionRequests = [
   {

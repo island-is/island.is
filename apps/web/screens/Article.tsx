@@ -362,8 +362,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
     : []
 
-  const processEntry =
-    processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
+  const processEntry = processEntries.length
+    ? (processEntries[0] as ProcessEntry)
+    : null
   const { buttonText, processLink } = processEntry
 
   return (

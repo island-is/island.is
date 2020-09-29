@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { ProsecutorLogo } from '../../../shared-components/Logos'
-import Modal from '../../../shared-components/Modal/Modal'
+import { ProsecutorLogo } from '../../../../shared-components/Logos'
+import Modal from '../../../../shared-components/Modal/Modal'
 import {
   Typography,
   GridContainer,
@@ -14,15 +14,15 @@ import {
   Option,
   DatePicker,
 } from '@island.is/island-ui/core'
-import { Case } from '../../../types'
-import * as api from '../../../api'
-import { validate } from '../../../utils/validate'
-import { updateState, autoSave } from '../../../utils/stepHelper'
+import { Case } from '../../../../types'
+import * as api from '../../../../api'
+import { validate } from '../../../../utils/validate'
+import { updateState, autoSave } from '../../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
-import { FormFooter } from '../../../shared-components/FormFooter'
+import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '../../../../utils/constants'
 import { formatDate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
