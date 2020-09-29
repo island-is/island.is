@@ -36,8 +36,8 @@ export const StepOne: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>({
     id: caseDraftJSON.id ?? '',
-    created: new Date(),
-    modified: new Date(),
+    created: caseDraftJSON.created ?? '',
+    modified: caseDraftJSON.modified ?? '',
     state: caseDraftJSON.state ?? '',
     policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
     accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
@@ -48,14 +48,29 @@ export const StepOne: React.FC = () => {
     requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
     requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
     lawsBroken: caseDraftJSON.lawsBroken ?? '',
-    custodyProvisions: caseDraftJSON.caseCustodyProvisions ?? [],
-    requestedCustodyRestrictions: caseDraftJSON.restrictions ?? [],
+    custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
+    requestedCustodyRestrictions:
+      caseDraftJSON.requestedCustodyRestrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
     witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
     investigationProgress: caseDraftJSON.investigationProgress ?? '',
     legalArguments: caseDraftJSON.legalArguments ?? '',
     comments: caseDraftJSON.comments ?? '',
+    notifications: caseDraftJSON.Notification ?? [],
+    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+    courtStartTime: caseDraftJSON.courtStartTime ?? '',
+    courtEndTime: caseDraftJSON.courtEndTime ?? '',
+    courtAttendees: caseDraftJSON.courtAttendees ?? '',
+    policeDemands: caseDraftJSON.policeDemands ?? '',
+    accusedPlea: caseDraftJSON.accusedPlea ?? '',
+    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+    ruling: caseDraftJSON.ruling ?? '',
+    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
+    prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
+
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,

@@ -39,8 +39,8 @@ export interface DetentionRequest {
 
 export interface Case {
   id: string
-  created: Date
-  modified: Date
+  created: string
+  modified: string
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
