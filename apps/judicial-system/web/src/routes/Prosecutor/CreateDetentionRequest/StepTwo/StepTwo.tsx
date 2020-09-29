@@ -17,18 +17,18 @@ import {
   CustodyRestrictions,
   Case,
 } from '@island.is/judicial-system-web/src/types'
-import { updateState, autoSave } from '../../../utils/stepHelper'
+import { updateState, autoSave } from '../../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import * as api from '../../../api'
+import { FormFooter } from '../../../../shared-components/FormFooter'
+import * as api from '../../../../api'
 import {
   formatDate,
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '../../../../utils/constants'
 
 export const StepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
@@ -36,8 +36,8 @@ export const StepTwo: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>({
     id: caseDraftJSON.id ?? '',
-    created: new Date(),
-    modified: new Date(),
+    created: caseDraftJSON.created ?? '',
+    modified: caseDraftJSON.modified ?? '',
     state: caseDraftJSON.state ?? '',
     policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
     accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
@@ -49,13 +49,28 @@ export const StepTwo: React.FC = () => {
     requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
     lawsBroken: caseDraftJSON.lawsBroken ?? '',
     custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-    requestedCustodyRestrictions: caseDraftJSON.restrictions ?? [],
+    requestedCustodyRestrictions:
+      caseDraftJSON.requestedCustodyRestrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
     witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
     investigationProgress: caseDraftJSON.investigationProgress ?? '',
     legalArguments: caseDraftJSON.legalArguments ?? '',
     comments: caseDraftJSON.comments ?? '',
+    notifications: caseDraftJSON.Notification ?? [],
+    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+    courtStartTime: caseDraftJSON.courtStartTime ?? '',
+    courtEndTime: caseDraftJSON.courtEndTime ?? '',
+    courtAttendees: caseDraftJSON.courtAttendees ?? '',
+    policeDemands: caseDraftJSON.policeDemands ?? '',
+    accusedPlea: caseDraftJSON.accusedPlea ?? '',
+    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+    ruling: caseDraftJSON.ruling ?? '',
+    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
+    prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
+
   const [
     requestedCustodyEndDateErrorMessage,
     setRequestedCustodyEndDateErrorMessage,

@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { ProsecutorLogo } from '../../../shared-components/Logos'
-import Modal from '../../../shared-components/Modal/Modal'
+import { ProsecutorLogo } from '../../../../shared-components/Logos'
+import Modal from '../../../../shared-components/Modal/Modal'
 import {
   Typography,
   GridContainer,
@@ -14,15 +14,15 @@ import {
   Option,
   DatePicker,
 } from '@island.is/island-ui/core'
-import { Case } from '../../../types'
-import * as api from '../../../api'
-import { validate } from '../../../utils/validate'
-import { updateState, autoSave } from '../../../utils/stepHelper'
+import { Case } from '../../../../types'
+import * as api from '../../../../api'
+import { validate } from '../../../../utils/validate'
+import { updateState, autoSave } from '../../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
-import { FormFooter } from '../../../shared-components/FormFooter'
+import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '../../../../utils/constants'
 import { formatDate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
@@ -36,8 +36,8 @@ export const StepOne: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>({
     id: caseDraftJSON.id ?? '',
-    created: new Date(),
-    modified: new Date(),
+    created: caseDraftJSON.created ?? '',
+    modified: caseDraftJSON.modified ?? '',
     state: caseDraftJSON.state ?? '',
     policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
     accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
@@ -48,14 +48,29 @@ export const StepOne: React.FC = () => {
     requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
     requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
     lawsBroken: caseDraftJSON.lawsBroken ?? '',
-    custodyProvisions: caseDraftJSON.caseCustodyProvisions ?? [],
-    requestedCustodyRestrictions: caseDraftJSON.restrictions ?? [],
+    custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
+    requestedCustodyRestrictions:
+      caseDraftJSON.requestedCustodyRestrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
     witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
     investigationProgress: caseDraftJSON.investigationProgress ?? '',
     legalArguments: caseDraftJSON.legalArguments ?? '',
     comments: caseDraftJSON.comments ?? '',
+    notifications: caseDraftJSON.Notification ?? [],
+    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+    courtStartTime: caseDraftJSON.courtStartTime ?? '',
+    courtEndTime: caseDraftJSON.courtEndTime ?? '',
+    courtAttendees: caseDraftJSON.courtAttendees ?? '',
+    policeDemands: caseDraftJSON.policeDemands ?? '',
+    accusedPlea: caseDraftJSON.accusedPlea ?? '',
+    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+    ruling: caseDraftJSON.ruling ?? '',
+    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
+    prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
+
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,

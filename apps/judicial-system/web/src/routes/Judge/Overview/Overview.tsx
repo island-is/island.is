@@ -9,21 +9,21 @@ import {
   AccordionItem,
   Input,
 } from '@island.is/island-ui/core'
-import { JudgeLogo } from '../../shared-components/Logos'
-import { formatDate, capitalize } from '../../utils/formatters'
+import { JudgeLogo } from '../../../shared-components/Logos'
+import { formatDate, capitalize } from '../../../utils/formatters'
 import is from 'date-fns/locale/is'
 import {
   autoSave,
   getRestrictionByValue,
   renderRestrictons,
-} from '../../utils/stepHelper'
-import { CustodyRestrictions } from '../../types'
-import { FormFooter } from '../../shared-components/FormFooter'
+} from '../../../utils/stepHelper'
+import { CustodyRestrictions } from '../../../types'
+import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import * as api from '../../api'
-import { validate } from '../../utils/validate'
-import useWorkingCase from '../../utils/hooks/useWorkingCase'
-import * as Constants from '../../utils/constants'
+import * as api from '../../../api'
+import { validate } from '../../../utils/validate'
+import useWorkingCase from '../../../utils/hooks/useWorkingCase'
+import * as Constants from '../../../utils/constants'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -46,7 +46,10 @@ export const JudgeOverview: React.FC = () => {
 
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
-      window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
+      window.localStorage.setItem(
+        'workingCase',
+        JSON.stringify(currentCase.case),
+      )
 
       if (mounted) {
         setWorkingCase(currentCase.case)

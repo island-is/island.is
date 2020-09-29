@@ -97,10 +97,10 @@ export class CaseService {
         : // State is CaseState.SUBMITTED
           this.constructReadyForCourtpSmsText(existingCase, user)
 
-    // Production or local development with judge phone number
-    if (environment.production || environment.notifications.judgePhoneNumber) {
+    // Production or local development with judge mobile number
+    if (environment.production || environment.notifications.judgeMobileNumber) {
       await this.smsService.sendSms(
-        environment.notifications.judgePhoneNumber,
+        environment.notifications.judgeMobileNumber,
         smsText,
       )
     }
