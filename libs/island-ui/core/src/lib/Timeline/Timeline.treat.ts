@@ -199,6 +199,7 @@ export const right = style({
 })
 
 export const monthContainer = style({
+  textTransform: 'capitalize',
   display: 'flex',
   justifyContent: 'end',
   flexDirection: 'row',
