@@ -147,11 +147,11 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsEnum(CaseAppealDecision, { each: true })
-  @ApiPropertyOptional({ enum: CaseAppealDecision, isArray: true })
-  readonly accusedAppealDecision: CaseAppealDecision[]
+  @ApiPropertyOptional({ enum: CaseAppealDecision })
+  readonly accusedAppealDecision: CaseAppealDecision
 
   @IsOptional()
   @IsEnum(CaseAppealDecision, { each: true })
-  @ApiPropertyOptional({ enum: CaseAppealDecision, isArray: true })
-  readonly prosecutorAppealDecision: CaseAppealDecision[]
+  @ApiPropertyOptional({ enum: CaseAppealDecision })
+  readonly prosecutorAppealDecision: CaseAppealDecision
 }
