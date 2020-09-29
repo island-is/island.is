@@ -53,6 +53,6 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: 'postgres',
-    userSeed: process.env.USER_SEED && JSON.parse(process.env.USER_SEED)
+    userSeed: process.env.USER_SEED && JSON.parse(process.env.USER_SEED),
   },
 }
