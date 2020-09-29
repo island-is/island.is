@@ -2,8 +2,8 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.addColumn(
           'case',
           'requested_custody_end_date',
@@ -24,12 +24,12 @@ module.exports = {
         ),
         queryInterface.sequelize.query(
           "CREATE TYPE \"enum_case_custody_provisions\" AS ENUM ('_95_1_A', '_95_1_B', '_95_1_C', '_95_1_D', '_95_2', '_99_1_B');\
-          ALTER TABLE \"case\" ADD COLUMN \"custody_provisions\" \"enum_case_custody_provisions\"[];",
+           ALTER TABLE \"case\" ADD COLUMN \"custody_provisions\" \"enum_case_custody_provisions\"[];",
           { transaction: t },
         ),
         queryInterface.sequelize.query(
           'CREATE TYPE "enum_case_custody_restrictions" AS ENUM (\'ISOLATION\', \'VISITAION\', \'COMMUNICATION\', \'MEDIA\');\
-          ALTER TABLE "case" ADD COLUMN "custody_restrictions" "enum_case_custody_restrictions"[];',
+           ALTER TABLE "case" ADD COLUMN "custody_restrictions" "enum_case_custody_restrictions"[];',
           { transaction: t },
         ),
         queryInterface.addColumn(
@@ -77,13 +77,13 @@ module.exports = {
           },
           { transaction: t },
         ),
-      ])
-    })
+      ]),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.removeColumn('case', 'requested_custody_end_date', {
           transaction: t,
         }),
@@ -115,7 +115,7 @@ module.exports = {
           transaction: t,
         }),
         queryInterface.removeColumn('case', 'comments', { transaction: t }),
-      ])
-    })
+      ]),
+    )
   },
 }

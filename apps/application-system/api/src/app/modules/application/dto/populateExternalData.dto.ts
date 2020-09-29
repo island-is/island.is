@@ -6,16 +6,16 @@ import { Type } from 'class-transformer'
 class DataProviderDto {
   @IsString()
   @ApiProperty()
-  id: string
+  id!: string
 
   @IsEnum(DataProviderTypes)
   @ApiProperty({ enum: DataProviderTypes })
-  type: DataProviderTypes
+  type!: DataProviderTypes
 }
 
 export class PopulateExternalDataDto {
   @IsArray()
   @Type(() => DataProviderDto)
   @ApiProperty({ type: [DataProviderDto] })
-  readonly dataProviders: DataProviderDto[]
+  readonly dataProviders!: DataProviderDto[]
 }

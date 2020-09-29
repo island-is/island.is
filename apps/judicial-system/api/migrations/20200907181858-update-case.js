@@ -2,8 +2,8 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.addColumn(
           'case',
           'suspect_address',
@@ -40,13 +40,13 @@ module.exports = {
           },
           { transaction: t },
         ),
-      ])
-    })
+      ]),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return Promise.all([
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
         queryInterface.removeColumn('case', 'suspect_address', {
           transaction: t,
         }),
@@ -55,7 +55,7 @@ module.exports = {
         queryInterface.removeColumn('case', 'requested_court_date', {
           transaction: t,
         }),
-      ])
-    })
+      ]),
+    )
   },
 }

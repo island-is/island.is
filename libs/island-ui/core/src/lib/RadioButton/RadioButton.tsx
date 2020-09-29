@@ -16,6 +16,7 @@ export interface RadioButtonProps {
   tooltip?: string
   hasError?: boolean
   errorMessage?: string
+  large?: boolean
 }
 
 export const RadioButton = ({
@@ -29,6 +30,7 @@ export const RadioButton = ({
   tooltip,
   hasError,
   errorMessage,
+  large,
 }: RadioButtonProps) => {
   const ariaError = hasError
     ? {
@@ -37,7 +39,7 @@ export const RadioButton = ({
       }
     : {}
   return (
-    <div className={styles.container}>
+    <div className={cn(styles.container, { [styles.large]: large })}>
       <input
         className={styles.input}
         type="radio"
@@ -66,9 +68,13 @@ export const RadioButton = ({
         </div>
         {label}
         {tooltip && (
-          <Box marginLeft={2} display="inlineBlock">
+          <div
+            className={cn(styles.tooltipContainer, {
+              [styles.tooltipLargeContainer]: large,
+            })}
+          >
             <Tooltip text={tooltip} />
-          </Box>
+          </div>
         )}
         {hasError && errorMessage && (
           <div className={styles.errorMessage} id={id}>
