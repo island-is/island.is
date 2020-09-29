@@ -46,7 +46,10 @@ export const JudgeOverview: React.FC = () => {
 
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
-      window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
+      window.localStorage.setItem(
+        'workingCase',
+        JSON.stringify(currentCase.case),
+      )
 
       if (mounted) {
         setWorkingCase(currentCase.case)
