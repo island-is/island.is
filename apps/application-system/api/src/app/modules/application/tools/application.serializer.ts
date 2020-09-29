@@ -11,8 +11,8 @@ import {
   Application as BaseApplication,
   ApplicationTemplateHelper,
   ApplicationTypes,
-  getApplicationTemplateByTypeId,
 } from '@island.is/application/template'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 @Injectable()
 export class ApplicationSerializer

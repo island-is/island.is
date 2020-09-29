@@ -1,13 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_APPLICATION } from '@island.is/application/graphql'
+import { Form, Schema } from '@island.is/application/template'
+import { FormShell } from './FormShell'
 import {
-  Form,
   getApplicationStateInformation,
   getApplicationTemplateByTypeId,
-  Schema,
-} from '@island.is/application/template'
-import { FormShell } from './FormShell'
+} from '@island.is/application/template-loader'
 
 export const ApplicationForm: FC<{
   applicationId: string
