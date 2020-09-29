@@ -14,6 +14,7 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
 jobs:
   prepare:
     #runs-on: self-hosted
@@ -157,12 +158,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Debug hashkey
-        run: |
-          shopt -s globstar
-          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
@@ -260,12 +256,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Debug hashkey
-        run: |
-          shopt -s globstar
-          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -328,12 +319,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Debug hashkey
-        run: |
-          shopt -s globstar
-          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -362,12 +348,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Debug hashkey
-        run: |
-          shopt -s globstar
-          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -425,12 +406,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Debug hashkey
-        run: |
-          shopt -s globstar
-          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -488,12 +464,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Debug hashkey
-        run: |
-          shopt -s globstar
-          ls ./libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts **/models/** **/dto/** **/enums/** **/queries/** **/air-discount-scheme/web/** **/typeDefs.ts
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
