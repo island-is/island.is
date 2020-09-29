@@ -70,9 +70,7 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async getAllNotificationsByCaseId(
-    existingCase: Case,
-  ): Promise<Notification[]> {
+  getAllNotificationsByCaseId(existingCase: Case): Promise<Notification[]> {
     this.logger.debug(
       `Getting all notifications for case with id "${existingCase.id}"`,
     )
