@@ -4,7 +4,6 @@ import React, {
   useState,
   useRef,
   useEffect,
-  useCallback,
   useMemo,
   Fragment,
   forwardRef,
@@ -68,136 +67,176 @@ const mapEvents = (
 
 export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
   const frameRef = useRef<HTMLDivElement>(null)
-  const innerContainerRef = useRef<HTMLDivElement>(null)
+  const entriesParentRef = useRef<HTMLDivElement>(null)
 
-  const [containerHeight, setContainerHeight] = useState(0)
-  const [frameHeight, setFrameHeight] = useState(0)
-  const [frameJump, setFrameJump] = useState(0)
-  const [jumpIndex, setJumpIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [prevButtonDisabled, setPrevButtonDisabled] = useState(false)
+  const [nextButtonDisabled, setNextButtonDisabled] = useState(false)
+
   const [visibleModal, setVisibleModal] = useState<string | null>('')
 
   const eventMap = useMemo(() => mapEvents(events), [events])
 
-  const onResize = useCallback(() => {
-    if (!frameRef.current || !innerContainerRef.current) return
-    setFrameJump(frameRef.current.offsetHeight / 2)
-    setContainerHeight(innerContainerRef.current.offsetHeight)
-    setFrameHeight(frameRef.current.offsetHeight)
-  }, [innerContainerRef, frameRef, setFrameJump])
+  const getPrevIndex = () => (currentIndex <= 0 ? 0 : currentIndex - 1)
+  const getNextIndex = () =>
+    currentIndex >= entriesParentRef.current.children.length - 1
+      ? currentIndex
+      : currentIndex + 1
 
-  useEffect(() => {
-    window.addEventListener('resize', onResize)
-    onResize()
-    return () => window.removeEventListener('resize', onResize)
-  }, [onResize])
-
-  const jumpTo = (dir: 'prev' | 'next') => {
-    setVisibleModal(null)
-    const jump = frameJump * jumpIndex
-    const diff = containerHeight - frameHeight
-
-    if (dir === 'prev' && jumpIndex > 0) {
-      setJumpIndex(jumpIndex - 1)
-    } else if (dir === 'next' && jump < diff) {
-      setJumpIndex(jumpIndex + 1)
+  const moveTimeline = (
+    index: number,
+    behavior: 'smooth' | 'auto' = 'smooth',
+  ) => {
+    frameRef.current.scrollTo({
+      top: entriesParentRef.current.children[index].offsetTop,
+      behavior,
+    })
+    const scrollReachedTop =
+      frameRef.current.scrollTop +
+        entriesParentRef.current.children[index].offsetTop <=
+      0
+    const scrollReachedBottom =
+      frameRef.current.scrollTop +
+        entriesParentRef.current.children[index].offsetTop +
+        frameRef.current.offsetHeight >=
+      frameRef.current.scrollHeight
+    if (scrollReachedTop !== prevButtonDisabled) {
+      setPrevButtonDisabled(scrollReachedTop)
     }
+    if (scrollReachedBottom !== nextButtonDisabled) {
+      setNextButtonDisabled(scrollReachedBottom)
+    }
+    setCurrentIndex(index)
   }
 
   useEffect(() => {
-    let jump = frameJump * jumpIndex
-    const diff = containerHeight - frameHeight
-
-    if (jump > containerHeight - frameHeight) {
-      jump = diff
+    if (frameRef.current && entriesParentRef.current) {
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = today.getMonth()
+      const { currentMonthIndex, currentMonth } = [
+        ...entriesParentRef.current.children,
+      ].reduce(
+        (acc, current, index) => {
+          if (current.dataset.date === `${year}/${month}`) {
+            acc.currentMonthIndex = index
+            acc.currentMonth = current
+          }
+          return acc
+        },
+        {
+          currentMonthIndex: 0,
+          currentMonth,
+        },
+      )
+      const leftPadding = 24
+      frameRef.current.scrollLeft = currentMonth.offsetLeft - leftPadding
+      moveTimeline(currentMonthIndex)
     }
-
-    if (innerContainerRef.current)
-      innerContainerRef.current.style.transform = `translateY(-${jump}px)`
-  }, [frameJump, jumpIndex, containerHeight, frameHeight])
+  }, [])
 
   return (
     <div className={timelineStyles.container}>
-      <ArrowButton type="prev" onClick={() => jumpTo('prev')} />
-      <ArrowButton type="next" onClick={() => jumpTo('next')} />
+      <ArrowButton
+        type="prev"
+        disabled={prevButtonDisabled}
+        onClick={() => {
+          moveTimeline(getPrevIndex())
+        }}
+      />
+      <ArrowButton
+        type="next"
+        disabled={nextButtonDisabled}
+        onClick={() => {
+          moveTimeline(getNextIndex())
+        }}
+      />
       <div ref={frameRef} className={timelineStyles.frame}>
-        <div ref={innerContainerRef} className={timelineStyles.innerContainer}>
-          {Array.from(eventMap.entries(), ([year, eventsByMonth]) => (
-            <div key={year} className={timelineStyles.yearContainer}>
-              <div className={timelineStyles.section}>
-                <div className={timelineStyles.left}>
-                  <span
-                    className={cn(
-                      timelineStyles.year,
-                      timelineStyles.leftLabel,
-                    )}
-                  >
-                    {year}
-                  </span>
-                </div>
-                <div className={timelineStyles.right}>&nbsp;</div>
-              </div>
-              {Array.from(eventsByMonth.entries(), ([month, monthEvents]) => (
-                <div key={month} className={timelineStyles.monthContainer}>
-                  <div className={timelineStyles.section}>
-                    <div className={timelineStyles.left}>
-                      <span
-                        className={cn(
-                          timelineStyles.month,
-                          timelineStyles.leftLabel,
-                        )}
-                      >
-                        {getMonthByIndex(month)}
-                      </span>
-                    </div>
-                    <div className={timelineStyles.right}>&nbsp;</div>
+        <div className={timelineStyles.innerContainer}>
+          <div ref={entriesParentRef} className={timelineStyles.yearContainer}>
+            {Array.from(eventMap.entries(), ([year, eventsByMonth]) => (
+              <Fragment key={year}>
+                <div className={timelineStyles.section}>
+                  <div className={timelineStyles.left}>
+                    <span
+                      className={cn(
+                        timelineStyles.year,
+                        timelineStyles.leftLabel,
+                      )}
+                    >
+                      {year}
+                    </span>
                   </div>
-
-                  <div className={timelineStyles.section}>
-                    <div className={timelineStyles.left}>&nbsp;</div>
-                    <div className={timelineStyles.right}>
-                      <div className={timelineStyles.eventsContainer}>
-                        {monthEvents.map((event, eventIndex) => {
-                          const larger = Boolean(event.data)
-                          const modalKey = `modal-${year}-${month}-${eventIndex}`
-                          const isVisible = visibleModal === modalKey
-                          const bulletLineClass = cn(
-                            timelineStyles.bulletLine,
-                            {
-                              [timelineStyles.bulletLineLarger]: larger,
-                            },
-                          )
-                          return (
-                            <div
-                              key={eventIndex}
-                              className={timelineStyles.eventWrapper}
-                            >
-                              <div className={timelineStyles.event}>
-                                {larger ? (
-                                  <Event
-                                    event={event}
-                                    visibleModal={visibleModal}
-                                    modalKey={modalKey}
-                                    setVisibleModal={setVisibleModal}
-                                  />
-                                ) : (
-                                  <span className={timelineStyles.eventSimple}>
-                                    {event.title}
-                                  </span>
-                                )}
+                  <div className={timelineStyles.right}>&nbsp;</div>
+                </div>
+                {Array.from(eventsByMonth.entries(), ([month, monthEvents]) => (
+                  <div
+                    key={month}
+                    className={timelineStyles.monthContainer}
+                    data-date={`${year}/${month}`}
+                  >
+                    <div className={timelineStyles.section}>
+                      <div className={timelineStyles.left}>
+                        <span
+                          className={cn(
+                            timelineStyles.month,
+                            timelineStyles.leftLabel,
+                          )}
+                        >
+                          {getMonthByIndex(month)}
+                        </span>
+                      </div>
+                      <div className={timelineStyles.right}>&nbsp;</div>
+                    </div>
+                    <div className={timelineStyles.section}>
+                      <div className={timelineStyles.left}>&nbsp;</div>
+                      <div className={timelineStyles.right}>
+                        <div className={timelineStyles.eventsContainer}>
+                          {monthEvents.map((event, eventIndex) => {
+                            const larger = Boolean(event.data)
+                            const modalKey = `modal-${year}-${month}-${eventIndex}`
+                            const isVisible = visibleModal === modalKey
+                            const bulletLineClass = cn(
+                              timelineStyles.bulletLine,
+                              {
+                                [timelineStyles.bulletLineLarger]: larger,
+                              },
+                            )
+                            return (
+                              <div
+                                key={eventIndex}
+                                className={timelineStyles.eventWrapper}
+                              >
+                                <div className={timelineStyles.event}>
+                                  {larger ? (
+                                    <Event
+                                      event={event}
+                                      visibleModal={visibleModal}
+                                      modalKey={modalKey}
+                                      setVisibleModal={setVisibleModal}
+                                    />
+                                  ) : (
+                                    <span
+                                      className={timelineStyles.eventSimple}
+                                    >
+                                      {event.title}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className={bulletLineClass}>
+                                  <BulletLine selected={isVisible} />
+                                </span>
                               </div>
-                              <span className={bulletLineClass}>
-                                <BulletLine selected={isVisible} />
-                              </span>
-                            </div>
-                          )
-                        })}
+                            )
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ))}
+                ))}
+              </Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -421,11 +460,17 @@ const BulletLine = ({ selected = false }: { selected?: boolean }) => {
 interface ArrowButtonProps {
   type: 'prev' | 'next'
   onClick: () => void
+  disabled: boolean
 }
 
-const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
+const ArrowButton = ({
+  type = 'prev',
+  onClick,
+  disabled,
+}: ArrowButtonProps) => {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
       className={cn(
         timelineStyles.arrowButton,

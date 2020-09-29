@@ -82,7 +82,9 @@ export const year = style({
   fontWeight: theme.typography.semiBold,
   ...themeUtils.responsiveStyle({
     lg: {
-      margin: '40px 0',
+      marginLeft: 0,
+      marginRight: 0,
+      marginTop: 40,
     },
   }),
 })
@@ -185,6 +187,7 @@ export const left = style({
   ...themeUtils.responsiveStyle({
     lg: {
       paddingRight: 20,
+      paddingTop: 40,
       textAlign: 'right',
       width: 100,
       height: 'auto',
@@ -229,7 +232,7 @@ export const eventsContainer = style({
   flexDirection: 'row',
   ...themeUtils.responsiveStyle({
     lg: {
-      margin: '40px 0',
+      marginTop: 40,
       flexDirection: 'column',
     },
   }),
@@ -255,6 +258,10 @@ export const arrowButton = style({
       display: 'inline-block',
     },
   }),
+  ':disabled': {
+    cursor: 'default',
+    backgroundColor: theme.color.dark100,
+  },
 })
 
 export const arrowButtonTypes = styleMap({
