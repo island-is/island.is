@@ -2,6 +2,11 @@
   "name": "island.is",
   "version": "0.0.1",
   "license": "MIT",
+  "husky": {
+    "hooks": {
+      "post-merge": "yarn schemas"
+    }
+  },
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
@@ -267,11 +272,13 @@
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
+    "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.21.2",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.20.0",
     "eslint-plugin-react-hooks": "4.0.4",
     "fetch-mock": "^9.10.7",
+    "husky": "4.3.0",
     "jest": "26.2.2",
     "jest-mock-extended": "^1.0.10",
     "jest-transform-stub": "2.0.0",
@@ -284,8 +291,7 @@
     "sequelize-cli": "5.5.1",
     "ts-jest": "26.1.4",
     "ts-node": "9.0.0",
-    "typescript": "3.9.7",
-    "eslint-plugin-cypress": "^2.10.3"
+    "typescript": "3.9.7"
   },
   "resolutions": {
     "webpack": "4.44.1",
