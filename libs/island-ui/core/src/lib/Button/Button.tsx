@@ -107,6 +107,7 @@ export const Button = forwardRef<
       showRightIcon,
       loading,
       isExternal,
+      variant,
     }
 
     return href ? (
@@ -173,6 +174,7 @@ interface ButtonContentProps {
   showRightIcon: boolean
   loading?: boolean
   isExternal?: boolean
+  variant?: ButtonVariant
 }
 
 const ButtonContent: FC<ButtonContentProps> = ({
@@ -185,35 +187,104 @@ const ButtonContent: FC<ButtonContentProps> = ({
   showRightIcon,
   loading,
   isExternal,
+  variant = '',
 }) => {
   return (
-    <Inline alignY="center" space={2}>
-      {isMenuButton && hasLeftContent ? (
-        <LeftContentContainer>
-          {leftImage ? (
-            <LeftImage leftImage={leftImage} />
+    <>
+      {variant === 'text' ? (
+        <span>
+          {children ? (
+            <span>
+              {children}
+              <span
+                style={{
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                &nbsp;&nbsp;
+                {icon ? (
+                  <Icon
+                    showRightIcon={showRightIcon}
+                    icon={icon}
+                    loading={!!loading}
+                    isExternal={!!isExternal}
+                  />
+                ) : null}
+              </span>
+            </span>
+          ) : (
+            <>
+              {icon ? (
+                <Icon
+                  showRightIcon={showRightIcon}
+                  icon={icon}
+                  loading={!!loading}
+                  isExternal={!!isExternal}
+                />
+              ) : null}
+            </>
+          )}
+        </span>
+      ) : (
+        <Inline alignY="center" space={2}>
+          {isMenuButton && hasLeftContent ? (
+            <LeftContentContainer>
+              {leftImage ? (
+                <LeftImage leftImage={leftImage} />
+              ) : leftIcon ? (
+                <LeftIcon leftIcon={leftIcon} />
+              ) : null}
+            </LeftContentContainer>
           ) : leftIcon ? (
             <LeftIcon leftIcon={leftIcon} />
           ) : null}
-        </LeftContentContainer>
-      ) : leftIcon ? (
-        <LeftIcon leftIcon={leftIcon} />
-      ) : null}
-      {children ? children : null}
-      {icon ? (
-        <Icon
-          showRightIcon={showRightIcon}
-          icon={icon}
-          loading={!!loading}
-          isExternal={!!isExternal}
-        />
-      ) : null}
-    </Inline>
+          {children ? (
+            <span>
+              {children}
+              <span
+                style={{
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                &nbsp;&nbsp;
+                {icon ? (
+                  <Icon
+                    showRightIcon={showRightIcon}
+                    icon={icon}
+                    loading={!!loading}
+                    isExternal={!!isExternal}
+                  />
+                ) : null}
+              </span>
+            </span>
+          ) : (
+            <>
+              {icon ? (
+                <Icon
+                  showRightIcon={showRightIcon}
+                  icon={icon}
+                  loading={!!loading}
+                  isExternal={!!isExternal}
+                />
+              ) : null}
+            </>
+          )}
+        </Inline>
+      )}
+    </>
   )
 }
 
 const IconContainer: FC = ({ children }) => (
-  <Box display="flex" height="full" alignItems="center">
+  <Box
+    display="inlineBlock"
+    textAlign="center"
+    height="full"
+    alignItems="center"
+    style={{
+      verticalAlign: 'middle',
+    }}
+  >
     {children}
   </Box>
 )
