@@ -4,15 +4,20 @@ import { findLastGoodBuild, WorkflowQueries } from './detection'
 const octokit = new Octokit()
 // const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+const workflow_file_name = 'build.yml'
 class GitHubWorkflowQueries implements WorkflowQueries {
   async getData(branch: string) {
     return (
-      await octokit.request('GET /repos/:owner/:repo/actions/runs', {
-        owner,
-        repo,
-        branch,
-        status: 'success' as 'completed' | 'status' | 'conclusion', // fix for missing value in the enum it seems
-      })
+      await octokit.request(
+        'GET /repos/:owner/:repo/actions/workflows/:workflow_file_name/runs',
+        {
+          owner,
+          repo,
+          branch,
+          workflow_file_name,
+          status: 'success' as 'completed' | 'status' | 'conclusion', // fix for missing value in the enum it seems
+        },
+      )
     ).data
   }
 }
