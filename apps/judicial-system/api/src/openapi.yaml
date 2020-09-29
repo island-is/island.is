@@ -434,6 +434,24 @@ paths:
                 $ref: '#/components/schemas/User'
       tags:
         - users
+  '/api/user/{nationalId}/admin':
+    get:
+      operationId: UserController_updateUserRole
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - users
   /api/cases:
     get:
       operationId: CaseController_getAll
