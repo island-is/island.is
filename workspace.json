@@ -3348,6 +3348,130 @@
           }
         }
       }
+    },
+    "application-templates-parental-leave": {
+      "root": "libs/application/templates/parental-leave",
+      "sourceRoot": "libs/application/templates/parental-leave/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/templates/parental-leave/.eslintrc",
+            "tsConfig": [
+              "libs/application/templates/parental-leave/tsconfig.lib.json",
+              "libs/application/templates/parental-leave/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/parental-leave/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/parental-leave/jest.config.js",
+            "tsConfig": "libs/application/templates/parental-leave/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-templates-driving-lessons": {
+      "root": "libs/application/templates/driving-lessons",
+      "sourceRoot": "libs/application/templates/driving-lessons/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/templates/driving-lessons/.eslintrc",
+            "tsConfig": [
+              "libs/application/templates/driving-lessons/tsconfig.lib.json",
+              "libs/application/templates/driving-lessons/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-lessons/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/driving-lessons/jest.config.js",
+            "tsConfig": "libs/application/templates/driving-lessons/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-template-loader": {
+      "root": "libs/application/template-loader",
+      "sourceRoot": "libs/application/template-loader/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/template-loader/.eslintrc",
+            "tsConfig": [
+              "libs/application/template-loader/tsconfig.lib.json",
+              "libs/application/template-loader/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/template-loader/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/template-loader/jest.config.js",
+            "tsConfig": "libs/application/template-loader/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-templates-reference-template": {
+      "root": "libs/application/templates/reference-template",
+      "sourceRoot": "libs/application/templates/reference-template/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/templates/reference-template/.eslintrc",
+            "tsConfig": [
+              "libs/application/templates/reference-template/tsconfig.lib.json",
+              "libs/application/templates/reference-template/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/reference-template/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/reference-template/jest.config.js",
+            "tsConfig": "libs/application/templates/reference-template/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

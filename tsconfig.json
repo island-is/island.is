@@ -128,6 +128,18 @@
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
+      ],
+      "@island.is/application/templates/parental-leave": [
+        "libs/application/templates/parental-leave/src/index.ts"
+      ],
+      "@island.is/application/templates/driving-lessons": [
+        "libs/application/templates/driving-lessons/src/index.ts"
+      ],
+      "@island.is/application/template-loader": [
+        "libs/application/template-loader/src/index.ts"
+      ],
+      "@island.is/application/templates/reference-template": [
+        "libs/application/templates/reference-template/src/index.ts"
       ]
     }
   },

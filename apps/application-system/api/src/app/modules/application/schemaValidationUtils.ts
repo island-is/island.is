@@ -1,10 +1,10 @@
 import {
   Application,
   FormValue,
-  getApplicationTemplateByTypeId,
   validateAnswers,
 } from '@island.is/application/template'
 import { BadRequestException } from '@nestjs/common'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 export async function validateApplicationSchema(
   application: Application,
