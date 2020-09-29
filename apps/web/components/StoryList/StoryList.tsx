@@ -2,10 +2,10 @@ import React, { FC } from 'react'
 import { Button, Typography, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { Link as LinkType } from '@island.is/web/graphql/schema'
-
-import * as styles from './StoryList.treat'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/routes'
+
+import * as styles from './StoryList.treat'
 
 export interface StoryProps {
   logoUrl: string

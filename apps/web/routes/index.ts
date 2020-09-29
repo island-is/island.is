@@ -4,35 +4,25 @@ import { Locale, defaultLanguage } from '../types'
 const routes = {
   is: {
     article: '',
-    Article: '',
     page: 'stofnanir', // quick fix for launch
-    Page: 'stofnanir',
     category: 'flokkur',
-    articleCategory: 'flokkur',
-    ArticleCategory: 'flokkur',
-    contentCategory: 'flokkur',
-    ContentCategory: 'flokkur',
+    articlecategory: 'flokkur',
+    contentcategory: 'flokkur',
     news: 'frett',
-    News: 'frett',
     search: 'leit',
-    lifeEvent: 'lifsvidburdur',
-    LifeEventPage: 'lifsvidburdur',
+    lifeevent: 'lifsvidburdur',
+    lifeeventpage: 'lifsvidburdur',
   },
   en: {
     article: '',
-    Article: '',
     page: 'organizations',
-    Page: 'organizations',
     category: 'category',
-    articleCategory: 'category',
-    ArticleCategory: 'category',
-    contentCategory: 'category',
-    ContentCategory: 'category',
+    articlecategory: 'category',
+    contentcategory: 'category',
     news: 'news',
-    News: 'news',
     search: 'search',
-    lifeEvent: 'life-event',
-    LifeEventPage: 'life-event',
+    lifeevent: 'life-event',
+    lifeeventpage: 'life-event',
   },
 }
 
@@ -52,9 +42,10 @@ export type PathTypes =
 
 export const routeNames = (locale: Locale = defaultLanguage) => {
   const makePath = (type?: PathTypes, subfix?: string) => {
+    const pathType = type ? type.trim().toLowerCase() : null
     const typePath =
-      type && typeof routes[locale][type] === 'string'
-        ? String(routes[locale][type])
+      pathType && typeof routes[locale][pathType] === 'string'
+        ? String(routes[locale][pathType])
         : null
 
     let path = ''
@@ -70,7 +61,7 @@ export const routeNames = (locale: Locale = defaultLanguage) => {
     if (subfix) {
       path += '/' + subfix
     }
-
+    console.log(pathType, path)
     return path ? path.replace(/\/\/+/g, '/') : '/'
   }
 

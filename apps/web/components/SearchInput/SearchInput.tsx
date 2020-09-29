@@ -14,10 +14,7 @@ import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
-import {
-  GET_SEARCH_RESULTS_QUERY,
-  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-} from '@island.is/web/screens/queries'
+import { theme } from '@island.is/island-ui/theme'
 import {
   AsyncSearchInput,
   AsyncSearchSizes,
@@ -25,8 +22,11 @@ import {
   Typography,
   Stack,
 } from '@island.is/island-ui/core'
+import {
+  GET_SEARCH_RESULTS_QUERY,
+  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+} from '@island.is/web/screens/queries'
 import routeNames from '@island.is/web/routes'
-import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/types'
 import {
   GetSearchResultsQuery,
@@ -38,7 +38,8 @@ import {
   SearchableContentTypes,
   LifeEventPage,
 } from '@island.is/web/graphql/schema'
-import { theme } from '@island.is/island-ui/theme'
+
+import * as styles from './SearchInput.treat'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
