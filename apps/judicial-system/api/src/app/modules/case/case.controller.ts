@@ -11,12 +11,14 @@ import {
   Req,
   ForbiddenException,
   Query,
+  Res,
+  ConflictException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseTransition, CaseState } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard, AuthUser } from '../auth'
 import { UserService } from '../user'
@@ -24,6 +26,21 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+
+const caseStateMachine = {}
+caseStateMachine[CaseTransition.SUBMIT] = {
+  from: CaseState.DRAFT,
+  to: CaseState.SUBMITTED,
+}
+caseStateMachine[CaseTransition.ACCEPT] = {
+  from: CaseState.SUBMITTED,
+  to: CaseState.ACCEPTED,
+}
+caseStateMachine[CaseTransition.REJECT] = {
+  from: CaseState.SUBMITTED,
+  to: CaseState.REJECTED,
+}
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -71,6 +88,40 @@ export class CaseController {
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`A case with the id ${id} does not exist`)
+    }
+
+    return updatedCase
+  }
+
+  @Put('case/:id/state')
+  @ApiOkResponse({ type: Case })
+  async transition(
+    @Param('id') id: string,
+    @Body() caseToTransition: TransitionCaseDto,
+  ): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      caseStateMachine[caseToTransition.transition].from !== existingCase.state
+    ) {
+      throw new ForbiddenException(
+        `The transition ${caseToTransition.transition} cannot be applied to a case in state ${existingCase.state}`,
+      )
+    }
+
+    const {
+      numberOfAffectedRows,
+      updatedCase,
+    } = await this.caseService.transition(
+      id,
+      caseToTransition.modified,
+      caseStateMachine[caseToTransition.transition].to,
+    )
+
+    if (numberOfAffectedRows === 0) {
+      throw new ConflictException(
+        `A more recent version exists of case with id ${id}`,
+      )
     }
 
     return updatedCase

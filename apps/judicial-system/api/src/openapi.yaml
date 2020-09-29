@@ -352,6 +352,21 @@ components:
             - APPEAL
             - ACCEPT
             - POSTPONE
+    TransitionCaseDto:
+      type: object
+      properties:
+        modified:
+          format: date-time
+          type: string
+        transition:
+          type: string
+          enum:
+            - SUBMIT
+            - ACCEPT
+            - REJECT
+      required:
+        - modified
+        - transition
     SigningServiceResponse:
       type: object
       properties:
@@ -520,6 +535,30 @@ paths:
               $ref: '#/components/schemas/CreateCaseDto'
       responses:
         '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+      tags:
+        - cases
+  '/api/case/{id}/state':
+    put:
+      operationId: CaseController_transitionCase
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransitionCaseDto'
+      responses:
+        '200':
           description: ''
           content:
             application/json:
