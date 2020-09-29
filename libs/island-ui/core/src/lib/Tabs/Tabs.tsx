@@ -62,6 +62,7 @@ export const Tabs: FC<TabInterface> = ({
             options={selectOptions}
             value={selectOptions[selectedIndex]}
             defaultValue={selectOptions[selectedIndex]}
+            isSearchable={false}
           />
         </div>
         <TabList className={styles.tabList} {...tab} aria-label={label}>

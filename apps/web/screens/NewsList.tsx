@@ -167,6 +167,7 @@ const NewsList: Screen<NewsListProps> = ({
             <Select
               label={yearString}
               placeholder={yearString}
+              isSearchable={false}
               value={yearOptions.find(
                 (option) =>
                   option.value ===
