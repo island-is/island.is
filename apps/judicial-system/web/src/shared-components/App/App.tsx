@@ -15,6 +15,7 @@ import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
 import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
 import Ruling from '../../routes/Judge/Ruling/Ruling'
+import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
@@ -28,6 +29,9 @@ const App: React.FC = () => {
         <Header />
         <main className={styles.mainConainer}>
           <Switch>
+            <Route path={Constants.CONFIRMATION_ROUTE}>
+              <Confirmation />
+            </Route>
             <Route path={Constants.RULING_ROUTE}>
               <Ruling />
             </Route>

@@ -9,16 +9,10 @@ import {
   RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
-import {
-  AppealDecision,
-  Case,
-  CustodyRestrictions,
-  GetCaseByIdResponse,
-} from '../../../types'
-import useWorkingCase from '../../../utils/hooks/useWorkingCase'
+import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
 import * as Constants from '../../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../../utils/formatters'
 import { CaseState } from '@island.is/judicial-system/types'
@@ -165,6 +159,7 @@ export const Ruling: React.FC = () => {
                   name="Ruling"
                   label="Niðurstaða úrskurðar"
                   placeholder="Skrifa hér..."
+                  defaultValue={workingCase.ruling}
                   textarea
                   rows={3}
                   onBlur={(evt) => {
@@ -257,66 +252,68 @@ export const Ruling: React.FC = () => {
                 </Typography>
               </Box>
               <Box marginBottom={1}>
-                {restrictions.map((restriction, index) => {
-                  return (
-                    <GridColumn span="3/7" key={index}>
-                      <Box marginBottom={3}>
-                        <Checkbox
-                          name={restriction.restriction}
-                          label={restriction.restriction}
-                          value={restriction.value}
-                          checked={restriction.getCheckbox}
-                          tooltip={restriction.explination}
-                          onChange={({ target }) => {
-                            // Toggle the checkbox on or off
-                            restriction.setCheckbox(target.checked)
+                <GridRow>
+                  {restrictions.map((restriction, index) => {
+                    return (
+                      <GridColumn span="3/7" key={index}>
+                        <Box marginBottom={3}>
+                          <Checkbox
+                            name={restriction.restriction}
+                            label={restriction.restriction}
+                            value={restriction.value}
+                            checked={restriction.getCheckbox}
+                            tooltip={restriction.explination}
+                            onChange={({ target }) => {
+                              // Toggle the checkbox on or off
+                              restriction.setCheckbox(target.checked)
 
-                            // Create a copy of the state
-                            const copyOfState = Object.assign(workingCase, {})
+                              // Create a copy of the state
+                              const copyOfState = Object.assign(workingCase, {})
 
-                            // If the user is checking the box, add the restriction to the state
-                            if (target.checked) {
-                              copyOfState.custodyRestrictions.push(
-                                target.value as CustodyRestrictions,
-                              )
-                            }
-                            // If the user is unchecking the box, remove the restriction from the state
-                            else {
-                              const restrictions =
-                                copyOfState.custodyRestrictions
-                              restrictions.splice(
-                                restrictions.indexOf(
+                              // If the user is checking the box, add the restriction to the state
+                              if (target.checked) {
+                                copyOfState.custodyRestrictions.push(
                                   target.value as CustodyRestrictions,
+                                )
+                              }
+                              // If the user is unchecking the box, remove the restriction from the state
+                              else {
+                                const restrictions =
+                                  copyOfState.custodyRestrictions
+                                restrictions.splice(
+                                  restrictions.indexOf(
+                                    target.value as CustodyRestrictions,
+                                  ),
+                                  1,
+                                )
+                              }
+
+                              // Set the updated state as the state
+                              setWorkingCase(copyOfState)
+
+                              // Save case
+                              api.saveCase(
+                                workingCase.id,
+                                parseArray(
+                                  'custodyRestrictions',
+                                  copyOfState.custodyRestrictions,
                                 ),
-                                1,
                               )
-                            }
 
-                            // Set the updated state as the state
-                            setWorkingCase(copyOfState)
-
-                            // Save case
-                            api.saveCase(
-                              workingCase.id,
-                              parseArray(
-                                'custodyRestrictions',
+                              updateState(
+                                workingCase,
+                                'restrictions',
                                 copyOfState.custodyRestrictions,
-                              ),
-                            )
-
-                            updateState(
-                              workingCase,
-                              'restrictions',
-                              copyOfState.custodyRestrictions,
-                              setWorkingCase,
-                            )
-                          }}
-                          large
-                        />
-                      </Box>
-                    </GridColumn>
-                  )
-                })}
+                                setWorkingCase,
+                              )
+                            }}
+                            large
+                          />
+                        </Box>
+                      </GridColumn>
+                    )
+                  })}
+                </GridRow>
               </Box>
               <Typography>
                 Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
@@ -547,8 +544,8 @@ export const Ruling: React.FC = () => {
               </Box>
             </Box>
             <FormFooter
-              previousUrl="/"
-              nextUrl="/"
+              previousUrl={Constants.COURT_DOCUMENT_ROUTE}
+              nextUrl={Constants.CONFIRMATION_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime
               }

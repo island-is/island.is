@@ -28,11 +28,11 @@ interface DetentionRequestsProps {
   onGetUser: (user: User) => void
 }
 
-export const DetentionRequests: React.FC<DetentionRequestsProps> = (
-  props: DetentionRequestsProps,
-) => {
+export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
+  onGetUser,
+}: DetentionRequestsProps) => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
-  const [user, setUser] = useState<User>(null)
+  const [, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const uContext = useContext(userContext)
 
@@ -49,7 +49,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
           role: userResponse.role,
         })
 
-        props.onGetUser({
+        onGetUser({
           nationalId: userResponse.nationalId,
           role: userResponse.role,
         })
@@ -71,7 +71,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
     return () => {
       isMounted = false
     }
-  }, [])
+  }, [onGetUser])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
