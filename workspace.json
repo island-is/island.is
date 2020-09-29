@@ -3007,32 +3007,6 @@
         }
       }
     },
-    "skilavottord": {
-      "root": "libs/skilavottord",
-      "sourceRoot": "libs/skilavottord/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/skilavottord/tsconfig.lib.json",
-              "libs/skilavottord/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/skilavottord/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/skilavottord/jest.config.js",
-            "tsConfig": "libs/skilavottord/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "skilavottord-const": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
@@ -3040,20 +3014,20 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
             "tsConfig": [
               "libs/skilavottord/consts/tsconfig.lib.json",
               "libs/skilavottord/consts/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/skilavottord/consts/**"]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/consts/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/skilavottord/consts/jest.config.js",
-            "tsConfig": "libs/skilavottord/consts/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
@@ -3066,20 +3040,20 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
             "tsConfig": [
               "libs/skilavottord/types/tsconfig.lib.json",
               "libs/skilavottord/types/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/skilavottord/types/**"]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/types/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/skilavottord/types/jest.config.js",
-            "tsConfig": "libs/skilavottord/types/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

@@ -120,7 +120,6 @@
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],
-      "@island.is/skilavottord": ["libs/skilavottord/src/index.ts"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
