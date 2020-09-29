@@ -37,7 +37,6 @@ export interface ButtonProps {
   white?: boolean
   tabIndex?: number
   rounded?: boolean
-  as?: 'span' | 'inline'
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -81,6 +80,7 @@ export const Button = forwardRef<
         [styles.rounded]: rounded,
       },
     )
+
     icon = loading ? 'loading' : icon
     const isExternal = !!(href && isLinkExternal(href))
     const isMenuButton = variant === 'menu'
