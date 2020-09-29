@@ -13,8 +13,6 @@ export interface StoryProps {
   title: string
   intro: string
   readMoreText: string
-  link?: string
-  linkedPage?: string
   storyLink?: LinkType
 }
 
@@ -37,8 +35,6 @@ const Story: FC<StoryProps> = ({
   title,
   intro,
   readMoreText,
-  linkedPage,
-  link,
   storyLink,
 }) => {
   const { activeLocale } = useI18n()

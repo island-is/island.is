@@ -66,15 +66,6 @@ export const slices = gql`
         ...ImageFields
       }
       body
-      page {
-        title
-        page {
-          title
-          slug
-          type
-        }
-      }
-      link
       storyLink {
         id
         text

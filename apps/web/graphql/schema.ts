@@ -75,19 +75,6 @@ export type Link = {
   linkReference?: Maybe<LinkReference>
 }
 
-export type Page = {
-  __typename?: 'Page'
-  title: Scalars['String']
-  slug: Scalars['String']
-  type: Scalars['String']
-}
-
-export type LinkedPage = {
-  __typename?: 'LinkedPage'
-  title: Scalars['String']
-  page?: Maybe<Page>
-}
-
 export type Story = {
   __typename?: 'Story'
   label: Scalars['String']
@@ -96,9 +83,7 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
-  link: Scalars['String']
   body?: Maybe<Scalars['String']>
-  page?: Maybe<LinkedPage>
   storyLink?: Maybe<Link>
 }
 
@@ -2039,19 +2024,9 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
     stories: Array<
       { __typename?: 'Story' } & Pick<
         Story,
-        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body' | 'link'
+        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body'
       > & {
           logo: { __typename?: 'Image' } & ImageFieldsFragment
-          page?: Maybe<
-            { __typename?: 'LinkedPage' } & Pick<LinkedPage, 'title'> & {
-                page?: Maybe<
-                  { __typename?: 'Page' } & Pick<
-                    Page,
-                    'title' | 'slug' | 'type'
-                  >
-                >
-              }
-          >
           storyLink?: Maybe<
             { __typename?: 'Link' } & Pick<Link, 'id' | 'text' | 'url'> & {
                 linkReference?: Maybe<

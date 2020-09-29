@@ -86,19 +86,6 @@ export type Link = {
   linkReference?: Maybe<LinkReference>
 }
 
-export type Page = {
-  __typename?: 'Page'
-  title: Scalars['String']
-  slug: Scalars['String']
-  type: Scalars['String']
-}
-
-export type LinkedPage = {
-  __typename?: 'LinkedPage'
-  title: Scalars['String']
-  page?: Maybe<Page>
-}
-
 export type Story = {
   __typename?: 'Story'
   label: Scalars['String']
@@ -107,9 +94,7 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
-  link: Scalars['String']
   body?: Maybe<Scalars['String']>
-  page?: Maybe<LinkedPage>
   storyLink?: Maybe<Link>
 }
 
@@ -1368,8 +1353,6 @@ export type ResolversTypes = {
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   LinkReference: ResolverTypeWrapper<LinkReference>
   Link: ResolverTypeWrapper<Link>
-  Page: ResolverTypeWrapper<Page>
-  LinkedPage: ResolverTypeWrapper<LinkedPage>
   Story: ResolverTypeWrapper<Story>
   LinkCard: ResolverTypeWrapper<LinkCard>
   News: ResolverTypeWrapper<News>
@@ -1570,8 +1553,6 @@ export type ResolversParentTypes = {
   TimelineSlice: TimelineSlice
   LinkReference: LinkReference
   Link: Link
-  Page: Page
-  LinkedPage: LinkedPage
   Story: Story
   LinkCard: LinkCard
   News: News
@@ -1844,25 +1825,6 @@ export type LinkResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type PageResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']
-> = {
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type LinkedPageResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['LinkedPage'] = ResolversParentTypes['LinkedPage']
-> = {
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type StoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Story'] = ResolversParentTypes['Story']
@@ -1873,9 +1835,7 @@ export type StoryResolvers<
   readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  page?: Resolver<Maybe<ResolversTypes['LinkedPage']>, ParentType, ContextType>
   storyLink?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -3246,8 +3206,6 @@ export type Resolvers<ContextType = Context> = {
   TimelineSlice?: TimelineSliceResolvers<ContextType>
   LinkReference?: LinkReferenceResolvers<ContextType>
   Link?: LinkResolvers<ContextType>
-  Page?: PageResolvers<ContextType>
-  LinkedPage?: LinkedPageResolvers<ContextType>
   Story?: StoryResolvers<ContextType>
   LinkCard?: LinkCardResolvers<ContextType>
   News?: NewsResolvers<ContextType>

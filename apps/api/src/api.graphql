@@ -60,17 +60,6 @@ type Link {
   linkReference: LinkReference
 }
 
-type Page {
-  title: String!
-  slug: String!
-  type: String!
-}
-
-type LinkedPage {
-  title: String!
-  page: Page
-}
-
 type Story {
   label: String!
   title: String!
@@ -78,9 +67,7 @@ type Story {
   readMoreText: String!
   date: String!
   intro: String!
-  link: String!
   body: String
-  page: LinkedPage
   storyLink: Link
 }
 
