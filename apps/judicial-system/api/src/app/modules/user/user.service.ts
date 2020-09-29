@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AuthUser } from '../auth/auth.types'
 import { User } from './user.model'
+import { UserRole } from './user.types'
 
 @Injectable()
 export class UserService {
@@ -15,11 +15,30 @@ export class UserService {
     private readonly logger: Logger,
   ) {}
 
-  async findByNationalId(authUser: AuthUser): Promise<User> {
-    this.logger.debug(`Getting user with national id ${authUser.nationalId}`)
+  findByNationalId(nationalId: string): Promise<User> {
+    this.logger.debug(`Getting user with national id ${nationalId}`)
 
     return this.userModel.findOne({
-      where: { nationalId: authUser.nationalId },
+      where: { nationalId },
     })
+  }
+
+  async setRoleByNationalId(
+    nationalId: string,
+    role: UserRole,
+  ): Promise<{ numberOfAffectedRows: number; updatedUser: User }> {
+    this.logger.debug(
+      `Setting role to ${role} for user with national id ${nationalId}`,
+    )
+
+    const [numberOfAffectedRows, [updatedUser]] = await this.userModel.update(
+      { role },
+      {
+        where: { nationalId },
+        returning: true,
+      },
+    )
+
+    return { numberOfAffectedRows, updatedUser }
   }
 }

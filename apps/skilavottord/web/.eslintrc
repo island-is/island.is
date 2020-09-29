@@ -243,5 +243,5 @@
     "@typescript-eslint/no-useless-constructor": "warn"
   },
   "extends": ["../../../.eslintrc"],
-  "ignorePatterns": ["!**/*"]
+  "ignorePatterns": ["!**/*", "translation.d.ts"]
 }
