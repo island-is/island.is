@@ -12,7 +12,7 @@ export const updateState = (
   state: Case,
   fieldToUpdate: string,
   fieldValue: string | string[] | Date,
-  stateSetter: (state: any) => void,
+  stateSetter: (state: Case) => void,
 ) => {
   // Create a copy of the state
   const copyOfState = Object.assign({}, state)
@@ -30,7 +30,7 @@ export const autoSave = async (
   state: Case,
   caseField: string,
   caseFieldValue: string | Date,
-  stateSetter: (state: any) => void,
+  stateSetter: (state: Case) => void,
 ) => {
   // Only save if the field has changes and the case exists
   if (state[caseField] !== caseFieldValue && state.id !== '') {
@@ -92,4 +92,34 @@ export const getAppealDecitionText = (
       } tekur sér lögboðinn frest`
     }
   }
+}
+
+export const constructConclusion = (workingCase: Case) => {
+  return workingCase.state === CaseState.REJECTED
+    ? 'Beiðni um gæsluvarðhald hafnað'
+    : `Kærði, ${workingCase.accusedName} kt.${
+        workingCase.accusedNationalId
+      } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
+        workingCase.custodyEndDate,
+        'PPPp',
+      )}. ${
+        workingCase.custodyRestrictions?.length === 0
+          ? 'Engar takmarkanir skulu vera á gæslunni.'
+          : `Kærði skal sæta ${workingCase.custodyRestrictions?.map(
+              (custodyRestriction, index) => {
+                const isNextLast =
+                  index === workingCase.custodyRestrictions.length - 1
+
+                return custodyRestriction === CustodyRestrictions.ISOLATION
+                  ? `einangrun${isNextLast && ' og '}`
+                  : custodyRestriction === CustodyRestrictions.COMMUNICATION
+                  ? `bréfa, og símabanni${isNextLast && ' og '}`
+                  : custodyRestriction === CustodyRestrictions.MEDIA
+                  ? `fjölmiðlabanni${isNextLast && ' og '}`
+                  : custodyRestriction === CustodyRestrictions.VISITAION
+                  ? `fjölmiðlabanni${isNextLast && ' og '}`
+                  : ''
+              },
+            )} á meðan á gæsluvarðhaldinu stendur.`
+      }`
 }

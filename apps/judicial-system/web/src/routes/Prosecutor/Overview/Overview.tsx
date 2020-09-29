@@ -13,12 +13,7 @@ import {
 import { ProsecutorLogo } from '../../../shared-components/Logos'
 import Modal from '../../../shared-components/Modal/Modal'
 import { formatDate, capitalize } from '../../../utils/formatters'
-import is from 'date-fns/locale/is'
-import {
-  getRestrictionByValue,
-  renderRestrictons,
-} from '../../../utils/stepHelper'
-import { CustodyRestrictions } from '../../../types'
+import { renderRestrictons } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
 import * as api from '../../../api'
@@ -26,7 +21,7 @@ import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
+  const [, setIsSendingNotification] = useState(false)
 
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
@@ -116,9 +111,7 @@ export const Overview: React.FC = () => {
                 </Box>
                 <Typography>
                   {`${capitalize(
-                    formatDate(caseDraftJSON?.arrestDate, 'PPPP', {
-                      locale: is,
-                    }),
+                    formatDate(caseDraftJSON?.arrestDate, 'PPPP'),
                   )} kl. ${formatDate(
                     caseDraftJSON?.arrestDate,
                     Constants.TIME_FORMAT,
@@ -135,9 +128,7 @@ export const Overview: React.FC = () => {
                     </Box>
                     <Typography>
                       {`${capitalize(
-                        formatDate(caseDraftJSON?.requestedCourtDate, 'PPPP', {
-                          locale: is,
-                        }),
+                        formatDate(caseDraftJSON?.requestedCourtDate, 'PPPP'),
                       )} kl. ${formatDate(
                         caseDraftJSON?.requestedCourtDate,
                         Constants.TIME_FORMAT,
@@ -154,7 +145,6 @@ export const Overview: React.FC = () => {
                         {` ${formatDate(
                           caseDraftJSON?.requestedCustodyEndDate,
                           'PPP',
-                          { locale: is },
                         )} kl. ${formatDate(
                           caseDraftJSON?.requestedCustodyEndDate,
                           Constants.TIME_FORMAT,

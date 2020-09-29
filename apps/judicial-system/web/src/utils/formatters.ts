@@ -1,4 +1,4 @@
-import { isValid, format, parse, parseISO } from 'date-fns'
+import { isValid, format, parseISO } from 'date-fns'
 import { is } from 'date-fns/locale'
 
 export const parseArray = (property: string, array: string[]) => {

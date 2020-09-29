@@ -10,12 +10,14 @@ import {
 import React, { useEffect } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
-import { AppealDecitionRole, Case, CustodyRestrictions } from '../../../types'
+import { AppealDecitionRole, Case } from '../../../types'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
-import { getAppealDecitionText } from '../../../utils/stepHelper'
+import {
+  constructConclusion,
+  getAppealDecitionText,
+} from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
 import { formatDate } from '../../../utils/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -135,41 +137,7 @@ export const Confirmation: React.FC = () => {
                   </Typography>
                 </Box>
                 <Box marginBottom={1}>
-                  <Typography>
-                    {workingCase.state === CaseState.REJECTED
-                      ? 'Beiðni um gæsluvarðhald hafnað'
-                      : `Kærði, ${workingCase.accusedName} kt.${
-                          workingCase.accusedNationalId
-                        } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
-                          workingCase.custodyEndDate,
-                          'PPPp',
-                        )}. ${
-                          workingCase.custodyRestrictions?.length === 0
-                            ? 'Engar takmarkanir skulu vera á gæslunni.'
-                            : `Kærði skal sæta ${workingCase.custodyRestrictions?.map(
-                                (custodyRestriction, index) => {
-                                  const isNextLast =
-                                    index ===
-                                    workingCase.custodyRestrictions.length - 1
-                                  custodyRestriction ===
-                                  CustodyRestrictions.ISOLATION
-                                    ? `einangrun${isNextLast && ' og '}`
-                                    : custodyRestriction ===
-                                      CustodyRestrictions.COMMUNICATION
-                                    ? `bréfa, og símabanni${
-                                        isNextLast && ' og '
-                                      }`
-                                    : custodyRestriction ===
-                                      CustodyRestrictions.MEDIA
-                                    ? `fjölmiðlabanni${isNextLast && ' og '}`
-                                    : custodyRestriction ===
-                                      CustodyRestrictions.VISITAION
-                                    ? `fjölmiðlabanni${isNextLast && ' og '}`
-                                    : ''
-                                },
-                              )} á meðan á gæsluvarðhaldinu stendur.`
-                        }`}
-                  </Typography>
+                  <Typography>{constructConclusion(workingCase)}</Typography>
                 </Box>
               </Box>
             </Box>

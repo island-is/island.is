@@ -11,13 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { formatDate, capitalize } from '../../../utils/formatters'
-import is from 'date-fns/locale/is'
-import {
-  autoSave,
-  getRestrictionByValue,
-  renderRestrictons,
-} from '../../../utils/stepHelper'
-import { CustodyRestrictions } from '../../../types'
+import { autoSave, renderRestrictons } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'

@@ -92,7 +92,6 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
     const nationalId = getByTestId(/nationalId/i) as HTMLInputElement
     const accusedName = getByTestId(/accusedName/i) as HTMLInputElement
     const accusedAddress = getByTestId(/accusedAddress/i) as HTMLInputElement
-    const court = getByTestId(/select-court/i) as HTMLSelectElement
 
     act(() => {
       userEvent.type(policeCaseNumber, 'x-007-2')
