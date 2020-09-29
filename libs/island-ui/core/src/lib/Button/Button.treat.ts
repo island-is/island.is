@@ -134,12 +134,6 @@ export const width = styleMap({
   },
 })
 
-export const asSpan = styleMap({
-  span: {
-    display: 'inline',
-  },
-})
-
 export const variants = styleMap({
   normal: {
     backgroundColor: theme.color.blue400,
@@ -241,6 +235,7 @@ export const variants = styleMap({
     },
   },
   text: {
+    display: 'inline',
     backgroundColor: 'transparent',
     color: theme.color.blue400,
     borderRadius: 0,

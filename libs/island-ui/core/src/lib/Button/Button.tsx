@@ -65,7 +65,6 @@ export const Button = forwardRef<
       white,
       tabIndex,
       rounded = false,
-      as = 'inline',
     },
     ref,
   ) => {
@@ -74,7 +73,6 @@ export const Button = forwardRef<
     const className = cn(
       styles.button,
       styles.variants[variant],
-      styles.asSpan[as],
       styles.sizes[size],
       styles.width[width],
       {
@@ -83,7 +81,6 @@ export const Button = forwardRef<
         [styles.rounded]: rounded,
       },
     )
-    as = as === 'span' && variant === 'text' ? 'span' : 'inline'
     icon = loading ? 'loading' : icon
     const isExternal = !!(href && isLinkExternal(href))
     const isMenuButton = variant === 'menu'
@@ -110,7 +107,7 @@ export const Button = forwardRef<
       showRightIcon,
       loading,
       isExternal,
-      as,
+      variant,
     }
 
     return href ? (
@@ -177,7 +174,7 @@ interface ButtonContentProps {
   showRightIcon: boolean
   loading?: boolean
   isExternal?: boolean
-  as?: 'span' | 'inline'
+  variant?: ButtonVariant
 }
 
 const ButtonContent: FC<ButtonContentProps> = ({
@@ -190,53 +187,91 @@ const ButtonContent: FC<ButtonContentProps> = ({
   showRightIcon,
   loading,
   isExternal,
-  as,
+  variant = '',
 }) => {
   return (
-    <Inline as={as} alignY="center" space={2}>
-      {isMenuButton && hasLeftContent ? (
-        <LeftContentContainer>
-          {leftImage ? (
-            <LeftImage leftImage={leftImage} />
+    <>
+      {variant === 'text' ? (
+        <span>
+          {children ? (
+            <span>
+              {children}
+              <span
+                style={{
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                &nbsp;&nbsp;
+                {icon ? (
+                  <Icon
+                    showRightIcon={showRightIcon}
+                    icon={icon}
+                    loading={!!loading}
+                    isExternal={!!isExternal}
+                  />
+                ) : null}
+              </span>
+            </span>
+          ) : (
+            <>
+              {icon ? (
+                <Icon
+                  showRightIcon={showRightIcon}
+                  icon={icon}
+                  loading={!!loading}
+                  isExternal={!!isExternal}
+                />
+              ) : null}
+            </>
+          )}
+        </span>
+      ) : (
+        <Inline alignY="center" space={2}>
+          {isMenuButton && hasLeftContent ? (
+            <LeftContentContainer>
+              {leftImage ? (
+                <LeftImage leftImage={leftImage} />
+              ) : leftIcon ? (
+                <LeftIcon leftIcon={leftIcon} />
+              ) : null}
+            </LeftContentContainer>
           ) : leftIcon ? (
             <LeftIcon leftIcon={leftIcon} />
           ) : null}
-        </LeftContentContainer>
-      ) : leftIcon ? (
-        <LeftIcon leftIcon={leftIcon} />
-      ) : null}
-      {children ? (
-        <span>
-          {children}
-          <span
-            style={{
-              whiteSpace: 'nowrap',
-            }}
-          >
-            &nbsp;&nbsp;
-            {icon ? (
-              <Icon
-                showRightIcon={showRightIcon}
-                icon={icon}
-                loading={!!loading}
-                isExternal={!!isExternal}
-              />
-            ) : null}
-          </span>
-        </span>
-      ) : (
-        <>
-          {icon ? (
-            <Icon
-              showRightIcon={showRightIcon}
-              icon={icon}
-              loading={!!loading}
-              isExternal={!!isExternal}
-            />
-          ) : null}
-        </>
+          {children ? (
+            <span>
+              {children}
+              <span
+                style={{
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                &nbsp;&nbsp;
+                {icon ? (
+                  <Icon
+                    showRightIcon={showRightIcon}
+                    icon={icon}
+                    loading={!!loading}
+                    isExternal={!!isExternal}
+                  />
+                ) : null}
+              </span>
+            </span>
+          ) : (
+            <>
+              {icon ? (
+                <Icon
+                  showRightIcon={showRightIcon}
+                  icon={icon}
+                  loading={!!loading}
+                  isExternal={!!isExternal}
+                />
+              ) : null}
+            </>
+          )}
+        </Inline>
       )}
-    </Inline>
+    </>
   )
 }
 
