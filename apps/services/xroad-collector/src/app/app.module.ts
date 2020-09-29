@@ -8,8 +8,8 @@ import {
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { ProviderService } from './provider.service'
 import { XroadClientController } from './xroadclient.controller'
-import { XroadClientService } from './xroadclient.service'
 
 const XROAD_BASE_PATH = 'http://testcomss01.playground.x-road.global'
 const XROAD_CLIENT = {
@@ -24,7 +24,7 @@ const XROAD_CLIENT = {
   controllers: [AppController, XroadClientController],
   providers: [
     AppService,
-    XroadClientService,
+    ProviderService,
     {
       provide: MetaservicesApi,
       useFactory: () =>
