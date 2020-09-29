@@ -83,6 +83,11 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       ? currentIndex
       : currentIndex + 1
 
+  /**
+   * Move timeline to DOM node index (years and months)
+   * @param index    DOM index
+   * @param behavior  type of scroll behavior
+   */
   const moveTimeline = (
     index: number,
     behavior: 'smooth' | 'auto' = 'smooth',
@@ -111,9 +116,13 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
 
   useEffect(() => {
     if (frameRef.current && entriesParentRef.current) {
+      /**
+       * Scroll to current month vertical and horizontal
+       */
       const today = new Date()
       const year = today.getFullYear()
       const month = today.getMonth()
+      // find current month
       const { currentMonthIndex, currentMonth } = [
         ...entriesParentRef.current.children,
       ].reduce(
@@ -129,6 +138,7 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
           currentMonth,
         },
       )
+      // padding based on mobile gutter
       const leftPadding = 24
       frameRef.current.scrollLeft = currentMonth.offsetLeft - leftPadding
       moveTimeline(currentMonthIndex)
