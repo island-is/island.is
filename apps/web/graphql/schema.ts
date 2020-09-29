@@ -313,6 +313,7 @@ export type TeamMember = {
 
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
+  id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
   description?: Maybe<Scalars['String']>
@@ -371,6 +372,13 @@ export type Article = {
   organization?: Maybe<Array<Organization>>
   subArticles: Array<SubArticle>
   relatedArticles?: Maybe<Array<Article>>
+}
+
+export type ContentSlug = {
+  __typename?: 'ContentSlug'
+  id: Scalars['ID']
+  slug: Scalars['String']
+  type: Scalars['String']
 }
 
 export type AdgerdirTag = {
@@ -714,6 +722,7 @@ export type Query = {
   getAboutPage: AboutPage
   getAboutSubPage?: Maybe<AboutSubPage>
   getLandingPage?: Maybe<LandingPage>
+  getContentSlug?: Maybe<ContentSlug>
   getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
@@ -771,6 +780,10 @@ export type QueryGetAboutSubPageArgs = {
 
 export type QueryGetLandingPageArgs = {
   input: GetLandingPageInput
+}
+
+export type QueryGetContentSlugArgs = {
+  input: GetContentSlugInput
 }
 
 export type QueryGetAlertBannerArgs = {
@@ -923,6 +936,11 @@ export type GetAboutSubPageInput = {
 
 export type GetLandingPageInput = {
   slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetContentSlugInput = {
+  id: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -1385,7 +1403,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<
             ArticleCategory,
-            'title' | 'slug' | 'description'
+            'id' | 'title' | 'slug' | 'description'
           >
         >
         relatedArticles?: Maybe<
@@ -1440,6 +1458,16 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type GetContentSlugQueryVariables = Exact<{
+  input: GetContentSlugInput
+}>
+
+export type GetContentSlugQuery = { __typename?: 'Query' } & {
+  getContentSlug?: Maybe<
+    { __typename?: 'ContentSlug' } & Pick<ContentSlug, 'slug' | 'type'>
+  >
+}
+
 export type GetArticleCategoriesQueryVariables = Exact<{
   input: GetArticleCategoriesInput
 }>
@@ -1448,7 +1476,7 @@ export type GetArticleCategoriesQuery = { __typename?: 'Query' } & {
   getArticleCategories: Array<
     { __typename?: 'ArticleCategory' } & Pick<
       ArticleCategory,
-      'title' | 'description' | 'slug'
+      'id' | 'title' | 'description' | 'slug'
     >
   >
 }
@@ -1570,7 +1598,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
   getLifeEventPage?: Maybe<
     { __typename?: 'LifeEventPage' } & Pick<
       LifeEventPage,
-      'title' | 'slug' | 'intro'
+      'id' | 'title' | 'slug' | 'intro'
     > & {
         image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
         content: Array<
@@ -1614,7 +1642,7 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
   getLifeEvents: Array<
     { __typename?: 'LifeEventPage' } & Pick<
       LifeEventPage,
-      'title' | 'slug' | 'intro'
+      'id' | 'title' | 'slug' | 'intro'
     > & {
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
         image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
@@ -1630,7 +1658,7 @@ export type GetLifeEventsInCategoryQuery = { __typename?: 'Query' } & {
   getLifeEventsInCategory: Array<
     { __typename?: 'LifeEventPage' } & Pick<
       LifeEventPage,
-      'title' | 'slug' | 'intro'
+      'id' | 'title' | 'slug' | 'intro'
     > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<

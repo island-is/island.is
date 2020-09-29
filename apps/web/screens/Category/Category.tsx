@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { theme } from '@island.is/island-ui/theme'
@@ -45,6 +45,7 @@ import {
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { GlobalContext } from '@island.is/web/context'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -64,6 +65,7 @@ const Category: Screen<CategoryProps> = ({
   namespace,
   slug,
 }) => {
+  const { setContentfulId } = useContext(GlobalContext)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
   const { activeLocale, t } = useI18n()
@@ -116,8 +118,20 @@ const Category: Screen<CategoryProps> = ({
     )
     .filter((x) => x)
 
+  const getCurrentCategory = () => categories.find((x) => x.slug === slug)
+
+  useEffect(() => {
+    const currentCategory = getCurrentCategory()
+
+    if (currentCategory?.id) {
+      setContentfulId(currentCategory.id)
+
+      return () => setContentfulId('')
+    }
+  }, [getCurrentCategory()])
+
   // find current category in categories list
-  const category = categories.find((x) => x.slug === slug)
+  const category = getCurrentCategory()
 
   useEffect(() => {
     const hashMatch = window.location.hash ?? ''

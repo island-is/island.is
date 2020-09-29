@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import Head from 'next/head'
 import {
   Typography,
@@ -24,6 +24,7 @@ import {
   QueryGetSingleNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { RichText } from '../components/RichText/RichText'
+import { GlobalContext } from '../context'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -33,6 +34,15 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
+  const { setContentfulId } = useContext(GlobalContext)
+
+  useEffect(() => {
+    if (newsItem?.id) {
+      setContentfulId(newsItem.id)
+    }
+
+    return () => setContentfulId('')
+  }, [newsItem])
 
   const sidebar = (
     <Box>
