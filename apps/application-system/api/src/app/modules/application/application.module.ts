@@ -10,7 +10,7 @@ import { UploadProcessor } from './upload.processor'
 
 let BullModule: DynamicModule
 
-if (process.env.NODE_ENV === 'test') {
+if (process.env.INIT_SCHEMA === 'true') {
   BullModule = NestBullModule.registerQueueAsync()
 } else {
   BullModule = NestBullModule.registerQueueAsync({
