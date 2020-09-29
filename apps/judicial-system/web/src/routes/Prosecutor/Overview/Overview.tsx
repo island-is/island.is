@@ -10,18 +10,18 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { ProsecutorLogo } from '../../shared-components/Logos'
-import Modal from '../../shared-components/Modal/Modal'
-import { formatDate, capitalize } from '../../utils/formatters'
+import { ProsecutorLogo } from '../../../shared-components/Logos'
+import Modal from '../../../shared-components/Modal/Modal'
+import { formatDate, capitalize } from '../../../utils/formatters'
 import is from 'date-fns/locale/is'
 import {
   getRestrictionByValue,
   renderRestrictons,
-} from '../../utils/stepHelper'
-import { CustodyRestrictions } from '../../types'
-import { FormFooter } from '../../shared-components/FormFooter'
-import * as Constants from '../../utils/constants'
-import * as api from '../../api'
+} from '../../../utils/stepHelper'
+import { CustodyRestrictions } from '../../../types'
+import { FormFooter } from '../../../shared-components/FormFooter'
+import * as Constants from '../../../utils/constants'
+import * as api from '../../../api'
 import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {

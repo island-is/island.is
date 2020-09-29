@@ -17,18 +17,18 @@ import {
   CustodyRestrictions,
   Case,
 } from '@island.is/judicial-system-web/src/types'
-import { updateState, autoSave } from '../../../utils/stepHelper'
+import { updateState, autoSave } from '../../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import * as api from '../../../api'
+import { FormFooter } from '../../../../shared-components/FormFooter'
+import * as api from '../../../../api'
 import {
   formatDate,
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '../../../../utils/constants'
 
 export const StepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')

@@ -2,16 +2,19 @@ import React, { useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Header } from '../Header'
 import * as Constants from '../../utils/constants'
-import { Overview } from '../../routes/Overview'
-import { StepOne, StepTwo } from '../../routes/CreateDetentionRequest'
-import { DetentionRequests } from '../../routes/DetentionRequests'
+import { Overview } from '../../routes/Prosecutor/Overview'
+import {
+  StepOne,
+  StepTwo,
+} from '../../routes/Prosecutor/CreateDetentionRequest'
+import { DetentionRequests } from '../../routes/Prosecutor/DetentionRequests'
 import { Login } from '../../routes/Login'
 import * as styles from './App.treat'
 import { User } from '../../types'
 import { userContext } from '../../utils/userContext'
-import JudgeOverview from '../../routes/Judge/Overview'
-import CourtRecord from '../../routes/CourtRecord/CourtRecord'
-import Ruling from '../../routes/Ruling/Ruling'
+import JudgeOverview from '../../routes/Judge/Overview/Overview'
+import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
+import Ruling from '../../routes/Judge/Ruling/Ruling'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)

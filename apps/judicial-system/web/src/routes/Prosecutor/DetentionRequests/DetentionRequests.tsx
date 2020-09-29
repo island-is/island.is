@@ -16,13 +16,13 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { CaseState } from '@island.is/judicial-system/types'
-import { DetentionRequest, User } from '../../types'
-import * as api from '../../api'
+import { DetentionRequest, User } from '../../../types'
+import * as api from '../../../api'
 import * as styles from './DetentionRequests.treat'
-import { UserRole } from '../../utils/authenticate'
-import * as Constants from '../../utils/constants'
+import { UserRole } from '../../../utils/authenticate'
+import * as Constants from '../../../utils/constants'
 import { Link } from 'react-router-dom'
-import { userContext } from '../../utils/userContext'
+import { userContext } from '../../../utils/userContext'
 
 interface DetentionRequestsProps {
   onGetUser: (user: User) => void

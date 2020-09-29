@@ -3,9 +3,8 @@ import React from 'react'
 import { cleanup, render, waitFor } from '@testing-library/react'
 import { Route, Router } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
-import * as Constants from '../../utils/constants'
+import * as Constants from '../../../utils/constants'
 import JudgeOverview from './Overview'
-import { CustodyRestrictions } from '../../types'
 
 describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should display the string lausagæsla in custody restrictions if there are no custody restrictions', async () => {
