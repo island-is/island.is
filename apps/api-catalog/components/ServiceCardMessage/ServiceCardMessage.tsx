@@ -3,18 +3,17 @@ import * as styles from './ServiceCardMessage.treat'
 import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core';
 
-type ServiceCardMessageTypes = 'default' | 'error'
-type borderStyleTypes = "none" | "standard"
+export type ServiceCardMessageTypes = 'default' | 'error'
+export type ServiceBorderStyleTypes = "none" | "standard"
 
 export interface ServiceCardMessageProps {
   title: string
   text?: string
-  borderStyle: borderStyleTypes
+  borderStyle: ServiceBorderStyleTypes
   messageType?: ServiceCardMessageTypes
 }
 
 export const ServiceCardMessage = (props: ServiceCardMessageProps) => {
-
 
   if (props.messageType === 'error') {
     return (

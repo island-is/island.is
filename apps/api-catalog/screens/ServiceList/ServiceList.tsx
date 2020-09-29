@@ -69,6 +69,10 @@ export interface ServiceListProps {
   pageContent: Page
 }
 
+//Todo: add to contentful
+const TEXT_SEARCHING = 'Leita ...'
+const TEXT_NOT_FOUND = 'Engin þjónusta fannast'
+
 
 export default function ServiceList(props: ServiceListProps) {
 
@@ -174,14 +178,17 @@ export default function ServiceList(props: ServiceListProps) {
   const [StatusQueryString, setStatusQueryString] = useState<string>(createStatusQueryString());
   const [timer, setTimer] = useState(null);
   const [width] = useWindowEvents();
+  const [emptyListText, setEmptyListText] = useState(TEXT_SEARCHING);
 
 
   useEffect(() => {
 
     const appendData = async () => {
       setLoading(true);
+      setEmptyListText(TEXT_SEARCHING)
       const response = await getServices(props.parameters);
       services.push(...response.result);
+      setEmptyListText(TEXT_NOT_FOUND);
       setNextCursor(response.nextCursor);
       setLoading(false);
     }
@@ -195,9 +202,11 @@ export default function ServiceList(props: ServiceListProps) {
 
     const loadData = async () => {
       setLoading(true);
+      setEmptyListText(TEXT_SEARCHING)
       setFirstGet(true);
       props.parameters.cursor = null;
       const response = await getServices(props.parameters);
+      setEmptyListText(TEXT_NOT_FOUND);
       setNextCursor(response.nextCursor);
       setServices(response.result);
       setLoading(false);
@@ -227,9 +236,9 @@ export default function ServiceList(props: ServiceListProps) {
             :
             (
               <ServiceCardMessage
-                messageType='default'
-                title="Engin þjónusta fannst"
-                borderStyle="none"
+                messageType="default"
+                borderStyle="standard"
+                title={emptyListText}
               />
             )
           }
@@ -238,9 +247,9 @@ export default function ServiceList(props: ServiceListProps) {
       right={
         isMobile(width) ? (
           <div className={cn(styles.accordionMobile)}>
-            <AccordionItem id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="sidebar">
+            <AccordionItem id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="default">
               <ServiceFilter
-                iconVariant="sidebar"
+                iconVariant="default"
                 rootClasses={cn(styles.filterMobile, "filter")}
                 searchValue={searchValue}
                 isLoading={isLoading}

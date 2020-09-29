@@ -9,6 +9,7 @@ export { ServiceSection } from './ServiceSection'
 export { ServiceFilter } from './ServiceFilter'
 export { InputSearch } from './InputSearch'
 export { ServiceCardMessage } from './ServiceCardMessage'
+export type { ServiceCardMessageTypes, ServiceBorderStyleTypes } from './ServiceCardMessage'
 
 export { 
     getService, 
