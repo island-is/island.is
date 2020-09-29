@@ -201,7 +201,9 @@ All generated files are ignored from the git repository to avoid noises, to make
 
 Once you do a `yarn install`/`npm install`, a postinstall script will generate all the schemas and types for the whole project. It takes around ~30sec to generate all schemas, definitions types and open api schemas.
 
-The normal development process stays the same, `e.g. yarn start api` will keep generating on the fly the schemas files. However, if you need to generate all the schemas files manually, you can do it with `yarn schemas`. Besides you can generate schemas, project by project with the following `yarn nx run <project>:init-schema`
+The script will run when you are merging/pulling from git into your working branch to make sure all your schemas files are up-to-date.
+
+The normal development process stays the same, `e.g. yarn start api` will keep generating on the fly the schemas files. However, if you need to generate all the schemas files manually, you can do it with `yarn schemas`. Besides you can generate schemas, project by project with the following `yarn nx run <project>:init-schema`.
 
 ### Generate schema and client types
 
