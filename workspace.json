@@ -506,7 +506,7 @@
                 "output": "./"
               },
               {
-                "glob": "migrations",
+                "glob": "migrations/**",
                 "input": "apps/gjafakort/application",
                 "output": "./"
               }
@@ -913,7 +913,7 @@
             "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
             "assets": [
               {
-                "glob": "config",
+                "glob": "config/**",
                 "input": "apps/services/search-indexer",
                 "output": "./"
               }
@@ -1690,7 +1690,7 @@
                 "output": "./"
               },
               {
-                "glob": "migrations",
+                "glob": "migrations/**",
                 "input": "apps/air-discount-scheme/backend",
                 "output": "./"
               }
