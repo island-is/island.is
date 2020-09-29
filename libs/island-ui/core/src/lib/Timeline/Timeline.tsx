@@ -125,7 +125,10 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       // find current month
       const { currentMonthIndex, currentMonth } = [
         ...entriesParentRef.current.children,
-      ].reduce(
+      ].reduce<{
+        currentMonthIndex: number
+        currentMonth: Element | null
+      }>(
         (acc, current, index) => {
           if (current.dataset.date === `${year}/${month}`) {
             acc.currentMonthIndex = index
@@ -135,7 +138,7 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
         },
         {
           currentMonthIndex: 0,
-          currentMonth,
+          currentMonth: null,
         },
       )
       // padding based on mobile gutter
