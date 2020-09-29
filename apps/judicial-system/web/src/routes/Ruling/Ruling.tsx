@@ -9,38 +9,127 @@ import {
   RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { JudgeLogo } from '../../shared-components/Logos'
-import { AppealDecision, GetCaseByIdResponse } from '../../types'
+import {
+  AppealDecision,
+  Case,
+  CustodyRestrictions,
+  GetCaseByIdResponse,
+} from '../../types'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import * as Constants from '../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../utils/formatters'
-import useRestrictions from '../../utils/hooks/useRestrictions'
 import { CaseState } from '@island.is/judicial-system/types'
 import { autoSave, updateState } from '../../utils/stepHelper'
 import * as api from '../../api'
 
 export const Ruling: React.FC = () => {
-  const [workingCase, setWorkingCase] = useWorkingCase()
+  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraftJSON = JSON.parse(caseDraft)
+
+  const [workingCase, setWorkingCase] = useState<Case>({
+    id: caseDraftJSON.id ?? '',
+    created: caseDraftJSON.created ?? '',
+    modified: caseDraftJSON.modified ?? '',
+    state: caseDraftJSON.state ?? '',
+    policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
+    accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
+    accusedName: caseDraftJSON.accusedName ?? '',
+    accusedAddress: caseDraftJSON.accusedAddress ?? '',
+    court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
+    arrestDate: caseDraftJSON.arrestDate ?? null,
+    requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
+    requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
+    lawsBroken: caseDraftJSON.lawsBroken ?? '',
+    custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
+    requestedCustodyRestrictions:
+      caseDraftJSON.requestedCustodyRestrictions ?? [],
+    caseFacts: caseDraftJSON.caseFacts ?? '',
+    witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
+    investigationProgress: caseDraftJSON.investigationProgress ?? '',
+    legalArguments: caseDraftJSON.legalArguments ?? '',
+    comments: caseDraftJSON.comments ?? '',
+    notifications: caseDraftJSON.Notification ?? [],
+    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+    courtStartTime: caseDraftJSON.courtStartTime ?? '',
+    courtEndTime: caseDraftJSON.courtEndTime ?? '',
+    courtAttendees: caseDraftJSON.courtAttendees ?? '',
+    policeDemands: caseDraftJSON.policeDemands ?? '',
+    accusedPlea: caseDraftJSON.accusedPlea ?? '',
+    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+    ruling: caseDraftJSON.ruling ?? '',
+    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
+    prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
+  })
+
   const [requestRecjected, setRequestRejected] = useState(
-    workingCase?.state === CaseState.REJECTED,
+    caseDraftJSON.state === CaseState.REJECTED,
   )
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
     AppealDecision
-  >(null)
-  const [prosecutorAppealDecition, setProsecutorAppealDecition] = useState(null)
-  const restrictions = useRestrictions(workingCase, setWorkingCase, true)
+  >(caseDraftJSON.accusedAppealDecision)
+  const [prosecutorAppealDecition, setProsecutorAppealDecition] = useState(
+    caseDraftJSON.prosecutorAppealDecision,
+  )
+  const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
+    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.ISOLATION,
+    ) > -1,
+  )
+  const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
+    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.VISITAION,
+    ) > -1,
+  )
+  const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
+    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.COMMUNICATION,
+    ) > -1,
+  )
+  const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
+    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
+      CustodyRestrictions.MEDIA,
+    ) > -1,
+  )
+  const restrictions = [
+    {
+      restriction: 'B - Einangrun',
+      value: CustodyRestrictions.ISOLATION,
+      getCheckbox: restrictionCheckboxOne,
+      setCheckbox: setRestrictionCheckboxOne,
+      explination:
+        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
+    },
+    {
+      restriction: 'C - Heimsóknarbann',
+      value: CustodyRestrictions.VISITAION,
+      getCheckbox: restrictionCheckboxTwo,
+      setCheckbox: setRestrictionCheckboxTwo,
+      explination:
+        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
+    },
+    {
+      restriction: 'D - Bréfskoðun, símabann',
+      value: CustodyRestrictions.COMMUNICATION,
+      getCheckbox: restrictionCheckboxThree,
+      setCheckbox: setRestrictionCheckboxThree,
+      explination:
+        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
+    },
+    {
+      restriction: 'E - Fjölmiðlabanns',
+      value: CustodyRestrictions.MEDIA,
+      getCheckbox: restrictionCheckboxFour,
+      setCheckbox: setRestrictionCheckboxFour,
+      explination:
+        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
+    },
+  ]
 
-  useEffect(() => {
-    const wc: GetCaseByIdResponse = JSON.parse(
-      window.localStorage.getItem('workingCase'),
-    )
-
-    if (wc) {
-      setWorkingCase(wc.case)
-    }
-  }, [])
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -168,7 +257,66 @@ export const Ruling: React.FC = () => {
                 </Typography>
               </Box>
               <Box marginBottom={1}>
-                <GridRow>{restrictions}</GridRow>
+                {restrictions.map((restriction, index) => {
+                  return (
+                    <GridColumn span="3/7" key={index}>
+                      <Box marginBottom={3}>
+                        <Checkbox
+                          name={restriction.restriction}
+                          label={restriction.restriction}
+                          value={restriction.value}
+                          checked={restriction.getCheckbox}
+                          tooltip={restriction.explination}
+                          onChange={({ target }) => {
+                            // Toggle the checkbox on or off
+                            restriction.setCheckbox(target.checked)
+
+                            // Create a copy of the state
+                            const copyOfState = Object.assign(workingCase, {})
+
+                            // If the user is checking the box, add the restriction to the state
+                            if (target.checked) {
+                              copyOfState.custodyRestrictions.push(
+                                target.value as CustodyRestrictions,
+                              )
+                            }
+                            // If the user is unchecking the box, remove the restriction from the state
+                            else {
+                              const restrictions =
+                                copyOfState.custodyRestrictions
+                              restrictions.splice(
+                                restrictions.indexOf(
+                                  target.value as CustodyRestrictions,
+                                ),
+                                1,
+                              )
+                            }
+
+                            // Set the updated state as the state
+                            setWorkingCase(copyOfState)
+
+                            // Save case
+                            api.saveCase(
+                              workingCase.id,
+                              parseArray(
+                                'custodyRestrictions',
+                                copyOfState.custodyRestrictions,
+                              ),
+                            )
+
+                            updateState(
+                              workingCase,
+                              'restrictions',
+                              copyOfState.custodyRestrictions,
+                              setWorkingCase,
+                            )
+                          }}
+                          large
+                        />
+                      </Box>
+                    </GridColumn>
+                  )
+                })}
               </Box>
               <Typography>
                 Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
@@ -206,11 +354,18 @@ export const Ruling: React.FC = () => {
                         }
                         onChange={() => {
                           setAccusedAppealDecition(AppealDecision.APPEAL)
+                          updateState(
+                            workingCase,
+                            'accusedAppealDecision',
+                            AppealDecision.APPEAL,
+                            setWorkingCase,
+                          )
                           api.saveCase(
                             workingCase.id,
-                            parseArray('accusedAppealDecision', [
+                            parseString(
+                              'accusedAppealDecision',
                               AppealDecision.APPEAL,
-                            ]),
+                            ),
                           )
                         }}
                         large
@@ -228,11 +383,19 @@ export const Ruling: React.FC = () => {
                         onChange={() => {
                           setAccusedAppealDecition(AppealDecision.ACCEPT)
 
+                          updateState(
+                            workingCase,
+                            'accusedAppealDecision',
+                            AppealDecision.ACCEPT,
+                            setWorkingCase,
+                          )
+
                           api.saveCase(
                             workingCase.id,
-                            parseArray('accusedAppealDecision', [
+                            parseString(
+                              'accusedAppealDecision',
                               AppealDecision.ACCEPT,
-                            ]),
+                            ),
                           )
                         }}
                         large
@@ -253,11 +416,19 @@ export const Ruling: React.FC = () => {
                       onChange={() => {
                         setAccusedAppealDecition(AppealDecision.POSTPONE)
 
+                        updateState(
+                          workingCase,
+                          'accusedAppealDecision',
+                          AppealDecision.POSTPONE,
+                          setWorkingCase,
+                        )
+
                         api.saveCase(
                           workingCase.id,
-                          parseArray('accusedAppealDecision', [
+                          parseString(
+                            'accusedAppealDecision',
                             AppealDecision.POSTPONE,
-                          ]),
+                          ),
                         )
                       }}
                       large
@@ -290,11 +461,20 @@ export const Ruling: React.FC = () => {
                         }
                         onChange={() => {
                           setProsecutorAppealDecition(AppealDecision.APPEAL)
+
+                          updateState(
+                            workingCase,
+                            'prosecutorAppealDecision',
+                            AppealDecision.APPEAL,
+                            setWorkingCase,
+                          )
+
                           api.saveCase(
                             workingCase.id,
-                            parseArray('prosecutorAppealDecision', [
+                            parseString(
+                              'prosecutorAppealDecision',
                               AppealDecision.APPEAL,
-                            ]),
+                            ),
                           )
                         }}
                         large
@@ -312,11 +492,19 @@ export const Ruling: React.FC = () => {
                         onChange={() => {
                           setProsecutorAppealDecition(AppealDecision.ACCEPT)
 
+                          updateState(
+                            workingCase,
+                            'prosecutorAppealDecision',
+                            AppealDecision.ACCEPT,
+                            setWorkingCase,
+                          )
+
                           api.saveCase(
                             workingCase.id,
-                            parseArray('prosecutorAppealDecision', [
+                            parseString(
+                              'prosecutorAppealDecision',
                               AppealDecision.ACCEPT,
-                            ]),
+                            ),
                           )
                         }}
                         large
@@ -337,11 +525,19 @@ export const Ruling: React.FC = () => {
                       onChange={() => {
                         setProsecutorAppealDecition(AppealDecision.POSTPONE)
 
+                        updateState(
+                          workingCase,
+                          'prosecutorAppealDecision',
+                          AppealDecision.POSTPONE,
+                          setWorkingCase,
+                        )
+
                         api.saveCase(
                           workingCase.id,
-                          parseArray('prosecutorAppealDecision', [
+                          parseString(
+                            'prosecutorAppealDecision',
                             AppealDecision.POSTPONE,
-                          ]),
+                          ),
                         )
                       }}
                       large
