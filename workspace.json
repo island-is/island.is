@@ -3109,7 +3109,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/application/templates/parental-leave/.eslintrc",
             "tsConfig": [
               "libs/application/templates/parental-leave/tsconfig.lib.json",
               "libs/application/templates/parental-leave/tsconfig.spec.json"
@@ -3124,7 +3123,6 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/application/templates/parental-leave/jest.config.js",
-            "tsConfig": "libs/application/templates/parental-leave/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
@@ -3140,7 +3138,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/application/templates/driving-lessons/.eslintrc",
             "tsConfig": [
               "libs/application/templates/driving-lessons/tsconfig.lib.json",
               "libs/application/templates/driving-lessons/tsconfig.spec.json"
@@ -3155,7 +3152,6 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/application/templates/driving-lessons/jest.config.js",
-            "tsConfig": "libs/application/templates/driving-lessons/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
@@ -3171,7 +3167,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/application/template-loader/.eslintrc",
             "tsConfig": [
               "libs/application/template-loader/tsconfig.lib.json",
               "libs/application/template-loader/tsconfig.spec.json"
@@ -3186,7 +3181,6 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/application/template-loader/jest.config.js",
-            "tsConfig": "libs/application/template-loader/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
@@ -3202,7 +3196,6 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/application/templates/reference-template/.eslintrc",
             "tsConfig": [
               "libs/application/templates/reference-template/tsconfig.lib.json",
               "libs/application/templates/reference-template/tsconfig.spec.json"
@@ -3217,7 +3210,6 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/application/templates/reference-template/jest.config.js",
-            "tsConfig": "libs/application/templates/reference-template/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
