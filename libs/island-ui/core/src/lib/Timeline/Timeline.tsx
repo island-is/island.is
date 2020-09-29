@@ -115,7 +115,7 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
   }
 
   useEffect(() => {
-    if (frameRef.current && entriesParentRef.current) {
+    if (frameRef.current && entriesParentRef.current?.children?.length > 0) {
       /**
        * Scroll to current month vertical and horizontal
        */
@@ -138,14 +138,12 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
         },
         {
           currentMonthIndex: 0,
-          currentMonth: null,
+          currentMonth,
         },
       )
       // padding based on mobile gutter
       const leftPadding = 24
-      if (currentMonth) {
-        frameRef.current.scrollLeft = currentMonth.offsetLeft - leftPadding
-      }
+      frameRef.current.scrollLeft = currentMonth.offsetLeft - leftPadding
       moveTimeline(currentMonthIndex)
     }
   }, [])
