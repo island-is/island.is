@@ -54,7 +54,6 @@ export class Article {
   relatedArticles?: Array<Article>
 }
 
-
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   id: sys.id,
   title: fields.title ?? '',
@@ -68,10 +67,12 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   group: fields.group ? mapArticleGroup(fields.group) : null,
   subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
   organization: (fields.organization ?? [])
-    .filter((organization) => organization.fields?.title && organization.fields?.slug)
+    .filter(
+      (organization) => organization.fields?.title && organization.fields?.slug,
+    )
     .map(mapOrganization),
   subArticles: (fields.subArticles ?? [])
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
     .map(mapSubArticle),
-  relatedArticles: [] // populated by resolver
+  relatedArticles: [], // populated by resolver
 })
