@@ -2338,6 +2338,11 @@
                 "output": "./migrations"
               },
               {
+                "glob": "*",
+                "input": "apps/judicial-system/api/seeders",
+                "output": "./seeders"
+              },
+              {
                 "glob": ".sequelizerc",
                 "input": "apps/judicial-system/api",
                 "output": "./"
