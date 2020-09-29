@@ -80,7 +80,7 @@ export class CmsResolver {
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   @Directive(cacheControlDirective())
   @Query(() => PaginatedAdgerdirNews)
@@ -344,7 +344,7 @@ export class CmsResolver {
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => [News])
   async news(
@@ -356,7 +356,7 @@ export class LatestNewsSliceResolver {
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) { }
+  constructor(private cmsContentfulService: CmsContentfulService) {}
 
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {
