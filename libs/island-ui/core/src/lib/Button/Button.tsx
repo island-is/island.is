@@ -37,6 +37,7 @@ export interface ButtonProps {
   white?: boolean
   tabIndex?: number
   rounded?: boolean
+  as?: 'span' | 'inline'
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -64,6 +65,7 @@ export const Button = forwardRef<
       white,
       tabIndex,
       rounded = false,
+      as = 'inline',
     },
     ref,
   ) => {
@@ -72,6 +74,7 @@ export const Button = forwardRef<
     const className = cn(
       styles.button,
       styles.variants[variant],
+      styles.asSpan[as],
       styles.sizes[size],
       styles.width[width],
       {
@@ -80,7 +83,7 @@ export const Button = forwardRef<
         [styles.rounded]: rounded,
       },
     )
-
+    as = as === 'span' && variant === 'text' ? 'span' : 'inline'
     icon = loading ? 'loading' : icon
     const isExternal = !!(href && isLinkExternal(href))
     const isMenuButton = variant === 'menu'
@@ -107,6 +110,7 @@ export const Button = forwardRef<
       showRightIcon,
       loading,
       isExternal,
+      as,
     }
 
     return href ? (
@@ -173,6 +177,7 @@ interface ButtonContentProps {
   showRightIcon: boolean
   loading?: boolean
   isExternal?: boolean
+  as?: 'span' | 'inline'
 }
 
 const ButtonContent: FC<ButtonContentProps> = ({
@@ -185,9 +190,10 @@ const ButtonContent: FC<ButtonContentProps> = ({
   showRightIcon,
   loading,
   isExternal,
+  as,
 }) => {
   return (
-    <Inline alignY="center" space={2}>
+    <Inline as={as} alignY="center" space={2}>
       {isMenuButton && hasLeftContent ? (
         <LeftContentContainer>
           {leftImage ? (

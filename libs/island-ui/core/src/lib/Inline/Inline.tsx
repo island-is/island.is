@@ -15,10 +15,12 @@ import {
 export interface InlineProps extends CollapsibleAlignmentProps {
   space: ResponsiveSpace
   children: ReactNodeNoStrings
+  as?: 'inline' | 'span'
 }
 
 export const Inline = ({
   space = 'none',
+  as = 'inline',
   align,
   alignY,
   collapseBelow,
@@ -40,25 +42,31 @@ export const Inline = ({
   })
 
   return (
-    <Box className={negativeMarginTop}>
-      <Box
-        className={negativeMarginLeft}
-        flexWrap="wrap"
-        {...collapsibleAlignmentProps}
-      >
-        {Children.map(orderChildren(flattenChildren(children)), (child) =>
-          child !== null && child !== undefined ? (
-            <Box
-              minWidth={0}
-              paddingLeft={space}
-              paddingTop={space}
-              {...collapsibleAlignmentChildProps}
-            >
-              {child}
-            </Box>
-          ) : null,
-        )}
-      </Box>
-    </Box>
+    <>
+      {as === 'span' ? (
+        <span>{children}</span>
+      ) : (
+        <Box className={negativeMarginTop}>
+          <Box
+            className={negativeMarginLeft}
+            flexWrap="wrap"
+            {...collapsibleAlignmentProps}
+          >
+            {Children.map(orderChildren(flattenChildren(children)), (child) =>
+              child !== null && child !== undefined ? (
+                <Box
+                  minWidth={0}
+                  paddingLeft={space}
+                  paddingTop={space}
+                  {...collapsibleAlignmentChildProps}
+                >
+                  {child}
+                </Box>
+              ) : null,
+            )}
+          </Box>
+        </Box>
+      )}
+    </>
   )
 }

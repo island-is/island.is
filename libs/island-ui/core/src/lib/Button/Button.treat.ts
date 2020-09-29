@@ -134,6 +134,12 @@ export const width = styleMap({
   },
 })
 
+export const asSpan = styleMap({
+  span: {
+    display: 'inline',
+  },
+})
+
 export const variants = styleMap({
   normal: {
     backgroundColor: theme.color.blue400,
