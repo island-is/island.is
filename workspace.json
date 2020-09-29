@@ -2430,6 +2430,26 @@
             "passWithNoTests": true
           }
         },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "graphql-codegen --config apps/adgerdir/codegen.yml"
+              }
+            ]
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "yarn nx run adgerdir:codegen"
+              }
+            ]
+          }
+        },
         "docker-next": {}
       }
     },
