@@ -155,9 +155,7 @@ export const JudgeOverview: React.FC = () => {
               <Typography>
                 {workingCase?.arrestDate &&
                   `${capitalize(
-                    formatDate(workingCase?.arrestDate, 'PPPP', {
-                      locale: is,
-                    }),
+                    formatDate(workingCase?.arrestDate, 'PPPP'),
                   )} kl. ${formatDate(
                     workingCase?.arrestDate,
                     Constants.TIME_FORMAT,
@@ -173,9 +171,7 @@ export const JudgeOverview: React.FC = () => {
                 </Box>
                 <Typography>
                   {`${capitalize(
-                    formatDate(workingCase?.requestedCourtDate, 'PPPP', {
-                      locale: is,
-                    }),
+                    formatDate(workingCase?.requestedCourtDate, 'PPPP'),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
                     Constants.TIME_FORMAT,
@@ -198,7 +194,6 @@ export const JudgeOverview: React.FC = () => {
                         ` ${formatDate(
                           workingCase?.requestedCustodyEndDate,
                           'PPP',
-                          { locale: is },
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
                           Constants.TIME_FORMAT,

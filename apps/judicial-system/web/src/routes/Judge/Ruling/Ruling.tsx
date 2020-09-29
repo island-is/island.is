@@ -12,13 +12,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
-import {
-  AppealDecision,
-  Case,
-  CustodyRestrictions,
-  GetCaseByIdResponse,
-} from '../../../types'
-import useWorkingCase from '../../../utils/hooks/useWorkingCase'
+import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
 import * as Constants from '../../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../../utils/formatters'
 import { CaseState } from '@island.is/judicial-system/types'
@@ -547,8 +541,8 @@ export const Ruling: React.FC = () => {
               </Box>
             </Box>
             <FormFooter
-              previousUrl="/"
-              nextUrl="/"
+              previousUrl={Constants.COURT_DOCUMENT_ROUTE}
+              nextUrl={Constants.CONFIRMATION_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime
               }

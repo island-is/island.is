@@ -1,6 +1,12 @@
-import { Case, CustodyRestrictions } from '../types'
+import {
+  AppealDecision,
+  AppealDecitionRole,
+  Case,
+  CustodyRestrictions,
+} from '../types'
 import * as api from '../api'
-import { parseString } from './formatters'
+import { formatDate, parseString } from './formatters'
+import { CaseState } from '@island.is/judicial-system/types'
 
 export const updateState = (
   state: Case,
@@ -63,4 +69,27 @@ export const renderRestrictons = (restrictions: CustodyRestrictions[]) => {
         .toString()
         .replace(',', ', ')
     : 'Lausagæsla'
+}
+
+export const getAppealDecitionText = (
+  role: AppealDecitionRole,
+  appealDecition: AppealDecision,
+) => {
+  switch (appealDecition) {
+    case AppealDecision.APPEAL: {
+      return `${
+        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+      } kærir málið`
+    }
+    case AppealDecision.ACCEPT: {
+      return `${
+        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+      } unir úrskurðinum`
+    }
+    case AppealDecision.POSTPONE: {
+      return `${
+        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+      } tekur sér lögboðinn frest`
+    }
+  }
 }
