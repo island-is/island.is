@@ -8,10 +8,13 @@ import {
   GridColumn,
   Footer,
 } from '@island.is/island-ui/core'
+import ApplicationProgress from '../ApplicationProgress/ApplicationProgress'
 
 interface PageProps {
   children: ReactNode
   right?: ReactNode
+  rightContent?: string[]
+  active?: number
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
@@ -36,7 +39,12 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
   </>
 )
 
-export const ProcessPageLayout: FC<PageProps> = ({ children, right }) => {
+export const ProcessPageLayout: FC<PageProps> = ({
+  children,
+  right,
+  rightContent,
+  active,
+}) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
@@ -45,11 +53,15 @@ export const ProcessPageLayout: FC<PageProps> = ({ children, right }) => {
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
     >
+<<<<<<< HEAD
+=======
+      {isMobile && <ApplicationProgress steps={rightContent} active={active} />}
+>>>>>>> 1f4ee5aa... Dynamic content in progress section
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
             <Box
-              paddingY={6}
+              paddingY={[3, 3, 3, 6]}
               background="white"
               borderColor="white"
               borderRadius="large"
@@ -66,7 +78,7 @@ export const ProcessPageLayout: FC<PageProps> = ({ children, right }) => {
             span={['0', '0', '0', '3/12']}
             offset={['0', '0', '0', '1/12']}
           >
-            {right}
+            {!isMobile && right}
           </GridColumn>
         </GridRow>
       </GridContainer>

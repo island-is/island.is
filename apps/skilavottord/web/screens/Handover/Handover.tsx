@@ -44,7 +44,7 @@ const Handover = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout>
+        <ProcessPageLayout active={2}>
           <Stack space={6}>
             <Stack space={2}>
               <Typography variant="h1">{t.title}</Typography>

@@ -15,11 +15,16 @@ import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
+import ApplicationProgress from '@island.is/skilavottord-web/components/ApplicationProgress/ApplicationProgress'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const Confirm = (props) => {
   const { car } = props
 
   const [checkbox, setCheckbox] = useState(false)
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const {
     t: { confirm: t },
@@ -74,7 +79,7 @@ const Confirm = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout>
+        <ProcessPageLayout active={1}>
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>
