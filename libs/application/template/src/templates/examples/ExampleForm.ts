@@ -27,10 +27,7 @@ const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
-    name: z
-      .string()
-      .nonempty()
-      .max(256),
+    name: z.string().nonempty().max(256),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     phoneNumber: z.string().min(7),
     email: z.string().email(),

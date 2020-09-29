@@ -36,7 +36,6 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  Article,
   SubArticle,
   Slice,
   ProcessEntry,
@@ -45,6 +44,8 @@ import {
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+
+type Article = GetSingleArticleQuery['getSingleArticle']
 
 const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
   condition ? <b>{content}</b> : content

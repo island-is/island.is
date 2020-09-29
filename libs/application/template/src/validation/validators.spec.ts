@@ -10,10 +10,7 @@ const schema = z.object({
       }
       return asNumber > 0
     }),
-    name: z
-      .string()
-      .nonempty()
-      .max(256),
+    name: z.string().nonempty().max(256),
     minString: z.string().min(7),
     email: z.string().email(),
   }),
@@ -112,10 +109,7 @@ describe('extractPartialSchemaForValues', () => {
               }
               return asNumber > 15
             }),
-            name: z
-              .string()
-              .nonempty()
-              .max(256),
+            name: z.string().nonempty().max(256),
           }),
         )
         .max(5)

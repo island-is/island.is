@@ -18,7 +18,7 @@ interface NewComponentProps<T> {
 }
 
 export const withLocale = <Props,>(locale?: Locale) => (
-  Component: NextPage,
+  Component: NextPage<Props>,
 ): NextComponentType => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {

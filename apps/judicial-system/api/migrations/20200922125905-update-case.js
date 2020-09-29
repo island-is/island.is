@@ -2,8 +2,8 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return queryInterface.addColumn(
+    return queryInterface.sequelize.transaction((t) =>
+      queryInterface.addColumn(
         'case',
         'court_case_number',
         {
@@ -11,15 +11,15 @@ module.exports = {
           allowNull: true,
         },
         { transaction: t },
-      )
-    })
+      ),
+    )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) => {
-      return queryInterface.removeColumn('case', 'court_case_number', {
+    return queryInterface.sequelize.transaction((t) =>
+      queryInterface.removeColumn('case', 'court_case_number', {
         transaction: t,
-      })
-    })
+      }),
+    )
   },
 }
