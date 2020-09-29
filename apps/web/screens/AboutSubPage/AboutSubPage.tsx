@@ -23,6 +23,8 @@ import { SidebarBox, Bullet, RichText } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
+import { Background } from '@island.is/island-ui/contentful'
+import * as styles from './AboutSubPage.treat'
 
 export interface AboutSubPageProps {
   page: GetAboutSubPageQuery['getAboutSubPage']
@@ -70,7 +72,12 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
       <Head>
         <title>{page.title}</title>
       </Head>
-      <StandardLayout sidebar={{ position: 'right', node: sidebar }}>
+      <StandardLayout
+        sidebar={{ position: 'right', node: sidebar }}
+        contentBoxProps={{
+          paddingBottom: page.bottomSlices.length > 0 ? 0 : undefined,
+        }}
+      >
         <GridRow>
           <GridColumn
             span={['9/9', '9/9', '7/8', '7/8', '7/9']}
@@ -95,10 +102,17 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
             </Stack>
           </GridColumn>
         </GridRow>
-        <Box paddingTop={10}>
-          <RichText body={page.slices} />
+        <Box paddingTop={5}>
+          <Background
+            background="dotted"
+            paddingTop={10}
+            paddingBottom={page.bottomSlices.length ? 20 : 10}
+          >
+            <RichText body={page.slices} />
+          </Background>
         </Box>
       </StandardLayout>
+      <RichText body={page.bottomSlices} />
     </>
   )
 }

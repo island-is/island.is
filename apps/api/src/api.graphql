@@ -107,6 +107,11 @@ type TeamMember {
   image: Image!
 }
 
+type Link {
+  text: String!
+  url: String!
+}
+
 type ArticleCategory {
   title: String!
   slug: String!
@@ -145,7 +150,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | ContactUs | Html | Image | Asset
+union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | ContactUs | Location | Html | Image | Asset
 
 type MailingListSignupSlice {
   typename: String!
@@ -283,6 +288,16 @@ type ContactUs {
   errorMessage: String!
 }
 
+type Location {
+  typename: String!
+  id: ID!
+  title: String!
+  subTitle: String!
+  address: String!
+  link: Link
+  background: Image!
+}
+
 type Asset {
   typename: String!
   id: ID!
@@ -404,11 +419,6 @@ type Namespace {
   fields: String!
 }
 
-type Link {
-  text: String!
-  url: String!
-}
-
 type PageHeader {
   typename: String!
   id: ID!
@@ -508,6 +518,7 @@ type AboutSubPage {
   description: String!
   subDescription: String!
   slices: [Slice!]!
+  bottomSlices: [Slice!]!
 }
 
 type ContactUsPayload {

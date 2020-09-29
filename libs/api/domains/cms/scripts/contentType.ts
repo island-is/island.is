@@ -18,7 +18,7 @@ export interface Args {
 }
 
 const client = createClient({
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
+  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN ?? '',
 })
 
 async function codegenContentful(environment: Environment) {

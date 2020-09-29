@@ -128,6 +128,12 @@ export type TeamMember = {
   image: Image
 }
 
+export type Link = {
+  __typename?: 'Link'
+  text: Scalars['String']
+  url: Scalars['String']
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -189,6 +195,7 @@ export type Slice =
   | TabSection
   | TeamList
   | ContactUs
+  | Location
   | Html
   | Image
   | Asset
@@ -346,6 +353,17 @@ export type ContactUs = {
   errorMessage: Scalars['String']
 }
 
+export type Location = {
+  __typename?: 'Location'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  subTitle: Scalars['String']
+  address: Scalars['String']
+  link?: Maybe<Link>
+  background: Image
+}
+
 export type Asset = {
   __typename?: 'Asset'
   typename: Scalars['String']
@@ -482,12 +500,6 @@ export type Namespace = {
   fields: Scalars['String']
 }
 
-export type Link = {
-  __typename?: 'Link'
-  text: Scalars['String']
-  url: Scalars['String']
-}
-
 export type PageHeader = {
   __typename?: 'PageHeader'
   typename: Scalars['String']
@@ -600,6 +612,7 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
+  bottomSlices: Array<Slice>
 }
 
 export type ContactUsPayload = {
@@ -1250,6 +1263,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
         | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
         | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+        | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
         | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
         | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1305,6 +1319,37 @@ export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
+        >
+        bottomSlices: Array<
+          | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
+          | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+          | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
+          | ({
+              __typename?: 'LatestNewsSlice'
+            } & AllSlicesLatestNewsSliceFragment)
+          | ({
+              __typename?: 'BulletListSlice'
+            } & AllSlicesBulletListSliceFragment)
+          | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+          | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+          | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+          | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1372,6 +1417,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1430,6 +1476,7 @@ export type GetSingleArticleQuery = { __typename?: 'Query' } & {
                 | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
                 | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
                 | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+                | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
                 | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
                 | ({ __typename?: 'Image' } & AllSlicesImageFragment)
                 | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1554,6 +1601,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -1598,6 +1646,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
           | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
           | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
           | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
           | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
@@ -2150,6 +2199,14 @@ export type ContactUsFieldsFragment = { __typename: 'ContactUs' } & Pick<
   | 'errorMessage'
 >
 
+export type LocationFieldsFragment = { __typename: 'Location' } & Pick<
+  Location,
+  'typename' | 'id' | 'title' | 'subTitle' | 'address'
+> & {
+    link?: Maybe<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
+    background: { __typename?: 'Image' } & ImageFieldsFragment
+  }
+
 export type AllSlicesTimelineSliceFragment = {
   __typename?: 'TimelineSlice'
 } & TimelineFieldsFragment
@@ -2214,6 +2271,10 @@ export type AllSlicesContactUsFragment = {
   __typename?: 'ContactUs'
 } & ContactUsFieldsFragment
 
+export type AllSlicesLocationFragment = {
+  __typename?: 'Location'
+} & LocationFieldsFragment
+
 export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
 
 export type AllSlicesImageFragment = {
@@ -2241,6 +2302,7 @@ export type AllSlicesFragment =
   | AllSlicesTabSectionFragment
   | AllSlicesTeamListFragment
   | AllSlicesContactUsFragment
+  | AllSlicesLocationFragment
   | AllSlicesHtmlFragment
   | AllSlicesImageFragment
   | AllSlicesAssetFragment

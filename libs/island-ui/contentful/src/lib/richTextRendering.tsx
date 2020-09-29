@@ -29,6 +29,7 @@ import slugify from '@sindresorhus/slugify'
 import { SectionWithImage } from './SectionWithImage/SectionWithImage'
 import { TeamList } from './TeamList/TeamList'
 import { ContactUs } from './ContactUs/ContactUs'
+import { Location } from './Location/Location'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
@@ -85,6 +86,9 @@ export const defaultRenderComponent = (
 
     case 'TeamList':
       return <TeamList {...slice} />
+
+    case 'Location':
+      return <Location {...slice} />
 
     case 'ContactUs':
       // NB: ContactUs needs to be connected with submit logic higher up

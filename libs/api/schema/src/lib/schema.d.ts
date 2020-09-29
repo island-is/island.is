@@ -139,6 +139,12 @@ export type TeamMember = {
   image: Image
 }
 
+export type Link = {
+  __typename?: 'Link'
+  text: Scalars['String']
+  url: Scalars['String']
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -200,6 +206,7 @@ export type Slice =
   | TabSection
   | TeamList
   | ContactUs
+  | Location
   | Html
   | Image
   | Asset
@@ -357,6 +364,17 @@ export type ContactUs = {
   errorMessage: Scalars['String']
 }
 
+export type Location = {
+  __typename?: 'Location'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  subTitle: Scalars['String']
+  address: Scalars['String']
+  link?: Maybe<Link>
+  background: Image
+}
+
 export type Asset = {
   __typename?: 'Asset'
   typename: Scalars['String']
@@ -493,12 +511,6 @@ export type Namespace = {
   fields: Scalars['String']
 }
 
-export type Link = {
-  __typename?: 'Link'
-  text: Scalars['String']
-  url: Scalars['String']
-}
-
 export type PageHeader = {
   __typename?: 'PageHeader'
   typename: Scalars['String']
@@ -611,6 +623,7 @@ export type AboutSubPage = {
   description: Scalars['String']
   subDescription: Scalars['String']
   slices: Array<Slice>
+  bottomSlices: Array<Slice>
 }
 
 export type ContactUsPayload = {
@@ -1350,6 +1363,7 @@ export type ResolversTypes = {
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
   TabContent: ResolverTypeWrapper<TabContent>
   TeamMember: ResolverTypeWrapper<TeamMember>
+  Link: ResolverTypeWrapper<Link>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
@@ -1376,6 +1390,7 @@ export type ResolversTypes = {
     | ResolversTypes['TabSection']
     | ResolversTypes['TeamList']
     | ResolversTypes['ContactUs']
+    | ResolversTypes['Location']
     | ResolversTypes['Html']
     | ResolversTypes['Image']
     | ResolversTypes['Asset']
@@ -1403,6 +1418,7 @@ export type ResolversTypes = {
   TabSection: ResolverTypeWrapper<TabSection>
   TeamList: ResolverTypeWrapper<TeamList>
   ContactUs: ResolverTypeWrapper<ContactUs>
+  Location: ResolverTypeWrapper<Location>
   Asset: ResolverTypeWrapper<Asset>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
@@ -1428,7 +1444,6 @@ export type ResolversTypes = {
   Pagination: ResolverTypeWrapper<Pagination>
   PaginatedNews: ResolverTypeWrapper<PaginatedNews>
   Namespace: ResolverTypeWrapper<Namespace>
-  Link: ResolverTypeWrapper<Link>
   PageHeader: ResolverTypeWrapper<PageHeader>
   AboutPage: ResolverTypeWrapper<
     Omit<AboutPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
@@ -1455,7 +1470,10 @@ export type ResolversTypes = {
     | ResolversTypes['News']
     | ResolversTypes['LifeEventPage']
   AboutSubPage: ResolverTypeWrapper<
-    Omit<AboutSubPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
+    Omit<AboutSubPage, 'slices' | 'bottomSlices'> & {
+      slices: Array<ResolversTypes['Slice']>
+      bottomSlices: Array<ResolversTypes['Slice']>
+    }
   >
   ContactUsPayload: ResolverTypeWrapper<ContactUsPayload>
   TagCount: ResolverTypeWrapper<TagCount>
@@ -1549,6 +1567,7 @@ export type ResolversParentTypes = {
   QuestionAndAnswer: QuestionAndAnswer
   TabContent: TabContent
   TeamMember: TeamMember
+  Link: Link
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
@@ -1575,6 +1594,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['TabSection']
     | ResolversParentTypes['TeamList']
     | ResolversParentTypes['ContactUs']
+    | ResolversParentTypes['Location']
     | ResolversParentTypes['Html']
     | ResolversParentTypes['Image']
     | ResolversParentTypes['Asset']
@@ -1600,6 +1620,7 @@ export type ResolversParentTypes = {
   TabSection: TabSection
   TeamList: TeamList
   ContactUs: ContactUs
+  Location: Location
   Asset: Asset
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
@@ -1623,7 +1644,6 @@ export type ResolversParentTypes = {
   Pagination: Pagination
   PaginatedNews: PaginatedNews
   Namespace: Namespace
-  Link: Link
   PageHeader: PageHeader
   AboutPage: Omit<AboutPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
@@ -1647,8 +1667,9 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ArticleCategory']
     | ResolversParentTypes['News']
     | ResolversParentTypes['LifeEventPage']
-  AboutSubPage: Omit<AboutSubPage, 'slices'> & {
+  AboutSubPage: Omit<AboutSubPage, 'slices' | 'bottomSlices'> & {
     slices: Array<ResolversParentTypes['Slice']>
+    bottomSlices: Array<ResolversParentTypes['Slice']>
   }
   ContactUsPayload: ContactUsPayload
   TagCount: TagCount
@@ -1889,6 +1910,15 @@ export type TeamMemberResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LinkResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
+> = {
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleCategoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
@@ -1988,6 +2018,7 @@ export type SliceResolvers<
     | 'TabSection'
     | 'TeamList'
     | 'ContactUs'
+    | 'Location'
     | 'Html'
     | 'Image'
     | 'Asset',
@@ -2230,6 +2261,20 @@ export type ContactUsResolvers<
   submitButtonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   successMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   errorMessage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LocationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Location'] = ResolversParentTypes['Location']
+> = {
+  typename?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType>
+  background?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2511,15 +2556,6 @@ export type NamespaceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type LinkResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
-> = {
-  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type PageHeaderResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['PageHeader'] = ResolversParentTypes['PageHeader']
@@ -2711,6 +2747,11 @@ export type AboutSubPageResolvers<
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   subDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  bottomSlices?: Resolver<
+    Array<ResolversTypes['Slice']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3189,6 +3230,7 @@ export type Resolvers<ContextType = Context> = {
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
   TabContent?: TabContentResolvers<ContextType>
   TeamMember?: TeamMemberResolvers<ContextType>
+  Link?: LinkResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
   ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
@@ -3214,6 +3256,7 @@ export type Resolvers<ContextType = Context> = {
   TabSection?: TabSectionResolvers<ContextType>
   TeamList?: TeamListResolvers<ContextType>
   ContactUs?: ContactUsResolvers<ContextType>
+  Location?: LocationResolvers<ContextType>
   Asset?: AssetResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
@@ -3230,7 +3273,6 @@ export type Resolvers<ContextType = Context> = {
   Pagination?: PaginationResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
-  Link?: LinkResolvers<ContextType>
   PageHeader?: PageHeaderResolvers<ContextType>
   AboutPage?: AboutPageResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
@@ -3332,6 +3374,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'ContactUs',
+          },
+          {
+            name: 'Location',
           },
           {
             name: 'Html',

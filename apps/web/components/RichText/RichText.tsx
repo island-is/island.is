@@ -13,6 +13,7 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'SectionWithImage',
   'TeamList',
   'ContactUs',
+  'Location',
 ]
 
 const renderComponent = (slice: Slice, config: RenderConfig) => {
