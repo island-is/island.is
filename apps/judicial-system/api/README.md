@@ -24,9 +24,12 @@ To skip authentication at innskraning.island.is run:
 where `<national id>` is the national id of a known user.
 
 Similarly, you can enable SMS notifications to an on-call judge by providing a password for the SMS service and
-a judge phone number:
+a judge mobile number:
 
-`NOVA_PASSWORD=<SMS password> JUDGE_PHONE_NUMBER=<judge phone number>`
+`NOVA_PASSWORD=<SMS password> JUDGE_MOBILE_NUMBER=<judge mobile number>`
+
+Finally, you can enable electronic signatures of judge rulings by providing a Dokobit access token:
+`DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
 
 ## Graphql - not yet implemented
 
