@@ -12,7 +12,7 @@ echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $1"
 if [ ! -z "$AFFECTED_PROJECTS" ]
 then
   echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
-  nx run-many --target=$1 --projects="$AFFECTED_PROJECTS" --parallel --maxParallel=$MAX_JOBS
+  yarn run nx run-many --target=$1 --projects="$AFFECTED_PROJECTS" --parallel --maxParallel=$MAX_JOBS
 else
   echo "No affected projects for target $1"
 fi
