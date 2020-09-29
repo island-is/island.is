@@ -235,6 +235,7 @@ export const variants = styleMap({
     },
   },
   text: {
+    display: 'inline',
     backgroundColor: 'transparent',
     color: theme.color.blue400,
     borderRadius: 0,

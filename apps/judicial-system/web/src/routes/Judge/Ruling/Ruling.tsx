@@ -10,20 +10,20 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
-import { FormFooter } from '../../shared-components/FormFooter'
-import { JudgeLogo } from '../../shared-components/Logos'
+import { FormFooter } from '../../../shared-components/FormFooter'
+import { JudgeLogo } from '../../../shared-components/Logos'
 import {
   AppealDecision,
   Case,
   CustodyRestrictions,
   GetCaseByIdResponse,
-} from '../../types'
-import useWorkingCase from '../../utils/hooks/useWorkingCase'
-import * as Constants from '../../utils/constants'
-import { formatDate, parseArray, parseString } from '../../utils/formatters'
+} from '../../../types'
+import useWorkingCase from '../../../utils/hooks/useWorkingCase'
+import * as Constants from '../../../utils/constants'
+import { formatDate, parseArray, parseString } from '../../../utils/formatters'
 import { CaseState } from '@island.is/judicial-system/types'
-import { autoSave, updateState } from '../../utils/stepHelper'
-import * as api from '../../api'
+import { autoSave, updateState } from '../../../utils/stepHelper'
+import * as api from '../../../api'
 
 export const Ruling: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
