@@ -51,7 +51,7 @@ jobs:
            GIT_BASE_BRANCH=$GITHUB_BASE_REF
           else
            # on master
-           GIT_BASE_BRANCH=master
+           GIT_BASE_BRANCH=release/3.3.0
           fi
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
@@ -71,11 +71,6 @@ jobs:
       - name: GitHub envs
         run: env | grep GITHUB
 
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
@@ -90,9 +85,9 @@ jobs:
           # Consider all hashes between HEAD and our merge base ~20 as possibilities
           MERGE_BASE=$(git merge-base origin/master HEAD)
           LAST_GOOD_BUILD=`git log --format=%H $MERGE_BASE~20..HEAD | node .github/actions/dist/index.js`
-          LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
-          LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
-          LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
+          LAST_GOOD_BUILD_SHA=`65feca73739178dfc48f498df10b2eecd1884e57`
+          LAST_GOOD_BUILD_BRANCH=`master`
+          LAST_GOOD_BUILD_RUN_NUMBER=`3559`
           echo "Last successful build is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
           echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
           LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
