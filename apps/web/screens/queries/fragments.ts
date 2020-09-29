@@ -12,6 +12,15 @@ export const slices = gql`
     height
   }
 
+  fragment AssetFields on Asset {
+    __typename
+    typename
+    id
+    title
+    url
+    contentType
+  }
+
   fragment TimelineFields on TimelineSlice {
     __typename
     typename
@@ -57,6 +66,8 @@ export const slices = gql`
         ...ImageFields
       }
       body
+      linkedPage
+      link
     }
   }
 
@@ -221,6 +232,37 @@ export const slices = gql`
     }
   }
 
+  fragment TeamListFields on TeamList {
+    __typename
+    typename
+    id
+    teamMembers {
+      name
+      title
+      image {
+        ...ImageFields
+      }
+    }
+  }
+
+  fragment ContactUsFields on ContactUs {
+    __typename
+    typename
+    id
+    title
+    required
+    invalidPhone
+    invalidEmail
+    labelName
+    labelPhone
+    labelEmail
+    labelSubject
+    labelMessage
+    submitButtonText
+    successMessage
+    errorMessage
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -235,8 +277,11 @@ export const slices = gql`
     ...ProcessEntryFields
     ...HtmlFields
     ...ImageFields
+    ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
     ...TabSectionFields
+    ...TeamListFields
+    ...ContactUsFields
   }
 `

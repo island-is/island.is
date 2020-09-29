@@ -17,8 +17,8 @@ export class LifeEventPage {
   @Field()
   slug: string
 
-  @Field()
-  intro: string
+  @Field({ nullable: true })
+  intro?: string
 
   @Field({ nullable: true })
   image?: Image

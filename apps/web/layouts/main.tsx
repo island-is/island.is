@@ -33,6 +33,7 @@ import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
+import { useNamespace } from '../hooks'
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
@@ -70,6 +71,7 @@ const Layout: NextComponentType<
 }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
+  const n = useNamespace(namespace)
 
   const menuTabs = [
     {
@@ -86,7 +88,7 @@ const Layout: NextComponentType<
     {
       title: t.siteTitle,
       links: topMenuCustomLinks,
-      externalLinksHeading: t.siteTitle,
+      externalLinksHeading: t.siteExternalTitle,
       externalLinks: footerLowerMenu,
     },
   ]
@@ -117,11 +119,18 @@ const Layout: NextComponentType<
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
+          <meta property="og:title" content={n('title')} />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://island.is/" />
+          <meta property="og:image" content="/is-fb-1200x630.png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
           <meta
             name="description"
-            content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
+            property="og:description"
+            content={n('description')}
           />
-          <title>Ísland.is</title>
+          <title>{n('title')}</title>
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
@@ -160,9 +169,14 @@ const Layout: NextComponentType<
             topLinks={footerUpperMenu}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
+            bottomLinksTitle={t.siteExternalTitle}
             tagLinks={footerTagsMenu}
             middleLinksTitle={String(namespace.footerMiddleLabel)}
             tagLinksTitle={String(namespace.footerRightLabel)}
+            languageSwitchLink={{
+              title: activeLocale === 'en' ? 'Íslenska' : 'English',
+              href: activeLocale === 'en' ? '/' : '/en',
+            }}
             showMiddleLinks
             showTagLinks
           />

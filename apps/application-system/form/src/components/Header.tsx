@@ -3,7 +3,7 @@ import { Header as UIHeader } from '@island.is/island-ui/core'
 import { useAuthState } from '../context/AuthProvider'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const Header: FC<{}> = () => {
+const Header: FC = () => {
   const [{ isAuthenticated, userInfo }] = useAuthState()
   const { lang } = useLocale()
   const { changeLanguage } = useNamespaces()

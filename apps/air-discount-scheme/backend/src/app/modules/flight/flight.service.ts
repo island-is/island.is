@@ -21,7 +21,7 @@ export const ADS_POSTAL_CODES = {
   Vestmannaeyjar: 900,
 }
 const DEFAULT_AVAILABLE_LEGS = 6
-const AVAILABLE_FLIGHT_LEGS = {
+const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,
 }
@@ -61,7 +61,7 @@ export class FlightService {
   private getCooperatingAirline(
     flightLeg: CreateFlightLegBody,
     airline: ValueOf<typeof Airlines>,
-  ): ValueOf<typeof Airlines> {
+  ): ValueOf<typeof Airlines> | null {
     if (flightLeg.cooperation) {
       return flightLeg.cooperation
     }
@@ -201,7 +201,7 @@ export class FlightService {
   async findOne(
     flightId: string,
     airline: ValueOf<typeof Airlines>,
-  ): Promise<Flight> {
+  ): Promise<Flight | null> {
     return this.flightModel.findOne({
       where: {
         id: flightId,

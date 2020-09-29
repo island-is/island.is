@@ -1,4 +1,4 @@
-import { ApplicationTemplate } from '../ApplicationTemplate'
+import { ApplicationTemplate } from '../../types/ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
@@ -6,7 +6,6 @@ import {
   ApplicationStateSchema,
 } from '../../types/StateMachine'
 import * as z from 'zod'
-import { ParentalLeaveForm } from './ParentalLeaveForm'
 
 type Events =
   | { type: 'APPROVE' }
@@ -14,7 +13,7 @@ type Events =
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
 
-export const ParentalLeave: ApplicationTemplate<
+const ParentalLeave: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -22,7 +21,7 @@ export const ParentalLeave: ApplicationTemplate<
   type: ApplicationTypes.PARENTAL_LEAVE,
   dataProviders: [],
   dataSchema: z.object({
-    approveExternalData: z.boolean().refine((v) => v === true),
+    approveExternalData: z.boolean().refine((v) => v),
     usage: z
       .number()
       .min(0)
@@ -48,7 +47,10 @@ export const ParentalLeave: ApplicationTemplate<
           roles: [
             {
               id: 'applicant',
-              form: ParentalLeaveForm,
+              formLoader: () =>
+                import('./ParentalLeaveForm').then((val) =>
+                  Promise.resolve(val.ParentalLeaveForm),
+                ),
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
               write: {
                 answers: ['usage', 'spread', 'periods'],
@@ -109,7 +111,9 @@ export const ParentalLeave: ApplicationTemplate<
       },
     },
   },
-  mapNationalRegistryIdToRole(): ApplicationRole {
+  mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
 }
+
+export default ParentalLeave

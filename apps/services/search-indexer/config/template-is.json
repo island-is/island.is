@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 9,
+  "version": 10,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -40,6 +40,17 @@
             "icelandicSynonym",
             "icelandicStop",
             "icelandicKeyword",
+            "icelandicStemmer"
+          ]
+        },
+        "compoundIcelandic": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "icelandicSynonym",
+            "icelandicStop",
+            "icelandicKeyword",
             "icelandicDeCompounded",
             "icelandicStemmer"
           ]
@@ -47,7 +58,7 @@
         "termIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": ["lowercase", "icelandicSynonym"]
+          "filter": ["lowercase", "icelandicSynonym", "icelandicStop"]
         }
       }
     }
@@ -66,6 +77,10 @@
           "stemmed": {
             "type": "text",
             "analyzer": "baseIcelandic"
+          },
+          "compound": {
+            "type": "text",
+            "analyzer": "compoundIcelandic"
           }
         }
       },

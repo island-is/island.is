@@ -1,0 +1,27 @@
+name: Lint codeowners
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  codeowners-check:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: |
+          MERGE_BASE=$(git merge-base origin/master HEAD)
+          CODEOWNERS_FILE=".github/CODEOWNERS"
+          if git diff --quiet $MERGE_BASE $CODEOWNERS_FILE; then
+            # We only want to run this when changes are made to CODEOWNERS
+            echo "::set-env name=SUCCESS::true"
+          fi
+      - uses: mszostok/codeowners-validator@v0.4.0
+        if: env.SUCCESS != 'true'
+        with:
+          checks: 'files,owners,duppatterns'
+          experimental_checks: 'notowned'
+          github_access_token: '${{ secrets.OWNERS_VALIDATOR_GITHUB_SECRET }}'

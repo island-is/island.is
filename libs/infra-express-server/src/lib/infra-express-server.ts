@@ -1,7 +1,7 @@
 // This needs to be the first import in the app to hook into the modules system correctly
 import { initTracing } from '@island.is/infra-tracing'
 
-import express, { Router } from 'express'
+import express, { Router, Request, Response, NextFunction } from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
 import { metricsApp } from './metrics-publisher'
 import { logger } from '@island.is/logging'
@@ -68,7 +68,12 @@ export const runServer = ({
   // secured
   app.use('/', routes)
 
-  app.use(function errorHandler(err, req, res, next) {
+  app.use(function errorHandler(
+    err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
+    req: Request,
+    res: Response,
+    next: NextFunction, // eslint-disable-line
+  ) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
     res.status(err.status || 500)
     res.send(err.message)

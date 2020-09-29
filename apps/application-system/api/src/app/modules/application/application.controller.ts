@@ -28,6 +28,7 @@ import {
   FormValue,
   getApplicationTemplateByTypeId,
   ApplicationTemplateHelper,
+  ExternalData,
 } from '@island.is/application/template'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -87,14 +88,8 @@ export class ApplicationController {
     application: CreateApplicationDto,
   ): Promise<Application> {
     // TODO not post the state, it should follow the initialstate of the machine
-    validateApplicationSchema(
-      {
-        ...application,
-        externalData: {},
-        id: undefined,
-        modified: new Date(),
-        created: new Date(),
-      } as BaseApplication,
+    await validateApplicationSchema(
+      application,
       application.answers as FormValue,
     )
 
@@ -117,13 +112,13 @@ export class ApplicationController {
     @Body()
     application: UpdateApplicationDto,
   ): Promise<Application> {
-    validateApplicationSchema(
+    await validateApplicationSchema(
       existingApplication as BaseApplication,
       application.answers as FormValue,
     )
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
-      application.answers,
+      application.answers as FormValue,
     )
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
@@ -161,6 +156,7 @@ export class ApplicationController {
       updatedApplication,
     } = await this.applicationService.updateExternalData(
       existingApplication.id,
+      existingApplication.externalData as ExternalData,
       buildExternalData(externalDataDto, results),
     )
     if (!updatedApplication) {
@@ -187,9 +183,10 @@ export class ApplicationController {
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
   ): Promise<Application> {
-    const template = getApplicationTemplateByTypeId(
+    const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
     )
+    // TODO
     if (template === null) {
       throw new BadRequestException(
         `No application template exists for type: ${existingApplication.typeId}`,

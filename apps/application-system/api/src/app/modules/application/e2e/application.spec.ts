@@ -8,7 +8,7 @@ beforeAll(async () => {
   app = await setup()
 })
 
-describe('Application', () => {
+describe('Application system API', () => {
   it(`POST /application should register application`, async () => {
     // Act
     const response = await request(app.getHttpServer())

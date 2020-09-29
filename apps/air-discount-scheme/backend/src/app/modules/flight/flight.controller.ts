@@ -36,6 +36,7 @@ import {
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
+import { HttpRequest } from '../../app.types'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -53,7 +54,7 @@ export class PublicFlightController {
   async create(
     @Param() params: CreateFlightParams,
     @Body() flight: CreateFlightBody,
-    @Req() request,
+    @Req() request: HttpRequest,
   ): Promise<FlightViewModel> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
@@ -99,7 +100,7 @@ export class PublicFlightController {
   @ApiOkResponse({ type: FlightViewModel })
   async getFlightById(
     @Param() params: GetFlightParams,
-    @Req() request,
+    @Req() request: HttpRequest,
   ): Promise<FlightViewModel> {
     const flight = await this.flightService.findOne(
       params.flightId,
@@ -116,7 +117,7 @@ export class PublicFlightController {
   @ApiNoContentResponse()
   async delete(
     @Param() params: DeleteFlightParams,
-    @Req() request,
+    @Req() request: HttpRequest,
   ): Promise<void> {
     const flight = await this.flightService.findOne(
       params.flightId,
@@ -134,7 +135,7 @@ export class PublicFlightController {
   @ApiNoContentResponse()
   async deleteFlightLeg(
     @Param() params: DeleteFlightLegParams,
-    @Req() request,
+    @Req() request: HttpRequest,
   ): Promise<void> {
     const flight = await this.flightService.findOne(
       params.flightId,

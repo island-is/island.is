@@ -10,6 +10,7 @@ export const tabSectionImg = responsiveStyleMap({
   maxWidth: {
     md: '382px',
   },
+  maxHeight: '400px',
   width: '100%',
   float: 'right',
   marginLeft: {

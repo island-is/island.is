@@ -5,8 +5,9 @@ const containerPaddingRight = 7
 const containerPaddingBottom = 13
 const containerPaddingLeft = 7
 const containerPadding = `${containerPaddingTop}px ${containerPaddingRight}px ${containerPaddingBottom}px ${containerPaddingLeft}px`
-const inputPadding = '0 16px'
+const inputPadding = `0 ${theme.spacing[2]}px`
 const inputLabelFontSize = 14
+const inputFontSize = 24
 const inputBorderRadius = 5
 
 export const label = {
@@ -41,12 +42,24 @@ export const input = {
   caretColor: theme.color.blue400,
   fontFamily: theme.typography.fontFamily,
   fontWeight: theme.typography.medium,
-  fontSize: theme.typography.baseFontSize,
+  fontSize: inputFontSize,
+  lineHeight: 1.4666,
   padding: inputPadding,
   border: 'none',
   width: '100%',
   background: 'none',
   boxShadow: 'none',
+  appearance: 'none' as const,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      fontSize: 20,
+      lineHeight: 1.3,
+    },
+    md: {
+      fontSize: inputFontSize,
+      lineHeight: 1.4666,
+    },
+  }),
 }
 
 export const inputPlaceholder = {

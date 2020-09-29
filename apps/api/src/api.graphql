@@ -53,6 +53,8 @@ type Story {
   readMoreText: String!
   date: String!
   intro: String!
+  link: String!
+  linkedPage: String
   body: String
 }
 
@@ -99,6 +101,12 @@ type TabContent {
   body: Html
 }
 
+type TeamMember {
+  name: String!
+  title: String!
+  image: Image!
+}
+
 type ArticleCategory {
   title: String!
   slug: String!
@@ -137,7 +145,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | Html | Image
+union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | ContactUs | Html | Image | Asset
 
 type MailingListSignupSlice {
   typename: String!
@@ -250,6 +258,37 @@ type TabSection {
   id: ID!
   title: String!
   tabs: [TabContent!]!
+}
+
+type TeamList {
+  typename: String!
+  id: ID!
+  teamMembers: [TeamMember!]!
+}
+
+type ContactUs {
+  typename: String!
+  id: ID!
+  title: String!
+  required: String!
+  invalidPhone: String!
+  invalidEmail: String!
+  labelName: String!
+  labelPhone: String!
+  labelEmail: String!
+  labelSubject: String!
+  labelMessage: String!
+  submitButtonText: String!
+  successMessage: String!
+  errorMessage: String!
+}
+
+type Asset {
+  typename: String!
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
 }
 
 type Article {
@@ -437,7 +476,7 @@ type LifeEventPage {
   id: ID!
   title: String!
   slug: String!
-  intro: String!
+  intro: String
   image: Image
   thumbnail: Image
   content: [Slice!]!
@@ -469,6 +508,10 @@ type AboutSubPage {
   description: String!
   subDescription: String!
   slices: [Slice!]!
+}
+
+type ContactUsPayload {
+  success: Boolean!
 }
 
 type TagCount {
@@ -817,6 +860,7 @@ input GetTranslationsInput {
 }
 
 type Mutation {
+  contactUs(input: ContactUsInput!): ContactUsPayload!
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
   updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
@@ -824,6 +868,14 @@ type Mutation {
   deleteAttachment(input: DeleteAttachmentInput!): Application
   submitApplication(input: SubmitApplicationInput!): Application
   createUploadUrl(filename: String!): PresignedPost!
+}
+
+input ContactUsInput {
+  name: String!
+  phone: String!
+  email: String!
+  subject: String!
+  message: String!
 }
 
 input CreateApplicationInput {

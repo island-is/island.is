@@ -195,7 +195,10 @@ const SubArticleNavigation: FC<{
               href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
             >
-              {maybeBold(article.title, !selectedSubArticle)}
+              {maybeBold(
+                article.shortTitle || article.title,
+                !selectedSubArticle,
+              )}
             </Link>
           </Typography>
         </div>
@@ -255,7 +258,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   const [bullet, setBullet] = useState<HTMLElement>(null)
 
   const navigation = useMemo(() => {
-    return createNavigation(article.body, { title: article.title })
+    return createNavigation(article.body, {
+      title: article.shortTitle || article.title,
+    })
   }, [article])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
@@ -358,6 +363,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const processEntry =
     processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
+  const { buttonText, processLink } = processEntry
 
   return (
     <>
@@ -454,7 +460,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       href={processEntry.processLink}
                       withUnderline
                     >
-                      <span>{processEntry.processTitle}</span>
+                      <span>{buttonText || n('processLinkButtonText')}</span>
                       <Box component="span" marginLeft={2}>
                         <Icon type="external" width="15" />
                       </Box>

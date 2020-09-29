@@ -36,6 +36,8 @@ import {
 import { NewsCard } from '../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 
+const PERPAGE = 10
+
 interface NewsListProps {
   newsList: GetNewsListQuery['getNewsList']['news']
   page: GetNewsListQuery['getNewsList']['page']
@@ -271,14 +273,13 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          perPage: 10,
+          perPage: PERPAGE,
           page: selectedPage,
           year,
           month,
         },
       },
     }),
-    // TODO: these queries really should be in a library
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,

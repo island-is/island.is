@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/common'
-import { CacheManager } from 'cache-manager'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
 
@@ -51,10 +50,10 @@ describe('DiscountService', () => {
       const ttl = 86400
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => ({ discountCode }))
+        .mockImplementation(() => Promise.resolve({ discountCode }))
       const cacheManagerTtlSpy = jest
         .spyOn(cacheManager, 'ttl')
-        .mockImplementation(() => ttl)
+        .mockImplementation(() => Promise.resolve(ttl))
 
       const result = await discountService.getDiscountByNationalId(nationalId)
 
@@ -71,7 +70,7 @@ describe('DiscountService', () => {
       const nationalId = '1234567890'
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => null)
+        .mockImplementation(() => Promise.resolve(null))
 
       const result = await discountService.getDiscountByNationalId(nationalId)
 
@@ -87,10 +86,10 @@ describe('DiscountService', () => {
       const ttl = 86400
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => ({ nationalId }))
+        .mockImplementation(() => Promise.resolve({ nationalId }))
       const cacheManagerTtlSpy = jest
         .spyOn(cacheManager, 'ttl')
-        .mockImplementation(() => ttl)
+        .mockImplementation(() => Promise.resolve(ttl))
 
       const result = await discountService.getDiscountByDiscountCode(
         discountCode,
@@ -109,7 +108,7 @@ describe('DiscountService', () => {
       const nationalId = '1234567890'
       const cacheManagerSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => null)
+        .mockImplementation(() => Promise.resolve(null))
 
       const result = await discountService.getDiscountByDiscountCode(nationalId)
 

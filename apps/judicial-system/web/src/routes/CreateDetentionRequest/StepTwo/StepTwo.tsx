@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
+import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   Typography,
   GridContainer,
@@ -11,26 +11,20 @@ import {
   Input,
   Checkbox,
 } from '@island.is/island-ui/core'
+import { CaseState } from '@island.is/judicial-system/types'
 import {
   CustodyProvisions,
   CustodyRestrictions,
   Case,
-  CaseState,
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  setHours,
-  setMinutes,
-  isValid,
-  parseISO,
-  format,
-  getTime,
-} from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
 import {
+  formatDate,
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -46,16 +40,16 @@ export const StepTwo: React.FC = () => {
     modified: new Date(),
     state: caseDraftJSON.state ?? '',
     policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-    suspectNationalId: caseDraftJSON.suspectNationalId ?? '',
-    suspectName: caseDraftJSON.suspectName ?? '',
-    suspectAddress: caseDraftJSON.suspectAddress ?? '',
+    accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
+    accusedName: caseDraftJSON.accusedName ?? '',
+    accusedAddress: caseDraftJSON.accusedAddress ?? '',
     court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
     arrestDate: caseDraftJSON.arrestDate ?? null,
     requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
     requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
     lawsBroken: caseDraftJSON.lawsBroken ?? '',
     custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-    custodyRestrictions: caseDraftJSON.restrictions ?? [],
+    requestedCustodyRestrictions: caseDraftJSON.restrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
     witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
     investigationProgress: caseDraftJSON.investigationProgress ?? '',
@@ -93,20 +87,24 @@ export const StepTwo: React.FC = () => {
     caseDraftJSON.custodyProvisions.indexOf(CustodyProvisions._99_1_B) > -1,
   )
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(CustodyRestrictions.ISOLATION) >
-      -1,
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
+      CustodyRestrictions.ISOLATION,
+    ) > -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(CustodyRestrictions.VISITAION) >
-      -1,
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
+      CustodyRestrictions.VISITAION,
+    ) > -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
       CustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    caseDraftJSON.custodyRestrictions.indexOf(CustodyRestrictions.MEDIA) > -1,
+    caseDraftJSON.requestedCustodyRestrictions.indexOf(
+      CustodyRestrictions.MEDIA,
+    ) > -1,
   )
 
   const caseCustodyProvisions = [
@@ -205,7 +203,7 @@ export const StepTwo: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <Logo />
+            <ProsecutorLogo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1" variant="h1">
@@ -227,7 +225,7 @@ export const StepTwo: React.FC = () => {
               <GridRow>
                 <GridColumn span="5/8">
                   <DatePicker
-                    label="Veldu dagsetningu"
+                    label="Gæsluvarðhald til"
                     placeholderText="Veldu dagsetningu"
                     selected={
                       caseDraftJSON.requestedCustodyEndDate
@@ -265,14 +263,10 @@ export const StepTwo: React.FC = () => {
                     name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
-                    defaultValue={
-                      caseDraftJSON.requestedCustodyEndDate
-                        ? format(
-                            getTime(parseISO(caseDraftJSON.arrestDate)),
-                            'hh:mm',
-                          )
-                        : null
-                    }
+                    defaultValue={formatDate(
+                      caseDraftJSON.requestedCustodyEndDate,
+                      Constants.TIME_FORMAT,
+                    )}
                     disabled={!workingCase.requestedCustodyEndDate}
                     errorMessage={requestedCustodyEndTimeErrorMessage}
                     hasError={requestedCustodyEndTimeErrorMessage !== ''}
@@ -296,7 +290,7 @@ export const StepTwo: React.FC = () => {
                         )
 
                         const requestedCustodyEndDateHours = setHours(
-                          workingCase.requestedCustodyEndDate,
+                          new Date(workingCase.requestedCustodyEndDate),
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 
@@ -454,14 +448,14 @@ export const StepTwo: React.FC = () => {
 
                             // If the user is checking the box, add the restriction to the state
                             if (target.checked) {
-                              copyOfState.custodyRestrictions.push(
+                              copyOfState.requestedCustodyRestrictions.push(
                                 target.value as CustodyRestrictions,
                               )
                             }
                             // If the user is unchecking the box, remove the restriction from the state
                             else {
                               const restrictions =
-                                copyOfState.custodyRestrictions
+                                copyOfState.requestedCustodyRestrictions
                               restrictions.splice(
                                 restrictions.indexOf(
                                   target.value as CustodyRestrictions,
@@ -477,15 +471,15 @@ export const StepTwo: React.FC = () => {
                             api.saveCase(
                               workingCase.id,
                               parseArray(
-                                'custodyRestrictions',
-                                copyOfState.custodyRestrictions,
+                                'requestedCustodyRestrictions',
+                                copyOfState.requestedCustodyRestrictions,
                               ),
                             )
 
                             updateState(
                               workingCase,
                               'restrictions',
-                              copyOfState.custodyRestrictions,
+                              copyOfState.requestedCustodyRestrictions,
                               setWorkingCase,
                             )
                           }}
@@ -599,7 +593,7 @@ export const StepTwo: React.FC = () => {
               nextUrl={Constants.STEP_THREE_ROUTE}
               nextIsDisabled={
                 workingCase.lawsBroken === '' &&
-                workingCase.custodyRestrictions.length === 0
+                workingCase.requestedCustodyRestrictions.length === 0
               }
             />
           </GridColumn>

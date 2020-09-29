@@ -78,10 +78,10 @@ export const Input = forwardRef(
     const {
       name,
       label,
-      hasError = false,
+      errorMessage = '',
+      hasError = Boolean(errorMessage),
       value,
       defaultValue,
-      errorMessage = '',
       id = name,
       disabled,
       required,
@@ -139,9 +139,13 @@ export const Input = forwardRef(
             )}
           </label>
           <InputComponent
-            className={cn(styles.input, {
-              [styles.textarea]: textarea,
-            })}
+            className={cn(
+              styles.input,
+              styles.inputBackground[backgroundColor],
+              {
+                [styles.textarea]: textarea,
+              },
+            )}
             id={id}
             disabled={disabled}
             name={name}

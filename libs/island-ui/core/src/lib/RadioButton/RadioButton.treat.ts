@@ -14,6 +14,12 @@ export const container = style({
   paddingLeft: radioButtonSize + radioButtonMargin,
 })
 
+export const large = style({
+  borderRadius: theme.border.radius.large,
+  border: `1px solid ${theme.color.blue200}`,
+  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+})
+
 export const checkMarkWidth = 17
 export const input = style({
   position: 'absolute',
@@ -24,6 +30,7 @@ export const input = style({
   width: radioButtonSize,
 })
 export const label = style({
+  display: 'flex',
   fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.light,
 })
@@ -39,12 +46,10 @@ export const radioButton = style({
   width: radioButtonSize,
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: '50%',
-  position: 'absolute',
-  left: 0,
-  top: 0,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  marginRight: theme.spacing[2],
   backgroundColor: theme.color.white,
   transition: 'border-color .1s, shadow .1s, background-color .1s',
   selectors: {
@@ -80,3 +85,13 @@ export const radioButtonLabelDisabled = style({
 
 export const radioButtonError = style(inputErrorState)
 export const errorMessage = style(inputErrorMessage)
+
+export const tooltipContainer = style({
+  display: 'inline-block',
+  marginLeft: theme.spacing[2],
+})
+
+export const tooltipLargeContainer = style({
+  marginLeft: 'auto',
+  paddingLeft: theme.spacing[2],
+})

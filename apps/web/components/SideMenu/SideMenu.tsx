@@ -6,7 +6,6 @@ import React, {
   useCallback,
   useContext,
 } from 'react'
-import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
 import { useKey, useWindowSize } from 'react-use'
@@ -26,9 +25,9 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'
-import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
+import * as styles from './SideMenu.treat'
 
 interface TabLink {
   title: string
@@ -77,10 +76,6 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true)
 
-    if (tabRefs.current) {
-      tabRefs.current[0] && tabRefs.current[0].focus()
-    }
-
     return () => {
       document.removeEventListener('click', handleClickOutside, true)
     }
@@ -90,13 +85,20 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
     <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
       <FocusLock>
         <Box
-          className={cn(styles.root, { [styles.isVisible]: isVisible })}
+          className={cn(styles.root, {
+            [styles.isVisible]: isVisible,
+          })}
           background="white"
           borderRadius="large"
           height="full"
         >
-          <Box display="flex" paddingBottom={3} justifyContent="spaceBetween">
-            <Logo iconOnly id="sideMenuLogo" />
+          <Box
+            display="flex"
+            alignItems="center"
+            paddingBottom={3}
+            justifyContent="spaceBetween"
+          >
+            <Logo width={isMobile ? 30 : 40} iconOnly id="sideMenuLogo" />
             <Box display="flex" alignItems="center">
               <FocusableBox
                 component="button"
@@ -121,7 +123,11 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                 </GridColumn>
               </GridRow>
               <GridRow>
-                <GridColumn span="8/12" paddingTop={3} paddingBottom={3}>
+                <GridColumn
+                  span="8/12"
+                  paddingTop={[2, 2, 3]}
+                  paddingBottom={[2, 2, 3]}
+                >
                   <Button
                     href="https://minarsidur.island.is/"
                     variant="menu"
@@ -131,7 +137,11 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                     {t.login}
                   </Button>
                 </GridColumn>
-                <GridColumn span="4/12" paddingTop={3} paddingBottom={3}>
+                <GridColumn
+                  span="4/12"
+                  paddingTop={[2, 2, 3]}
+                  paddingBottom={[2, 2, 3]}
+                >
                   <LanguageToggler />
                 </GridColumn>
               </GridRow>

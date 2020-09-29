@@ -1,5 +1,5 @@
-import * as templates from './templates/'
 import { ApplicationTypes } from './types/ApplicationTypes'
+import { ApplicationTemplate } from './types/ApplicationTemplate'
 import { Application } from './types/Application'
 import {
   ApplicationContext,
@@ -7,28 +7,41 @@ import {
   ApplicationStateSchema,
 } from './types/StateMachine'
 import { EventObject } from 'xstate'
-import {
-  ApplicationTemplate,
-  ApplicationTemplateHelper,
-} from './templates/ApplicationTemplate'
+import { ApplicationTemplateHelper } from './templates/ApplicationTemplateHelper'
 
-export function getApplicationTemplateByTypeId<
+const loadedTemplates: Record<string, unknown> = {}
+
+export async function getApplicationTemplateByTypeId<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject
 >(
   templateId: ApplicationTypes,
-): ApplicationTemplate<TContext, TStateSchema, TEvents> | null {
-  return templates[templateId] || null
+): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
+  const loadedTemplate = loadedTemplates[templateId]
+  if (loadedTemplate !== undefined) {
+    return loadedTemplate as ApplicationTemplate<
+      TContext,
+      TStateSchema,
+      TEvents
+    >
+  }
+  try {
+    const template = (await import(`./templates/${templateId}`)).default
+    loadedTemplates[templateId] = template
+    return template
+  } catch (e) {
+    return Promise.reject(`No template found with id ${templateId}`)
+  }
 }
 
-export function getApplicationStateInformation(
+export async function getApplicationStateInformation(
   application: Application,
-): ApplicationStateMeta | null {
-  const template = getApplicationTemplateByTypeId(application.typeId)
+): Promise<ApplicationStateMeta | null> {
+  const template = await getApplicationTemplateByTypeId(application.typeId)
   if (!template) {
     return null
   }
   const helper = new ApplicationTemplateHelper(application, template)
-  return helper.getApplicationStateInformation()
+  return helper.getApplicationStateInformation() || null
 }

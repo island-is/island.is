@@ -11,7 +11,7 @@ export enum DataProviderTypes {
 }
 
 export abstract class DataProvider {
-  readonly type: DataProviderTypes
+  readonly type!: DataProviderTypes
 
   /**
    * Use this method to fetch data from external APIs

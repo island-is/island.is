@@ -69,6 +69,7 @@ const ArticleFields = [
   'sys',
   'fields.slug',
   'fields.title',
+  'fields.shortTitle',
   'fields.content',
   'fields.subgroup',
   'fields.group',
@@ -119,7 +120,9 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizations'))
 
     return {
-      items: result.items.map(mapOrganization),
+      items: result.items
+        .map(mapOrganization)
+        .filter((organization) => organization.title && organization.slug),
     }
   }
 
@@ -285,11 +288,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.INewsFields>(lang, params)
       .catch(errorHandler('getNewsList'))
 
-    const mappedNews = result.items.map(mapNews)
-
     return {
-      page: makePage(page, perPage, mappedNews.length),
-      news: mappedNews.filter((news) => news.title && news.slug), // we consider news "empty" that dont pass this check
+      page: makePage(page, perPage, result.total),
+      news: result.items.map(mapNews).filter((news) => news.title && news.slug), // we consider news "empty" that dont pass this check
     }
   }
 

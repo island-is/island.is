@@ -25,7 +25,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
         answers?: string[]
         externalData?: string[]
       }
-  form?: Form
+  formLoader?: () => Promise<Form>
   actions?: CallToAction<T>[]
 }
 
@@ -47,7 +47,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
   extends StateSchema {
   meta: ApplicationStateMeta<T>
-  states?: {
+  states: {
     [key: string]: ApplicationStateSchema<T>
   }
 }

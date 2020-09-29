@@ -52,8 +52,8 @@ export function makeServer({ environment = 'development' } = {}) {
           {
             id: 'ABC-123',
             policeCaseNumber: 'XYZ-456',
-            suspectName: 'John Doe',
-            suspectNationalId: '123456789',
+            accusedName: 'John Doe',
+            accusedNationalId: '123456789',
             created: '2020-07-27T00:00:00.000',
             modified: '2020-07-27T00:00:00.000',
             state: 'Drög',
@@ -61,8 +61,8 @@ export function makeServer({ environment = 'development' } = {}) {
           {
             id: 'ABC-453',
             policeCaseNumber: 'SDF-456',
-            suspectName: 'Mary Doe',
-            suspectNationalId: '123456789',
+            accusedName: 'Mary Doe',
+            accusedNationalId: '123456789',
             created: '2020-07-27T00:00:00.000',
             modified: '2020-07-27T00:00:00.000',
             state: 'Gæsluvarðhald virkt',
@@ -70,8 +70,8 @@ export function makeServer({ environment = 'development' } = {}) {
           {
             id: 'ABC-987',
             policeCaseNumber: 'KFD-486',
-            suspectName: 'Alan Smith',
-            suspectNationalId: '123456789',
+            accusedName: 'Alan Smith',
+            accusedNationalId: '123456789',
             created: '2020-07-27T00:00:00.000',
             modified: '2020-07-27T00:00:00.000',
             state: 'Krafa staðfest',

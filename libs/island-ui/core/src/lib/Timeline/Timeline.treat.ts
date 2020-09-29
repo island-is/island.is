@@ -4,6 +4,14 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 export const container = style({
   position: 'relative',
   display: 'flex',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      // Escape grid
+      marginLeft: -theme.grid.gutter.mobile * 2,
+      marginRight: -theme.grid.gutter.mobile * 2,
+    },
+  },
 })
 
 export const innerContainer = style({
@@ -13,7 +21,6 @@ export const innerContainer = style({
   height: 'auto',
   flexDirection: 'row',
   transition: `transform 300ms ease`,
-  // border: '5px solid lime',
   ':before': {
     content: '""',
     position: 'absolute',
@@ -30,7 +37,6 @@ export const innerContainer = style({
   ...themeUtils.responsiveStyle({
     lg: {
       minWidth: '100%',
-      // padding: '40px 0',
       flexDirection: 'column',
       ':before': {
         background: `linear-gradient(359.09deg, #0161FD 15.89%, #3F46D2 33.21%, #812EA4 51.23%, #C21578 69.24%, #FD0050 85.18%)`,

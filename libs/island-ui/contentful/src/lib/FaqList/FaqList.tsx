@@ -14,7 +14,7 @@ export interface FaqListProps {
   questions: {
     id: string
     question: string
-    answer: Html
+    answer?: Html
   }[]
 }
 

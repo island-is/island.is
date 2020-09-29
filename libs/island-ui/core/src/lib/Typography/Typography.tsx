@@ -1,6 +1,5 @@
 import React from 'react'
 import cn from 'classnames'
-import { resolveResponsiveProp } from '../../utils/responsiveProp'
 
 import styles, {
   VariantTypes,
