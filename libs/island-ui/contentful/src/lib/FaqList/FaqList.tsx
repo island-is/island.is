@@ -7,14 +7,13 @@ import {
   AccordionItem,
 } from '@island.is/island-ui/core'
 import { renderHtml } from '../richTextRendering'
-import { Document } from '@contentful/rich-text-types'
 
 export interface FaqListProps {
   title: string
   questions: {
     id: string
     question: string
-    answer?: { document: Document }
+    answer?: { document: any }
   }[]
 }
 

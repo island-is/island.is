@@ -3,7 +3,6 @@ import { Typography, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
 import StaticHtml from '../StaticHtml/StaticHtml'
 import { renderHtml } from '../richTextRendering'
-import { Document } from '@contentful/rich-text-types'
 import * as styles from './SectionWithImage.treat'
 
 export interface SectionWithImageProps {
@@ -11,7 +10,7 @@ export interface SectionWithImageProps {
   image?: {
     url: string
   }
-  html?: { document: Document }
+  html?: { document: any }
 }
 
 export const SectionWithImage: FC<SectionWithImageProps> = ({
