@@ -71,6 +71,7 @@
     "@sentry/react": "^5.22.3",
     "@sentry/tracing": "^5.22.3",
     "@sindresorhus/slugify": "1.0.0",
+    "@types/cross-spawn": "^6.0.2",
     "@types/form-data": "^2.5.0",
     "@types/pug": "^2.0.4",
     "@types/puppeteer": "^3.0.2",
@@ -103,6 +104,7 @@
     "contentful": "7.14.6",
     "contentful-management": "6.0.5",
     "cookie-parser": "1.4.5",
+    "cross-spawn": "^7.0.3",
     "crypto-js": "4.0.0",
     "csv-stringify": "5.5.1",
     "curry": "1.2.0",
@@ -265,6 +267,7 @@
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
+    "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.21.2",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.20.0",
@@ -281,8 +284,7 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "sequelize-cli": "5.5.1",
     "ts-jest": "26.1.4",
-    "typescript": "3.9.7",
-    "eslint-plugin-cypress": "^2.10.3"
+    "typescript": "3.9.7"
   },
   "resolutions": {
     "webpack": "4.44.1",
