@@ -260,7 +260,7 @@ export const arrowButton = style({
   }),
   ':disabled': {
     cursor: 'default',
-    backgroundColor: theme.color.dark100,
+    backgroundColor: theme.color.dark200,
   },
 })
 
