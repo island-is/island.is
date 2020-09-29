@@ -11,7 +11,6 @@ import {
   Req,
   ForbiddenException,
   Query,
-  Res,
   ConflictException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
