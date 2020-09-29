@@ -11,6 +11,9 @@ export { InputSearch } from './InputSearch'
 export { ServiceCardMessage } from './ServiceCardMessage'
 export type { ServiceCardMessageTypes, ServiceBorderStyleTypes } from './ServiceCardMessage'
 
+export { SideMenu } from './SideMenu';
+export type { SideMenuLink, SideMenuProps } from './SideMenu';
+
 export { 
     getService, 
     getServices, 

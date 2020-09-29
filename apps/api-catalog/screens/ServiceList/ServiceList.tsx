@@ -1,4 +1,5 @@
-import React, { useState, useEffect, ReactNode, useLayoutEffect } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
   Button,
@@ -26,6 +27,7 @@ import {
 
 import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
+
 
 interface PropTypes {
   top?: ReactNode
@@ -135,28 +137,6 @@ export default function ServiceList(props: ServiceListProps) {
     return str;
   }
 
-  const isMobile = (width: number) => {
-    return width < 771;
-  }
-
-  function useWindowEvents() {
-    const [size, setSize] = useState([0, 0, 0]);
-    useLayoutEffect(() => {
-      function updateValues() {
-        setSize([window.innerWidth, window.innerHeight/*, Math.round(window.scrollY)*/]);
-      }
-
-      window.addEventListener('resize', updateValues);
-      //window.addEventListener('scroll', updateValues);
-      updateValues();
-      return () => {
-        window.removeEventListener('resize', updateValues);
-        //window.removeEventListener('scroll', updateValues);
-      }
-    }, []);
-    return size;
-  }
-
   const onSearchChange = function (inputValue: string) {
     props.parameters.text = inputValue;
     setSearchValue(inputValue);
@@ -177,9 +157,17 @@ export default function ServiceList(props: ServiceListProps) {
   const [searchValue, setSearchValue] = useState('');
   const [StatusQueryString, setStatusQueryString] = useState<string>(createStatusQueryString());
   const [timer, setTimer] = useState(null);
-  const [width] = useWindowEvents();
+  const { width } = useWindowSize();
   const [emptyListText, setEmptyListText] = useState(TEXT_SEARCHING);
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width < 771) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   useEffect(() => {
 
@@ -216,7 +204,7 @@ export default function ServiceList(props: ServiceListProps) {
   }, [firstGet, StatusQueryString, props.parameters]);
 
   return (
-    <ServiceLayout classes={cn(isMobile(width) ? styles.serviceLayoutMobile : {})}
+    <ServiceLayout classes={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
         <div className={cn(styles.topSection)}>
           <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
@@ -245,7 +233,7 @@ export default function ServiceList(props: ServiceListProps) {
         </Box>
       }
       right={
-        isMobile(width) ? (
+        isMobile? (
           <div className={cn(styles.accordionMobile)}>
             <AccordionItem id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="default">
               <ServiceFilter
@@ -275,7 +263,7 @@ export default function ServiceList(props: ServiceListProps) {
       }
 
       bottom={
-        <Box className={cn(isMobile(width) ? styles.navigationMobile : styles.navigation)} borderRadius="large">
+        <Box className={cn(isMobile ? styles.navigationMobile : styles.navigation)} borderRadius="large">
           <div className={cn(isLoading ? styles.displayInline : styles.displayHidden)}>
             <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
           </div>
