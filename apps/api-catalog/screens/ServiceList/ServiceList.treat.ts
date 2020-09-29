@@ -25,8 +25,9 @@ export const filter = style({
   minWidth:filterOrg.minWidth
 })
 export const accordionMobile = style({
-  marginLeft:20,
+  marginLeft:24,
   width:412
+
 })
 
 export const filterMobile = style({

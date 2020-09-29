@@ -1,24 +1,27 @@
 import React, { useState, useEffect, ReactNode, useLayoutEffect } from 'react';
-import {  Box,  
-          Button, 
-          ContentBlock, 
-          GridRow, 
-          GridColumn,
-          Icon, 
-          Typography, AccordionItem
+import {
+  Box,
+  Button,
+  ContentBlock,
+  GridRow,
+  GridColumn,
+  Icon,
+  Typography, AccordionItem
 } from '@island.is/island-ui/core';
 
 import * as styles from './ServiceList.treat';
 import cn from 'classnames'
-import {  PRICING_CATEGORY, 
-          DATA_CATEGORY, 
-          TYPE_CATEGORY,
-          ACCESS_CATEGORY, 
-          GetServicesParameters, 
-          getServices, 
-          ServiceCardInformation, 
-          ServiceCard, 
-          ServiceFilter
+import {
+  PRICING_CATEGORY,
+  DATA_CATEGORY,
+  TYPE_CATEGORY,
+  ACCESS_CATEGORY,
+  GetServicesParameters,
+  getServices,
+  ServiceCardInformation,
+  ServiceCard,
+  ServiceFilter, 
+  ServiceCardMessage
 } from '../../components';
 
 import ContentfulApi from '../../services/contentful'
@@ -32,7 +35,7 @@ interface PropTypes {
   classes?: string
 }
 
-function ServiceLayout({ top, bottom, left, right, classes}: PropTypes) {
+function ServiceLayout({ top, bottom, left, right, classes }: PropTypes) {
   return (
     <Box paddingX="gutter">
       {<ContentBlock >
@@ -40,13 +43,13 @@ function ServiceLayout({ top, bottom, left, right, classes}: PropTypes) {
       </ContentBlock>}
       <ContentBlock>
         <GridRow className={classes}>
-          <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '8/12']}
-                    offset={[    '0',     '0',  '0',    '0', '0']}>
+        <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '8/12']}
+                  offset={[    '0',     '0',  '0',    '0', '0']}>
             {left}
           </GridColumn>
           <GridColumn span={[ '12/12',  '8/12',  '3/12', '3/12', '4/12']}
-                    offset={[    '0',  '0',     '0',    '0', '0']}>
-              {right}
+                    offset={[    '0',      '0',     '0',    '0',    '0']}>
+            {right}
           </GridColumn>
         </GridRow>
       </ContentBlock>
@@ -67,21 +70,10 @@ export interface ServiceListProps {
 }
 
 
-export default function ServiceList(props:ServiceListProps) {
+export default function ServiceList(props: ServiceListProps) {
+
   
-  if (!props.parameters === null) {
-    props.parameters = { 
-      cursor:null, 
-      limit:null, 
-      owner:null, 
-      name:null, 
-      pricing:[], 
-      data:[], 
-      type:[], 
-      access:[],
-      text:null};
-  }
- 
+
   const onPageMoreButtonClick = () => {
     props.parameters.cursor = nextCursor;
     setFirstGet(false);
@@ -89,27 +81,27 @@ export default function ServiceList(props:ServiceListProps) {
   }
 
   const updateCategoryCheckBox = (target) => {
-    const categoryValue:string = target.value;
-    const checked:boolean = target.checked;
+    const categoryValue: string = target.value;
+    const checked: boolean = target.checked;
     props.parameters.cursor = null;
-    let filter:Array<string>;
-    switch(categoryValue){
+    let filter: Array<string>;
+    switch (categoryValue) {
       case PRICING_CATEGORY.FREE:
-      case PRICING_CATEGORY.PAID:   filter = props.parameters.pricing; 
-                                    break;
+      case PRICING_CATEGORY.PAID: filter = props.parameters.pricing;
+        break;
       case DATA_CATEGORY.PUBLIC:
       case DATA_CATEGORY.OFFICIAL:
-      case DATA_CATEGORY.PERSONAL:     
+      case DATA_CATEGORY.PERSONAL:
       case DATA_CATEGORY.HEALTH:
-      case DATA_CATEGORY.FINANCIAL: filter = props.parameters.data; 
-                                    break;
+      case DATA_CATEGORY.FINANCIAL: filter = props.parameters.data;
+        break;
       case TYPE_CATEGORY.REACT:
-      case TYPE_CATEGORY.SOAP:           
-      case TYPE_CATEGORY.GRAPHQL:   filter = props.parameters.type; 
-                                    break;
+      case TYPE_CATEGORY.SOAP:
+      case TYPE_CATEGORY.GRAPHQL: filter = props.parameters.type;
+        break;
       case ACCESS_CATEGORY.X_ROAD:
-      case ACCESS_CATEGORY.API_GW:  filter = props.parameters.access; 
-                                    break;
+      case ACCESS_CATEGORY.API_GW: filter = props.parameters.access;
+        break;
 
       default:
         console.error('Invalid checkbox value')
@@ -120,9 +112,9 @@ export default function ServiceList(props:ServiceListProps) {
       filter = [];
     }
     if (checked) {
-        if (!filter.includes(categoryValue)) {
-          filter.push(categoryValue)
-        }
+      if (!filter.includes(categoryValue)) {
+        filter.push(categoryValue)
+      }
     } else {
       filter.splice(filter.indexOf(categoryValue), 1);
     }
@@ -132,14 +124,14 @@ export default function ServiceList(props:ServiceListProps) {
 
   }
 
-  const createStatusQueryString = ():string => {
-    let str:string = props.parameters.cursor ===null? 'null':props.parameters.cursor.toString();
-    str+=`|${props.parameters.text}`
-    str+= `|${props.parameters.pricing.sort().join()}|${props.parameters.data.sort().join()}|${props.parameters.type.sort().join()}|${props.parameters.access.sort().join()}`;
-    return str;  
+  const createStatusQueryString = (): string => {
+    let str: string = props.parameters.cursor === null ? 'null' : props.parameters.cursor.toString();
+    str += `|${props.parameters.text}`
+    str += `|${props.parameters.pricing.sort().join()}|${props.parameters.data.sort().join()}|${props.parameters.type.sort().join()}|${props.parameters.access.sort().join()}`;
+    return str;
   }
 
-  const isMobile = (width:number) => {
+  const isMobile = (width: number) => {
     return width < 771;
   }
 
@@ -147,139 +139,163 @@ export default function ServiceList(props:ServiceListProps) {
     const [size, setSize] = useState([0, 0, 0]);
     useLayoutEffect(() => {
       function updateValues() {
-        setSize([window.innerWidth, window.innerHeight, Math.round(window.scrollY)]);
+        setSize([window.innerWidth, window.innerHeight/*, Math.round(window.scrollY)*/]);
       }
-  
+
       window.addEventListener('resize', updateValues);
-      window.addEventListener('scroll', updateValues);
+      //window.addEventListener('scroll', updateValues);
       updateValues();
       return () => {
         window.removeEventListener('resize', updateValues);
-        window.removeEventListener('scroll', updateValues);
+        //window.removeEventListener('scroll', updateValues);
       }
     }, []);
     return size;
   }
 
-  const onSearchChange = function(inputValue: string){
+  const onSearchChange = function (inputValue: string) {
     props.parameters.text = inputValue;
     setSearchValue(inputValue);
-    if (timer !== null ) {
+    if (timer !== null) {
       clearTimeout(timer);
     }
-    setTimer(setTimeout(function(){
+    setTimer(setTimeout(function () {
       setStatusQueryString(createStatusQueryString());
       setFirstGet(true);
-    }, 600)) 
+    }, 600))
   }
 
-  const [isLoading,    setLoading]   = useState<boolean>(true);
-  const [services,    setServices]   = useState<Array<ServiceCardInformation>>(null);
-  const [nextCursor,  setNextCursor] = useState<string>(props.nextCursor);
-  const [nextFetch,   setNextFetch] = useState<string>(null);
-  const [firstGet,    setFirstGet] = useState<boolean>(true);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [services, setServices] = useState<Array<ServiceCardInformation>>(null);
+  const [nextCursor, setNextCursor] = useState<string>(props.nextCursor);
+  const [nextFetch, setNextFetch] = useState<string>(null);
+  const [firstGet, setFirstGet] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState('');
-  const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
+  const [StatusQueryString, setStatusQueryString] = useState<string>(createStatusQueryString());
   const [timer, setTimer] = useState(null);
   const [width] = useWindowEvents();
-  
+
 
   useEffect(() => {
-    
+
     const appendData = async () => {
       setLoading(true);
       const response = await getServices(props.parameters);
-      services.push(...response.result);    
+      services.push(...response.result);
       setNextCursor(response.nextCursor);
-      setLoading(false); 
+      setLoading(false);
     }
 
     if (!firstGet && nextFetch) {
-        appendData();
+      appendData();
     }
-  }, [firstGet, nextFetch, props.parameters, services]); 
+  }, [firstGet, nextFetch, props.parameters, services]);
 
   useEffect(() => {
-      
-      const loadData = async () => {
-        setLoading(true);
-        setFirstGet(true);
-        props.parameters.cursor=null;
-        const response = await getServices(props.parameters);
-        setNextCursor(response.nextCursor);
-        setServices(response.result);
-        setLoading(false);
-      }
-      if (firstGet)
-        loadData();
-    }, [firstGet, StatusQueryString, props.parameters]);
 
-  return (   
-      <ServiceLayout  classes={cn(isMobile(width)? styles.serviceLayoutMobile : {})}
+    const loadData = async () => {
+      setLoading(true);
+      setFirstGet(true);
+      props.parameters.cursor = null;
+      const response = await getServices(props.parameters);
+      setNextCursor(response.nextCursor);
+      setServices(response.result);
+      setLoading(false);
+    }
+    if (firstGet)
+      loadData();
+  }, [firstGet, StatusQueryString, props.parameters]);
+
+  return (
+    <ServiceLayout classes={cn(isMobile(width) ? styles.serviceLayoutMobile : {})}
       top={
-            <div className={cn(styles.topSection)}>
-              <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
-              <div className={cn(styles.topSectionText)}>
-                <Typography variant="intro">{props.pageContent.strings.find(s => s.id === 'catalog-intro').text}</Typography>
-              </div>
-            </div>
+        <div className={cn(styles.topSection)}>
+          <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
+          <div className={cn(styles.topSectionText)}>
+            <Typography variant="intro">{props.pageContent.strings.find(s => s.id === 'catalog-intro').text}</Typography>
+          </div>
+        </div>
       }
       left={
-          <Box className={cn(styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
-                    {
-                      services?.map( (item) => {
-                        return <ServiceCard key={item.id} service={item} />
-                      })
-                    }
-          </Box>
+        <Box className={cn(styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
+          {services?.length > 0 ?
+            (
+              services?.map((item) => {
+                return <ServiceCard key={item.id} service={item} />
+              })
+            )
+            :
+            (
+              <ServiceCardMessage
+                messageType='default'
+                title="Engin þjónusta fannst"
+                borderStyle="none"
+              />
+            )
+          }
+        </Box>
       }
       right={
-              isMobile(width)? (
-                <div className={cn(styles.accordionMobile)}>
-                  <AccordionItem  id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="sidebar">
-                    <ServiceFilter
-                      iconVariant="sidebar"
-                      rootClasses={cn(styles.filterMobile, "filter")}
-                      searchValue={searchValue}
-                      isLoading={isLoading}
-                      parameters={props.parameters}
-                      onInputChange={input => onSearchChange(input.target.value)}
-                      onCheckCategoryChanged={({target})=>{updateCategoryCheckBox(target)}}
-                      />
-                    </AccordionItem>
-                  </div>
-                ) 
-                : 
-                (
-                  <ServiceFilter
-                  rootClasses={cn(styles.filter , "filter")}
-                  searchValue={searchValue}
-                  isLoading={isLoading}
-                  parameters={props.parameters}
-                  onInputChange={input => onSearchChange(input.target.value)}
-                  onCheckCategoryChanged={({target})=>{updateCategoryCheckBox(target)}}
-                  />
-                )
+        isMobile(width) ? (
+          <div className={cn(styles.accordionMobile)}>
+            <AccordionItem id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="sidebar">
+              <ServiceFilter
+                iconVariant="sidebar"
+                rootClasses={cn(styles.filterMobile, "filter")}
+                searchValue={searchValue}
+                isLoading={isLoading}
+                parameters={props.parameters}
+                onInputChange={input => onSearchChange(input.target.value)}
+                onCheckCategoryChanged={({ target }) => { updateCategoryCheckBox(target) }}
+              />
+            </AccordionItem>
+          </div>
+        )
+          :
+          (
+            <ServiceFilter
+              rootClasses={cn(styles.filter, "filter")}
+              searchValue={searchValue}
+              isLoading={isLoading}
+              parameters={props.parameters}
+              onInputChange={input => onSearchChange(input.target.value)}
+              onCheckCategoryChanged={({ target }) => { updateCategoryCheckBox(target) }}
+            />
+          )
 
-      } 
-      
-      bottom = {
-        <Box className={cn(isMobile(width)? styles.navigationMobile : styles.navigation)} borderRadius="large">
-          <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
+      }
+
+      bottom={
+        <Box className={cn(isMobile(width) ? styles.navigationMobile : styles.navigation)} borderRadius="large">
+          <div className={cn(isLoading ? styles.displayInline : styles.displayHidden)}>
             <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
           </div>
-          <div className={cn(isLoading? styles.displayHidden : {})}>
+          <div className={cn(isLoading ? styles.displayHidden : {})}>
             <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
               {props.pageContent.strings.find(s => s.id === 'catalog-fetch-more-button').text}
             </Button>
           </div>
         </Box>
       }
-      />
+    />
   )
 }
 
-ServiceList.getInitialProps = async (ctx):Promise<ServiceListProps> => {
+ServiceList.defaultProps = {
+    parameters : {
+      cursor: null,
+      limit: null,
+      owner: null,
+      name: null,
+      pricing: [],
+      data: [],
+      type: [],
+      access: [],
+      text: null
+  }
+}
+
+ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
 
   const client = new ContentfulApi();
   let locale = 'is-IS';
@@ -291,21 +307,21 @@ ServiceList.getInitialProps = async (ctx):Promise<ServiceListProps> => {
 
   const pageContent = await client.fetchPageBySlug('services', locale);
 
-  const params:GetServicesParameters = { 
-    cursor:null, 
-    limit:null, 
-    owner:null,
-    name:null, 
-    pricing:[], 
-    data:[],
-    type:[],    
-    access:[],
-    text:''
+  const params: GetServicesParameters = {
+    cursor: null,
+    limit: null,
+    owner: null,
+    name: null,
+    pricing: [],
+    data: [],
+    type: [],
+    access: [],
+    text: ''
   };
-  return { 
-    parameters:params, 
-    prevCursor:null, 
-    nextCursor:null, 
-    pageContent:pageContent
+  return {
+    parameters: params,
+    prevCursor: null,
+    nextCursor: null,
+    pageContent: pageContent
   }
 }
