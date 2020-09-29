@@ -22,19 +22,13 @@ const ParentalLeave: ApplicationTemplate<
   dataProviders: [],
   dataSchema: z.object({
     approveExternalData: z.boolean().refine((v) => v),
-    usage: z
-      .number()
-      .min(0)
-      .max(6),
+    usage: z.number().min(0).max(6),
     spread: z.number().max(24),
     periods: z.array(
       z.object({
         start: z.date(),
         end: z.date(),
-        ratio: z
-          .number()
-          .min(1)
-          .max(100),
+        ratio: z.number().min(1).max(100),
       }),
     ),
   }),
