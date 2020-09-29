@@ -27,8 +27,8 @@ export class AboutPage {
 export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
   id: sys.id,
   pageHeader: mapPageHeader(fields.header),
-  slices: fields?.slices?.map(safelyMapSlices).filter(Boolean), // filter out empty slices that failed mapping
-  title: fields?.title ?? '',
-  theme: fields?.theme?.toLowerCase() ?? '',
-  seoDescription: fields?.seoDescription ?? '',
+  slices: fields.slices?.map(safelyMapSlices).filter(Boolean), // filter out empty slices that failed mapping
+  title: fields.title ?? '',
+  theme: fields.theme ?? '',
+  seoDescription: fields.seoDescription ?? '',
 })
