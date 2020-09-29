@@ -55,7 +55,7 @@ export class CaseController {
   ) {}
 
   @Get('cases')
-  @ApiOkResponse({ type: Case, isArray: true })
+  @ApiOkResponse({ type: Case, isArray: true, description: 'Gets all cases' })
   getAll(): Promise<Case[]> {
     return this.caseService.getAll()
   }
@@ -138,7 +138,7 @@ export class CaseController {
   }
 
   @Post('case/:id/notification')
-  @ApiOkResponse({ type: Notification })
+  @ApiCreatedResponse({ type: Notification })
   async sendNotificationByCaseId(
     @Param('id') id: string,
     @Req() req,
@@ -161,8 +161,28 @@ export class CaseController {
     return this.caseService.sendNotificationByCaseId(existingCase, user)
   }
 
+  @Get('case/:id/signature')
+  @ApiOkResponse({ type: Case })
+  async confirmSignature(
+    @Param('id') id: string,
+    @Query('documentToken') documentToken: string,
+  ): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.ACCEPTED &&
+      existingCase.state !== CaseState.REJECTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
+      )
+    }
+
+    return this.caseService.confirrmSignature(existingCase, documentToken)
+  }
+
   @Post('case/:id/signature')
-  @ApiOkResponse({ type: SigningServiceResponse })
+  @ApiCreatedResponse({ type: SigningServiceResponse })
   async requestSignature(
     @Param('id') id: string,
     @Req() req,
@@ -183,26 +203,6 @@ export class CaseController {
     const user = await this.userService.findByNationalId(authUser.nationalId)
 
     return this.caseService.requestSignature(existingCase, user)
-  }
-
-  @Get('case/:id/signature')
-  @ApiOkResponse({ type: Case })
-  async confirmSignature(
-    @Param('id') id: string,
-    @Query('documentToken') documentToken: string,
-  ): Promise<Case> {
-    const existingCase = await this.findCaseById(id)
-
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
-      )
-    }
-
-    return this.caseService.confirrmSignature(existingCase, documentToken)
   }
 
   private async findCaseById(id: string) {

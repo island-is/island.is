@@ -473,7 +473,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Gets all cases
           content:
             application/json:
               schema:
@@ -544,7 +544,7 @@ paths:
         - cases
   '/api/case/{id}/state':
     put:
-      operationId: CaseController_transitionCase
+      operationId: CaseController_transition
       parameters:
         - name: id
           required: true
@@ -596,7 +596,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        '201':
           description: ''
           content:
             application/json:
@@ -605,23 +605,6 @@ paths:
       tags:
         - cases
   '/api/case/{id}/signature':
-    post:
-      operationId: CaseController_requestSignature
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningServiceResponse'
-      tags:
-        - cases
     get:
       operationId: CaseController_confirmSignature
       parameters:
@@ -642,5 +625,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
+      tags:
+        - cases
+    post:
+      operationId: CaseController_requestSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningServiceResponse'
       tags:
         - cases
