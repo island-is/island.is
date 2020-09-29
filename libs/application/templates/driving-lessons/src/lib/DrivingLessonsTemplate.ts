@@ -22,10 +22,7 @@ const dataSchema = z.object({
   type: z.enum(['B', 'AM', 'A', 'A1', 'A2', 'T']),
   student: z.object({
     name: z.string().nonempty(),
-    parentEmail: z
-      .string()
-      .email()
-      .nonempty(),
+    parentEmail: z.string().email().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     phoneNumber: z.string().min(7),
     address: z.string().nonempty(),

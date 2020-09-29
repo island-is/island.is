@@ -6,8 +6,8 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    "tsconfig.base.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
@@ -271,5 +271,8 @@
     "application-templates-reference-template": {
       "tags": []
     }
+  },
+  "affected": {
+    "defaultBase": "master"
   }
 }

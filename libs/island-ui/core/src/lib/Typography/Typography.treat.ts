@@ -231,7 +231,7 @@ globalStyle(`${links} a:hover svg path`, {
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
-export default (Object.keys(variants) as VariantTypes[]).reduce(
+const variantStyles = (Object.keys(variants) as VariantTypes[]).reduce(
   (acc, variantKey) => {
     acc[variantKey] = responsiveStyleMap(variants[variantKey])
     return acc
@@ -240,3 +240,5 @@ export default (Object.keys(variants) as VariantTypes[]).reduce(
     [Type in VariantTypes]: string
   },
 )
+
+export default variantStyles

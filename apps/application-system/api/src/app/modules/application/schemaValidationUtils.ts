@@ -7,7 +7,7 @@ import { BadRequestException } from '@nestjs/common'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 export async function validateApplicationSchema(
-  application: Application,
+  application: Pick<Application, 'typeId'>,
   newAnswers: FormValue,
 ) {
   const applicationTemplate = await getApplicationTemplateByTypeId(
