@@ -3007,7 +3007,7 @@
         }
       }
     },
-    "skilavottord-const": {
+    "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
       "projectType": "library",
