@@ -13,5 +13,5 @@ export class Namespace {
 
 export const mapNamespace = ({ fields }: IUiConfiguration): Namespace => ({
   namespace: fields.namespace,
-  fields: JSON.stringify(fields.fields),
+  fields: fields.fields ? JSON.stringify(fields.fields) : '',
 })

@@ -73,7 +73,5 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   subArticles: (fields.subArticles ?? [])
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
     .map(mapSubArticle),
-  relatedArticles: (fields.relatedArticles ?? [])
-    .filter((article) => article.fields?.title && article.fields?.slug) // we assume articles failing this check are empty
-    .map(mapArticle),
+  relatedArticles: [] // populated by resolver
 })
