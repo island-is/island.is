@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { JudgeLogo } from '../../shared-components/Logos'
-import { GetCaseByIdResponse } from '../../types'
+import { Case, GetCaseByIdResponse } from '../../types'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
 import { autoSave } from '../../utils/stepHelper'
 import { validate } from '../../utils/validate'
@@ -30,12 +30,10 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   useEffect(() => {
-    const wc: GetCaseByIdResponse = JSON.parse(
-      window.localStorage.getItem('workingCase'),
-    )
+    const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
 
-    if (wc.httpStatusCode === 200) {
-      setWorkingCase(wc.case)
+    if (wc) {
+      setWorkingCase(wc)
     }
   }, [])
 
