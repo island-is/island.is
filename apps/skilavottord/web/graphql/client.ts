@@ -10,7 +10,6 @@ import authLink from './authLink'
 import errorLink from './errorLink'
 import httpLink from './httpLink'
 import retryLink from './retryLink'
-import { possibleTypes } from './possibleTypes.json'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
@@ -18,7 +17,7 @@ const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
-    possibleTypes,
+    possibleTypes: {},
   }).restore(initialState || {})
 
   return new ApolloClient<NormalizedCacheObject>({

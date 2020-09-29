@@ -3,19 +3,4 @@
 # For some reasons if the script to generate all the automatic files is failing
 # and you can't do anything else, this script remove them all
 
-rm apps/api/src/api.graphql
-rm apps/web/graphql/fragmentTypes.json
-rm apps/web/graphql/schema.ts
-rm apps/gjafakort/api/src/types/schema.d.ts
-rm apps/gjafakort/web/graphql/schema.tsx
-rm apps/gjafakort/web/graphql/possibleTypes.json
-rm apps/air-discount-scheme/api.graphql
-rm apps/air-discount-scheme/web/graphql/schema.tsx
-rm apps/air-discount-scheme/web/graphql/possibleTypes.json
-rm apps/air-discount-scheme/backend/src/openapi.yaml
-rm apps/skilavottord/ws/src/app/api.graphql
-rm apps/judicial-system/api/src/openapi.yaml
-rm apps/application-system/api/src/openapi.yaml
-rm apps/reference-backend/src/openapi.yaml
-# rm libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts
-rm libs/api/schema/src/lib/schema.d.ts
+find . -type f \( -name "openapi.yaml" -o -name "api.graphql" -o -name "schema.d.ts" -o -name "schema.tsx" -o -name "schema.ts" -o -name "possibleTypes.json" -o -name "fragmentTypes.json" \) -delete

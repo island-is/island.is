@@ -355,14 +355,21 @@
             "buildTarget": "api:build"
           }
         },
+        "build-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
+              }
+            ]
+          }
+        },
         "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
             "commands": [
-              {
-                "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
-              },
               {
                 "command": "yarn nx run api:codegen"
               },
