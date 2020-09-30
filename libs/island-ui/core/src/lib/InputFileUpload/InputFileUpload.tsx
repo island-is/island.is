@@ -1,5 +1,3 @@
-// TODO: Rename to DropZone
-
 import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 
