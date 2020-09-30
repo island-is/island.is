@@ -37,48 +37,17 @@ describe('Case', () => {
           created: response.body.created,
           modified: response.body.modified,
           state: CaseState.DRAFT,
-        })
+        } as Case)
 
         // Check the data in the database
         await Case.findOne({
           where: { id: response.body.id },
           include: [Notification],
         }).then((value) => {
-          expect(value.id).toBe(response.body.id)
-          expect(value.created.toISOString()).toBe(response.body.created)
-          expect(value.modified.toISOString()).toBe(response.body.modified)
-          expect(value.state).toBe(response.body.state)
-          expect(value.policeCaseNumber).toBe(data.policeCaseNumber)
-          expect(value.accusedNationalId).toBe(data.accusedNationalId)
-          expect(value.accusedName).toBe(data.accusedName)
-          expect(value.accusedAddress).toBe(data.accusedAddress)
-          expect(value.court).toBe(data.court)
-          expect(value.arrestDate.toISOString()).toBe(data.arrestDate)
-          expect(value.requestedCourtDate.toISOString()).toBe(
-            data.requestedCourtDate,
+          expectResponseToMatchCase(
+            { ...response.body, notifications: [] },
+            dbCaseToCase(value),
           )
-          expect(value.requestedCustodyEndDate).toBeNull()
-          expect(value.lawsBroken).toBeNull()
-          expect(value.custodyProvisions).toBeNull()
-          expect(value.requestedCustodyRestrictions).toBeNull()
-          expect(value.caseFacts).toBeNull()
-          expect(value.witnessAccounts).toBeNull()
-          expect(value.investigationProgress).toBeNull()
-          expect(value.legalArguments).toBeNull()
-          expect(value.comments).toBeNull()
-          expect(value.courtCaseNumber).toBeNull()
-          expect(value.courtStartTime).toBeNull()
-          expect(value.courtEndTime).toBeNull()
-          expect(value.courtAttendees).toBeNull()
-          expect(value.policeDemands).toBeNull()
-          expect(value.accusedPlea).toBeNull()
-          expect(value.litigationPresentations).toBeNull()
-          expect(value.ruling).toBeNull()
-          expect(value.custodyEndDate).toBeNull()
-          expect(value.custodyRestrictions).toBeNull()
-          expect(value.accusedAppealDecision).toBeNull()
-          expect(value.prosecutorAppealDecision).toBeNull()
-          expect(value.notifications).toStrictEqual([])
         })
       })
   })
@@ -553,7 +522,19 @@ function getCaseData(
   return data as Case
 }
 
-function expectResponseToMatchCase(resCase, theCase) {
+function dbCaseToCase(dbCase: Case) {
+  const theCase = dbCase.toJSON() as Case
+
+  return ({
+    ...theCase,
+    created: theCase.created.toISOString(),
+    modified: theCase.modified.toISOString(),
+    arrestDate: theCase.arrestDate.toISOString(),
+    requestedCourtDate: theCase.requestedCourtDate.toISOString(),
+  } as unknown) as Case
+}
+
+function expectResponseToMatchCase(resCase: Case, theCase: Case) {
   expect(resCase.id).toBe(theCase.id)
   expect(resCase.created).toBe(theCase.created)
   expect(resCase.modified).toBe(theCase.modified)
@@ -598,5 +579,5 @@ function expectResponseToMatchCase(resCase, theCase) {
   expect(resCase.prosecutorAppealDecision).toBe(
     theCase.prosecutorAppealDecision || null,
   )
-  expect(resCase.notifications).toBeUndefined()
+  expect(resCase.notifications).toStrictEqual(theCase.notifications)
 }
