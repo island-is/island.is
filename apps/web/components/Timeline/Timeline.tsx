@@ -99,20 +99,14 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       behavior,
     })
     const scrollReachedTop =
-      frameRef.current.scrollTop +
-        entriesParentRef.current.children[index].offsetTop <=
-      0
+      entriesParentRef.current.children[index].offsetTop <= 0
     const scrollReachedBottom =
-      frameRef.current.scrollTop +
-        entriesParentRef.current.children[index].offsetTop +
-        frameRef.current.offsetHeight >=
-      frameRef.current.scrollHeight
-    if (scrollReachedTop !== prevButtonDisabled) {
-      setPrevButtonDisabled(scrollReachedTop)
-    }
-    if (scrollReachedBottom !== nextButtonDisabled) {
-      setNextButtonDisabled(scrollReachedBottom)
-    }
+      frameRef.current.scrollHeight -
+        entriesParentRef.current.children[index].offsetTop <=
+      frameRef.current.clientHeight
+
+    setPrevButtonDisabled(scrollReachedTop)
+    setNextButtonDisabled(scrollReachedBottom)
     setCurrentIndex(index)
   }
 

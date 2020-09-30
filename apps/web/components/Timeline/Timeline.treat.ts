@@ -221,6 +221,7 @@ export const yearContainer = style({
   ...themeUtils.responsiveStyle({
     lg: {
       flexDirection: 'column',
+      paddingBottom: 40,
     },
   }),
 })
