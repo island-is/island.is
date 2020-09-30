@@ -23,7 +23,7 @@ beforeAll(async () => {
 
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
-    const data = getFullCreateCaseData()
+    const data = getCaseData(true)
 
     await request(app.getHttpServer())
       .post('/api/case')
@@ -110,7 +110,7 @@ describe('Case', () => {
   })
 
   it('POST /api/case with required fields should create a case', async () => {
-    const data = getMinimalCaseData()
+    const data = getCaseData()
 
     await request(app.getHttpServer())
       .post('/api/case')
@@ -195,8 +195,8 @@ describe('Case', () => {
   })
 
   it('PUT /api/case/:id should update a case by id', async () => {
-    await Case.create(getMinimalCaseData()).then(async (value) => {
-      const data = getFullCaseData()
+    await Case.create(getCaseData()).then(async (value) => {
+      const data = getCaseData(true, true)
 
       await request(app.getHttpServer())
         .put(`/api/case/${value.id}`)
@@ -322,7 +322,7 @@ describe('Case', () => {
   })
 
   it('Put /api/case/:id/state should transition case to a new state', async () => {
-    await Case.create(getMinimalCaseData()).then(async (value) => {
+    await Case.create(getCaseData()).then(async (value) => {
       const data = {
         modified: value.modified.toISOString(),
         transition: CaseTransition.SUBMIT,
@@ -349,8 +349,8 @@ describe('Case', () => {
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create(getMinimalCaseData()).then(async (value1) => {
-      await Case.create(getMinimalCaseData()).then(async (value2) => {
+    await Case.create(getCaseData()).then(async (value1) => {
+      await Case.create(getCaseData()).then(async (value2) => {
         await request(app.getHttpServer())
           .get(`/api/cases`)
           .send()
@@ -364,7 +364,7 @@ describe('Case', () => {
   })
 
   it('GET /api/case/:id should get a case by id', async () => {
-    await Case.create(getFullCaseData()).then(async (value) => {
+    await Case.create(getCaseData(true, true)).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
         .send()
@@ -433,7 +433,7 @@ describe('Case', () => {
   })
 
   it('POST /api/case/:id/notification should send a notification', async () => {
-    await Case.create(getMinimalCaseData()).then(async (value) => {
+    await Case.create(getCaseData()).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/notification`)
         .expect(201)
@@ -461,7 +461,7 @@ describe('Case', () => {
   })
 
   it('GET /api/case/:id/notifications should get all notifications by case id', async () => {
-    await Case.create(getMinimalCaseData()).then(async (caseValue) => {
+    await Case.create(getCaseData()).then(async (caseValue) => {
       await Notification.create({
         caseId: caseValue.id,
         type: NotificationType.HEADS_UP,
@@ -486,7 +486,7 @@ describe('Case', () => {
   })
 
   it('GET /api/case/:id should include notifications', async () => {
-    await Case.create(getMinimalCaseData()).then(async (caseValue) => {
+    await Case.create(getCaseData()).then(async (caseValue) => {
       await Notification.create({
         caseId: caseValue.id,
         type: NotificationType.HEADS_UP,
@@ -520,61 +520,61 @@ describe('Case', () => {
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {})
 })
 
-function getMinimalCaseData() {
-  return {
-    policeCaseNumber: 'Case Number',
-    accusedNationalId: '0101010000',
-  }
+const minimalCaseData = {
+  policeCaseNumber: 'Case Number',
+  accusedNationalId: '0101010000',
 }
 
-function getFullCreateCaseData() {
-  return {
-    policeCaseNumber: 'Case Number',
-    accusedNationalId: '0101010000',
-    accusedName: 'Accused Name',
-    accusedAddress: 'Accused Address',
-    court: 'Court',
-    arrestDate: '2020-09-08T08:00:00.000Z',
-    requestedCourtDate: '2020-09-08T11:30:00.000Z',
-  }
+const remainingCreateCaseData = {
+  accusedName: 'Accused Name',
+  accusedAddress: 'Accused Address',
+  court: 'Court',
+  arrestDate: '2020-09-08T08:00:00.000Z',
+  requestedCourtDate: '2020-09-08T11:30:00.000Z',
 }
 
-function getFullCaseData() {
-  return {
-    state: CaseState.DRAFT,
-    policeCaseNumber: 'Case Number',
-    accusedNationalId: '0101010000',
-    accusedName: 'Accused Name',
-    accusedAddress: 'Accused Address',
-    court: 'Court',
-    arrestDate: '2020-09-08T08:00:00.000Z',
-    requestedCourtDate: '2020-09-08T11:30:00.000Z',
-    requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
-    lawsBroken: 'Broken Laws',
-    custodyProvisions: [
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._99_1_B,
-    ],
-    requestedCustodyRestrictions: [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ],
-    caseFacts: 'Case Facts',
-    witnessAccounts: 'Witness Accounts',
-    investigationProgress: 'Investigation Progress',
-    legalArguments: 'Legal Arguments',
-    comments: 'Comments',
-    courtCaseNumber: 'Court Case Number',
-    courtStartTime: '2020-09-29T13:00:00.000Z',
-    courtEndTime: '2020-09-29T14:00:00.000Z',
-    courtAttendees: 'Court Attendees',
-    policeDemands: 'Police Demands',
-    accusedPlea: 'Accused Plea',
-    litigationPresentations: 'Litigation Presentations',
-    ruling: 'Ruling',
-    custodyEndDate: '2020-09-28T12:00:00.000Z',
-    custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-    accusedAppealDecision: CaseAppealDecision.APPEAL,
-    prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+const remainingCaseData = {
+  state: CaseState.DRAFT,
+  requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+  lawsBroken: 'Broken Laws',
+  custodyProvisions: [
+    CaseCustodyProvisions._95_1_A,
+    CaseCustodyProvisions._99_1_B,
+  ],
+  requestedCustodyRestrictions: [
+    CaseCustodyRestrictions.ISOLATION,
+    CaseCustodyRestrictions.MEDIA,
+  ],
+  caseFacts: 'Case Facts',
+  witnessAccounts: 'Witness Accounts',
+  investigationProgress: 'Investigation Progress',
+  legalArguments: 'Legal Arguments',
+  comments: 'Comments',
+  courtCaseNumber: 'Court Case Number',
+  courtStartTime: '2020-09-29T13:00:00.000Z',
+  courtEndTime: '2020-09-29T14:00:00.000Z',
+  courtAttendees: 'Court Attendees',
+  policeDemands: 'Police Demands',
+  accusedPlea: 'Accused Plea',
+  litigationPresentations: 'Litigation Presentations',
+  ruling: 'Ruling',
+  custodyEndDate: '2020-09-28T12:00:00.000Z',
+  custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+  accusedAppealDecision: CaseAppealDecision.APPEAL,
+  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+}
+
+function getCaseData(
+  fullCreateCaseData: boolean = false,
+  otherCaseData: boolean = false,
+) {
+  let data = minimalCaseData
+  if (fullCreateCaseData) {
+    data = { ...data, ...remainingCreateCaseData }
   }
+  if (otherCaseData) {
+    data = { ...data, ...remainingCaseData }
+  }
+
+  return data as Case
 }
