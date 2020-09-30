@@ -287,7 +287,39 @@ describe('Case', () => {
     })
   })
 
-  it('GET /api/case/:id/signature should confirm a signature for a case', async () => {})
+  it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
+    await Case.create(getCaseData()).then(async (value) => {
+      await request(app.getHttpServer())
+        .put(`/api/case/${value.id}/state`)
+        .send({
+          modified: value.modified.toISOString(),
+          transition: CaseTransition.SUBMIT,
+        })
+        .expect(200)
+        .then(async (response) => {
+          await request(app.getHttpServer())
+            .put(`/api/case/${response.body.id}/state`)
+            .send({
+              modified: response.body.modified,
+              transition: CaseTransition.ACCEPT,
+            })
+            .expect(200)
+            .then(async (updateResponse) => {
+              await request(app.getHttpServer())
+                .get(`/api/case/${response.body.id}/signature`)
+                .query({ documentToken: 'DEVELOPMENT' })
+                .expect(200)
+                .then(async (signatureResponse) => {
+                  // Check the response
+                  expectCasesToMatch(signatureResponse.body, {
+                    ...updateResponse.body,
+                    notifications: [],
+                  })
+                })
+            })
+        })
+    })
+  })
 })
 
 const minimalCaseData = {
