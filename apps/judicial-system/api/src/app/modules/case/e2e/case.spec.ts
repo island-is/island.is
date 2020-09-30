@@ -357,16 +357,8 @@ describe('Case', () => {
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create({
-      state: CaseState.SUBMITTED,
-      policeCaseNumber: 'Case Number 1',
-      accusedNationalId: '0101010000',
-    }).then(async (value1) => {
-      await Case.create({
-        state: CaseState.SUBMITTED,
-        policeCaseNumber: 'Case Number 2',
-        accusedNationalId: '1010109999',
-      }).then(async (value2) => {
+    await Case.create(getMinimalCaseData()).then(async (value1) => {
+      await Case.create(getMinimalCaseData()).then(async (value2) => {
         await request(app.getHttpServer())
           .get(`/api/cases`)
           .send()
