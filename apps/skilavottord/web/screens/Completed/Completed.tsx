@@ -7,13 +7,13 @@ import {
   GridColumn,
   Link,
   Box,
-  Button
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { CarDetailsBox } from '../Confirm/components'
+import { Button } from '@island.is/skilavottord-web/components'
 
 const Completed = (props) => {
   const { car } = props
