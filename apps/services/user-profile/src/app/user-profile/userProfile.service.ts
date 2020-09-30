@@ -1,21 +1,21 @@
-import { LOGGER_PROVIDER } from '@island.is/logging';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { CreateUserProfileDto } from './dto/createUserProfileDto';
-import { UserProfile } from './userProfile.model';
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { CreateUserProfileDto } from './dto/createUserProfileDto'
+import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
+import { UserProfile } from './userProfile.model'
 
 @Injectable()
 export class UserProfileService {
-
   constructor(
     @InjectModel(UserProfile)
     private userProfileModel: typeof UserProfile,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) { }
+  ) {}
 
   async findById(id: string): Promise<UserProfile | null> {
-    this.logger.debug(`Finding application by id - "${id}"`)
+    this.logger.debug(`Finding user profile by id - "${id}"`)
     return this.userProfileModel.findOne({
       where: { id },
     })
@@ -26,9 +26,29 @@ export class UserProfileService {
   }
 
   async findByNationalId(nationalId: string): Promise<UserProfile | null> {
-    this.logger.debug(`Finding application by id - "${nationalId}"`)
+    this.logger.debug(`Finding user profile by nationalId - "${nationalId}"`)
     return this.userProfileModel.findOne({
       where: { nationalId },
     })
+  }
+
+  async update(
+    id: string,
+    userProfileToUpdate: UpdateUserProfileDto,
+  ): Promise<{
+    numberOfAffectedRows: number
+    updatedUserProfile: UserProfile
+  }> {
+    this.logger.debug(`Updating user profile with id "${id}"`)
+
+    const [
+      numberOfAffectedRows,
+      [updatedUserProfile],
+    ] = await this.userProfileModel.update(userProfileToUpdate, {
+      where: { id },
+      returning: true,
+    })
+
+    return { numberOfAffectedRows, updatedUserProfile }
   }
 }
