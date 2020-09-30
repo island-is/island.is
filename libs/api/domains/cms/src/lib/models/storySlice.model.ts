@@ -23,5 +23,5 @@ export const mapStorySlice = ({ fields, sys }: IStorySection): StorySlice => ({
   typename: 'StorySlice',
   id: sys.id,
   readMoreText: fields.readMoreText ?? '',
-  stories: fields.stories.map(mapStory),
+  stories: (fields.stories ?? []).map(mapStory),
 })

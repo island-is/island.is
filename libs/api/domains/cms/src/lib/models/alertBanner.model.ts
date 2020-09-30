@@ -33,11 +33,11 @@ export class AlertBanner {
 
 export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
   id: sys.id,
-  showAlertBanner: fields.showAlertBanner,
-  bannerVariant: fields.bannerVariant,
+  showAlertBanner: fields.showAlertBanner ?? false,
+  bannerVariant: fields.bannerVariant ?? 'default',
   title: fields.title ?? '',
   description: fields.description ?? '',
-  link: mapLink(fields.link),
-  isDismissable: fields.isDismissable,
-  dismissedForDays: fields.dismissedForDays,
+  link: fields.link ? mapLink(fields.link) : null,
+  isDismissable: fields.isDismissable ?? true,
+  dismissedForDays: fields.dismissedForDays ?? 7,
 })

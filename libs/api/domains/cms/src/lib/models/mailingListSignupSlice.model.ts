@@ -29,8 +29,8 @@ export const mapMailingListSignup = ({
 }: IMailingListSignup): MailingListSignupSlice => ({
   typename: 'MailingListSignupSlice',
   id: sys.id,
-  title: fields.title,
-  description: fields.description,
-  inputLabel: fields.inputLabel,
-  buttonText: fields.buttonText,
+  title: fields.title ?? '',
+  description: fields.description ?? '',
+  inputLabel: fields.inputLabel ?? '',
+  buttonText: fields.buttonText ?? '',
 })

@@ -23,5 +23,6 @@ export const mapEmbeddedVideo = ({
 }: IEmbeddedVideo): EmbeddedVideo => ({
   typename: 'EmbeddedVideo',
   id: sys.id,
-  ...fields,
+  title: fields.title ?? '',
+  url: fields.url ?? '',
 })
