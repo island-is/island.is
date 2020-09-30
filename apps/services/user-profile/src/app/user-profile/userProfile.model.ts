@@ -1,13 +1,13 @@
 //umport { Model } from 'sequelize/types';
 import {
   Column,
-  CreatedAt,
   DataType,
   Model,
   Table,
-  UpdatedAt,
+  CreatedAt,
+  UpdatedAt
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'user_profile',
@@ -27,6 +27,14 @@ export class UserProfile extends Model<UserProfile> {
   })
   @ApiProperty()
   id!: string
+
+  @CreatedAt
+  @ApiProperty()
+  created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  modified!: Date
 
   @Column({
     type: DataType.STRING,

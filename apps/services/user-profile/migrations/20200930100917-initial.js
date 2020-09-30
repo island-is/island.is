@@ -30,6 +30,16 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false,
         },
+        created: {
+          type: 'TIMESTAMP WITH TIME ZONE',
+          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+          allowNull: false,
+        },
+        modified: {
+          type: 'TIMESTAMP WITH TIME ZONE',
+          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+          allowNull: false,
+        },
       })
       .then(() => queryInterface.addIndex('user_profile', ['national_id']))
   },
