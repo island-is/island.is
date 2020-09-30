@@ -2,18 +2,20 @@ import React from 'react'
 import cn from 'classnames'
 import { Typography } from '../Typography/Typography'
 
-import * as styles from './Alert.treat'
+import * as styles from './AlertMessage.treat'
 import { Icon } from '../Icon/Icon'
 
-export type AlertType = 'info' | 'error'
+export type AlertMessageType = 'info' | 'error'
 
-export interface AlertProps {
-  type: AlertType
+export interface AlertMessageProps {
+  type: AlertMessageType
   title: string
   message: string
 }
 
-export const Alert: React.FC<AlertProps> = (props: AlertProps) => {
+export const AlertMessage: React.FC<AlertMessageProps> = (
+  props: AlertMessageProps,
+) => {
   const className = cn(styles.container, styles.containerVariants[props.type])
 
   return (
@@ -38,4 +40,4 @@ export const Alert: React.FC<AlertProps> = (props: AlertProps) => {
   )
 }
 
-export default Alert
+export default AlertMessage

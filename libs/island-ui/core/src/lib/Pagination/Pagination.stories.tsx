@@ -4,7 +4,7 @@ import { number } from '@storybook/addon-knobs'
 import { Box } from '../Box'
 
 export default {
-  title: 'Components/Pagination',
+  title: 'Navigation/Pagination',
   component: Pagination,
 }
 
