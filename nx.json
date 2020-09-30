@@ -228,6 +228,12 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "skilavottord-consts": {
+      "tags": []
+    },
+    "skilavottord-types": {
+      "tags": []
+    },
     "elastic-indexing": {
       "tags": []
     },
