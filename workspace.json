@@ -1808,70 +1808,6 @@
         }
       }
     },
-    "application-template": {
-      "root": "libs/application/template",
-      "sourceRoot": "libs/application/template/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/template/tsconfig.lib.json",
-              "libs/application/template/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/application/template/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/application/template/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/template/src/templates/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
-    "application-form": {
-      "root": "libs/application/form",
-      "sourceRoot": "libs/application/form/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/form/tsconfig.lib.json",
-              "libs/application/form/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/application/form/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/application/form/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/form/src/{lib,components}/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
     "application-system-form": {
       "root": "apps/application-system/form",
       "sourceRoot": "apps/application-system/form/src",
@@ -3286,6 +3222,99 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/reference-template/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-core": {
+      "root": "libs/application/core",
+      "sourceRoot": "libs/application/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/core/tsconfig.lib.json",
+              "libs/application/core/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/application/core/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/core/src/templates/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-ui-shell": {
+      "root": "libs/application/ui-shell",
+      "sourceRoot": "libs/application/ui-shell/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/ui-shell/tsconfig.lib.json",
+              "libs/application/ui-shell/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/application/ui-shell/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/ui-shell/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/ui-shell/src/{lib,components}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-ui-fields": {
+      "root": "libs/application/ui-fields",
+      "sourceRoot": "libs/application/ui-fields/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/ui-fields/tsconfig.lib.json",
+              "libs/application/ui-fields/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/ui-fields/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/ui-fields/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

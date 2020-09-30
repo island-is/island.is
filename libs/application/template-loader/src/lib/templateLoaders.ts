@@ -1,4 +1,4 @@
-import { ApplicationTypes } from '@island.is/application/template'
+import { ApplicationTypes } from '@island.is/application/core'
 
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.EXAMPLE]: () =>
