@@ -14,9 +14,13 @@ import * as styles from './Layout.treat'
 import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { footerProps } from './footerProps'
+import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
+  const { pathname } = useLocation()
+  useScrollTopOnUpdate([pathname])
 
   return (
     <>
