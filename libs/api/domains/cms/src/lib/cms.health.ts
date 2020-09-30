@@ -5,7 +5,6 @@ import {
   HealthCheckError,
   DNSHealthIndicator,
   HealthCheckService,
-  HealthCheckResult,
 } from '@nestjs/terminus'
 import dns from 'dns'
 
