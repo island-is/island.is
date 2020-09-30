@@ -4,7 +4,7 @@ import {
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import * as z from 'zod'
 
 type Events =

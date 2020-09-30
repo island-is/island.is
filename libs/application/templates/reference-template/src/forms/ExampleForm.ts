@@ -11,7 +11,7 @@ import {
   Comparators,
   ApplicationTypes,
   FormValue,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({

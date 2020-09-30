@@ -6,7 +6,7 @@ import {
   ApplicationStateMeta,
   ApplicationStateSchema,
   ApplicationTemplateHelper,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 
