@@ -21,6 +21,6 @@ export const mapQuestionAndAnswer = ({
   sys,
 }: IQuestionAndAnswer): QuestionAndAnswer => ({
   id: sys.id,
-  question: fields.question,
+  question: fields.question ?? '',
   answer: fields.answer && mapHtml(fields.answer, sys.id + ':answer'),
 })

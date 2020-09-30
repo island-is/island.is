@@ -25,6 +25,6 @@ export class FaqList {
 export const mapFaqList = ({ fields, sys }: IFaqList): FaqList => ({
   typename: 'FaqList',
   id: sys.id,
-  title: fields.title,
+  title: fields.title ?? '',
   questions: (fields.questions ?? []).map(mapQuestionAndAnswer),
 })

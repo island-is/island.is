@@ -88,7 +88,11 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                 {page.introduction}
               </Typography>
               {page.image && (
-                <Image type="apiImage" image={page.image} maxWidth={774} />
+                <Image
+                  {...page.image}
+                  url={page.image.url + '?w=774'}
+                  thumbnail={page.image.url + '?w=50'}
+                />
               )}
             </Stack>
           </GridColumn>
