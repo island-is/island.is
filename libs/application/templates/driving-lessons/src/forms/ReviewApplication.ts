@@ -10,7 +10,7 @@ import {
   buildTextField,
   Form,
   ApplicationTypes,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 
 const yesOption = { value: 'yes', label: 'Já' }
 const noOption = { value: 'no', label: 'Nei' }
