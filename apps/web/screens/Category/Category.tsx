@@ -404,6 +404,7 @@ const Category: Screen<CategoryProps> = ({
                   makePath('ArticleCategory', slug),
                 )
               }}
+              isSearchable={false}
               options={categoryOptions}
               name="categories"
             />
