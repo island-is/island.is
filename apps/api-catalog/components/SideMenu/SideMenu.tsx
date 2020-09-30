@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import FocusLock from 'react-focus-lock'
 import * as styles from './SideMenu.treat'
 import cn from 'classnames'
 import { Box, FocusableBox, Icon, Typography } from '@island.is/island-ui/core';
 import { useKey } from 'react-use';
-
+import { FocusableClickBox } from '../FocusableClickBox';
 
 export interface SideMenuLink {
     title: string
@@ -18,8 +18,28 @@ export interface SideMenuProps {
     handleClose: () => void
 }
 
+function useOutsideClicked(ref, func) {
+  useEffect(() => {
+
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        func()
+      }
+    }
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [func, ref]);
+}
+
 export const SideMenu = (props: SideMenuProps) => {
     useKey('Escape', props.handleClose)
+
+  const wrapperRef = useRef(null);
+  useOutsideClicked(wrapperRef, props.handleClose);
 
     return (
         <FocusLock>
@@ -28,6 +48,7 @@ export const SideMenu = (props: SideMenuProps) => {
           background="white"
           boxShadow="subtle"
           height="full"
+          ref={wrapperRef}
         >
         <Box display="flex" paddingBottom={1} justifyContent="flexEnd">
             <Box display="flex" paddingBottom={3} flexGrow={1} justifyContent="spaceBetween">
@@ -53,10 +74,10 @@ export const SideMenu = (props: SideMenuProps) => {
                       key={index}
                       paddingBottom={index + 1 === props.links.length ? 0 : 2}
                     >
-                      <FocusableBox href={link.url}>{link.title}</FocusableBox>
+                      <FocusableClickBox  onClick={props.handleClose } href={link.url}>{link.title}</FocusableClickBox>
                     </Typography>
                   ))}
-                </div>
+            </div>
 
         </Box>
         </FocusLock>

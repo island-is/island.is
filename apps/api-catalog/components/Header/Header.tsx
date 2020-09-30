@@ -7,6 +7,7 @@ import { SideMenu } from '..'
 function Header() {
 
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
+  
   return (
     <GridContainer>
       <GridRow>
@@ -31,7 +32,7 @@ function Header() {
 
                 <Button
                   variant="menu"
-                  onClick={() => setSideMenuOpen(!sideMenuOpen)}
+                  onClick={() => setSideMenuOpen(true)}
                   icon="burger"
                 >
                   Valmynd
@@ -46,13 +47,14 @@ function Header() {
       </GridRow>
       <SideMenu
         isVisible={sideMenuOpen}
+        handleClose={() => setSideMenuOpen(false)}
         title="Viskuausan"
         links={[
           { title: "Upphafsíða", url: "/"},
           { title: "API Vörulisti", url: "/services"},
           { title: "Þróunarhandbók", url: "/design-guide"},
+          { title: "Island", url: "https://island.is"},
         ]}
-        handleClose={() => setSideMenuOpen(false)}
       />
     </GridContainer>
   )
