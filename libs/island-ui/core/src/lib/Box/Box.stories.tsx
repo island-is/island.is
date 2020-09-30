@@ -4,7 +4,7 @@ import { select } from '@storybook/addon-knobs'
 import { Colors } from '@island.is/island-ui/theme'
 
 export default {
-  title: 'Components/Box',
+  title: 'Core/Box',
   component: Box,
 }
 
@@ -94,4 +94,3 @@ export const Default = () =>
   makeBox(
     'Box is the primary layout component. See `Docs` tab for all available props.',
   )
-

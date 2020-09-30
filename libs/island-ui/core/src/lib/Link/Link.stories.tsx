@@ -4,7 +4,7 @@ import ArrowLinkComponent from './ArrowLink/ArrowLink'
 import { Box } from '../Box'
 
 export default {
-  title: 'Components/Link',
+  title: 'Core/Link',
   component: Link,
 }
 
