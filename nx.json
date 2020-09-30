@@ -258,6 +258,9 @@
     "skilavottord/web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
+    },
+    "services-user-profile": {
+      "tags": []
     }
   },
   "affected": {

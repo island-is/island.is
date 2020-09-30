@@ -3098,6 +3098,96 @@
           }
         }
       }
+    },
+    "services-user-profile": {
+      "root": "apps/services/user-profile",
+      "sourceRoot": "apps/services/user-profile/src",
+      "projectType": "application",
+      "prefix": "services-user-profile",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/user-profile",
+            "main": "apps/services/user-profile/src/main.ts",
+            "tsConfig": "apps/services/user-profile/tsconfig.app.json",
+            "assets": ["apps/services/user-profile/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/user-profile/src/environments/environment.ts",
+                  "with": "apps/services/user-profile/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-user-profile:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/services/user-profile/tsconfig.app.json",
+              "apps/services/user-profile/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/services/user-profile/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/user-profile/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "cwd": "apps/services/user-profile"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/services/user-profile/src/openapi.yaml",
+            "commands": [
+              "yarn build application-system-api",
+              "node dist/apps/services/user-profile/main --generate-schema apps/services/user-profile/src/openapi.yaml"
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/services/user-profile/"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/services/user-profile/"
+          }
+        }
+      }
     }
   },
   "cli": {
