@@ -3056,6 +3056,58 @@
         }
       }
     },
+    "skilavottord-consts": {
+      "root": "libs/skilavottord/consts",
+      "sourceRoot": "libs/skilavottord/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/skilavottord/consts/tsconfig.lib.json",
+              "libs/skilavottord/consts/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/consts/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/skilavottord/consts/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "skilavottord-types": {
+      "root": "libs/skilavottord/types",
+      "sourceRoot": "libs/skilavottord/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/skilavottord/types/tsconfig.lib.json",
+              "libs/skilavottord/types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/types/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/skilavottord/types/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-web": {
       "root": "apps/skilavottord/web",
       "sourceRoot": "apps/skilavottord/web",
