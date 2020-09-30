@@ -14,7 +14,7 @@ interface PageProps {
   children: ReactNode
   right?: ReactNode
   rightContent?: string[]
-  active?: number
+  currentStep?: number
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
@@ -43,7 +43,7 @@ export const ProcessPageLayout: FC<PageProps> = ({
   children,
   right,
   rightContent,
-  active,
+  currentStep,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -53,10 +53,9 @@ export const ProcessPageLayout: FC<PageProps> = ({
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
     >
-<<<<<<< HEAD
-=======
-      {isMobile && <ApplicationProgress steps={rightContent} active={active} />}
->>>>>>> 1f4ee5aa... Dynamic content in progress section
+      {isMobile && (
+        <ApplicationProgress steps={rightContent} currentStep={currentStep} />
+      )}
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>

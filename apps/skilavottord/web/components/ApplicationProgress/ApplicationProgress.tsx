@@ -4,15 +4,15 @@ import * as styles from './ApplicationProgress.treat'
 
 const ApplicationProgress = ({
   steps = ['Confirm car for recycling', 'Recycle the car', 'Get money back'],
-  active = 1,
+  currentStep = 1,
 }) => {
-  if (steps.length < active) {
-    active = 1
+  if (steps.length < currentStep) {
+    currentStep = 1
   }
 
   useEffect(() => {
-    if (active !== 1) {
-      const step = document.getElementById(active.toString())
+    if (currentStep !== 1) {
+      const step = document.getElementById(currentStep.toString())
       step.scrollIntoView({ block: 'end', inline: 'start', behavior: 'smooth' })
     }
   }, [])
@@ -28,8 +28,9 @@ const ApplicationProgress = ({
       position="relative"
     >
       {steps.map((step, index) => {
-        const isCompleted = index + 1 < active || active === steps.length
-        const isActive = active === index + 1 && !isCompleted
+        const isCompleted =
+          index + 1 < currentStep || currentStep === steps.length
+        const isActive = currentStep === index + 1 && !isCompleted
         return (
           <Box
             id={(index + 1).toString()}
@@ -45,7 +46,7 @@ const ApplicationProgress = ({
                   <Icon type="check" color="white" width="16px" />
                 ) : (
                   <Typography variant="h5" color="white">
-                    {active}
+                    {currentStep}
                   </Typography>
                 )}
               </Circle>

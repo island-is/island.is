@@ -15,16 +15,9 @@ import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
-import ApplicationProgress from '@island.is/skilavottord-web/components/ApplicationProgress/ApplicationProgress'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 const Confirm = (props) => {
-  const { car } = props
-
   const [checkbox, setCheckbox] = useState(false)
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   const {
     t: { confirm: t },
@@ -33,6 +26,9 @@ const Confirm = (props) => {
 
   const router = useRouter()
   const { id } = router.query
+
+  const { apolloState } = props
+  const car = apolloState[`Car:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -79,7 +75,7 @@ const Confirm = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout active={1}>
+        <ProcessPageLayout currentStep={1}>
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>
@@ -124,19 +120,6 @@ const Confirm = (props) => {
       )}
     </>
   )
-}
-
-Confirm.getInitialProps = (ctx) => {
-  const { apolloClient, query } = ctx
-  const {
-    cache: {
-      data: { data },
-    },
-  } = apolloClient
-
-  const car = data[`Car:${query.id}`]
-
-  return { car }
 }
 
 export default Confirm

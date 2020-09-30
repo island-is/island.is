@@ -11,7 +11,7 @@ import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Handover.treat'
 
 const Handover = (props) => {
-  const { companies, car } = props
+  const { companies, apolloState } = props
 
   const [showModal, setModal] = useState(false)
   const { width } = useWindowSize()
@@ -24,6 +24,9 @@ const Handover = (props) => {
   const { makePath } = useRouteNames(activeLocale)
 
   const router = useRouter()
+  const { id } = router.query
+
+  const car = apolloState[`Car:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -44,7 +47,7 @@ const Handover = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout active={2}>
+        <ProcessPageLayout currentStep={2}>
           <Stack space={6}>
             <Stack space={2}>
               <Typography variant="h1">{t.title}</Typography>
@@ -91,16 +94,7 @@ const Handover = (props) => {
   )
 }
 
-Handover.getInitialProps = (ctx) => {
-  const { apolloClient, query } = ctx
-  const {
-    cache: {
-      data: { data },
-    },
-  } = apolloClient
-
-  const car = data[`Car:${query.id}`]
-
+Handover.getInitialProps = () => {
   const companies = [
     {
       name: 'Company 1',
@@ -122,7 +116,7 @@ Handover.getInitialProps = (ctx) => {
     },
   ]
 
-  return { car, companies }
+  return { companies }
 }
 
 export default Handover
