@@ -13,7 +13,9 @@ export interface AlertMessageProps {
   message: string
 }
 
-export const AlertMessage: React.FC<AlertMessageProps> = (props: AlertMessageProps) => {
+export const AlertMessage: React.FC<AlertMessageProps> = (
+  props: AlertMessageProps,
+) => {
   const className = cn(styles.container, styles.containerVariants[props.type])
 
   return (
