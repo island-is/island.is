@@ -15,9 +15,12 @@ import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import {
   constructConclusion,
   getAppealDecitionText,
+  renderRestrictons,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
 import { formatDate } from '../../../utils/formatters'
+import { capitalize } from 'lodash'
+import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -72,14 +75,78 @@ export const Confirmation: React.FC = () => {
                   id="id_1"
                   label="Krafan um gæsluvarðhald frá Lögreglu"
                 >
-                  {workingCase?.caseFacts && (
-                    <Box marginBottom={2}>
-                      <Box marginBottom={2}>
-                        <Typography variant="h5">Málsatvik rakin</Typography>
-                      </Box>
-                      <Typography>{workingCase.caseFacts}</Typography>
-                    </Box>
-                  )}
+                  <Box marginBottom={2}>
+                    <Typography variant="h3" as="h3">
+                      Grunnupplýsingar
+                    </Typography>
+                  </Box>
+                  <Box marginBottom={1}>
+                    <Typography>
+                      Kennitala: {workingCase.accusedNationalId}
+                    </Typography>
+                  </Box>
+                  <Box marginBottom={1}>
+                    <Typography>
+                      Fullt nafn: {workingCase.accusedName}
+                    </Typography>
+                  </Box>
+                  <Box marginBottom={3}>
+                    <Typography>
+                      Lögheimili: {workingCase.accusedAddress}
+                    </Typography>
+                  </Box>
+                  <AccordionListItem title="Tími handtöku">
+                    {`${capitalize(
+                      formatDate(workingCase.arrestDate, 'PPPP'),
+                    )} kl. ${formatDate(
+                      workingCase.arrestDate,
+                      Constants.TIME_FORMAT,
+                    )}`}
+                  </AccordionListItem>
+                  <AccordionListItem title="Ósk um fyrirtökudag og tíma">
+                    {`${capitalize(
+                      formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                    )} kl. ${formatDate(
+                      workingCase.requestedCourtDate,
+                      Constants.TIME_FORMAT,
+                    )}`}
+                  </AccordionListItem>
+                  <AccordionListItem title="Dómkröfur">
+                    {`Gæsluvarðhald til ${capitalize(
+                      formatDate(workingCase.custodyEndDate, 'PPP'),
+                    )} kl. ${formatDate(
+                      workingCase.custodyEndDate,
+                      Constants.TIME_FORMAT,
+                    )}`}
+                  </AccordionListItem>
+                  <AccordionListItem title="Lagaákvæði">
+                    {workingCase.lawsBroken}
+                  </AccordionListItem>
+                  <Box marginBottom={1}>
+                    <Typography variant="h5">Takmarkanir á gæslu</Typography>
+                  </Box>
+                  <Box marginBottom={4}>
+                    <Typography>
+                      {renderRestrictons(workingCase.custodyRestrictions)}
+                    </Typography>
+                  </Box>
+                  <Box marginBottom={2}>
+                    <Typography variant="h3" as="h3">
+                      Greinargerð um málsatvik og lagarök
+                    </Typography>
+                  </Box>
+                  <AccordionListItem title="Málsatvik rakin">
+                    {workingCase.caseFacts}
+                  </AccordionListItem>
+                  <AccordionListItem title="Framburðir">
+                    {workingCase.witnessAccounts}
+                  </AccordionListItem>
+                  <AccordionListItem title="Staða rannsóknar og næstu skref">
+                    {workingCase.investigationProgress}
+                  </AccordionListItem>
+                  <AccordionListItem title="Lagarök">
+                    {workingCase.legalArguments}
+                  </AccordionListItem>
                 </AccordionItem>
                 <AccordionItem id="id_2" label="Þingbók">
                   {workingCase?.caseFacts && (
