@@ -1,3 +1,5 @@
+import { CaseState } from '@island.is/judicial-system/types'
+
 export enum CustodyProvisions {
   _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
@@ -14,24 +16,22 @@ export enum CustodyRestrictions {
   MEDIA = 'MEDIA',
 }
 
-export enum CaseState {
-  UNKNOWN = 'UNKNOWN',
-  DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-}
-
 export enum NotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
 }
 
+export enum AppealDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
+  POSTPONE = 'POSTPONE',
+}
+
 export interface DetentionRequest {
   id: string
   policeCaseNumber: string
-  suspectName: string
-  suspectNationalId: string
+  accusedName: string
+  accusedNationalId: string
   created: string
   modified: string
   state: CaseState
@@ -43,16 +43,16 @@ export interface Case {
   modified: Date
   state: CaseState
   policeCaseNumber: string
-  suspectNationalId: string
-  suspectName?: string
-  suspectAddress?: string
+  accusedNationalId: string
+  accusedName?: string
+  accusedAddress?: string
   court?: string
-  arrestDate?: Date
-  requestedCourtDate?: Date
-  requestedCustodyEndDate?: Date
+  arrestDate?: string
+  requestedCourtDate?: string
+  requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CustodyProvisions[]
-  custodyRestrictions?: CustodyRestrictions[]
+  requestedCustodyRestrictions?: CustodyRestrictions[]
   caseFacts?: string
   witnessAccounts?: string
   investigationProgress?: string
@@ -60,11 +60,22 @@ export interface Case {
   comments?: string
   notifications?: Notification[]
   courtCaseNumber?: string
+  courtStartTime?: string
+  courtEndTime?: string
+  courtAttendees?: string
+  policeDemands?: string
+  accusedPlea?: string
+  litigationPresentations?: string
+  ruling?: string
+  custodyEndDate?: string
+  custodyRestrictions?: CustodyRestrictions[]
+  accusedAppealDecision?: AppealDecision
+  prosecutorAppealDecision?: AppealDecision
 }
 
 export interface Notification {
   id: string
-  created: Date
+  created: string
   caseId: string
   type: NotificationType
   message: string
@@ -82,10 +93,10 @@ export interface SendNotificationResponse {
 
 export interface CreateCaseRequest {
   policeCaseNumber: string
-  suspectNationalId: string
+  accusedNationalId: string
 }
 
 export interface User {
   nationalId: string
-  roles: string[]
+  role: string
 }

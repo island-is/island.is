@@ -27,18 +27,34 @@ components:
     User:
       type: object
       properties:
+        id:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
         nationalId:
           type: string
         name:
           type: string
-        roles:
-          type: array
-          items:
-            type: string
+        mobileNumber:
+          type: string
+        role:
+          type: string
+          enum:
+            - PROSECUTOR
+            - REGISTRAR
+            - JUDGE
       required:
+        - id
+        - created
+        - modified
         - nationalId
         - name
-        - roles
+        - mobileNumber
+        - role
     Notification:
       type: object
       properties:
@@ -76,18 +92,17 @@ components:
         state:
           type: string
           enum:
-            - UNKNOWN
             - DRAFT
             - SUBMITTED
-            - ACTIVE
-            - COMPLETED
+            - ACCEPTED
+            - REJECTED
         policeCaseNumber:
           type: string
-        suspectNationalId:
+        accusedNationalId:
           type: string
-        suspectName:
+        accusedName:
           type: string
-        suspectAddress:
+        accusedAddress:
           type: string
         court:
           type: string
@@ -113,7 +128,7 @@ components:
               - _95_1_D
               - _95_2
               - _99_1_B
-        custodyRestrictions:
+        requestedCustodyRestrictions:
           type: array
           items:
             type: string
@@ -132,6 +147,48 @@ components:
           type: string
         comments:
           type: string
+        courtCaseNumber:
+          type: string
+        courtStartTime:
+          format: date-time
+          type: string
+        courtEndTime:
+          format: date-time
+          type: string
+        courtAttendees:
+          type: string
+        policeDemands:
+          type: string
+        accusedPlea:
+          type: string
+        litigationPresentations:
+          type: string
+        ruling:
+          type: string
+        custodyEndDate:
+          format: date-time
+          type: string
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        accusedAppealDecision:
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
+        prosecutorAppealDecision:
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
         notifications:
           type: array
           items:
@@ -142,19 +199,44 @@ components:
         - modified
         - state
         - policeCaseNumber
-        - suspectNationalId
+        - accusedNationalId
+        - accusedName
+        - accusedAddress
+        - court
+        - arrestDate
+        - requestedCourtDate
+        - requestedCustodyEndDate
+        - lawsBroken
         - custodyProvisions
+        - requestedCustodyRestrictions
+        - caseFacts
+        - witnessAccounts
+        - investigationProgress
+        - legalArguments
+        - comments
+        - courtCaseNumber
+        - courtStartTime
+        - courtEndTime
+        - courtAttendees
+        - policeDemands
+        - accusedPlea
+        - litigationPresentations
+        - ruling
+        - custodyEndDate
         - custodyRestrictions
+        - accusedAppealDecision
+        - prosecutorAppealDecision
+        - notifications
     CreateCaseDto:
       type: object
       properties:
         policeCaseNumber:
           type: string
-        suspectNationalId:
+        accusedNationalId:
           type: string
-        suspectName:
+        accusedName:
           type: string
-        suspectAddress:
+        accusedAddress:
           type: string
         court:
           type: string
@@ -166,25 +248,24 @@ components:
           type: string
       required:
         - policeCaseNumber
-        - suspectNationalId
+        - accusedNationalId
     UpdateCaseDto:
       type: object
       properties:
         state:
           type: string
           enum:
-            - UNKNOWN
             - DRAFT
             - SUBMITTED
-            - ACTIVE
-            - COMPLETED
+            - ACCEPTED
+            - REJECTED
         policeCaseNumber:
           type: string
-        suspectNationalId:
+        accusedNationalId:
           type: string
-        suspectName:
+        accusedName:
           type: string
-        suspectAddress:
+        accusedAddress:
           type: string
         court:
           type: string
@@ -210,7 +291,7 @@ components:
               - _95_1_D
               - _95_2
               - _99_1_B
-        custodyRestrictions:
+        requestedCustodyRestrictions:
           type: array
           items:
             type: string
@@ -229,6 +310,58 @@ components:
           type: string
         comments:
           type: string
+        courtCaseNumber:
+          type: string
+        courtStartTime:
+          format: date-time
+          type: string
+        courtEndTime:
+          format: date-time
+          type: string
+        courtAttendees:
+          type: string
+        policeDemands:
+          type: string
+        accusedPlea:
+          type: string
+        litigationPresentations:
+          type: string
+        ruling:
+          type: string
+        custodyEndDate:
+          format: date-time
+          type: string
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        accusedAppealDecision:
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
+        prosecutorAppealDecision:
+          type: string
+          enum:
+            - APPEAL
+            - ACCEPT
+            - POSTPONE
+    SigningServiceResponse:
+      type: object
+      properties:
+        controlCode:
+          type: string
+        documentToken:
+          type: string
+      required:
+        - controlCode
+        - documentToken
 paths:
   /liveness:
     get:
@@ -292,6 +425,24 @@ paths:
     get:
       operationId: UserController_getCurrentUser
       parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - users
+  '/api/user/{nationalId}/admin':
+    get:
+      operationId: UserController_updateUserRole
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -412,5 +563,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Notification'
+      tags:
+        - cases
+  '/api/case/{id}/signature':
+    post:
+      operationId: CaseController_requestSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningServiceResponse'
+      tags:
+        - cases
+    get:
+      operationId: CaseController_confirmSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: documentToken
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
       tags:
         - cases

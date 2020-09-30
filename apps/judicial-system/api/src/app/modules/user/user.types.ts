@@ -1,17 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
+  REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
-}
-
-export class User {
-  @ApiProperty()
-  nationalId: string
-
-  @ApiProperty()
-  name: string
-
-  @ApiProperty()
-  roles: UserRole[]
 }
