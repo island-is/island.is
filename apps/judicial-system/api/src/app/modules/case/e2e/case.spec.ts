@@ -23,15 +23,7 @@ beforeAll(async () => {
 
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
-    const data = {
-      policeCaseNumber: 'Case Number',
-      accusedNationalId: '0101010000',
-      accusedName: 'Accused Name',
-      accusedAddress: 'Accused Address',
-      court: 'Court',
-      arrestDate: '2020-09-08T08:00:00.000Z',
-      requestedCourtDate: '2020-09-08T11:30:00.000Z',
-    }
+    const data = getFullCreateCaseData()
 
     await request(app.getHttpServer())
       .post('/api/case')
@@ -532,6 +524,18 @@ function getMinimalCaseData() {
   return {
     policeCaseNumber: 'Case Number',
     accusedNationalId: '0101010000',
+  }
+}
+
+function getFullCreateCaseData() {
+  return {
+    policeCaseNumber: 'Case Number',
+    accusedNationalId: '0101010000',
+    accusedName: 'Accused Name',
+    accusedAddress: 'Accused Address',
+    court: 'Court',
+    arrestDate: '2020-09-08T08:00:00.000Z',
+    requestedCourtDate: '2020-09-08T11:30:00.000Z',
   }
 }
 
