@@ -31,7 +31,7 @@ describe('Case', () => {
       .expect(201)
       .then(async (response) => {
         // Check the response
-        expectResponseToMatchCase(response.body, {
+        expectCasesToMatch(response.body, {
           ...data,
           id: response.body.id || 'FAILURE',
           created: response.body.created || 'FAILURE',
@@ -44,7 +44,7 @@ describe('Case', () => {
           where: { id: response.body.id },
           include: [Notification],
         }).then((value) => {
-          expectResponseToMatchCase(dbCaseToCase(value), {
+          expectCasesToMatch(dbCaseToCase(value), {
             ...response.body,
             notifications: [],
           })
@@ -61,7 +61,7 @@ describe('Case', () => {
       .expect(201)
       .then(async (response) => {
         // Check the response
-        expectResponseToMatchCase(response.body, {
+        expectCasesToMatch(response.body, {
           ...data,
           id: response.body.id || 'FAILURE',
           created: response.body.created || 'FAILURE',
@@ -74,7 +74,7 @@ describe('Case', () => {
           where: { id: response.body.id },
           include: [Notification],
         }).then((value) => {
-          expectResponseToMatchCase(dbCaseToCase(value), {
+          expectCasesToMatch(dbCaseToCase(value), {
             ...response.body,
             notifications: [],
           })
@@ -92,57 +92,15 @@ describe('Case', () => {
         .expect(200)
         .then(async (response) => {
           // Check the response
-          expect(response.body.id).toBe(value.id)
-          expect(response.body.created).toBe(value.created.toISOString())
-          expect(response.body.modified).not.toBe(value.modified.toISOString())
-          expect(response.body.state).toBe(data.state)
-          expect(response.body.policeCaseNumber).toBe(data.policeCaseNumber)
-          expect(response.body.accusedNationalId).toBe(data.accusedNationalId)
-          expect(response.body.accusedName).toBe(data.accusedName)
-          expect(response.body.accusedAddress).toBe(data.accusedAddress)
-          expect(response.body.court).toBe(data.court)
-          expect(response.body.arrestDate).toBe(data.arrestDate)
-          expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
-          expect(response.body.requestedCustodyEndDate).toBe(
-            data.requestedCustodyEndDate,
-          )
-          expect(response.body.lawsBroken).toBe(data.lawsBroken)
-          expect(response.body.custodyProvisions).toStrictEqual(
-            data.custodyProvisions,
-          )
-          expect(response.body.requestedCustodyRestrictions).toStrictEqual(
-            data.requestedCustodyRestrictions,
-          )
-          expect(response.body.caseFacts).toBe(data.caseFacts)
-          expect(response.body.witnessAccounts).toBe(data.witnessAccounts)
-          expect(response.body.investigationProgress).toBe(
-            data.investigationProgress,
-          )
-          expect(response.body.legalArguments).toBe(data.legalArguments)
-          expect(response.body.comments).toBe(data.comments)
-          expect(response.body.courtCaseNumber).toBe(data.courtCaseNumber)
-          expect(response.body.courtStartTime).toBe(data.courtStartTime)
-          expect(response.body.courtEndTime).toBe(data.courtEndTime)
-          expect(response.body.courtAttendees).toBe(data.courtAttendees)
-          expect(response.body.policeDemands).toBe(data.policeDemands)
-          expect(response.body.accusedPlea).toBe(data.accusedPlea)
-          expect(response.body.litigationPresentations).toBe(
-            data.litigationPresentations,
-          )
-          expect(response.body.ruling).toBe(data.ruling)
-          expect(response.body.custodyEndDate).toStrictEqual(
-            data.custodyEndDate,
-          )
-          expect(response.body.custodyRestrictions).toStrictEqual(
-            data.custodyRestrictions,
-          )
-          expect(response.body.accusedAppealDecision).toBe(
-            data.accusedAppealDecision,
-          )
-          expect(response.body.prosecutorAppealDecision).toBe(
-            data.prosecutorAppealDecision,
-          )
-          expect(response.body.notifications).toBeUndefined()
+          const dbCase = dbCaseToCase(value)
+
+          expect(response.body.modified).not.toBe(dbCase.modified)
+          expectCasesToMatch(response.body, {
+            ...data,
+            id: dbCase.id || 'FAILURE',
+            created: dbCase.created || 'FAILURE',
+            modified: response.body.modified,
+          } as Case)
 
           // Check the data in the database
           await Case.findOne({
@@ -472,15 +430,15 @@ function dbCaseToCase(dbCase: Case) {
 
   return ({
     ...theCase,
-    created: theCase.created.toISOString(),
-    modified: theCase.modified.toISOString(),
+    created: theCase.created && theCase.created.toISOString(),
+    modified: theCase.modified && theCase.modified.toISOString(),
     arrestDate: theCase.arrestDate && theCase.arrestDate.toISOString(),
     requestedCourtDate:
       theCase.requestedCourtDate && theCase.requestedCourtDate.toISOString(),
   } as unknown) as Case
 }
 
-function expectResponseToMatchCase(resCase: Case, theCase: Case) {
+function expectCasesToMatch(resCase: Case, theCase: Case) {
   expect(resCase.id).toBe(theCase.id)
   expect(resCase.created).toBe(theCase.created)
   expect(resCase.modified).toBe(theCase.modified)
@@ -498,10 +456,10 @@ function expectResponseToMatchCase(resCase: Case, theCase: Case) {
     theCase.requestedCustodyEndDate || null,
   )
   expect(resCase.lawsBroken || null).toBe(theCase.lawsBroken || null)
-  expect(resCase.custodyProvisions || null).toBe(
+  expect(resCase.custodyProvisions || null).toStrictEqual(
     theCase.custodyProvisions || null,
   )
-  expect(resCase.requestedCustodyRestrictions || null).toBe(
+  expect(resCase.requestedCustodyRestrictions || null).toStrictEqual(
     theCase.requestedCustodyRestrictions || null,
   )
   expect(resCase.caseFacts || null).toBe(theCase.caseFacts || null)
@@ -522,7 +480,7 @@ function expectResponseToMatchCase(resCase: Case, theCase: Case) {
   )
   expect(resCase.ruling || null).toBe(theCase.ruling || null)
   expect(resCase.custodyEndDate || null).toBe(theCase.custodyEndDate || null)
-  expect(resCase.custodyRestrictions || null).toBe(
+  expect(resCase.custodyRestrictions || null).toStrictEqual(
     theCase.custodyRestrictions || null,
   )
   expect(resCase.accusedAppealDecision || null).toBe(
