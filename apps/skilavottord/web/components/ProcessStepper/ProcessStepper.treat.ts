@@ -12,12 +12,12 @@ export const step = style({
   whiteSpace: 'nowrap',
 })
 
-export const activeNumberContainer = style({
+export const activeIcon = style({
   height: '32px',
   width: '32px',
 })
 
-export const notStarted = style({
+export const inProgressIcon = style({
   height: '16px',
   width: '16px',
 })

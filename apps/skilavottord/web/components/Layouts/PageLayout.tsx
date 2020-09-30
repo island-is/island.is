@@ -8,17 +8,20 @@ import {
   GridColumn,
   Footer,
 } from '@island.is/island-ui/core'
-import ApplicationProgress from '../ApplicationProgress/ApplicationProgress'
+import ProcessStepper from '../ProcessStepper/ProcessStepper'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 interface PageProps {
   children: ReactNode
+}
+
+interface ProcessPageProps extends PageProps {
   right?: ReactNode
-  rightContent?: string[]
-  currentStep?: number
+  step: number
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
-  <>
+  <Box>
     <Box paddingY={10}>
       <GridContainer>
         <GridRow>
@@ -36,26 +39,26 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
       </GridContainer>
     </Box>
     <Footer />
-  </>
+  </Box>
 )
 
-export const ProcessPageLayout: FC<PageProps> = ({
+export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
   right,
-  rightContent,
-  currentStep,
+  step,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const {
+    t: { processSteps: t },
+  } = useI18n()
 
   return (
     <Box
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
     >
-      {isMobile && (
-        <ApplicationProgress steps={rightContent} currentStep={currentStep} />
-      )}
+      {isMobile && <ProcessStepper steps={t} currentStep={step} />}
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>

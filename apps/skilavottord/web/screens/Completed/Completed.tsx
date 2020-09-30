@@ -15,13 +15,13 @@ import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { CarDetailsBox } from '../Confirm/components'
 import { Button } from '@island.is/skilavottord-web/components'
 
-const Completed = (props) => {  
+const Completed = (props) => {
   const {
     activeLocale,
     t: { completed: t },
   } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
-  
+
   const router = useRouter()
   const { id } = router.query
 
@@ -43,7 +43,7 @@ const Completed = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout currentStep={3}>
+        <ProcessPageLayout step={3}>
           <Stack space={3}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={4}>

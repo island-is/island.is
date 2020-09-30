@@ -1,21 +1,23 @@
 import React, { useEffect } from 'react'
 import { Box, Icon, Typography } from '@island.is/island-ui/core'
-import * as styles from './ApplicationProgress.treat'
+import * as styles from './ProcessStepper.treat'
 
-const ApplicationProgress = ({
-  steps = ['Confirm car for recycling', 'Recycle the car', 'Get money back'],
-  currentStep = 1,
-}) => {
-  if (steps.length < currentStep) {
-    currentStep = 1
-  }
+interface ProcessProps {
+  steps: string[]
+  currentStep: number
+}
 
+const ProcessStepper = ({ steps, currentStep }: ProcessProps) => {
   useEffect(() => {
+    if (steps.length < currentStep) {
+      currentStep = 1
+    }
+    // Scrolls current step into view unless it is the first step
     if (currentStep !== 1) {
       const step = document.getElementById(currentStep.toString())
       step.scrollIntoView({ block: 'end', inline: 'start', behavior: 'smooth' })
     }
-  }, [])
+  }, [currentStep, steps])
 
   return (
     <Box
@@ -28,6 +30,7 @@ const ApplicationProgress = ({
       position="relative"
     >
       {steps.map((step, index) => {
+        // the second checks in isCompleted and isActive is because design wants the last step to be marked as completed as well
         const isCompleted =
           index + 1 < currentStep || currentStep === steps.length
         const isActive = currentStep === index + 1 && !isCompleted
@@ -41,7 +44,7 @@ const ApplicationProgress = ({
             paddingRight={4}
           >
             {isActive || isCompleted ? (
-              <Circle>
+              <IconBackground>
                 {isCompleted ? (
                   <Icon type="check" color="white" width="16px" />
                 ) : (
@@ -49,10 +52,10 @@ const ApplicationProgress = ({
                     {currentStep}
                   </Typography>
                 )}
-              </Circle>
+              </IconBackground>
             ) : (
               <Box
-                className={styles.notStarted}
+                className={styles.inProgressIcon}
                 display="flex"
                 background="purple200"
                 borderRadius="circle"
@@ -67,9 +70,9 @@ const ApplicationProgress = ({
   )
 }
 
-const Circle = ({ children }) => (
+const IconBackground = ({ children }) => (
   <Box
-    className={styles.activeNumberContainer}
+    className={styles.activeIcon}
     display="flex"
     background="purple400"
     borderRadius="circle"
@@ -81,4 +84,4 @@ const Circle = ({ children }) => (
   </Box>
 )
 
-export default ApplicationProgress
+export default ProcessStepper
