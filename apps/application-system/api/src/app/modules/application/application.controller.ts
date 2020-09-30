@@ -26,10 +26,10 @@ import {
   callDataProviders,
   ApplicationTypes,
   FormValue,
-  getApplicationTemplateByTypeId,
   ApplicationTemplateHelper,
   ExternalData,
 } from '@island.is/application/template'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'

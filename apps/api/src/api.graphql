@@ -73,76 +73,7 @@ type News {
   intro: String!
   image: Image
   date: String!
-  content: String
-}
-
-type NumberBullet {
-  id: ID!
-  title: String!
-  body: String!
-}
-
-type Statistic {
-  id: ID!
-  value: String!
-  label: String!
-}
-
-type QuestionAndAnswer {
-  id: ID!
-  question: String!
-  answer: Html
-}
-
-type TabContent {
-  tabTitle: String!
-  contentTitle: String
-  image: Image
-  body: Html
-}
-
-type TeamMember {
-  name: String!
-  title: String!
-  image: Image!
-}
-
-type ArticleCategory {
-  title: String!
-  slug: String!
-  description: String
-}
-
-type ArticleGroup {
-  title: String!
-  slug: String!
-  description: String
-}
-
-type ArticleSubgroup {
-  title: String!
-  importance: Float
-  slug: String!
-}
-
-type OrganizationTag {
-  id: ID!
-  title: String!
-}
-
-type Organization {
-  id: ID!
-  title: String!
-  description: String
-  slug: String!
-  tag: [OrganizationTag!]
-  link: String
-}
-
-type SubArticle {
-  title: String!
-  slug: String!
-  body: [Slice!]!
+  content: [Slice!]
 }
 
 union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | ContactUs | Html | Image | Asset
@@ -289,6 +220,75 @@ type Asset {
   url: String!
   title: String!
   contentType: String!
+}
+
+type NumberBullet {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type Statistic {
+  id: ID!
+  value: String!
+  label: String!
+}
+
+type QuestionAndAnswer {
+  id: ID!
+  question: String!
+  answer: Html
+}
+
+type TabContent {
+  tabTitle: String!
+  contentTitle: String
+  image: Image
+  body: Html
+}
+
+type TeamMember {
+  name: String!
+  title: String!
+  image: Image!
+}
+
+type ArticleCategory {
+  title: String!
+  slug: String!
+  description: String
+}
+
+type ArticleGroup {
+  title: String!
+  slug: String!
+  description: String
+}
+
+type ArticleSubgroup {
+  title: String!
+  importance: Float
+  slug: String!
+}
+
+type OrganizationTag {
+  id: ID!
+  title: String!
+}
+
+type Organization {
+  id: ID!
+  title: String!
+  description: String
+  slug: String!
+  tag: [OrganizationTag!]
+  link: String
+}
+
+type SubArticle {
+  title: String!
+  slug: String!
+  body: [Slice!]!
 }
 
 type Article {

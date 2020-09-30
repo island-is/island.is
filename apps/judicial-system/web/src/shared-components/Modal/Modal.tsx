@@ -1,5 +1,4 @@
 import { Box, Button, Icon, Typography } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import ReactDOM from 'react-dom'
 

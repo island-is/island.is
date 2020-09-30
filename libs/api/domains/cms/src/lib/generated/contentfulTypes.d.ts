@@ -712,6 +712,9 @@ export interface ILinkFields {
 
   /** URL */
   url: string
+
+  /** Linked page */
+  linkedPage?: ILinkedPage | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -724,6 +727,31 @@ export interface ILink extends Entry<ILinkFields> {
     contentType: {
       sys: {
         id: 'link'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILinkedPageFields {
+  /** Title */
+  title: string
+
+  /** page */
+  page: IArticle | IArticleCategory | INews
+}
+
+export interface ILinkedPage extends Entry<ILinkedPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'linkedPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1362,6 +1390,9 @@ export interface IStoryFields {
 
   /** Link */
   link?: string | undefined
+
+  /** Linked page (new) */
+  page?: ILinkedPage | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {
@@ -1997,6 +2028,7 @@ export type CONTENT_TYPE =
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'link'
+  | 'linkedPage'
   | 'linkList'
   | 'logoListSlice'
   | 'mailingListSignup'

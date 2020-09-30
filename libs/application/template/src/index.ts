@@ -13,7 +13,6 @@ export * from './lib/dataProviderUtils'
 export * from './lib/formUtils'
 export * from './lib/fieldBuilders'
 export * from './lib/formBuilders'
-export * from './templates/ApplicationTemplateHelper'
+export * from './lib/ApplicationTemplateHelper'
 
 export * from './validation/validators'
-export * from './applicationTemplateLoader'
