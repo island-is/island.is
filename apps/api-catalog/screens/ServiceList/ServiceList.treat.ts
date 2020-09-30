@@ -4,7 +4,8 @@ import { theme } from '@island.is/island-ui/theme'
 export const serviceList = style ({
     display: 'flex',  
     flexWrap: 'wrap',
-    minHeight: 350
+    minHeight: 350,
+    justifyContent: 'space-between'
 })
 
 const filterOrg = {

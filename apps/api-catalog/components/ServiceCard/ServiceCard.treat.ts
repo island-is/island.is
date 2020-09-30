@@ -4,8 +4,6 @@ import { theme } from '@island.is/island-ui/theme'
 export const card = style({
     width:432,
     marginBottom:20,
-    marginLeft:10,
-    marginRight:10,
     fontFamily:theme.typography.fontFamily,
     borderColor:theme.color.blue200,
     borderWidth:1,

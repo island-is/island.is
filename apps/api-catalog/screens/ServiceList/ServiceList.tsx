@@ -51,7 +51,7 @@ function ServiceLayout({ top, bottom, left, right, classes }: PropTypes) {
                     offset={[    '0',     '0',  '0',    '0', '0']}>
               {left}
             </GridColumn>
-            <GridColumn span={[ '12/12',  '8/12',  '3/12', '3/12', '3/12']}
+            <GridColumn span={[ '12/12',  '4/12',  '4/12', '3/12', '3/12']}
                       offset={[    '0',      '0',     '0',    '0',    '0']}>
               {right}
             </GridColumn>
