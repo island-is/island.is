@@ -86,10 +86,6 @@
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
       ],
-      "@island.is/application/template": [
-        "libs/application/template/src/index.ts"
-      ],
-      "@island.is/application/form": ["libs/application/form/src/index.ts"],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
@@ -140,6 +136,13 @@
       ],
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
+      ],
+      "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/ui-shell": [
+        "libs/application/ui-shell/src/index.ts"
+      ],
+      "@island.is/application/ui-fields": [
+        "libs/application/ui-fields/src/index.ts"
       ]
     }
   },
