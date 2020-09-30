@@ -10,7 +10,6 @@ export class UserProfileController {
 
   constructor(private userProfileService: UserProfileService) { }
 
-
   @Get(':id')
   @ApiOkResponse({ type: UserProfile })
   async findOne(
@@ -42,7 +41,6 @@ export class UserProfileController {
 
     return profile
   }
-
 
   @Post()
   @ApiCreatedResponse({ type: UserProfile })
