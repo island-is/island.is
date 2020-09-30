@@ -14,12 +14,15 @@ export interface TimelineEventProps {
   link?: string
 }
 
-export interface TimelineProps {
+export interface TimelineSectionProps {
   title: string
   events: TimelineEventProps[]
 }
 
-export const TimelineSection: FC<TimelineProps> = ({ title, events }) => {
+export const TimelineSection: FC<TimelineSectionProps> = ({
+  title,
+  events,
+}) => {
   const mappedEvents = useMemo(() => events.map(mapEvent), [events])
   const { getMonthByIndex } = useDateUtils()
 
