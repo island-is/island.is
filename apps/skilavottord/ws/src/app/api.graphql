@@ -2,13 +2,31 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Car {
+type RecyclingPartner {
   id: ID!
+  name: String!
+  address: String!
+  postNumber: Float!
+  website: String
+  phone: String
+  active: Boolean
+}
+
+type User {
+  nationalId: ID!
+  name: String!
+  mobile: String
+}
+
+type Car {
+  permno: ID!
+  type: String!
   name: String!
   model: String!
   color: String!
-  year: String!
+  newregdate: String!
   recyclable: Boolean!
+  recyclingPartner: RecyclingPartner
 }
 
 type Carowner {
@@ -19,5 +37,20 @@ type Carowner {
 }
 
 type Query {
-  getCarownerByNationalId(nationalId: String!): Carowner!
+  getRecyclingPartner(id: Float!): RecyclingPartner!
+  getUserByNationalId(nationalId: String!): User!
+  getVehiclesForNationalId(nationalId: String!): Carowner!
+}
+
+type Mutation {
+  deregisterCar(deregisterCarInput: DeregisterCarInput!): Boolean!
+  requestPayment(nationalid: String!, permno: String!): Boolean!
+}
+
+input DeregisterCarInput {
+  permno: String!
+  nationalid: String!
+  recyclingCompanyId: Float!
+  recyclingCompanyName: String!
+  deregisterDescription: String
 }

@@ -12,7 +12,7 @@ import {
   Form,
   DataProviderTypes,
   ApplicationTypes,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { m } from './messages'
 
 const yesOption = { value: 'yes', label: m.yesOptionLabel }

@@ -1,7 +1,4 @@
-import {
-  DataProvider,
-  DataProviderTypes,
-} from '@island.is/application/template'
+import { DataProvider, DataProviderTypes } from '@island.is/application/core'
 
 export class ExampleFails extends DataProvider {
   readonly type = DataProviderTypes.ExampleFails
