@@ -246,18 +246,11 @@ describe('Case', () => {
           .expect(200)
           .then((response) => {
             // Check the response
-            expect(response.body.notifications.length).toBe(1)
-            expect(response.body.notifications[0].id).toBe(notificationValue.id)
-            expect(response.body.notifications[0].created).toBe(
-              notificationValue.created.toISOString(),
-            )
-            expect(response.body.notifications[0].caseId).toBe(caseValue.id)
-            expect(response.body.notifications[0].type).toBe(
-              notificationValue.type,
-            )
-            expect(response.body.notifications[0].message).toBe(
-              notificationValue.message,
-            )
+            const dbCase = dbCaseToCase(caseValue)
+            expectCasesToMatch(response.body, {
+              ...dbCase,
+              notifications: [dbNotificationToNotification(notificationValue)],
+            } as Case)
           })
       })
     })
@@ -351,10 +344,10 @@ function dbCaseToCase(dbCase: Case) {
 function dbNotificationToNotification(dbNotification: Notification) {
   const notification = dbNotification.toJSON() as Notification
 
-  return {
+  return ({
     ...notification,
     created: notification.created && notification.created.toISOString(),
-  }
+  } as unknown) as Notification
 }
 
 function expectCasesToMatch(resCase: Case, theCase: Case) {
