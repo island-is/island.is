@@ -164,7 +164,7 @@ export class CaseService {
     // Development without signing service access token
     return {
       controlCode: '0000',
-      documentToken: 'DEVELOPEMNT',
+      documentToken: 'DEVELOPMENT',
     }
   }
 

@@ -256,7 +256,36 @@ describe('Case', () => {
     })
   })
 
-  it('POST /api/case/:id/signature should request a signature for a case', async () => {})
+  it('POST /api/case/:id/signature should request a signature for a case', async () => {
+    await Case.create(getCaseData()).then(async (value) => {
+      await request(app.getHttpServer())
+        .put(`/api/case/${value.id}/state`)
+        .send({
+          modified: value.modified.toISOString(),
+          transition: CaseTransition.SUBMIT,
+        })
+        .expect(200)
+        .then(async (response) => {
+          await request(app.getHttpServer())
+            .put(`/api/case/${response.body.id}/state`)
+            .send({
+              modified: response.body.modified,
+              transition: CaseTransition.ACCEPT,
+            })
+            .expect(200)
+            .then(async (response) => {
+              await request(app.getHttpServer())
+                .post(`/api/case/${response.body.id}/signature`)
+                .expect(201)
+                .then(async (response) => {
+                  // Check the response
+                  expect(response.body.controlCode).toBe('0000')
+                  expect(response.body.documentToken).toBe('DEVELOPMENT')
+                })
+            })
+        })
+    })
+  })
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {})
 })
