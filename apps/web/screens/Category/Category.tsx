@@ -125,6 +125,22 @@ const Category: Screen<CategoryProps> = ({
     setHash(hashString)
   }, [Router])
 
+  useEffect(() => {
+    const groupSlug = Object.keys(groups).find(
+      (x) => x === hash.replace('#', ''),
+    )
+
+    if (groupSlug) {
+      const el = itemsRef.current.find(
+        (x) => x.getAttribute('data-slug') === groupSlug,
+      )
+
+      if (el) {
+        window.scrollTo(0, el.offsetTop)
+      }
+    }
+  }, [itemsRef, groups, hash])
+
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
     active: c.slug === Router.query.slug,
