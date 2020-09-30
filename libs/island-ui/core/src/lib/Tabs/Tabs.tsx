@@ -57,6 +57,7 @@ export const Tabs: FC<TabInterface> = ({
             onChange={onChange}
             options={selectOptions}
             defaultValue={selectOptions[parseInt(selected)]}
+            isSearchable={false}
           />
         </div>
         <TabList
