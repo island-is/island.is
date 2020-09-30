@@ -19,7 +19,7 @@ export interface StandardLayoutProps {
 export const StandardLayout: FC<StandardLayoutProps> = ({
   sidebar,
   children,
-  contentBoxProps = {}
+  contentBoxProps = {},
 }) => {
   const columns = [
     <GridColumn
