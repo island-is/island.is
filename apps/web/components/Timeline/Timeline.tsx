@@ -288,13 +288,29 @@ const Event = ({ event, setVisibleModal, visibleModal, modalKey }) => {
       {mounted &&
         isVisible &&
         ReactDOM.createPortal(
-          <div
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <EventModal event={event} onClose={() => setVisibleModal(null)} />
-          </div>,
+          <Fragment>
+            <Box
+              display={['none', 'none', 'none', 'block']}
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
+              <EventModal event={event} onClose={() => setVisibleModal(null)} />
+            </Box>
+            <Box
+              display={['flex', 'flex', 'flex', 'none']}
+              position="fixed"
+              top={0}
+              bottom={0}
+              left={0}
+              right={0}
+              overflow="auto"
+              padding={3}
+              className={eventStyles.mobileModalContainer}
+            >
+              <EventModal event={event} onClose={() => setVisibleModal(null)} />
+            </Box>
+          </Fragment>,
           portalRef.current,
         )}
     </>
