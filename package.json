@@ -279,6 +279,7 @@
   "resolutions": {
     "webpack": "4.42.0",
     "serialize-javascript": "4.0.0",
-    "http-proxy": "1.18.1"
+    "http-proxy": "1.18.1",
+    "node-forge": "0.10.0"
   }
 }
