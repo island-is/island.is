@@ -11,9 +11,9 @@ export class CaseValidationPipe implements PipeTransform {
         `Police case number "${theCase.policeCaseNumber}" is not valid`,
       )
     }
-    if (!theCase.suspectNationalId) {
+    if (!theCase.accusedNationalId) {
       throw new BadRequestException(
-        `National id "${theCase.suspectNationalId}" is not valid`,
+        `National id "${theCase.accusedNationalId}" is not valid`,
       )
     }
 

@@ -11,6 +11,10 @@ export default {
     password: process.env.NOVA_PASSWORD,
   },
   notifications: {
-    judgePhoneNumber: process.env.JUDGE_PHONE_NUMBER,
+    judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
+  },
+  signingOptions: {
+    url: process.env.DOKOBIT_URL,
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
 }
