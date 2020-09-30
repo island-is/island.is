@@ -1,5 +1,5 @@
 import { IsArray, IsEnum, IsString } from 'class-validator'
-import { DataProviderTypes } from '@island.is/application/template'
+import { DataProviderTypes } from '@island.is/application/core'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 

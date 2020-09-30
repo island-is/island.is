@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   Typography,
-  Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -10,7 +9,7 @@ import {
   Tooltip,
   Inline,
 } from '@island.is/island-ui/core'
-import { OutlinedBox } from '@island.is/skilavottord-web/components'
+import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -77,11 +76,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 paddingX={4}
                 paddingY={4}
               >
-                <Button
-                  size="small"
-                  width={isMobile ? 'fluid' : 'normal'}
-                  onClick={onContinue}
-                >
+                <Button size="small" onClick={onContinue}>
                   {t.actions.valid}
                 </Button>
               </ColumnBox>

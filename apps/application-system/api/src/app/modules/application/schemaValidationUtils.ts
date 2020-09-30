@@ -2,7 +2,7 @@ import {
   Application,
   FormValue,
   validateAnswers,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { BadRequestException } from '@nestjs/common'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
