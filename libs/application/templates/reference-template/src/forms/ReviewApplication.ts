@@ -10,7 +10,7 @@ import {
   buildSection,
   buildTextField,
   Form,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({

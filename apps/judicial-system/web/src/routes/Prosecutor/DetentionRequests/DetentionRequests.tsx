@@ -8,7 +8,7 @@ import {
   ProsecutorLogo,
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
-  Alert,
+  AlertMessage,
   Button,
   Typography,
   Tag,
@@ -167,7 +167,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
           className={styles.detentionRequestsError}
           data-testid="detention-requests-error"
         >
-          <Alert
+          <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
             message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar"
             type="error"

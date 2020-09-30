@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { ApplicationForm } from '@island.is/application/form'
+import { ApplicationForm } from '@island.is/application/ui-shell'
 import { useNamespaces } from '@island.is/localization'
 import useAuth from '../hooks/useAuth'
 

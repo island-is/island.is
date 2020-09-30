@@ -3,7 +3,7 @@ import { AlertBanner } from './AlertBanner'
 import { Box } from '../Box/Box'
 
 export default {
-  title: 'Components/AlertBanner',
+  title: 'Alerts/AlertBanner',
   component: AlertBanner,
 }
 

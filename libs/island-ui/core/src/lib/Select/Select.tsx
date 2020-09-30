@@ -41,6 +41,7 @@ export interface SelectProps {
   placeholder?: string
   defaultValue?: Option
   icon?: string
+  isSearchable?: boolean
 }
 
 export const Select = ({
@@ -57,6 +58,7 @@ export const Select = ({
   placeholder = '',
   defaultValue,
   icon = 'cheveron',
+  isSearchable = true,
 }: SelectProps) => {
   return (
     <div className={styles.wrapper} data-testid={`select-${name}`}>
@@ -77,6 +79,7 @@ export const Select = ({
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
+        isSearchable={isSearchable}
         components={{
           Control,
           Input,

@@ -11,7 +11,7 @@ import { Icon } from '../Icon/Icon'
 import { GridContainer, GridRow, GridColumn } from '../Grid'
 
 import * as styles from './Footer.treat'
-import { ExternalLink, Link } from '../Link'
+import { Link } from '../Link'
 
 export interface FooterLinkProps {
   title: string
@@ -206,9 +206,9 @@ export const Footer = ({
                         fontWeight="light"
                         paddingBottom={2}
                       >
-                        <ExternalLink href={href} color="blue600">
+                        <Link href={href} color="blue600" withUnderline>
                           {title}
-                        </ExternalLink>
+                        </Link>
                       </Typography>
                     </GridColumn>
                   )

@@ -8,7 +8,7 @@ import {
   Header,
   LinkCardList,
   Heading,
-  Timeline,
+  TimelineSection,
   StoryList,
   AboutLatestNews,
   LogoList,
@@ -287,7 +287,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'TimelineSlice':
       return (
         <div id={slice.id}>
-          <Timeline
+          <TimelineSection
             {...slice}
             events={slice.events.map((event) => ({
               ...event,
