@@ -32,7 +32,6 @@ import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { useNamespace } from '../hooks'
 
 export interface LayoutProps {
@@ -40,6 +39,7 @@ export interface LayoutProps {
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
+  showDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
@@ -59,6 +59,7 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
+  showDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperMenu,
@@ -164,6 +165,7 @@ const Layout: NextComponentType<
             {wrapContent ? <Box width="full">{children}</Box> : children}
           </div>
         </MenuTabsContext.Provider>
+        {String(showDrawerMenu)}
         {showFooter && (
           <Footer
             topLinks={footerUpperMenu}
@@ -179,6 +181,7 @@ const Layout: NextComponentType<
             }}
             showMiddleLinks
             showTagLinks
+            showDrawerMenu
           />
         )}
         <style jsx global>{`
