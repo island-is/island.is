@@ -38,21 +38,21 @@ export const LanguageToggler: FC<{
         const type = findKey(o, (v) => v === firstPath) as PathTypes
 
         if (type) {
-          return Router.push(makePath(type))
+          return Router.push(makePath(type), makePath(type))
         }
       }
 
-      return Router.push(otherLanguageUrl)
+      return Router.push(otherLanguageUrl, otherLanguageUrl)
     } else {
       return getContentSlug(contentfulId).then((res) => {
         const slug = res.data?.getContentSlug?.slug
         const type = res.data?.getContentSlug?.type
 
         if (type && slug) {
-          return Router.push(makePath(type, slug))
+          return Router.push(makePath(type, '[slug]'), makePath(type, slug))
         }
 
-        return Router.push(makePath())
+        return Router.push(makePath(), makePath())
       })
     }
   }

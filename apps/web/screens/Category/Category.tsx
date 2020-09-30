@@ -504,6 +504,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   const categoryExists = getArticleCategories.some(
     (category) => category.slug === slug,
   )
+
   // if requested category si not in returned list of categories we assume it does not exist
   if (!categoryExists) {
     throw new CustomNextError(404, 'Category not found')

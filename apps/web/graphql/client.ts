@@ -2,6 +2,8 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
   IntrospectionFragmentMatcher,
+  IdGetterObj,
+  defaultDataIdFromObject,
 } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import getConfig from 'next/config'
@@ -35,6 +37,8 @@ function create(initialState?: any) {
   const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
   const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
 
+  const clientLocale = initialState?.clientLocale
+
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     name: 'cms-web-client',
@@ -43,6 +47,12 @@ function create(initialState?: any) {
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: httpLink,
     cache: new InMemoryCache({
+      dataIdFromObject(obj: IdGetterObj) {
+        switch (obj.__typename) {
+          case 'ArticleCategory':
+            return `${obj.__typename}:${obj.id}:${clientLocale}`
+        }
+      },
       fragmentMatcher: new IntrospectionFragmentMatcher({
         introspectionQueryResultData,
       }),
