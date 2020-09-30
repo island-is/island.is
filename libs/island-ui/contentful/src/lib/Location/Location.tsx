@@ -3,7 +3,6 @@ import * as styles from './Location.treat'
 import {
   Box,
   Typography,
-  Link,
   Stack,
   GridContainer,
   GridRow,
@@ -75,7 +74,13 @@ export const Location: FC<LocationProps> = ({
                           ))}
                       </div>
                     )}
-                    {link && <Link href={link.url}>{link.text}</Link>}
+                    {link && (
+                      <a href={link.url}>
+                        <Typography variant="eyebrow" as="span" color="blue400">
+                          {link.text}
+                        </Typography>
+                      </a>
+                    )}
                   </Stack>
                 </Box>
               </Box>
