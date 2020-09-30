@@ -7,7 +7,7 @@ import { boolean, select } from '@storybook/addon-knobs'
 import avatarImage from '../../assets/avatar.jpg'
 
 export default {
-  title: 'Components/Button',
+  title: 'Core/Button',
   component: Button,
 }
 

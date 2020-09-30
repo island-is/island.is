@@ -11,7 +11,7 @@ import { Icon } from '../Icon/Icon'
 import { GridContainer, GridRow, GridColumn } from '../Grid'
 
 import * as styles from './Footer.treat'
-import { ExternalLink, Link } from '../Link'
+import { Link } from '../Link'
 
 export interface FooterLinkProps {
   title: string
@@ -31,6 +31,7 @@ interface FooterProps {
   hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
   showTagLinks?: boolean
+  hasDrawerMenu?: boolean
   languageSwitchOnClick?: () => void
 }
 
@@ -44,6 +45,7 @@ export const Footer = ({
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   showTagLinks = false,
+  hasDrawerMenu = false,
   languageSwitchLink = defaultLanguageSwitchLink,
   hideLanguageSwith = false,
   languageSwitchOnClick,
@@ -180,7 +182,8 @@ export const Footer = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Box paddingTop={4} paddingBottom={4}>
+      {}
+      <Box paddingTop={4} paddingBottom={[hasDrawerMenu ? 10 : 4, 4, 4]}>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
@@ -203,9 +206,9 @@ export const Footer = ({
                         fontWeight="light"
                         paddingBottom={2}
                       >
-                        <ExternalLink href={href} color="blue600">
+                        <Link href={href} color="blue600" withUnderline>
                           {title}
-                        </ExternalLink>
+                        </Link>
                       </Typography>
                     </GridColumn>
                   )

@@ -169,13 +169,14 @@ globalStyle(
 )
 
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__day--disabled`, {
-  color: `${theme.color.dark400} !important`,
+  color: `${theme.color.dark200} !important`,
 })
 
 globalStyle(
   `${root}.island-ui-datepicker .react-datepicker__day--disabled:hover`,
   {
     borderColor: 'transparent !important',
+    background: 'transparent !important',
   },
 )
 

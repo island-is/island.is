@@ -1,6 +1,6 @@
 import React from 'react'
 import Swiper from './Swiper'
-import Alert from '../Alert/Alert'
+import AlertMessage from '../AlertMessage/AlertMessage'
 
 export default {
   title: 'Components/Swiper',
@@ -9,12 +9,12 @@ export default {
 
 export const Default = () => (
   <Swiper>
-    <Alert
+    <AlertMessage
       type="info"
-      title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
-      message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+      title="This a mobile swiper"
+      message="It uses the scroll-snap spec to smoothly transition from one item to the next based on the users' swipe"
     />
-    <Alert
+    <AlertMessage
       type="info"
       title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
       message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
