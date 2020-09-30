@@ -18,7 +18,7 @@ export const Titles: { [k: string]: string } = {
   'No type': '',
 }
 
-interface ProcessEntryProps {
+export interface ProcessEntryProps {
   processTitle: string
   processLink: string
   type: string

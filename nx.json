@@ -234,6 +234,12 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "skilavottord-consts": {
+      "tags": []
+    },
+    "skilavottord-types": {
+      "tags": []
+    },
     "elastic-indexing": {
       "tags": []
     },
@@ -258,6 +264,18 @@
     "skilavottord/web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
+    },
+    "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-driving-lessons": {
+      "tags": []
+    },
+    "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-reference-template": {
+      "tags": []
     }
   },
   "affected": {

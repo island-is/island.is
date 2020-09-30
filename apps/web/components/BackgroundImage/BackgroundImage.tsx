@@ -2,11 +2,10 @@ import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import { Image as ApiImage } from '@island.is/api/schema'
 import * as styles from './BackgroundImage.treat'
 
 export type BackgroundImageProps = {
-  image: ApiImage
+  image: { url: string; title: string }
   ratio?: string
   width?: number
   height?: number
