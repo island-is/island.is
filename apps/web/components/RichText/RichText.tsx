@@ -54,7 +54,6 @@ export const RichText: FC<{
   body: Slice[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
-  console.log('body', body)
   return <>{renderSlices(body, { renderComponent, ...config })}</>
 })
 
