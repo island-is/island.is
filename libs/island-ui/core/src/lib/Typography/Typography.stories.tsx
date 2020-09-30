@@ -5,10 +5,9 @@ import { select } from '@storybook/addon-knobs'
 import { Colors } from '@island.is/island-ui/theme'
 import { VariantTypes } from './Typography.treat'
 import { GridColumn, GridContainer, GridRow } from '../Grid'
-import { ContentBlock } from '../ContentBlock'
 
 export default {
-  title: 'Components/Typography',
+  title: 'Core/Typography',
   component: Typography,
 }
 

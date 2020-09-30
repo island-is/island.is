@@ -5,7 +5,7 @@ import { Typography } from '../Typography/Typography'
 import { ContentBlock } from '../ContentBlock'
 
 export default {
-  title: 'Components/Tabs',
+  title: 'Navigation/Tabs',
   component: Tabs,
 }
 

@@ -11,7 +11,7 @@ import {
   Application as BaseApplication,
   ApplicationTemplateHelper,
   ApplicationTypes,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 @Injectable()

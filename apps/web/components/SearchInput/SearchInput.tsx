@@ -314,7 +314,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               colored,
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
-                  onBlur()
+                  e.currentTarget.blur()
                   closeMenu()
                   onSubmit(e.currentTarget.value)
                 }

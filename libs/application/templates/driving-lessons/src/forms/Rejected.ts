@@ -3,7 +3,7 @@ import {
   buildForm,
   buildIntroductionField,
   Form,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
