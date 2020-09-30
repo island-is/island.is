@@ -11,13 +11,11 @@ const radioButtonMargin = 16
 
 export const container = style({
   position: 'relative',
-  paddingLeft: radioButtonSize + radioButtonMargin,
 })
 
 export const large = style({
   borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
-  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
 })
 
 export const checkMarkWidth = 17
@@ -33,6 +31,9 @@ export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.light,
+})
+export const largeLabel = style({
+  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
 })
 export const labelChecked = style({
   fontWeight: theme.typography.medium,

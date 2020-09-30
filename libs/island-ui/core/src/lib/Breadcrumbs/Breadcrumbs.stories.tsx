@@ -3,7 +3,7 @@ import { Breadcrumbs } from './Breadcrumbs'
 import { Box } from '../Box'
 
 export default {
-  title: 'Components/Breadcrumbs',
+  title: 'Navigation/Breadcrumbs',
   component: Breadcrumbs,
 }
 

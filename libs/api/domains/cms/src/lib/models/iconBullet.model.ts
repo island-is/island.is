@@ -32,9 +32,9 @@ export class IconBullet {
 export const mapIconBullet = ({ fields, sys }: IIconBullet): IconBullet =>
   new IconBullet({
     id: sys.id,
-    title: fields.title,
-    body: fields.body,
+    title: fields.title ?? '',
+    body: fields.body ?? '',
     icon: mapImage(fields.icon),
     url: fields.url ?? '',
-    linkText: fields.linkText,
+    linkText: fields.linkText ?? '',
   })

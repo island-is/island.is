@@ -352,6 +352,21 @@ components:
             - APPEAL
             - ACCEPT
             - POSTPONE
+    TransitionCaseDto:
+      type: object
+      properties:
+        modified:
+          format: date-time
+          type: string
+        transition:
+          type: string
+          enum:
+            - SUBMIT
+            - ACCEPT
+            - REJECT
+      required:
+        - modified
+        - transition
     SigningServiceResponse:
       type: object
       properties:
@@ -434,13 +449,31 @@ paths:
                 $ref: '#/components/schemas/User'
       tags:
         - users
+  '/api/user/{nationalId}/admin':
+    get:
+      operationId: UserController_updateUserRole
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - users
   /api/cases:
     get:
       operationId: CaseController_getAll
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Gets all cases
           content:
             application/json:
               schema:
@@ -509,6 +542,30 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
+  '/api/case/{id}/state':
+    put:
+      operationId: CaseController_transition
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransitionCaseDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+      tags:
+        - cases
   '/api/case/{id}/notifications':
     get:
       operationId: CaseController_getAllNotificationsById
@@ -539,7 +596,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        '201':
           description: ''
           content:
             application/json:
@@ -548,23 +605,6 @@ paths:
       tags:
         - cases
   '/api/case/{id}/signature':
-    post:
-      operationId: CaseController_requestSignature
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningServiceResponse'
-      tags:
-        - cases
     get:
       operationId: CaseController_confirmSignature
       parameters:
@@ -585,5 +625,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
+      tags:
+        - cases
+    post:
+      operationId: CaseController_requestSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningServiceResponse'
       tags:
         - cases

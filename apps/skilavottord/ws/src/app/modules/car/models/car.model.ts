@@ -1,24 +1,27 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { RecyclingPartner } from '../../recyclingPartner'
 
 @ObjectType()
 export class Car {
   constructor(
-    id: string,
-    name: string,
-    model: string,
+    permno: string,
+    type: string,
     color: string,
-    year: string,
+    newregdate: string,
     recyclable: boolean,
   ) {
-    this.id = id
-    this.name = name
-    this.model = model
+    this.permno = permno
+    this.type = type
     this.color = color
-    this.year = year
+    this.newregdate = newregdate
     this.recyclable = recyclable
   }
 
   @Field((_1) => ID)
+  permno: string
+
+  @Field()
+  type: string
   id: string
 
   @Field()
@@ -31,8 +34,12 @@ export class Car {
   color: string
 
   @Field()
-  year: string
+  newregdate: string
 
   @Field()
   recyclable: boolean
+
+  @Field({ nullable: true })
+  recyclingPartner: RecyclingPartner
+  year: string
 }

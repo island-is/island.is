@@ -11,12 +11,13 @@ import {
   Req,
   ForbiddenException,
   Query,
+  ConflictException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseTransition, CaseState } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard, AuthUser } from '../auth'
 import { UserService } from '../user'
@@ -24,6 +25,21 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+
+const caseStateMachine = {}
+caseStateMachine[CaseTransition.SUBMIT] = {
+  from: CaseState.DRAFT,
+  to: CaseState.SUBMITTED,
+}
+caseStateMachine[CaseTransition.ACCEPT] = {
+  from: CaseState.SUBMITTED,
+  to: CaseState.ACCEPTED,
+}
+caseStateMachine[CaseTransition.REJECT] = {
+  from: CaseState.SUBMITTED,
+  to: CaseState.REJECTED,
+}
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -38,7 +54,7 @@ export class CaseController {
   ) {}
 
   @Get('cases')
-  @ApiOkResponse({ type: Case, isArray: true })
+  @ApiOkResponse({ type: Case, isArray: true, description: 'Gets all cases' })
   getAll(): Promise<Case[]> {
     return this.caseService.getAll()
   }
@@ -76,6 +92,40 @@ export class CaseController {
     return updatedCase
   }
 
+  @Put('case/:id/state')
+  @ApiOkResponse({ type: Case })
+  async transition(
+    @Param('id') id: string,
+    @Body() caseToTransition: TransitionCaseDto,
+  ): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      caseStateMachine[caseToTransition.transition].from !== existingCase.state
+    ) {
+      throw new ForbiddenException(
+        `The transition ${caseToTransition.transition} cannot be applied to a case in state ${existingCase.state}`,
+      )
+    }
+
+    const {
+      numberOfAffectedRows,
+      updatedCase,
+    } = await this.caseService.transition(
+      id,
+      caseToTransition.modified,
+      caseStateMachine[caseToTransition.transition].to,
+    )
+
+    if (numberOfAffectedRows === 0) {
+      throw new ConflictException(
+        `A more recent version exists of case with id ${id}`,
+      )
+    }
+
+    return updatedCase
+  }
+
   @Get('case/:id/notifications')
   @ApiOkResponse({ type: Notification, isArray: true })
   async getAllNotificationsById(
@@ -87,7 +137,7 @@ export class CaseController {
   }
 
   @Post('case/:id/notification')
-  @ApiOkResponse({ type: Notification })
+  @ApiCreatedResponse({ type: Notification })
   async sendNotificationByCaseId(
     @Param('id') id: string,
     @Req() req,
@@ -105,33 +155,9 @@ export class CaseController {
 
     const authUser: AuthUser = req.user
 
-    const user = await this.userService.findByNationalId(authUser)
+    const user = await this.userService.findByNationalId(authUser.nationalId)
 
     return this.caseService.sendNotificationByCaseId(existingCase, user)
-  }
-
-  @Post('case/:id/signature')
-  @ApiOkResponse({ type: SigningServiceResponse })
-  async requestSignature(
-    @Param('id') id: string,
-    @Req() req,
-  ): Promise<SigningServiceResponse> {
-    const existingCase = await this.findCaseById(id)
-
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot sign a ruling for a case in state ${existingCase.state}`,
-      )
-    }
-
-    const authUser: AuthUser = req.user
-
-    const user = await this.userService.findByNationalId(authUser)
-
-    return this.caseService.requestSignature(existingCase, user)
   }
 
   @Get('case/:id/signature')
@@ -152,6 +178,30 @@ export class CaseController {
     }
 
     return this.caseService.confirrmSignature(existingCase, documentToken)
+  }
+
+  @Post('case/:id/signature')
+  @ApiCreatedResponse({ type: SigningServiceResponse })
+  async requestSignature(
+    @Param('id') id: string,
+    @Req() req,
+  ): Promise<SigningServiceResponse> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.ACCEPTED &&
+      existingCase.state !== CaseState.REJECTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot sign a ruling for a case in state ${existingCase.state}`,
+      )
+    }
+
+    const authUser: AuthUser = req.user
+
+    const user = await this.userService.findByNationalId(authUser.nationalId)
+
+    return this.caseService.requestSignature(existingCase, user)
   }
 
   private async findCaseById(id: string) {
