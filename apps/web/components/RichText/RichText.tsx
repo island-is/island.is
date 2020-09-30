@@ -31,7 +31,7 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
         <GridRow>
           <GridColumn
             offset={['0', '0', '0', '0', '1/9']}
-            span={['0', '0', '0', '0', '7/9']}
+            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
           >
             {children}
           </GridColumn>
@@ -54,6 +54,7 @@ export const RichText: FC<{
   body: Slice[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
+  console.log('body', body)
   return <>{renderSlices(body, { renderComponent, ...config })}</>
 })
 
