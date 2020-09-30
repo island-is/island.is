@@ -168,6 +168,7 @@
     "react-remove-scroll": "^2.4.0",
     "react-router-dom": "5.2.0",
     "react-select": "3.1.0",
+    "react-toastify": "^6.0.8",
     "react-top-loading-bar": "2.0.0",
     "react-uid": "2.2.0",
     "react-use": "^15.3.3",
@@ -265,6 +266,7 @@
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
+    "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.21.2",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.20.0",
@@ -281,8 +283,7 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "sequelize-cli": "5.5.1",
     "ts-jest": "26.1.4",
-    "typescript": "3.9.7",
-    "eslint-plugin-cypress": "^2.10.3"
+    "typescript": "3.9.7"
   },
   "resolutions": {
     "webpack": "4.44.1",
