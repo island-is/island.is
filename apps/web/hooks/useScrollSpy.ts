@@ -18,7 +18,7 @@ const guessVisibleSection = (
     if (!el) {
       return '0'
     }
-    const elPosY = el.getBoundingClientRect().top + window.scrollY
+    const elPosY = Math.floor(el.getBoundingClientRect().top) + window.scrollY
     return window.scrollY + marginTop >= elPosY ? id : match
   }, ids[0])
 }
@@ -45,7 +45,7 @@ const useScrollSpy = (
       setCurrent(id)
       setIgnore(true)
       const rect = document.getElementById(id).getBoundingClientRect()
-      window.scrollTo(0, rect.top + window.scrollY - marginTop)
+      window.scrollTo(0, Math.floor(rect.top) + window.scrollY - marginTop)
     },
     [setCurrent, setIgnore],
   )

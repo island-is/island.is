@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Stack,
   Typography,
-  Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -13,6 +12,7 @@ import * as styles from './CompanyListItem.treat'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { Button } from '@island.is/skilavottord-web/components'
 
 export interface CompanyProps {
   name?: string
@@ -30,9 +30,6 @@ export const CompanyListItem: FC<CompanyProps> = ({
   const {
     t: { handover: t },
   } = useI18n()
-
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   return (
     <Box padding={3} className={styles.container}>
@@ -57,11 +54,7 @@ export const CompanyListItem: FC<CompanyProps> = ({
                 height="full"
               >
                 <Link href={website} passHref>
-                  <Button
-                    size="small"
-                    variant="ghost"
-                    width={isMobile ? 'fluid' : 'normal'}
-                  >
+                  <Button size="small" variant="ghost">
                     {t.buttons.website}
                   </Button>
                 </Link>
