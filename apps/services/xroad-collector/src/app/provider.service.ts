@@ -23,20 +23,23 @@ export class ProviderService {
     return this.getProviders(ProviderType.PUBLIC)
   }
 
+  private createFilter(providerType: ProviderType): RegExp {
+    return new RegExp(`.*${providerType}$`)
+  }
+
   private async getProviders(
     providerType: ProviderType,
   ): Promise<Array<Provider>> {
     let providers: Array<Provider> = []
-
+    const filter = this.createFilter(providerType)
     const xrdClients = await this.xrdMetaService.listClients({})
 
     if (xrdClients && xrdClients.member?.length > 0) {
       providers = xrdClients.member
         .filter((item: XroadIdentifier): boolean => {
-          const memberCodeTokens = item.id.memberCode.split('-')
           return (
             item.id?.objectType === XroadIdentifierIdObjectTypeEnum.SUBSYSTEM &&
-            Number(memberCodeTokens[1]) === providerType
+            filter.test(item.id?.subsystemCode.toLowerCase())
           )
         })
         .map(

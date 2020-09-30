@@ -16,97 +16,88 @@ class MetaservicesApiMock {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10001-0',
+            memberCode: '10001',
             objectType: XroadIdentifierIdObjectTypeEnum.MEMBER,
           },
-          name: 'Agency1-Clients',
+          name: 'VMST',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10001-1',
+            memberCode: '10002',
             objectType: XroadIdentifierIdObjectTypeEnum.MEMBER,
           },
-          name: 'Agency1-Private',
+          name: 'SKRA',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10001-2',
+            memberCode: '10003',
             objectType: XroadIdentifierIdObjectTypeEnum.MEMBER,
           },
-          name: 'Agency1-Protected',
+          name: 'island.is',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10001-3',
-            objectType: XroadIdentifierIdObjectTypeEnum.MEMBER,
-          },
-          name: 'Agency1-Public',
-        },
-        {
-          id: {
-            xroadInstance: 'IS-DEV',
-            memberClass: 'GOV',
-            memberCode: '10001-1',
-            subsystemCode: 'TestService',
+            memberCode: '10001',
+            subsystemCode: 'VMST-Private',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
-          name: 'Agency1-Private',
+          name: 'VMST',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10001-2',
-            subsystemCode: 'TestService',
+            memberCode: '10001',
+            subsystemCode: 'VMST-Protected',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
-          name: 'Agency1-Protected',
+          name: 'VMST',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10001-3',
-            subsystemCode: 'TestService',
+            memberCode: '10001',
+            subsystemCode: 'VMST-Public',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
-          name: 'Agency1-Public',
+          name: 'VMST',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10002-2',
-            subsystemCode: 'TestService',
+            memberCode: '10002',
+            subsystemCode: 'SKRA-Protected',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
-          name: 'Agency2-Protected',
+          name: 'SKRA',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10002-3',
-            subsystemCode: 'TestService',
+            memberCode: '10002',
+            subsystemCode: 'SKRA-Public',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
-          name: 'Agency2-Public',
+          name: 'SKRA',
         },
         {
           id: {
             xroadInstance: 'IS-DEV',
             memberClass: 'GOV',
-            memberCode: '10003-1',
-            subsystemCode: 'TestServicePublic',
+            memberCode: '10003',
+            subsystemCode: 'islandis-Client',
             objectType: XroadIdentifierIdObjectTypeEnum.SUBSYSTEM,
           },
-          name: 'Agency3-Private',
+          name: 'island.is',
         },
       ],
     })
@@ -136,16 +127,53 @@ describe('ProviderService', () => {
       expect(providers).toEqual([
         {
           memberClass: 'GOV',
-          memberCode: '10001-1',
-          subsystemCode: 'TestService',
-          type: 1,
+          memberCode: '10001',
+          subsystemCode: 'VMST-Private',
+          type: 'private',
+          xroadInstance: 'IS-DEV',
+        },
+      ])
+    })
+  })
+
+  describe('getProtectedProviders', () => {
+    it('should return all and only protected service providers', async () => {
+      const providers = await service.getProtectedProviders()
+      expect(providers).toEqual([
+        {
+          memberClass: 'GOV',
+          memberCode: '10001',
+          subsystemCode: 'VMST-Protected',
+          type: 'protected',
           xroadInstance: 'IS-DEV',
         },
         {
           memberClass: 'GOV',
-          memberCode: '10003-1',
-          subsystemCode: 'TestServicePublic',
-          type: 1,
+          memberCode: '10002',
+          subsystemCode: 'SKRA-Protected',
+          type: 'protected',
+          xroadInstance: 'IS-DEV',
+        },
+      ])
+    })
+  })
+
+  describe('getPublicProviders', () => {
+    it('should return all and only `public` service providers', async () => {
+      const providers = await service.getPublicProviders()
+      expect(providers).toEqual([
+        {
+          memberClass: 'GOV',
+          memberCode: '10001',
+          subsystemCode: 'VMST-Public',
+          type: 'public',
+          xroadInstance: 'IS-DEV',
+        },
+        {
+          memberClass: 'GOV',
+          memberCode: '10002',
+          subsystemCode: 'SKRA-Public',
+          type: 'public',
           xroadInstance: 'IS-DEV',
         },
       ])

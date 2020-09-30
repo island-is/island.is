@@ -18,6 +18,13 @@ export class RestServiceCollector implements ServiceCollector {
     logger.debug(`Found ${protectedProviders.length} protected clients...`)
 
     protectedProviders.forEach(async (provider: Provider) => {
+      // Get list af all REST service codes for this provider
+
+      // Group all service codes that have same first section
+      // given that service code is: <service id>-v<service version>
+
+      // Insert into Elastic
+
       let service: Service = {
         id: `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`,
       }
