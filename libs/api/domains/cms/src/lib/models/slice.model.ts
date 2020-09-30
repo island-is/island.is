@@ -90,7 +90,7 @@ export const Slice = createUnionType({
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
-  switch (slice.sys.contentType.sys.id) {
+  switch (slice.sys.contentType?.sys?.id) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':
@@ -163,7 +163,7 @@ export const mapDocument = (
         slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        if (block.data.target.fields.file) {
+        if (block.data.target.fields?.file) {
           block.data.target.fields.file.details?.image
             ? slices.push(mapImage(block.data.target))
             : slices.push(mapAsset(block.data.target))

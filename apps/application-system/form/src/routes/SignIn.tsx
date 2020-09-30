@@ -11,7 +11,7 @@ export const Signin = () => {
   useEffect(() => {
     userManager
       .signinCallback(window.location.href)
-      .then(function(user) {
+      .then(function (user) {
         dispatch({
           type: ActionType.SET_USER_FULFILLED,
           payload: user,
@@ -19,7 +19,7 @@ export const Signin = () => {
 
         history.push(user.state?.redirect ?? '/')
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // TODO: Handle error
         console.log('error in SIGNING', error)
       })

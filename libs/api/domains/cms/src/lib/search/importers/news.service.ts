@@ -23,7 +23,7 @@ export class NewsSyncService {
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: extractStringsFromObject(JSON.parse(mapped.content)),
+            content: extractStringsFromObject(mapped.content),
             type,
             termPool: createTerms([mapped.title, mapped.intro]),
             response: JSON.stringify({ ...mapped, __typename: type }),

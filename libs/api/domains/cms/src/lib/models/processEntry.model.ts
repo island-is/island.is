@@ -29,8 +29,8 @@ export const mapProcessEntry = ({
 }: IProcessEntry): ProcessEntry => ({
   typename: 'ProcessEntry',
   id: sys.id,
-  type: fields?.type ?? '',
-  processTitle: fields?.processTitle ?? '',
-  processLink: fields?.processLink ?? '',
-  buttonText: fields?.buttonText ?? '',
+  type: fields.type ?? '',
+  processTitle: fields.processTitle ?? '',
+  processLink: fields.processLink ?? '',
+  buttonText: fields.buttonText ?? '',
 })
