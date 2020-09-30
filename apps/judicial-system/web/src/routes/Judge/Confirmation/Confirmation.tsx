@@ -2,6 +2,8 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Bullet,
+  BulletList,
   GridColumn,
   GridContainer,
   GridRow,
@@ -149,14 +151,78 @@ export const Confirmation: React.FC = () => {
                   </AccordionListItem>
                 </AccordionItem>
                 <AccordionItem id="id_2" label="Þingbók">
-                  {workingCase?.caseFacts && (
-                    <Box marginBottom={2}>
-                      <Box marginBottom={2}>
-                        <Typography variant="h5">Málsatvik rakin</Typography>
-                      </Box>
-                      <Typography>{workingCase.caseFacts}</Typography>
-                    </Box>
-                  )}
+                  <Box marginBottom={2}>
+                    <Typography variant="h3" as="h3">
+                      Upplýsingar
+                    </Typography>
+                  </Box>
+                  <Box marginBottom={1}>
+                    <Typography>
+                      {`Þinghald frá kl. ${formatDate(
+                        workingCase.courtStartTime,
+                        Constants.TIME_FORMAT,
+                      )} til kl. ${formatDate(
+                        workingCase.courtEndTime,
+                        Constants.TIME_FORMAT,
+                      )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
+                    </Typography>
+                  </Box>
+                  <AccordionListItem title="Krafa lögreglu">
+                    {workingCase.policeDemands}
+                  </AccordionListItem>
+                  <AccordionListItem title="Viðstaddir">
+                    {workingCase.courtAttendees}
+                  </AccordionListItem>
+                  <AccordionListItem title="Dómskjöl">
+                    Rannsóknargögn málsins liggja frammi. Krafa lögreglu
+                    þingmerkt nr. 1.
+                  </AccordionListItem>
+                  <AccordionListItem title="Réttindi kærða">
+                    Kærða er bent á að honum sé óskylt að svara spurningum er
+                    varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
+                    gr. laga nr. 88/2008. Kærði er enn fremur áminntur um
+                    sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
+                    114. gr. sömu laga.
+                  </AccordionListItem>
+                  <AccordionListItem title="Afstaða kærða">
+                    {workingCase.accusedPlea}
+                  </AccordionListItem>
+                  <AccordionListItem title="Málflutningur">
+                    {workingCase.litigationPresentations}
+                  </AccordionListItem>
+                  <Box marginBottom={2}>
+                    <Typography variant="h3" as="h3">
+                      Úrskurður
+                    </Typography>
+                  </Box>
+                  <Box marginBottom={1}>
+                    <Typography>{workingCase.ruling}</Typography>
+                  </Box>
+                  <AccordionListItem title="Úrskurðarorð">
+                    {constructConclusion(workingCase)}
+                  </AccordionListItem>
+                  <AccordionListItem title="Ákvörðun um kæru">
+                    Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
+                    úrskurð þennan til Landsréttar innan þriggja sólarhringa.
+                    Dómari bendir kærða á að honum sé heimilt að bera atriði er
+                    lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+                  </AccordionListItem>
+                  <Box marginBottom={5}>
+                    <BulletList>
+                      <Bullet>
+                        {getAppealDecitionText(
+                          AppealDecitionRole.ACCUSED,
+                          workingCase.accusedAppealDecision,
+                        )}
+                      </Bullet>
+                      <Bullet>
+                        {getAppealDecitionText(
+                          AppealDecitionRole.PROSECUTOR,
+                          workingCase.prosecutorAppealDecision,
+                        )}
+                      </Bullet>
+                    </BulletList>
+                  </Box>
                 </AccordionItem>
               </Accordion>
             </Box>
