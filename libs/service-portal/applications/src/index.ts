@@ -6,7 +6,7 @@ import { lazy } from 'react'
 import { defineMessage } from 'react-intl'
 
 const rootName = defineMessage({
-  id: 'sp:applications',
+  id: 'service.portal:applications',
   defaultMessage: 'Umsóknir',
 })
 
