@@ -39,7 +39,7 @@ export interface LayoutProps {
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  showDrawerMenu?: boolean
+  hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
@@ -59,7 +59,7 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
-  showDrawerMenu = false,
+  hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperMenu,
@@ -165,7 +165,6 @@ const Layout: NextComponentType<
             {wrapContent ? <Box width="full">{children}</Box> : children}
           </div>
         </MenuTabsContext.Provider>
-        {String(showDrawerMenu)}
         {showFooter && (
           <Footer
             topLinks={footerUpperMenu}
@@ -181,7 +180,7 @@ const Layout: NextComponentType<
             }}
             showMiddleLinks
             showTagLinks
-            showDrawerMenu
+            hasDrawerMenu
           />
         )}
         <style jsx global>{`
