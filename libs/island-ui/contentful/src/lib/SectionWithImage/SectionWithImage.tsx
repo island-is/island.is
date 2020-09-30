@@ -1,18 +1,16 @@
 import React, { FC } from 'react'
-import { Html } from '@island.is/api/schema'
 import { Typography, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
 import StaticHtml from '../StaticHtml/StaticHtml'
-import { renderSlices } from '../richTextRendering'
-
+import { renderHtml } from '../richTextRendering'
 import * as styles from './SectionWithImage.treat'
 
 export interface SectionWithImageProps {
-  title?: string
+  title: string
   image?: {
     url: string
   }
-  html: Html
+  html?: { document: any }
 }
 
 export const SectionWithImage: FC<SectionWithImageProps> = ({
@@ -34,7 +32,7 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
             {title}
           </Typography>
         )}
-        <StaticHtml>{renderSlices(html)}</StaticHtml>
+        <StaticHtml>{renderHtml(html.document)}</StaticHtml>
       </>
     )
   }
@@ -57,7 +55,7 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
             {title}
           </Typography>
         )}
-        <StaticHtml>{renderSlices(html)}</StaticHtml>
+        <StaticHtml>{renderHtml(html.document)}</StaticHtml>
       </GridColumn>
     </GridRow>
   )
