@@ -188,7 +188,7 @@ export const StepOne: React.FC = () => {
     if (id) {
       getCurrentCase()
     }
-  }, [id])
+  }, [])
 
   return (
     <>

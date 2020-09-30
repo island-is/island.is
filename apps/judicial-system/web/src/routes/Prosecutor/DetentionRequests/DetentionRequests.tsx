@@ -32,7 +32,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
   onGetUser,
 }: DetentionRequestsProps) => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
-  const [, setUser] = useState<User>(null)
+  const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const uContext = useContext(userContext)
 
@@ -40,10 +40,9 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
     let isMounted = true
 
     async function getData() {
-      const casesResponse = await api.getCases()
       const userResponse = await api.getUser()
 
-      if (isMounted && casesResponse) {
+      if (isMounted && userResponse) {
         setUser({
           nationalId: userResponse.nationalId,
           role: userResponse.role,
@@ -53,25 +52,38 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
           nationalId: userResponse.nationalId,
           role: userResponse.role,
         })
-
-        if (userResponse.role === UserRole.JUDGE) {
-          const judgeCases = casesResponse.filter((c) => {
-            return c.state === CaseState.SUBMITTED
-          })
-          setCases(judgeCases)
-        } else {
-          setCases(casesResponse)
-        }
       }
-      setIsLoading(false)
     }
-
-    getData()
+    if (!user) {
+      getData()
+    }
 
     return () => {
       isMounted = false
     }
-  }, [onGetUser])
+  }, [user, onGetUser])
+
+  useEffect(() => {
+    async function getCases(user: User) {
+      const cases = await api.getCases()
+
+      if (user.role === UserRole.JUDGE) {
+        const judgeCases = cases.filter((c) => {
+          return c.state === CaseState.SUBMITTED
+        })
+
+        setCases(judgeCases)
+      } else {
+        setCases(cases)
+      }
+
+      setIsLoading(false)
+    }
+
+    if (user) {
+      getCases(user)
+    }
+  }, [user])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
