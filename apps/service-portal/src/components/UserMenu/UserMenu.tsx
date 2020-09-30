@@ -18,7 +18,6 @@ const UserMenu: FC<{}> = () => {
 
   const handleSelection = async (subjectNationalId: string) => {
     setIsOpen(false)
-    //await setUser(userInfo.actor.nationalId, subjectNationalId)
     history.push('/')
   }
 
@@ -33,7 +32,7 @@ const UserMenu: FC<{}> = () => {
           leftIcon="user"
           icon="cheveron"
         >
-          {userInfo?.user.profile.name}
+          {userInfo?.profile.name}
         </Button>
       </Hidden>
       <Hidden above="sm">

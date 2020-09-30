@@ -3,15 +3,15 @@ import {
   ServicePortalNavigationItem,
   servicePortalMasterNavigation,
   ServicePortalRoute,
-  UserWithMeta,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import { cloneDeep } from 'lodash'
+import { User } from 'oidc-client'
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
-  userInfo: UserWithMeta,
+  userInfo: User,
 ): boolean => {
   const included = routes.find(
     (route) =>

@@ -1,7 +1,6 @@
 import {
   ServicePortalModule,
   ServicePortalRoute,
-  UserWithMeta,
   LanguageCode,
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
@@ -14,9 +13,10 @@ import {
   NotificationMenuState,
 } from './actions'
 import { determineInitialLocale, setLangInLocalStore } from '../utils/locale'
+import { User } from 'oidc-client'
 
 export interface StoreState {
-  userInfo: UserWithMeta | null
+  userInfo: User | null
   userInfoState: AsyncActionState | 'logging-out'
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
@@ -49,7 +49,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case ActionType.SetUserFulfilled:
       return {
         ...state,
-        userInfo: { user: action.payload, mockSubjects },
+        userInfo: action.payload,
         userInfoState: 'fulfilled',
       }
     case ActionType.FetchSubjectListPending:

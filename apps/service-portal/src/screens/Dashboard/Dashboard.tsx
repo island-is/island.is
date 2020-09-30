@@ -6,14 +6,14 @@ import {
   ServicePortalModule,
 } from '@island.is/service-portal/core'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
-import { UserWithMeta } from '@island.is/service-portal/core'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import Greeting from '../../components/Greeting/Greeting'
+import { User } from 'oidc-client'
 
 const Widget: FC<{
   widget: ServicePortalWidget
-  userInfo: UserWithMeta
+  userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ widget, userInfo, client }) => {
   const Component = widget.render({
@@ -40,7 +40,7 @@ const Widget: FC<{
 
 const WidgetLoader: FC<{
   modules: ServicePortalModule[]
-  userInfo: UserWithMeta
+  userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ modules, userInfo, client }) => {
   const widgets = modules

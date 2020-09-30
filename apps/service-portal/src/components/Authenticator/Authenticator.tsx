@@ -8,14 +8,14 @@ export const Authenticator: FC = ({ children }) => {
 
   useEffect(() => {
     if (
-      (userInfo === null || userInfo.user === null) &&
+      (userInfo === null || userInfo === null) &&
       userInfoState === 'passive'
     ) {
       MOCK_AUTHENTICATION ? mockSignIn() : signInUser()
     }
   }, [userInfo, userInfoState, signInUser, mockSignIn])
 
-  return <>{userInfo?.user ? children : <AuthenticatorLoadingScreen />}</>
+  return <>{userInfo ? children : <AuthenticatorLoadingScreen />}</>
 }
 
 export default Authenticator

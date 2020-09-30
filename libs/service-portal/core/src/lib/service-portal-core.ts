@@ -19,7 +19,7 @@ export interface ServicePortalNavigationItem {
  * The props provided to a service portal module
  */
 export interface ServicePortalModuleProps {
-  userInfo: UserWithMeta
+  userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }
 
@@ -88,27 +88,6 @@ export interface ServicePortalModule {
    * within itself and use the provided render function to render out the component
    */
   routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
-}
-
-/**
- * The subject passed to us via the jwt token metadata.
- */
-export interface MockSubject {
-  id: number
-  name: string
-  nationalId: string
-  scope: string[]
-  subjectType: 'person' | 'company' | 'institution'
-}
-
-/**
- * Currently we are not getting any metadata from the jwt token.
- * In order to fix that issue we padded the data with some mock
- * subjects.
- */
-export interface UserWithMeta {
-  user: User
-  mockSubjects: MockSubject[]
 }
 
 export type LanguageCode = 'is' | 'en'

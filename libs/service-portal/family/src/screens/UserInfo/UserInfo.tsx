@@ -49,8 +49,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         >
           <div>
             <Stack space={1}>
-              <Typography variant="h3">{userInfo.user.profile.name}</Typography>
-              <div>Kennitala: {userInfo.user.profile.natreg}</div>
+              <Typography variant="h3">{userInfo.profile.name}</Typography>
+              <div>Kennitala: {userInfo.profile.natreg}</div>
               <Box marginTop={1}>
                 <Button
                   variant="text"
@@ -83,9 +83,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <UserInfoLine
           label="Ríkisfang"
           content={
-            userInfo.user.profile.nat === 'IS'
-              ? 'Ísland'
-              : userInfo.user.profile.nat
+            userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
         <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />

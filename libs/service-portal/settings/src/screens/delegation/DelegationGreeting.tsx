@@ -17,7 +17,7 @@ const DelegationGreeting: ServicePortalModuleComponent = ({ userInfo }) => {
           <Stack space={2}>
             <Typography variant="h3">Umboðskerfi</Typography>
             <Typography variant="p">
-              Sæl/l {userInfo.user.profile.name}, í umboðskerfinu getur þú veitt
+              Sæl/l {userInfo.profile.name}, í umboðskerfinu getur þú veitt
               aðilum umboð fyrir sjálfan þig eða fyrirtæki/stofnun sem þú hefur
               aðgang að.
             </Typography>

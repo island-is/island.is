@@ -48,7 +48,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   })
   const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
   const { data, loading, error } = useListDocuments(
-    userInfo.user.profile.natreg,
+    userInfo.profile.natreg,
     filterValue.dateFrom,
     filterValue.dateTo,
     page,

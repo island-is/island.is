@@ -64,9 +64,6 @@ export const Header: FC<{}> = () => {
                 <Box marginLeft={spacing}>
                   <UserMenu />
                 </Box>
-                <Box marginLeft={spacing}>
-                  <NotificationMenuTrigger />
-                </Box>
               </Box>
             </Box>
           </ContentBlock>

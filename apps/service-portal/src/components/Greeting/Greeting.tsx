@@ -12,7 +12,7 @@ const Greeting: FC<{}> = () => {
         <Box marginTop={[2, 3, 8]} marginBottom={2}>
           <Typography variant="h1">Velkominn aftur,</Typography>
           <Typography variant="h3" color="purple400">
-            {userInfo?.user.profile.name}
+            {userInfo?.profile.name}
           </Typography>
         </Box>
       </GridColumn>

@@ -1,5 +1,5 @@
+import { User } from 'oidc-client'
 import { useState, useEffect } from 'react'
-import { UserWithMeta } from '@island.is/service-portal/core'
 
 type FamilyMember = {
   banlabel?: string
@@ -17,7 +17,7 @@ export interface NationalRegistryFamilyLookupResponse {
   results: FamilyMember[]
 }
 
-export const useNatRegFamilyLookup = (userInfo: UserWithMeta) => {
+export const useNatRegFamilyLookup = (userInfo: User) => {
   const [state, setState] = useState<{
     data: NationalRegistryFamilyLookupResponse | null
     loading: boolean
@@ -34,12 +34,12 @@ export const useNatRegFamilyLookup = (userInfo: UserWithMeta) => {
       setState({
         data: {
           source: 'Þjóðskrá',
-          familyssn: userInfo.user.profile.natreg,
+          familyssn: userInfo.profile.natreg,
           results: [
             {
               banlabel: '',
-              ssn: userInfo.user.profile.natreg,
-              name: userInfo.user.profile.name,
+              ssn: userInfo.profile.natreg,
+              name: userInfo.profile.name,
               address: 'Heimilisgata 18',
               towncode: 119,
               postalcode: 119,

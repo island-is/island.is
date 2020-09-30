@@ -6,13 +6,13 @@ import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
 import NotFound from '../../screens/NotFound/NotFound'
-import { UserWithMeta } from '@island.is/service-portal/core'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { User } from 'oidc-client'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute
-  userInfo: UserWithMeta
+  userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ route, userInfo, client }) => {
   if (route.render === undefined) return null
@@ -36,7 +36,7 @@ const RouteComponent: FC<{
 
 const RouteLoader: FC<{
   routes: ServicePortalRoute[]
-  userInfo: UserWithMeta
+  userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ routes, userInfo, client }) => (
   <Switch>
