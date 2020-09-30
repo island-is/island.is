@@ -31,7 +31,7 @@ const Confirm = (props) => {
 
   const { apolloState } = props
   const car = apolloState[`Car:${id}`]
-  
+
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 

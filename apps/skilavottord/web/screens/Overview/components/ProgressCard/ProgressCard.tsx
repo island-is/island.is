@@ -40,6 +40,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const justifyContent = isMobile ? 'flexStart' : 'flexEnd'
 
   return (
     <OutlinedBox paddingY={4} paddingX={4}>
@@ -59,22 +60,21 @@ export const ProgressCard: FC<ProgressCardProps> = ({
           <GridColumn span={['10/10', '10/10', '10/10', '3/10']}>
             <Box marginTop={[3, 3, 3, 0]}>
               <Stack space={2}>
-                <Box
-                  display="flex"
-                  justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
-                >
-                  <Tag
-                    variant={status === 'pending' ? 'rose' : 'darkerMint'}
-                    label
-                  >
-                    {status === 'pending'
-                      ? 'Take to recycling company'
-                      : 'Recycled'}
-                  </Tag>
+                <Box display="flex" justifyContent={justifyContent}>
+                  <Box>
+                    <Tag
+                      variant={status === 'pending' ? 'rose' : 'darkerMint'}
+                      label
+                    >
+                      {status === 'pending'
+                        ? 'Take to recycling company'
+                        : 'Recycled'}
+                    </Tag>
+                  </Box>
                 </Box>
                 <Box
                   display="flex"
-                  justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
+                  justifyContent={justifyContent}
                   paddingTop={[0, 0, 0, 3]}
                 >
                   <Button
