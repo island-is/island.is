@@ -31,39 +31,13 @@ describe('Case', () => {
       .expect(201)
       .then(async (response) => {
         // Check the response
-        expect(response.body.id).toBeTruthy()
-        expect(response.body.created).toBeTruthy()
-        expect(response.body.modified).toBeTruthy()
-        expect(response.body.state).toBe(CaseState.DRAFT)
-        expect(response.body.policeCaseNumber).toBe(data.policeCaseNumber)
-        expect(response.body.accusedNationalId).toBe(data.accusedNationalId)
-        expect(response.body.accusedName).toBe(data.accusedName)
-        expect(response.body.accusedAddress).toBe(data.accusedAddress)
-        expect(response.body.court).toBe(data.court)
-        expect(response.body.arrestDate).toBe(data.arrestDate)
-        expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
-        expect(response.body.requestedCustodyEndDate).toBeNull()
-        expect(response.body.lawsBroken).toBeNull()
-        expect(response.body.custodyProvisions).toBeNull()
-        expect(response.body.requestedCustodyRestrictions).toBeNull()
-        expect(response.body.caseFacts).toBeNull()
-        expect(response.body.witnessAccounts).toBeNull()
-        expect(response.body.investigationProgress).toBeNull()
-        expect(response.body.legalArguments).toBeNull()
-        expect(response.body.comments).toBeNull()
-        expect(response.body.courtCaseNumber).toBeNull()
-        expect(response.body.courtStartTime).toBeNull()
-        expect(response.body.courtEndTime).toBeNull()
-        expect(response.body.courtAttendees).toBeNull()
-        expect(response.body.policeDemands).toBeNull()
-        expect(response.body.accusedPlea).toBeNull()
-        expect(response.body.litigationPresentations).toBeNull()
-        expect(response.body.ruling).toBeNull()
-        expect(response.body.custodyEndDate).toBeNull()
-        expect(response.body.custodyRestrictions).toBeNull()
-        expect(response.body.accusedAppealDecision).toBeNull()
-        expect(response.body.prosecutorAppealDecision).toBeNull()
-        expect(response.body.notifications).toBeUndefined()
+        expectResponseToMatchCase(response.body, {
+          ...data,
+          id: response.body.id,
+          created: response.body.created,
+          modified: response.body.modified,
+          state: CaseState.DRAFT,
+        })
 
         // Check the data in the database
         await Case.findOne({
@@ -577,4 +551,52 @@ function getCaseData(
   }
 
   return data as Case
+}
+
+function expectResponseToMatchCase(resCase, theCase) {
+  expect(resCase.id).toBe(theCase.id)
+  expect(resCase.created).toBe(theCase.created)
+  expect(resCase.modified).toBe(theCase.modified)
+  expect(resCase.state).toBe(theCase.state)
+  expect(resCase.policeCaseNumber).toBe(theCase.policeCaseNumber)
+  expect(resCase.accusedNationalId).toBe(theCase.accusedNationalId)
+  expect(resCase.accusedName).toBe(theCase.accusedName)
+  expect(resCase.accusedAddress).toBe(theCase.accusedAddress)
+  expect(resCase.court).toBe(theCase.court)
+  expect(resCase.arrestDate).toBe(theCase.arrestDate)
+  expect(resCase.requestedCourtDate).toBe(theCase.requestedCourtDate)
+  expect(resCase.requestedCustodyEndDate).toBe(
+    theCase.requestedCustodyEndDate || null,
+  )
+  expect(resCase.lawsBroken).toBe(theCase.lawsBroken || null)
+  expect(resCase.custodyProvisions).toBe(theCase.custodyProvisions || null)
+  expect(resCase.requestedCustodyRestrictions).toBe(
+    theCase.requestedCustodyRestrictions || null,
+  )
+  expect(resCase.caseFacts).toBe(theCase.caseFacts || null)
+  expect(resCase.witnessAccounts).toBe(theCase.witnessAccounts || null)
+  expect(resCase.investigationProgress).toBe(
+    theCase.investigationProgress || null,
+  )
+  expect(resCase.legalArguments).toBe(theCase.legalArguments || null)
+  expect(resCase.comments).toBe(theCase.comments || null)
+  expect(resCase.courtCaseNumber).toBe(theCase.courtCaseNumber || null)
+  expect(resCase.courtStartTime).toBe(theCase.courtStartTime || null)
+  expect(resCase.courtEndTime).toBe(theCase.courtEndTime || null)
+  expect(resCase.courtAttendees).toBe(theCase.courtAttendees || null)
+  expect(resCase.policeDemands).toBe(theCase.policeDemands || null)
+  expect(resCase.accusedPlea).toBe(theCase.accusedPlea || null)
+  expect(resCase.litigationPresentations).toBe(
+    theCase.litigationPresentations || null,
+  )
+  expect(resCase.ruling).toBe(theCase.ruling || null)
+  expect(resCase.custodyEndDate).toBe(theCase.custodyEndDate || null)
+  expect(resCase.custodyRestrictions).toBe(theCase.custodyRestrictions || null)
+  expect(resCase.accusedAppealDecision).toBe(
+    theCase.accusedAppealDecision || null,
+  )
+  expect(resCase.prosecutorAppealDecision).toBe(
+    theCase.prosecutorAppealDecision || null,
+  )
+  expect(resCase.notifications).toBeUndefined()
 }
