@@ -7,18 +7,13 @@ import { lazy } from 'react'
 export const applicationsModule: ServicePortalModule = {
   name: 'Umsóknir',
   widgets: () => [],
-  routes: (userInfo) => {
+  routes: () => {
     const applicationRoutes = [
       {
         name: 'Umsóknir',
         path: ServicePortalPath.UmsoknirRoot,
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),
-      },
-      {
-        name: 'Umsóknir',
-        path: [ServicePortalPath.UmsoknirOpnarUmsoknir],
-        render: () => lazy(() => import('./lib/service-portal-applications')),
       },
     ]
 

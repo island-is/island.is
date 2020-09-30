@@ -11,7 +11,8 @@ export const assetsModule: ServicePortalModule = {
     {
       name: 'Eignir',
       path: ServicePortalPath.EignirRoot,
-      render: () => lazy(() => import('./lib/service-portal-assets')),
+      render: () =>
+        lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
     },
   ],
 }
