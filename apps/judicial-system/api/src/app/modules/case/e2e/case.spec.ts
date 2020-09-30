@@ -225,14 +225,9 @@ describe('Case', () => {
           .expect(200)
           .then(async (response) => {
             // Check the response
-            expect(response.body.length).toBe(1)
-            expect(response.body[0].id).toBe(notificationValue.id)
-            expect(response.body[0].created).toBe(
-              notificationValue.created.toISOString(),
-            )
-            expect(response.body[0].caseId).toBe(caseValue.id)
-            expect(response.body[0].type).toBe(notificationValue.type)
-            expect(response.body[0].message).toBe(notificationValue.message)
+            expect(response.body).toStrictEqual([
+              dbNotificationToNotification(notificationValue),
+            ])
           })
       })
     })
@@ -351,6 +346,15 @@ function dbCaseToCase(dbCase: Case) {
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
   } as unknown) as Case
+}
+
+function dbNotificationToNotification(dbNotification: Notification) {
+  const notification = dbNotification.toJSON() as Notification
+
+  return {
+    ...notification,
+    created: notification.created && notification.created.toISOString(),
+  }
 }
 
 function expectCasesToMatch(resCase: Case, theCase: Case) {
