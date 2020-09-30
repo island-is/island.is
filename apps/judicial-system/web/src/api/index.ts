@@ -34,6 +34,7 @@ export const getCases: () => Promise<DetentionRequest[]> = async () => {
     }
   } catch (ex) {
     // TODO: Log error
+    console.log(ex)
   }
 }
 

@@ -10,14 +10,11 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { ProsecutorLogo } from '../../shared-components/Logos'
+import { Logo } from '../../shared-components/Logo/Logo'
 import Modal from '../../shared-components/Modal/Modal'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import {
-  getRestrictionByValue,
-  renderRestrictons,
-} from '../../utils/stepHelper'
+import { getRestrictionByValue } from '../../utils/stepHelper'
 import { CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import * as Constants from '../../utils/constants'
@@ -32,15 +29,15 @@ export const Overview: React.FC = () => {
   const caseDraftJSON = JSON.parse(caseDraft)
   const history = useHistory()
 
-  const renderAccusedName = () => (
+  const renderSuspectName = () => (
     <Typography>
       Tilkynning hefur verið send á dómara á vakt.
       <br />
       Dómstóll: {caseDraftJSON.court}.
       <br />
       Sakborningur:
-      <span className={styles.accusedName}>
-        {` ${caseDraftJSON.accusedName}`}
+      <span className={styles.suspectName}>
+        {` ${caseDraftJSON.suspectName}`}
       </span>
       .
     </Typography>
@@ -63,7 +60,7 @@ export const Overview: React.FC = () => {
         <GridContainer>
           <GridRow>
             <GridColumn span={'3/12'}>
-              <ProsecutorLogo />
+              <Logo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">
@@ -90,7 +87,7 @@ export const Overview: React.FC = () => {
                     Fullt nafn kærða
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.accusedName}</Typography>
+                <Typography>{caseDraftJSON.suspectName}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -98,7 +95,7 @@ export const Overview: React.FC = () => {
                     Lögheimili/dvalarstaður
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.accusedAddress}</Typography>
+                <Typography>{caseDraftJSON.suspectAddress}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -119,10 +116,7 @@ export const Overview: React.FC = () => {
                     formatDate(caseDraftJSON?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(
-                    caseDraftJSON?.arrestDate,
-                    Constants.TIME_FORMAT,
-                  )}`}
+                  )} kl. ${formatDate(caseDraftJSON?.arrestDate, 'hh:mm')}`}
                 </Typography>
               </Box>
               {caseDraftJSON.requestedCourtDate &&
@@ -140,7 +134,7 @@ export const Overview: React.FC = () => {
                         }),
                       )} kl. ${formatDate(
                         caseDraftJSON?.requestedCourtDate,
-                        Constants.TIME_FORMAT,
+                        'hh:mm',
                       )}`}
                     </Typography>
                   </Box>
@@ -157,7 +151,7 @@ export const Overview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           caseDraftJSON?.requestedCustodyEndDate,
-                          Constants.TIME_FORMAT,
+                          'hh:mm',
                         )}`}
                       </strong>
                     </Typography>
@@ -169,9 +163,13 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
-                      {renderRestrictons(
-                        caseDraftJSON.requestedCustodyRestrictions,
-                      )}
+                      {caseDraftJSON.custodyRestrictions
+                        .map(
+                          (restriction: CustodyRestrictions) =>
+                            `${getRestrictionByValue(restriction)}`,
+                        )
+                        .toString()
+                        .replace(',', ', ')}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem
@@ -238,7 +236,7 @@ export const Overview: React.FC = () => {
       {modalVisible && (
         <Modal
           title="Krafa um gæsluvarðhald hefur verið staðfest"
-          text={renderAccusedName() as JSX.Element}
+          text={renderSuspectName() as JSX.Element}
           handleClose={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
           handlePrimaryButtonClick={async () => {
             history.push(Constants.DETENTION_REQUESTS_ROUTE)

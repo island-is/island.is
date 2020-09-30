@@ -11,17 +11,17 @@ export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly accusedNationalId: string
+  readonly suspectNationalId: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedName: string
+  readonly suspectName: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedAddress: string
+  readonly suspectAddress: string
 
   @IsOptional()
   @IsString()

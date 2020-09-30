@@ -8,15 +8,13 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
-
-import { CaseState } from '@island.is/judicial-system/types'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Notification } from './notification.model'
 import {
-  CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseState,
 } from './case.types'
 
 @Table({
@@ -48,7 +46,7 @@ export class Case extends Model<Case> {
     defaultValue: CaseState.DRAFT,
   })
   @ApiProperty({ enum: CaseState })
-  state: CaseState
+  state: string
 
   @Column({
     type: DataType.STRING,
@@ -62,55 +60,55 @@ export class Case extends Model<Case> {
     allowNull: false,
   })
   @ApiProperty()
-  accusedNationalId: string
+  suspectNationalId: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
-  accusedName: string
+  @ApiPropertyOptional()
+  suspectName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
-  accusedAddress: string
+  @ApiPropertyOptional()
+  suspectAddress: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   court: string
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   arrestDate: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   requestedCourtDate: Date
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   requestedCustodyEndDate: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Lagaákvæði sem brot varða við
   lawsBroken: string
 
@@ -130,13 +128,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
   // Takmarkanir á gæslu
-  requestedCustodyRestrictions: CaseCustodyRestrictions[]
+  custodyRestrictions: CaseCustodyRestrictions[]
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Málsatvik rakin
   caseFacts: string
 
@@ -144,7 +142,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Framburðir
   witnessAccounts: string
 
@@ -152,7 +150,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Staða rannsóknar og næstu skref
   investigationProgress: string
 
@@ -160,7 +158,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Lagarök
   legalArguments: string
 
@@ -168,7 +166,7 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Athugasemdir til dómara
   comments: string
 
@@ -176,99 +174,11 @@ export class Case extends Model<Case> {
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   // Málsnúmer héraðsdóms
   courtCaseNumber: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  courtStartTime: Date
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  courtEndTime: Date
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Viðstaddir og hlutverk þeirra
-  courtAttendees: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Krafa lögreglu
-  policeDemands: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Afstaða kærða
-  accusedPlea: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Málflutningsræður
-  litigationPresentations: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Niðurstaða úrskurðar
-  ruling: string
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  custodyEndDate: Date
-
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(CaseCustodyRestrictions),
-  })
-  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  // Takmarkanir á gæslu
-  custodyRestrictions: CaseCustodyRestrictions[]
-
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseAppealDecision),
-  })
-  @ApiProperty({ enum: CaseAppealDecision })
-  // Ákvörðun um kæru kærða
-  accusedAppealDecision: CaseAppealDecision
-
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseAppealDecision),
-  })
-  @ApiProperty({ enum: CaseAppealDecision })
-  // Ákvörðun um kæru sækjanda
-  prosecutorAppealDecision: CaseAppealDecision
-
   @HasMany(() => Notification)
-  @ApiProperty({ type: Notification, isArray: true })
+  @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications: Notification[]
 }

@@ -55,12 +55,3 @@ export const getRestrictionByValue = (value: CustodyRestrictions) => {
       return 'C - Heimsóknarbann'
   }
 }
-
-export const renderRestrictons = (restrictions: CustodyRestrictions[]) => {
-  return restrictions && restrictions.length > 0
-    ? restrictions
-        .map((restriction) => getRestrictionByValue(restriction))
-        .toString()
-        .replace(',', ', ')
-    : 'Lausagæsla'
-}

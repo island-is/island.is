@@ -1,12 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { format, parseISO } from 'date-fns'
-
+import React, { useEffect, useState } from 'react'
+import { format, parseISO, getTime } from 'date-fns'
 import localeIS from 'date-fns/locale/is'
 
-import {
-  JudgeLogo,
-  ProsecutorLogo,
-} from '@island.is/judicial-system-web/src/shared-components/Logos'
+import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
   Alert,
   Button,
@@ -15,11 +11,10 @@ import {
   TagVariant,
   Box,
 } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
-import { DetentionRequest, User } from '../../types'
+import { DetentionRequest, CaseState, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
-import { UserRole } from '../../utils/authenticate'
+import { hasRole, UserRole } from '../../utils/authenticate'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
 import { userContext } from '../../utils/userContext'
@@ -34,7 +29,6 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   const [cases, setCases] = useState<DetentionRequest[]>(null)
   const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const uContext = useContext(userContext)
 
   useEffect(() => {
     let isMounted = true
@@ -46,15 +40,15 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
       if (isMounted && casesResponse) {
         setUser({
           nationalId: userResponse.nationalId,
-          role: userResponse.role,
+          roles: userResponse.roles,
         })
 
         props.onGetUser({
           nationalId: userResponse.nationalId,
-          role: userResponse.role,
+          roles: userResponse.roles,
         })
 
-        if (userResponse.role === UserRole.JUDGE) {
+        if (hasRole(userResponse.roles, UserRole.JUDGE)) {
           const judgeCases = casesResponse.filter((c) => {
             return c.state === CaseState.SUBMITTED
           })
@@ -81,10 +75,10 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa staðfest' }
-      case CaseState.ACCEPTED:
+      case CaseState.ACTIVE:
         return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
-      case CaseState.REJECTED:
-        return { color: 'blue', text: 'Gæsluvarðhaldi hafnað' }
+      case CaseState.COMPLETED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi lokið' }
       default:
         return { color: 'white', text: 'Óþekkt' }
     }
@@ -93,11 +87,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
   return (
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
-        {!uContext.user ? null : uContext.user.role === UserRole.JUDGE ? (
-          <JudgeLogo />
-        ) : (
-          <ProsecutorLogo />
-        )}
+        <Logo />
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
         <Link to={Constants.STEP_ONE_ROUTE}>
@@ -131,8 +121,8 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
             {cases.map((c, i) => (
               <tr key={i} data-testid="detention-requests-table-row">
                 <td>{c.policeCaseNumber || '-'}</td>
-                <td>{c.accusedName}</td>
-                <td>{c.accusedNationalId || '-'}</td>
+                <td>{c.suspectName}</td>
+                <td>{c.suspectNationalId || '-'}</td>
                 <td>
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
@@ -146,7 +136,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = (
                     {(user) => (
                       <Link
                         to={
-                          user.user.role === UserRole.JUDGE
+                          user.user.roles.indexOf(UserRole.JUDGE) > -1
                             ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                             : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         }

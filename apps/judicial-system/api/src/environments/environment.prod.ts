@@ -13,8 +13,4 @@ export default {
   notifications: {
     judgePhoneNumber: process.env.JUDGE_PHONE_NUMBER,
   },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL,
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
-  },
 }

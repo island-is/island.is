@@ -9,21 +9,16 @@ import {
   AccordionItem,
   Input,
 } from '@island.is/island-ui/core'
-import { JudgeLogo } from '../../shared-components/Logos'
+import { Logo } from '../../shared-components/Logo/Logo'
 import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
-import {
-  autoSave,
-  getRestrictionByValue,
-  renderRestrictons,
-} from '../../utils/stepHelper'
-import { CustodyRestrictions } from '../../types'
+import { autoSave, getRestrictionByValue } from '../../utils/stepHelper'
+import { Case, CustodyRestrictions } from '../../types'
 import { FormFooter } from '../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../api'
 import { validate } from '../../utils/validate'
 import useWorkingCase from '../../utils/hooks/useWorkingCase'
-import * as Constants from '../../utils/constants'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -42,32 +37,23 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
-    let mounted = true
-
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem('workingCase', JSON.stringify(currentCase))
-
-      if (mounted) {
-        setWorkingCase(currentCase.case)
-      }
+      setWorkingCase(currentCase.case)
     }
 
     if (id) {
       getCurrentCase()
     }
+  }, [])
 
-    return () => {
-      mounted = false
-    }
-  }, [id])
-
-  return workingCase ? (
+  return (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
-            <JudgeLogo />
+            <Logo />
           </GridColumn>
           <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1" variant="h1">
@@ -91,7 +77,7 @@ export const JudgeOverview: React.FC = () => {
                   data-testid="courtCaseNumber"
                   name="courtCaseNumber"
                   label="Slá inn málsnúmer"
-                  defaultValue={workingCase?.courtCaseNumber}
+                  // defaultValue={workingCase.courtCaseNumber} TODO
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={courtCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
@@ -125,7 +111,7 @@ export const JudgeOverview: React.FC = () => {
                   Fullt nafn kærða
                 </Typography>
               </Box>
-              <Typography>{workingCase?.accusedName}</Typography>
+              <Typography>{workingCase?.suspectName}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -133,7 +119,7 @@ export const JudgeOverview: React.FC = () => {
                   Lögheimili/dvalarstaður
                 </Typography>
               </Box>
-              <Typography>{workingCase?.accusedAddress}</Typography>
+              <Typography>{workingCase?.suspectAddress}</Typography>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -155,10 +141,7 @@ export const JudgeOverview: React.FC = () => {
                     formatDate(workingCase?.arrestDate, 'PPPP', {
                       locale: is,
                     }),
-                  )} kl. ${formatDate(
-                    workingCase?.arrestDate,
-                    Constants.TIME_FORMAT,
-                  )}`}
+                  )} kl. ${formatDate(workingCase?.arrestDate, 'hh:mm')}`}
               </Typography>
             </Box>
             {workingCase?.requestedCourtDate && (
@@ -175,7 +158,7 @@ export const JudgeOverview: React.FC = () => {
                     }),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
-                    Constants.TIME_FORMAT,
+                    'hh:mm',
                   )}`}
                 </Typography>
               </Box>
@@ -198,7 +181,7 @@ export const JudgeOverview: React.FC = () => {
                           { locale: is },
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
-                          Constants.TIME_FORMAT,
+                          'hh:mm',
                         )}`}
                     </strong>
                   </Typography>
@@ -220,9 +203,14 @@ export const JudgeOverview: React.FC = () => {
                   onToggle={() => setAccordionItemThreeExpanded(false)}
                 >
                   <Typography variant="p" as="p">
-                    {renderRestrictons(
-                      workingCase.requestedCustodyRestrictions,
-                    )}
+                    {workingCase?.custodyRestrictions?.length > 0 &&
+                      workingCase?.custodyRestrictions
+                        .map(
+                          (restriction: CustodyRestrictions) =>
+                            `${getRestrictionByValue(restriction)}`,
+                        )
+                        .toString()
+                        .replace(',', ', ')}
                   </Typography>
                 </AccordionItem>
                 <AccordionItem
@@ -271,14 +259,14 @@ export const JudgeOverview: React.FC = () => {
               </Accordion>
             </Box>
             <FormFooter
-              nextUrl={Constants.COURT_DOCUMENT_ROUTE}
+              nextUrl="/"
               nextIsDisabled={workingCase?.courtCaseNumber === ''}
             />
           </GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
-  ) : null
+  )
 }
 
 export default JudgeOverview
