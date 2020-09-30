@@ -4,7 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import * as z from 'zod'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/

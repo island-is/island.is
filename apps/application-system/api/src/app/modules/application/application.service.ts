@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ExternalData } from '@island.is/application/template'
+import { ExternalData } from '@island.is/application/core'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import { ApplicationTypes } from '@island.is/application/template'
+import { ApplicationTypes } from '@island.is/application/core'
 
 @Injectable()
 export class ApplicationService {

@@ -106,12 +106,6 @@
     "gjafakort-consts": {
       "tags": []
     },
-    "application-template": {
-      "tags": []
-    },
-    "application-form": {
-      "tags": []
-    },
     "application-system-form": {
       "tags": []
     },
@@ -275,6 +269,15 @@
       "tags": []
     },
     "application-templates-reference-template": {
+      "tags": []
+    },
+    "application-core": {
+      "tags": []
+    },
+    "application-ui-shell": {
+      "tags": []
+    },
+    "application-ui-fields": {
       "tags": []
     }
   },
