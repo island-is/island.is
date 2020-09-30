@@ -61,39 +61,13 @@ describe('Case', () => {
       .expect(201)
       .then(async (response) => {
         // Check the response
-        expect(response.body.id).toBeTruthy()
-        expect(response.body.created).toBeTruthy()
-        expect(response.body.modified).toBeTruthy()
-        expect(response.body.state).toBe(CaseState.DRAFT)
-        expect(response.body.policeCaseNumber).toBe(data.policeCaseNumber)
-        expect(response.body.accusedNationalId).toBe(data.accusedNationalId)
-        expect(response.body.accusedName).toBeNull()
-        expect(response.body.accusedAddress).toBeNull()
-        expect(response.body.court).toBeNull()
-        expect(response.body.arrestDate).toBeNull()
-        expect(response.body.requestedCourtDate).toBeNull()
-        expect(response.body.requestedCustodyEndDate).toBeNull()
-        expect(response.body.lawsBroken).toBeNull()
-        expect(response.body.custodyProvisions).toBeNull()
-        expect(response.body.requestedCustodyRestrictions).toBeNull()
-        expect(response.body.caseFacts).toBeNull()
-        expect(response.body.witnessAccounts).toBeNull()
-        expect(response.body.investigationProgress).toBeNull()
-        expect(response.body.legalArguments).toBeNull()
-        expect(response.body.comments).toBeNull()
-        expect(response.body.courtCaseNumber).toBeNull()
-        expect(response.body.courtStartTime).toBeNull()
-        expect(response.body.courtEndTime).toBeNull()
-        expect(response.body.courtAttendees).toBeNull()
-        expect(response.body.policeDemands).toBeNull()
-        expect(response.body.accusedPlea).toBeNull()
-        expect(response.body.litigationPresentations).toBeNull()
-        expect(response.body.ruling).toBeNull()
-        expect(response.body.custodyEndDate).toBeNull()
-        expect(response.body.custodyRestrictions).toBeNull()
-        expect(response.body.accusedAppealDecision).toBeNull()
-        expect(response.body.prosecutorAppealDecision).toBeNull()
-        expect(response.body.notifications).toBeUndefined()
+        expectResponseToMatchCase(response.body, {
+          ...data,
+          id: response.body.id,
+          created: response.body.created,
+          modified: response.body.modified,
+          state: CaseState.DRAFT,
+        } as Case)
 
         // Check the data in the database
         await Case.findOne({
@@ -541,11 +515,11 @@ function expectResponseToMatchCase(resCase: Case, theCase: Case) {
   expect(resCase.state).toBe(theCase.state)
   expect(resCase.policeCaseNumber).toBe(theCase.policeCaseNumber)
   expect(resCase.accusedNationalId).toBe(theCase.accusedNationalId)
-  expect(resCase.accusedName).toBe(theCase.accusedName)
-  expect(resCase.accusedAddress).toBe(theCase.accusedAddress)
-  expect(resCase.court).toBe(theCase.court)
-  expect(resCase.arrestDate).toBe(theCase.arrestDate)
-  expect(resCase.requestedCourtDate).toBe(theCase.requestedCourtDate)
+  expect(resCase.accusedName).toBe(theCase.accusedName || null)
+  expect(resCase.accusedAddress).toBe(theCase.accusedAddress || null)
+  expect(resCase.court).toBe(theCase.court || null)
+  expect(resCase.arrestDate).toBe(theCase.arrestDate || null)
+  expect(resCase.requestedCourtDate).toBe(theCase.requestedCourtDate || null)
   expect(resCase.requestedCustodyEndDate).toBe(
     theCase.requestedCustodyEndDate || null,
   )
