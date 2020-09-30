@@ -5,14 +5,14 @@ import { defineMessage } from 'react-intl'
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
     name: defineMessage({
-      id: 'sp:info',
+      id: 'service.portal:info',
       defaultMessage: 'Upplýsingar',
     }),
     children: [
       // Yfirlit
       {
         name: defineMessage({
-          id: 'sp:overview',
+          id: 'service.portal:overview',
           defaultMessage: 'Yfirlit',
         }),
         path: ServicePortalPath.MinarSidurRoot,
@@ -21,15 +21,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjolskyldan
       {
         name: defineMessage({
-          id: 'sp:family',
-          defaultMessage: 'Fjölskyldan',
+          id: 'service.portal:family',
+          defaultMessage: 'Default fjolskyldan',
         }),
         path: ServicePortalPath.FjolskyldanRoot,
         icon: 'user',
         children: [
           {
             name: defineMessage({
-              id: 'sp:my-info',
+              id: 'service.portal:my-info',
               defaultMessage: 'Mínar upplýsingar',
             }),
             path: ServicePortalPath.MinarUpplysingar,
@@ -41,7 +41,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Eignir
       {
         name: defineMessage({
-          id: 'sp:assets',
+          id: 'service.portal:assets',
           defaultMessage: 'Eignir',
         }),
         path: ServicePortalPath.EignirRoot,
@@ -51,7 +51,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjarmal
       {
         name: defineMessage({
-          id: 'sp:finance',
+          id: 'service.portal:finance',
           defaultMessage: 'Fjármál',
         }),
         path: ServicePortalPath.FjarmalRoot,
@@ -59,7 +59,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             name: defineMessage({
-              id: 'sp:vehicles',
+              id: 'service.portal:vehicles',
               defaultMessage: 'Ökutæki',
             }),
             path: ServicePortalPath.FjarmalOkutaeki,
@@ -71,7 +71,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Heilsa
       {
         name: defineMessage({
-          id: 'sp:health',
+          id: 'service.portal:health',
           defaultMessage: 'Heilsa',
         }),
         path: ServicePortalPath.HeilsaRoot,
@@ -81,7 +81,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Menntun
       {
         name: defineMessage({
-          id: 'sp:education',
+          id: 'service.portal:education',
           defaultMessage: 'Menntun',
         }),
         path: ServicePortalPath.MenntunRoot,
@@ -91,7 +91,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   },
   {
     name: defineMessage({
-      id: 'sp:actions',
+      id: 'service.portal:actions',
       defaultMessage: 'Aðgerðir',
       description: 'Title of the actions category',
     }),
@@ -99,7 +99,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Umsoknir
       {
         name: defineMessage({
-          id: 'sp:applications',
+          id: 'service.portal:applications',
           defaultMessage: 'Umsóknir',
         }),
         path: ServicePortalPath.UmsoknirRoot,
@@ -109,7 +109,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Rafraen skjol
       {
         name: defineMessage({
-          id: 'sp:documents',
+          id: 'service.portal:documents',
           defaultMessage: 'Rafræn skjöl',
         }),
         path: ServicePortalPath.RafraenSkjolRoot,
@@ -119,7 +119,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Stillingar
       {
         name: defineMessage({
-          id: 'sp:settings',
+          id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
         path: ServicePortalPath.StillingarRoot,
@@ -127,7 +127,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             name: defineMessage({
-              id: 'sp:delegation',
+              id: 'service.portal:delegation',
               defaultMessage: 'Umboð',
             }),
             path: ServicePortalPath.StillingarUmbod,

@@ -9,11 +9,12 @@ interface Props {
 
 const ModuleLoadingScreen: FC<Props> = ({ name }) => {
   const { formatMessage } = useLocale()
+
   return (
     <Box padding={8}>
       <Typography variant="h2" as="h2">
         {formatMessage({
-          id: 'sp:fetching',
+          id: 'service.portal:fetching',
           defaultMessage: 'Sæki',
         })}
         {formatMessage(name)}

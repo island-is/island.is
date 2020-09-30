@@ -32,16 +32,17 @@ export class ModuleErrorBoundary extends React.Component<
 
 const ModuleErrorScreen: FC<Props> = ({ name }) => {
   const { formatMessage } = useLocale()
+
   return (
     <Box padding={8}>
       <Typography variant="h2" as="h2">
         {formatMessage({
-          id: 'sp:could-not-fetch',
+          id: 'service.portal:could-not-fetch',
           defaultMessage: 'Tókst ekki að sækja',
         })}
         {formatMessage(name)},
         {formatMessage({
-          id: 'sp:something-went-wrong',
+          id: 'service.portal:something-went-wrong',
           defaultMessage: 'eitthvað fór úrskeiðis',
         })}
       </Typography>

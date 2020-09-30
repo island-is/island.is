@@ -18,9 +18,11 @@ const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<{}> = () => {
   const { lang } = useLocale()
-  const { changeLanguage } = useNamespaces()
+  const { changeLanguage } = useNamespaces(['service.portal'])
 
-  const handleLangClick = (value: Locale) => changeLanguage(value)
+  const handleLangClick = (value: Locale) => {
+    changeLanguage(value)
+  }
 
   return (
     <>

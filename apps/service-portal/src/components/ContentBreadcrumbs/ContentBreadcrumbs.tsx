@@ -35,7 +35,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
     },
     {
       name: defineMessage({
-        id: 'sp:application-name',
+        id: 'service.portal:application-name',
         defaultMessage: 'Mitt Ísland',
       }),
       path: ServicePortalPath.MinarSidurRoot,
