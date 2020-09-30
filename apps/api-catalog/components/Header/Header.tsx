@@ -53,7 +53,7 @@ function Header() {
           { title: "Upphafsíða", url: "/"},
           { title: "API Vörulisti", url: "/services"},
           { title: "Þróunarhandbók", url: "/design-guide"},
-          { title: "Island", url: "https://island.is"},
+          { title: "Island.is", url: "https://island.is"},
         ]}
       />
     </GridContainer>
