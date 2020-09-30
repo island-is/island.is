@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Icon,
-  Typography, AccordionItem
+  Typography, AccordionItem, GridContainer
 } from '@island.is/island-ui/core';
 
 import * as styles from './ServiceList.treat';
@@ -27,6 +27,7 @@ import {
 
 import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
+import { theme } from '@island.is/island-ui/theme';
 
 
 interface PropTypes {
@@ -40,24 +41,26 @@ interface PropTypes {
 function ServiceLayout({ top, bottom, left, right, classes }: PropTypes) {
   return (
     <Box paddingX="gutter">
-      {<ContentBlock >
-        {top}
-      </ContentBlock>}
-      <ContentBlock>
-        <GridRow className={classes}>
-        <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '8/12']}
-                  offset={[    '0',     '0',  '0',    '0', '0']}>
-            {left}
-          </GridColumn>
-          <GridColumn span={[ '12/12',  '8/12',  '3/12', '3/12', '4/12']}
-                    offset={[    '0',      '0',     '0',    '0',    '0']}>
-            {right}
-          </GridColumn>
-        </GridRow>
-      </ContentBlock>
-      {<ContentBlock >
-        {bottom}
-      </ContentBlock>}
+      <GridContainer>
+        {<ContentBlock >
+          {top}
+        </ContentBlock>}
+        <ContentBlock>
+          <GridRow className={classes}>
+          <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '9/12']}
+                    offset={[    '0',     '0',  '0',    '0', '0']}>
+              {left}
+            </GridColumn>
+            <GridColumn span={[ '12/12',  '8/12',  '3/12', '3/12', '3/12']}
+                      offset={[    '0',      '0',     '0',    '0',    '0']}>
+              {right}
+            </GridColumn>
+          </GridRow>
+        </ContentBlock>
+        {<ContentBlock >
+          {bottom}
+        </ContentBlock>}
+      </GridContainer>
     </Box>
   )
 }
@@ -163,7 +166,8 @@ export default function ServiceList(props: ServiceListProps) {
   const [isMobile, setIsMobile] = useState(false)
 
   useIsomorphicLayoutEffect(() => {
-    if (width < 771) {
+    //if (width < 771) {
+    if (width < theme.breakpoints.md) {
       return setIsMobile(true)
     }
     setIsMobile(false)
@@ -206,7 +210,7 @@ export default function ServiceList(props: ServiceListProps) {
   return (
     <ServiceLayout classes={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
-        <div className={cn(styles.topSection)}>
+        <div className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}>
           <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
           <div className={cn(styles.topSectionText)}>
             <Typography variant="intro">{props.pageContent.strings.find(s => s.id === 'catalog-intro').text}</Typography>

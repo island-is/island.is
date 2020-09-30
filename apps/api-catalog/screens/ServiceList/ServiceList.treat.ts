@@ -100,6 +100,11 @@ export const topSectionText = style({
   maxWidth:600
 })
 
+export const topSectionMobile = style({
+  marginBottom:40,
+  textAlign:'center',
+  width:412
+})
 export const topSection = style({
   marginBottom:40,
   textAlign:'center'
