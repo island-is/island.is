@@ -68,7 +68,10 @@ export const Confirmation: React.FC = () => {
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>
-              <Typography variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Typography>
+              <Typography
+                variant="h2"
+                as="h2"
+              >{`Mál nr. ${workingCase.courtCaseNumber}`}</Typography>
               <Typography fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Typography>
             </Box>
             <Box marginBottom={9}>
@@ -78,7 +81,7 @@ export const Confirmation: React.FC = () => {
                   label="Krafan um gæsluvarðhald frá Lögreglu"
                 >
                   <Box marginBottom={2}>
-                    <Typography variant="h3" as="h3">
+                    <Typography variant="h4" as="h4">
                       Grunnupplýsingar
                     </Typography>
                   </Box>
@@ -133,7 +136,7 @@ export const Confirmation: React.FC = () => {
                     </Typography>
                   </Box>
                   <Box marginBottom={2}>
-                    <Typography variant="h3" as="h3">
+                    <Typography variant="h4" as="h4">
                       Greinargerð um málsatvik og lagarök
                     </Typography>
                   </Box>
@@ -152,7 +155,7 @@ export const Confirmation: React.FC = () => {
                 </AccordionItem>
                 <AccordionItem id="id_2" label="Þingbók">
                   <Box marginBottom={2}>
-                    <Typography variant="h3" as="h3">
+                    <Typography variant="h4" as="h4">
                       Upplýsingar
                     </Typography>
                   </Box>
@@ -191,7 +194,7 @@ export const Confirmation: React.FC = () => {
                     {workingCase.litigationPresentations}
                   </AccordionListItem>
                   <Box marginBottom={2}>
-                    <Typography variant="h3" as="h3">
+                    <Typography variant="h4" as="h4">
                       Úrskurður
                     </Typography>
                   </Box>
@@ -228,7 +231,7 @@ export const Confirmation: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
+                <Typography as="h4" variant="h4">
                   Úrskurður Héraðsdóms
                 </Typography>
               </Box>
@@ -242,7 +245,7 @@ export const Confirmation: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={10}>
                 <Box marginBottom={2}>
-                  <Typography as="h3" variant="h3">
+                  <Typography as="h4" variant="h4">
                     Ákvörðun um kæru
                   </Typography>
                 </Box>
@@ -265,7 +268,7 @@ export const Confirmation: React.FC = () => {
             <Box component="section" marginBottom={8}>
               <Box marginBottom={10}>
                 <Box marginBottom={2}>
-                  <Typography as="h3" variant="h3">
+                  <Typography as="h4" variant="h4">
                     Úrskurðarorð
                   </Typography>
                 </Box>
