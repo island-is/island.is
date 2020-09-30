@@ -129,15 +129,25 @@ describe('Case', () => {
         .expect(200)
         .then(async (response) => {
           // Check the response
-          expect(response.body.modified).not.toBe(value.modified.toISOString())
-          expect(response.body.state).toBe(CaseState.SUBMITTED)
+          const dbCase = dbCaseToCase(value)
+
+          expect(response.body.modified).not.toBe(dbCase.modified)
+          expect(response.body.state).not.toBe(dbCase.state)
+          expectCasesToMatch(response.body, {
+            ...dbCase,
+            modified: response.body.modified,
+            state: CaseState.SUBMITTED,
+          } as Case)
 
           // Check the data in the database
           await Case.findOne({
             where: { id: response.body.id },
+            include: [Notification],
           }).then((newValue) => {
-            expect(newValue.modified.toISOString()).toBe(response.body.modified)
-            expect(newValue.state).toBe(response.body.state)
+            expectCasesToMatch(dbCaseToCase(newValue), {
+              ...response.body,
+              notifications: [],
+            })
           })
         })
     })
