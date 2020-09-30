@@ -6,13 +6,7 @@ import { lazy } from 'react'
 
 export const applicationsModule: ServicePortalModule = {
   name: 'Umsóknir',
-  widgets: () => [
-    {
-      name: 'Umsóknir',
-      weight: 0,
-      render: () => lazy(() => import('./widgets')),
-    },
-  ],
+  widgets: () => [],
   routes: (userInfo) => {
     const applicationRoutes = [
       {

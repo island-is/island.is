@@ -14,7 +14,8 @@ export const financeModule: ServicePortalModule = {
       {
         name: 'Fjármál',
         path: ServicePortalPath.FjarmalRoot,
-        render: () => lazy(() => import('./lib/service-portal-finance')),
+        render: () =>
+          lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
     ]
 
