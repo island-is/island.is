@@ -1,0 +1,10 @@
+module.exports = {
+  name: 'application-templates-driving-lessons',
+  preset: '../../../../jest.config.js',
+  transform: {
+    '^.+\\.[tj]sx?$': 'ts-jest',
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
+  coverageDirectory:
+    '../../../../coverage/libs/application/templates/driving-lessons',
+}

@@ -1,5 +1,5 @@
 import React, { FC, memo, ReactNode } from 'react'
-import { Slice } from '@island.is/web/graphql/schema'
+import { AllSlicesFragment as Slice } from '@island.is/web/graphql/schema'
 import {
   renderSlices,
   defaultRenderComponent,
@@ -17,14 +17,12 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
 ]
 
 const renderComponent = (slice: Slice, config: RenderConfig) => {
-  let children: ReactNode = null
-  switch (slice.__typename) {
-    case 'ContactUs':
-      children = <ContactUs {...slice} />
-      break
-    default:
-      children = defaultRenderComponent(slice, config)
-  }
+  let children: ReactNode =
+    slice.__typename === 'ContactUs' ? (
+      <ContactUs {...slice} />
+    ) : (
+      defaultRenderComponent(slice, config)
+    )
 
   if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.

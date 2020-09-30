@@ -157,6 +157,9 @@ export interface IArticleFields {
 
   /** Importance */
   importance?: number | undefined
+
+  /** User stories */
+  userStories?: Document | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -828,9 +831,6 @@ export interface ILocationFields {
   /** subTitle */
   subTitle?: string | undefined
 
-  /** image */
-  image: Asset
-
   /** Address */
   address?: string | undefined
 
@@ -1467,6 +1467,9 @@ export interface IStoryFields {
 
   /** Linked page (new) */
   page?: ILinkedPage | undefined
+
+  /** Link reference */
+  storyLink?: ILink | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {

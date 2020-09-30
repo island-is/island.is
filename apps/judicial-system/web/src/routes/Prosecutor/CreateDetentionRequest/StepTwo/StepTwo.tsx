@@ -463,7 +463,12 @@ export const StepTwo: React.FC = () => {
 
                             // If the user is checking the box, add the restriction to the state
                             if (target.checked) {
+                              // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
                               copyOfState.requestedCustodyRestrictions.push(
+                                target.value as CustodyRestrictions,
+                              )
+
+                              copyOfState.custodyRestrictions.push(
                                 target.value as CustodyRestrictions,
                               )
                             }
@@ -471,7 +476,18 @@ export const StepTwo: React.FC = () => {
                             else {
                               const restrictions =
                                 copyOfState.requestedCustodyRestrictions
+
+                              const cRestrictions =
+                                copyOfState.custodyRestrictions
+
                               restrictions.splice(
+                                restrictions.indexOf(
+                                  target.value as CustodyRestrictions,
+                                ),
+                                1,
+                              )
+
+                              cRestrictions.splice(
                                 restrictions.indexOf(
                                   target.value as CustodyRestrictions,
                                 ),
@@ -491,10 +507,25 @@ export const StepTwo: React.FC = () => {
                               ),
                             )
 
+                            api.saveCase(
+                              workingCase.id,
+                              parseArray(
+                                'custodyRestrictions',
+                                copyOfState.custodyRestrictions,
+                              ),
+                            )
+
                             updateState(
                               workingCase,
                               'restrictions',
                               copyOfState.requestedCustodyRestrictions,
+                              setWorkingCase,
+                            )
+
+                            updateState(
+                              workingCase,
+                              'restrictions',
+                              copyOfState.custodyRestrictions,
                               setWorkingCase,
                             )
                           }}

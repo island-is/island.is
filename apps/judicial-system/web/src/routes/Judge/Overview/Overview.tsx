@@ -11,13 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { formatDate, capitalize } from '../../../utils/formatters'
-import is from 'date-fns/locale/is'
-import {
-  autoSave,
-  getRestrictionByValue,
-  renderRestrictons,
-} from '../../../utils/stepHelper'
-import { CustodyRestrictions } from '../../../types'
+import { autoSave, renderRestrictons } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'
@@ -155,9 +149,7 @@ export const JudgeOverview: React.FC = () => {
               <Typography>
                 {workingCase?.arrestDate &&
                   `${capitalize(
-                    formatDate(workingCase?.arrestDate, 'PPPP', {
-                      locale: is,
-                    }),
+                    formatDate(workingCase?.arrestDate, 'PPPP'),
                   )} kl. ${formatDate(
                     workingCase?.arrestDate,
                     Constants.TIME_FORMAT,
@@ -173,9 +165,7 @@ export const JudgeOverview: React.FC = () => {
                 </Box>
                 <Typography>
                   {`${capitalize(
-                    formatDate(workingCase?.requestedCourtDate, 'PPPP', {
-                      locale: is,
-                    }),
+                    formatDate(workingCase?.requestedCourtDate, 'PPPP'),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
                     Constants.TIME_FORMAT,
@@ -198,7 +188,6 @@ export const JudgeOverview: React.FC = () => {
                         ` ${formatDate(
                           workingCase?.requestedCustodyEndDate,
                           'PPP',
-                          { locale: is },
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
                           Constants.TIME_FORMAT,

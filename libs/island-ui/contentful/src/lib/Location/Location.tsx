@@ -11,7 +11,7 @@ import {
   Logo,
 } from '@island.is/island-ui/core'
 
-export interface Location {
+export interface LocationProps {
   title: string
   subTitle: string
   address: string
@@ -19,7 +19,7 @@ export interface Location {
   background: { url: string }
 }
 
-export const Location: FC<Location> = ({
+export const Location: FC<LocationProps> = ({
   title,
   subTitle,
   address,
