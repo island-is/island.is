@@ -33,7 +33,6 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "storybook:island-ui": "nx run island-ui-storybook:storybook",
     "ts-node": "node -r ./scripts/ts-node"
   },
   "dependencies": {
