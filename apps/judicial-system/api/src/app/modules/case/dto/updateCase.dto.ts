@@ -1,12 +1,10 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
 import {
+  CaseState,
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
-  CaseAppealDecision,
 } from '../models'
 
 export class UpdateCaseDto {
@@ -23,17 +21,17 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedNationalId: string
+  readonly suspectNationalId: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedName: string
+  readonly suspectName: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedAddress: string
+  readonly suspectAddress: string
 
   @IsOptional()
   @IsString()
@@ -68,7 +66,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
-  readonly requestedCustodyRestrictions: CaseCustodyRestrictions[]
+  readonly custodyRestrictions: CaseCustodyRestrictions[]
 
   @IsOptional()
   @IsString()
@@ -99,59 +97,4 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseNumber: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtStartTime: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtEndTime: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtAttendees: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly policeDemands: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedPlea: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly litigationPresentations: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly ruling: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly custodyEndDate: Date
-
-  @IsOptional()
-  @IsEnum(CaseCustodyRestrictions, { each: true })
-  @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
-  readonly custodyRestrictions: CaseCustodyRestrictions[]
-
-  @IsOptional()
-  @IsEnum(CaseAppealDecision, { each: true })
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly accusedAppealDecision: CaseAppealDecision
-
-  @IsOptional()
-  @IsEnum(CaseAppealDecision, { each: true })
-  @ApiPropertyOptional({ enum: CaseAppealDecision })
-  readonly prosecutorAppealDecision: CaseAppealDecision
 }

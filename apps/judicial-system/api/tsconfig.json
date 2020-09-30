@@ -1,20 +1,10 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "types": ["node", "jest"],
     "emitDecoratorMetadata": true,
-    "target": "es2015",
-    "strict": false
+    "target": "es2015"
   },
-  "include": [],
-  "allowJs": true,
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+  "include": ["**/*.ts"],
+  "allowJs": true
 }

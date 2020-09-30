@@ -1,5 +1,4 @@
 import { isValid, format, parseISO } from 'date-fns'
-import { is } from 'date-fns/locale'
 
 export const parseArray = (property: string, array: string[]) => {
   try {
@@ -20,9 +19,15 @@ export const parseString = (property: string, value: string | Date) => {
   }
 }
 
-export const formatDate = (date: string, formatPattern: string) => {
-  if (isValid(parseISO(date))) {
-    return format(parseISO(date), formatPattern, { locale: is })
+export const formatDate = (
+  date: Date,
+  formatPattern: string,
+  options?: any,
+) => {
+  if (isValid(date)) {
+    return format(date, formatPattern, options)
+  } else if (isValid(parseISO(date.toString()))) {
+    return format(parseISO(date.toString()), formatPattern, options)
   } else {
     return null
   }

@@ -18,7 +18,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
   const history = useHistory()
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
+    <Box display="flex" justifyContent="spaceBetween">
       <Button
         variant="ghost"
         disabled={props.previousIsDisabled}

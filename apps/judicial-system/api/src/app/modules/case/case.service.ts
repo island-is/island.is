@@ -3,24 +3,16 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
-import {
-  SigningService,
-  SigningServiceResponse,
-} from '@island.is/dokobit-signing'
-import { CaseState } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, Notification, NotificationType } from './models'
-import { getPdf } from './case.pdf'
-import { writeDummySignedPdf } from './case.dummy.pdf'
+import { Case, Notification, NotificationType, CaseState } from './models'
 
 @Injectable()
 export class CaseService {
   constructor(
     private readonly smsService: SmsService,
-    private readonly signingService: SigningService,
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     @InjectModel(Notification)
@@ -70,28 +62,9 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  async transition(
-    id: string,
-    modified: Date,
-    state: CaseState,
-  ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
-    this.logger.debug(`Transitioning case with id "${id}"`)
-
-    const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      { state },
-      {
-        where: {
-          id,
-          modified,
-        },
-        returning: true,
-      },
-    )
-
-    return { numberOfAffectedRows, updatedCase }
-  }
-
-  getAllNotificationsByCaseId(existingCase: Case): Promise<Notification[]> {
+  async getAllNotificationsByCaseId(
+    existingCase: Case,
+  ): Promise<Notification[]> {
     this.logger.debug(
       `Getting all notifications for case with id "${existingCase.id}"`,
     )
@@ -110,18 +83,16 @@ export class CaseService {
       `Sending a notification for case with id "${existingCase.id}"`,
     )
 
-    // This method should only be called if the case state is DRAFT or SUBMITTED
-
     const smsText =
       existingCase.state === CaseState.DRAFT
         ? this.constructHeadsUpSmsText(existingCase, user)
         : // State is CaseState.SUBMITTED
           this.constructReadyForCourtpSmsText(existingCase, user)
 
-    // Production or local development with judge mobile number
-    if (environment.production || environment.notifications.judgeMobileNumber) {
+    // Production or local development with judge phone number
+    if (environment.production || environment.notifications.judgePhoneNumber) {
       await this.smsService.sendSms(
-        environment.notifications.judgeMobileNumber,
+        environment.notifications.judgePhoneNumber,
         smsText,
       )
     }
@@ -135,61 +106,6 @@ export class CaseService {
             NotificationType.READY_FOR_COURT,
       message: smsText,
     })
-  }
-
-  async requestSignature(
-    existingCase: Case,
-    user: User,
-  ): Promise<SigningServiceResponse> {
-    this.logger.debug(
-      `Requesting signature of ruling for case with id "${existingCase.id}"`,
-    )
-
-    // This method should only be called if the csae state is ACCEPTED or REJECTED
-
-    // Production, or development with signing service access token
-    if (environment.production || environment.signingOptions.accessToken) {
-      const pdf = await this.getRulingAsPdf()
-
-      return this.signingService.requestSignature(
-        user.mobileNumber,
-        'Undirrita dóm',
-        existingCase.accusedName,
-        'Ísland',
-        'ruling.pdf',
-        pdf,
-      )
-    }
-
-    // Development without signing service access token
-    return {
-      controlCode: '0000',
-      documentToken: 'DEVELOPEMNT',
-    }
-  }
-
-  async confirrmSignature(
-    existingCase: Case,
-    documentToken: string,
-  ): Promise<Case> {
-    this.logger.debug(
-      `Confirming signature of ruling for case with id "${existingCase.id}"`,
-    )
-
-    // This method should only be called if the csae state is ACCEPTED or REJECTED and
-    // requestSignature has previously been called for the same case
-
-    // Production, or development with signing service access token
-    if (environment.production || environment.signingOptions.accessToken) {
-      const signedPdf = await this.signingService.getSignedDocument(
-        'ruling.pdf',
-        documentToken,
-      )
-
-      this.sendRulingAsSignedPdf(signedPdf)
-    }
-
-    return existingCase
   }
 
   private constructHeadsUpSmsText(existingCase: Case, user: User): string {
@@ -220,7 +136,7 @@ export class CaseService {
         )}:${cd.substring(14, 16)}.`
       : ''
 
-    return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutor}${adText}${cdText}`
+    return `Ný gæsluvarðhaldskrafa í vinnslu.${adText}${cdText}`
   }
 
   private constructReadyForCourtpSmsText(
@@ -234,17 +150,5 @@ export class CaseService {
     const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
 
     return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
-  }
-
-  // Not implemented yet
-  private getRulingAsPdf(): Promise<string> {
-    return getPdf()
-  }
-
-  // Not implemented yet
-  private sendRulingAsSignedPdf(
-    signedPdf: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): void {
-    writeDummySignedPdf(signedPdf)
   }
 }

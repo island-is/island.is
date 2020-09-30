@@ -11,7 +11,7 @@ export class AuthService {
   ) {}
 
   async validateUser(authUser: AuthUser): Promise<boolean> {
-    const user = await this.userService.findByNationalId(authUser.nationalId)
+    const user = await this.userService.findByNationalId(authUser)
 
     return !!user
   }

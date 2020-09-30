@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import fetchMock from 'fetch-mock'
 import { BrowserRouter } from 'react-router-dom'
 
