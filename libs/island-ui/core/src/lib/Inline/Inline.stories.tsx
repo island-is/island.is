@@ -16,7 +16,7 @@ export const Default = () => (
       <Inline space="containerGutter">
         <Typography>
           Renders content horizontally with consistent spacing between all
-          items, spanning multiple lines if needed. So `Stack` for a vertical
+          items, spanning multiple lines if needed. See `Stack` for a vertical
           version.
         </Typography>
         <Logo />
