@@ -107,61 +107,10 @@ describe('Case', () => {
             where: { id: response.body.id },
             include: [Notification],
           }).then((newValue) => {
-            expect(newValue.id).toBe(value.id)
-            expect(newValue.created).toStrictEqual(value.created)
-            expect(newValue.modified.toISOString()).toBe(response.body.modified)
-            expect(newValue.state).toBe(data.state)
-            expect(newValue.policeCaseNumber).toBe(data.policeCaseNumber)
-            expect(newValue.accusedNationalId).toBe(data.accusedNationalId)
-            expect(newValue.accusedName).toBe(data.accusedName)
-            expect(newValue.accusedAddress).toBe(data.accusedAddress)
-            expect(newValue.court).toBe(data.court)
-            expect(newValue.arrestDate.toISOString()).toBe(data.arrestDate)
-            expect(newValue.requestedCourtDate.toISOString()).toBe(
-              data.requestedCourtDate,
-            )
-            expect(newValue.requestedCustodyEndDate.toISOString()).toBe(
-              data.requestedCustodyEndDate,
-            )
-            expect(newValue.lawsBroken).toBe(data.lawsBroken)
-            expect(newValue.custodyProvisions).toStrictEqual(
-              data.custodyProvisions,
-            )
-            expect(newValue.requestedCustodyRestrictions).toStrictEqual(
-              data.requestedCustodyRestrictions,
-            )
-            expect(newValue.caseFacts).toBe(data.caseFacts)
-            expect(newValue.witnessAccounts).toBe(data.witnessAccounts)
-            expect(newValue.investigationProgress).toBe(
-              data.investigationProgress,
-            )
-            expect(newValue.legalArguments).toBe(data.legalArguments)
-            expect(newValue.comments).toBe(data.comments)
-            expect(newValue.courtCaseNumber).toBe(data.courtCaseNumber)
-            expect(newValue.courtStartTime.toISOString()).toBe(
-              data.courtStartTime,
-            )
-            expect(newValue.courtEndTime.toISOString()).toBe(data.courtEndTime)
-            expect(newValue.courtAttendees).toBe(data.courtAttendees)
-            expect(newValue.policeDemands).toBe(data.policeDemands)
-            expect(newValue.accusedPlea).toBe(data.accusedPlea)
-            expect(newValue.litigationPresentations).toBe(
-              data.litigationPresentations,
-            )
-            expect(newValue.ruling).toBe(data.ruling)
-            expect(newValue.custodyEndDate.toISOString()).toBe(
-              data.custodyEndDate,
-            )
-            expect(newValue.custodyRestrictions).toStrictEqual(
-              data.custodyRestrictions,
-            )
-            expect(newValue.accusedAppealDecision).toBe(
-              data.accusedAppealDecision,
-            )
-            expect(newValue.prosecutorAppealDecision).toBe(
-              data.prosecutorAppealDecision,
-            )
-            expect(newValue.notifications).toStrictEqual([])
+            expectCasesToMatch(dbCaseToCase(newValue), {
+              ...response.body,
+              notifications: [],
+            })
           })
         })
     })
@@ -435,6 +384,14 @@ function dbCaseToCase(dbCase: Case) {
     arrestDate: theCase.arrestDate && theCase.arrestDate.toISOString(),
     requestedCourtDate:
       theCase.requestedCourtDate && theCase.requestedCourtDate.toISOString(),
+    requestedCustodyEndDate:
+      theCase.requestedCustodyEndDate &&
+      theCase.requestedCustodyEndDate.toISOString(),
+    courtStartTime:
+      theCase.courtStartTime && theCase.courtStartTime.toISOString(),
+    courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
+    custodyEndDate:
+      theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
   } as unknown) as Case
 }
 
