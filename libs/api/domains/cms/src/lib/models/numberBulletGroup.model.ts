@@ -26,6 +26,6 @@ export const mapNumberBulletGroup = ({
 }: INumberBulletSection): NumberBulletGroup =>
   new NumberBulletGroup({
     id: sys.id,
-    defaultVisible: fields.defaultVisible,
-    bullets: fields.bullets.map(mapNumberBullet),
+    defaultVisible: fields.defaultVisible ?? 5,
+    bullets: (fields.bullets ?? []).map(mapNumberBullet),
   })

@@ -26,5 +26,5 @@ export const mapTimelineSlice = ({
   typename: 'TimelineSlice',
   id: sys.id,
   title: fields.title ?? '',
-  events: fields.events.map(mapTimelineEvent),
+  events: (fields.events ?? []).map(mapTimelineEvent),
 })

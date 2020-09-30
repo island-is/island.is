@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { ILifeEventPage } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
-import { ArticleCategory } from './articleCategory.model'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { Slice, mapDocument } from './slice.model'
 
 @ObjectType()
@@ -46,5 +46,5 @@ export const mapLifeEventPage = ({
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
-  category: fields.category?.fields,
+  category: fields.category ? mapArticleCategory(fields.category) : null,
 })

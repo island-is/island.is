@@ -16,5 +16,5 @@ export const mapOrganizationTag = ({
   sys,
 }: IOrganizationTag): OrganizationTag => ({
   id: sys.id,
-  title: fields.title,
+  title: fields.title ?? '',
 })

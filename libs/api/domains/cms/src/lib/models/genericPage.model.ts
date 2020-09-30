@@ -24,10 +24,10 @@ export class GenericPage {
 }
 
 export const mapGenericPage = ({ fields }: IGenericPage): GenericPage => ({
-  title: fields.title,
-  slug: fields.slug,
-  intro: fields.intro && JSON.stringify(fields.intro),
-  mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
-  sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
-  misc: fields.misc && JSON.stringify(fields.misc),
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
+  intro: fields.intro ? JSON.stringify(fields.intro) : '',
+  mainContent: fields.mainContent ? JSON.stringify(fields.mainContent) : '',
+  sidebar: fields.sidebar ? JSON.stringify(fields.sidebar) : '',
+  misc: fields.misc ? JSON.stringify(fields.misc) : '',
 })
