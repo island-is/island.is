@@ -45,7 +45,7 @@ export const JudgeOverview: React.FC = () => {
         JSON.stringify(currentCase.case),
       )
 
-      if (mounted) {
+      if (mounted && !workingCase) {
         setWorkingCase(currentCase.case)
       }
     }
@@ -57,7 +57,7 @@ export const JudgeOverview: React.FC = () => {
     return () => {
       mounted = false
     }
-  }, [id])
+  }, [id, workingCase, setWorkingCase])
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
