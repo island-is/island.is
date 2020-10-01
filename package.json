@@ -169,7 +169,7 @@
     "react-remove-scroll": "^2.4.0",
     "react-router-dom": "5.2.0",
     "react-select": "3.1.0",
-    "react-toastify": "^6.0.8",
+    "react-toastify": "6.0.8",
     "react-top-loading-bar": "2.0.0",
     "react-uid": "2.2.0",
     "react-use": "^15.3.3",
