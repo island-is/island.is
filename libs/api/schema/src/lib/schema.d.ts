@@ -678,6 +678,8 @@ export type Application = {
   typeId: ApplicationResponseDtoTypeIdEnum
   answers: Scalars['JSON']
   externalData: Scalars['JSON']
+  name?: Maybe<Scalars['String']>
+  progress?: Maybe<Scalars['Float']>
 }
 
 export enum ApplicationResponseDtoTypeIdEnum {
@@ -2874,6 +2876,8 @@ export type ApplicationResolvers<
   >
   answers?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   externalData?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

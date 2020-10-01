@@ -45,6 +45,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EXAMPLE,
+  name: 'Reference application',
   dataProviders: [],
   dataSchema: ExampleSchema,
   stateMachineConfig: {

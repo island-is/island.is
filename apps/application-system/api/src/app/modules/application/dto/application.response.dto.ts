@@ -1,25 +1,7 @@
-import {
-  ApplicationContext,
-  ApplicationRole,
-  ApplicationStateSchema,
-  ApplicationTypes,
-  Application,
-  ApplicationTemplate,
-  ApplicationTemplateHelper,
-} from '@island.is/application/template'
-import { EventObject, MachineConfig } from 'xstate'
-
+import { ApplicationTypes } from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Exclude, Expose, Type } from 'class-transformer'
-import {
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsNumber,
-  IsObject,
-  IsString,
-  ValidateNested,
-} from 'class-validator'
+import { Expose } from 'class-transformer'
+import { IsDate, IsEnum, IsNumber, IsObject, IsString } from 'class-validator'
 
 export class ApplicationResponseDto {
   @ApiProperty()

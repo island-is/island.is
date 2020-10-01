@@ -41,6 +41,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LESSONS,
+  name: 'Umsókn um ökunám',
   dataProviders: [],
   dataSchema,
   stateMachineConfig: {

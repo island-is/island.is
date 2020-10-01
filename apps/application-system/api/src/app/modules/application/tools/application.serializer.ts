@@ -48,14 +48,10 @@ export class ApplicationSerializer
     )
     const helper = new ApplicationTemplateHelper(application, template)
 
-    const { name } = helper.getApplicationStateInformation(
-      application.state,
-    ) as ApplicationStateMeta
-
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
       ...helper.getPermittedAnswersAndExternalData(role),
-      name,
+      name: template.name,
       progress: helper.getApplicationProgress(),
     })
 

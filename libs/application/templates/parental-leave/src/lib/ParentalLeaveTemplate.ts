@@ -32,6 +32,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
+  name: 'Umsókn um fæðingarorlof',
   dataProviders: [],
   dataSchema,
   stateMachineConfig: {

@@ -1,8 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  name: {
+  applicationName: {
     id: 'dl.application:application.name',
+    defaultMessage: 'Umsókn um fæðingarorlof',
+    description: 'Some description',
+  },
+  formName: {
+    id: 'dl.application:form.name',
     defaultMessage: 'Ökunám',
     description: 'Some description',
   },
