@@ -142,7 +142,11 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
           </thead>
           <tbody>
             {cases.map((c, i) => (
-              <tr key={i} data-testid="detention-requests-table-row">
+              <tr
+                key={i}
+                className={styles.detentionRequestsTableRow}
+                data-testid="detention-requests-table-row"
+              >
                 <td>{c.policeCaseNumber || '-'}</td>
                 <td>{c.accusedName}</td>
                 <td>{c.accusedNationalId || '-'}</td>
