@@ -722,8 +722,17 @@ export interface ILinkFields {
   /** URL */
   url: string
 
-  /** Linked page */
+  /** Linked page (deprecated) */
   linkedPage?: ILinkedPage | undefined
+
+  /** Link reference */
+  linkReference?:
+    | IArticle
+    | IArticleCategory
+    | ILinkUrl
+    | INews
+    | IPage
+    | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -748,7 +757,7 @@ export interface ILinkedPageFields {
   title: string
 
   /** page */
-  page: IArticle | IArticleCategory | INews
+  page: IArticle | IArticleCategory | INews | IPage
 }
 
 export interface ILinkedPage extends Entry<ILinkedPageFields> {
@@ -821,9 +830,6 @@ export interface ILocationFields {
 
   /** subTitle */
   subTitle?: string | undefined
-
-  /** image */
-  image: Asset
 
   /** Address */
   address?: string | undefined
@@ -1461,6 +1467,9 @@ export interface IStoryFields {
 
   /** Linked page (new) */
   page?: ILinkedPage | undefined
+
+  /** Link reference */
+  storyLink?: ILink | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {

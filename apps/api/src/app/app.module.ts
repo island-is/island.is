@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
@@ -7,11 +8,13 @@ import { ApplicationModule } from '@island.is/api/domains/application'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { TranslationsModule } from '@island.is/api/domains/translations'
+import { HealthController } from './health.controller'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 
 @Module({
+  controllers: [HealthController],
   imports: [
     GraphQLModule.forRoot({
       debug,
@@ -37,6 +40,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     FileUploadModule,
     DocumentModule,
     TranslationsModule,
+    TerminusModule,
   ],
 })
 export class AppModule {}
