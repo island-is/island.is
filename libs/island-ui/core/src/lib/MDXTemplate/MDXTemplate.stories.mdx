@@ -1,0 +1,34 @@
+import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
+import { ExampleComponent } from './ExampleComponent'
+import { Box } from '../Box'
+
+<Meta title="MDX/Example Story" component={ExampleComponent} />
+
+# Our MDX Template
+## You can copy this one to make your own
+<br />
+
+### With `MDX` we can define a story for our `ExampleComponent` right in the middle of our Markdown documentation.
+
+### We can drop it in a `Canvas` to get a code snippet:
+
+<Canvas>
+  <Story name="Example story">
+    <ExampleComponent />
+  </Story>
+</Canvas>
+
+### Or render it directly:
+
+<Box paddingY={1}>
+  <ExampleComponent exclamationPoint />
+</Box>
+
+### And since this is markdown we can print code:
+
+```tsx
+  <ExampleComponent exclamationPoint={true} />
+```
+
+### Here are its props
+<Props of={ExampleComponent} />
