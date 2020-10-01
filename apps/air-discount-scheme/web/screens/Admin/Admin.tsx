@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 import { SubmitHandler } from 'react-hook-form'
 
@@ -45,6 +45,15 @@ const FlightLegsQuery = gql`
   }
 `
 
+const ConfirmInvoiceMutation = gql`
+  mutation ConfirmInvoiceMutation($input: ConfirmInvoiceInput!) {
+    confirmInvoice(input: $input) {
+      id
+      financialState
+    }
+  }
+`
+
 const TODAY = new Date()
 
 const Admin: Screen = ({}) => {
@@ -56,29 +65,33 @@ const Admin: Screen = ({}) => {
       to: TODAY,
     },
   } as any)
-  const { data, loading, error } = useQuery(FlightLegsQuery, {
+  const input = {
+    ...filters,
+    airline:
+      filters.airline?.value === Airlines.norlandair
+        ? Airlines.icelandair
+        : filters.airline?.value,
+    cooperation:
+      filters.airline?.value === Airlines.norlandair
+        ? Airlines.norlandair
+        : undefined,
+    gender:
+      filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
+    age: {
+      from: parseInt(Number(filters.age?.from).toString()) || -1,
+      to: parseInt(Number(filters.age?.to).toString()) || 1000,
+    },
+    postalCode: filters.postalCode
+      ? parseInt(filters.postalCode.toString())
+      : undefined,
+  }
+  const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
+    ConfirmInvoiceMutation,
+  )
+  const { data, loading: queryLoading, error } = useQuery(FlightLegsQuery, {
     ssr: false,
     variables: {
-      input: {
-        ...filters,
-        airline:
-          filters.airline?.value === Airlines.norlandair
-            ? Airlines.icelandair
-            : filters.airline?.value,
-        cooperation:
-          filters.airline?.value === Airlines.norlandair
-            ? Airlines.norlandair
-            : undefined,
-        gender:
-          filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
-        age: {
-          from: parseInt(Number(filters.age?.from).toString()) || -1,
-          to: parseInt(Number(filters.age?.to).toString()) || 1000,
-        },
-        postalCode: filters.postalCode
-          ? parseInt(filters.postalCode.toString())
-          : undefined,
-      },
+      input,
     },
   })
   const { flightLegs = [] } = data ?? {}
@@ -92,6 +105,7 @@ const Admin: Screen = ({}) => {
     return <NotFound />
   }
 
+  const loading = queryLoading || confirmInvoiceLoading
   const applyFilters: SubmitHandler<FilterInput> = (data: FilterInput) => {
     setFilters(data)
   }
@@ -142,6 +156,22 @@ const Admin: Screen = ({}) => {
                   disabled={!isCSVAvailable(filters)}
                 >
                   Prenta yfirlit
+                </Button>
+              </Box>
+              <Box paddingTop={3}>
+                <Button
+                  width="fluid"
+                  variant="redGhost"
+                  disabled={!isCSVAvailable(filters)}
+                >
+                  <Box
+                    display="inlineFlex"
+                    flexDirection="column"
+                    alignItems="center"
+                  >
+                    <Box>Gjaldfæra</Box>
+                    <Box>Endurgreiða</Box>
+                  </Box>
                 </Button>
               </Box>
             </Box>
