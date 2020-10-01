@@ -69,7 +69,8 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
 
       if (user.role === UserRole.JUDGE) {
         const judgeCases = cases.filter((c) => {
-          return c.state === CaseState.SUBMITTED
+          // Judges should see all cases excpet drafts
+          return c.state !== CaseState.DRAFT
         })
 
         setCases(judgeCases)
