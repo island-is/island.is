@@ -11,11 +11,6 @@ import {
 
 export class UpdateCaseDto {
   @IsOptional()
-  @IsEnum(CaseState)
-  @ApiPropertyOptional({ enum: CaseState })
-  readonly state: string
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly policeCaseNumber: string

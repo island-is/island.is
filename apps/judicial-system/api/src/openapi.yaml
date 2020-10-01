@@ -255,13 +255,6 @@ components:
     UpdateCaseDto:
       type: object
       properties:
-        state:
-          type: string
-          enum:
-            - DRAFT
-            - SUBMITTED
-            - ACCEPTED
-            - REJECTED
         policeCaseNumber:
           type: string
         accusedNationalId:

@@ -95,7 +95,7 @@ export const getAppealDecitionText = (
 }
 
 export const constructConclusion = (workingCase: Case) => {
-  return workingCase.state === CaseState.REJECTED
+  return workingCase.rejecting
     ? 'Beiðni um gæsluvarðhald hafnað'
     : `Kærði, ${workingCase.accusedName} kt.${
         workingCase.accusedNationalId
