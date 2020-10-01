@@ -46,7 +46,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
             paddingX={[3, 3, 3, 3, 0]}
             display="flex"
             flexGrow={1}
-            flexDirection={['column', 'column', 'column', 'column', 'row']}
+            flexDirection={['column', 'column', 'row', 'row', 'row']}
           >
             <Box flexGrow={1}>
               <Stack space={1}>

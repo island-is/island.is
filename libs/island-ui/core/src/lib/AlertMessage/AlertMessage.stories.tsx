@@ -1,11 +1,12 @@
 import React from 'react'
-import { ContentBlock } from '../..'
-import { Alert } from './Alert'
+import { ContentBlock } from '../ContentBlock'
+import { AlertMessage } from './AlertMessage'
 import { GridContainer } from '../Grid/GridContainer'
 import { GridRow, GridColumn } from '../Grid'
+
 export default {
-  title: 'Components/Alert',
-  component: Alert,
+  title: 'Alerts/AlertMessage',
+  component: AlertMessage,
 }
 
 export const Info = () => (
@@ -13,7 +14,7 @@ export const Info = () => (
     <ContentBlock>
       <GridRow>
         <GridColumn span="5/12">
-          <Alert
+          <AlertMessage
             type="info"
             title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
             message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
@@ -26,7 +27,7 @@ export const Info = () => (
 
 export const Error = () => (
   <ContentBlock>
-    <Alert
+    <AlertMessage
       type="error"
       title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
       message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
