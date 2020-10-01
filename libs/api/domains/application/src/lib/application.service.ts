@@ -5,10 +5,11 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { ApplicationsApi, ApplicationTypeIdEnum } from '../../gen/fetch'
+import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { GetApplicationsByUserInput } from './dto/getApplicationByUser.input'
+import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 
 const handleError = (error) => {
   logger.error(error)
@@ -33,7 +34,7 @@ export class ApplicationService {
     })
   }
 
-  async findAllByType(typeId: ApplicationTypeIdEnum) {
+  async findAllByType(typeId: ApplicationResponseDtoTypeIdEnum) {
     return await this.applicationApi
       .applicationControllerFindAll({ typeId })
       .catch(handleError)

@@ -18,7 +18,7 @@ export class ApplicationResolver {
   @Query(() => Application, { nullable: true })
   async getApplication(
     @Args('input') input: GetApplicationInput,
-  ): Promise<Application | null> {
+  ): Promise<Application> {
     return this.applicationService.findOne(input.id)
   }
 

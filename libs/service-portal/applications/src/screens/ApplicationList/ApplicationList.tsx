@@ -1,9 +1,15 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import format from 'date-fns/format'
+import {
+  ActionCardLoader,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 import ApplicationCard, {
   MockApplication,
 } from '../../components/ApplicationCard/ApplicationCard'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
+import { useListApplications } from '@island.is/service-portal/graphql'
+import { Application } from '@island.is/application/template'
 
 const mockApplications: MockApplication[] = [
   {
@@ -20,15 +26,37 @@ const mockApplications: MockApplication[] = [
   },
 ]
 
-const ApplicationList: ServicePortalModuleComponent = () => {
+const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
+  const { data: applications, loading, error } = useListApplications(
+    userInfo.user.profile.natreg,
+  )
+
   return (
     <>
       <Box marginBottom={5}>
         <Typography variant="h1">Umsóknir</Typography>
       </Box>
+      {loading && <ActionCardLoader repeat={3} />}
       <Stack space={2}>
-        {mockApplications.map((application, index) => (
-          <ApplicationCard application={application} key={index} />
+        {mockApplications.map(({ name, date, status, url }, index) => (
+          <ApplicationCard
+            key={index}
+            name={name}
+            date={date}
+            status={status}
+            url={url}
+            progress={50}
+          />
+        ))}
+        {applications?.map((application: Application, index: number) => (
+          <ApplicationCard
+            key={index}
+            name={application.name || application.typeId}
+            date={format(new Date(application.modified), 'MMMM')}
+            status={application.state === 'approved'}
+            url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
+            progress={application.progress ? application.progress * 100 : 0}
+          />
         ))}
       </Stack>
     </>

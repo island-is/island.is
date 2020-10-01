@@ -675,12 +675,12 @@ export type Application = {
   externalId?: Maybe<Scalars['String']>
   state: Scalars['String']
   attachments?: Maybe<Scalars['JSON']>
-  typeId: ApplicationTypeIdEnum
+  typeId: ApplicationResponseDtoTypeIdEnum
   answers: Scalars['JSON']
   externalData: Scalars['JSON']
 }
 
-export enum ApplicationTypeIdEnum {
+export enum ApplicationResponseDtoTypeIdEnum {
   ExampleForm = 'ExampleForm',
   DrivingLessons = 'DrivingLessons',
   ParentalLeave = 'ParentalLeave',
@@ -750,6 +750,8 @@ export type Query = {
   webSearchAutocomplete: WebSearchAutocomplete
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
+  getApplicationsByApplicant?: Maybe<Array<Application>>
+  getApplicationsByAssignee?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
@@ -882,6 +884,14 @@ export type QueryGetApplicationArgs = {
 
 export type QueryGetApplicationsByTypeArgs = {
   input: GetApplicationsByTypeInput
+}
+
+export type QueryGetApplicationsByApplicantArgs = {
+  input: GetApplicationsByUserInput
+}
+
+export type QueryGetApplicationsByAssigneeArgs = {
+  input: GetApplicationsByUserInput
 }
 
 export type QueryGetDocumentArgs = {
@@ -1087,7 +1097,12 @@ export type GetApplicationInput = {
 }
 
 export type GetApplicationsByTypeInput = {
-  typeId: ApplicationTypeIdEnum
+  typeId: ApplicationResponseDtoTypeIdEnum
+}
+
+export type GetApplicationsByUserInput = {
+  nationalRegistryId: Scalars['String']
+  typeId?: Maybe<ApplicationResponseDtoTypeIdEnum>
 }
 
 export type GetDocumentInput = {
@@ -1471,7 +1486,7 @@ export type ResolversTypes = {
   WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
-  ApplicationTypeIdEnum: ApplicationTypeIdEnum
+  ApplicationResponseDtoTypeIdEnum: ApplicationResponseDtoTypeIdEnum
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   DocumentDetails: ResolverTypeWrapper<DocumentDetails>
@@ -1514,6 +1529,7 @@ export type ResolversTypes = {
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
+  GetApplicationsByUserInput: GetApplicationsByUserInput
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
@@ -1702,6 +1718,7 @@ export type ResolversParentTypes = {
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
+  GetApplicationsByUserInput: GetApplicationsByUserInput
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
@@ -2843,7 +2860,7 @@ export type ApplicationResolvers<
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   attachments?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>
   typeId?: Resolver<
-    ResolversTypes['ApplicationTypeIdEnum'],
+    ResolversTypes['ApplicationResponseDtoTypeIdEnum'],
     ParentType,
     ContextType
   >
@@ -3094,6 +3111,18 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
+  >
+  getApplicationsByApplicant?: Resolver<
+    Maybe<Array<ResolversTypes['Application']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationsByApplicantArgs, 'input'>
+  >
+  getApplicationsByAssignee?: Resolver<
+    Maybe<Array<ResolversTypes['Application']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationsByAssigneeArgs, 'input'>
   >
   getDocument?: Resolver<
     Maybe<ResolversTypes['DocumentDetails']>,

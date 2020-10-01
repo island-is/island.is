@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
-import { ApplicationTypeIdEnum } from '../../../gen/fetch'
+import { ApplicationResponseDtoTypeIdEnum } from '../../../gen/fetch/models/ApplicationResponseDto'
 
 @InputType()
 export class GetApplicationsByUserInput {
@@ -8,8 +8,8 @@ export class GetApplicationsByUserInput {
   @IsString()
   nationalRegistryId!: string
 
-  @Field(() => ApplicationTypeIdEnum, { nullable: true })
-  @IsEnum(ApplicationTypeIdEnum)
+  @Field(() => ApplicationResponseDtoTypeIdEnum, { nullable: true })
+  @IsEnum(ApplicationResponseDtoTypeIdEnum)
   @IsOptional()
-  typeId?: ApplicationTypeIdEnum
+  typeId?: ApplicationResponseDtoTypeIdEnum
 }

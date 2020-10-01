@@ -21,6 +21,7 @@ import {
 
 import * as styles from './FormShell.treat'
 import { FormModes, ProgressThemes } from '../types'
+import { useLocale } from '@island.is/localization'
 
 export const FormShell: FC<{
   application: Application
@@ -28,6 +29,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const { formatMessage } = useLocale()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -153,7 +155,7 @@ export const FormShell: FC<{
                 <FormProgress
                   theme={progressTheme[mode]}
                   tag={showProgressTag && <ProgressTag />}
-                  formName={form.name}
+                  formName={formatMessage(form.name)}
                   formIcon={form.icon}
                   sections={sections}
                   activeSection={activeSection}

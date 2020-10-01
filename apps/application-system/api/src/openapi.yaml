@@ -24,7 +24,7 @@ components:
           type: string
       required:
         - version
-    Application:
+    ApplicationResponseDto:
       type: object
       properties:
         id:
@@ -55,6 +55,10 @@ components:
           type: object
         externalData:
           type: object
+        name:
+          type: string
+        progress:
+          type: number
       required:
         - id
         - created
@@ -196,7 +200,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
     put:
@@ -221,7 +225,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   /:
@@ -241,7 +245,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
+                  $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   '/applicants/{nationalRegistryId}/applications':
@@ -266,7 +270,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
+                  $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   '/reviewers/{nationalRegistryId}/applications':
@@ -291,7 +295,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
+                  $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   /applications:
@@ -310,7 +314,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   '/applications/{id}/externalData':
@@ -336,7 +340,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   '/applications/{id}/submit':
@@ -362,7 +366,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
   '/applications/{id}/attachments':
@@ -388,7 +392,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
     delete:
@@ -413,6 +417,6 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications

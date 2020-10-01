@@ -23,7 +23,7 @@ const noOption = { value: 'no', label: m.noOptionLabel }
 export const DrivingLessonsApplication: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
   ownerId: 'TODO?',
-  name: 'Ökunám',
+  name: m.name,
   children: [
     buildSection({
       id: 'student',

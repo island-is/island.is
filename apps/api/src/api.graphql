@@ -566,9 +566,11 @@ type Application {
   externalId: String
   state: String!
   attachments: JSON
-  typeId: ApplicationTypeIdEnum!
+  typeId: ApplicationResponseDtoTypeIdEnum!
   answers: JSON!
   externalData: JSON!
+  name: String
+  progress: Float
 }
 
 """
@@ -576,7 +578,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-enum ApplicationTypeIdEnum {
+enum ApplicationResponseDtoTypeIdEnum {
   ExampleForm
   DrivingLessons
   ParentalLeave
@@ -840,12 +842,12 @@ input GetApplicationInput {
 }
 
 input GetApplicationsByTypeInput {
-  typeId: ApplicationTypeIdEnum!
+  typeId: ApplicationResponseDtoTypeIdEnum!
 }
 
 input GetApplicationsByUserInput {
   nationalRegistryId: String!
-  typeId: ApplicationTypeIdEnum
+  typeId: ApplicationResponseDtoTypeIdEnum
 }
 
 input GetDocumentInput {
