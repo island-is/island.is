@@ -357,7 +357,7 @@
         "contentful-types": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
+            "command": "npx ts-node -O '{\"module\":\"commonjs\", \"lib\": [\"es2015\"]}' ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
           }
         },
         "contentType": {
