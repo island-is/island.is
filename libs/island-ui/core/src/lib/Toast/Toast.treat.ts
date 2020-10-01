@@ -12,7 +12,7 @@ globalStyle(`${root} .Toastify__toast-container`, {
   padding: '4px',
   width: '320px',
   boxSizing: 'border-box',
-  color: `${theme.color.white}`,
+  color: theme.color.dark400,
   '@media': {
     '(max-width: 480px)': {
       width: '100vw',
@@ -92,54 +92,57 @@ globalStyle(`${root} .Toastify__toast`, {
   position: 'relative',
   minHeight: '64px',
   boxSizing: 'border-box',
-  marginBottom: '1rem',
-  padding: '8px',
-  borderRadius: '1px',
-  boxShadow:
-    '0 1px 10px 0 rgba(0, 0, 0, 0.1), 0 2px 15px 0 rgba(0, 0, 0, 0.05)',
+  marginBottom: theme.spacing[2],
+  padding: theme.spacing[1],
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderRadius: theme.border.radius.large,
   display: 'flex',
   justifyContent: 'space-between',
-  maxHeight: '800px',
   overflow: 'hidden',
-  fontFamily: 'sans-serif',
   cursor: 'pointer',
   direction: 'ltr',
+  fontWeight: theme.typography.medium,
   '@media': {
     '(max-width: 480px)': {
       marginBottom: 0,
     },
   },
 })
-
 globalStyle(`${root} .Toastify__toast--dark`, {
   background: '#121212',
   color: '#fff',
 })
-
 globalStyle(`${root} .Toastify__toast--default`, {
   background: `${theme.color.white}`,
   color: '#aaa',
 })
-
 globalStyle(`${root} .Toastify__toast--info`, {
-  background: '#3498db',
+  background: theme.color.blue100,
+  borderColor: theme.color.mint200,
+  boxShadow: `0px 4px 20px rgba(0, 97, 255, 0.15)`,
 })
-
 globalStyle(`${root} .Toastify__toast--success`, {
-  background: '#07bc0c',
+  background: theme.color.mint100,
+  borderColor: theme.color.mint200,
+  boxShadow: `0px 4px 20px rgba(0, 228, 202, 0.15)`,
 })
 globalStyle(`${root} .Toastify__toast--warning`, {
-  background: '#f1c40f',
+  background: theme.color.yellow200,
+  borderColor: theme.color.yellow300,
+  boxShadow: `0px 4px 20px rgba(255, 240, 102, 0.15)`,
 })
 globalStyle(`${root} .Toastify__toast--error`, {
-  background: '#e74c3c',
+  background: theme.color.red100,
+  borderColor: theme.color.red200,
+  boxShadow: `0px 4px 20px rgba(255, 0, 80, 0.15)`,
 })
-
 globalStyle(`${root} .Toastify__toast-body`, {
   flex: '1 1 auto',
   margin: 'auto 0',
 })
 
+/** Close button **/
 globalStyle(`${root} .Toastify__close-button`, {
   color: '#fff',
   background: 'transparent',
@@ -151,18 +154,15 @@ globalStyle(`${root} .Toastify__close-button`, {
   transition: '0.3s ease',
   alignSelf: 'flex-start',
 })
-
 globalStyle(`${root} .Toastify__close-button--default`, {
   color: '#000',
   opacity: 0.5,
 })
-
 globalStyle(`${root} .Toastify__close-button > svg`, {
   fill: 'currentColor',
   height: 16,
   width: 14,
 })
-
 globalStyle(
   `${root} .Toastify__close-button:hover, .Toastify__close-button:focus`,
   {
@@ -179,23 +179,34 @@ globalStyle(`${root} .Toastify__progress-bar`, {
   height: '5px',
   zIndex: 9999,
   opacity: 0.7,
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  backgroundColor: theme.color.mint400,
   transformOrigin: 'left',
 })
-
+globalStyle(`${root} .Toastify__toast--info .Toastify__progress-bar`, {
+  background: theme.color.blue400,
+})
+globalStyle(`${root} .Toastify__toast--success .Toastify__progress-bar`, {
+  background: theme.color.mint400,
+})
+globalStyle(`${root} .Toastify__toast--warning .Toastify__progress-bar`, {
+  background: theme.color.yellow600,
+})
+globalStyle(`${root} .Toastify__toast--error .Toastify__progress-bar`, {
+  background: theme.color.red400,
+})
 globalStyle(`${root} .Toastify__progress-bar--animated`, {
   animation: 'Toastify__trackProgress linear 1 forwards',
 })
-
+globalStyle(`${root} .Toastify__progress-bar--animated`, {
+  animation: 'Toastify__trackProgress linear 1 forwards',
+})
 globalStyle(`${root} .Toastify__progress-bar--controlled`, {
   transition: 'transform 0.2s',
 })
-
 globalStyle(`${root} .Toastify__progress-bar--default`, {
   background:
     'linear-gradient(to right, #4cd964, #5ac8fa, #007aff, #34aadc, #5856d6, #ff2d55)',
 })
-
 globalStyle(`${root} .Toastify__progress-bar--dark`, {
   background: '#bb86fc',
 })
@@ -207,7 +218,6 @@ globalStyle(
     animationName: 'Toastify__bounceInLeft',
   },
 )
-
 globalStyle(
   `${root} .Toastify__bounce-enter--top-right, .Toastify__bounce-enter--bottom-right`,
   {
@@ -226,28 +236,23 @@ globalStyle(
     animationName: 'Toastify__bounceOutLeft',
   },
 )
-
 globalStyle(
   `${root} .Toastify__bounce-exit--top-right, .Toastify__bounce-exit--bottom-right`,
   {
     animationName: 'Toastify__bounceOutRight',
   },
 )
-
 globalStyle(`${root} .Toastify__bounce-exit--top-center`, {
   animationName: 'Toastify__bounceOutUp',
 })
-
 globalStyle(`${root} .Toastify__bounce-exit--bottom-center`, {
   animationName: 'Toastify__bounceOutDown',
 })
 
 /** Zoom animation */
-
 globalStyle(`${root} .Toastify__zoom-enter`, {
   animationName: 'Toastify__zoomIn',
 })
-
 globalStyle(`${root} .Toastify__zoom-exit`, {
   animationName: 'Toastify__zoomOut',
 })
@@ -256,7 +261,6 @@ globalStyle(`${root} .Toastify__zoom-exit`, {
 globalStyle(`${root} .Toastify__flip-enter`, {
   animationName: 'Toastify__flipIn',
 })
-
 globalStyle(`${root} .Toastify__flip-exit`, {
   animationName: 'Toastify__flipOut',
 })
@@ -268,40 +272,33 @@ globalStyle(
     animationName: 'Toastify__slideInLeft',
   },
 )
-
 globalStyle(
   `${root} .Toastify__slide-enter--top-right, .Toastify__slide-enter--bottom-right`,
   {
     animationName: 'Toastify__slideInRight',
   },
 )
-
 globalStyle(`${root} .Toastify__slide-enter--top-center`, {
   animationName: 'Toastify__slideInDown',
 })
-
 globalStyle(`${root} .Toastify__slide-enter--bottom-center`, {
   animationName: 'Toastify__slideInUp',
 })
-
 globalStyle(
   `${root} .Toastify__slide-exit--top-left, .Toastify__slide-exit--bottom-left`,
   {
     animationName: 'Toastify__slideOutLeft',
   },
 )
-
 globalStyle(
   `${root} .Toastify__slide-exit--top-right, .Toastify__slide-exit--bottom-right`,
   {
     animationName: 'Toastify__slideOutRight',
   },
 )
-
 globalStyle(`${root} .Toastify__slide-exit--top-center`, {
   animationName: 'Toastify__slideOutUp',
 })
-
 globalStyle(`${root} .Toastify__slide-exit--bottom-center`, {
   animationName: 'Toastify__slideOutDown',
 })
