@@ -106,6 +106,29 @@ export const saveCase: (
   }
 }
 
+export const transitionCase: (
+  caseId: string,
+  transition: string,
+) => Promise<number> = async (caseId: string, transition: string) => {
+  const response = await fetch(`/api/case/${caseId}/state`, {
+    method: 'put',
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(transition),
+  })
+
+  if (!response.ok) {
+    // TODO: log error
+    if (response.status === 401) {
+      window.location.assign('/?error=true')
+    }
+  }
+
+  return response.status
+}
+
 export const getUser = async () => {
   const response = await fetch('/api/user', {
     headers: {
@@ -132,7 +155,7 @@ export const logOut = async () => {
 }
 
 /**
- * 
+ *
  * export const getCaseById: (
   caseId: string,
 ) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
