@@ -21,6 +21,151 @@ beforeAll(async () => {
   app = await setup()
 })
 
+const minimalCaseData = {
+  policeCaseNumber: 'Case Number',
+  accusedNationalId: '0101010000',
+}
+
+const remainingCreateCaseData = {
+  accusedName: 'Accused Name',
+  accusedAddress: 'Accused Address',
+  court: 'Court',
+  arrestDate: '2020-09-08T08:00:00.000Z',
+  requestedCourtDate: '2020-09-08T11:30:00.000Z',
+}
+
+const remainingCaseData = {
+  requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+  lawsBroken: 'Broken Laws',
+  custodyProvisions: [
+    CaseCustodyProvisions._95_1_A,
+    CaseCustodyProvisions._99_1_B,
+  ],
+  requestedCustodyRestrictions: [
+    CaseCustodyRestrictions.ISOLATION,
+    CaseCustodyRestrictions.MEDIA,
+  ],
+  caseFacts: 'Case Facts',
+  witnessAccounts: 'Witness Accounts',
+  investigationProgress: 'Investigation Progress',
+  legalArguments: 'Legal Arguments',
+  comments: 'Comments',
+  courtCaseNumber: 'Court Case Number',
+  courtStartTime: '2020-09-29T13:00:00.000Z',
+  courtEndTime: '2020-09-29T14:00:00.000Z',
+  courtAttendees: 'Court Attendees',
+  policeDemands: 'Police Demands',
+  accusedPlea: 'Accused Plea',
+  litigationPresentations: 'Litigation Presentations',
+  ruling: 'Ruling',
+  rejecting: 'false',
+  custodyEndDate: '2020-09-28T12:00:00.000Z',
+  custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+  accusedAppealDecision: CaseAppealDecision.APPEAL,
+  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+}
+
+function getCaseData(fullCreateCaseData = false, otherCaseData = false) {
+  let data = minimalCaseData
+  if (fullCreateCaseData) {
+    data = { ...data, ...remainingCreateCaseData }
+  }
+  if (otherCaseData) {
+    data = { ...data, ...remainingCaseData }
+  }
+
+  return data as Case
+}
+
+function dbCaseToCase(dbCase: Case) {
+  const theCase = dbCase.toJSON() as Case
+
+  return ({
+    ...theCase,
+    created: theCase.created && theCase.created.toISOString(),
+    modified: theCase.modified && theCase.modified.toISOString(),
+    arrestDate: theCase.arrestDate && theCase.arrestDate.toISOString(),
+    requestedCourtDate:
+      theCase.requestedCourtDate && theCase.requestedCourtDate.toISOString(),
+    requestedCustodyEndDate:
+      theCase.requestedCustodyEndDate &&
+      theCase.requestedCustodyEndDate.toISOString(),
+    courtStartTime:
+      theCase.courtStartTime && theCase.courtStartTime.toISOString(),
+    courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
+    custodyEndDate:
+      theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+  } as unknown) as Case
+}
+
+function dbNotificationToNotification(dbNotification: Notification) {
+  const notification = dbNotification.toJSON() as Notification
+
+  return ({
+    ...notification,
+    created: notification.created && notification.created.toISOString(),
+  } as unknown) as Notification
+}
+
+function parseBoolean(value: string | boolean) {
+  return value === 'false' ? false : value === 'true' ? true : value || false
+}
+
+function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
+  expect(caseOne.id).toBe(caseTwo.id)
+  expect(caseOne.created).toBe(caseTwo.created)
+  expect(caseOne.modified).toBe(caseTwo.modified)
+  expect(caseOne.state).toBe(caseTwo.state)
+  expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
+  expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
+  expect(caseOne.accusedName || null).toBe(caseTwo.accusedName || null)
+  expect(caseOne.accusedAddress || null).toBe(caseTwo.accusedAddress || null)
+  expect(caseOne.court || null).toBe(caseTwo.court || null)
+  expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
+  expect(caseOne.requestedCourtDate || null).toBe(
+    caseTwo.requestedCourtDate || null,
+  )
+  expect(caseOne.requestedCustodyEndDate || null).toBe(
+    caseTwo.requestedCustodyEndDate || null,
+  )
+  expect(caseOne.lawsBroken || null).toBe(caseTwo.lawsBroken || null)
+  expect(caseOne.custodyProvisions || null).toStrictEqual(
+    caseTwo.custodyProvisions || null,
+  )
+  expect(caseOne.requestedCustodyRestrictions || null).toStrictEqual(
+    caseTwo.requestedCustodyRestrictions || null,
+  )
+  expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
+  expect(caseOne.witnessAccounts || null).toBe(caseTwo.witnessAccounts || null)
+  expect(caseOne.investigationProgress || null).toBe(
+    caseTwo.investigationProgress || null,
+  )
+  expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
+  expect(caseOne.comments || null).toBe(caseTwo.comments || null)
+  expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
+  expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
+  expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
+  expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)
+  expect(caseOne.policeDemands || null).toBe(caseTwo.policeDemands || null)
+  expect(caseOne.accusedPlea || null).toBe(caseTwo.accusedPlea || null)
+  expect(caseOne.litigationPresentations || null).toBe(
+    caseTwo.litigationPresentations || null,
+  )
+  expect(caseOne.ruling || null).toBe(caseTwo.ruling || null)
+  expect(parseBoolean(caseOne.rejecting)).toBe(parseBoolean(caseTwo.rejecting))
+  expect(caseOne.custodyEndDate || null).toBe(caseTwo.custodyEndDate || null)
+  expect(caseOne.custodyRestrictions || null).toStrictEqual(
+    caseTwo.custodyRestrictions || null,
+  )
+  expect(caseOne.accusedAppealDecision || null).toBe(
+    caseTwo.accusedAppealDecision || null,
+  )
+  expect(caseOne.prosecutorAppealDecision || null).toBe(
+    caseTwo.prosecutorAppealDecision || null,
+  )
+  expect(caseOne.notifications).toStrictEqual(caseTwo.notifications)
+}
+
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
     const data = getCaseData(true)
@@ -155,8 +300,8 @@ describe('Case', () => {
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create(getCaseData()).then(async (value1) => {
-      await Case.create(getCaseData()).then(async (value2) => {
+    await Case.create(getCaseData()).then(async () => {
+      await Case.create(getCaseData()).then(async () => {
         await request(app.getHttpServer())
           .get(`/api/cases`)
           .send()
@@ -322,151 +467,3 @@ describe('Case', () => {
     })
   })
 })
-
-const minimalCaseData = {
-  policeCaseNumber: 'Case Number',
-  accusedNationalId: '0101010000',
-}
-
-const remainingCreateCaseData = {
-  accusedName: 'Accused Name',
-  accusedAddress: 'Accused Address',
-  court: 'Court',
-  arrestDate: '2020-09-08T08:00:00.000Z',
-  requestedCourtDate: '2020-09-08T11:30:00.000Z',
-}
-
-const remainingCaseData = {
-  requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
-  lawsBroken: 'Broken Laws',
-  custodyProvisions: [
-    CaseCustodyProvisions._95_1_A,
-    CaseCustodyProvisions._99_1_B,
-  ],
-  requestedCustodyRestrictions: [
-    CaseCustodyRestrictions.ISOLATION,
-    CaseCustodyRestrictions.MEDIA,
-  ],
-  caseFacts: 'Case Facts',
-  witnessAccounts: 'Witness Accounts',
-  investigationProgress: 'Investigation Progress',
-  legalArguments: 'Legal Arguments',
-  comments: 'Comments',
-  courtCaseNumber: 'Court Case Number',
-  courtStartTime: '2020-09-29T13:00:00.000Z',
-  courtEndTime: '2020-09-29T14:00:00.000Z',
-  courtAttendees: 'Court Attendees',
-  policeDemands: 'Police Demands',
-  accusedPlea: 'Accused Plea',
-  litigationPresentations: 'Litigation Presentations',
-  ruling: 'Ruling',
-  rejecting: 'false',
-  custodyEndDate: '2020-09-28T12:00:00.000Z',
-  custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-  accusedAppealDecision: CaseAppealDecision.APPEAL,
-  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-}
-
-function getCaseData(
-  fullCreateCaseData: boolean = false,
-  otherCaseData: boolean = false,
-) {
-  let data = minimalCaseData
-  if (fullCreateCaseData) {
-    data = { ...data, ...remainingCreateCaseData }
-  }
-  if (otherCaseData) {
-    data = { ...data, ...remainingCaseData }
-  }
-
-  return data as Case
-}
-
-function dbCaseToCase(dbCase: Case) {
-  const theCase = dbCase.toJSON() as Case
-
-  return ({
-    ...theCase,
-    created: theCase.created && theCase.created.toISOString(),
-    modified: theCase.modified && theCase.modified.toISOString(),
-    arrestDate: theCase.arrestDate && theCase.arrestDate.toISOString(),
-    requestedCourtDate:
-      theCase.requestedCourtDate && theCase.requestedCourtDate.toISOString(),
-    requestedCustodyEndDate:
-      theCase.requestedCustodyEndDate &&
-      theCase.requestedCustodyEndDate.toISOString(),
-    courtStartTime:
-      theCase.courtStartTime && theCase.courtStartTime.toISOString(),
-    courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
-    custodyEndDate:
-      theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
-  } as unknown) as Case
-}
-
-function dbNotificationToNotification(dbNotification: Notification) {
-  const notification = dbNotification.toJSON() as Notification
-
-  return ({
-    ...notification,
-    created: notification.created && notification.created.toISOString(),
-  } as unknown) as Notification
-}
-
-function parseBoolean(value: string | boolean) {
-  return value === 'false' ? false : value === 'true' ? true : value || false
-}
-
-function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
-  expect(caseOne.id).toBe(caseTwo.id)
-  expect(caseOne.created).toBe(caseTwo.created)
-  expect(caseOne.modified).toBe(caseTwo.modified)
-  expect(caseOne.state).toBe(caseTwo.state)
-  expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
-  expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
-  expect(caseOne.accusedName || null).toBe(caseTwo.accusedName || null)
-  expect(caseOne.accusedAddress || null).toBe(caseTwo.accusedAddress || null)
-  expect(caseOne.court || null).toBe(caseTwo.court || null)
-  expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
-  expect(caseOne.requestedCourtDate || null).toBe(
-    caseTwo.requestedCourtDate || null,
-  )
-  expect(caseOne.requestedCustodyEndDate || null).toBe(
-    caseTwo.requestedCustodyEndDate || null,
-  )
-  expect(caseOne.lawsBroken || null).toBe(caseTwo.lawsBroken || null)
-  expect(caseOne.custodyProvisions || null).toStrictEqual(
-    caseTwo.custodyProvisions || null,
-  )
-  expect(caseOne.requestedCustodyRestrictions || null).toStrictEqual(
-    caseTwo.requestedCustodyRestrictions || null,
-  )
-  expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
-  expect(caseOne.witnessAccounts || null).toBe(caseTwo.witnessAccounts || null)
-  expect(caseOne.investigationProgress || null).toBe(
-    caseTwo.investigationProgress || null,
-  )
-  expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
-  expect(caseOne.comments || null).toBe(caseTwo.comments || null)
-  expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
-  expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
-  expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
-  expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)
-  expect(caseOne.policeDemands || null).toBe(caseTwo.policeDemands || null)
-  expect(caseOne.accusedPlea || null).toBe(caseTwo.accusedPlea || null)
-  expect(caseOne.litigationPresentations || null).toBe(
-    caseTwo.litigationPresentations || null,
-  )
-  expect(caseOne.ruling || null).toBe(caseTwo.ruling || null)
-  expect(parseBoolean(caseOne.rejecting)).toBe(parseBoolean(caseTwo.rejecting))
-  expect(caseOne.custodyEndDate || null).toBe(caseTwo.custodyEndDate || null)
-  expect(caseOne.custodyRestrictions || null).toStrictEqual(
-    caseTwo.custodyRestrictions || null,
-  )
-  expect(caseOne.accusedAppealDecision || null).toBe(
-    caseTwo.accusedAppealDecision || null,
-  )
-  expect(caseOne.prosecutorAppealDecision || null).toBe(
-    caseTwo.prosecutorAppealDecision || null,
-  )
-  expect(caseOne.notifications).toStrictEqual(caseTwo.notifications)
-}

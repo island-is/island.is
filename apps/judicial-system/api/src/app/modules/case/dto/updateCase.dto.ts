@@ -1,8 +1,6 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
 import {
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
