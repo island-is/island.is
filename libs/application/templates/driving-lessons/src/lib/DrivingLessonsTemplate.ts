@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { m } from '../forms/messages'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -41,7 +42,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LESSONS,
-  name: 'Umsókn um ökunám',
+  name: m.applicationName,
   dataProviders: [],
   dataSchema,
   stateMachineConfig: {

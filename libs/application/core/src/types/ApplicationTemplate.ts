@@ -6,6 +6,7 @@ import {
   DataProvider,
   Schema,
 } from '@island.is/application/core'
+import { MessageDescriptor } from 'react-intl'
 import { EventObject, MachineConfig } from 'xstate'
 import { StatesConfig } from 'xstate/lib/types'
 
@@ -15,7 +16,7 @@ export interface ApplicationTemplate<
   TEvents extends EventObject
 > {
   readonly type: ApplicationTypes
-  readonly name: string
+  readonly name: string | MessageDescriptor
   readonly dataSchema: Schema
   readonly dataProviders: DataProvider[]
   readonly stateMachineConfig: MachineConfig<

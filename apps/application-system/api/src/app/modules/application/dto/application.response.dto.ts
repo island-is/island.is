@@ -2,6 +2,7 @@ import { ApplicationTypes } from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { IsDate, IsEnum, IsNumber, IsObject, IsString } from 'class-validator'
+import { MessageDescriptor } from 'react-intl'
 
 export class ApplicationResponseDto {
   @ApiProperty()
@@ -61,8 +62,8 @@ export class ApplicationResponseDto {
 
   @ApiPropertyOptional()
   @Expose()
-  @IsString()
-  name?: string
+  @IsObject()
+  name?: MessageDescriptor
 
   @ApiPropertyOptional()
   @Expose()
