@@ -2,21 +2,20 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
   IntrospectionFragmentMatcher,
-  IdGetterObj,
 } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
 import introspectionQueryResultData from './fragmentTypes.json'
-import { defaultLanguage } from '../i18n/I18n'
+import { defaultLanguage, Locale } from '../i18n/I18n'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-let clientLocale = defaultLanguage
+let currentClientLocale = defaultLanguage
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!isBrowser) {
@@ -53,7 +52,7 @@ function create(initialState?: any) {
   })
 }
 
-export default function initApollo(initialState?: any) {
+export default function initApollo(initialState?: any, clientLocale?: Locale) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
@@ -67,8 +66,8 @@ export default function initApollo(initialState?: any) {
   }
 
   // Create new instance if client is changing language
-  if (initialState.clientLocale !== clientLocale) {
-    clientLocale = initialState.clientLocale
+  if (currentClientLocale !== clientLocale) {
+    currentClientLocale = clientLocale
     apolloClient = create(initialState)
   }
 

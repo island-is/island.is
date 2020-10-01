@@ -10,7 +10,7 @@ export const withApollo = (Component) => {
     const { asPath } = useRouter()
     const clientLocale = getLocaleFromPath(asPath)
     return (
-      <ApolloProvider client={initApollo({ ...apolloState, clientLocale })}>
+      <ApolloProvider client={initApollo({ ...apolloState }, clientLocale)}>
         <Component {...pageProps} />
       </ApolloProvider>
     )
@@ -18,7 +18,7 @@ export const withApollo = (Component) => {
 
   NewComponent.getInitialProps = async (ctx: NextPageContext) => {
     const clientLocale = getLocaleFromPath(ctx.asPath)
-    const apolloClient = initApollo({ clientLocale })
+    const apolloClient = initApollo({}, clientLocale)
     const newContext = { ...ctx, apolloClient }
     const props = Component.getInitialProps
       ? await Component.getInitialProps(newContext)
