@@ -43,12 +43,11 @@
     }
   },
   "handover": {
-    "title": "Car is ready to be recycled!",
+    "title": "Hand over the car for recycling",
     "subTitles": {
-      "recycle": "Take the car to any of our connected recycling companies for recycling",
       "companies": "Recycling companies"
     },
-    "info": "You can take the car too any of the connected recycling companies for recycling for free. Once the car is handed over you will recive your money within 2 business days.",
+    "info": "Hand over the car to any of the connected recycling companies for recycling. Once the car has been handed over you will recive your payment within 2 business days.",
     "buttons": {
       "cancel": "Cancel recycling",
       "continue": "Back to my cars",

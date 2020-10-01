@@ -5,14 +5,14 @@ import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { ActionCard, ProgressCard } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
-import { GET_CAR_OWNER } from '@island.is/skilavottord-web/graphql/queries'
+import { GET_CARS } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 
 const nationalId = '2222222222'
 
 const Overview: FC = () => {
-  const { data, loading, error } = useQuery(GET_CAR_OWNER, {
+  const { data, loading, error } = useQuery(GET_CARS, {
     variables: { nationalId },
   })
 
@@ -26,7 +26,7 @@ const Overview: FC = () => {
     return <>Loading</>
   }
 
-  const { cars } = data.getCarownerByNationalId || {}
+  const { cars } = data.getVehiclesForNationalId || {}
 
   const onRecycleCar = (id: string) => {
     router.push(
@@ -66,11 +66,11 @@ const Overview: FC = () => {
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.pending}</Typography>
-          {cars.map((car, index) => (
+          {cars.map((car) => (
             <ProgressCard
-              key={index}
+              key={car.permno}
               car={car}
-              onClick={() => onOpenProcess(car.id)}
+              onClick={() => onOpenProcess(car.permno)}
             />
           ))}
         </Stack>
@@ -81,9 +81,9 @@ const Overview: FC = () => {
           {cars.length > 0 ? (
             cars.map((car) => (
               <ActionCard
-                key={car.id}
+                key={car.permno}
                 car={car}
-                onContinue={() => onRecycleCar(car.id)}
+                onContinue={() => onRecycleCar(car.permno)}
               />
             ))
           ) : (
@@ -96,9 +96,9 @@ const Overview: FC = () => {
           <Typography variant="h3">{t.subTitles.done}</Typography>
           {cars.map((car) => (
             <ProgressCard
-              key={car.id}
+              key={car.permno}
               car={{ ...car, status: 'done' }}
-              onClick={() => onSeeDetails(car.id)}
+              onClick={() => onSeeDetails(car.permno)}
             />
           ))}
         </Stack>
