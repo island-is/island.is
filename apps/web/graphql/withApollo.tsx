@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import { ApolloProvider } from 'react-apollo'
@@ -7,16 +7,8 @@ import initApollo from './client'
 
 export const withApollo = (Component) => {
   const NewComponent = ({ apolloState, pageProps }) => {
-    const Router = useRouter()
-
-    const { asPath } = Router
-
-    let clientLocale = null
-
-    if (asPath) {
-      clientLocale = getLocaleFromPath(asPath)
-    }
-
+    const { asPath } = useRouter()
+    const clientLocale = getLocaleFromPath(asPath)
     return (
       <ApolloProvider client={initApollo({ ...apolloState, clientLocale })}>
         <Component {...pageProps} />
@@ -25,7 +17,8 @@ export const withApollo = (Component) => {
   }
 
   NewComponent.getInitialProps = async (ctx: NextPageContext) => {
-    const apolloClient = initApollo({})
+    const clientLocale = getLocaleFromPath(ctx.asPath)
+    const apolloClient = initApollo({ clientLocale })
     const newContext = { ...ctx, apolloClient }
     const props = Component.getInitialProps
       ? await Component.getInitialProps(newContext)

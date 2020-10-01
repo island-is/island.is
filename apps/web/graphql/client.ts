@@ -9,11 +9,14 @@ import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
 import introspectionQueryResultData from './fragmentTypes.json'
+import { defaultLanguage } from '../i18n/I18n'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+
+let clientLocale = defaultLanguage
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!isBrowser) {
@@ -35,8 +38,6 @@ function create(initialState?: any) {
   const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
   const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
 
-  const clientLocale = initialState?.clientLocale
-
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     name: 'cms-web-client',
@@ -45,14 +46,6 @@ function create(initialState?: any) {
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: httpLink,
     cache: new InMemoryCache({
-      dataIdFromObject(obj: IdGetterObj) {
-        // when we have an id on the obj then the queries get cached and don't update
-        // even if the lang has been changed.
-        // this will check if there is an id and append the lang locale to the id
-        if (obj.id && clientLocale) {
-          return `${obj.__typename}:${obj.id}:${clientLocale}`
-        }
-      },
       fragmentMatcher: new IntrospectionFragmentMatcher({
         introspectionQueryResultData,
       }),
@@ -69,6 +62,13 @@ export default function initApollo(initialState?: any) {
 
   // Reuse client on the client-side
   if (!apolloClient) {
+    apolloClient = create(initialState)
+    return apolloClient
+  }
+
+  // Create new instance if client is changing language
+  if (initialState.clientLocale !== clientLocale) {
+    clientLocale = initialState.clientLocale
     apolloClient = create(initialState)
   }
 

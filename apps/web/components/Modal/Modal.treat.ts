@@ -24,6 +24,7 @@ export const backdrop = style({
   backgroundColor: `rgba(${hexToRgb(theme.color.blue100)}, 0.7)`,
   transition: `opacity 250ms ease-in-out`,
   opacity: 0,
+  zIndex: 10000,
   selectors: {
     '&[data-enter]': {
       opacity: 1,
