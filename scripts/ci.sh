@@ -7,8 +7,13 @@ source $DIR/_common.sh
 
 export DOCKER_TAG=local
 export PUBLISH=local
-export APP=api
-source $PROJECT_ROOT/scripts/00_prepare-base-tags.sh
+
+export APP=$1
+
+# We can do this to find last good build. Needs a few env variables though.
+# source $PROJECT_ROOT/scripts/00_prepare-base-tags.sh
+
+# This is our CI process for a given app. Needs a bit more tweaking maybe, still represents the important steps in it.
 $PROJECT_ROOT/scripts/10_prepare-deps.sh
 $PROJECT_ROOT/scripts/20_lint.sh
 $PROJECT_ROOT/scripts/20_check-formatting.sh
