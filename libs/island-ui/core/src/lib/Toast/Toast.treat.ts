@@ -14,7 +14,7 @@ globalStyle(`${root} .Toastify__toast-container`, {
   boxSizing: 'border-box',
   color: theme.color.dark400,
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       width: '100vw',
       padding: 0,
       left: 0,
@@ -28,7 +28,7 @@ globalStyle(`${root} .Toastify__toast-container--top-left`, {
   top: '1em',
   left: '1em',
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       top: 0,
       transform: 'translateX(0)',
     },
@@ -39,7 +39,7 @@ globalStyle(`${root} .Toastify__toast-container--top-center`, {
   left: '50%',
   transform: 'translateX(-50%)',
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       top: 0,
       transform: 'translateX(0)',
     },
@@ -49,7 +49,7 @@ globalStyle(`${root} .Toastify__toast-container--top-right`, {
   top: '1em',
   right: '1em',
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       top: 0,
       transform: 'translateX(0)',
     },
@@ -59,7 +59,7 @@ globalStyle(`${root} .Toastify__toast-container--bottom-left`, {
   bottom: '1em',
   left: '1em',
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       bottom: 0,
       transform: 'translateX(0)',
     },
@@ -70,7 +70,7 @@ globalStyle(`${root} .Toastify__toast-container--bottom-center`, {
   left: '50%',
   transform: 'translateX(-50%)',
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       bottom: 0,
       transform: 'translateX(0)',
     },
@@ -80,7 +80,7 @@ globalStyle(`${root} .Toastify__toast-container--bottom-right`, {
   bottom: '1em',
   right: '1em',
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       bottom: 0,
       transform: 'translateX(0)',
     },
@@ -104,7 +104,7 @@ globalStyle(`${root} .Toastify__toast`, {
   direction: 'ltr',
   fontWeight: theme.typography.medium,
   '@media': {
-    '(max-width: 480px)': {
+    [`(max-width: ${theme.breakpoints.sm}px)`]: {
       marginBottom: 0,
     },
   },
