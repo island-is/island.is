@@ -100,6 +100,7 @@ describe('Case', () => {
             id: dbCase.id || 'FAILURE',
             created: dbCase.created || 'FAILURE',
             modified: response.body.modified,
+            state: dbCase.state || 'FAILURE',
           } as Case)
 
           // Check the data in the database
@@ -336,7 +337,6 @@ const remainingCreateCaseData = {
 }
 
 const remainingCaseData = {
-  state: CaseState.DRAFT,
   requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
   lawsBroken: 'Broken Laws',
   custodyProvisions: [
