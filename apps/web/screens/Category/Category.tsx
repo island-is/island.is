@@ -254,7 +254,7 @@ const Category: Screen<CategoryProps> = ({
                   return (
                     <div
                       key={index}
-                      data-slug={groupSlug}
+                      id={groupSlug}
                       ref={(el) => (itemsRef.current[index] = el)}
                     >
                       <AccordionCard
@@ -404,6 +404,7 @@ const Category: Screen<CategoryProps> = ({
                   makePath('ArticleCategory', slug),
                 )
               }}
+              isSearchable={false}
               options={categoryOptions}
               name="categories"
             />

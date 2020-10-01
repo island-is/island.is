@@ -3,14 +3,20 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
+import { defineMessage } from 'react-intl'
+
+const rootName = defineMessage({
+  id: 'service.portal:applications',
+  defaultMessage: 'Umsóknir',
+})
 
 export const applicationsModule: ServicePortalModule = {
-  name: 'Umsóknir',
+  name: rootName,
   widgets: () => [],
   routes: () => {
     const applicationRoutes = [
       {
-        name: 'Umsóknir',
+        name: rootName,
         path: ServicePortalPath.UmsoknirRoot,
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),

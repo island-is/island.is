@@ -10,12 +10,14 @@ import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import Greeting from '../../components/Greeting/Greeting'
 import { User } from 'oidc-client'
+import { useLocale } from '@island.is/localization'
 
 const Widget: FC<{
   widget: ServicePortalWidget
   userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ widget, userInfo, client }) => {
+  const { formatMessage } = useLocale()
   const Component = widget.render({
     userInfo,
     client,
@@ -26,7 +28,7 @@ const Widget: FC<{
       <Box marginBottom={8}>
         <Box marginBottom={2}>
           <Typography variant="h3" as="h3">
-            {widget.name}
+            {formatMessage(widget.name)}
           </Typography>
         </Box>
         <Suspense fallback={<WidgetLoading />}>

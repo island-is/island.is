@@ -56,6 +56,7 @@
     "@nestjs/platform-express": "7.4.4",
     "@nestjs/sequelize": "0.1.0",
     "@nestjs/swagger": "4.5.12",
+    "@nestjs/terminus": "^7.0.1",
     "@opentelemetry/api": "0.8.3",
     "@opentelemetry/exporter-jaeger": "0.8.3",
     "@opentelemetry/node": "0.8.3",
@@ -237,6 +238,7 @@
     "@types/cache-manager-ioredis": "^2.0.1",
     "@types/classnames": "^2.2.10",
     "@types/cookie-parser": "^1.4.2",
+    "@types/cross-spawn": "^6.0.2",
     "@types/express": "4.17.0",
     "@types/isomorphic-fetch": "0.0.35",
     "@types/jest": "26.0.8",
@@ -260,11 +262,13 @@
     "@typescript-eslint/parser": "2.19.2",
     "@zeit/next-source-maps": "^0.0.3",
     "babel-loader": "8.0.6",
+    "cross-spawn": "^7.0.3",
     "csstype": "^2.6.10",
     "cypress": "4.1.0",
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
+    "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.21.2",
     "eslint-plugin-jsx-a11y": "6.2.3",
     "eslint-plugin-react": "7.20.0",
@@ -281,12 +285,12 @@
     "react-docgen-typescript-loader": "^3.7.2",
     "sequelize-cli": "5.5.1",
     "ts-jest": "26.1.4",
-    "typescript": "3.9.7",
-    "eslint-plugin-cypress": "^2.10.3"
+    "typescript": "3.9.7"
   },
   "resolutions": {
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
-    "http-proxy": "1.18.1"
+    "http-proxy": "1.18.1",
+    "node-forge": "0.10.0"
   }
 }

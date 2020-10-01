@@ -1,12 +1,10 @@
 import {
   ServicePortalModule,
   ServicePortalRoute,
-  LanguageCode,
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
-import { determineInitialLocale, setLangInLocalStore } from '../utils/locale'
 import { User } from 'oidc-client'
 
 export interface StoreState {
@@ -19,7 +17,6 @@ export interface StoreState {
   notificationMenuState: MenuState
   mobileMenuState: MenuState
   routes: ServicePortalRoute[]
-  lang: LanguageCode
 }
 
 export const initialState: StoreState = {
@@ -32,7 +29,6 @@ export const initialState: StoreState = {
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
   routes: [],
-  lang: determineInitialLocale(),
 }
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
@@ -83,13 +79,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         routes: action.payload,
-      }
-    case ActionType.SetLanguage:
-      setLangInLocalStore(action.payload)
-
-      return {
-        ...state,
-        lang: action.payload,
       }
     case ActionType.SetUserLoggingOut:
       return {

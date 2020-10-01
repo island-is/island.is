@@ -8,7 +8,7 @@ import {
   ProsecutorLogo,
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
-  Alert,
+  AlertMessage,
   Button,
   Typography,
   Tag,
@@ -32,7 +32,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
   onGetUser,
 }: DetentionRequestsProps) => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
-  const [, setUser] = useState<User>(null)
+  const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const uContext = useContext(userContext)
 
@@ -40,10 +40,9 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
     let isMounted = true
 
     async function getData() {
-      const casesResponse = await api.getCases()
       const userResponse = await api.getUser()
 
-      if (isMounted && casesResponse) {
+      if (isMounted && userResponse) {
         setUser({
           nationalId: userResponse.nationalId,
           role: userResponse.role,
@@ -53,25 +52,38 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
           nationalId: userResponse.nationalId,
           role: userResponse.role,
         })
-
-        if (userResponse.role === UserRole.JUDGE) {
-          const judgeCases = casesResponse.filter((c) => {
-            return c.state === CaseState.SUBMITTED
-          })
-          setCases(judgeCases)
-        } else {
-          setCases(casesResponse)
-        }
       }
-      setIsLoading(false)
     }
-
-    getData()
+    if (!user) {
+      getData()
+    }
 
     return () => {
       isMounted = false
     }
-  }, [onGetUser])
+  }, [user, onGetUser])
+
+  useEffect(() => {
+    async function getCases(user: User) {
+      const cases = await api.getCases()
+
+      if (user.role === UserRole.JUDGE) {
+        const judgeCases = cases.filter((c) => {
+          return c.state === CaseState.SUBMITTED
+        })
+
+        setCases(judgeCases)
+      } else {
+        setCases(cases)
+      }
+
+      setIsLoading(false)
+    }
+
+    if (user) {
+      getCases(user)
+    }
+  }, [user])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
@@ -100,7 +112,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
         )}
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
-        <Link to={Constants.STEP_ONE_ROUTE}>
+        <Link to={Constants.STEP_ONE_ROUTE} style={{ textDecoration: 'none' }}>
           <Button
             icon="plus"
             onClick={() => window.localStorage.removeItem('workingCase')}
@@ -150,6 +162,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
                             ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                             : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         }
+                        style={{ textDecoration: 'none' }}
                       >
                         <Button icon="arrowRight" variant="text">
                           Opna kröfu
@@ -167,7 +180,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
           className={styles.detentionRequestsError}
           data-testid="detention-requests-error"
         >
-          <Alert
+          <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
             message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar"
             type="error"

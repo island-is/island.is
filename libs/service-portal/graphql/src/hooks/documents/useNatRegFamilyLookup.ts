@@ -39,7 +39,7 @@ export const useNatRegFamilyLookup = (userInfo: User) => {
             {
               banlabel: '',
               ssn: userInfo.profile.natreg,
-              name: userInfo.profile.name,
+              name: userInfo.profile.name || '',
               address: 'Heimilisgata 18',
               towncode: 119,
               postalcode: 119,

@@ -1,7 +1,6 @@
 import React, { FC, useState, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
-import useSubjects from '../../hooks/useSubjects/useSubjects'
 import { Box, Button, Hidden, Icon } from '@island.is/island-ui/core'
 import Menu from './Menu/Menu'
 import { useClickAway } from 'react-use'
@@ -11,7 +10,6 @@ const UserMenu: FC<{}> = () => {
   const [isOpen, setIsOpen] = useState(false)
   const history = useHistory()
   const [{ userInfo }] = useStore()
-  const { subjectList } = useSubjects()
 
   useClickAway(ref, () => (isOpen ? setIsOpen(false) : null))
 
@@ -48,7 +46,6 @@ const UserMenu: FC<{}> = () => {
           isOpen={isOpen}
           userInfo={userInfo}
           onSubjectSelection={handleSelection}
-          subjectList={subjectList}
           onCloseMenu={setIsOpen.bind(null, false)}
         />
       )}

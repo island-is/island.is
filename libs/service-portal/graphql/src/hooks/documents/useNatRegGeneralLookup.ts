@@ -32,7 +32,7 @@ export const useNatRegGeneralLookup = (userInfo: User) => {
         data: {
           source: 'Þjóðskrá',
           ssn: userInfo.profile.natreg,
-          name: userInfo.profile.name,
+          name: userInfo.profile.name || '',
           gender: 'kk',
           address: 'Íbúðastaðir 35d',
           postalcode: 119,

@@ -6,7 +6,7 @@ import * as kennitala from 'kennitala'
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { CreateFlightBody, CreateFlightLegBody, GetFlightLegsBody } from './dto'
+import { CreateFlightBody, GetFlightLegsBody } from './dto'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
@@ -25,7 +25,6 @@ const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,
 }
-export const NORLANDAIR_FLIGHTS = ['VPN', 'THO', 'GRY']
 
 const availableFinancialStates = [
   financialStateMachine.states[States.awaitingDebit].key,
@@ -56,26 +55,6 @@ export class FlightService {
       return true
     }
     return false
-  }
-
-  private getCooperatingAirline(
-    flightLeg: CreateFlightLegBody,
-    airline: ValueOf<typeof Airlines>,
-  ): ValueOf<typeof Airlines> | null {
-    if (flightLeg.cooperation) {
-      return flightLeg.cooperation
-    }
-    // TODO: remove when icelandair has fixed their POST parameters
-    if (airline === Airlines.icelandair) {
-      if (
-        NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||
-        NORLANDAIR_FLIGHTS.includes(flightLeg.origin)
-      ) {
-        return Airlines.norlandair
-      }
-    }
-
-    return null
   }
 
   async countFlightLegsByNationalId(
@@ -185,7 +164,6 @@ export class FlightService {
         flightLegs: flight.flightLegs.map((flightLeg) => ({
           ...flightLeg,
           airline,
-          cooperation: this.getCooperatingAirline(flightLeg, airline),
         })),
         nationalId,
         userInfo: {

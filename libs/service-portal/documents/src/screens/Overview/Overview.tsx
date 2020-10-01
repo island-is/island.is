@@ -78,7 +78,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }
   }
 
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFilterValue({
       ...filterValue,
       [e.target.name]: e.target.value,
