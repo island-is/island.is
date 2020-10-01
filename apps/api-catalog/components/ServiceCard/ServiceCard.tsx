@@ -2,7 +2,10 @@ import React from 'react'
 import { Box, Link } from '@island.is/island-ui/core'
 import * as styles from './ServiceCard.treat';
 import cn from 'classnames'
-import { ServiceStatus } from '..';
+import {
+  ServiceStatus,
+  useHorizontalDragScroll
+} from '..';
 
 import type { ServiceCardInformation } from '..';
 
@@ -11,39 +14,49 @@ export interface ServiceCardProps {
 }
 
 export const ServiceCard = (props: ServiceCardProps) => {
-  
+  const dragProps = useHorizontalDragScroll();
+
+  const preventDragHandler = (e) => {
+    console.log('preventing')
+    e.preventDefault();
+  }
   return (
-    <Link href={`./services/${props.service.id}`}>
+    <div onDragStart={preventDragHandler}>
       <Box
         borderRadius="large"
         className={cn(styles.card, "service-card")}
       >
-        <div className={cn(styles.cardTexts)}>
-          
-          <div className={cn(styles.name)}>{props.service.name}</div>
-          {/*<ServiceStatus className={styles.serviceStatus} status={props.service.status}/>*/}
-          <div className={cn(styles.owner)}>{props.service.owner}</div>
+        <Link href={`./services/${props.service.id}`}>
+          <div className={cn(styles.cardTexts)}>
+
+            <div className={cn(styles.name)}>{props.service.name}</div>
+            {/*<ServiceStatus className={styles.serviceStatus} status={props.service.status}/>*/}
+            <div className={cn(styles.owner)}>{props.service.owner}</div>
+          </div>
+        </Link>
+        <div {...dragProps} className={cn(styles.scrollBoxWrapper)}>
+          <div className={cn(styles.category)}>
+
+            {props.service.pricing?.map((item, index, array) => (
+              <div className={cn(styles.categoryItem, styles.categoryItem, "no-select")} key={index}>{item + ''} </div>
+            ))
+            }
+            {props.service.data?.map((item, index) => (
+              <div className={cn(styles.categoryItem, "no-select")} key={index}>{item + ''} </div>
+            ))
+            }
+            {props.service.type?.map((item, index) => (
+              <div className={cn(styles.categoryItem, "no-select")} key={index}>{item + ''} </div>
+            ))
+            }
+            {props.service.access?.map((item, index) => (
+              <div className={cn(styles.categoryItem, "no-select")} key={index}>{item + ''} </div>
+            ))
+            }
+          </div>
         </div>
-        <div className={cn(styles.category)}>
-          {	props.service.pricing?.map((item, index, array) => (
-                <div className={cn(styles.categoryItem, styles.categoryItem,"card-item pricing")} key={index}>{item + ''} </div>
-            ))
-          }
-          {	props.service.data?.map((item, index) => (
-                <div className={cn(styles.categoryItem,"card-item data")} key={index}>{item + ''} </div>
-            ))
-          }
-          {	props.service.type?.map((item, index) => (
-                <div className={cn(styles.categoryItem,"card-item type")} key={index}>{item + ''} </div>
-            ))
-          }
-          {	props.service.access?.map((item, index) => (
-                <div className={cn(styles.categoryItem,"card-item access")} key={index}>{item + ''} </div>
-            ))
-          }
-      </div>
       </Box>
-    </Link>
+    </div>
   )
 }
 
