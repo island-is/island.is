@@ -1,6 +1,7 @@
 import {
   ApolloClient,
   ApolloLink,
+  defaultDataIdFromObject,
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
@@ -17,7 +18,14 @@ const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
-    possibleTypes: {},
+    dataIdFromObject: (object) => {
+      switch (object.__typename) {
+        case 'Car':
+          return `Car:${object.permno}`
+        default:
+          return defaultDataIdFromObject(object)
+      }
+    },
   }).restore(initialState || {})
 
   return new ApolloClient<NormalizedCacheObject>({
