@@ -7,12 +7,3 @@ source $DIR/_common.sh
 
 exec yarn run \
   lint ${APP}
-
-# Docker based run, not used at the moment due to severe speed penalty
-# exec docker buildx build \
-#   --platform=linux/amd64 \
-#   --cache-from=type=local,src=$PROJECT_ROOT/cache \
-#   -f ${DIR}/Dockerfile \
-#   --target=linter \
-#   --build-arg APP=${APP} \
-#   $PROJECT_ROOT
