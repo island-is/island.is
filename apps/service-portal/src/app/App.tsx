@@ -1,6 +1,5 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { makeServer } from '../../mirage-server'
 import { StateProvider } from '../store/stateProvider'
 import { ApolloProvider } from '@apollo/client'
 import * as store from '../store/store'
@@ -17,8 +16,6 @@ import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
 
 export const App = () => {
-  makeServer()
-
   return (
     <div className={styles.page}>
       <ApolloProvider client={client}>
