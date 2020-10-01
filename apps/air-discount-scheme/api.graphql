@@ -3,6 +3,7 @@
 # ------------------------------------------------------
 
 type Image {
+  typename: String!
   id: ID!
   url: String!
   title: String!
@@ -11,12 +12,8 @@ type Image {
   height: Int!
 }
 
-type Link {
-  text: String!
-  url: String!
-}
-
 type Html {
+  typename: String!
   id: ID!
   document: JSON!
 }
@@ -39,6 +36,7 @@ type TimelineEvent {
 }
 
 type TimelineSlice {
+  typename: String!
   id: ID!
   title: String!
   events: [TimelineEvent!]!
@@ -51,6 +49,8 @@ type Story {
   readMoreText: String!
   date: String!
   intro: String!
+  link: String!
+  linkedPage: String
   body: String
 }
 
@@ -69,7 +69,153 @@ type News {
   intro: String!
   image: Image
   date: String!
-  content: String
+  content: [Slice!]
+}
+
+union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | ContactUs | Html | Image | Asset
+
+type MailingListSignupSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  description: String
+  inputLabel: String!
+  buttonText: String!
+}
+
+type HeadingSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type LinkCardSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  cards: [LinkCard!]!
+}
+
+type StorySlice {
+  typename: String!
+  id: ID!
+  readMoreText: String!
+  stories: [Story!]!
+}
+
+type LogoListSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  body: String!
+  images: [Image!]!
+}
+
+type LatestNewsSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  news: [News!]!
+}
+
+type BulletListSlice {
+  typename: String!
+  id: ID!
+  bullets: [BulletEntry!]!
+}
+
+union BulletEntry = IconBullet | NumberBulletGroup
+
+type IconBullet {
+  id: ID!
+  title: String!
+  body: String!
+  icon: Image!
+  url: String
+  linkText: String
+}
+
+type NumberBulletGroup {
+  id: ID!
+  defaultVisible: Int!
+  bullets: [NumberBullet!]!
+}
+
+type Statistics {
+  typename: String!
+  id: ID!
+  title: String!
+  statistics: [Statistic!]!
+}
+
+type ProcessEntry {
+  typename: String!
+  id: ID!
+  type: String!
+  processTitle: String!
+  processLink: String!
+  buttonText: String!
+}
+
+type FaqList {
+  typename: String!
+  id: ID!
+  title: String!
+  questions: [QuestionAndAnswer!]!
+}
+
+type EmbeddedVideo {
+  typename: String!
+  id: ID!
+  title: String!
+  url: String!
+}
+
+type SectionWithImage {
+  typename: String!
+  id: ID!
+  title: String!
+  image: Image
+  html: Html!
+}
+
+type TabSection {
+  typename: String!
+  id: ID!
+  title: String!
+  tabs: [TabContent!]!
+}
+
+type TeamList {
+  typename: String!
+  id: ID!
+  teamMembers: [TeamMember!]!
+}
+
+type ContactUs {
+  typename: String!
+  id: ID!
+  title: String!
+  required: String!
+  invalidPhone: String!
+  invalidEmail: String!
+  labelName: String!
+  labelPhone: String!
+  labelEmail: String!
+  labelSubject: String!
+  labelMessage: String!
+  submitButtonText: String!
+  successMessage: String!
+  errorMessage: String!
+}
+
+type Asset {
+  typename: String!
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
 }
 
 type NumberBullet {
@@ -88,6 +234,19 @@ type QuestionAndAnswer {
   id: ID!
   question: String!
   answer: Html
+}
+
+type TabContent {
+  tabTitle: String!
+  contentTitle: String
+  image: Image
+  body: Html
+}
+
+type TeamMember {
+  name: String!
+  title: String!
+  image: Image!
 }
 
 type ArticleCategory {
@@ -128,114 +287,8 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
-
-type PageHeaderSlice {
-  id: ID!
-  title: String!
-  introduction: String!
-  navigationText: String!
-  links: [Link!]!
-  slices: [TimelineSlice!]!
-}
-
-type HeadingSlice {
-  id: ID!
-  title: String!
-  body: String!
-}
-
-type StorySlice {
-  id: ID!
-  readMoreText: String!
-  stories: [Story!]!
-}
-
-type LinkCardSlice {
-  id: ID!
-  title: String!
-  cards: [LinkCard!]!
-}
-
-type LatestNewsSlice {
-  id: ID!
-  title: String!
-  news: [News!]!
-}
-
-type MailingListSignupSlice {
-  id: ID!
-  title: String!
-  description: String
-  inputLabel: String!
-  buttonText: String!
-}
-
-type LogoListSlice {
-  id: ID!
-  title: String!
-  body: String!
-  images: [Image!]!
-}
-
-type BulletListSlice {
-  id: ID!
-  bullets: [BulletEntry!]!
-}
-
-union BulletEntry = IconBullet | NumberBulletGroup
-
-type IconBullet {
-  id: ID!
-  title: String!
-  body: String!
-  icon: Image!
-  url: String
-  linkText: String
-}
-
-type NumberBulletGroup {
-  id: ID!
-  defaultVisible: Int!
-  bullets: [NumberBullet!]!
-}
-
-type Statistics {
-  id: ID!
-  title: String!
-  statistics: [Statistic!]!
-}
-
-type ProcessEntry {
-  id: ID!
-  type: String!
-  processTitle: String!
-  processLink: String!
-  buttonText: String!
-}
-
-type FaqList {
-  id: ID!
-  title: String!
-  questions: [QuestionAndAnswer!]!
-}
-
-type EmbeddedVideo {
-  id: ID!
-  title: String!
-  url: String!
-}
-
-type SectionWithImage {
-  id: ID!
-  title: String!
-  image: Image
-  html: Html!
-}
-
 type Article {
   id: ID!
-  contentStatus: String!
   title: String!
   slug: String!
   shortTitle: String
@@ -347,11 +400,27 @@ type Namespace {
   fields: String!
 }
 
+type Link {
+  text: String!
+  url: String!
+}
+
+type PageHeader {
+  typename: String!
+  id: ID!
+  title: String!
+  introduction: String!
+  navigationText: String!
+  links: [Link!]!
+  slices: [TimelineSlice!]!
+}
+
 type AboutPage {
   id: ID!
   title: String!
   seoDescription: String!
   theme: String!
+  pageHeader: PageHeader!
   slices: [Slice!]!
 }
 
@@ -403,7 +472,7 @@ type LifeEventPage {
   id: ID!
   title: String!
   slug: String!
-  intro: String!
+  intro: String
   image: Image
   thumbnail: Image
   content: [Slice!]!
@@ -427,6 +496,19 @@ type Url {
 }
 
 union UrlPage = Article | ArticleCategory | News | LifeEventPage
+
+type AboutSubPage {
+  id: ID!
+  title: String!
+  slug: String!
+  description: String!
+  subDescription: String!
+  slices: [Slice!]!
+}
+
+type ContactUsPayload {
+  success: Boolean!
+}
 
 type Fund {
   credit: Float!
@@ -477,11 +559,11 @@ type Discount {
 }
 
 type Query {
-  getArticle(input: GetArticleInput!): Article
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
+  getAboutSubPage(input: GetAboutSubPageInput!): AboutSubPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
@@ -499,17 +581,13 @@ type Query {
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
   getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getSingleArticle(input: GetSingleArticleInput!): Article
   getArticles(input: GetArticlesInput!): [Article!]!
   getSingleNews(input: GetSingleNewsInput!): News
   getUrl(input: GetUrlInput!): Url
   flightLegs(input: FlightLegsInput!): [FlightLeg!]!
   user: User
   discounts: [Discount!]
-}
-
-input GetArticleInput {
-  slug: String
-  lang: String!
 }
 
 input GetNewsListInput {
@@ -536,6 +614,11 @@ input GetNamespaceInput {
 }
 
 input GetAboutPageInput {
+  lang: String!
+}
+
+input GetAboutSubPageInput {
+  slug: String!
   lang: String!
 }
 
@@ -619,6 +702,11 @@ input GetArticleCategoriesInput {
   size: Int
 }
 
+input GetSingleArticleInput {
+  slug: String!
+  lang: String!
+}
+
 input GetArticlesInput {
   lang: String!
   category: String!
@@ -664,4 +752,16 @@ scalar DateTime
 input Range {
   from: Int
   to: Int
+}
+
+type Mutation {
+  contactUs(input: ContactUsInput!): ContactUsPayload!
+}
+
+input ContactUsInput {
+  name: String!
+  phone: String!
+  email: String!
+  subject: String!
+  message: String!
 }
