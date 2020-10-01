@@ -56,6 +56,7 @@
     "@nestjs/platform-express": "7.4.4",
     "@nestjs/sequelize": "0.1.0",
     "@nestjs/swagger": "4.5.12",
+    "@nestjs/terminus": "^7.0.1",
     "@opentelemetry/api": "0.8.3",
     "@opentelemetry/exporter-jaeger": "0.8.3",
     "@opentelemetry/node": "0.8.3",
@@ -288,6 +289,7 @@
   "resolutions": {
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
-    "http-proxy": "1.18.1"
+    "http-proxy": "1.18.1",
+    "node-forge": "0.10.0"
   }
 }

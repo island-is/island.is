@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const eventBar = style({
   position: 'relative',
@@ -86,14 +86,12 @@ export const maxValue = style({
 
 // Modal
 export const eventModal = style({
-  position: 'absolute',
-  zIndex: 1,
-  top: 0,
-  left: 0,
+  position: 'relative',
   borderRadius: `32px 5px 5px 5px`,
   boxSizing: 'border-box',
-  width: '660px',
   whiteSpace: 'normal',
+  maxWidth: 660,
+  margin: 'auto',
   backgroundColor: theme.color.purple100,
   '@keyframes': {
     from: {
@@ -105,6 +103,19 @@ export const eventModal = style({
   },
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      position: 'absolute',
+      zIndex: 1,
+      top: 0,
+      left: 0,
+      width: 660,
+    },
+  }),
+})
+
+export const mobileModalContainer = style({
+  zIndex: 11,
 })
 
 export const eventModalContent = style({

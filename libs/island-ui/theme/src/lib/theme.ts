@@ -51,7 +51,7 @@ export const theme = {
   },
   touchableSize: 10,
   typography: {
-    fontFamily: `"IBM Plex Sans", sans-serif`,
+    fontFamily: `"IBM Plex Sans", San Francisco, Segoe UI, sans-serif`,
     light: 300,
     regular: 400,
     medium: 500,
