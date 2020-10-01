@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import {
@@ -18,19 +18,19 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
 import * as api from '../../../api'
 import * as styles from './Overview.treat'
+import { Case } from '@island.is/judicial-system-web/src/types'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [, setIsSendingNotification] = useState(false)
+  const [workingCase, setWorkingCase] = useState<Case>(null)
 
-  const caseDraft = window.localStorage.getItem('workingCase')
-  const caseDraftJSON = JSON.parse(caseDraft)
   const history = useHistory()
 
   const handleNextButtonClick = async () => {
     try {
       setIsSendingNotification(true)
-      await api.sendNotification(caseDraftJSON.id)
+      await api.sendNotification(workingCase.id)
       setIsSendingNotification(false)
       return true
     } catch (e) {
@@ -38,7 +38,16 @@ export const Overview: React.FC = () => {
     }
   }
 
-  return caseDraftJSON ? (
+  useEffect(() => {
+    const caseDraft = window.localStorage.getItem('workingCase')
+    const caseDraftJSON = JSON.parse(caseDraft)
+
+    if (!workingCase) {
+      setWorkingCase(caseDraftJSON)
+    }
+  }, [workingCase, setWorkingCase])
+
+  return workingCase ? (
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
@@ -63,15 +72,23 @@ export const Overview: React.FC = () => {
                     LÖKE málsnúmer
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.policeCaseNumber}</Typography>
+                <Typography>{workingCase.policeCaseNumber}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
                   <Typography variant="eyebrow" color="blue400">
-                    Fullt nafn kærða
+                    Kennitala
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.accusedName}</Typography>
+                <Typography>{workingCase.accusedNationalId}</Typography>
+              </Box>
+              <Box component="section" marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Typography variant="eyebrow" color="blue400">
+                    Fullt nafn
+                  </Typography>
+                </Box>
+                <Typography>{workingCase.accusedName}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -79,7 +96,7 @@ export const Overview: React.FC = () => {
                     Lögheimili/dvalarstaður
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.accusedAddress}</Typography>
+                <Typography>{workingCase.accusedAddress}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -87,7 +104,7 @@ export const Overview: React.FC = () => {
                     Dómstóll
                   </Typography>
                 </Box>
-                <Typography>{caseDraftJSON.court}</Typography>
+                <Typography>{workingCase.court}</Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -97,31 +114,30 @@ export const Overview: React.FC = () => {
                 </Box>
                 <Typography>
                   {`${capitalize(
-                    formatDate(caseDraftJSON?.arrestDate, 'PPPP'),
+                    formatDate(workingCase.arrestDate, 'PPPP'),
                   )} kl. ${formatDate(
-                    caseDraftJSON?.arrestDate,
+                    workingCase?.arrestDate,
                     Constants.TIME_FORMAT,
                   )}`}
                 </Typography>
               </Box>
-              {caseDraftJSON.requestedCourtDate &&
-                caseDraftJSON.requestedCourtTime && (
-                  <Box component="section" marginBottom={5}>
-                    <Box marginBottom={1}>
-                      <Typography variant="eyebrow" color="blue400">
-                        Ósk um fyrirtökudag og tíma
-                      </Typography>
-                    </Box>
-                    <Typography>
-                      {`${capitalize(
-                        formatDate(caseDraftJSON?.requestedCourtDate, 'PPPP'),
-                      )} kl. ${formatDate(
-                        caseDraftJSON?.requestedCourtDate,
-                        Constants.TIME_FORMAT,
-                      )}`}
+              {workingCase.requestedCourtDate && (
+                <Box component="section" marginBottom={5}>
+                  <Box marginBottom={1}>
+                    <Typography variant="eyebrow" color="blue400">
+                      Ósk um fyrirtökudag og tíma
                     </Typography>
                   </Box>
-                )}
+                  <Typography>
+                    {`${capitalize(
+                      formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                    )} kl. ${formatDate(
+                      workingCase?.requestedCourtDate,
+                      Constants.TIME_FORMAT,
+                    )}`}
+                  </Typography>
+                </Box>
+              )}
               <Box component="section" marginBottom={5}>
                 <Accordion>
                   <AccordionItem id="id_1" label="Dómkröfur">
@@ -129,10 +145,10 @@ export const Overview: React.FC = () => {
                       Gæsluvarðhald til
                       <strong>
                         {` ${formatDate(
-                          caseDraftJSON?.requestedCustodyEndDate,
+                          workingCase?.requestedCustodyEndDate,
                           'PPP',
                         )} kl. ${formatDate(
-                          caseDraftJSON?.requestedCustodyEndDate,
+                          workingCase?.requestedCustodyEndDate,
                           Constants.TIME_FORMAT,
                         )}`}
                       </strong>
@@ -140,13 +156,13 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_2" label="Lagaákvæði">
                     <Typography variant="p" as="p">
-                      {caseDraftJSON.lawsBroken}
+                      {workingCase.lawsBroken}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
                       {renderRestrictons(
-                        caseDraftJSON.requestedCustodyRestrictions,
+                        workingCase.requestedCustodyRestrictions,
                       )}
                     </Typography>
                   </AccordionItem>
@@ -154,23 +170,23 @@ export const Overview: React.FC = () => {
                     id="id_4"
                     label="Greinagerð um málsatvik og lagarök"
                   >
-                    {caseDraftJSON.caseFacts && (
+                    {workingCase.caseFacts && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
                           <Typography variant="h5">Málsatvik rakin</Typography>
                         </Box>
-                        <Typography>{caseDraftJSON.caseFacts}</Typography>
+                        <Typography>{workingCase.caseFacts}</Typography>
                       </Box>
                     )}
-                    {caseDraftJSON.witnessAccounts && (
+                    {workingCase.witnessAccounts && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
                           <Typography variant="h5">Framburður</Typography>
                         </Box>
-                        <Typography>{caseDraftJSON.witnessAccounts}</Typography>
+                        <Typography>{workingCase.witnessAccounts}</Typography>
                       </Box>
                     )}
-                    {caseDraftJSON.investigationProgress && (
+                    {workingCase.investigationProgress && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
                           <Typography variant="h5">
@@ -178,16 +194,16 @@ export const Overview: React.FC = () => {
                           </Typography>
                         </Box>
                         <Typography>
-                          {caseDraftJSON.investigationProgress}
+                          {workingCase.investigationProgress}
                         </Typography>
                       </Box>
                     )}
-                    {caseDraftJSON.legalArguments && (
+                    {workingCase.legalArguments && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
                           <Typography variant="h5">Lagarök</Typography>
                         </Box>
-                        <Typography>{caseDraftJSON.legalArguments}</Typography>
+                        <Typography>{workingCase.legalArguments}</Typography>
                       </Box>
                     )}
                   </AccordionItem>
