@@ -6,15 +6,15 @@ import {
   Breadcrumbs,
   Box,
   Link,
-  Stack,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { Image } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
-import { Content } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { NewsItemLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { StandardLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { GET_SINGLE_NEWS_ITEM_QUERY } from '@island.is/web/screens/queries'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -23,6 +23,7 @@ import {
   GetSingleNewsItemQuery,
   QueryGetSingleNewsArgs,
 } from '@island.is/web/graphql/schema'
+import { RichText } from '../components/RichText/RichText'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -55,27 +56,35 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <Head>
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
-      <NewsItemLayout>
-        <Breadcrumbs>
-          <Link href={makePath()}>Ísland.is</Link>
-          <Link href={makePath('news')}>{t.newsAndAnnouncements}</Link>
-        </Breadcrumbs>
-        <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
-          {newsItem.title}
-        </Typography>
-        <Typography variant="intro" as="p" paddingBottom={2}>
-          {newsItem.intro}
-        </Typography>
-        {Boolean(newsItem.image) && (
-          <Box paddingY={2}>
-            <Image type="apiImage" image={newsItem.image} />
-          </Box>
-        )}
-        <Content
-          document={newsItem.content}
-          wrapper={(children) => <Stack space={3}>{children}</Stack>}
-        />
-      </NewsItemLayout>
+      <StandardLayout sidebar={{ position: 'right', node: null }}>
+        <GridRow>
+          <GridColumn
+            span={['9/9', '9/9', '7/8', '7/8', '7/9']}
+            offset={['0', '0', '0', '0', '1/9']}
+          >
+            <Breadcrumbs>
+              <Link href={makePath()}>Ísland.is</Link>
+              <Link href={makePath('news')}>{t.newsAndAnnouncements}</Link>
+            </Breadcrumbs>
+            <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
+              {newsItem.title}
+            </Typography>
+            <Typography variant="intro" as="p" paddingBottom={2}>
+              {newsItem.intro}
+            </Typography>
+            {Boolean(newsItem.image) && (
+              <Box paddingY={2}>
+                <Image
+                  {...newsItem.image}
+                  url={newsItem.image.url + '?w=774'}
+                  thumbnail={newsItem.image.url + '?w=50'}
+                />
+              </Box>
+            )}
+          </GridColumn>
+        </GridRow>
+        <RichText body={newsItem.content} />
+      </StandardLayout>
     </>
   )
 }

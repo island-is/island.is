@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import {
   Stack,
   Typography,
-  Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -14,6 +13,7 @@ import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { CarDetailsBox } from '../Confirm/components'
+import { Button } from '@island.is/skilavottord-web/components'
 
 const Completed = (props) => {
   const { car } = props
@@ -53,22 +53,22 @@ const Completed = (props) => {
                 <Stack space={4}>
                   <Stack space={2}>
                     <GridRow>
-                      <GridColumn span={'6/9'}>
+                      <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                         <Typography variant="p">
                           {`${t.confirmedBy.user} Albert Flores`}
                         </Typography>
                       </GridColumn>
-                      <GridColumn span={'3/9'}>
+                      <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                         <Typography variant="h5">2019-06-12 00:55</Typography>
                       </GridColumn>
                     </GridRow>
                     <GridRow>
-                      <GridColumn span={'6/9'}>
+                      <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                         <Typography variant="p">
                           {`${t.confirmedBy.user} Albert Flores`}
                         </Typography>
                       </GridColumn>
-                      <GridColumn span={'3/9'}>
+                      <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                         <Typography variant="h5">2019-06-12 00:55</Typography>
                       </GridColumn>
                     </GridRow>
@@ -76,32 +76,32 @@ const Completed = (props) => {
                   <Box borderTopWidth="standard" borderColor="blue200"></Box>
                   <Stack space={1}>
                     <GridRow>
-                      <GridColumn span={'6/9'}>
+                      <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                         <Typography variant="p">
                           {`${t.confirmedBy.company} VAKA`}
                         </Typography>
                       </GridColumn>
-                      <GridColumn span={'3/9'}>
+                      <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                         <Typography variant="h5">2019-06-12 00:55</Typography>
                       </GridColumn>
                     </GridRow>
                     <GridRow>
-                      <GridColumn span={'6/9'}>
+                      <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                         <Typography variant="p">
                           {`${t.confirmedBy.authority}`}
                         </Typography>
                       </GridColumn>
-                      <GridColumn span={'3/9'}>
+                      <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                         <Typography variant="h5">2019-06-12 00:55</Typography>
                       </GridColumn>
                     </GridRow>
                     <GridRow>
-                      <GridColumn span={'6/9'}>
+                      <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                         <Typography variant="p">
                           {`${t.confirmedBy.fund}`}
                         </Typography>
                       </GridColumn>
-                      <GridColumn span={'3/9'}>
+                      <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                         <Typography variant="h5">2019-06-12 00:55</Typography>
                       </GridColumn>
                     </GridRow>

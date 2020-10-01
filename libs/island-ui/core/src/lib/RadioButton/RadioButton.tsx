@@ -54,6 +54,7 @@ export const RadioButton = ({
         className={cn(styles.label, {
           [styles.labelChecked]: checked,
           [styles.radioButtonLabelDisabled]: disabled,
+          [styles.largeLabel]: large,
         })}
         htmlFor={id}
       >

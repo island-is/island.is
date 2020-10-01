@@ -4,7 +4,7 @@ import { select } from '@storybook/addon-knobs'
 import { Colors } from '@island.is/island-ui/theme'
 
 export default {
-  title: 'Components/Box',
+  title: 'Core/Box',
   component: Box,
 }
 
@@ -94,18 +94,3 @@ export const Default = () =>
   makeBox(
     'Box is the primary layout component. See `Docs` tab for all available props.',
   )
-
-export const Hidden = () => (
-  <>
-    <Box>
-      The breakpoints are {`{xs: 0, sm: 576, md: 768, lg: 992, xl: 1440}`}
-    </Box>
-    <Box background="purple200" hiddenAbove="md">
-      I'm hidden above `md` which means I'm hidden from `lg` and above
-    </Box>
-    <Box background="blueberry100" hiddenBelow="md">
-      I'm hidden below `md` which means I'm hidden on `xs` and `sm` (visible at
-      `md`)
-    </Box>
-  </>
-)
