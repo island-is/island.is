@@ -1,6 +1,6 @@
 import { IsEnum, IsString } from 'class-validator'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 import { CaseTransition } from '@island.is/judicial-system/types'
 

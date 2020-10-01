@@ -1,6 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react",
     "types": ["node", "jest"],
     "emitDecoratorMetadata": true,
     "target": "es2015",
