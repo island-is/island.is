@@ -1,9 +1,11 @@
 import React, { FC } from 'react'
-import { RadioField } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  RadioField,
+} from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Typography, Box, RadioController } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '../../types'
-import { getValueViaPath } from '../../utils'
 
 interface Props extends FieldBaseProps {
   field: RadioField

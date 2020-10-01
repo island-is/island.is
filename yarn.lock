@@ -4729,6 +4729,13 @@
   dependencies:
     "@types/express" "*"
 
+"@types/cross-spawn@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@types/cross-spawn/-/cross-spawn-6.0.2.tgz#168309de311cd30a2b8ae720de6475c2fbf33ac7"
+  integrity sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/domhandler@*":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/domhandler/-/domhandler-2.4.1.tgz#7b3b347f7762180fbcb1ece1ce3dd0ebbb8c64cf"
@@ -9109,7 +9116,7 @@ cross-spawn@^3.0.0:
     lru-cache "^4.0.1"
     which "^1.2.9"
 
-cross-spawn@^7.0.0:
+cross-spawn@^7.0.0, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
   integrity sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==
@@ -14740,10 +14747,10 @@ karma-source-map-support@1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
-kennitala@1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.3.tgz#aaa65e3240c9d7225cefe6d58019556f33744955"
-  integrity sha512-mjcnFBKUDkTDpDnsZHXTbfe8v8nO0YikTHqyDHpE9HZBkLKP/tazcbbBanTRr0F2O68C0t+bGqTPUXpN35VmqQ==
+kennitala@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.4.tgz#b478ae0d62b9687d458e611806692596e2bd6cac"
+  integrity sha512-hxnzr39l4SlJHvhnRtW5Z9hyNiY6LUKjGBMnakLpmYEnIrxXXx5+wpBTj59ixw7l40D5LJtrFdlqnBG8IQ0N8Q==
 
 killable@^1.0.1:
   version "1.0.1"

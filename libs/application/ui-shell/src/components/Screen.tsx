@@ -2,6 +2,7 @@ import React, { FC, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   ExternalData,
+  FieldBaseProps,
   FormItemTypes,
   FormMode,
   FormValue,

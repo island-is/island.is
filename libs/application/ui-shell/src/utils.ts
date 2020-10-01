@@ -7,29 +7,6 @@ import {
 } from '@island.is/application/core'
 import { FormScreen } from './types'
 
-export const getValueViaPath = (
-  obj: object,
-  path: string,
-  defaultValue?: unknown,
-) => {
-  try {
-    const travel = (regexp: RegExp) =>
-      String.prototype.split
-        .call(path, regexp)
-        .filter(Boolean)
-        .reduce(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          (res, key) => (res !== null && res !== undefined ? res[key] : res),
-          obj,
-        )
-    const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
-    return result === undefined || result === obj ? defaultValue : result
-  } catch (e) {
-    return undefined
-  }
-}
-
 export function verifyExternalData(
   externalData: ExternalData,
   dataProviders: DataProviderItem[],

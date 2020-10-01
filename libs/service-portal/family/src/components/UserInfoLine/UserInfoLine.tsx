@@ -10,7 +10,7 @@ import {
 interface Props {
   label: string
   content?: string
-  onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  onEdit?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void
 }
 
 const UserInfoLine: FC<Props> = ({ label, content, onEdit }) => {
@@ -25,7 +25,7 @@ const UserInfoLine: FC<Props> = ({ label, content, onEdit }) => {
         <Column width="4/12">
           <Box overflow="hidden">{content}</Box>
         </Column>
-        {onEdit && (
+        {onEdit ? (
           <Column width="3/12">
             <Box overflow="hidden" textAlign="right">
               <Button
@@ -38,7 +38,7 @@ const UserInfoLine: FC<Props> = ({ label, content, onEdit }) => {
               </Button>
             </Box>
           </Column>
-        )}
+        ) : null}
       </Columns>
     </Box>
   )

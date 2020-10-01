@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from 'react'
-import { ReviewField } from '@island.is/application/core'
+import { ReviewField, FieldBaseProps } from '@island.is/application/core'
 import { Typography, Box, RadioController } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '../../types'
 
 interface Props extends FieldBaseProps {
   field: ReviewField

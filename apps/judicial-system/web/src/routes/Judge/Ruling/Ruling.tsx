@@ -113,7 +113,7 @@ export const Ruling: React.FC = () => {
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
     },
     {
-      restriction: 'E - Fjölmiðlabanns',
+      restriction: 'E - Fjölmiðlabann',
       value: CustodyRestrictions.MEDIA,
       getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
