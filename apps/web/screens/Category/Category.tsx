@@ -404,6 +404,7 @@ const Category: Screen<CategoryProps> = ({
                   makePath('ArticleCategory', slug),
                 )
               }}
+              isSearchable={false}
               options={categoryOptions}
               name="categories"
             />
@@ -446,6 +447,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           category: slug,
+          size: 150,
         },
       },
     }),

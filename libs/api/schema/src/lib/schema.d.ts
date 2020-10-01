@@ -100,87 +100,7 @@ export type News = {
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
-  content?: Maybe<Scalars['String']>
-}
-
-export type NumberBullet = {
-  __typename?: 'NumberBullet'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-}
-
-export type Statistic = {
-  __typename?: 'Statistic'
-  id: Scalars['ID']
-  value: Scalars['String']
-  label: Scalars['String']
-}
-
-export type QuestionAndAnswer = {
-  __typename?: 'QuestionAndAnswer'
-  id: Scalars['ID']
-  question: Scalars['String']
-  answer?: Maybe<Html>
-}
-
-export type TabContent = {
-  __typename?: 'TabContent'
-  tabTitle: Scalars['String']
-  contentTitle?: Maybe<Scalars['String']>
-  image?: Maybe<Image>
-  body?: Maybe<Html>
-}
-
-export type TeamMember = {
-  __typename?: 'TeamMember'
-  name: Scalars['String']
-  title: Scalars['String']
-  image: Image
-}
-
-export type ArticleCategory = {
-  __typename?: 'ArticleCategory'
-  title: Scalars['String']
-  slug: Scalars['String']
-  description?: Maybe<Scalars['String']>
-}
-
-export type ArticleGroup = {
-  __typename?: 'ArticleGroup'
-  title: Scalars['String']
-  slug: Scalars['String']
-  description?: Maybe<Scalars['String']>
-}
-
-export type ArticleSubgroup = {
-  __typename?: 'ArticleSubgroup'
-  title: Scalars['String']
-  importance?: Maybe<Scalars['Float']>
-  slug: Scalars['String']
-}
-
-export type OrganizationTag = {
-  __typename?: 'OrganizationTag'
-  id: Scalars['ID']
-  title: Scalars['String']
-}
-
-export type Organization = {
-  __typename?: 'Organization'
-  id: Scalars['ID']
-  title: Scalars['String']
-  description?: Maybe<Scalars['String']>
-  slug: Scalars['String']
-  tag?: Maybe<Array<OrganizationTag>>
-  link?: Maybe<Scalars['String']>
-}
-
-export type SubArticle = {
-  __typename?: 'SubArticle'
-  title: Scalars['String']
-  slug: Scalars['String']
-  body: Array<Slice>
+  content?: Maybe<Array<Slice>>
 }
 
 export type Slice =
@@ -364,6 +284,86 @@ export type Asset = {
   url: Scalars['String']
   title: Scalars['String']
   contentType: Scalars['String']
+}
+
+export type NumberBullet = {
+  __typename?: 'NumberBullet'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type Statistic = {
+  __typename?: 'Statistic'
+  id: Scalars['ID']
+  value: Scalars['String']
+  label: Scalars['String']
+}
+
+export type QuestionAndAnswer = {
+  __typename?: 'QuestionAndAnswer'
+  id: Scalars['ID']
+  question: Scalars['String']
+  answer?: Maybe<Html>
+}
+
+export type TabContent = {
+  __typename?: 'TabContent'
+  tabTitle: Scalars['String']
+  contentTitle?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  body?: Maybe<Html>
+}
+
+export type TeamMember = {
+  __typename?: 'TeamMember'
+  name: Scalars['String']
+  title: Scalars['String']
+  image: Image
+}
+
+export type ArticleCategory = {
+  __typename?: 'ArticleCategory'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+}
+
+export type ArticleGroup = {
+  __typename?: 'ArticleGroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+}
+
+export type ArticleSubgroup = {
+  __typename?: 'ArticleSubgroup'
+  title: Scalars['String']
+  importance?: Maybe<Scalars['Float']>
+  slug: Scalars['String']
+}
+
+export type OrganizationTag = {
+  __typename?: 'OrganizationTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
+export type Organization = {
+  __typename?: 'Organization'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  slug: Scalars['String']
+  tag?: Maybe<Array<OrganizationTag>>
+  link?: Maybe<Scalars['String']>
+}
+
+export type SubArticle = {
+  __typename?: 'SubArticle'
+  title: Scalars['String']
+  slug: Scalars['String']
+  body: Array<Slice>
 }
 
 export type Article = {
@@ -1359,20 +1359,8 @@ export type ResolversTypes = {
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   Story: ResolverTypeWrapper<Story>
   LinkCard: ResolverTypeWrapper<LinkCard>
-  News: ResolverTypeWrapper<News>
-  NumberBullet: ResolverTypeWrapper<NumberBullet>
-  Statistic: ResolverTypeWrapper<Statistic>
-  QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
-  TabContent: ResolverTypeWrapper<TabContent>
-  TeamMember: ResolverTypeWrapper<TeamMember>
-  ArticleCategory: ResolverTypeWrapper<ArticleCategory>
-  ArticleGroup: ResolverTypeWrapper<ArticleGroup>
-  ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
-  Float: ResolverTypeWrapper<Scalars['Float']>
-  OrganizationTag: ResolverTypeWrapper<OrganizationTag>
-  Organization: ResolverTypeWrapper<Organization>
-  SubArticle: ResolverTypeWrapper<
-    Omit<SubArticle, 'body'> & { body: Array<ResolversTypes['Slice']> }
+  News: ResolverTypeWrapper<
+    Omit<News, 'content'> & { content?: Maybe<Array<ResolversTypes['Slice']>> }
   >
   Slice:
     | ResolversTypes['TimelineSlice']
@@ -1419,6 +1407,20 @@ export type ResolversTypes = {
   TeamList: ResolverTypeWrapper<TeamList>
   ContactUs: ResolverTypeWrapper<ContactUs>
   Asset: ResolverTypeWrapper<Asset>
+  NumberBullet: ResolverTypeWrapper<NumberBullet>
+  Statistic: ResolverTypeWrapper<Statistic>
+  QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
+  TabContent: ResolverTypeWrapper<TabContent>
+  TeamMember: ResolverTypeWrapper<TeamMember>
+  ArticleCategory: ResolverTypeWrapper<ArticleCategory>
+  ArticleGroup: ResolverTypeWrapper<ArticleGroup>
+  ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
+  Float: ResolverTypeWrapper<Scalars['Float']>
+  OrganizationTag: ResolverTypeWrapper<OrganizationTag>
+  Organization: ResolverTypeWrapper<Organization>
+  SubArticle: ResolverTypeWrapper<
+    Omit<SubArticle, 'body'> & { body: Array<ResolversTypes['Slice']> }
+  >
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1559,20 +1561,8 @@ export type ResolversParentTypes = {
   TimelineSlice: TimelineSlice
   Story: Story
   LinkCard: LinkCard
-  News: News
-  NumberBullet: NumberBullet
-  Statistic: Statistic
-  QuestionAndAnswer: QuestionAndAnswer
-  TabContent: TabContent
-  TeamMember: TeamMember
-  ArticleCategory: ArticleCategory
-  ArticleGroup: ArticleGroup
-  ArticleSubgroup: ArticleSubgroup
-  Float: Scalars['Float']
-  OrganizationTag: OrganizationTag
-  Organization: Organization
-  SubArticle: Omit<SubArticle, 'body'> & {
-    body: Array<ResolversParentTypes['Slice']>
+  News: Omit<News, 'content'> & {
+    content?: Maybe<Array<ResolversParentTypes['Slice']>>
   }
   Slice:
     | ResolversParentTypes['TimelineSlice']
@@ -1617,6 +1607,20 @@ export type ResolversParentTypes = {
   TeamList: TeamList
   ContactUs: ContactUs
   Asset: Asset
+  NumberBullet: NumberBullet
+  Statistic: Statistic
+  QuestionAndAnswer: QuestionAndAnswer
+  TabContent: TabContent
+  TeamMember: TeamMember
+  ArticleCategory: ArticleCategory
+  ArticleGroup: ArticleGroup
+  ArticleSubgroup: ArticleSubgroup
+  Float: Scalars['Float']
+  OrganizationTag: OrganizationTag
+  Organization: Organization
+  SubArticle: Omit<SubArticle, 'body'> & {
+    body: Array<ResolversParentTypes['Slice']>
+  }
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1847,140 +1851,11 @@ export type NewsResolvers<
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type NumberBulletResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['NumberBullet'] = ResolversParentTypes['NumberBullet']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type StatisticResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Statistic'] = ResolversParentTypes['Statistic']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type QuestionAndAnswerResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['QuestionAndAnswer'] = ResolversParentTypes['QuestionAndAnswer']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  answer?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type TabContentResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['TabContent'] = ResolversParentTypes['TabContent']
-> = {
-  tabTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  contentTitle?: Resolver<
-    Maybe<ResolversTypes['String']>,
+  content?: Resolver<
+    Maybe<Array<ResolversTypes['Slice']>>,
     ParentType,
     ContextType
   >
-  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-  body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type TeamMemberResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['TeamMember'] = ResolversParentTypes['TeamMember']
-> = {
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type ArticleCategoryResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
-> = {
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type ArticleGroupResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['ArticleGroup'] = ResolversParentTypes['ArticleGroup']
-> = {
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type ArticleSubgroupResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['ArticleSubgroup'] = ResolversParentTypes['ArticleSubgroup']
-> = {
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type OrganizationTagResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['OrganizationTag'] = ResolversParentTypes['OrganizationTag']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type OrganizationResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  tag?: Resolver<
-    Maybe<Array<ResolversTypes['OrganizationTag']>>,
-    ParentType,
-    ContextType
-  >
-  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type SubArticleResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['SubArticle'] = ResolversParentTypes['SubArticle']
-> = {
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2259,6 +2134,139 @@ export type AssetResolvers<
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type NumberBulletResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['NumberBullet'] = ResolversParentTypes['NumberBullet']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type StatisticResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Statistic'] = ResolversParentTypes['Statistic']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type QuestionAndAnswerResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['QuestionAndAnswer'] = ResolversParentTypes['QuestionAndAnswer']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  answer?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TabContentResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TabContent'] = ResolversParentTypes['TabContent']
+> = {
+  tabTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TeamMemberResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TeamMember'] = ResolversParentTypes['TeamMember']
+> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ArticleCategoryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ArticleGroupResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ArticleGroup'] = ResolversParentTypes['ArticleGroup']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ArticleSubgroupResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ArticleSubgroup'] = ResolversParentTypes['ArticleSubgroup']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type OrganizationTagResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['OrganizationTag'] = ResolversParentTypes['OrganizationTag']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type OrganizationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  tag?: Resolver<
+    Maybe<Array<ResolversTypes['OrganizationTag']>>,
+    ParentType,
+    ContextType
+  >
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type SubArticleResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['SubArticle'] = ResolversParentTypes['SubArticle']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -3213,17 +3221,6 @@ export type Resolvers<ContextType = Context> = {
   Story?: StoryResolvers<ContextType>
   LinkCard?: LinkCardResolvers<ContextType>
   News?: NewsResolvers<ContextType>
-  NumberBullet?: NumberBulletResolvers<ContextType>
-  Statistic?: StatisticResolvers<ContextType>
-  QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
-  TabContent?: TabContentResolvers<ContextType>
-  TeamMember?: TeamMemberResolvers<ContextType>
-  ArticleCategory?: ArticleCategoryResolvers<ContextType>
-  ArticleGroup?: ArticleGroupResolvers<ContextType>
-  ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
-  OrganizationTag?: OrganizationTagResolvers<ContextType>
-  Organization?: OrganizationResolvers<ContextType>
-  SubArticle?: SubArticleResolvers<ContextType>
   Slice?: SliceResolvers<ContextType>
   MailingListSignupSlice?: MailingListSignupSliceResolvers<ContextType>
   HeadingSlice?: HeadingSliceResolvers<ContextType>
@@ -3244,6 +3241,17 @@ export type Resolvers<ContextType = Context> = {
   TeamList?: TeamListResolvers<ContextType>
   ContactUs?: ContactUsResolvers<ContextType>
   Asset?: AssetResolvers<ContextType>
+  NumberBullet?: NumberBulletResolvers<ContextType>
+  Statistic?: StatisticResolvers<ContextType>
+  QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
+  TabContent?: TabContentResolvers<ContextType>
+  TeamMember?: TeamMemberResolvers<ContextType>
+  ArticleCategory?: ArticleCategoryResolvers<ContextType>
+  ArticleGroup?: ArticleGroupResolvers<ContextType>
+  ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
+  OrganizationTag?: OrganizationTagResolvers<ContextType>
+  Organization?: OrganizationResolvers<ContextType>
+  SubArticle?: SubArticleResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>

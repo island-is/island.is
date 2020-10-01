@@ -9,6 +9,7 @@ export const focusable = style({
     content: "''",
     display: 'inline-block',
     position: 'absolute',
+    zIndex: 1,
     pointerEvents: 'none',
     borderStyle: 'solid',
     borderWidth: 3,
@@ -34,19 +35,6 @@ export const focusable = style({
       borderColor: theme.color.mint400,
       opacity: 1,
       outline: 0,
-    },
-  },
-})
-
-export const focused = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      ':hover': {
-        borderColor: theme.color.blue400,
-      },
-      ':focus': {
-        borderColor: 'transparent',
-      },
     },
   },
 })
@@ -81,6 +69,18 @@ export const colorSchemes = styleMap({
       [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
         ':hover': {
           borderColor: theme.color.red400,
+        },
+        ':focus': {
+          borderColor: 'transparent',
+        },
+      },
+    },
+  },
+  white: {
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        ':hover': {
+          borderColor: theme.color.white,
         },
         ':focus': {
           borderColor: 'transparent',

@@ -1,4 +1,4 @@
-import { Slice } from '@island.is/web/graphql/schema'
+import { AllSlicesFragment as Slice } from '@island.is/web/graphql/schema'
 import { Document, BLOCKS, Block, Text } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 

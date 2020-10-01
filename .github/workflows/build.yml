@@ -5,6 +5,7 @@ on:
     branches:
       - 'master'
       - 'release/**'
+      - 'hotfix/**'
     paths-ignore:
       - '**/*.md'
   pull_request:
@@ -294,7 +295,7 @@ jobs:
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh lint
+        run: ./scripts/run-in-parallel-native.sh lint
 
   docker-express:
     needs: [prepare, tests]

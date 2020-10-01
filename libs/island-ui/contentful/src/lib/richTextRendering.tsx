@@ -9,12 +9,11 @@ import {
 } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import Image from './Image/Image'
-import FaqList from './FaqList/FaqList'
-import { Slice } from '@island.is/api/schema'
-import { Statistics } from './Statistics/Statistics'
+import { Image, ImageProps } from './Image/Image'
+import FaqList, { FaqListProps } from './FaqList/FaqList'
+import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
-import AssetLink from './AssetLink/AssetLink'
+import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
 import {
   Typography,
   Blockquote,
@@ -22,19 +21,66 @@ import {
   TypographyProps,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import ProcessEntry from './ProcessEntry/ProcessEntry'
-import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
+import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
+import EmbeddedVideo, {
+  EmbeddedVideoProps,
+} from './EmbeddedVideo/EmbeddedVideo'
 import StaticHtml from './StaticHtml/StaticHtml'
 import slugify from '@sindresorhus/slugify'
-import { SectionWithImage } from './SectionWithImage/SectionWithImage'
-import { TeamList } from './TeamList/TeamList'
-import { ContactUs } from './ContactUs/ContactUs'
+import {
+  SectionWithImage,
+  SectionWithImageProps,
+} from './SectionWithImage/SectionWithImage'
+import { TeamList, TeamListProps } from './TeamList/TeamList'
+import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
+
+type HtmlSlice = { __typename: 'Html'; document: any }
+type FaqListSlice = { __typename: 'FaqList' } & FaqListProps
+type StatisticsSlice = { __typename: 'Statistics' } & StatisticsProps
+type ImageSlice = { __typename: 'Image' } & Omit<ImageProps, 'thumbnail'>
+type AssetSlice = { __typename: 'Asset' } & AssetLinkProps
+type ProcessEntrySlice = { __typename: 'ProcessEntry' } & ProcessEntryProps
+type EmbeddedVideoSlice = { __typename: 'EmbeddedVideo' } & EmbeddedVideoProps
+type TeamListSlice = { __typename: 'TeamList' } & TeamListProps
+type ContactUsSlice = { __typename: 'ContactUs' } & Omit<
+  ContactUsProps,
+  'state' | 'onSubmit'
+>
+type SectionWithImageSlice = {
+  __typename: 'SectionWithImage'
+} & SectionWithImageProps
+
+type Slice =
+  | HtmlSlice
+  | FaqListSlice
+  | StatisticsSlice
+  | ImageSlice
+  | AssetSlice
+  | ProcessEntrySlice
+  | EmbeddedVideoSlice
+  | TeamListSlice
+  | ContactUsSlice
+  | SectionWithImageSlice
+  | {
+      // TODO: these are used on the about page - we need to move their rendering
+      // to here to make them re-usable by other page types
+      __typename:
+        | 'TimelineSlice'
+        | 'HeadingSlice'
+        | 'LinkCardSlice'
+        | 'MailingListSignupSlice'
+        | 'StorySlice'
+        | 'LatestNewsSlice'
+        | 'LogoListSlice'
+        | 'BulletListSlice'
+        | 'TabSection'
+    }
+
+type SliceType = Slice['__typename']
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
 }
-
-type SliceType = Slice['__typename']
 
 export interface PaddingConfig {
   sorted?: boolean
@@ -69,10 +115,10 @@ export const defaultRenderComponent = (
       return <Statistics {...slice} />
 
     case 'Image':
-      return <Image type="apiImage" image={slice} />
+      return <Image {...slice} thumbnail={slice.url + '?w=50'} />
 
     case 'Asset':
-      return <AssetLink {...slice}>{slice.title}</AssetLink>
+      return <AssetLink {...slice} />
 
     case 'ProcessEntry':
       return <ProcessEntry {...slice} />
@@ -211,7 +257,7 @@ export const renderSlices = (
     }
 
     return (
-      <Fragment key={slice.id}>
+      <Fragment key={index}>
         {index > 0 && config.renderPadding(slices[index - 1], slice, config)}
         {comp}
       </Fragment>

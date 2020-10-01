@@ -5,6 +5,7 @@ import {
   CallHandler,
   Inject,
 } from '@nestjs/common'
+import { classToPlain, plainToClass } from 'class-transformer'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { Application } from '../application.model'
@@ -12,11 +13,10 @@ import {
   Application as BaseApplication,
   ApplicationTemplateHelper,
   ApplicationTypes,
-  getApplicationTemplateByTypeId,
   ApplicationStateMeta,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
-import { classToPlain, plainToClass, serialize } from 'class-transformer'
 
 const role = 'applicant' // TODO get real role
 
