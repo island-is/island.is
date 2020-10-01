@@ -64,7 +64,7 @@ export const StepTwo: React.FC = () => {
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
@@ -520,14 +520,14 @@ export const StepTwo: React.FC = () => {
 
                             updateState(
                               workingCase,
-                              'restrictions',
+                              'requestedCustodyRestrictions',
                               copyOfState.requestedCustodyRestrictions,
                               setWorkingCase,
                             )
 
                             updateState(
                               workingCase,
-                              'restrictions',
+                              'custodyRestrictions',
                               copyOfState.custodyRestrictions,
                               setWorkingCase,
                             )
