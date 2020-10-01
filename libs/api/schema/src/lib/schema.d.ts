@@ -857,8 +857,8 @@ export type Query = {
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
   getTranslations?: Maybe<Scalars['JSON']>
-  getApiCatalogues: ApiCatalogue
-  getApiCatalogueById: ApiCatalogue
+  getApiCatalogue: ApiCatalogue
+  getApiServiceById?: Maybe<ApiService>
 }
 
 export type QueryGetAdgerdirNewsListArgs = {
@@ -1017,11 +1017,11 @@ export type QueryGetTranslationsArgs = {
   input: GetTranslationsInput
 }
 
-export type QueryGetApiCataloguesArgs = {
+export type QueryGetApiCatalogueArgs = {
   input: GetApiCataloguesInput
 }
 
-export type QueryGetApiCatalogueByIdArgs = {
+export type QueryGetApiServiceByIdArgs = {
   input: GetApiServiceInput
 }
 
@@ -1651,7 +1651,7 @@ export type ResolversTypes = {
   PricingCategoryEnum: PricingCategoryEnum
   DataCategoryEnum: DataCategoryEnum
   TypeCategoryEnum: TypeCategoryEnum
-  accessCategoryEnum: AccessCategoryEnum
+  AccessCategoryEnum: AccessCategoryEnum
   ApiCatalogue: ResolverTypeWrapper<ApiCatalogue>
   Query: ResolverTypeWrapper<{}>
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
@@ -3212,7 +3212,7 @@ export type ApiServiceResolvers<
     ContextType
   >
   access?: Resolver<
-    Array<ResolversTypes['accessCategoryEnum']>,
+    Array<ResolversTypes['AccessCategoryEnum']>,
     ParentType,
     ContextType
   >
@@ -3484,17 +3484,17 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetTranslationsArgs, 'input'>
   >
-  getApiCatalogues?: Resolver<
+  getApiCatalogue?: Resolver<
     ResolversTypes['ApiCatalogue'],
     ParentType,
     ContextType,
-    RequireFields<QueryGetApiCataloguesArgs, 'input'>
+    RequireFields<QueryGetApiCatalogueArgs, 'input'>
   >
-  getApiCatalogueById?: Resolver<
-    ResolversTypes['ApiCatalogue'],
+  getApiServiceById?: Resolver<
+    Maybe<ResolversTypes['ApiService']>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetApiCatalogueByIdArgs, 'input'>
+    RequireFields<QueryGetApiServiceByIdArgs, 'input'>
   >
 }
 

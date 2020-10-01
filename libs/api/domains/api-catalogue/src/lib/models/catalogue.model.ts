@@ -11,7 +11,7 @@ import { PageInfo } from './pageInfo.model'
 import { XroadInfo } from './xroadIdentifier.model'
 
 registerEnumType(AccessCategory, {
-  name: 'accessCategoryEnum',
+  name: 'AccessCategoryEnum',
 })
 
 registerEnumType(PricingCategory, {

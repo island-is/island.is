@@ -1,6 +1,6 @@
 import { Resolver, Query, Args } from '@nestjs/graphql'
 import { ApiCatalogueService } from './catalogue.service'
-import { ApiCatalogue } from './models/catalogue.model'
+import { ApiCatalogue, ApiService } from './models/catalogue.model'
 import {
   GetApiCataloguesInput,
   GetApiServiceInput,
@@ -11,16 +11,16 @@ export class ApiCatalogueResolver {
   constructor(private catalogueService: ApiCatalogueService) {}
 
   @Query(() => ApiCatalogue)
-  async getApiCatalogues(
+  async getApiCatalogue(
     @Args('input') input: GetApiCataloguesInput,
   ): Promise<ApiCatalogue> {
-    return this.catalogueService.getCatalogues(input)
+    return this.catalogueService.getCatalogue(input)
   }
 
-  @Query(() => ApiCatalogue)
-  async getApiCatalogueById(
+  @Query(() => ApiService, { nullable: true })
+  async getApiServiceById(
     @Args('input') input: GetApiServiceInput,
-  ): Promise<ApiCatalogue> {
-    return this.catalogueService.getCatalogueById(input.id)
+  ): Promise<ApiService> {
+    return this.catalogueService.getApiServiceById(input.id)
   }
 }

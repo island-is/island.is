@@ -665,7 +665,7 @@ type ApiService {
   pricing: [PricingCategoryEnum!]!
   data: [DataCategoryEnum!]!
   type: [TypeCategoryEnum!]!
-  access: [accessCategoryEnum!]!
+  access: [AccessCategoryEnum!]!
   xroadIdentifier: [XroadInfo!]
 }
 
@@ -688,7 +688,7 @@ enum TypeCategoryEnum {
   GRAPHQL
 }
 
-enum accessCategoryEnum {
+enum AccessCategoryEnum {
   XROAD
   APIGW
 }
@@ -739,8 +739,8 @@ type Query {
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
   getTranslations(input: GetTranslationsInput!): JSON
-  getApiCatalogues(input: GetApiCataloguesInput!): ApiCatalogue!
-  getApiCatalogueById(input: GetApiServiceInput!): ApiCatalogue!
+  getApiCatalogue(input: GetApiCataloguesInput!): ApiCatalogue!
+  getApiServiceById(input: GetApiServiceInput!): ApiService
 }
 
 input GetAdgerdirNewsListInput {
@@ -978,7 +978,7 @@ input GetApiCataloguesInput {
   pricing: PricingCategoryEnum
   data: DataCategoryEnum
   type: TypeCategoryEnum
-  access: accessCategoryEnum
+  access: AccessCategoryEnum
 }
 
 input GetApiServiceInput {

@@ -4,6 +4,8 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
+import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
+import { SearchResponse } from './types/types.model'
 //import { logger } from '@island.is/logging'
 
 const { elastic } = environment
@@ -13,8 +15,20 @@ export class ElasticService {
   private client: Client
   private indexName = 'apicatalogue'
 
+  async deleteIndex() {
+    console.log('Deleting index')
+
+    try {
+      const client = await this.getClient()
+
+      return client.indices.delete({ index: this.indexName })
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2))
+    }
+  }
+
   async index(service: Service) {
-    console.log('service', service)
+    console.log('Indexing', service)
 
     try {
       const client = await this.getClient()
@@ -28,24 +42,68 @@ export class ElasticService {
     }
   }
 
-  async bulk(service: Service) {
-    console.log('service', service)
+  async bulk(services: Array<Service>) {
+    console.log('Bulk insert', services)
 
-    try {
-      const client = await this.getClient()
-      return await client.index({
-        id: service.id,
-        index: this.indexName,
-        body: service,
+    if (services.length) {
+      const bulk = []
+      services.forEach((service) => {
+        bulk.push({
+          index: { _index: this.indexName },
+        })
+        bulk.push(service)
       })
-    } catch (error) {
-      console.log(JSON.stringify(error, null, 2))
+      try {
+        const client = await this.getClient()
+        return await client.bulk({
+          body: bulk,
+          index: this.indexName,
+        })
+      } catch (error) {
+        console.log(JSON.stringify(error, null, 2))
+      }
     }
+  }
+
+  async fetchAll(limit: number, cursor?: string[]) {
+    console.log('Fetch paginated results')
+    const query = {
+      size: limit,
+      query: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        match_all: {},
+      },
+      sort: [
+        { 'owner.keyword': { order: 'asc' } },
+        { 'name.keyword': { order: 'asc' } },
+      ],
+    }
+
+    if (cursor.length > 0) {
+      query['search_after'] = cursor
+    }
+
+    return this.search<SearchResponse<Service>, RequestBody>(query)
+  }
+
+  async fetchById(id: string) {
+    console.log('Fetch by id')
+    const query = {
+      query: {
+        match: {
+          id: id,
+        },
+      },
+    }
+    return this.search<SearchResponse<Service>, RequestBody>(query)
+  }
+
+  async fetchByFilters() {
+    console.log('Fetch paginated results based on filters')
   }
 
   async search<ResponseBody, RequestBody>(query: RequestBody) {
     try {
-      console.log(query)
       const client = await this.getClient()
       return client.search<ResponseBody, RequestBody>({
         body: query,
