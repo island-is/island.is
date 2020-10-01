@@ -34,7 +34,7 @@ export const getRegexByValidation = (validation: Validation) => {
     case 'national-id':
       return {
         regex: new RegExp(
-          /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})-(\d{3})(0|9)$/g,
+          /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})-?(\d{3})(0|9)$/g,
         ),
         errorMessage: 'Ekki á réttu formi',
       }
