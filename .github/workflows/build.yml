@@ -68,8 +68,10 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
 
-      - name: GitHub envs
-        run: env | grep GITHUB
+      - run: |
+          echo "::set-env name=HEAD::${GITHUB_SHA}"
+        id: git_nx_head
+        name: Preparing HEAD tag
 
       - run: |
           source ./scripts/00_prepare-base-tags.sh
@@ -89,7 +91,6 @@ jobs:
           else
             export PUBLISH=true
           fi
-          export PUBLISH=true
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
       - name: Cache for NodeJS dependencies - Docker layer

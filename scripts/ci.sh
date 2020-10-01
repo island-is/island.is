@@ -16,3 +16,6 @@ $PROJECT_ROOT/scripts/20_security-audit.sh
 $PROJECT_ROOT/scripts/20_license-audit.sh
 $PROJECT_ROOT/scripts/30_test.sh
 $PROJECT_ROOT/scripts/90_docker-express.sh
+# Alternatively build different type of containers
+# $PROJECT_ROOT/scripts/90_docker-next.sh
+# $PROJECT_ROOT/scripts/90_docker-static.sh
