@@ -82,7 +82,7 @@ export class CaseService {
       {
         where: {
           id,
-          modified,
+          // modified, Uncomment when client is ready to send last modified timestamp
         },
         returning: true,
       },

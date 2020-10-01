@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
@@ -11,7 +11,6 @@ import {
   Input,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CustodyProvisions,
   CustodyRestrictions,
@@ -26,7 +25,6 @@ import * as api from '../../../../api'
 import {
   formatDate,
   parseArray,
-  parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 
@@ -207,11 +205,6 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
-
-  useEffect(() => {
-    const caseId = workingCase.id
-    api.saveCase(caseId, parseString('state', CaseState.SUBMITTED))
-  }, [workingCase.id])
 
   return (
     <Box marginTop={7} marginBottom={30}>

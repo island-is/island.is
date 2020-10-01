@@ -10,9 +10,15 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
+import { CaseTransition } from '@island.is/judicial-system/types'
+
 import { ProsecutorLogo } from '../../../shared-components/Logos'
 import Modal from '../../../shared-components/Modal/Modal'
-import { formatDate, capitalize } from '../../../utils/formatters'
+import {
+  formatDate,
+  capitalize,
+  parseTransition,
+} from '../../../utils/formatters'
 import { renderRestrictons } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
@@ -43,6 +49,23 @@ export const Overview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     try {
+      // Parse the transition request
+      const transitionRequest = parseTransition(
+        caseDraftJSON.modified,
+        CaseTransition.SUBMIT,
+      )
+
+      // Transition the case
+      const response = await api.transitionCase(
+        caseDraftJSON.id,
+        transitionRequest,
+      )
+
+      if (response !== 200) {
+        // Improve error handling at some point
+        return false
+      }
+
       setIsSendingNotification(true)
       await api.sendNotification(caseDraftJSON.id)
       setIsSendingNotification(false)
