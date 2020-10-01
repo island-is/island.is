@@ -122,7 +122,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare_deps.sh
+        run: ./scripts/10_prepare-deps.sh
 
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
