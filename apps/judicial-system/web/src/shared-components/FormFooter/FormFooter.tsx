@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Typography } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 
 import * as styles from './FormFooter.treat'
@@ -11,7 +11,6 @@ interface Props {
   onNextButtonClick?: () => void
   previousUrl?: string
   previousIsDisabled?: boolean
-  confirmationText?: string
 }
 
 const FormFooter: React.FC<Props> = (props: Props) => {
@@ -40,11 +39,6 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         >
           {props.nextButtonText ?? 'Halda áfram'}
         </Button>
-        {props.confirmationText && (
-          <Box marginTop={1}>
-            <Typography variant="pSmall">{props.confirmationText}</Typography>
-          </Box>
-        )}
       </div>
     </Box>
   )
