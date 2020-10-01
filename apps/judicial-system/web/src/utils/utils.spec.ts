@@ -108,4 +108,18 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('Ekki á réttu formi')
     })
   })
+
+  describe('Validate national id format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const nid = '999999-9999'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+  })
 })

@@ -267,8 +267,15 @@ export const StepOne: React.FC = () => {
                     hasError={nationalIdErrorMessage !== ''}
                     onBlur={(evt) => {
                       const validateField = validate(evt.target.value, 'empty')
+                      const validateFieldFormat = validate(
+                        evt.target.value,
+                        'national-id',
+                      )
 
-                      if (validateField.isValid) {
+                      if (
+                        validateField.isValid &&
+                        validateFieldFormat.isValid
+                      ) {
                         createCaseIfPossible()
                         updateState(
                           workingCase,
@@ -277,7 +284,10 @@ export const StepOne: React.FC = () => {
                           setWorkingCase,
                         )
                       } else {
-                        setNationalIdErrorMessage(validateField.errorMessage)
+                        setNationalIdErrorMessage(
+                          validateField.errorMessage ||
+                            validateFieldFormat.errorMessage,
+                        )
                       }
                     }}
                     onFocus={() => setNationalIdErrorMessage('')}
