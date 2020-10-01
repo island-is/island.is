@@ -119,7 +119,7 @@ export const JudgeOverview: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
                 <Typography variant="eyebrow" color="blue400">
-                  Fullt nafn kærða
+                  Fullt nafn
                 </Typography>
               </Box>
               <Typography>{workingCase?.accusedName}</Typography>

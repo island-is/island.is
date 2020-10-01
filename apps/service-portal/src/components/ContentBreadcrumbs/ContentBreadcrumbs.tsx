@@ -6,6 +6,8 @@ import {
   ServicePortalNavigationItem,
 } from '@island.is/service-portal/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { useLocale } from '@island.is/localization'
+import { defineMessage } from 'react-intl'
 
 const reduce = (
   f: (
@@ -25,13 +27,17 @@ const reduce = (
 const ContentBreadcrumbs: FC<{}> = () => {
   const navigation = useNavigation()
   const location = useLocation()
+  const { formatMessage } = useLocale()
   const items: ServicePortalNavigationItem[] = reduce(
     (acc, n) => {
       if (n.path && location.pathname.includes(n.path)) return [...acc, n]
       else return acc
     },
     {
-      name: 'Mitt Ísland',
+      name: defineMessage({
+        id: 'service.portal:application-name',
+        defaultMessage: 'Mitt Ísland',
+      }),
       path: ServicePortalPath.MinarSidurRoot,
       children: navigation,
     },
@@ -48,7 +54,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
             (item, index) =>
               item.path !== undefined && (
                 <Link key={index} to={item.path}>
-                  {item.name}
+                  {formatMessage(item.name)}
                 </Link>
               ),
           )}
