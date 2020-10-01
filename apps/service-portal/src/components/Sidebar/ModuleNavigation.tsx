@@ -1,34 +1,44 @@
 import React, { FC, useState } from 'react'
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import {
+  ServicePortalNavigationItem,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { Box, Stack, Divider } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import IconButton from '../Button/IconButton/IconButton'
 import LinkButton from '../Button/LinkButton/LinkButton'
 import { useLocale } from '@island.is/localization'
+import NavItem from './NavItem/NavItem'
 
 interface Props {
   nav: ServicePortalNavigationItem
+  variant: 'blue' | 'purple'
 }
 
-const ModuleNavigation: FC<Props> = ({ nav }) => {
+const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
   const [expand, setExpand] = useState(false)
-  const location = useLocation()
+  const { pathname } = useLocation()
   const isModuleActive =
-    (nav.path && location.pathname.includes(nav.path)) || expand
+    (nav.path &&
+      nav.path !== ServicePortalPath.MinarSidurRoot &&
+      pathname.includes(nav.path)) ||
+    expand ||
+    nav.path === pathname
   const { formatMessage } = useLocale()
   const handleExpand = () => setExpand(!expand)
 
   return (
     <Box>
-      <IconButton
-        url={nav.path}
+      <NavItem
+        path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
+        variant={variant}
         onClick={nav.path === undefined ? handleExpand : undefined}
       >
         {formatMessage(nav.name)}
-      </IconButton>
+      </NavItem>
       {Array.isArray(nav.children) && nav.children.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <div>
@@ -38,9 +48,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
                   <LinkButton
                     url={child.path}
                     key={`child-${index}`}
-                    active={
-                      child.path && location.pathname.includes(child.path)
-                    }
+                    active={child.path && pathname.includes(child.path)}
                     external={child.external}
                   >
                     {formatMessage(child.name)}

@@ -13,13 +13,14 @@ const filterNavigationTree = (
   routes: ServicePortalRoute[],
   userInfo: User,
 ): boolean => {
-  const included = routes.find(
-    (route) =>
-      route.path === item.path ||
-      (Array.isArray(route.path) &&
-        item.path &&
-        route.path.includes(item.path)),
-  )
+  const included =
+    routes.find(
+      (route) =>
+        route.path === item.path ||
+        (Array.isArray(route.path) &&
+          item.path &&
+          route.path.includes(item.path)),
+    ) || item.systemRoute === true
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {

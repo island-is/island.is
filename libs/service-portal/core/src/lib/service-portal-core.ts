@@ -12,6 +12,8 @@ export interface ServicePortalNavigationItem {
   name: MessageDescriptor | string
   path?: ServicePortalPath
   external?: boolean
+  // System routes are always rendered in the navigation
+  systemRoute?: boolean
   icon?: IconTypes
   children?: ServicePortalNavigationItem[]
 }

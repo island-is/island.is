@@ -15,6 +15,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:overview',
           defaultMessage: 'Yfirlit',
         }),
+        systemRoute: true,
         path: ServicePortalPath.MinarSidurRoot,
         icon: 'globe',
       },
@@ -22,7 +23,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: defineMessage({
           id: 'service.portal:family',
-          defaultMessage: 'Default fjolskyldan',
+          defaultMessage: 'Fjölskyldan',
         }),
         path: ServicePortalPath.FjolskyldanRoot,
         icon: 'user',
@@ -55,7 +56,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Fjármál',
         }),
         path: ServicePortalPath.FjarmalRoot,
-        icon: 'user',
+        icon: 'info',
         children: [
           {
             name: defineMessage({
@@ -85,7 +86,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Menntun',
         }),
         path: ServicePortalPath.MenntunRoot,
-        icon: 'search',
+        icon: 'calendar',
       },
     ],
   },
@@ -103,7 +104,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Umsóknir',
         }),
         path: ServicePortalPath.UmsoknirRoot,
-        icon: 'user',
+        icon: 'file',
       },
 
       // Rafraen skjol

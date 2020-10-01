@@ -24,7 +24,7 @@ const RouteComponent: FC<{
 
   if (App)
     return (
-      <Suspense fallback={<ModuleLoadingScreen name={route.name} />}>
+      <Suspense fallback={null}>
         <ModuleErrorBoundary name={route.name}>
           <App userInfo={userInfo} client={client} />
         </ModuleErrorBoundary>
