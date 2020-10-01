@@ -36,13 +36,13 @@ export const Overview: React.FC = () => {
     try {
       // Parse the transition request
       const transitionRequest = parseTransition(
-        caseDraftJSON.modified,
+        workingCase.modified,
         CaseTransition.SUBMIT,
       )
 
       // Transition the case
       const response = await api.transitionCase(
-        caseDraftJSON.id,
+        workingCase.id,
         transitionRequest,
       )
 
