@@ -282,7 +282,7 @@ export const StepOne: React.FC = () => {
                   <Input
                     data-testid="accusedName"
                     name="accusedName"
-                    label="Fullt nafn kærða"
+                    label="Fullt nafn"
                     defaultValue={workingCase.accusedName}
                     errorMessage={accusedNameErrorMessage}
                     hasError={accusedNameErrorMessage !== ''}

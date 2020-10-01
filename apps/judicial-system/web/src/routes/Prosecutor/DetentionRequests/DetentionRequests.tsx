@@ -132,7 +132,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
           <thead>
             <tr>
               <th>LÖKE málsnr.</th>
-              <th>Nafn grunaða</th>
+              <th>Fullt nafn</th>
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
