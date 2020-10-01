@@ -27,20 +27,6 @@ export const Overview: React.FC = () => {
   const caseDraftJSON = JSON.parse(caseDraft)
   const history = useHistory()
 
-  const renderAccusedName = () => (
-    <Typography>
-      Tilkynning hefur verið send á dómara á vakt.
-      <br />
-      Dómstóll: {caseDraftJSON.court}.
-      <br />
-      Sakborningur:
-      <span className={styles.accusedName}>
-        {` ${caseDraftJSON.accusedName}`}
-      </span>
-      .
-    </Typography>
-  )
-
   const handleNextButtonClick = async () => {
     try {
       setIsSendingNotification(true)
@@ -228,7 +214,7 @@ export const Overview: React.FC = () => {
       {modalVisible && (
         <Modal
           title="Krafa um gæsluvarðhald hefur verið staðfest"
-          text={renderAccusedName() as JSX.Element}
+          text="Tilkynning hefur verið send á dómara og dómritara á vakt."
           handleClose={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
           handlePrimaryButtonClick={async () => {
             history.push(Constants.DETENTION_REQUESTS_ROUTE)
