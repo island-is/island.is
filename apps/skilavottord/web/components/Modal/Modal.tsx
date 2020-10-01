@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
   Button,
   Box,
@@ -27,29 +27,49 @@ export const Modal: FC<ModalProps> = ({
     t: { cancelModal: t },
   } = useI18n()
 
+  useEffect(() => {
+    document.body.style.overflowY = 'auto'
+    if (show) {
+      document.body.style.overflowY = 'hidden'
+    }
+  }, [show])
+
   return (
     <>
       {show && (
-        <div className={styles.container}>
-          <div className={styles.overlay}></div>
+        <Box
+          className={styles.container}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Box className={styles.overlay} background="blue100" />
           <GridContainer>
             <GridRow>
-              <GridColumn span="8/12" offset="2/12">
-                <Box paddingY={[3, 8, 8, 10]} className={styles.modal}>
+              <GridColumn
+                span={['12/12', '8/12', '8/12', '8/12']}
+                offset={['0', '2/12', '2/12', '2/12']}
+              >
+                <Box
+                  paddingY={[12, 10, 10, 10]}
+                  paddingX={[3, 0, 0, 0]}
+                  className={styles.modal}
+                  background="white"
+                  borderRadius="large"
+                >
                   <button onClick={onCancel} className={styles.modalClose}>
                     <Icon type="close" />
                   </button>
-                  <GridColumn span="6/8" offset="1/8">
+                  <GridColumn
+                    span={['8/8', '6/8', '6/8', '6/8']}
+                    offset={['0', '1/8', '1/8', '1/8']}
+                  >
                     <Stack space={4}>
                       <Stack space={2}>
                         <Typography variant="h1">{t.title}</Typography>
                         <Typography variant="intro">{t.info}</Typography>
                       </Stack>
-                      <Box
-                        width="full"
-                        display="inlineFlex"
-                        justifyContent="spaceBetween"
-                      >
+                      <Box display="flex" justifyContent="spaceBetween">
                         <Button
                           variant="ghost"
                           width="fixed"
@@ -71,7 +91,7 @@ export const Modal: FC<ModalProps> = ({
               </GridColumn>
             </GridRow>
           </GridContainer>
-        </div>
+        </Box>
       )}
     </>
   )
