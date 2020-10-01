@@ -4,7 +4,6 @@ import React, {
   useMemo,
   ReactNode,
   Fragment,
-  useContext,
   useEffect,
 } from 'react'
 import { useFirstMountState } from 'react-use'
@@ -49,9 +48,9 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
-import { GlobalContext } from '@island.is/web/context'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -349,19 +348,11 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
-  const { setContentfulId } = useContext(GlobalContext)
+  useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
-
-  useEffect(() => {
-    if (article?.id) {
-      setContentfulId(article.id)
-    }
-
-    return () => setContentfulId('')
-  }, [article])
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug

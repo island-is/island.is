@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState, useRef, useContext } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { theme } from '@island.is/island-ui/theme'
@@ -33,6 +33,7 @@ import { CategoryLayout } from '@island.is/web/screens/Layouts/Layouts'
 import LifeEventInCategory from './LifeEventInCategory'
 
 import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
   GetLifeEventsInCategoryQuery,
   GetNamespaceQuery,
@@ -45,7 +46,6 @@ import {
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { GlobalContext } from '@island.is/web/context'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -65,7 +65,6 @@ const Category: Screen<CategoryProps> = ({
   namespace,
   slug,
 }) => {
-  const { setContentfulId } = useContext(GlobalContext)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
   const { activeLocale, t } = useI18n()
@@ -120,15 +119,7 @@ const Category: Screen<CategoryProps> = ({
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
 
-  useEffect(() => {
-    const currentCategory = getCurrentCategory()
-
-    if (currentCategory?.id) {
-      setContentfulId(currentCategory.id)
-
-      return () => setContentfulId('')
-    }
-  }, [getCurrentCategory()])
+  useContentfulId(getCurrentCategory()?.id)
 
   // find current category in categories list
   const category = getCurrentCategory()

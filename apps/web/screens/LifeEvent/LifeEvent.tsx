@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import Head from 'next/head'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -35,7 +35,7 @@ import {
 import { createNavigation } from '@island.is/web/utils/navigation'
 import ArticleLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
-import { GlobalContext } from '@island.is/web/context'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -46,7 +46,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   lifeEvent: { id, image, title, intro, content },
   namespace,
 }) => {
-  const { setContentfulId } = useContext(GlobalContext)
+  useContentfulId(id)
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)
@@ -59,14 +59,6 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     title: x.text,
     url: '#' + x.id,
   }))
-
-  useEffect(() => {
-    if (id) {
-      setContentfulId(id)
-    }
-
-    return () => setContentfulId('')
-  }, [id])
 
   const metaTitle = `${title} | Ísland.is`
   const metaDescription =
