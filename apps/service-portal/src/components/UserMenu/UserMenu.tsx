@@ -1,5 +1,4 @@
 import React, { FC, useState, useRef } from 'react'
-import * as styles from './UserMenu.treat'
 import { useHistory } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 import useSubjects from '../../hooks/useSubjects/useSubjects'
@@ -14,7 +13,7 @@ const UserMenu: FC<{}> = () => {
   const [{ userInfo }] = useStore()
   const { subjectList } = useSubjects()
 
-  useClickAway(ref, () => setIsOpen(false))
+  useClickAway(ref, () => (isOpen ? setIsOpen(false) : null))
 
   const handleSelection = async (subjectNationalId: string) => {
     setIsOpen(false)
@@ -22,7 +21,7 @@ const UserMenu: FC<{}> = () => {
   }
 
   return (
-    <Box position="relative" height="full" ref={ref} className={styles.wrapper}>
+    <Box position="relative" height="full" ref={ref}>
       <Hidden below="md">
         <Button
           variant="menu"
