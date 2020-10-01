@@ -16,6 +16,7 @@ import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { footerProps } from './footerProps'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
+import MobileToolbar from '../MobileToolbar/MobileToolbar'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -26,6 +27,9 @@ const Layout: FC = ({ children }) => {
     <>
       <UserInfoLoadingOverlay />
       <Header />
+      <Hidden above="md">
+        <MobileToolbar />
+      </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper}>
         <ContentBlock>
           <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>

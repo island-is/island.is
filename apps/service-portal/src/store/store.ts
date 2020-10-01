@@ -5,13 +5,7 @@ import {
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
-import { mockSubjects } from './mockData'
-import {
-  Action,
-  ActionType,
-  AsyncActionState,
-  NotificationMenuState,
-} from './actions'
+import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 import { determineInitialLocale, setLangInLocalStore } from '../utils/locale'
 import { User } from 'oidc-client'
 
@@ -22,7 +16,8 @@ export interface StoreState {
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
-  notificationMenuState: NotificationMenuState
+  notificationMenuState: MenuState
+  mobileMenuState: MenuState
   routes: ServicePortalRoute[]
   lang: LanguageCode
 }
@@ -35,6 +30,7 @@ export const initialState: StoreState = {
   subjectList: [],
   subjectListState: 'passive',
   notificationMenuState: 'closed',
+  mobileMenuState: 'closed',
   routes: [],
   lang: determineInitialLocale(),
 }
@@ -72,6 +68,12 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         notificationMenuState: action.payload,
+      }
+
+    case ActionType.SetMobileMenuState:
+      return {
+        ...state,
+        mobileMenuState: action.payload,
       }
     case ActionType.SetUserLoggedOut:
       return {

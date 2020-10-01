@@ -4,6 +4,7 @@ export const SERVICE_PORTAL_HEADER_HEIGHT_LG = 112
 
 export const zIndex = {
   header: 10,
+  mobileToolbar: 10,
   notificationSidebar: 11,
   actionSidebar: 12,
 }

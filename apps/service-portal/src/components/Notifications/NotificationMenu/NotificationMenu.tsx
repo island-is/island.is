@@ -4,10 +4,10 @@ import cn from 'classnames'
 import { Box, Typography, Stack, Button } from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'
-import { NotificationMenuState } from '../../../store/actions'
+import { MenuState } from '../../../store/actions'
 
 interface Props {
-  state: NotificationMenuState
+  state: MenuState
 }
 
 const NotificationMenu: FC<Props> = ({ state }) => {
