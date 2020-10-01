@@ -37,7 +37,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     />
   )
 
-  let renderDesktopView = (lifeEvents, keyPrefix?: string) =>
+  const renderDesktopView = (lifeEvents, keyPrefix?: string) =>
     lifeEvents
       .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
       .map((lifeEvent, i) => (

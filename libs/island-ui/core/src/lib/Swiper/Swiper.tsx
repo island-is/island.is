@@ -21,7 +21,7 @@ const Swiper: FC = ({ children }) => {
     return () => window.removeEventListener('resize', onResize)
   }, [onResize])
 
-  const arr = React.Children.map(children, (child) => child)
+  const arr = React.Children.map(children, (child) => child) || []
 
   return (
     <div className={styles.root}>
