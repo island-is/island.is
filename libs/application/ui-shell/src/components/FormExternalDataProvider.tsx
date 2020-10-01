@@ -12,11 +12,11 @@ import {
   DataProviderResult,
   ExternalData,
   FormValue,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '../utils'
 import { useLocale } from '@island.is/localization'
 
 const ProviderItem: FC<{
