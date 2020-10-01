@@ -15,10 +15,9 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
 interface MockCar {
-  id: string
-  name: string
-  model: string
-  year: number
+  permno: string
+  type: string
+  newregdate: number
   color: number
   recyclable: boolean
   status?: string
@@ -32,7 +31,7 @@ interface ActionCardProps {
 
 export const ActionCard: FC<ActionCardProps> = ({
   onContinue,
-  car: { id, name, model, year, recyclable, isCoOwned = false },
+  car: { permno, type, newregdate, recyclable, isCoOwned = false },
 }: ActionCardProps) => {
   const {
     t: { myCars: t },
@@ -50,9 +49,9 @@ export const ActionCard: FC<ActionCardProps> = ({
               <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
-                    <Typography variant="h5">{id}</Typography>
+                    <Typography variant="h5">{permno}</Typography>
                     <Typography variant="p">
-                      {`${name} ${model}, ${year}`}
+                      {`${type}, ${newregdate}`}
                     </Typography>
                   </Stack>
                 </Box>
