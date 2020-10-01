@@ -17,6 +17,7 @@ import { footerProps } from './footerProps'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import MobileToolbar from '../MobileToolbar/MobileToolbar'
+import MobileMenu from '../MobileMenu/MobileMenu'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -29,6 +30,7 @@ const Layout: FC = ({ children }) => {
       <Header />
       <Hidden above="md">
         <MobileToolbar />
+        <MobileMenu />
       </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper}>
         <ContentBlock>
