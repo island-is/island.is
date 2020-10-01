@@ -25,6 +25,9 @@ interface InputComponentProps {
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
+  onKeyDown?: (
+    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
   rows?: number
 }
 
@@ -90,6 +93,7 @@ export const Input = forwardRef(
       backgroundColor = 'white',
       onFocus,
       onBlur,
+      onKeyDown,
       textarea,
       ...inputProps
     } = props
@@ -163,6 +167,11 @@ export const Input = forwardRef(
               setHasFocus(false)
               if (onBlur) {
                 onBlur(e)
+              }
+            }}
+            onKeyDown={(e) => {
+              if (onKeyDown) {
+                onKeyDown(e)
               }
             }}
             {...ariaError}

@@ -15,6 +15,7 @@ export const Default = () => (
         label="This is the label"
         placeholder="This is the placeholder"
         name="Test1"
+        onKeyDown={(e) => console.log(e.keyCode)}
       />
     </Box>
   </ContentBlock>
