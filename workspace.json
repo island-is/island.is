@@ -1188,6 +1188,17 @@
             "passWithNoTests": true
           }
         },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
+        },
         "docker-static": {}
       }
     },
@@ -1270,6 +1281,17 @@
           "options": {
             "jestConfig": "libs/service-portal/core/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components}/**/*.{js,ts,tsx}"
+              }
+            ]
           }
         }
       }
