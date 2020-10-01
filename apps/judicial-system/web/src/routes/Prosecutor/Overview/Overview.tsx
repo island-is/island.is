@@ -17,7 +17,6 @@ import { renderRestrictons } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
 import * as api from '../../../api'
-import * as styles from './Overview.treat'
 import { Case } from '@island.is/judicial-system-web/src/types'
 
 export const Overview: React.FC = () => {
@@ -221,7 +220,6 @@ export const Overview: React.FC = () => {
                     // TODO: Handle error
                   }
                 }}
-                confirmationText="Með því að ýta á þennan hnapp fær dómari á vakt tilkynningu um að krafan sé tilbúin."
               />
             </GridColumn>
           </GridRow>
