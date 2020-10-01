@@ -155,7 +155,7 @@ export const StepOne: React.FC = () => {
     if (isPossibleToSave) {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
-        accusedNationalId: accusedNationalIdRef.current.value,
+        accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
       })
 
       window.localStorage.setItem(
@@ -163,14 +163,17 @@ export const StepOne: React.FC = () => {
         JSON.stringify({
           ...workingCase,
           id: caseId,
-          accusedNationalId: accusedNationalIdRef.current.value,
+          accusedNationalId: accusedNationalIdRef.current.value.replace(
+            '-',
+            '',
+          ),
           policeCaseNumber: policeCaseNumberRef.current.value,
         }),
       )
       setWorkingCase({
         ...workingCase,
         id: caseId,
-        accusedNationalId: accusedNationalIdRef.current.value,
+        accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
         policeCaseNumber: policeCaseNumberRef.current.value,
       })
     }
@@ -280,7 +283,7 @@ export const StepOne: React.FC = () => {
                         updateState(
                           workingCase,
                           'accusedNationalId',
-                          evt.target.value,
+                          evt.target.value.replace('-', ''),
                           setWorkingCase,
                         )
                       } else {
