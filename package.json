@@ -35,7 +35,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "storybook:island-ui": "nx run island-ui-storybook:storybook",
-    "ts-node": "ts-node -r tsconfig-paths/register -O '{\"module\":\"commonjs\",\"esModuleInterop\":true,\"lib\": [\"es2015\"]}'",
+    "ts-node": "ts-node -r tsconfig-paths/register -O '{\"module\":\"commonjs\",\"esModuleInterop\":true}'",
     "schemas": "test -f libs/api/schema/src/lib/schema.d.ts || echo 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && yarn nx run api:contentful-types && yarn nx run api:build-schema && yarn affected:schemas",
     "postinstall": "if [ ! -z ${CI+x} ]; then exit 0; else yarn schemas; fi"
   },
@@ -211,7 +211,6 @@
     "@graphql-codegen/typescript-operations": "^1.13.5",
     "@graphql-codegen/typescript-react-apollo": "^1.13.5",
     "@graphql-codegen/typescript-resolvers": "^1.13.5",
-    "@jeremybarbet/contentful-typescript-codegen": "1.0.0",
     "@nestjs/schematics": "7.1.2",
     "@nestjs/testing": "7.4.4",
     "@nrwl/cypress": "10.2.1",

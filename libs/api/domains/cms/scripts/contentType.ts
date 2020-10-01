@@ -1,12 +1,12 @@
 import { ContentType, FieldValidation } from 'contentful'
 import { createClient } from 'contentful-management'
 import { Environment } from 'contentful-management/dist/typings/entities/environment'
-import { codegen } from '@jeremybarbet/contentful-typescript-codegen'
 import { flattenDeep } from 'lodash'
 import { logger } from '@island.is/logging'
 
 import { execShellCommand } from './execShellCommand'
 import { generateFile } from './generateFile'
+import { codegenContentful } from './codegenContentful'
 
 export interface LinkContentType {
   id: string
@@ -19,17 +19,6 @@ export interface Args {
 }
 
 const { CONTENTFUL_MANAGEMENT_ACCESS_TOKEN } = process.env
-
-async function codegenContentful(environment: Environment) {
-  try {
-    codegen({
-      outputFile: 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts',
-      environment,
-    })
-  } catch (e) {
-    logger.error('Cannot generate contentful types', { message: e.message })
-  }
-}
 
 async function getContentType(
   id: string,
@@ -145,7 +134,7 @@ async function main() {
   const environment = await space.getEnvironment('master')
 
   // 2. We generate new contentful types
-  await codegenContentful(environment)
+  await codegenContentful()
 
   // 3. Get main contentType
   const contentType = await getContentType(id, environment)
