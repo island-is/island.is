@@ -17,7 +17,7 @@ import {
   SkeletonLoader,
   Button,
 } from '@island.is/island-ui/core'
-import { Filters, Panel, Summary } from './components'
+import { Filters, Panel, Summary, Modal } from './components'
 import { FilterInput } from './consts'
 import { Screen } from '../../types'
 import { isCSVAvailable, downloadCSV } from './utils'
@@ -58,6 +58,7 @@ const TODAY = new Date()
 
 const Admin: Screen = ({}) => {
   const { user } = useContext(UserContext)
+  const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FilterInput>({
     state: [],
     period: {
@@ -162,6 +163,7 @@ const Admin: Screen = ({}) => {
                 <Button
                   width="fluid"
                   variant="redGhost"
+                  onClick={() => setModal(true)}
                   disabled={!isCSVAvailable(filters)}
                 >
                   <Box
@@ -224,6 +226,23 @@ const Admin: Screen = ({}) => {
           </GridRow>
         </GridColumn>
       </GridRow>
+      <Modal
+        show={showModal}
+        onCancel={() => setModal(false)}
+        onContinue={() => {
+          confirmInvoice({ variables: { input } })
+          setModal(false)
+        }}
+        t={{
+          title: 'Gjaldfæra og endurgreiða',
+          info:
+            'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
+          buttons: {
+            cancel: 'Hætta við',
+            continue: 'Halda áfram',
+          },
+        }}
+      />
     </GridContainer>
   )
 }
