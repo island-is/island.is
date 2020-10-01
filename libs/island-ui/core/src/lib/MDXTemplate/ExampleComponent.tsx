@@ -1,6 +1,7 @@
 import React from 'react'
 
 interface Props {
+  /** This a comment from the component's interface */
   exclamationPoint?: boolean
 }
 
