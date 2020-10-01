@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import IconButton from '../Button/IconButton/IconButton'
 import LinkButton from '../Button/LinkButton/LinkButton'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   nav: ServicePortalNavigationItem
@@ -15,7 +16,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
   const location = useLocation()
   const isModuleActive =
     (nav.path && location.pathname.includes(nav.path)) || expand
-
+  const { formatMessage } = useLocale()
   const handleExpand = () => setExpand(!expand)
 
   return (
@@ -26,7 +27,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
         active={isModuleActive}
         onClick={nav.path === undefined ? handleExpand : undefined}
       >
-        {nav.name}
+        {formatMessage(nav.name)}
       </IconButton>
       {Array.isArray(nav.children) && nav.children.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
@@ -42,7 +43,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
                     }
                     external={child.external}
                   >
-                    {child.name}
+                    {formatMessage(child.name)}
                   </LinkButton>
                 ))}
               </Stack>
