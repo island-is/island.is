@@ -112,7 +112,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
         )}
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
-        <Link to={Constants.STEP_ONE_ROUTE}>
+        <Link to={Constants.STEP_ONE_ROUTE} style={{ textDecoration: 'none' }}>
           <Button
             icon="plus"
             onClick={() => window.localStorage.removeItem('workingCase')}
@@ -162,6 +162,7 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
                             ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                             : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         }
+                        style={{ textDecoration: 'none' }}
                       >
                         <Button icon="arrowRight" variant="text">
                           Opna kröfu
