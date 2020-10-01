@@ -215,60 +215,6 @@ globalStyle(`${root} .Toastify__progress-bar--dark`, {
   background: '#bb86fc',
 })
 
-/** Bounce animation */
-globalStyle(
-  `${root} .Toastify__bounce-enter--top-left, .Toastify__bounce-enter--bottom-left`,
-  {
-    animationName: 'Toastify__bounceInLeft',
-  },
-)
-globalStyle(
-  `${root} .Toastify__bounce-enter--top-right, .Toastify__bounce-enter--bottom-right`,
-  {
-    animationName: 'Toastify__bounceInRight',
-  },
-)
-globalStyle(`${root} .Toastify__bounce-enter--top-center`, {
-  animationName: 'Toastify__bounceInDown',
-})
-globalStyle(`${root} .Toastify__bounce-enter--bottom-center`, {
-  animationName: 'Toastify__bounceInUp',
-})
-globalStyle(
-  `${root} .Toastify__bounce-exit--top-left, .Toastify__bounce-exit--bottom-left`,
-  {
-    animationName: 'Toastify__bounceOutLeft',
-  },
-)
-globalStyle(
-  `${root} .Toastify__bounce-exit--top-right, .Toastify__bounce-exit--bottom-right`,
-  {
-    animationName: 'Toastify__bounceOutRight',
-  },
-)
-globalStyle(`${root} .Toastify__bounce-exit--top-center`, {
-  animationName: 'Toastify__bounceOutUp',
-})
-globalStyle(`${root} .Toastify__bounce-exit--bottom-center`, {
-  animationName: 'Toastify__bounceOutDown',
-})
-
-/** Zoom animation */
-globalStyle(`${root} .Toastify__zoom-enter`, {
-  animationName: 'Toastify__zoomIn',
-})
-globalStyle(`${root} .Toastify__zoom-exit`, {
-  animationName: 'Toastify__zoomOut',
-})
-
-/** Flip animation */
-globalStyle(`${root} .Toastify__flip-enter`, {
-  animationName: 'Toastify__flipIn',
-})
-globalStyle(`${root} .Toastify__flip-exit`, {
-  animationName: 'Toastify__flipOut',
-})
-
 /** Slide animation */
 globalStyle(
   `${root} .Toastify__slide-enter--top-left, .Toastify__slide-enter--bottom-left`,
