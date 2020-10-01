@@ -62,8 +62,16 @@ const Admin: Screen = ({}) => {
   const [filters, setFilters] = useState<FilterInput>({
     state: [],
     period: {
-      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0),
-      to: TODAY,
+      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
+      to: new Date(
+        TODAY.getFullYear(),
+        TODAY.getMonth(),
+        TODAY.getDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
     },
   } as any)
   const input = {
