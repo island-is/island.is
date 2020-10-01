@@ -3,12 +3,13 @@ import { IconTypes } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
 import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { MessageDescriptor } from 'react-intl'
 
 /**
  * A navigational item used by the service portal
  */
 export interface ServicePortalNavigationItem {
-  name: string
+  name: MessageDescriptor | string
   path?: ServicePortalPath
   external?: boolean
   icon?: IconTypes
@@ -42,7 +43,7 @@ export type ServicePortalRoute = {
   /**
    * The title of this route
    */
-  name: string
+  name: MessageDescriptor | string
   /**
    * Describes the path or paths used to route to this component
    */
@@ -60,7 +61,7 @@ export type ServicePortalWidget = {
   /**
    * Describes the name of this widget, displayed on the dashboard above it fx.
    */
-  name: string
+  name: MessageDescriptor | string
   /**
    * Weight determines how widgets are sorted on the dashboard.
    * The lower the weight, the higher up it is
@@ -76,7 +77,7 @@ export interface ServicePortalModule {
   /**
    * The title of this module
    */
-  name: string
+  name: MessageDescriptor | string
   /**
    * An optional render value of widgets that should
    * be displayed on the dashboard
@@ -110,5 +111,3 @@ export interface UserWithMeta {
   user: User
   mockSubjects: MockSubject[]
 }
-
-export type LanguageCode = 'is' | 'en'
