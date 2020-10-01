@@ -6,14 +6,18 @@ import { FormShell } from './FormShell'
 import {
   getApplicationStateInformation,
   getApplicationTemplateByTypeId,
+  getApplicationUIFields,
 } from '@island.is/application/template-loader'
+import { FieldProvider, useFields } from '../components/FieldContext'
 
-export const ApplicationForm: FC<{
+const ShellWrapper: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => {
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
+  const [, fieldsDispatch] = useFields()
+
   const { data, error, loading } = useQuery(GET_APPLICATION, {
     variables: {
       input: {
@@ -35,6 +39,10 @@ export const ApplicationForm: FC<{
           const stateInformation = await getApplicationStateInformation(
             application,
           )
+          const applicationFields = await getApplicationUIFields(
+            application.typeId,
+          )
+          fieldsDispatch(applicationFields)
           const role = template.mapUserToRole(
             nationalRegistryId,
             application.state,
@@ -53,7 +61,7 @@ export const ApplicationForm: FC<{
       }
     }
     populateForm()
-  }, [application, form, nationalRegistryId])
+  }, [fieldsDispatch, application, form, nationalRegistryId])
 
   if (!applicationId) {
     return <p>Error there is no id</p>
@@ -65,7 +73,6 @@ export const ApplicationForm: FC<{
   if (loading || !form || !dataSchema) {
     return null
   }
-
   return (
     <FormShell
       application={application}
@@ -73,5 +80,19 @@ export const ApplicationForm: FC<{
       form={form}
       nationalRegistryId={nationalRegistryId}
     />
+  )
+}
+
+export const ApplicationForm: FC<{
+  applicationId: string
+  nationalRegistryId: string
+}> = ({ applicationId, nationalRegistryId }) => {
+  return (
+    <FieldProvider>
+      <ShellWrapper
+        applicationId={applicationId}
+        nationalRegistryId={nationalRegistryId}
+      />
+    </FieldProvider>
   )
 }

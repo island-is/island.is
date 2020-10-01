@@ -6,29 +6,7 @@ import {
   SingleConditionCheck,
   StaticCheck,
 } from '../types/Condition'
-
-const getValueViaPath = (
-  obj: {},
-  path: string,
-  defaultValue = undefined,
-): Answer | undefined => {
-  try {
-    const travel = (regexp: RegExp) =>
-      String.prototype.split
-        .call(path, regexp)
-        .filter(Boolean)
-        .reduce(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          (res, key) => (res !== null && res !== undefined ? res[key] : res),
-          obj,
-        )
-    const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
-    return result === undefined || result === obj ? defaultValue : result
-  } catch (e) {
-    return undefined
-  }
-}
+import { getValueViaPath } from './formUtils'
 
 function applyStaticConditionalCheck(
   formValue: FormValue,
@@ -36,7 +14,8 @@ function applyStaticConditionalCheck(
 ): boolean {
   const { value, questionId, comparator } = check
   let isValid = false
-  const answer = getValueViaPath(formValue, questionId)
+  const answer = getValueViaPath(formValue, questionId) as Answer | undefined
+
   switch (comparator) {
     case Comparators.EQUALS:
       isValid = answer === value

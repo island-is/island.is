@@ -1,7 +1,13 @@
-import { formatDate, parseArray, parseString } from './formatters'
+import {
+  formatDate,
+  parseArray,
+  parseString,
+  parseTransition,
+} from './formatters'
 import * as Constants from './constants'
 import { renderRestrictons } from './stepHelper'
 import { CustodyRestrictions } from '../types'
+import { CaseTransition } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
 describe('Formatters utils', () => {
@@ -31,6 +37,23 @@ describe('Formatters utils', () => {
 
       // Assert
       expect(parsedString).toEqual({ test: 'lorem' })
+    })
+  })
+
+  describe('Parse transition', () => {
+    test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
+      // Arrange
+      const modified = 'timestamp'
+      const transition = CaseTransition.SUBMIT
+
+      // Act
+      const parsedTransition = parseTransition(modified, transition)
+
+      // Assert
+      expect(parsedTransition).toEqual({
+        modified: 'timestamp',
+        transition: CaseTransition.SUBMIT,
+      })
     })
   })
 

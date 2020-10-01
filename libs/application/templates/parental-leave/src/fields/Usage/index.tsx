@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { FieldBaseProps } from '../../../../types'
+import { FieldBaseProps } from '@island.is/application/core'
 import Slider from './components/Slider'
 import { Box, Typography } from '@island.is/island-ui/core'
 
