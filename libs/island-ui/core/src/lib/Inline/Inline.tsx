@@ -14,11 +14,13 @@ import {
 
 export interface InlineProps extends CollapsibleAlignmentProps {
   space: ResponsiveSpace
+  flexWrap?: 'wrap' | 'nowrap'
   children: ReactNodeNoStrings
 }
 
 export const Inline = ({
   space = 'none',
+  flexWrap = 'wrap',
   align,
   alignY,
   collapseBelow,
@@ -43,7 +45,7 @@ export const Inline = ({
     <Box className={negativeMarginTop}>
       <Box
         className={negativeMarginLeft}
-        flexWrap="wrap"
+        flexWrap={flexWrap}
         {...collapsibleAlignmentProps}
       >
         {Children.map(orderChildren(flattenChildren(children)), (child) =>
