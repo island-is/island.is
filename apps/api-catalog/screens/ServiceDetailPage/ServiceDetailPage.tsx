@@ -8,7 +8,7 @@ import { GET_CATALOGUES_QUERY } from '../Queries';
 
 import {
     Query,
-    QueryGetApiCatalogueByIdArgs
+    //QueryGetApiCatalogueByIdArgs
   } from '@island.is/api/schema'
 import { ServiceDetails } from '../../components'
 

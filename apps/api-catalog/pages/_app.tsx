@@ -71,6 +71,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </div>
         <Footer 
+          showMiddleLinks
+          showTagLinks
           hideLanguageSwith
         />
       </Page>

@@ -1,4 +1,5 @@
 export { Layout } from './Layout'
+export { HomeLayout} from './HomeLayout'
 export { Header } from './Header'
 export { Card } from './Card'
 export { ServiceCard} from './ServiceCard'

@@ -1,31 +1,31 @@
 import React from 'react'
-import { Box, Link, Typography } from '@island.is/island-ui/core'
+import { Box, Link } from '@island.is/island-ui/core'
+
+import * as styles from './Card.treat';
+import cn from 'classnames';
 
 //import './service-card.scss'
 
-export interface CardInformation {
+export interface CardProps {
     title: string;
     slug: string;
+    text: string;
 }
 
-export interface CardProps {
-  card: CardInformation
-}
-
-function Card({ title, slug }) {
+function Card(props: CardProps) {
   return (
-    <Link href={slug}>
+    <Link href={props.slug}>
       <Box
       display="flex"
-      boxShadow="large"
+      flexDirection="column"
       borderRadius="large"
-      justifyContent="center"
-      alignItems="center"
       marginX={2}
+      marginY={2}
 
-      className="home-card"
+      className={cn(styles.homeCard)}
       >
-        <Typography variant="cardCategoryTitle">{title}</Typography>
+        <h3 className={cn(styles.cardTitle)}>{props.title}</h3>
+        <p className={cn(styles.cardText)}>{props.text}</p>
       </Box>
     </Link>
   )

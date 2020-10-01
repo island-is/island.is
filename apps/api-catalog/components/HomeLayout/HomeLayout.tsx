@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Box, ContentBlock, Columns, Column } from '@island.is/island-ui/core'
 
-import * as styles from './Layout.treat';
+import * as styles from './HomeLayout.treat';
 import cn from 'classnames';
 
 interface PropTypes {
@@ -9,13 +9,13 @@ interface PropTypes {
   right?: ReactNode
 }
 
-function Layout({ left, right }: PropTypes) {
+function HomeLayout({ left, right }: PropTypes) {
   return (
-    <Box paddingX="gutter">
+    <Box className={cn(styles.layout)} paddingX="gutter">
       <ContentBlock>
         <Columns align="right" space="gutter" collapseBelow="lg">
-          <Column width="7/12">{left}</Column>
-          <Column width="4/12">
+          <Column width="6/12">{left}</Column>
+          <Column width="5/12">
             <Box paddingLeft={[0, 0, 0, 8, 15]} width="full">
               {right}
             </Box>
@@ -26,4 +26,4 @@ function Layout({ left, right }: PropTypes) {
   )
 }
 
-export default Layout
+export default HomeLayout
