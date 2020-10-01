@@ -3,13 +3,11 @@ import {
   NormalizedCacheObject,
   IntrospectionFragmentMatcher,
   IdGetterObj,
-  defaultDataIdFromObject,
 } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
-
 import introspectionQueryResultData from './fragmentTypes.json'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
@@ -48,9 +46,11 @@ function create(initialState?: any) {
     link: httpLink,
     cache: new InMemoryCache({
       dataIdFromObject(obj: IdGetterObj) {
-        switch (obj.__typename) {
-          case 'ArticleCategory':
-            return `${obj.__typename}:${obj.id}:${clientLocale}`
+        // when we have an id on the obj then the queries get cached and don't update
+        // even if the lang has been changed.
+        // this will check if there is an id and append the lang locale to the id
+        if (obj.id && clientLocale) {
+          return `${obj.__typename}:${obj.id}:${clientLocale}`
         }
       },
       fragmentMatcher: new IntrospectionFragmentMatcher({

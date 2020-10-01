@@ -3,12 +3,20 @@ import React, {
   forwardRef,
   ReactElement,
   Ref,
+  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react'
-import { Button, Box, Stack, Typography, Icon } from '@island.is/island-ui/core'
+import {
+  Button,
+  Box,
+  Stack,
+  Typography,
+  Icon,
+  ColorSchemeContext,
+} from '@island.is/island-ui/core'
 import {
   useDialogState,
   Dialog,
@@ -36,7 +44,7 @@ export const ModalDiv = forwardRef(
   (props: DialogProps, ref: Ref<HTMLDivElement>) => {
     const [mounted, setMounted] = useState(false)
 
-    useLayoutEffect(function() {
+    useLayoutEffect(function () {
       setMounted(true)
     }, [])
 
@@ -58,6 +66,7 @@ export const Modal: FC<ModalProps> = ({
   buttonTextConfirm = 'Confirm',
 }) => {
   const initialFocusedRef = useRef(null)
+  const { colorScheme } = useContext(ColorSchemeContext)
 
   const dialog = useDialogState({
     animated,
@@ -82,55 +91,57 @@ export const Modal: FC<ModalProps> = ({
           {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
         </DialogDisclosure>
       )}
-      <DialogBackdrop {...dialog} as={ModalDiv}>
-        <Dialog
-          {...dialog}
-          role={role}
-          aria-label={label}
-          className={styles.dialog}
-        >
-          <Box
-            position="relative"
-            width="full"
-            marginX={3}
-            paddingX={[3, 6, 6, 15]}
-            paddingY={[6, 6, 6, 10]}
-            borderRadius="large"
-            className={styles.content}
+      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+        <DialogBackdrop {...dialog} as={ModalDiv}>
+          <Dialog
+            {...dialog}
+            role={role}
+            aria-label={label}
+            className={styles.dialog}
           >
-            <button onClick={onCloseEvent} className={styles.close}>
-              <Icon type="close" color="blue400" width="18" height="18" />
-            </button>
-            <Stack space={3}>
-              {!!title && (
-                <Typography variant="h2" as="h3">
-                  {title}
-                </Typography>
-              )}
-              {children ?? null}
-              <Box marginTop={6} className={styles.buttons}>
-                <Button
-                  ref={initialFocusedRef}
-                  width="fixed"
-                  variant="ghost"
-                  onClick={onCloseEvent}
-                >
-                  {buttonTextCancel}
-                </Button>
-                <Button
-                  width="fixed"
-                  onClick={() => {
-                    onCloseEvent()
-                    onConfirm && onConfirm()
-                  }}
-                >
-                  {buttonTextConfirm}
-                </Button>
-              </Box>
-            </Stack>
-          </Box>
-        </Dialog>
-      </DialogBackdrop>
+            <Box
+              position="relative"
+              width="full"
+              marginX={3}
+              paddingX={[3, 6, 6, 15]}
+              paddingY={[6, 6, 6, 10]}
+              borderRadius="large"
+              className={styles.content}
+            >
+              <button onClick={onCloseEvent} className={styles.close}>
+                <Icon type="close" color="blue400" width="18" height="18" />
+              </button>
+              <Stack space={3}>
+                {!!title && (
+                  <Typography variant="h2" as="h3">
+                    {title}
+                  </Typography>
+                )}
+                {children ?? null}
+                <Box marginTop={6} className={styles.buttons}>
+                  <Button
+                    ref={initialFocusedRef}
+                    width="fixed"
+                    variant="ghost"
+                    onClick={onCloseEvent}
+                  >
+                    {buttonTextCancel}
+                  </Button>
+                  <Button
+                    width="fixed"
+                    onClick={() => {
+                      onCloseEvent()
+                      onConfirm && onConfirm()
+                    }}
+                  >
+                    {buttonTextConfirm}
+                  </Button>
+                </Box>
+              </Stack>
+            </Box>
+          </Dialog>
+        </DialogBackdrop>
+      </ColorSchemeContext.Provider>
     </>
   )
 }
