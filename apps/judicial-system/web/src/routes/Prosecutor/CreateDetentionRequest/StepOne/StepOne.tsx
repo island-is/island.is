@@ -225,7 +225,12 @@ export const StepOne: React.FC = () => {
                   hasError={policeCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
                     const validateField = validate(evt.target.value, 'empty')
-                    if (validateField.isValid) {
+                    const validateFieldFormat = validate(
+                      evt.target.value,
+                      'police-casenumber-format',
+                    )
+
+                    if (validateField.isValid && validateFieldFormat.isValid) {
                       createCaseIfPossible()
                       updateState(
                         workingCase,
@@ -235,7 +240,8 @@ export const StepOne: React.FC = () => {
                       )
                     } else {
                       setPoliceCaseNumberErrorMessage(
-                        validateField.errorMessage,
+                        validateField.errorMessage ||
+                          validateFieldFormat.errorMessage,
                       )
                     }
                   }}

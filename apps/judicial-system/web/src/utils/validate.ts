@@ -1,6 +1,6 @@
 // TODO: Add tests
 
-type Validation = 'empty' | 'time-format'
+type Validation = 'empty' | 'time-format' | 'police-casenumber-format'
 export const validate = (value: string, validation: Validation) => {
   const v = getRegexByValidation(validation)
   const isValid = v.regex.test(value)
@@ -17,6 +17,11 @@ export const getRegexByValidation = (validation: Validation) => {
     case 'time-format':
       return {
         regex: new RegExp('^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$'),
+        errorMessage: 'Ekki á réttu formi',
+      }
+    case 'police-casenumber-format':
+      return {
+        regex: new RegExp(/[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-\d{0,99999}$/g),
         errorMessage: 'Ekki á réttu formi',
       }
   }
