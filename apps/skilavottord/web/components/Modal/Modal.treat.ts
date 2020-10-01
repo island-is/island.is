@@ -3,6 +3,9 @@ import { style } from 'treat'
 
 export const container = style({
   position: 'fixed',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   width: '100%',
   height: '100%',
   top: 0,
@@ -31,7 +34,7 @@ export const overlay = style({
   animationDuration: '0.25s',
 })
 
-export const modal = style({
+export const modalContainer = style({
   position: 'relative',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   zIndex: 1,
@@ -58,8 +61,4 @@ export const modalClose = style({
   right: 30,
   lineHeight: 0,
   outline: 0,
-})
-
-export const indent = style({
- 
 })
