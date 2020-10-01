@@ -70,37 +70,15 @@ jobs:
 
       - name: GitHub envs
         run: env | grep GITHUB
-      - run: |
-          echo "::set-env name=HEAD::${GITHUB_SHA}"
-        id: git_nx_head
-        name: Preparing HEAD tag
-      - run: |
-          if [[ ! -z "$GITHUB_BASE_REF" ]]
-          then
-            export BRANCH=$GIT_BASE_BRANCH
-          else
-            export BRANCH=$GIT_BRANCH
-          fi
-          # Consider all hashes between HEAD and our merge base ~20 as possibilities
-          MERGE_BASE=$(git merge-base origin/master HEAD)
-          LAST_GOOD_BUILD=`git log --format=%H $MERGE_BASE~20..HEAD | node .github/actions/dist/index.js`
-          LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
-          LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
-          LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
-          echo "Last successful build is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
-          echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
-          LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
-          export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
-          echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
-          echo "::set-env name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
-          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
 
+      - run: |
+          source ./scripts/prepare-base-tags.sh
+          echo "::set-env name=BASE::${BASE}"
+          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
         id: git_nx_base
         name: Preparing BASE tags
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BASE_BRANCH: ${{ env.GIT_BASE_BRANCH }}
 
       - name: Set publish flag
         id: publish_flag
@@ -111,7 +89,7 @@ jobs:
           else
             export PUBLISH=true
           fi
-          echo "::set-env name=PUBLISH::${PUBLISH}"
+          export PUBLISH=true
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -134,10 +112,6 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
-      - name: Building NodeJS dependencies - host OS
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
-
       - name: Set up Docker Buildx
         if: steps.cache-deps.outputs.cache-hit != 'true'
         id: buildx
@@ -154,61 +128,45 @@ jobs:
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
       - name: Security audit Node modules
-        run: yarn run security-audit
+        run: ./scripts/security-audit.sh
 
       - name: License audit Node modules
-        run: yarn run license-audit
+        run: ./scripts/license-audit.sh
 
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh lint`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`CHUNK_SIZE=7 node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          CHUNK_SIZE=7 source ./scripts/generate-chunks.sh lint
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare test targets
         id: test_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh test`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh test
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare docker-express targets
         id: docker_express_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh docker-express`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh docker-express
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare docker-next targets
         id: docker_next_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh docker-next`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh docker-next
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare docker-static targets
         id: docker_static_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh docker-static`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh docker-static
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare unaffected docker images
         id: docker_unaffected_projects
         run: |
-          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express docker-static`
-          echo "Unaffected Docker images: ${UNAFFECTED}"
+          source ./scripts/list-unaffected.sh docker-next docker-express docker-static
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
@@ -328,7 +286,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -375,7 +333,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -422,7 +380,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
