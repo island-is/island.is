@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
 import { Box, Typography } from '@island.is/island-ui/core'
-import { ReactIntlMessage } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
 
 interface Props {
-  name: string | ReactIntlMessage
+  name: string | MessageDescriptor
 }
 
 const ModuleLoadingScreen: FC<Props> = ({ name }) => {
