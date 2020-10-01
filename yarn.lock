@@ -14740,10 +14740,10 @@ karma-source-map-support@1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
-kennitala@1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.3.tgz#aaa65e3240c9d7225cefe6d58019556f33744955"
-  integrity sha512-mjcnFBKUDkTDpDnsZHXTbfe8v8nO0YikTHqyDHpE9HZBkLKP/tazcbbBanTRr0F2O68C0t+bGqTPUXpN35VmqQ==
+kennitala@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.4.tgz#b478ae0d62b9687d458e611806692596e2bd6cac"
+  integrity sha512-hxnzr39l4SlJHvhnRtW5Z9hyNiY6LUKjGBMnakLpmYEnIrxXXx5+wpBTj59ixw7l40D5LJtrFdlqnBG8IQ0N8Q==
 
 killable@^1.0.1:
   version "1.0.1"
