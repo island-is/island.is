@@ -226,7 +226,7 @@ const ButtonContent: FC<ButtonContentProps> = ({
           )}
         </span>
       ) : (
-        <Inline alignY="center" space={2}>
+        <Inline alignY="center" flexWrap="nowrap" space={2}>
           {isMenuButton && hasLeftContent ? (
             <LeftContentContainer>
               {leftImage ? (
