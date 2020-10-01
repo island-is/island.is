@@ -1,8 +1,11 @@
 import React from 'react'
-import { ToastContainer, toast as toastify, ToastOptions } from 'react-toastify'
+import {
+  ToastContainer as ToastifyContainer,
+  toast as toastify,
+  Slide,
+} from 'react-toastify'
 import { Box } from '../Box'
 import Icon from '../Icon/Icon'
-import { Inline } from '../Inline/Inline'
 import Typography from '../Typography/Typography'
 import * as toastStyles from './Toast.treat'
 import { toastKeyframes } from './toastKeyframes'
@@ -16,6 +19,8 @@ declare module 'react' {
 
 interface ToastProps {
   hideProgressBar?: boolean
+  timeout?: number
+  closeButton?: boolean
 }
 
 const RenderMessage = ({
@@ -38,33 +43,32 @@ const RenderMessage = ({
     info: 'toasterInfo' as const,
   }
   return (
-    <Box display="flex" padding={1}>
-      <Icon type={icons[type]} color={colors[type]} />
-      <Box paddingLeft={1}>
+    <Box display="flex" padding={1} alignItems="flexStart">
+      <Box flexShrink={0}>
+        <Icon type={icons[type]} color={colors[type]} />
+      </Box>
+      <Box paddingLeft={2}>
         <Typography variant="h5">{message}</Typography>
       </Box>
     </Box>
   )
 }
 
-// return (
-//   <Inline space="gutter" alignY="center">
-//     <Icon type={icons[type]} color={colors[type]} />
-//     {message}
-//   </Inline>
-// )
-
-const Toast: React.FC<ToastProps> = ({ hideProgressBar = false }) => {
+const ToastContainer: React.FC<ToastProps> = ({
+  hideProgressBar = false,
+  timeout = 5000,
+}) => {
   return (
     <div className={toastStyles.root}>
-      <ToastContainer
+      <ToastifyContainer
         position="bottom-right"
-        autoClose={5000}
+        autoClose={timeout}
         hideProgressBar={hideProgressBar}
         closeOnClick
         pauseOnFocusLoss
         draggable
         pauseOnHover
+        transition={Slide}
       />
       <style jsx>{toastKeyframes}</style>
     </div>
@@ -82,4 +86,4 @@ export const toast = {
     toastify.warning(<RenderMessage type="warning" message={message} />),
 }
 
-export default Toast
+export default ToastContainer

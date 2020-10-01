@@ -109,6 +109,10 @@ globalStyle(`${root} .Toastify__toast`, {
     },
   },
 })
+globalStyle(`${root} .Toastify__toast svg`, {
+  position: 'relative',
+  top: 1,
+})
 globalStyle(`${root} .Toastify__toast--dark`, {
   background: '#121212',
   color: '#fff',
@@ -159,7 +163,7 @@ globalStyle(`${root} .Toastify__close-button--default`, {
   opacity: 0.5,
 })
 globalStyle(`${root} .Toastify__close-button > svg`, {
-  fill: 'currentColor',
+  fill: theme.color.dark400,
   height: 16,
   width: 14,
 })
