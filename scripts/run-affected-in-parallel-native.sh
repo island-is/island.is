@@ -20,7 +20,7 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
 
 MAX_JOBS=${MAX_JOBS:-2}
 
-AFFECTED_PROJECTS=`$DIR/_nx-affected-targets.sh $1 | tr -d '\n[:space:]'`
+AFFECTED_PROJECTS=`$DIR/nx-affected-targets.sh $1 | tr -d '\n[:space:]'`
 if [ ! -z "$AFFECTED_PROJECTS" ]
 then
   echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
