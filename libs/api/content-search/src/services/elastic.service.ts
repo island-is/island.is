@@ -16,8 +16,7 @@ import {
 } from '../queries/documentByMetaData'
 import { MappedData, SearchIndexes, SearchResponse } from '../types'
 import { environment } from '../environments/environment'
-import { SearcherInput } from '../dto/searcher.input'
-import { WebSearchAutocompleteInput } from '../dto/webSearchAutocomplete.input'
+import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
 
 const { elastic } = environment
 interface SyncRequest {
