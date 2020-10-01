@@ -7,9 +7,7 @@ source $DIR/_common.sh
 
 # Build the node_modules as well as the base image for the final outputs and store it in the shared cache so it can be reused later
 
-cd $PROJECT_ROOT
-yarn install --frozen-lockfile
-cd -
+(cd $PROJECT_ROOT ; yarn install --frozen-lockfile)
 
 mkdir -p $PROJECT_ROOT/cache
 docker buildx create --driver docker-container --use || true

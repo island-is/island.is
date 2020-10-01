@@ -7,8 +7,12 @@ source $DIR/_common.sh
 
 export DOCKER_TAG=local
 export PUBLISH=local
-source $PROJECT_ROOT/scripts/prepare-base-tags.sh
-$PROJECT_ROOT/scripts/prepare_deps.sh
-# APP=api $PROJECT_ROOT/scripts/lint.sh
-APP=api $PROJECT_ROOT/scripts/test.sh
-APP=api $PROJECT_ROOT/scripts/docker-express.sh
+export APP=api
+source $PROJECT_ROOT/scripts/00_prepare-base-tags.sh
+$PROJECT_ROOT/scripts/10_prepare-deps.sh
+$PROJECT_ROOT/scripts/20_lint.sh
+$PROJECT_ROOT/scripts/20_check-formatting.sh
+$PROJECT_ROOT/scripts/20_security-audit.sh
+$PROJECT_ROOT/scripts/20_license-audit.sh
+$PROJECT_ROOT/scripts/30_test.sh
+$PROJECT_ROOT/scripts/90_docker-express.sh

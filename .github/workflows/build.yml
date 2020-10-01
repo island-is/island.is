@@ -72,7 +72,7 @@ jobs:
         run: env | grep GITHUB
 
       - run: |
-          source ./scripts/prepare-base-tags.sh
+          source ./scripts/00_prepare-base-tags.sh
           echo "::set-env name=BASE::${BASE}"
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
         id: git_nx_base
@@ -122,16 +122,16 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: ./scripts/prepare_deps.sh
+        run: ./scripts/10_prepare_deps.sh
 
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
       - name: Security audit Node modules
-        run: ./scripts/security-audit.sh
+        run: ./scripts/20_security-audit.sh
 
       - name: License audit Node modules
-        run: ./scripts/license-audit.sh
+        run: ./scripts/20_license-audit.sh
 
       - name: Prepare lint targets
         id: lint_projects
@@ -207,7 +207,7 @@ jobs:
 
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh test
+        run: ./scripts/run-in-parallel.sh 30_test
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
 
@@ -227,7 +227,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
       - name: Check formatting
-        run: ./scripts/check_formatting.sh
+        run: ./scripts/20_check-formatting.sh
 
   linting:
     needs: prepare
@@ -253,7 +253,7 @@ jobs:
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel-native.sh lint
+        run: ./scripts/run-in-parallel-native.sh 20_lint
 
   docker-express:
     needs: [prepare, tests]
@@ -300,7 +300,7 @@ jobs:
 
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-express
+        run: ./scripts/run-in-parallel.sh 90_docker-express
 
   docker-static:
     needs: [prepare, tests]
@@ -347,7 +347,7 @@ jobs:
 
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-static
+        run: ./scripts/run-in-parallel.sh 90_docker-static
 
   docker-next:
     needs: [prepare, tests]
@@ -394,7 +394,7 @@ jobs:
 
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-next
+        run: ./scripts/run-in-parallel.sh 90_docker-next
 
   retag-unaffected:
     runs-on: ubuntu-20.04
