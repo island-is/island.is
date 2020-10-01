@@ -32,10 +32,10 @@ export const CourtRecord: React.FC = () => {
   useEffect(() => {
     const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
 
-    if (wc) {
+    if (wc && !workingCase) {
       setWorkingCase(wc)
     }
-  }, [])
+  }, [workingCase, setWorkingCase])
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
