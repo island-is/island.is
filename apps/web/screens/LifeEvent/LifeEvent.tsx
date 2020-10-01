@@ -179,4 +179,4 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
   return { lifeEvent, namespace }
 }
 
-export default withMainLayout(LifeEvent)
+export default withMainLayout(LifeEvent, { hasDrawerMenu: true })
