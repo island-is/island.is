@@ -54,15 +54,13 @@ export const Ruling: React.FC = () => {
     accusedPlea: caseDraftJSON.accusedPlea ?? '',
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
+    rejecting: caseDraftJSON.rejecting ?? false,
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
     custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
   })
 
-  const [requestRecjected, setRequestRejected] = useState(
-    caseDraftJSON.state === CaseState.REJECTED,
-  )
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
     AppealDecision
   >(caseDraftJSON.accusedAppealDecision)
@@ -178,28 +176,14 @@ export const Ruling: React.FC = () => {
                     name="rejectRequest"
                     label="Hafna kröfu"
                     onChange={({ target }) => {
-                      setRequestRejected(target.checked)
-                      // Save case
-                      api.saveCase(
-                        workingCase.id,
-                        parseString(
-                          'state',
-                          target.checked
-                            ? CaseState.REJECTED
-                            : CaseState.ACCEPTED,
-                        ),
-                      )
-
-                      updateState(
+                      autoSave(
                         workingCase,
-                        'state',
-                        target.checked
-                          ? CaseState.REJECTED
-                          : CaseState.ACCEPTED,
+                        'rejecting',
+                        target.checked,
                         setWorkingCase,
                       )
                     }}
-                    checked={requestRecjected}
+                    checked={workingCase.rejecting}
                     large
                   />
                 </GridColumn>

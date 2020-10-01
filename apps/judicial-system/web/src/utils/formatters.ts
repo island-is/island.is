@@ -11,7 +11,10 @@ export const parseArray = (property: string, array: string[]) => {
   }
 }
 
-export const parseString = (property: string, value: string | Date) => {
+export const parseString = (
+  property: string,
+  value: string | Date | boolean,
+) => {
   try {
     const json = JSON.parse(`{"${property}": "${value}"}`)
     return json

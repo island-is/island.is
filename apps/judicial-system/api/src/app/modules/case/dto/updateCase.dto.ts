@@ -137,6 +137,11 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly rejecting: boolean
+
+  @IsOptional()
+  @IsString()
   @ApiPropertyOptional()
   readonly custodyEndDate: Date
 

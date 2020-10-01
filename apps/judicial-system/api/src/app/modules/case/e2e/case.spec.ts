@@ -360,6 +360,7 @@ const remainingCaseData = {
   accusedPlea: 'Accused Plea',
   litigationPresentations: 'Litigation Presentations',
   ruling: 'Ruling',
+  rejecting: false,
   custodyEndDate: '2020-09-28T12:00:00.000Z',
   custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -452,6 +453,7 @@ function expectCasesToMatch(resCase: Case, theCase: Case) {
     theCase.litigationPresentations || null,
   )
   expect(resCase.ruling || null).toBe(theCase.ruling || null)
+  expect(resCase.rejecting || null).toBe(theCase.rejecting || null)
   expect(resCase.custodyEndDate || null).toBe(theCase.custodyEndDate || null)
   expect(resCase.custodyRestrictions || null).toStrictEqual(
     theCase.custodyRestrictions || null,
