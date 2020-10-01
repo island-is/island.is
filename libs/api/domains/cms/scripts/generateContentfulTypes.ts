@@ -1,21 +1,25 @@
-import { codegen } from '@jeremybarbet/contentful-typescript-codegen'
-import { createClient } from 'contentful-management'
+import 'isomorphic-fetch'
+import { writeFileSync } from 'fs'
+import { format, resolveConfig } from 'prettier'
 
-const client = createClient({
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
-})
-
+const targetFileName =
+  'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts'
+const apiUrl = 'https://contentful-type-generator.shared.devland.is/'
 async function main() {
   try {
-    const space = await client.getSpace('8k0h54kbe6bj')
-    const environment = await space.getEnvironment('master')
+    const prettierOptions = await resolveConfig(targetFileName)
+    if (!prettierOptions) {
+      console.error(`Could not find prettier options for ${targetFileName}`)
+      process.exit(1)
+    }
+    const res = await fetch(apiUrl)
 
-    codegen({
-      outputFile: 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts',
-      environment,
-    })
+    writeFileSync(
+      targetFileName,
+      format(await res.text(), { ...prettierOptions, parser: 'typescript' }),
+    )
   } catch (e) {
-    console.error(`Cannot generate contentful types ${e.message}`)
+    console.error(`Cannot fetch and write contentful types ${e.message}`)
   }
 }
 
