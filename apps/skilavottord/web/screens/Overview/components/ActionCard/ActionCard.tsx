@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   Typography,
-  Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -10,16 +9,15 @@ import {
   Tooltip,
   Inline,
 } from '@island.is/island-ui/core'
-import { OutlinedBox } from '@island.is/skilavottord-web/components'
+import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
 interface MockCar {
-  id: string
-  name: string
-  model: string
-  year: number
+  permno: string
+  type: string
+  newregdate: number
   color: number
   recyclable: boolean
   status?: string
@@ -33,7 +31,7 @@ interface ActionCardProps {
 
 export const ActionCard: FC<ActionCardProps> = ({
   onContinue,
-  car: { id, name, model, year, recyclable, isCoOwned = false },
+  car: { permno, type, newregdate, recyclable, isCoOwned = false },
 }: ActionCardProps) => {
   const {
     t: { myCars: t },
@@ -51,9 +49,9 @@ export const ActionCard: FC<ActionCardProps> = ({
               <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
-                    <Typography variant="h5">{id}</Typography>
+                    <Typography variant="h5">{permno}</Typography>
                     <Typography variant="p">
-                      {`${name} ${model}, ${year}`}
+                      {`${type}, ${newregdate}`}
                     </Typography>
                   </Stack>
                 </Box>
@@ -77,11 +75,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 paddingX={4}
                 paddingY={4}
               >
-                <Button
-                  size="small"
-                  width={isMobile ? 'fluid' : 'normal'}
-                  onClick={onContinue}
-                >
+                <Button size="small" onClick={onContinue}>
                   {t.actions.valid}
                 </Button>
               </ColumnBox>

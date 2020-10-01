@@ -22,5 +22,5 @@ export const mapBulletListSlice = ({
 }: IBigBulletList): BulletListSlice => ({
   typename: 'BulletListSlice',
   id: sys.id,
-  bullets: fields.bullets.map(mapBulletEntry),
+  bullets: (fields.bullets ?? []).map(mapBulletEntry),
 })

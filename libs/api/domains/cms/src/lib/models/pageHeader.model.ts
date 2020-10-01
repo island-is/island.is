@@ -27,12 +27,16 @@ export class PageHeader {
   slices: Array<TimelineSlice>
 }
 
-export const mapPageHeader = ({ fields, sys }: IPageHeader): PageHeader => ({
-  typename: 'PageHeader',
-  id: sys.id,
-  title: fields.title,
-  introduction: fields.introduction,
-  navigationText: fields.navigationText,
-  links: (fields.links ?? []).map(mapLink),
-  slices: fields.slices.map(mapTimelineSlice),
-})
+export const mapPageHeader = (entry: IPageHeader): PageHeader => {
+  const fields = entry?.fields
+  const sys = entry?.sys
+  return {
+    typename: 'PageHeader',
+    id: sys?.id ?? '',
+    title: fields?.title ?? '',
+    introduction: fields?.introduction ?? '',
+    navigationText: fields?.navigationText ?? '',
+    links: (fields?.links ?? []).map(mapLink),
+    slices: (fields?.slices ?? []).map(mapTimelineSlice),
+  }
+}

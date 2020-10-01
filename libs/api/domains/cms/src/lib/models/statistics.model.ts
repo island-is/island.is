@@ -23,5 +23,5 @@ export const mapStatistics = ({ fields, sys }: IStatistics): Statistics => ({
   typename: 'Statistics',
   id: sys.id,
   title: fields.title ?? '',
-  statistics: fields.statistics.map(mapStatistic),
+  statistics: (fields.statistics ?? []).map(mapStatistic),
 })
