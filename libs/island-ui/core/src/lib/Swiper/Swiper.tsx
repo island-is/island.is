@@ -29,6 +29,7 @@ const Swiper: FC = ({ children }) => {
         <div className={styles.slides}>
           {arr.map((child, i) => (
             <div
+              key={i}
               className={styles.slide}
               style={{
                 width: i === arr.length - 1 ? theme.spacing[3] + width : width,

@@ -5,7 +5,6 @@ import {
   GridRow,
   GridColumn,
   Swiper,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -27,9 +26,9 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
-  const renderLifeEventCard = (lifeEvent, key: string | number) => (
+  const renderLifeEventCard = (lifeEvent, i) => (
     <Card
-      key={key}
+      key={i}
       title={lifeEvent.title}
       description={lifeEvent.intro}
       href={makePath('lifeEvent', '[slug]')}
@@ -38,17 +37,17 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     />
   )
 
-  let renderDesktopView = (lifeEvents) =>
+  let renderDesktopView = (lifeEvents, keyPrefix?: string) =>
     lifeEvents
       .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
       .map((lifeEvent, i) => (
         <GridColumn
-          key={`life-event-column-${i}`}
+          key={i}
           hiddenBelow="md"
           span={['12/12', '6/12', '6/12', '6/12', '4/12']}
           paddingBottom={3}
         >
-          {renderLifeEventCard(lifeEvent, `life-event-card-desktop-${i}`)}
+          {renderLifeEventCard(lifeEvent, `${keyPrefix}-${i}`)}
         </GridColumn>
       ))
 
@@ -63,16 +62,18 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
       </GridRow>
       <GridRow>
         {showSleeve ? (
-          <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
+          <Sleeve sleeveShadow="purple">
+            {renderDesktopView(lifeEvents, 'desktop')}
+          </Sleeve>
         ) : (
-          renderDesktopView(lifeEvents)
+          renderDesktopView(lifeEvents, 'desktop')
         )}
       </GridRow>
       <GridRow>
         <GridColumn span="12/12" hiddenAbove="sm">
           <Swiper>
             {lifeEvents.map((lifeEvent, i) =>
-              renderLifeEventCard(lifeEvent, `life-event-card-mobile-${i}`),
+              renderLifeEventCard(lifeEvent, i),
             )}
           </Swiper>
         </GridColumn>
