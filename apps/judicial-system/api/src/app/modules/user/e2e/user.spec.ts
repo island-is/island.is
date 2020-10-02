@@ -3,7 +3,6 @@ import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import { setup, user } from '../../../../../test/setup'
-import { test } from '../../../../../sequelize.config.js'
 
 let app: INestApplication
 
