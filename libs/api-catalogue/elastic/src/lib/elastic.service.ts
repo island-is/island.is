@@ -13,7 +13,7 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { searchQuery } from './queries/search.model'
-//import { logger } from '@island.is/logging'
+import { logger } from '@island.is/logging'
 
 const { elastic } = environment
 
@@ -23,18 +23,18 @@ export class ElasticService {
   private indexName = 'apicatalogue'
 
   async deleteIndex() {
-    console.log('Deleting index')
+    logger.info('Deleting index', this.indexName)
 
     try {
       const client = await this.getClient()
       return client.indices.delete({ index: this.indexName })
     } catch (error) {
-      console.log(JSON.stringify(error, null, 2))
+      logger.error('Error in deleting index', error)
     }
   }
 
   async index(service: Service) {
-    console.log('Indexing', service)
+    logger.info('Indexing', service)
 
     try {
       const client = await this.getClient()
@@ -44,12 +44,12 @@ export class ElasticService {
         body: service,
       })
     } catch (error) {
-      console.log(JSON.stringify(error, null, 2))
+      logger.error('Error in index', error)
     }
   }
 
   async bulk(services: Array<Service>) {
-    console.log('Bulk insert', services)
+    logger.info('Bulk insert', services)
 
     if (services.length) {
       const bulk = []
@@ -66,11 +66,11 @@ export class ElasticService {
           index: this.indexName,
         })
       } catch (error) {
-        console.log(JSON.stringify(error, null, 2))
+        logger.error('Error in bulk import', error)
       }
     }
 
-    console.log('nothing to bulk insert')
+    logger.debug('nothing to bulk insert')
   }
 
   async fetchAll(
@@ -82,7 +82,7 @@ export class ElasticService {
     type?: TypeCategory[],
     access?: AccessCategory[],
   ) {
-    console.log('Fetch paginated results')
+    logger.debug('Fetch paginated results')
 
     const requestBody = searchQuery({
       limit,
@@ -98,14 +98,14 @@ export class ElasticService {
   }
 
   async fetchById(id: string) {
-    console.log('Fetch by id', id)
+    logger.info('Fetch by id')
     return this.search<SearchResponse<Service>, RequestBody>({
       query: { bool: { must: { term: { id: id } } } },
     })
   }
 
   async search<ResponseBody, RequestBody>(query: RequestBody) {
-    console.log('Searching for', JSON.stringify(query, null, 2))
+    logger.debug('Searching for', query)
     try {
       const client = await this.getClient()
       return client.search<ResponseBody, RequestBody>({
@@ -113,7 +113,7 @@ export class ElasticService {
         index: this.indexName,
       })
     } catch (error) {
-      console.log(error)
+      logger.error('Error in search', error)
     }
   }
 
@@ -121,6 +121,8 @@ export class ElasticService {
     if (!ids.length) {
       return
     }
+
+    logger.info('Deleting based on indexes', { ids })
     const client = await this.getClient()
     return client.delete_by_query({
       index: this.indexName,
@@ -136,8 +138,8 @@ export class ElasticService {
   }
 
   async deleteAllExcept(excludeIds: Array<string>) {
+    logger.info('Deleting everything except', { excludeIds })
     const client = await this.getClient()
-
     return client.delete_by_query({
       index: this.indexName,
       body: {
@@ -154,9 +156,9 @@ export class ElasticService {
   async ping() {
     const client = await this.getClient()
     const result = await client.ping().catch((error) => {
-      console.log(error)
+      logger.error('Error in ping', error)
     })
-    console.log('Got elasticsearch ping response')
+    logger.info('Got elasticsearch ping response')
     return result
   }
 
