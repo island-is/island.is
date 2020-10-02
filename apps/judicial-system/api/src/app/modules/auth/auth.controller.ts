@@ -154,13 +154,15 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  private redirectAuthenticatedUser(
+  private async redirectAuthenticatedUser(
     authUser: AuthUser,
     returnUrl: string,
     res,
     csrfToken?: string,
   ) {
-    if (!this.authService.validateUser(authUser)) {
+    const valid = await this.authService.validateUser(authUser)
+
+    if (!valid) {
       this.logger.error('Unknown user', {
         extra: {
           authUser,
