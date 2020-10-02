@@ -29,6 +29,7 @@ export interface MyCars {
   status: CarStatus
   buttons: CarsButtons
   tooltip: string
+  error: Errors
 }
 
 export interface Confirm {
@@ -84,6 +85,7 @@ export interface CarStatus {
 export interface CarsButtons {
   openProcess: string
   seeDetails: string
+  reload: string
 }
 
 export interface ConfirmSubTitles {
@@ -128,6 +130,13 @@ export interface CompletedConfirmation {
 
 export interface CompletedButtons extends ProcessButtons {
   close: string
+}
+
+export interface Errors {
+  title: string
+  message: string
+  primaryButton: string
+  secondaryButton: string
 }
 
 // Converts JSON strings to/from your types
