@@ -64,8 +64,12 @@ const NavItemContent: FC<Props> = ({
 )
 
 const NavItem: FC<Props> = (props) => {
-  return props.path ? (
-    <Link to={props.path} target={props.external ? '_blank' : '_self'}>
+  return props.external ? (
+    <a href={props.path} target="_blank">
+      <NavItemContent {...props} />
+    </a>
+  ) : props.path ? (
+    <Link to={props.path}>
       <NavItemContent {...props} />
     </Link>
   ) : (

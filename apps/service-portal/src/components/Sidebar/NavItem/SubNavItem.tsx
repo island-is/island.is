@@ -35,8 +35,12 @@ const SubNavItemContent: FC<Props> = ({
 )
 
 const SubNavItem: FC<Props> = (props) => {
-  return props.path ? (
-    <Link to={props.path} target={props.external ? '_blank' : '_self'}>
+  return props.external ? (
+    <a href={props.path} target="_blank">
+      <SubNavItemContent {...props} />
+    </a>
+  ) : props.path ? (
+    <Link to={props.path}>
       <SubNavItemContent {...props} />
     </Link>
   ) : (

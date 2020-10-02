@@ -8,19 +8,21 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
+import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
 import * as styles from './InfoScreen.treat'
 
 interface Props {
-  title: string
-  intro: string
+  title: MessageDescriptor
+  intro: MessageDescriptor
   list?: {
-    title: string
-    items: string[]
+    title: MessageDescriptor
+    items: MessageDescriptor[]
   }
-  institutionTitle: string
-  institutionDescription: string
+  institutionTitle: MessageDescriptor
+  institutionDescription: MessageDescriptor
   institutionHref: string
-  institutionLinkTitle: string
+  institutionLinkTitle: MessageDescriptor
   renderFigure: () => JSX.Element | null
 }
 
@@ -34,6 +36,8 @@ export const InfoScreen: FC<Props> = ({
   institutionLinkTitle,
   renderFigure,
 }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <>
       <Box marginBottom={[4, 6, 9]}>
@@ -41,19 +45,21 @@ export const InfoScreen: FC<Props> = ({
           <GridColumn span={['12/12', '7/12']}>
             <Box marginTop={[2, 3, 8]} marginBottom={2}>
               <Box marginBottom={[2, 3]}>
-                <Typography variant="h1">{title}</Typography>
+                <Typography variant="h1">{formatMessage(title)}</Typography>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
-                <Typography variant="intro">{intro}</Typography>
+                <Typography variant="intro">{formatMessage(intro)}</Typography>
               </Box>
               {list && (
                 <>
                   <Box marginBottom={[2, 3]}>
-                    <Typography variant="h2">{list.title}</Typography>
+                    <Typography variant="h2">
+                      {formatMessage(list.title)}
+                    </Typography>
                   </Box>
                   <BulletList>
                     {list.items.map((item, index) => (
-                      <Bullet key={index}>{item}</Bullet>
+                      <Bullet key={index}>{formatMessage(item)}</Bullet>
                     ))}
                   </BulletList>
                 </>
@@ -70,15 +76,26 @@ export const InfoScreen: FC<Props> = ({
         background="purple100"
       >
         <Box marginBottom={[3, 4]}>
-          <Typography variant="h2">Stofnun</Typography>
+          <Typography variant="h2">
+            {formatMessage({
+              id: 'service.portal:institution',
+              defaultMessage: 'Stofnun',
+            })}
+          </Typography>
         </Box>
         <Box marginBottom={[2, 3]}>
-          <Typography variant="h3">{institutionTitle}</Typography>
+          <Typography variant="h3">
+            {formatMessage(institutionTitle)}
+          </Typography>
         </Box>
         <Box marginBottom={[2, 3]}>
-          <Typography variant="p">{institutionDescription}</Typography>
+          <Typography variant="p">
+            {formatMessage(institutionDescription)}
+          </Typography>
         </Box>
-        <ArrowLink href={institutionHref}>{institutionLinkTitle}</ArrowLink>
+        <ArrowLink href={institutionHref}>
+          {formatMessage(institutionLinkTitle)}
+        </ArrowLink>
       </Box>
     </>
   )
