@@ -16,7 +16,7 @@ const Greeting: FC<{}> = () => {
             {formatMessage({
               defaultMessage: 'Velkomin/nn aftur',
               description: 'Welcome user',
-              id: 'service-portal.welcome-back',
+              id: 'service.portal:welcome-back',
             })}
           </Typography>
           <Typography variant="h3" color="purple400">
