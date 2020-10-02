@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/node'
-import * as Transport from 'winston-transport'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const TransportStream = require('winston-transport')
 
-export class SentryTransport extends Transport {
+export class SentryTransport extends TransportStream {
   constructor() {
     super({ level: 'error' })
   }
@@ -15,8 +16,10 @@ export class SentryTransport extends Transport {
           Sentry.setExtra(key, info.extra[key])
         })
       }
+
       Sentry.captureMessage(info.message)
     }
+
     callback()
   }
 }

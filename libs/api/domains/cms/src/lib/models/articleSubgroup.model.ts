@@ -1,4 +1,4 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 import { IArticleSubgroup } from '../generated/contentfulTypes'
 
