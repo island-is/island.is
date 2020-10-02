@@ -48,9 +48,9 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
             progress={50}
           />
         ))}
-        {applications?.map((application: Application, index: number) => (
+        {applications?.map((application: Application) => (
           <ApplicationCard
-            key={index}
+            key={application.id}
             name={application.name || application.typeId}
             date={format(new Date(application.modified), 'MMMM')}
             status={application.state === 'approved'}

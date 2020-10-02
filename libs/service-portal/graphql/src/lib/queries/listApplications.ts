@@ -10,10 +10,7 @@ export const LIST_APPLICATIONS = gql`
       assignee
       externalId
       state
-      attachments
       typeId
-      answers
-      externalData
       name
       progress
     }
