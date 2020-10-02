@@ -2,6 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 
 import styles, {
+  base,
   VariantTypes,
   colors,
   truncate as truncateStyle,
@@ -67,6 +68,7 @@ export const Typography = ({
       paddingBottom={paddingBottom}
       paddingY={paddingY}
       className={cn(
+        base,
         variant ? styles[variant] : null,
         color ? colors[color] : null,
         fontWeight ? fontWeightStyles[fontWeight] : null,
