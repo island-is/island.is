@@ -20,29 +20,28 @@ module.exports = {
       role: Sequelize.STRING,
     })
 
-    return queryInterface.sequelize.transaction((t) =>
-      Promise.all(
-        userSeed.map((user) =>
-          queryInterface.upsert(
-            'user',
-            {
-              ...user,
-              created: new Date(),
-              modified: new Date(),
-            },
-            user,
-            { id: user.id },
-            model,
-            { transaction: t },
-          ),
+    return Promise.all(
+      userSeed.map((user) =>
+        queryInterface.upsert(
+          'user',
+          {
+            ...user,
+            created: new Date(),
+            modified: new Date(),
+          },
+          {
+            ...user,
+            modified: new Date(),
+          },
+          { id: user.id },
+          model,
+          {},
         ),
       ),
     )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.bulkDelete('user', null, { transaction: t }),
-    )
+    return queryInterface.bulkDelete('user', null, { transaction: t })
   },
 }
