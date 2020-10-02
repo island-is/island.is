@@ -1,5 +1,11 @@
 import { Field, InputType, ID } from '@nestjs/graphql'
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import {
   AccessCategory,
   PricingCategory,
@@ -15,7 +21,7 @@ export class GetApiServiceInput {
 }
 
 @InputType()
-export class GetApiCataloguesInput {
+export class GetApiCatalogueInput {
   @Field((type) => Number)
   @IsNumber()
   limit: number
@@ -28,30 +34,25 @@ export class GetApiCataloguesInput {
   @Field((type) => String, { nullable: true })
   @IsOptional()
   @IsString()
-  owner?: string
+  query?: string
 
-  @Field((type) => String, { nullable: true })
+  @Field((type) => [PricingCategory], { nullable: true })
   @IsOptional()
-  @IsString()
-  name?: string
+  @IsArray()
+  pricing?: PricingCategory[]
 
-  @Field((type) => PricingCategory, { nullable: true })
+  @Field((type) => [DataCategory], { nullable: true })
   @IsOptional()
-  @IsEnum(PricingCategory)
-  pricing?: PricingCategory
+  @IsArray()
+  data?: DataCategory[]
 
-  @Field((type) => DataCategory, { nullable: true })
+  @Field((type) => [TypeCategory], { nullable: true })
   @IsOptional()
-  @IsEnum(DataCategory)
-  data?: DataCategory
+  @IsArray()
+  type?: TypeCategory[]
 
-  @Field((type) => TypeCategory, { nullable: true })
+  @Field((type) => [AccessCategory], { nullable: true })
   @IsOptional()
-  @IsEnum(TypeCategory)
-  type?: TypeCategory
-
-  @Field((type) => AccessCategory, { nullable: true })
-  @IsOptional()
-  @IsEnum(AccessCategory)
-  access?: AccessCategory
+  @IsArray()
+  access?: AccessCategory[]
 }

@@ -6,6 +6,13 @@ import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
 import { SearchResponse } from './types/types.model'
+import {
+  AccessCategory,
+  PricingCategory,
+  DataCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
+import { searchQuery } from './queries/search.model'
 //import { logger } from '@island.is/logging'
 
 const { elastic } = environment
@@ -20,7 +27,6 @@ export class ElasticService {
 
     try {
       const client = await this.getClient()
-
       return client.indices.delete({ index: this.indexName })
     } catch (error) {
       console.log(JSON.stringify(error, null, 2))
@@ -63,46 +69,43 @@ export class ElasticService {
         console.log(JSON.stringify(error, null, 2))
       }
     }
+
+    console.log('nothing to bulk insert')
   }
 
-  async fetchAll(limit: number, cursor?: string[]) {
+  async fetchAll(
+    limit: number,
+    searchAfter?: string[],
+    query?: string,
+    pricing?: PricingCategory[],
+    data?: DataCategory[],
+    type?: TypeCategory[],
+    access?: AccessCategory[],
+  ) {
     console.log('Fetch paginated results')
-    const query = {
-      size: limit,
-      query: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        match_all: {},
-      },
-      sort: [
-        { 'owner.keyword': { order: 'asc' } },
-        { 'name.keyword': { order: 'asc' } },
-      ],
-    }
 
-    if (cursor.length > 0) {
-      query['search_after'] = cursor
-    }
+    const requestBody = searchQuery({
+      limit,
+      searchAfter,
+      query,
+      pricing,
+      data,
+      type,
+      access,
+    })
 
-    return this.search<SearchResponse<Service>, RequestBody>(query)
+    return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
   async fetchById(id: string) {
-    console.log('Fetch by id')
-    const query = {
-      query: {
-        match: {
-          id: id,
-        },
-      },
-    }
-    return this.search<SearchResponse<Service>, RequestBody>(query)
-  }
-
-  async fetchByFilters() {
-    console.log('Fetch paginated results based on filters')
+    console.log('Fetch by id', id)
+    return this.search<SearchResponse<Service>, RequestBody>({
+      query: { bool: { must: { term: { id: id } } } },
+    })
   }
 
   async search<ResponseBody, RequestBody>(query: RequestBody) {
+    console.log('Searching for', JSON.stringify(query, null, 2))
     try {
       const client = await this.getClient()
       return client.search<ResponseBody, RequestBody>({

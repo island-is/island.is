@@ -662,19 +662,19 @@ type ApiService {
   owner: String!
   name: String!
   description: String!
-  pricing: [PricingCategoryEnum!]!
-  data: [DataCategoryEnum!]!
-  type: [TypeCategoryEnum!]!
-  access: [AccessCategoryEnum!]!
+  pricing: [PricingCategory!]!
+  data: [DataCategory!]!
+  type: [TypeCategory!]!
+  access: [AccessCategory!]!
   xroadIdentifier: [XroadInfo!]
 }
 
-enum PricingCategoryEnum {
+enum PricingCategory {
   FREE
   PAID
 }
 
-enum DataCategoryEnum {
+enum DataCategory {
   PUBLIC
   OFFICIAL
   PERSONAL
@@ -682,13 +682,13 @@ enum DataCategoryEnum {
   FINANCIAL
 }
 
-enum TypeCategoryEnum {
+enum TypeCategory {
   REST
   SOAP
   GRAPHQL
 }
 
-enum AccessCategoryEnum {
+enum AccessCategory {
   XROAD
   APIGW
 }
@@ -739,7 +739,7 @@ type Query {
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
   getTranslations(input: GetTranslationsInput!): JSON
-  getApiCatalogue(input: GetApiCataloguesInput!): ApiCatalogue!
+  getApiCatalogue(input: GetApiCatalogueInput!): ApiCatalogue!
   getApiServiceById(input: GetApiServiceInput!): ApiService
 }
 
@@ -970,15 +970,14 @@ input GetTranslationsInput {
   lang: String!
 }
 
-input GetApiCataloguesInput {
+input GetApiCatalogueInput {
   limit: Float!
   cursor: String
-  owner: String
-  name: String
-  pricing: PricingCategoryEnum
-  data: DataCategoryEnum
-  type: TypeCategoryEnum
-  access: AccessCategoryEnum
+  query: String
+  pricing: [PricingCategory!]
+  data: [DataCategory!]
+  type: [TypeCategory!]
+  access: [AccessCategory!]
 }
 
 input GetApiServiceInput {

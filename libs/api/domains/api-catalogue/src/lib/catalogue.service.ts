@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { ApiCatalogue, ApiService } from './models/catalogue.model'
-import { GetApiCataloguesInput } from './dto/catalogue.input'
+import { GetApiCatalogueInput } from './dto/catalogue.input'
 import { ElasticService } from '@island.is/api-catalogue/elastic'
 
 @Injectable()
 export class ApiCatalogueService {
   constructor(private elastic: ElasticService) {}
 
-  async getCatalogue(input: GetApiCataloguesInput): Promise<ApiCatalogue> {
+  async getCatalogue(input: GetApiCatalogueInput): Promise<ApiCatalogue> {
     const res: ApiCatalogue = {
       services: [],
       pageInfo: {
@@ -16,16 +16,25 @@ export class ApiCatalogueService {
     }
     //Set the search after parameter as an empty array since it will be ignored in elastic
     let searchAfter = []
+    const { limit, cursor, query, pricing, data, type, access } = input
 
-    if (input.cursor || input.cursor !== null) {
+    if (cursor || cursor !== null) {
       const temp = Buffer.from(input.cursor, 'base64').toString()
       searchAfter = temp.split(',')
     }
 
-    const { body } = await this.elastic.fetchAll(input.limit + 1, searchAfter)
+    const { body } = await this.elastic.fetchAll(
+      limit,
+      searchAfter,
+      query,
+      pricing,
+      data,
+      type,
+      access,
+    )
 
     //check if we have more available then was asked for
-    if (body?.hits?.hits.length > input.limit) {
+    if (body?.hits?.hits.length > limit) {
       //remove the unwanted result
       body?.hits?.hits.pop()
       //get the sort parameters of the last item to use as the cursor for next search
@@ -42,7 +51,6 @@ export class ApiCatalogueService {
 
   async getApiServiceById(id: string): Promise<ApiService> {
     const { body } = await this.elastic.fetchById(id)
-
     if (body?.hits?.total.value > 0) {
       return body?.hits?.hits[0]._source
     }

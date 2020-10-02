@@ -11,19 +11,19 @@ import { PageInfo } from './pageInfo.model'
 import { XroadInfo } from './xroadIdentifier.model'
 
 registerEnumType(AccessCategory, {
-  name: 'AccessCategoryEnum',
-})
-
-registerEnumType(PricingCategory, {
-  name: 'PricingCategoryEnum',
+  name: 'AccessCategory',
 })
 
 registerEnumType(DataCategory, {
-  name: 'DataCategoryEnum',
+  name: 'DataCategory',
+})
+
+registerEnumType(PricingCategory, {
+  name: 'PricingCategory',
 })
 
 registerEnumType(TypeCategory, {
-  name: 'TypeCategoryEnum',
+  name: 'TypeCategory',
 })
 
 @ObjectType()

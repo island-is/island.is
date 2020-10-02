@@ -778,19 +778,19 @@ export type ApiService = {
   owner: Scalars['String']
   name: Scalars['String']
   description: Scalars['String']
-  pricing: Array<PricingCategoryEnum>
-  data: Array<DataCategoryEnum>
-  type: Array<TypeCategoryEnum>
-  access: Array<AccessCategoryEnum>
+  pricing: Array<PricingCategory>
+  data: Array<DataCategory>
+  type: Array<TypeCategory>
+  access: Array<AccessCategory>
   xroadIdentifier?: Maybe<Array<XroadInfo>>
 }
 
-export enum PricingCategoryEnum {
+export enum PricingCategory {
   FREE = 'FREE',
   PAID = 'PAID',
 }
 
-export enum DataCategoryEnum {
+export enum DataCategory {
   PUBLIC = 'PUBLIC',
   OFFICIAL = 'OFFICIAL',
   PERSONAL = 'PERSONAL',
@@ -798,13 +798,13 @@ export enum DataCategoryEnum {
   FINANCIAL = 'FINANCIAL',
 }
 
-export enum TypeCategoryEnum {
+export enum TypeCategory {
   REST = 'REST',
   SOAP = 'SOAP',
   GRAPHQL = 'GRAPHQL',
 }
 
-export enum AccessCategoryEnum {
+export enum AccessCategory {
   XROAD = 'XROAD',
   APIGW = 'APIGW',
 }
@@ -1018,7 +1018,7 @@ export type QueryGetTranslationsArgs = {
 }
 
 export type QueryGetApiCatalogueArgs = {
-  input: GetApiCataloguesInput
+  input: GetApiCatalogueInput
 }
 
 export type QueryGetApiServiceByIdArgs = {
@@ -1252,15 +1252,14 @@ export type GetTranslationsInput = {
   lang: Scalars['String']
 }
 
-export type GetApiCataloguesInput = {
+export type GetApiCatalogueInput = {
   limit: Scalars['Float']
   cursor?: Maybe<Scalars['String']>
-  owner?: Maybe<Scalars['String']>
-  name?: Maybe<Scalars['String']>
-  pricing?: Maybe<PricingCategoryEnum>
-  data?: Maybe<DataCategoryEnum>
-  type?: Maybe<TypeCategoryEnum>
-  access?: Maybe<AccessCategoryEnum>
+  query?: Maybe<Scalars['String']>
+  pricing?: Maybe<Array<PricingCategory>>
+  data?: Maybe<Array<DataCategory>>
+  type?: Maybe<Array<TypeCategory>>
+  access?: Maybe<Array<AccessCategory>>
 }
 
 export type GetApiServiceInput = {
@@ -1648,10 +1647,10 @@ export type ResolversTypes = {
   PageInfo: ResolverTypeWrapper<PageInfo>
   XroadInfo: ResolverTypeWrapper<XroadInfo>
   ApiService: ResolverTypeWrapper<ApiService>
-  PricingCategoryEnum: PricingCategoryEnum
-  DataCategoryEnum: DataCategoryEnum
-  TypeCategoryEnum: TypeCategoryEnum
-  AccessCategoryEnum: AccessCategoryEnum
+  PricingCategory: PricingCategory
+  DataCategory: DataCategory
+  TypeCategory: TypeCategory
+  AccessCategory: AccessCategory
   ApiCatalogue: ResolverTypeWrapper<ApiCatalogue>
   Query: ResolverTypeWrapper<{}>
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
@@ -1697,7 +1696,7 @@ export type ResolversTypes = {
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
-  GetApiCataloguesInput: GetApiCataloguesInput
+  GetApiCatalogueInput: GetApiCatalogueInput
   GetApiServiceInput: GetApiServiceInput
   Mutation: ResolverTypeWrapper<{}>
   ContactUsInput: ContactUsInput
@@ -1902,7 +1901,7 @@ export type ResolversParentTypes = {
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
   GetTranslationsInput: GetTranslationsInput
-  GetApiCataloguesInput: GetApiCataloguesInput
+  GetApiCatalogueInput: GetApiCatalogueInput
   GetApiServiceInput: GetApiServiceInput
   Mutation: {}
   ContactUsInput: ContactUsInput
@@ -3197,22 +3196,22 @@ export type ApiServiceResolvers<
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   pricing?: Resolver<
-    Array<ResolversTypes['PricingCategoryEnum']>,
+    Array<ResolversTypes['PricingCategory']>,
     ParentType,
     ContextType
   >
   data?: Resolver<
-    Array<ResolversTypes['DataCategoryEnum']>,
+    Array<ResolversTypes['DataCategory']>,
     ParentType,
     ContextType
   >
   type?: Resolver<
-    Array<ResolversTypes['TypeCategoryEnum']>,
+    Array<ResolversTypes['TypeCategory']>,
     ParentType,
     ContextType
   >
   access?: Resolver<
-    Array<ResolversTypes['AccessCategoryEnum']>,
+    Array<ResolversTypes['AccessCategory']>,
     ParentType,
     ContextType
   >
