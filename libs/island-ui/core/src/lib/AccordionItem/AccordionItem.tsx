@@ -156,7 +156,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </Typography>
                 {visibleContent && (
                   <div className={styles.visibleContent}>
-                    <Typography variant="pSmall">{visibleContent}</Typography>
+                    <Typography variant="p">{visibleContent}</Typography>
                   </div>
                 )}
               </Column>
@@ -222,6 +222,7 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
+      padding={[2, 2, 4]}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>

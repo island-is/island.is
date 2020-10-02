@@ -14,8 +14,8 @@ import {
   LinkCard,
   Option,
   Link,
-  Accordion,
   FocusableBox,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -29,8 +29,6 @@ import {
   GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '@island.is/web/screens/queries'
 import { CategoryLayout } from '@island.is/web/screens/Layouts/Layouts'
-
-import LifeEventInCategory from './LifeEventInCategory'
 
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -46,6 +44,7 @@ import {
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { ApiImageSource } from '@island.is/web/components/Image/Image'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -241,7 +240,7 @@ const Category: Screen<CategoryProps> = ({
           />
         }
         belowContent={
-          <>
+          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
             <Stack space={2}>
               {sortedGroups.map((groupSlug, index) => {
                 const { title, description, articles } = groups[groupSlug]
@@ -261,13 +260,14 @@ const Category: Screen<CategoryProps> = ({
                       id={`accordion-item-${groupSlug}`}
                       label={title}
                       labelUse="h2"
+                      labelVariant="h3"
                       startExpanded={expanded}
                       visibleContent={description}
                       onClick={() => {
                         handleAccordionClick(groupSlug)
                       }}
                     >
-                      <Box paddingY={2}>
+                      <Box paddingTop={2}>
                         {sortedSubgroupKeys.map((subgroup, index) => {
                           const {
                             sortedArticles,
@@ -343,26 +343,27 @@ const Category: Screen<CategoryProps> = ({
                   </div>
                 )
               })}
-            </Stack>
-            <Stack space={2}>
-              {lifeEvents.map((lifeEvent, index) => {
-                return (
-                  <LifeEventInCategory
-                    key={index}
-                    title={lifeEvent.title}
-                    slug={lifeEvent.slug}
-                    intro={lifeEvent.intro}
-                    image={
-                      lifeEvent.thumbnail
-                        ? lifeEvent.thumbnail.url
-                        : lifeEvent.image.url
-                    }
-                    categoryTag={n('categoryTag', 'Lífsviðburður')}
-                  />
-                )
-              })}
-            </Stack>
-            <Stack space={2}>
+              {lifeEvents.map(
+                ({ title, slug, intro, thumbnail, image }, index) => {
+                  return (
+                    <Card
+                      key={index}
+                      href={makePath('lifeEvent', '[slug]')}
+                      as={makePath('lifeEvent', slug)}
+                      description={intro}
+                      title={title}
+                      slug={slug}
+                      intro={intro}
+                      image={thumbnail || image}
+                      tags={[
+                        {
+                          title: n('categoryTag'),
+                        },
+                      ]}
+                    />
+                  )
+                },
+              )}
               {cards.map(({ title, content, slug }, index) => {
                 return (
                   <Card
@@ -375,7 +376,7 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
-          </>
+          </ColorSchemeContext.Provider>
         }
       >
         <Box paddingBottom={2}>
