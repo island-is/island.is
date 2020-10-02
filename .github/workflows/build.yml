@@ -134,7 +134,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
@@ -216,7 +216,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -278,7 +278,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -307,7 +307,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -365,7 +365,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
@@ -423,7 +423,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**/*.tsx?', 'libs/**/modules/**/*.tsx?', 'apps/**/models/**/*.tsx?', 'libs/**/models/**/*.tsx?', 'apps/**/dto/**/*.tsx?', 'libs/**/dto/**/*.tsx?', 'apps/**/enums/**/*.tsx?', 'libs/**/enums/**/*.tsx?', 'apps/**/queries/**/*.tsx?', 'libs/**/queries/**/*.tsx?', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
