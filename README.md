@@ -197,7 +197,7 @@ Run `yarn nx run <project>:migrate`
 
 ### Schemas and types
 
-All generated files are ignored (except contentfulTypes.d.ts to be remove in another PR later) from the git repository to avoid noises, to make reviews easier on PRs and don't notify teams with code reviews when not needed.
+All generated files are ignored from the git repository to avoid noises (except contentfulTypes.d.ts that we will keep tracked), to make reviews easier on PRs and don't notify teams with code reviews when not needed.
 
 Once you do a `yarn install`/`npm install`, a postinstall script will generate all the schemas and types for the whole project. It takes around ~30sec to generate all schemas, definitions types and open api schemas.
 
