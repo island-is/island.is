@@ -224,13 +224,16 @@ export class FlightService {
   private updateFinancialState(
     flightLeg: FlightLeg,
     action: ValueOf<typeof Actions>,
+    changeByAirline: boolean,
   ): Promise<FlightLeg> {
     const financialState = financialStateMachine
       .transition(flightLeg.financialState, action)
       .value.toString()
     return flightLeg.update({
       financialState,
-      financialStateUpdated: new Date(),
+      financialStateUpdated: changeByAirline
+        ? new Date()
+        : flightLeg.financialStateUpdated,
     })
   }
 
@@ -241,7 +244,7 @@ export class FlightService {
         if (!finalizingStates.includes(flightLeg.financialState)) {
           return flightLeg
         }
-        return this.updateFinancialState(flightLeg, Actions.send)
+        return this.updateFinancialState(flightLeg, Actions.send, false)
       }),
     )
   }
@@ -255,6 +258,6 @@ export class FlightService {
   }
 
   deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
-    return this.updateFinancialState(flightLeg, Actions.revoke)
+    return this.updateFinancialState(flightLeg, Actions.revoke, true)
   }
 }

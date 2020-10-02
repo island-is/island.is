@@ -1,6 +1,4 @@
-import { logger } from '@island.is/logging'
 import { Field, ObjectType } from '@nestjs/graphql'
-import { isEmpty } from 'lodash'
 import { ILink } from '../generated/contentfulTypes'
 
 @ObjectType()

@@ -22,9 +22,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       autoSchemaFile: 'apps/air-discount-scheme/api.graphql',
       path: '/api/graphql',
       context: ({ req }) => ({ req }),
-      dataSources: () => ({
-        backendApi: new BackendAPI(),
-      }),
+      dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
     AuthModule,
     UserModule,
