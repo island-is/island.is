@@ -254,6 +254,7 @@ type TeamMember {
 }
 
 type ArticleCategory {
+  id: ID!
   title: String!
   slug: String!
   description: String
@@ -306,6 +307,12 @@ type Article {
   organization: [Organization!]
   subArticles: [SubArticle!]!
   relatedArticles: [Article!]
+}
+
+type ContentSlug {
+  id: ID!
+  slug: String!
+  type: String!
 }
 
 type AdgerdirTag {
@@ -616,6 +623,7 @@ type Query {
   getAboutPage(input: GetAboutPageInput!): AboutPage!
   getAboutSubPage(input: GetAboutSubPageInput!): AboutSubPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getContentSlug(input: GetContentSlugInput!): ContentSlug
   getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
@@ -685,6 +693,11 @@ input GetAboutSubPageInput {
 
 input GetLandingPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetContentSlugInput {
+  id: String!
   lang: String!
 }
 

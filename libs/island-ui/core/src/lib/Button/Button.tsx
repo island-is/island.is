@@ -64,6 +64,7 @@ export const Button = forwardRef<
       white,
       tabIndex,
       rounded = false,
+      ...rest
     },
     ref,
   ) => {
@@ -95,6 +96,7 @@ export const Button = forwardRef<
       tabIndex,
       className,
       onClick,
+      ...rest,
     }
 
     const buttonContent = {

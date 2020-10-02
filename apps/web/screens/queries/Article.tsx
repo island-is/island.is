@@ -20,6 +20,7 @@ export const GET_ARTICLE_QUERY = gql`
         description
       }
       category {
+        id
         title
         slug
         description
@@ -38,4 +39,13 @@ export const GET_ARTICLE_QUERY = gql`
     }
   }
   ${slices}
+`
+
+export const GET_CONTENT_SLUG = gql`
+  query GetContentSlug($input: GetContentSlugInput!) {
+    getContentSlug(input: $input) {
+      slug
+      type
+    }
+  }
 `
