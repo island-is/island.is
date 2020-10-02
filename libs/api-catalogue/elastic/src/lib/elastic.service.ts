@@ -55,7 +55,10 @@ export class ElasticService {
       const bulk = []
       services.forEach((service) => {
         bulk.push({
-          index: { _index: this.indexName },
+          index: {
+            _index: this.indexName,
+            _id: service.id,
+          },
         })
         bulk.push(service)
       })

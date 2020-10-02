@@ -47,10 +47,11 @@ export class RestMetadataService {
       }
     })
 
-    for (let [key, value] of serviceMap) {
+    for (const [key, value] of serviceMap) {
       const sorted = value.sort(serviceIdSort)
 
       let service: Service = {
+        id: `${sorted[0].subsystemCode}-${key}`,
         name: '',
         owner: '',
         description: '',
@@ -98,9 +99,8 @@ export class RestMetadataService {
           if (err.status && err.status === HttpStatus.INTERNAL_SERVER_ERROR) {
             // Error from X-Road calling getOpenApi
             logger.error(
-              `Error calling getOpenApi for service ${sorted[i].subsystemCode}/${sorted[i].serviceCode}`,
+              `Error calling getOpenApi for service ${sorted[i].subsystemCode}/${sorted[i].serviceCode}\nService is probably registered as REST without OpenAPI`,
             )
-            logger.error(err.status, err.statusText, err.headers)
           } else {
             logger.error(err)
           }

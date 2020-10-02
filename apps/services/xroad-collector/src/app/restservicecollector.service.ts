@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { ProviderService } from './provider.service'
 import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
-import { Provider, Service } from '@island.is/api-catalogue/types'
+import { Provider } from '@island.is/api-catalogue/types'
 import { RestMetadataService } from './restmetadata.service'
 
 @Injectable()
@@ -16,14 +16,15 @@ export class RestServiceCollector implements ServiceCollector {
 
   async indexServices(): Promise<void> {
     logger.info('Start indexing of REST services...')
-    const protectedProviders = await this.providerService.getProtectedProviders()
+    const protectedProviders: Array<Provider> = await this.providerService.getProtectedProviders()
     logger.debug(`Found ${protectedProviders.length} protected clients...`)
 
-    protectedProviders.forEach(async (provider: Provider) => {
+    for (const provider of protectedProviders) {
       // Get list af all REST service that have OpenAPI
-      let services = await this.restMetadataService.getServices(provider)
+      const services = await this.restMetadataService.getServices(provider)
 
       // Insert into Elastic
-    })
+      await this.elasticService.bulk(services)
+    }
   }
 }

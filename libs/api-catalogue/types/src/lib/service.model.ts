@@ -7,7 +7,7 @@ import {
 import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Service {
-  id?: string
+  id: string
   name: string
   description: string
   owner: string
