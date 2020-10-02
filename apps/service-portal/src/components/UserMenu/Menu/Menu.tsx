@@ -19,7 +19,6 @@ import { User } from 'oidc-client'
 interface Props {
   isOpen: boolean
   userInfo: User
-  subjectList: SubjectListDto[]
   onSubjectSelection: (subjectNationalId: string) => void
   onCloseMenu: () => void
 }

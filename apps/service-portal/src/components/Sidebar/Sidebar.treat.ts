@@ -11,3 +11,11 @@ export const sidebar = style({
     },
   }),
 })
+
+export const subNavBlue = style({
+  borderLeft: `1px solid ${theme.color.blue200}`,
+})
+
+export const subNavPurple = style({
+  borderLeft: `1px solid ${theme.color.blueberry200}`,
+})

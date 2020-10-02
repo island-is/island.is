@@ -12,3 +12,7 @@ export const dot = style({
 export const dotActive = style({
   opacity: 1,
 })
+
+export const subNavItem = style({
+  fontSize: 16,
+})
