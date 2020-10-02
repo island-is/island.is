@@ -4,11 +4,13 @@ import { ProviderService } from './provider.service'
 import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
 import { Provider, Service } from '@island.is/api-catalogue/types'
+import { RestMetadataService } from './restmetadata.service'
 
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
   constructor(
     private readonly providerService: ProviderService,
+    private readonly restMetadataService: RestMetadataService,
     private readonly elasticService: ElasticService,
   ) {}
 
@@ -18,16 +20,10 @@ export class RestServiceCollector implements ServiceCollector {
     logger.debug(`Found ${protectedProviders.length} protected clients...`)
 
     protectedProviders.forEach(async (provider: Provider) => {
-      // Get list af all REST service codes for this provider
-
-      // Group all service codes that have same first section
-      // given that service code is: <service id>-v<service version>
+      // Get list af all REST service that have OpenAPI
+      let services = await this.restMetadataService.getServices(provider)
 
       // Insert into Elastic
-
-      let service: Service = {
-        id: `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`,
-      }
     })
   }
 }

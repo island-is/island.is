@@ -7,7 +7,7 @@ import {
 import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Service {
-  id: string
+  id?: string
   name: string
   description: string
   owner: string
@@ -15,5 +15,5 @@ export interface Service {
   data: Array<DataCategory>
   type: Array<TypeCategory>
   access: Array<AccessCategory>
-  xroadIdentifier?: Array<XroadIdentifier>
+  xroadIdentifier: Array<XroadIdentifier>
 }

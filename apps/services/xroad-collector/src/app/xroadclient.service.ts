@@ -117,17 +117,17 @@ export class XroadClientService {
           serviceCode: services.service[i].serviceCode,
         })
 
-        const api = await SwaggerParser.dereference(spec)
+        // const api = await SwaggerParser.dereference(spec)
 
-        client.services.push({
-          spec: spec,
-          name: api.info.title,
-          owner: api.info.contact.name, // or read from current client subsystem node?
-          access: [],
-          categories: [],
-          pricing: [],
-          type: ['REST'],
-        })
+        // client.services.push({
+        //   spec: spec,
+        //   name: api.info.title,
+        //   owner: api.info.contact.name, // or read from current client subsystem node?
+        //   access: [],
+        //   categories: [],
+        //   pricing: [],
+        //   type: ['REST'],
+        // })
       }
     })
 

@@ -1,3 +1,4 @@
+import { ElasticService } from '@island.is/api-catalogue/elastic'
 import { Module } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 import { Configuration, MetaservicesApi } from '../../gen/fetch-xrd'
@@ -9,7 +10,9 @@ import {
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ProviderService } from './provider.service'
-import { XroadClientController } from './xroadclient.controller'
+import { RestMetadataService } from './restmetadata.service'
+import { RestServiceCollector } from './restservicecollector.service'
+import { CollectorController } from './collector.controller'
 
 const XROAD_BASE_PATH = 'http://testcomss01.playground.x-road.global'
 const XROAD_CLIENT = {
@@ -21,10 +24,13 @@ const XROAD_CLIENT = {
 
 @Module({
   imports: [],
-  controllers: [AppController, XroadClientController],
+  controllers: [AppController, CollectorController],
   providers: [
     AppService,
+    ElasticService,
+    RestServiceCollector,
     ProviderService,
+    RestMetadataService,
     {
       provide: MetaservicesApi,
       useFactory: () =>
