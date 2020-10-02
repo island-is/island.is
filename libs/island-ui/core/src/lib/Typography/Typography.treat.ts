@@ -47,6 +47,10 @@ export const truncate = style({
   whiteSpace: 'nowrap',
 })
 
+export const base = style({
+  ['-webkit-font-smoothing' as any]: 'antialiased',
+})
+
 const fontWeightMap = {
   light: theme.typography.light,
   regular: theme.typography.regular,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
@@ -11,7 +11,6 @@ import {
   Input,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CustodyProvisions,
   CustodyRestrictions,
@@ -26,7 +25,6 @@ import * as api from '../../../../api'
 import {
   formatDate,
   parseArray,
-  parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 
@@ -66,7 +64,7 @@ export const StepTwo: React.FC = () => {
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
@@ -199,7 +197,7 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
     },
     {
-      restriction: 'E - Fjölmiðlabanns',
+      restriction: 'E - Fjölmiðlabann',
       value: CustodyRestrictions.MEDIA,
       getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
@@ -207,11 +205,6 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
-
-  useEffect(() => {
-    const caseId = workingCase.id
-    api.saveCase(caseId, parseString('state', CaseState.SUBMITTED))
-  }, [workingCase.id])
 
   return (
     <Box marginTop={7} marginBottom={30}>
@@ -382,14 +375,19 @@ export const StepTwo: React.FC = () => {
                             checked={provision.getCheckbox}
                             tooltip={provision.explination}
                             onChange={({ target }) => {
-                              // Toggle the checkbox on or off
-                              provision.setCheckbox(target.checked)
-
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
+                              const provisionIsSelected =
+                                copyOfState.custodyProvisions.indexOf(
+                                  target.value as CustodyProvisions,
+                                ) > -1
+
+                              // Toggle the checkbox on or off
+                              provision.setCheckbox(!provisionIsSelected)
+
                               // If the user is checking the box, add the broken law to the state
-                              if (target.checked) {
+                              if (!provisionIsSelected) {
                                 copyOfState.custodyProvisions.push(
                                   target.value as CustodyProvisions,
                                 )
@@ -455,14 +453,19 @@ export const StepTwo: React.FC = () => {
                           checked={restriction.getCheckbox}
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
-                            // Toggle the checkbox on or off
-                            restriction.setCheckbox(target.checked)
-
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
+                            const restrictionIsSelected =
+                              copyOfState.requestedCustodyRestrictions.indexOf(
+                                target.value as CustodyRestrictions,
+                              ) > -1
+
+                            // Toggle the checkbox on or off
+                            restriction.setCheckbox(!restrictionIsSelected)
+
                             // If the user is checking the box, add the restriction to the state
-                            if (target.checked) {
+                            if (!restrictionIsSelected) {
                               // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
                               copyOfState.requestedCustodyRestrictions.push(
                                 target.value as CustodyRestrictions,
@@ -506,7 +509,7 @@ export const StepTwo: React.FC = () => {
                                 copyOfState.requestedCustodyRestrictions,
                               ),
                             )
-
+                            // TODO: COMBINE IN A SINGLE API CALL
                             api.saveCase(
                               workingCase.id,
                               parseArray(
@@ -517,14 +520,14 @@ export const StepTwo: React.FC = () => {
 
                             updateState(
                               workingCase,
-                              'restrictions',
+                              'requestedCustodyRestrictions',
                               copyOfState.requestedCustodyRestrictions,
                               setWorkingCase,
                             )
 
                             updateState(
                               workingCase,
-                              'restrictions',
+                              'custodyRestrictions',
                               copyOfState.custodyRestrictions,
                               setWorkingCase,
                             )

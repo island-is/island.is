@@ -27,12 +27,11 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
-import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { GlobalContextProvider, GlobalContext } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 import { useNamespace } from '../hooks'
 
 export interface LayoutProps {
@@ -40,6 +39,7 @@ export interface LayoutProps {
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
+  hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
@@ -59,6 +59,7 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
+  hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperMenu,
@@ -95,7 +96,7 @@ const Layout: NextComponentType<
 
   const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
   return (
-    <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
+    <GlobalContextProvider namespace={namespace}>
       <Page>
         <Head>
           <link
@@ -179,6 +180,7 @@ const Layout: NextComponentType<
             }}
             showMiddleLinks
             showTagLinks
+            hasDrawerMenu
           />
         )}
         <style jsx global>{`
@@ -229,7 +231,7 @@ const Layout: NextComponentType<
           }
         `}</style>
       </Page>
-    </GlobalNamespaceContext.Provider>
+    </GlobalContextProvider>
   )
 }
 

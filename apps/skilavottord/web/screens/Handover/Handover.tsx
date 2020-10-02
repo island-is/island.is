@@ -6,11 +6,16 @@ import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+import * as styles from './Handover.treat'
 
 const Handover = (props) => {
-  const { companies, car } = props
+  const { companies, apolloState } = props
 
   const [showModal, setModal] = useState(false)
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const {
     activeLocale,
@@ -19,6 +24,9 @@ const Handover = (props) => {
   const { makePath } = useRouteNames(activeLocale)
 
   const router = useRouter()
+  const { id } = router.query
+
+  const car = apolloState[`Car:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -37,48 +45,56 @@ const Handover = (props) => {
   }
 
   return (
-    <ProcessPageLayout>
-      <Stack space={3}>
-        <Typography variant="h1">{t.title}</Typography>
-        <Stack space={4}>
-          <Stack space={2}>
-            <Typography variant="h3">{t.subTitles.recycle}</Typography>
-            <Typography variant="p">{t.info}</Typography>
+    <>
+      {car && (
+        <ProcessPageLayout step={2}>
+          <Stack space={6}>
+            <Stack space={2}>
+              <Typography variant="h1">{t.title}</Typography>
+              <Typography variant="p">{t.info}</Typography>
+            </Stack>
+            <Stack space={[3, 3, 4, 4]}>
+              <Typography variant="h3">{t.subTitles.companies}</Typography>
+              <CompanyList companies={companies} />
+            </Stack>
+            <Box display="flex" justifyContent="spaceBetween" flexWrap="wrap">
+              {isMobile ? (
+                <div className={styles.cancelButtonContainer}>
+                  <button onClick={onCancel} className={styles.cancelButton}>
+                    <Typography variant="h5" color="red400">
+                      {t.buttons.cancel}
+                    </Typography>
+                  </button>
+                </div>
+              ) : (
+                <Button variant="redGhost" onClick={onCancel}>
+                  {t.buttons.cancel}
+                </Button>
+              )}
+              <Button
+                variant="normal"
+                onClick={onContinue}
+                width={isMobile ? 'fluid' : 'normal'}
+              >
+                {t.buttons.continue}
+              </Button>
+            </Box>
           </Stack>
-          <Typography variant="h3">{t.subTitles.companies}</Typography>
-          <CompanyList companies={companies} />
-          <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
-            <Button variant="redGhost" onClick={onCancel}>
-              {t.buttons.cancel}
-            </Button>
-            <Button variant="normal" onClick={onContinue}>
-              {t.buttons.continue}
-            </Button>
-          </Box>
-        </Stack>
-      </Stack>
-      <Modal
-        show={showModal}
-        onCancel={() => setModal(false)}
-        onContinue={() => {
-          router.replace(makePath('myCars'))
-          setModal(false)
-        }}
-      />
-    </ProcessPageLayout>
+          <Modal
+            show={showModal}
+            onCancel={() => setModal(false)}
+            onContinue={() => {
+              router.replace(makePath('myCars'))
+              setModal(false)
+            }}
+          />
+        </ProcessPageLayout>
+      )}
+    </>
   )
 }
 
-Handover.getInitialProps = (ctx) => {
-  const { apolloClient, query } = ctx
-  const {
-    cache: {
-      data: { data },
-    },
-  } = apolloClient
-
-  const car = data[`Car:${query.id}`]
-
+Handover.getInitialProps = () => {
   const companies = [
     {
       name: 'Company 1',
@@ -100,7 +116,7 @@ Handover.getInitialProps = (ctx) => {
     },
   ]
 
-  return { car, companies }
+  return { companies }
 }
 
 export default Handover

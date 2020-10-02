@@ -490,4 +490,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(AboutPageScreen, { showHeader: false })
+export default withMainLayout(AboutPageScreen, {
+  showHeader: false,
+  hasDrawerMenu: true,
+})

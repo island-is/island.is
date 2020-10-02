@@ -1,7 +1,14 @@
-import { formatDate, parseArray, parseString } from './formatters'
+import {
+  formatDate,
+  parseArray,
+  parseString,
+  parseTransition,
+} from './formatters'
 import * as Constants from './constants'
 import { renderRestrictons } from './stepHelper'
 import { CustodyRestrictions } from '../types'
+import { CaseTransition } from '@island.is/judicial-system/types'
+import { validate } from './validate'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -30,6 +37,23 @@ describe('Formatters utils', () => {
 
       // Assert
       expect(parsedString).toEqual({ test: 'lorem' })
+    })
+  })
+
+  describe('Parse transition', () => {
+    test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
+      // Arrange
+      const modified = 'timestamp'
+      const transition = CaseTransition.SUBMIT
+
+      // Act
+      const parsedTransition = parseTransition(modified, transition)
+
+      // Assert
+      expect(parsedTransition).toEqual({
+        modified: 'timestamp',
+        transition: CaseTransition.SUBMIT,
+      })
     })
   })
 
@@ -89,6 +113,36 @@ describe('Step helper', () => {
 
       // Assert
       expect(r).toEqual('Lausagæsla')
+    })
+  })
+})
+
+describe('Validation', () => {
+  describe('Validate police casenumber format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const LOKE = 'INCORRECT FORMAT'
+
+      // Act
+      const r = validate(LOKE, 'police-casenumber-format')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+  })
+
+  describe('Validate national id format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const nid = '999999-9999'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
     })
   })
 })

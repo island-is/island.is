@@ -1,7 +1,12 @@
 import React, { FC, useReducer } from 'react'
 import cn from 'classnames'
 
-import { Application, Form, Schema } from '@island.is/application/core'
+import {
+  Application,
+  FieldBaseProps,
+  Form,
+  Schema,
+} from '@island.is/application/core'
 
 import FormProgress from '../components/FormProgress/'
 import Sidebar from '../components/Sidebar'

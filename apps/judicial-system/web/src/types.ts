@@ -72,6 +72,7 @@ export interface Case {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
+  rejecting?: boolean
   custodyEndDate?: string
   custodyRestrictions?: CustodyRestrictions[]
   accusedAppealDecision?: AppealDecision

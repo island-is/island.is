@@ -1,12 +1,13 @@
 import { Locale, defaultLanguage } from './I18n'
 
-const routes = {
+export const routes = {
   is: {
     article: '',
     Article: '',
     page: 'stofnanir', // quick fix for launch
     Page: 'stofnanir',
     category: 'flokkur',
+    articleCategory: 'flokkur',
     ArticleCategory: 'flokkur',
     ContentCategory: 'flokkur',
     news: 'frett',
@@ -14,6 +15,7 @@ const routes = {
     search: 'leit',
     lifeEvent: 'lifsvidburdur',
     LifeEventPage: 'lifsvidburdur',
+    lifeEventPage: 'lifsvidburdur',
   },
   en: {
     article: '',
@@ -21,6 +23,7 @@ const routes = {
     page: 'organizations',
     Page: 'organizations',
     category: 'category',
+    articleCategory: 'category',
     ArticleCategory: 'category',
     ContentCategory: 'category',
     news: 'news',
@@ -28,6 +31,7 @@ const routes = {
     search: 'search',
     lifeEvent: 'life-event',
     LifeEventPage: 'life-event',
+    lifeEventPage: 'life-event',
   },
 }
 
@@ -42,6 +46,7 @@ export type PathTypes =
   | 'search'
   | 'lifeEvent'
   | 'LifeEventPage'
+  | 'lifeEventPage'
 
 export const routeNames = (locale: Locale = defaultLanguage) => {
   const makePath = (type?: PathTypes, subfix?: string) => {
