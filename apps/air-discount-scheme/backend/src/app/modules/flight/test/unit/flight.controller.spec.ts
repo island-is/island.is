@@ -21,6 +21,7 @@ describe('PublicFlightController', () => {
   const nationalId = '1234567890'
   const flight = {
     id: '70de7be1-6b6d-4ec3-8063-be55e241d488',
+    nationalId: '123456xxx0',
     bookingDate: new Date('2020-10-05T14:48:00.000Z'),
     flightLegs: [
       {
