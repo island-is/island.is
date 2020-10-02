@@ -6,6 +6,7 @@ export { default as TextFormField } from './TextFormField'
 export { default as FileUploadFormField } from './FileUploadFormField'
 export { default as ReviewFormField } from './ReviewFormField'
 export { default as DividerFormField } from './DividerFormField'
+export { default as FormStepper } from './FormStepper'
 
 /** Example fields **/
 export { default as ExampleCountryField } from './custom/ExampleCountryField'

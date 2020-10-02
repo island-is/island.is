@@ -36,7 +36,6 @@ export interface Form {
 
 export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
 export type FormNode = Form | Section | SubSection | FormLeaf
-
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
 

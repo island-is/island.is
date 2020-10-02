@@ -27,8 +27,8 @@ const makeDefaultComponent = (text = '') => {
     'sideMenu',
     'placeholderText',
     'datepickerHeaderText',
-    'formProgressSection',
-    'formProgressSectionActive',
+    'formStepperSection',
+    'formStepperSectionActive',
   ]
 
   const variant = select('Variants', variantOptions, 'p') as VariantTypes

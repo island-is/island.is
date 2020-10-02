@@ -1,26 +1,32 @@
 import React, { FC, useReducer } from 'react'
 import cn from 'classnames'
-
-import { Application, Form, Schema } from '@island.is/application/core'
-
-import FormProgress from '../components/FormProgress/'
-import Sidebar from '../components/Sidebar'
-import Screen from '../components/Screen'
 import {
-  ApplicationReducer,
-  initializeReducer,
-} from '../reducer/ApplicationFormReducer'
-import { ActionTypes } from '../reducer/ReducerTypes'
+  Application,
+  Form,
+  Schema,
+  Section,
+  SectionChildren,
+} from '@island.is/application/core'
 import {
   Box,
+  FormStepperThemes,
   GridColumn,
   GridContainer,
   GridRow,
   Tag,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
+import Sidebar from '../components/Sidebar'
+import Screen from '../components/Screen'
+import FormStepper from '../components/fields/FormStepper'
+import {
+  ApplicationReducer,
+  initializeReducer,
+} from '../reducer/ApplicationFormReducer'
+import { ActionTypes } from '../reducer/ReducerTypes'
+import { FormModes } from '../types'
 import * as styles from './FormShell.treat'
-import { FormModes, ProgressThemes } from '../types'
 
 export const FormShell: FC<{
   application: Application
@@ -55,41 +61,6 @@ export const FormShell: FC<{
   } = state
 
   const { mode = FormModes.APPLYING } = state.form
-
-  const progressTheme: Record<FormModes, ProgressThemes> = {
-    [FormModes.APPLYING]: ProgressThemes.PURPLE,
-    [FormModes.APPROVED]: ProgressThemes.GREEN,
-    [FormModes.REVIEW]: ProgressThemes.BLUE,
-    [FormModes.PENDING]: ProgressThemes.BLUE,
-    [FormModes.REJECTED]: ProgressThemes.RED,
-  }
-
-  const ProgressTag: FC = () => {
-    switch (mode) {
-      case FormModes.REVIEW:
-      case FormModes.PENDING:
-        return (
-          <Tag variant="darkerBlue" label bordered>
-            Status: In Review
-          </Tag>
-        )
-      case FormModes.APPROVED:
-        return (
-          <Tag variant="darkerMint" label bordered>
-            Status: Approved
-          </Tag>
-        )
-      case FormModes.REJECTED:
-        return (
-          <Tag variant="red" label bordered>
-            Status: Rejected
-          </Tag>
-        )
-      default:
-        return null
-    }
-  }
-
   const showProgressTag = mode !== FormModes.APPLYING
 
   return (
@@ -150,11 +121,10 @@ export const FormShell: FC<{
               className={styles.largeSidebarContainer}
             >
               <Sidebar>
-                <FormProgress
-                  theme={progressTheme[mode]}
-                  tag={showProgressTag && <ProgressTag />}
-                  formName={form.name}
-                  formIcon={form.icon}
+                <FormStepper
+                  mode={mode}
+                  showTag={showProgressTag}
+                  form={form}
                   sections={sections}
                   activeSection={activeSection}
                   activeSubSection={activeSubSection}

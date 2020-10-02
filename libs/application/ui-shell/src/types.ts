@@ -52,13 +52,6 @@ export enum FormModes {
   REJECTED = 'rejected',
 }
 
-export enum ProgressThemes {
-  GREEN = 'green',
-  BLUE = 'blue',
-  PURPLE = 'purple',
-  RED = 'red',
-}
-
 export interface FieldComponentProps {
   applicationId: string
   autoFocus?: boolean
