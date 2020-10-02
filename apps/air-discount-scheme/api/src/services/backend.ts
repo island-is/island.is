@@ -20,6 +20,10 @@ class BackendAPI extends RESTDataSource {
     return this.post('flightLegs', body)
   }
 
+  confirmInvoice(body: {}): Promise<Flight[]> {
+    return this.post('flightLegs/confirmInvoice', body)
+  }
+
   getDiscount(nationalId: string): Promise<Discount | null> {
     return this.get(`users/${nationalId}/discounts/current`)
   }
