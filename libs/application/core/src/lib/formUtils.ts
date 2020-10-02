@@ -3,7 +3,7 @@
 // @ts-ignore
 const merge = require('deepmerge')
 
-import { FormValue } from '../types/Application'
+import { Answer, FormValue } from '../types/Application'
 import {
   Form,
   FormNode,
@@ -12,6 +12,29 @@ import {
   Section,
   SubSection,
 } from '../types/Form'
+
+export function getValueViaPath(
+  obj: {},
+  path: string,
+  defaultValue: unknown = undefined,
+): unknown | undefined {
+  try {
+    const travel = (regexp: RegExp) =>
+      String.prototype.split
+        .call(path, regexp)
+        .filter(Boolean)
+        .reduce(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // @ts-ignore
+          (res, key) => (res !== null && res !== undefined ? res[key] : res),
+          obj,
+        )
+    const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
+    return result === undefined || result === obj ? defaultValue : result
+  } catch (e) {
+    return undefined
+  }
+}
 
 export function findNode(
   id: string,
