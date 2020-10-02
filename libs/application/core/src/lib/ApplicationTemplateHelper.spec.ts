@@ -41,6 +41,7 @@ const testApplicationTemplate: ApplicationTemplate<
     return 'applicant'
   },
   type: ApplicationTypes.EXAMPLE,
+  name: 'Test application',
   dataProviders: [],
   dataSchema: z.object({
     person: z.object({
