@@ -8,10 +8,10 @@ import {
   GridRow,
   Tag,
 } from '@island.is/island-ui/core'
-import { FormStepper } from '@island.is/application/ui-fields'
 
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
+import FormStepper from '../components/FormStepper'
 import {
   ApplicationReducer,
   initializeReducer,

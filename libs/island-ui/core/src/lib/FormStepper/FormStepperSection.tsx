@@ -16,7 +16,7 @@ function getSubSectionsInSection(
 export const FormStepperSection: FC<{
   theme?: types.FormStepperThemes
   section: types.FormStepperSection
-  subSection?: string
+  subSection: string
   sectionIndex: number
   isActive: boolean
   isComplete: boolean
