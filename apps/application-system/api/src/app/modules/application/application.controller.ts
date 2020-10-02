@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
+  Optional,
 } from '@nestjs/common'
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
@@ -52,8 +53,7 @@ import { ApplicationResponseDto } from './dto/application.response.dto'
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    @InjectQueue('upload')
-    private readonly uploadQueue: Queue,
+    @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
   @Get('applications/:id')

@@ -81,5 +81,10 @@
       "cancel": "No",
       "continue": "Yes"
     }
-  }
+  },
+  "processSteps": [
+    "Confirm car for recycling",
+    "Recycle the car",
+    "Get money back"
+  ]
 }

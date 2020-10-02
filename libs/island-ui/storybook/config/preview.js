@@ -7,6 +7,8 @@ addParameters({
   options: {
     theme: storyBookTheme,
   },
+  viewMode: 'docs',
+  previewTabs: { 'storybook/docs/panel': { index: -1 } },
 })
 addDecorator(withKnobs)
 addDecorator(withA11y)

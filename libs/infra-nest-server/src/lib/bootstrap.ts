@@ -99,6 +99,7 @@ export const bootstrap = async (options: RunServerOptions) => {
   collectDefaultMetrics()
 
   const app = await createApp(options)
+
   if (options.openApi) {
     const document = setupOpenApi(app, options.openApi, options.swaggerPath)
 
@@ -107,6 +108,7 @@ export const bootstrap = async (options: RunServerOptions) => {
       return
     }
   }
+
   if (options.interceptors) {
     options.interceptors.forEach((interceptor) => {
       app.useGlobalInterceptors(interceptor)

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { Op } from 'sequelize'
 import * as kennitala from 'kennitala'
 
 import {
@@ -98,6 +99,8 @@ export class FlightService {
   }
 
   findAllLegsByFilter(body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
+    const awaitingCredit =
+      financialStateMachine.states[States.awaitingCredit].key
     return this.flightLegModel.findAll({
       where: {
         ...(body.airline ? { airline: body.airline } : {}),
@@ -107,21 +110,39 @@ export class FlightService {
           : {}),
         ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
         ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
+        // We want to show rows that are awaiting credit based on their
+        // financial_state_updated instead of booking_date because if they
+        // were booked long ago and have recently been cancelled they need
+        // to show up on the correct monthly report
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { financialState: { [Op.eq]: awaitingCredit } },
+              {
+                financialStateUpdated: { [Op.gte]: new Date(body.period.from) },
+              },
+              { financialStateUpdated: { [Op.lte]: new Date(body.period.to) } },
+            ],
+          },
+          {
+            [Op.and]: [
+              { financialState: { [Op.ne]: awaitingCredit } },
+              {
+                '$flight.booking_date$': {
+                  [Op.gte]: new Date(body.period.from),
+                },
+              },
+              {
+                '$flight.booking_date$': { [Op.lte]: new Date(body.period.to) },
+              },
+            ],
+          },
+        ],
       },
       include: [
         {
           model: this.flightModel,
           where: Sequelize.and(
-            Sequelize.where(
-              Sequelize.fn('date', Sequelize.col('booking_date')),
-              '>=',
-              body.period.from,
-            ),
-            Sequelize.where(
-              Sequelize.fn('date', Sequelize.col('booking_date')),
-              '<=',
-              body.period.to,
-            ),
             Sequelize.where(
               Sequelize.literal("(user_info->>'age')::numeric"),
               '>=',
@@ -200,25 +221,6 @@ export class FlightService {
     })
   }
 
-  finalizeCreditsAndDebits(flightLegs: FlightLeg[]): Promise<FlightLeg[]> {
-    return Promise.all(
-      flightLegs.map((flightLeg) => {
-        let { financialState } = flightLeg
-        if (financialState === States.awaitingDebit) {
-          financialState = financialStateMachine
-            .transition(flightLeg.financialState, 'SEND')
-            .value.toString()
-        } else if (financialState === States.awaitingCredit) {
-          financialState = financialStateMachine
-            .transition(flightLeg.financialState, 'SEND')
-            .value.toString()
-        }
-
-        return flightLeg.update({ financialState })
-      }),
-    )
-  }
-
   private updateFinancialState(
     flightLeg: FlightLeg,
     action: ValueOf<typeof Actions>,
@@ -230,6 +232,18 @@ export class FlightService {
       financialState,
       financialStateUpdated: new Date(),
     })
+  }
+
+  finalizeCreditsAndDebits(flightLegs: FlightLeg[]): Promise<FlightLeg[]> {
+    return Promise.all(
+      flightLegs.map((flightLeg) => {
+        const finalizingStates = [States.awaitingDebit, States.awaitingCredit]
+        if (!finalizingStates.includes(flightLeg.financialState)) {
+          return flightLeg
+        }
+        return this.updateFinancialState(flightLeg, Actions.send)
+      }),
+    )
   }
 
   delete(flight: Flight): Promise<FlightLeg[]> {

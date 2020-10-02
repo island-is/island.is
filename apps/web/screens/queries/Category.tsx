@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export const GET_CATEGORIES_QUERY = gql`
   query GetArticleCategories($input: GetArticleCategoriesInput!) {
     getArticleCategories(input: $input) {
+      id
       title
       description
       slug
