@@ -34,14 +34,22 @@ export class FlightLegViewModel {
 export class FlightViewModel {
   constructor(flight: Flight) {
     this.id = flight.id
+    this.nationalId = FlightViewModel.maskNationalId(flight.nationalId)
     this.bookingDate = flight.bookingDate
     this.flightLegs = flight.flightLegs.map(
       (flightLeg) => new FlightLegViewModel(flightLeg),
     )
   }
 
+  private static maskNationalId(nationalId: string): string {
+    return `${nationalId.slice(0, 6)}xxx${nationalId.slice(-1)}`
+  }
+
   @ApiProperty()
   readonly id: string
+
+  @ApiProperty()
+  readonly nationalId: string
 
   @ApiProperty()
   readonly bookingDate: Date
