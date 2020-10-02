@@ -173,6 +173,12 @@ export class Case extends Model<Case> {
   comments: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  prosecutor: string
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -275,6 +281,12 @@ export class Case extends Model<Case> {
   @ApiProperty({ enum: CaseAppealDecision })
   // Ákvörðun um kæru sækjanda
   prosecutorAppealDecision: CaseAppealDecision
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  judge: string
 
   @HasMany(() => Notification)
   @ApiProperty({ type: Notification, isArray: true })

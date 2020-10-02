@@ -11,5 +11,5 @@ export class TransitionCaseDto {
 
   @IsEnum(CaseTransition)
   @ApiProperty({ enum: CaseTransition })
-  readonly transition: string
+  readonly transition: CaseTransition
 }

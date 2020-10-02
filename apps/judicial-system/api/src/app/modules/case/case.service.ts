@@ -15,6 +15,7 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, NotificationType } from './models'
 import { getPdf } from './case.pdf'
 import { writeDummySignedPdf } from './case.dummy.pdf'
+import { TransitionUpdate } from './case.state'
 
 @Injectable()
 export class CaseService {
@@ -55,35 +56,14 @@ export class CaseService {
 
   async update(
     id: string,
-    caseToUpdate: UpdateCaseDto,
+    update: UpdateCaseDto | TransitionUpdate,
   ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
     this.logger.debug(`Updating case whith id "${id}"`)
 
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      caseToUpdate,
+      update,
       {
         where: { id },
-        returning: true,
-      },
-    )
-
-    return { numberOfAffectedRows, updatedCase }
-  }
-
-  async transition(
-    id: string,
-    modified: Date,
-    state: CaseState,
-  ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
-    this.logger.debug(`Transitioning case with id "${id}"`)
-
-    const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      { state },
-      {
-        where: {
-          id,
-          // modified, Uncomment when client is ready to send last modified timestamp
-        },
         returning: true,
       },
     )
