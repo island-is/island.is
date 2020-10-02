@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { CustomField } from '@island.is/application/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/core'
 import {
   AsyncSearch,
   AsyncSearchOption,
@@ -9,7 +9,6 @@ import {
   Input,
   Typography,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '../../../types'
 
 interface Props extends FieldBaseProps {
   field: CustomField

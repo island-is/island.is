@@ -1,5 +1,9 @@
 import React, { FC, useState, useReducer, useEffect } from 'react'
-import { FileUploadField } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  FileUploadField,
+} from '@island.is/application/core'
 import {
   Box,
   InputFileUpload,
@@ -7,9 +11,7 @@ import {
   fileToObject,
   Typography,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '../../../types'
 import { useFormContext, Controller } from 'react-hook-form'
-import { getValueViaPath } from '../../../utils'
 import { useMutation } from '@apollo/client'
 
 import { uploadFileToS3 } from './utils'

@@ -1,8 +1,6 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
 import {
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
@@ -10,11 +8,6 @@ import {
 } from '../models'
 
 export class UpdateCaseDto {
-  @IsOptional()
-  @IsEnum(CaseState)
-  @ApiPropertyOptional({ enum: CaseState })
-  readonly state: string
-
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
@@ -134,6 +127,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly ruling: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly rejecting: boolean
 
   @IsOptional()
   @IsString()

@@ -14747,10 +14747,10 @@ karma-source-map-support@1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
-kennitala@1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.3.tgz#aaa65e3240c9d7225cefe6d58019556f33744955"
-  integrity sha512-mjcnFBKUDkTDpDnsZHXTbfe8v8nO0YikTHqyDHpE9HZBkLKP/tazcbbBanTRr0F2O68C0t+bGqTPUXpN35VmqQ==
+kennitala@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.4.tgz#b478ae0d62b9687d458e611806692596e2bd6cac"
+  integrity sha512-hxnzr39l4SlJHvhnRtW5Z9hyNiY6LUKjGBMnakLpmYEnIrxXXx5+wpBTj59ixw7l40D5LJtrFdlqnBG8IQ0N8Q==
 
 killable@^1.0.1:
   version "1.0.1"
@@ -19211,12 +19211,21 @@ react-textarea-autosize@^7.1.0:
     "@babel/runtime" "^7.1.2"
     prop-types "^15.6.0"
 
+react-toastify@6.0.8:
+  version "6.0.8"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-6.0.8.tgz#84625d81d0fd01902a7f4c6f317eb074cb3bba67"
+  integrity sha512-NSqCNwv+C4IfR+c92PFZiNyeBwOJvigrP2bcRi2f6Hg3WqcHhEHOknbSQOs9QDFuqUjmK3SOrdvScQ3z63ifXg==
+  dependencies:
+    classnames "^2.2.6"
+    prop-types "^15.7.2"
+    react-transition-group "^4.4.1"
+
 react-top-loading-bar@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-top-loading-bar/-/react-top-loading-bar-2.0.0.tgz#531927ec5fb5f2e49a17d6ee602f91fb407a64f1"
   integrity sha512-nsBElvXeKHTKAHM2GA7IIafPp1Wd05NLFEUAN+64Tlm7sklEnbi9PtiIwOLJd1DtUMelhk0OmqUDEEo0BFBcQQ==
 
-react-transition-group@^4.3.0:
+react-transition-group@^4.3.0, react-transition-group@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"
   integrity sha512-Djqr7OQ2aPUiYurhPalTrVy9ddmFCCzwhqQmtN+J3+3DzLO209Fdr70QrN8Z3DsglWql6iY1lDWAfpFiBtuKGw==
