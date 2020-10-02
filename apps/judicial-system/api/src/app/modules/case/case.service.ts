@@ -35,7 +35,11 @@ export class CaseService {
 
     return this.caseModel.findAll({
       order: [['modified', 'DESC']],
-      include: [Notification],
+      include: [
+        Notification,
+        { model: User, as: 'prosecutor' },
+        { model: User, as: 'judge' },
+      ],
     })
   }
 
@@ -44,7 +48,11 @@ export class CaseService {
 
     return this.caseModel.findOne({
       where: { id },
-      include: [Notification],
+      include: [
+        Notification,
+        { model: User, as: 'prosecutor' },
+        { model: User, as: 'judge' },
+      ],
     })
   }
 

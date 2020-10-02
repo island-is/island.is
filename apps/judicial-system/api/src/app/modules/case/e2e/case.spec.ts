@@ -13,6 +13,7 @@ import {
   Notification,
   NotificationType,
 } from '../models'
+import { User } from '../../user'
 
 let app: INestApplication
 
@@ -141,7 +142,10 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   )
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
-  expect(caseOne.prosecutor || null).toBe(caseTwo.prosecutor || null)
+  expect(caseOne.prosecutorId || null).toStrictEqual(
+    caseTwo.prosecutorId || null,
+  )
+  expect(caseOne.prosecutor || null).toStrictEqual(caseTwo.prosecutor || null)
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
@@ -163,7 +167,8 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   expect(caseOne.prosecutorAppealDecision || null).toBe(
     caseTwo.prosecutorAppealDecision || null,
   )
-  expect(caseOne.judge || null).toBe(caseTwo.judge || null)
+  expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
+  expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
   expect(caseOne.notifications).toStrictEqual(caseTwo.notifications)
 }
 
@@ -188,7 +193,11 @@ describe('Case', () => {
         // Check the data in the database
         await Case.findOne({
           where: { id: response.body.id },
-          include: [Notification],
+          include: [
+            Notification,
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
         }).then((value) => {
           expectCasesToMatch(dbCaseToCase(value), {
             ...response.body,
@@ -218,7 +227,11 @@ describe('Case', () => {
         // Check the data in the database
         await Case.findOne({
           where: { id: response.body.id },
-          include: [Notification],
+          include: [
+            Notification,
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
         }).then((value) => {
           expectCasesToMatch(dbCaseToCase(value), {
             ...response.body,
@@ -252,7 +265,11 @@ describe('Case', () => {
           // Check the data in the database
           await Case.findOne({
             where: { id: response.body.id },
-            include: [Notification],
+            include: [
+              Notification,
+              { model: User, as: 'prosecutor' },
+              { model: User, as: 'judge' },
+            ],
           }).then((newValue) => {
             expectCasesToMatch(dbCaseToCase(newValue), {
               ...response.body,
@@ -285,16 +302,25 @@ describe('Case', () => {
               ...dbCase,
               modified: response.body.modified,
               state: CaseState.ACCEPTED,
-              judge: user.id,
+              judgeId: user.id,
             } as Case)
 
             // Check the data in the database
             await Case.findOne({
               where: { id: response.body.id },
-              include: [Notification],
+              include: [
+                Notification,
+                { model: User, as: 'prosecutor' },
+                { model: User, as: 'judge' },
+              ],
             }).then((newValue) => {
               expectCasesToMatch(dbCaseToCase(newValue), {
                 ...response.body,
+                judge: {
+                  ...user,
+                  created: newValue.judge.created,
+                  modified: newValue.judge.modified,
+                },
                 notifications: [],
               })
             })

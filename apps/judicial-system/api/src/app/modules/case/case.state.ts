@@ -28,7 +28,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: CaseState.DRAFT,
       to: CaseState.SUBMITTED,
-      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutor' },
+      agent: { role: UserRole.PROSECUTOR, userKey: 'prosecutorId' },
     },
   ],
   [
@@ -36,7 +36,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: CaseState.SUBMITTED,
       to: CaseState.ACCEPTED,
-      agent: { role: UserRole.JUDGE, userKey: 'judge' },
+      agent: { role: UserRole.JUDGE, userKey: 'judgeId' },
     },
   ],
   [
@@ -44,7 +44,7 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     {
       from: CaseState.SUBMITTED,
       to: CaseState.REJECTED,
-      agent: { role: UserRole.JUDGE, userKey: 'judge' },
+      agent: { role: UserRole.JUDGE, userKey: 'judgeId' },
     },
   ],
 ])

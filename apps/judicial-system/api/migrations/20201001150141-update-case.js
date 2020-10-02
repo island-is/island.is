@@ -6,7 +6,7 @@ module.exports = {
       Promise.all([
         queryInterface.addColumn(
           'case',
-          'prosecutor',
+          'prosecutor_id',
           {
             type: Sequelize.UUID,
             references: {
@@ -19,7 +19,7 @@ module.exports = {
         ),
         queryInterface.addColumn(
           'case',
-          'judge',
+          'judge_id',
           {
             type: Sequelize.UUID,
             references: {

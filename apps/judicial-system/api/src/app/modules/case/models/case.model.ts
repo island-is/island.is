@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
   Table,
@@ -18,6 +20,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
 } from './case.types'
+import { User } from '../../user'
 
 @Table({
   tableName: 'case',
@@ -172,11 +175,17 @@ export class Case extends Model<Case> {
   // Athugasemdir til dómara
   comments: string
 
+  @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
     allowNull: true,
   })
-  prosecutor: string
+  @ApiProperty()
+  prosecutorId: string
+
+  @BelongsTo(() => User, 'prosecutorId')
+  @ApiProperty({ type: User })
+  prosecutor: User
 
   @Column({
     type: DataType.STRING,
@@ -282,11 +291,17 @@ export class Case extends Model<Case> {
   // Ákvörðun um kæru sækjanda
   prosecutorAppealDecision: CaseAppealDecision
 
+  @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,
     allowNull: true,
   })
-  judge: string
+  @ApiProperty()
+  judgeId: string
+
+  @BelongsTo(() => User, 'judgeId')
+  @ApiProperty({ type: User })
+  judge: User
 
   @HasMany(() => Notification)
   @ApiProperty({ type: Notification, isArray: true })
