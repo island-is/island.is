@@ -4,6 +4,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 export const card = style({
   display: 'flex',
   height: '100%',
+  width: '100%',
   flexDirection: 'column',
   cursor: 'pointer',
   boxSizing: 'border-box',
@@ -36,8 +37,11 @@ export const imageContainer = style({
 })
 
 export const imageContainerStacked = style({
+  display: 'flex',
   width: '100%',
-  height: 80,
+  height: 200,
   marginTop: 16,
-  flexGrow: 1,
+  justifyContent: 'center',
+  flexGrow: 0,
+  marginBottom: 16,
 })
