@@ -18,8 +18,6 @@ import {
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
 
-const role = 'applicant' // TODO get real role
-
 @Injectable()
 export class ApplicationSerializer
   implements NestInterceptor<Application, Promise<any>> {
@@ -50,7 +48,9 @@ export class ApplicationSerializer
 
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
-      ...helper.getPermittedAnswersAndExternalData(role),
+      ...helper.getPermittedAnswersAndExternalData(
+        application.state === 'inReview' ? 'reviewer' : 'applicant',
+      ),
       name: template.name,
       progress: helper.getApplicationProgress(),
     })
