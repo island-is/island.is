@@ -11,6 +11,7 @@ import type { ServiceCardInformation } from '..';
 
 export interface ServiceCardProps {
   service: ServiceCardInformation
+  cardWidth: number
 }
 
 export const ServiceCard = (props: ServiceCardProps) => {
@@ -21,9 +22,10 @@ export const ServiceCard = (props: ServiceCardProps) => {
     e.preventDefault();
   }
   return (
-    <div onDragStart={preventDragHandler}>
+    <div style={{ width: props.cardWidth }} onDragStart={preventDragHandler}>
       <Box
         borderRadius="large"
+
         className={cn(styles.card, "service-card")}
       >
         <Link href={`./services/${props.service.id}`}>

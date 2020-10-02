@@ -1,116 +1,134 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const serviceList = style ({
-    display: 'flex',  
-    flexWrap: 'wrap',
-    minHeight: 350,
-    justifyContent: 'space-between'
+export const serviceList = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  minHeight: 350,
+  justifyContent: 'space-between',
+})
+
+export const serviceListMobile = style({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  minHeight: 350,
+  justifyContent: 'space-between',
 })
 
 const filterOrg = {
-  background:theme.color.blue100,
-  fontFamily:'IBM Plex Sans',
-  borderRadius:5,
-  marginTop:10,
-  padding:24,
-  minWidth:220
+  background: theme.color.blue100,
+  fontFamily: 'IBM Plex Sans',
+  borderRadius: 5,
+  marginTop: 10,
+  padding: 24,
+  minWidth: 220,
 }
 
 export const filter = style({
-  background:filterOrg.background,
-  fontFamily:filterOrg.fontFamily,
-  borderRadius:filterOrg.borderRadius,
-  marginTop:filterOrg.marginTop,
-  padding:filterOrg.padding,
-  minWidth:filterOrg.minWidth
+  background: filterOrg.background,
+  fontFamily: filterOrg.fontFamily,
+  borderRadius: filterOrg.borderRadius,
+  marginTop: filterOrg.marginTop,
+  padding: filterOrg.padding,
+  minWidth: filterOrg.minWidth,
 })
 export const accordionMobile = style({
-  marginLeft:24,
-  width:412
-
+  marginLeft: 24,
 })
 
 export const filterMobile = style({
-  background:filterOrg.background,
-  fontFamily:filterOrg.fontFamily,
-  borderRadius:filterOrg.borderRadius,
-  marginTop:filterOrg.marginTop,
-  padding:filterOrg.padding,
-  minWidth:filterOrg.minWidth,
-  width:432,
-  marginBottom:20,
-  marginLeft:-10,
-  marginRight:10,
+  background: filterOrg.background,
+  fontFamily: filterOrg.fontFamily,
+  borderRadius: filterOrg.borderRadius,
+  marginTop: filterOrg.marginTop,
+  padding: filterOrg.padding,
+  marginBottom: 20,
+  marginLeft: -10,
+  marginRight: 10,
 })
 
 export const filterItem = style({
-  marginTop:0
+  marginTop: 0,
 })
 
 export const inputSearch = style({
-  marginBottom:20
+  marginBottom: 20,
 })
 
-export const navigation = style({
-  height:60,
-  marginBottom:80,
-  marginLeft:10,
-  fontFamily:theme.typography.fontFamily,
-  borderColor:theme.color.blue200,
-  borderWidth:1,
-  borderStyle:'solid',
-  textAlign:'center',
-  display:'flex',
+export const cardWidth = 320
+export const cardHeightMin = 144
+
+const navigationOrg = {
+  width: cardWidth,
+  height: cardHeightMin,
+  borderWidth: 1,
+  fontFamily: theme.typography.fontFamily,
+  borderColor: theme.color.blue200,
+  borderStyle: 'solid',
+  display: 'flex',
   justifyContent: 'center',
-  flexDirection: 'column'
+}
+export const navigation = style({
+  width: navigationOrg.width,
+  height: navigationOrg.height,
+  fontFamily: navigationOrg.fontFamily,
+  borderColor: navigationOrg.borderColor,
+  borderWidth: navigationOrg.borderWidth,
+  borderStyle: navigationOrg.borderStyle,
+  display: navigationOrg.display,
+  justifyContent: navigationOrg.justifyContent,
+  textAlign: 'center',
+  flexDirection: 'column',
+  marginBottom: 80,
 })
 
 export const navigationMobile = style({
-  height:60,
-  fontFamily:theme.typography.fontFamily,
-  borderColor:theme.color.blue200,
-  borderWidth:1,
-  borderStyle:'solid',
-  textAlign:'center',
-  display:'flex',
-  justifyContent: 'center',
+  width: navigationOrg.width,
+  height: navigationOrg.height,
+  fontFamily: navigationOrg.fontFamily,
+  borderColor: navigationOrg.borderColor,
+  borderWidth: navigationOrg.borderWidth,
+  borderStyle: navigationOrg.borderStyle,
+  display: navigationOrg.display,
+  justifyContent: navigationOrg.justifyContent,
+  textAlign: 'center',
   flexDirection: 'column',
-  width:432,
-  marginBottom:20,
-  marginLeft:10,
-  marginRight:10,
+  marginBottom: 20,
 })
 
 export const displayInline = style({
-  display:'inline'
+  display: 'inline',
 })
 export const displayHidden = style({
-  display:'none'
+  display: 'none',
 })
 
-
 export const radioButton = style({
-  marginTop:5
+  marginTop: 5,
 })
 
 export const topSectionText = style({
-  fontSize:24,
+  fontSize: 24,
   margin: 'auto',
   padding: 10,
-  maxWidth:600
+  maxWidth: 600,
 })
 
 export const topSectionMobile = style({
-  marginBottom:40,
-  textAlign:'center',
-  width:412
+  marginBottom: 40,
+  textAlign: 'center',
 })
 export const topSection = style({
-  marginBottom:40,
-  textAlign:'center'
+  marginBottom: 40,
+  textAlign: 'center',
+})
+
+export const LayoutMobile = style({
+  paddingLeft: 0,
+  paddingRight: 0,
 })
 
 export const serviceLayoutMobile = style({
-  flexDirection:'column-reverse',
+  flexDirection: 'column-reverse',
 })

@@ -21,7 +21,7 @@ import {
   getServices,
   ServiceCardInformation,
   ServiceCard,
-  ServiceFilter, 
+  ServiceFilter,
   ServiceCardMessage
 } from '../../components';
 
@@ -35,18 +35,19 @@ interface PropTypes {
   left: ReactNode
   right?: ReactNode
   bottom?: ReactNode
-  classes?: string
+  className?: string
+  listClassNames?: string
 }
 
-function ServiceLayout({ top, bottom, left, right, classes }: PropTypes) {
+function ServiceLayout({ top, bottom, left, right, className, listClassNames: listClasses }: PropTypes) {
   return (
     <Box paddingX="gutter">
-      <GridContainer>
+      <GridContainer className={className}>
         {<ContentBlock >
           {top}
         </ContentBlock>}
         <ContentBlock>
-          <GridRow className={classes}>
+          <GridRow className={listClasses}>
           <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '9/12']}
                     offset={[    '0',     '0',  '0',    '0', '0']}>
               {left}
@@ -81,7 +82,7 @@ const TEXT_NOT_FOUND = 'Engin þjónusta fannast'
 
 export default function ServiceList(props: ServiceListProps) {
 
-  
+
 
   const onPageMoreButtonClick = () => {
     props.parameters.cursor = nextCursor;
@@ -151,7 +152,6 @@ export default function ServiceList(props: ServiceListProps) {
       setFirstGet(true);
     }, 600))
   }
-
   const [isLoading, setLoading] = useState<boolean>(true);
   const [services, setServices] = useState<Array<ServiceCardInformation>>(null);
   const [nextCursor, setNextCursor] = useState<string>(props.nextCursor);
@@ -166,8 +166,8 @@ export default function ServiceList(props: ServiceListProps) {
   const [isMobile, setIsMobile] = useState(false)
 
   useIsomorphicLayoutEffect(() => {
-    //if (width < 771) {
-    if (width < theme.breakpoints.md) {
+    if (width < 576) {
+      //if (width < theme.breakpoints.md) {
       return setIsMobile(true)
     }
     setIsMobile(false)
@@ -208,7 +208,7 @@ export default function ServiceList(props: ServiceListProps) {
   }, [firstGet, StatusQueryString, props.parameters]);
 
   return (
-    <ServiceLayout classes={cn(isMobile ? styles.serviceLayoutMobile : {})}
+    <ServiceLayout className={cn(isMobile ? styles.LayoutMobile : {})} listClassNames={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
         <div className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}>
           <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
@@ -218,11 +218,11 @@ export default function ServiceList(props: ServiceListProps) {
         </div>
       }
       left={
-        <Box className={cn(styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
+        <Box className={cn(isMobile ? styles.serviceListMobile : styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
           {services?.length > 0 ?
             (
               services?.map((item) => {
-                return <ServiceCard key={item.id} service={item} />
+                return <ServiceCard cardWidth={styles.cardWidth} key={item.id} service={item} />
               })
             )
             :
@@ -234,10 +234,20 @@ export default function ServiceList(props: ServiceListProps) {
               />
             )
           }
+          <Box className={cn(isMobile ? styles.navigationMobile : styles.navigation)} borderRadius="large">
+            <div className={cn(isLoading ? styles.displayInline : styles.displayHidden)}>
+              <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
+            </div>
+            <div className={cn(isLoading ? styles.displayHidden : {})}>
+              <Button width="normal" variant="text" disabled={nextCursor === null} onClick={() => onPageMoreButtonClick()} >
+                {props.pageContent.strings.find(s => s.id === 'catalog-fetch-more-button').text}
+              </Button>
+            </div>
+          </Box>
         </Box>
       }
       right={
-        isMobile? (
+        isMobile ? (
           <div className={cn(styles.accordionMobile)}>
             <AccordionItem id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="default">
               <ServiceFilter
@@ -266,33 +276,22 @@ export default function ServiceList(props: ServiceListProps) {
 
       }
 
-      bottom={
-        <Box className={cn(isMobile ? styles.navigationMobile : styles.navigation)} borderRadius="large">
-          <div className={cn(isLoading ? styles.displayInline : styles.displayHidden)}>
-            <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
-          </div>
-          <div className={cn(isLoading ? styles.displayHidden : {})}>
-            <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-              {props.pageContent.strings.find(s => s.id === 'catalog-fetch-more-button').text}
-            </Button>
-          </div>
-        </Box>
-      }
+
     />
   )
 }
 
 ServiceList.defaultProps = {
-    parameters : {
-      cursor: null,
-      limit: null,
-      owner: null,
-      name: null,
-      pricing: [],
-      data: [],
-      type: [],
-      access: [],
-      text: null
+  parameters: {
+    cursor: null,
+    limit: null,
+    owner: null,
+    name: null,
+    pricing: [],
+    data: [],
+    type: [],
+    access: [],
+    text: null
   }
 }
 

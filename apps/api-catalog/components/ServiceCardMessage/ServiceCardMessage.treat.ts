@@ -2,10 +2,9 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 const wrapperOrg = {
-  width: 432,
+  width: 320,
+  height: 144,
   marginBottom: 20,
-  marginLeft: 10,
-  marginRight: 10,
   fontFamily: theme.typography.fontFamily,
   borderColor: theme.color.blue200,
   borderWidth: 1,
@@ -13,7 +12,6 @@ const wrapperOrg = {
   display: 'flex',
   alignItems: 'center',
   alignContent: 'center',
-  height: 200,
 }
 const errorColor = theme.color.red400
 export const wrapper = style(wrapperOrg)
@@ -32,8 +30,8 @@ export const wrapperError = style({
 })
 
 export const cardTexts = style({
-  paddingLeft: 32,
-  paddingRight: 32,
+  paddingLeft: 24,
+  paddingRight: 24,
   paddingTop: 24,
   paddingBottom: 24,
 })

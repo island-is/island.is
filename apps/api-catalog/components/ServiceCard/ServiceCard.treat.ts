@@ -2,7 +2,6 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
-  width: 432,
   marginBottom: 20,
   fontFamily: theme.typography.fontFamily,
   borderColor: theme.color.blue200,
