@@ -4,27 +4,10 @@ import {
   ActionCardLoader,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import ApplicationCard, {
-  MockApplication,
-} from '../../components/ApplicationCard/ApplicationCard'
+import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
 import { useListApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
-
-const mockApplications: MockApplication[] = [
-  {
-    name: 'Stafrænt ökuskírteini',
-    date: '2020-07-27T00:00:00.000',
-    status: true,
-    url: 'https://leyfisumsokn.island.is/Home/Completed?applicationID=93202',
-  },
-  {
-    name: 'Stafrænt ökuskírteini',
-    date: '2020-06-22T00:00:00.000',
-    status: false,
-    url: 'https://leyfisumsokn.island.is/Home/Completed?applicationID=93202',
-  },
-]
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data: applications, loading, error } = useListApplications(
@@ -37,17 +20,14 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
         <Typography variant="h1">Umsóknir</Typography>
       </Box>
       {loading && <ActionCardLoader repeat={3} />}
+      {error && (
+        <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+          <Typography variant="h3">
+            Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
+          </Typography>
+        </Box>
+      )}
       <Stack space={2}>
-        {mockApplications.map(({ name, date, status, url }, index) => (
-          <ApplicationCard
-            key={index}
-            name={name}
-            date={date}
-            status={status}
-            url={url}
-            progress={50}
-          />
-        ))}
         {applications?.map((application: Application) => (
           <ApplicationCard
             key={application.id}

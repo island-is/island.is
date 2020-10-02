@@ -13,13 +13,6 @@ import {
 import * as styles from './ApplicationCard.treat'
 import ProgressBar from '../ProgressBar/ProgressBar'
 
-export interface MockApplication {
-  name: string
-  date: string
-  status: boolean
-  url: string
-}
-
 interface Props {
   name: string
   date: string
