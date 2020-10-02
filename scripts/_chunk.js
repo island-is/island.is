@@ -16,6 +16,6 @@ let chunks = chunk(
   .map((ch) => ch.join(','))
   .filter((job) => job.length > 0)
 
-if (chunks.length == 0) chunks = ['dummy']
+chunks = ['dummy']
 
 process.stdout.write(JSON.stringify(chunks))
