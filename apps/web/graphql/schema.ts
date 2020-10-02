@@ -80,12 +80,19 @@ export type LinkCard = {
   linkText: Scalars['String']
 }
 
+export type Author = {
+  __typename?: 'Author'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type News = {
   __typename?: 'News'
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
   subtitle: Scalars['String']
+  author?: Maybe<Author>
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
@@ -1700,6 +1707,7 @@ export type GetSingleNewsItemQuery = { __typename?: 'Query' } & {
       News,
       'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro'
     > & {
+        author?: Maybe<{ __typename?: 'Author' } & Pick<Author, 'name'>>
         content?: Maybe<
           Array<
             | ({

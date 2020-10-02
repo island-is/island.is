@@ -91,12 +91,19 @@ export type LinkCard = {
   linkText: Scalars['String']
 }
 
+export type Author = {
+  __typename?: 'Author'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type News = {
   __typename?: 'News'
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
   subtitle: Scalars['String']
+  author?: Maybe<Author>
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
@@ -1344,6 +1351,7 @@ export type ResolversTypes = {
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   Story: ResolverTypeWrapper<Story>
   LinkCard: ResolverTypeWrapper<LinkCard>
+  Author: ResolverTypeWrapper<Author>
   News: ResolverTypeWrapper<
     Omit<News, 'content'> & { content?: Maybe<Array<ResolversTypes['Slice']>> }
   >
@@ -1545,6 +1553,7 @@ export type ResolversParentTypes = {
   TimelineSlice: TimelineSlice
   Story: Story
   LinkCard: LinkCard
+  Author: Author
   News: Omit<News, 'content'> & {
     content?: Maybe<Array<ResolversParentTypes['Slice']>>
   }
@@ -1823,6 +1832,15 @@ export type LinkCardResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type AuthorResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type NewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['News'] = ResolversParentTypes['News']
@@ -1831,6 +1849,7 @@ export type NewsResolvers<
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  author?: Resolver<Maybe<ResolversTypes['Author']>, ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -3191,6 +3210,7 @@ export type Resolvers<ContextType = Context> = {
   TimelineSlice?: TimelineSliceResolvers<ContextType>
   Story?: StoryResolvers<ContextType>
   LinkCard?: LinkCardResolvers<ContextType>
+  Author?: AuthorResolvers<ContextType>
   News?: NewsResolvers<ContextType>
   Slice?: SliceResolvers<ContextType>
   MailingListSignupSlice?: MailingListSignupSliceResolvers<ContextType>
