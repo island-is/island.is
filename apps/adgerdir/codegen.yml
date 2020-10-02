@@ -1,0 +1,11 @@
+schema:
+  - apps/api/src/api.graphql
+generates:
+  ./apps/adgerdir/graphql/fragmentTypes.json:
+    plugins:
+      - fragment-matcher
+    config:
+      module: commonjs
+hooks:
+  afterAllFileWrite:
+    - prettier --write
