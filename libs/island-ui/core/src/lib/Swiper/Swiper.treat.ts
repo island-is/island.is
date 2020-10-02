@@ -40,7 +40,7 @@ export const slide = style({
       content: "''",
       display: 'block',
       flex: 'none',
-      width: theme.spacing[4],
+      width: theme.spacing[3],
     },
   },
 })

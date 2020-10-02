@@ -235,6 +235,14 @@ export class Case extends Model<Case> {
   ruling: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Hafna kröfu
+  rejecting: boolean
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
   })

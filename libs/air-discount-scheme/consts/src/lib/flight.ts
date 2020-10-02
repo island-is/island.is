@@ -1,3 +1,8 @@
+export const Actions = {
+  send: 'SEND',
+  revoke: 'REVOKE',
+}
+
 export const States = {
   awaitingDebit: 'AWAITING_DEBIT',
   sentDebit: 'SENT_DEBIT',
