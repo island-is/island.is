@@ -20,9 +20,11 @@ import {
   renderRestrictons,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { formatDate } from '../../../utils/formatters'
+import { formatDate, parseTransition } from '../../../utils/formatters'
 import { capitalize } from 'lodash'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
+import { CaseTransition } from '@island.is/judicial-system/types'
+import * as api from '../../../api'
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -34,6 +36,31 @@ export const Confirmation: React.FC = () => {
       setWorkingCase(wc)
     }
   }, [workingCase, setWorkingCase])
+
+  const handleNextButtonClick = async () => {
+    try {
+      // Parse the transition request
+      const transitionRequest = parseTransition(
+        workingCase.modified,
+        workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+      )
+
+      // Transition the case
+      const response = await api.transitionCase(
+        workingCase.id,
+        transitionRequest,
+      )
+
+      if (response !== 200) {
+        // Improve error handling at some point
+        return false
+      }
+
+      return true
+    } catch (e) {
+      return false
+    }
+  }
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
@@ -281,6 +308,9 @@ export const Confirmation: React.FC = () => {
               previousUrl={Constants.RULING_ROUTE}
               nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
               nextButtonText="Staðfesta úrskurð"
+              onNextButtonClick={() => {
+                handleNextButtonClick()
+              }}
             />
           </GridColumn>
         </GridRow>

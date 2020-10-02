@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import glob from 'glob'
-import { execFileSync } from 'child_process'
+import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Collection } from 'contentful-management/dist/typings/common-types'
 import {
@@ -31,7 +31,7 @@ const client = createClient({
   accessToken,
 })
 
-execFileSync('npx', [
+spawn.sync('npx', [
   'formatjs',
   'extract',
   '--out-file',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
@@ -11,7 +11,6 @@ import {
   Input,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
 import {
   CustodyProvisions,
   CustodyRestrictions,
@@ -26,7 +25,6 @@ import * as api from '../../../../api'
 import {
   formatDate,
   parseArray,
-  parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 
@@ -199,7 +197,7 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
     },
     {
-      restriction: 'E - Fjölmiðlabanns',
+      restriction: 'E - Fjölmiðlabann',
       value: CustodyRestrictions.MEDIA,
       getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
@@ -207,11 +205,6 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
-
-  useEffect(() => {
-    const caseId = workingCase.id
-    api.saveCase(caseId, parseString('state', CaseState.SUBMITTED))
-  }, [workingCase.id])
 
   return (
     <Box marginTop={7} marginBottom={30}>

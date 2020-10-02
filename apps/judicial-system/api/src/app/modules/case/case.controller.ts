@@ -53,20 +53,8 @@ export class CaseController {
     private readonly logger: Logger,
   ) {}
 
-  @Get('cases')
-  @ApiOkResponse({ type: Case, isArray: true, description: 'Gets all cases' })
-  getAll(): Promise<Case[]> {
-    return this.caseService.getAll()
-  }
-
-  @Get('case/:id')
-  @ApiOkResponse({ type: Case })
-  async getById(@Param('id') id: string): Promise<Case> {
-    return this.findCaseById(id)
-  }
-
   @Post('case')
-  @ApiCreatedResponse({ type: Case })
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
     @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
@@ -75,7 +63,7 @@ export class CaseController {
   }
 
   @Put('case/:id')
-  @ApiOkResponse({ type: Case })
+  @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('id') id: string,
     @Body() caseToUpdate: UpdateCaseDto,
@@ -93,7 +81,10 @@ export class CaseController {
   }
 
   @Put('case/:id/state')
-  @ApiOkResponse({ type: Case })
+  @ApiOkResponse({
+    type: Case,
+    description: 'Transitions an existing case to a new state',
+  })
   async transition(
     @Param('id') id: string,
     @Body() caseToTransition: TransitionCaseDto,
@@ -126,18 +117,27 @@ export class CaseController {
     return updatedCase
   }
 
-  @Get('case/:id/notifications')
-  @ApiOkResponse({ type: Notification, isArray: true })
-  async getAllNotificationsById(
-    @Param('id') id: string,
-  ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id)
+  @Get('cases')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all existing cases',
+  })
+  getAll(): Promise<Case[]> {
+    return this.caseService.getAll()
+  }
 
-    return this.caseService.getAllNotificationsByCaseId(existingCase)
+  @Get('case/:id')
+  @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  async getById(@Param('id') id: string): Promise<Case> {
+    return this.findCaseById(id)
   }
 
   @Post('case/:id/notification')
-  @ApiCreatedResponse({ type: Notification })
+  @ApiCreatedResponse({
+    type: Notification,
+    description: 'Sends a new notification for an existing case',
+  })
   async sendNotificationByCaseId(
     @Param('id') id: string,
     @Req() req,
@@ -160,28 +160,25 @@ export class CaseController {
     return this.caseService.sendNotificationByCaseId(existingCase, user)
   }
 
-  @Get('case/:id/signature')
-  @ApiOkResponse({ type: Case })
-  async confirmSignature(
+  @Get('case/:id/notifications')
+  @ApiOkResponse({
+    type: Notification,
+    isArray: true,
+    description: 'Gets all existing notifications for an existing case',
+  })
+  async getAllNotificationsById(
     @Param('id') id: string,
-    @Query('documentToken') documentToken: string,
-  ): Promise<Case> {
+  ): Promise<Notification[]> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
-      )
-    }
-
-    return this.caseService.confirrmSignature(existingCase, documentToken)
+    return this.caseService.getAllNotificationsByCaseId(existingCase)
   }
 
   @Post('case/:id/signature')
-  @ApiCreatedResponse({ type: SigningServiceResponse })
+  @ApiCreatedResponse({
+    type: SigningServiceResponse,
+    description: 'Requests a signature for an existing case',
+  })
   async requestSignature(
     @Param('id') id: string,
     @Req() req,
@@ -202,6 +199,30 @@ export class CaseController {
     const user = await this.userService.findByNationalId(authUser.nationalId)
 
     return this.caseService.requestSignature(existingCase, user)
+  }
+
+  @Get('case/:id/signature')
+  @ApiOkResponse({
+    type: Case,
+    description:
+      'Confirms a previously requested signature for an existing case',
+  })
+  async confirmSignature(
+    @Param('id') id: string,
+    @Query('documentToken') documentToken: string,
+  ): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.ACCEPTED &&
+      existingCase.state !== CaseState.REJECTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
+      )
+    }
+
+    return this.caseService.confirrmSignature(existingCase, documentToken)
   }
 
   private async findCaseById(id: string) {
