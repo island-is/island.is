@@ -1,8 +1,7 @@
-import React, { ReactNode } from 'react'
-import { Box, ContentBlock, Columns, Column } from '@island.is/island-ui/core'
-
-import * as styles from './HomeLayout.treat';
-import cn from 'classnames';
+import React, { ReactNode } from 'react';
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use';
+import { Box, ContentBlock, Columns, Column } from '@island.is/island-ui/core';
+import { theme } from '@island.is/island-ui/theme';
 
 interface PropTypes {
   left: ReactNode
@@ -10,12 +9,24 @@ interface PropTypes {
 }
 
 function HomeLayout({ left, right }: PropTypes) {
+
+  const { width } = useWindowSize();
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    //if (width < 771) {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   return (
-    <Box className={cn(styles.layout)} paddingX="gutter">
+    <Box paddingX="gutter">
       <ContentBlock>
-        <Columns align="right" space="gutter" collapseBelow="lg">
-          <Column width="6/12">{left}</Column>
-          <Column width="5/12">
+        <Columns align="right" space="gutter">
+          <Column width={isMobile ? "11/12" : "6/12"}>{left}</Column>
+          <Column width={isMobile ? "content" : "5/12"}>
             <Box paddingLeft={[0, 0, 0, 8, 15]} width="full">
               {right}
             </Box>

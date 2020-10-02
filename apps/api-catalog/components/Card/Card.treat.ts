@@ -12,7 +12,21 @@ export const homeCard = style ({
   ':hover': {
     borderColor: theme.color.blue400,
     textDecoration: 'none',
-  },
+  }
+});
+
+export const homeCardMobile = style ({
+  width: 327,
+  height: 162,
+  padding: '16px 16px 16px 24px',
+  fontFamily:theme.typography.fontFamily,
+  borderColor:theme.color.blue200,
+  borderWidth:1,
+  borderStyle:'solid',
+  ':hover': {
+    borderColor: theme.color.blue400,
+    textDecoration: 'none',
+  }
 });
 
 export const cardTitle = style ({

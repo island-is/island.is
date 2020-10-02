@@ -20,7 +20,7 @@ function DesignGuide(props: DesignGuideProps) {
   return (
     <Layout left={
       <Box>
-        <Box marginBottom={4}>
+        <Box marginBottom={2}>
           <Breadcrumbs>
               <a href="/">
                 Ísland.is
