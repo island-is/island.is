@@ -165,7 +165,7 @@ export const Card: FC<CardProps> = ({
         display="flex"
         flexDirection={stackImage ? 'column' : 'row'}
       >
-        {items.map((x) => x)}
+        {items}
       </Box>
     </Box>
   )
