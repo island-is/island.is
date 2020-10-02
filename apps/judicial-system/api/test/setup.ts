@@ -14,9 +14,6 @@ import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { JwtAuthGuard } from '../src/app/modules/auth'
 import { AppModule } from '../src/app'
 
-let app: INestApplication
-let sequelize: Sequelize
-
 // A bit of a hack for now, until we simulate login in tests
 export const user = {
   id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
@@ -24,7 +21,6 @@ export const user = {
   name: 'Ívar Oddsson',
   mobileNumber: '6904031',
   role: 'JUDGE',
-}
 
 const noGuard: CanActivate = {
   canActivate: jest.fn(async (context: ExecutionContext) => {
@@ -34,6 +30,9 @@ const noGuard: CanActivate = {
     return true
   }),
 }
+
+let app: INestApplication
+let sequelize: Sequelize
 
 const truncate = () => {
   if (!sequelize) {
