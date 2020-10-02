@@ -16,7 +16,11 @@ import {
   FlightLeg as TFlightLeg,
   UserInfo,
 } from '@island.is/air-discount-scheme/types'
-import { States, Airlines } from '@island.is/air-discount-scheme/consts'
+import {
+  Actions,
+  States,
+  Airlines,
+} from '@island.is/air-discount-scheme/consts'
 import { createMachine } from 'xstate'
 
 export const financialStateMachine = createMachine({
@@ -24,13 +28,16 @@ export const financialStateMachine = createMachine({
   initial: States.awaitingDebit,
   states: {
     [States.awaitingDebit]: {
-      on: { REVOKE: States.cancelled, SEND: States.sentDebit },
+      on: {
+        [Actions.revoke]: States.cancelled,
+        [Actions.send]: States.sentDebit,
+      },
     },
     [States.sentDebit]: {
-      on: { REVOKE: States.awaitingCredit },
+      on: { [Actions.revoke]: States.awaitingCredit },
     },
     [States.awaitingCredit]: {
-      on: { SEND: States.sentCredit },
+      on: { [Actions.send]: States.sentCredit },
     },
     [States.sentCredit]: {
       type: 'final',
@@ -115,6 +122,14 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   })
   @ApiProperty()
   financialState!: string
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+  })
+  @ApiProperty()
+  financialStateUpdated!: Date
 
   @Column({
     type: DataType.DATE,
