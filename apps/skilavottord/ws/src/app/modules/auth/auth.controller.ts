@@ -108,6 +108,20 @@ export class AuthController {
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+    console.log("---user---")
+    console.log(user)
+    console.log("---csrfToken---")
+    console.log(csrfToken)
+    console.log("---jwtToken---")
+    console.log(jwtToken)
+    console.log("---CSRF_COOKIE---") 
+    console.log(CSRF_COOKIE) 
+    console.log("---ACCESS_TOKEN_COOKIE---")   
+    console.log(ACCESS_TOKEN_COOKIE)    
+    console.log("---returnUrl---")
+    console.log(returnUrl)
+    console.log("---res---")
+    console.log(res)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -122,11 +136,14 @@ export class AuthController {
 
   @Get('/login')
   login(@Res() res, @Query() query) {
-    //console.log("Duddi ralli rai 2")
+    console.log("---/login starting---")
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
-
+    console.log("---returnUrl---")
+    console.log(returnUrl)
+    console.log("---samlEntryPoint---")
+    console.log(samlEntryPoint)
     return res
       .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(samlEntryPoint)
