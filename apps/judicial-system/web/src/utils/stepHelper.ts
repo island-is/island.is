@@ -6,7 +6,6 @@ import {
 } from '../types'
 import * as api from '../api'
 import { formatDate, parseString } from './formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 
 export const updateState = (
   state: Case,
