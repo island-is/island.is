@@ -4,9 +4,9 @@ import { createNestJSCache } from '@island.is/cache'
 import { environment } from '../../../environments'
 
 const { redis, production } = environment
-
 let CacheModule: DynamicModule
-if (process.env.NODE_ENV === 'test') {
+
+if (process.env.NODE_ENV === 'test' || process.env.INIT_SCHEMA === 'true') {
   CacheModule = NestCacheModule.register()
 } else {
   CacheModule = NestCacheModule.register({

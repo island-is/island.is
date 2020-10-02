@@ -14,6 +14,7 @@ export interface Translation {
   handover: Handover
   completed: Completed
   cancelModal: CancelModal
+  processSteps: string[]
 }
 
 export interface Home {
