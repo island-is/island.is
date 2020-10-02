@@ -122,9 +122,11 @@ const Home: Screen<HomeProps> = ({
         backgroundBleed={
           includeLifeEventSectionBleed && {
             bleedAmount: 100,
+            mobileBleedAmount: 50,
             bleedDirection: 'bottom',
             fromColor: 'white',
             toColor: 'purple100',
+            bleedInMobile: true,
           }
         }
       >
