@@ -271,7 +271,7 @@ export class ApplicationsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/reviewers/{nationalRegistryId}/applications`.replace(`{${"nationalRegistryId"}}`, encodeURIComponent(String(requestParameters.nationalRegistryId))),
+            path: `/assignees/{nationalRegistryId}/applications`.replace(`{${"nationalRegistryId"}}`, encodeURIComponent(String(requestParameters.nationalRegistryId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

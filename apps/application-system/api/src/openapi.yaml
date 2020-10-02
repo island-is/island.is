@@ -273,7 +273,7 @@ paths:
                   $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
         - applications
-  '/reviewers/{nationalRegistryId}/applications':
+  '/assignees/{nationalRegistryId}/applications':
     get:
       operationId: ApplicationController_findAssigneeApplications
       parameters:
