@@ -35,7 +35,7 @@ import {
   LatestNewsSection,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { GlobalNamespaceContext } from '@island.is/web/context'
+import { GlobalContext } from '@island.is/web/context'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -53,7 +53,7 @@ const Home: Screen<HomeProps> = ({
   lifeEvents,
 }) => {
   const { activeLocale } = useI18n()
-  const { globalNamespace } = useContext(GlobalNamespaceContext)
+  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
@@ -122,9 +122,11 @@ const Home: Screen<HomeProps> = ({
         backgroundBleed={
           includeLifeEventSectionBleed && {
             bleedAmount: 100,
+            mobileBleedAmount: 50,
             bleedDirection: 'bottom',
             fromColor: 'white',
             toColor: 'purple100',
+            bleedInMobile: true,
           }
         }
       >

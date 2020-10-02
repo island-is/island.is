@@ -18,7 +18,7 @@ When adding new types/endpoints to the api:
 - Run the following script
 
   ```bash
-  yarn nx run api:contentType --args="--id=contentTypeId --sys=id --overwrite=false"
+  yarn nx run api:contentType --id=contentTypeId --sys=id --overwrite=false
   ```
 
   The script take 3 arguments:
