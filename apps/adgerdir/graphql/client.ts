@@ -8,7 +8,7 @@ import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
 
-import introspectionQueryResultData from './possibleTypes.json'
+import introspectionQueryResultData from './fragmentTypes.json'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 

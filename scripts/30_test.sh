@@ -11,19 +11,19 @@ APP_HOME=`cat $PROJECT_ROOT/workspace.json | jq ".projects[\"$APP\"].root" -r`
 # Checking if we should simple run the test runner container or should we use a docker-compose setup
 if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
   COMPOSE_FILES="-f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml"
-  
+
   if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.base.yml ]; then
     COMPOSE_FILES="-f $PROJECT_ROOT/$APP_HOME/docker-compose.base.yml $COMPOSE_FILES"
   fi
 
-  # Cleanup after the test 
+  # Cleanup after the test
   clean_up () {
     if [ "$1" != "0" ]; then
       SUT=${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} docker-compose -p test-$APP $COMPOSE_FILES rm -s -f
       echo "Cleanup result for $APP is $? and exit code is $1"
       exit $1
     fi
-  } 
+  }
   trap 'clean_up $? $LINENO' EXIT
 
   docker image inspect ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} -f ' ' > /dev/null  2>&1 || \
