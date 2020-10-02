@@ -97,12 +97,16 @@ const Admin: Screen = ({}) => {
   const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
     ConfirmInvoiceMutation,
   )
-  const { data, loading: queryLoading, error } = useQuery(FlightLegsQuery, {
-    ssr: false,
-    variables: {
-      input,
+  const { data, loading: queryLoading, error, refetch } = useQuery(
+    FlightLegsQuery,
+    {
+      ssr: false,
+      fetchPolicy: 'network-only',
+      variables: {
+        input,
+      },
     },
-  })
+  )
   const { flightLegs = [] } = data ?? {}
 
   if (!user) {
@@ -117,6 +121,7 @@ const Admin: Screen = ({}) => {
   const loading = queryLoading || confirmInvoiceLoading
   const applyFilters: SubmitHandler<FilterInput> = (data: FilterInput) => {
     setFilters(data)
+    refetch()
   }
 
   return (
