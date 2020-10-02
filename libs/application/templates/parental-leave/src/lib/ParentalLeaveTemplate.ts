@@ -41,6 +41,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'draft',
+          progress: 0.25,
           roles: [
             {
               id: 'applicant',
@@ -63,6 +64,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       employerApproval: {
         meta: {
           name: 'Employer Approval',
+          progress: 0.5,
           roles: [
             {
               id: 'employer',
@@ -89,6 +91,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
+          progress: 0.75,
         },
         on: {
           APPROVE: { target: 'approved' },
@@ -98,6 +101,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          progress: 1,
         },
         type: 'final' as const,
       },

@@ -59,6 +59,7 @@ const testApplicationTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'draft',
+          progress: 0.33,
           roles: [
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -86,6 +87,7 @@ const testApplicationTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
+          progress: 0.66,
           roles: [
             {
               id: 'applicant',
@@ -108,6 +110,7 @@ const testApplicationTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          progress: 1,
         },
         type: 'final' as const,
       },
@@ -281,6 +284,20 @@ describe('ApplicationTemplate', () => {
         answers,
         externalData,
       })
+    })
+  })
+
+  describe('getApplicationProgress', () => {
+    const application = createMockApplication()
+    const templateHelper = new ApplicationTemplateHelper(
+      application,
+      testApplicationTemplate,
+    )
+    it('should return the corrent progress for each state', () => {
+      expect(templateHelper.getApplicationProgress('draft')).toBe(0.33)
+      expect(templateHelper.getApplicationProgress('inReview')).toBe(0.66)
+      expect(templateHelper.getApplicationProgress('approved')).toBe(1)
+      expect(templateHelper.getApplicationProgress('rejected')).toBe(0)
     })
   })
 })

@@ -50,6 +50,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökunám',
+          progress: 0.33,
           roles: [
             {
               id: 'applicant',
@@ -73,6 +74,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
+          progress: 0.66,
           roles: [
             {
               id: 'reviewer',
@@ -104,6 +106,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          progress: 1,
           roles: [
             {
               id: 'applicant',

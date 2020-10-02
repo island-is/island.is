@@ -45,9 +45,9 @@ export class ApplicationTemplateHelper<
   }
 
   getApplicationProgress(stateKey: string = this.application.state): number {
-    const states = Object.keys(this.template.stateMachineConfig.states)
-
-    return states.indexOf(stateKey) / states.length
+    return (
+      this.template.stateMachineConfig.states[stateKey]?.meta?.progress ?? 0
+    )
   }
 
   getApplicationStateInformation(
