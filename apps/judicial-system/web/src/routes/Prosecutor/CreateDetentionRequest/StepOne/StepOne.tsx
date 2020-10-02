@@ -66,7 +66,7 @@ export const StepOne: React.FC = () => {
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
@@ -511,7 +511,10 @@ export const StepOne: React.FC = () => {
                       name="courtDate"
                       label="Tímasetning"
                       placeholder="Settu inn tíma"
-                      defaultValue={caseDraftJSON.requestedCourtTime}
+                      defaultValue={formatDate(
+                        caseDraftJSON.requestedCourtDate,
+                        Constants.TIME_FORMAT,
+                      )}
                       disabled={!workingCase.requestedCourtDate}
                       onBlur={(evt) => {
                         const timeWithoutColon = evt.target.value.replace(
