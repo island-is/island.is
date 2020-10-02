@@ -226,12 +226,13 @@ export default function ServiceList(props: ServiceListProps) {
               })
             )
             :
-            (
+            ( <span className={cn(isLoading? styles.displayHidden: {})}>
               <ServiceCardMessage
                 messageType="default"
                 borderStyle="standard"
                 title={emptyListText}
               />
+              </span>
             )
           }
           <Box className={cn(isMobile ? styles.navigationMobile : styles.navigation)} borderRadius="large">
