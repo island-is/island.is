@@ -1,15 +1,16 @@
 import {
+  Args,
   Context,
-  Query,
+  Mutation,
   Parent,
+  Query,
   ResolveField,
   Resolver,
-  Args,
 } from '@nestjs/graphql'
 
 import { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
 import { Authorize, AuthService } from '../auth'
-import { FlightLegsInput } from './dto'
+import { FlightLegsInput, ConfirmInvoiceInput } from './dto'
 import { FlightLeg } from './flightLeg.model'
 
 @Resolver(() => FlightLeg)
@@ -23,6 +24,15 @@ export class FlightLegResolver {
     @Args('input', { type: () => FlightLegsInput }) input,
   ): Promise<TFlightLeg[]> {
     return backendApi.getFlightLegs(input)
+  }
+
+  @Authorize({ role: 'admin' })
+  @Mutation(() => [FlightLeg])
+  confirmInvoice(
+    @Context('dataSources') { backendApi },
+    @Args('input', { type: () => ConfirmInvoiceInput }) input,
+  ): Promise<TFlightLeg[]> {
+    return backendApi.confirmInvoice(input)
   }
 
   @ResolveField('travel')

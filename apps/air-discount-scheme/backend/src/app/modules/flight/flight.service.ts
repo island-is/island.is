@@ -200,6 +200,25 @@ export class FlightService {
     })
   }
 
+  finalizeCreditsAndDebits(flightLegs: FlightLeg[]): Promise<FlightLeg[]> {
+    return Promise.all(
+      flightLegs.map((flightLeg) => {
+        let { financialState } = flightLeg
+        if (financialState === States.awaitingDebit) {
+          financialState = financialStateMachine
+            .transition(flightLeg.financialState, 'SEND')
+            .value.toString()
+        } else if (financialState === States.awaitingCredit) {
+          financialState = financialStateMachine
+            .transition(flightLeg.financialState, 'SEND')
+            .value.toString()
+        }
+
+        return flightLeg.update({ financialState })
+      }),
+    )
+  }
+
   private updateFinancialState(
     flightLeg: FlightLeg,
     action: ValueOf<typeof Actions>,

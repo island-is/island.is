@@ -28,6 +28,7 @@ import {
   CreateFlightBody,
   GetFlightParams,
   GetFlightLegsBody,
+  ConfirmInvoiceBody,
   CreateFlightParams,
   GetUserFlightsParams,
   DeleteFlightParams,
@@ -171,6 +172,16 @@ export class PrivateFlightController {
   @ApiExcludeEndpoint()
   getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
     return this.flightService.findAllLegsByFilter(body)
+  }
+
+  @Post('flightLegs/confirmInvoice')
+  @ApiExcludeEndpoint()
+  async confirmInvoice(
+    @Body() body: ConfirmInvoiceBody | {},
+  ): Promise<FlightLeg[]> {
+    let flightLegs = await this.flightService.findAllLegsByFilter(body)
+    flightLegs = await this.flightService.finalizeCreditsAndDebits(flightLegs)
+    return flightLegs
   }
 
   @Get('users/:nationalId/flights')
