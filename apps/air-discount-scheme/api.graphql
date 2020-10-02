@@ -756,6 +756,7 @@ input Range {
 
 type Mutation {
   contactUs(input: ContactUsInput!): ContactUsPayload!
+  confirmInvoice(input: ConfirmInvoiceInput!): [FlightLeg!]!
 }
 
 input ContactUsInput {
@@ -764,4 +765,15 @@ input ContactUsInput {
   email: String!
   subject: String!
   message: String!
+}
+
+input ConfirmInvoiceInput {
+  airline: String
+  cooperation: String
+  flightLeg: Travel
+  period: Period
+  state: [String!]
+  age: Range
+  gender: String
+  postalCode: Int
 }
