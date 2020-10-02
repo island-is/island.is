@@ -82,7 +82,7 @@ export class CaseService {
       {
         where: {
           id,
-          modified,
+          // modified, Uncomment when client is ready to send last modified timestamp
         },
         returning: true,
       },
@@ -164,7 +164,7 @@ export class CaseService {
     // Development without signing service access token
     return {
       controlCode: '0000',
-      documentToken: 'DEVELOPEMNT',
+      documentToken: 'DEVELOPMENT',
     }
   }
 

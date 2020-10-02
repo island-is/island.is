@@ -4,6 +4,7 @@ import { Field } from './Fields'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderTypes } from './DataProvider'
 import { MessageDescriptor } from 'react-intl'
+import { FormValue } from './Application'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -90,4 +91,13 @@ export interface DataProviderItem {
   readonly title: MessageDescriptor | string
   readonly subTitle?: MessageDescriptor | string
   readonly source?: string
+}
+
+export interface FieldBaseProps {
+  applicationId?: string
+  autoFocus?: boolean
+  error?: string
+  field: Field
+  formValue: FormValue
+  showFieldName?: boolean
 }
