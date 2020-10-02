@@ -9,7 +9,7 @@ import ApplicationCard, {
 } from '../../components/ApplicationCard/ApplicationCard'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
 import { useListApplications } from '@island.is/service-portal/graphql'
-import { Application } from '@island.is/application/template'
+import { Application } from '@island.is/application/core'
 
 const mockApplications: MockApplication[] = [
   {
