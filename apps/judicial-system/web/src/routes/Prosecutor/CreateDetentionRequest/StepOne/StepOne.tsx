@@ -301,7 +301,7 @@ export const StepOne: React.FC = () => {
                   <Input
                     data-testid="accusedName"
                     name="accusedName"
-                    label="Fullt nafn kærða"
+                    label="Fullt nafn"
                     defaultValue={workingCase.accusedName}
                     errorMessage={accusedNameErrorMessage}
                     hasError={accusedNameErrorMessage !== ''}
@@ -548,7 +548,7 @@ export const StepOne: React.FC = () => {
                 </GridRow>
               </Box>
               <FormFooter
-                previousUrl="/"
+                previousUrl={Constants.DETENTION_REQUESTS_ROUTE}
                 nextUrl={Constants.STEP_TWO_ROUTE}
                 onNextButtonClick={() => setModalVisible(true)}
                 nextIsDisabled={
@@ -562,7 +562,6 @@ export const StepOne: React.FC = () => {
                     ? true
                     : false
                 }
-                previousIsDisabled
               />
             </GridColumn>
           </GridRow>

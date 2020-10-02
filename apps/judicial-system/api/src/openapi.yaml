@@ -55,6 +55,28 @@ components:
         - name
         - mobileNumber
         - role
+    CreateCaseDto:
+      type: object
+      properties:
+        policeCaseNumber:
+          type: string
+        accusedNationalId:
+          type: string
+        accusedName:
+          type: string
+        accusedAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
+      required:
+        - policeCaseNumber
+        - accusedNationalId
     Notification:
       type: object
       properties:
@@ -165,6 +187,8 @@ components:
           type: string
         ruling:
           type: string
+        rejecting:
+          type: boolean
         custodyEndDate:
           format: date-time
           type: string
@@ -222,43 +246,15 @@ components:
         - accusedPlea
         - litigationPresentations
         - ruling
+        - rejecting
         - custodyEndDate
         - custodyRestrictions
         - accusedAppealDecision
         - prosecutorAppealDecision
         - notifications
-    CreateCaseDto:
-      type: object
-      properties:
-        policeCaseNumber:
-          type: string
-        accusedNationalId:
-          type: string
-        accusedName:
-          type: string
-        accusedAddress:
-          type: string
-        court:
-          type: string
-        arrestDate:
-          format: date-time
-          type: string
-        requestedCourtDate:
-          format: date-time
-          type: string
-      required:
-        - policeCaseNumber
-        - accusedNationalId
     UpdateCaseDto:
       type: object
       properties:
-        state:
-          type: string
-          enum:
-            - DRAFT
-            - SUBMITTED
-            - ACCEPTED
-            - REJECTED
         policeCaseNumber:
           type: string
         accusedNationalId:
@@ -327,6 +323,8 @@ components:
         litigationPresentations:
           type: string
         ruling:
+          type: string
+        rejecting:
           type: string
         custodyEndDate:
           format: date-time
@@ -467,39 +465,26 @@ paths:
                 $ref: '#/components/schemas/User'
       tags:
         - users
-  /api/cases:
-    get:
-      operationId: CaseController_getAll
+  /api/case:
+    post:
+      operationId: CaseController_create
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCaseDto'
       responses:
-        '200':
-          description: Gets all cases
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Case'
-      tags:
-        - cases
-  '/api/case/{id}':
-    get:
-      operationId: CaseController_getById
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
+        '201':
+          description: Creates a new case
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
+  '/api/case/{id}':
     put:
       operationId: CaseController_update
       parameters:
@@ -516,26 +501,24 @@ paths:
               $ref: '#/components/schemas/UpdateCaseDto'
       responses:
         '200':
-          description: ''
+          description: Updates an existing case
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  /api/case:
-    post:
-      operationId: CaseController_create
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateCaseDto'
+    get:
+      operationId: CaseController_getById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
-        '201':
-          description: ''
+        '200':
+          description: Gets an existing case
           content:
             application/json:
               schema:
@@ -559,31 +542,26 @@ paths:
               $ref: '#/components/schemas/TransitionCaseDto'
       responses:
         '200':
-          description: ''
+          description: Transitions an existing case to a new state
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  '/api/case/{id}/notifications':
+  /api/cases:
     get:
-      operationId: CaseController_getAllNotificationsById
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
+      operationId: CaseController_getAll
+      parameters: []
       responses:
         '200':
-          description: ''
+          description: Gets all existing cases
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Notification'
+                  $ref: '#/components/schemas/Case'
       tags:
         - cases
   '/api/case/{id}/notification':
@@ -597,14 +575,51 @@ paths:
             type: string
       responses:
         '201':
-          description: ''
+          description: Sends a new notification for an existing case
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Notification'
       tags:
         - cases
+  '/api/case/{id}/notifications':
+    get:
+      operationId: CaseController_getAllNotificationsById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Gets all existing notifications for an existing case
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+      tags:
+        - cases
   '/api/case/{id}/signature':
+    post:
+      operationId: CaseController_requestSignature
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Requests a signature for an existing case
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningServiceResponse'
+      tags:
+        - cases
     get:
       operationId: CaseController_confirmSignature
       parameters:
@@ -620,27 +635,10 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
+          description: Confirms a previously requested signature for an existing case
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
-      tags:
-        - cases
-    post:
-      operationId: CaseController_requestSignature
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningServiceResponse'
       tags:
         - cases

@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import * as kennitala from 'kennitala'
 
-import { Airlines, States } from '@island.is/air-discount-scheme/consts'
+import {
+  Actions,
+  Airlines,
+  States,
+} from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { CreateFlightBody, GetFlightLegsBody } from './dto'
@@ -140,7 +144,7 @@ export class FlightService {
     })
   }
 
-  async findAllByNationalId(nationalId: string): Promise<Flight[]> {
+  findAllByNationalId(nationalId: string): Promise<Flight[]> {
     return this.flightModel.findAll({
       where: { nationalId },
       include: [
@@ -152,7 +156,7 @@ export class FlightService {
     })
   }
 
-  async create(
+  create(
     flight: CreateFlightBody,
     user: NationalRegistryUser,
     airline: ValueOf<typeof Airlines>,
@@ -176,7 +180,7 @@ export class FlightService {
     )
   }
 
-  async findOne(
+  findOne(
     flightId: string,
     airline: ValueOf<typeof Airlines>,
   ): Promise<Flight | null> {
@@ -196,21 +200,47 @@ export class FlightService {
     })
   }
 
-  delete(flight: Flight): Promise<FlightLeg[]> {
+  finalizeCreditsAndDebits(flightLegs: FlightLeg[]): Promise<FlightLeg[]> {
     return Promise.all(
-      flight.flightLegs.map((flightLeg) => {
-        const financialState = financialStateMachine
-          .transition(flightLeg.financialState, 'REVOKE')
-          .value.toString()
+      flightLegs.map((flightLeg) => {
+        let { financialState } = flightLeg
+        if (financialState === States.awaitingDebit) {
+          financialState = financialStateMachine
+            .transition(flightLeg.financialState, 'SEND')
+            .value.toString()
+        } else if (financialState === States.awaitingCredit) {
+          financialState = financialStateMachine
+            .transition(flightLeg.financialState, 'SEND')
+            .value.toString()
+        }
+
         return flightLeg.update({ financialState })
       }),
     )
   }
 
-  async deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
+  private updateFinancialState(
+    flightLeg: FlightLeg,
+    action: ValueOf<typeof Actions>,
+  ): Promise<FlightLeg> {
     const financialState = financialStateMachine
-      .transition(flightLeg.financialState, 'REVOKE')
+      .transition(flightLeg.financialState, action)
       .value.toString()
-    return flightLeg.update({ financialState })
+    return flightLeg.update({
+      financialState,
+      financialStateUpdated: new Date(),
+    })
+  }
+
+  delete(flight: Flight): Promise<FlightLeg[]> {
+    return Promise.all(
+      flight.flightLegs.map((flightLeg: FlightLeg) =>
+        this.deleteFlightLeg(flightLeg),
+      ),
+    )
+  }
+
+  deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
+    return this.updateFinancialState(flightLeg, Actions.revoke)
   }
 }

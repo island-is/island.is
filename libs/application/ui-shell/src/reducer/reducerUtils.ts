@@ -10,6 +10,7 @@ import {
   ExternalDataProvider,
   Repeater,
   shouldShowFormLeaf,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { ApplicationUIState } from './ReducerTypes'
 import {
@@ -19,7 +20,6 @@ import {
   ExternalDataProviderScreen,
   RepeaterScreen,
 } from '../types'
-import { getValueViaPath } from '../utils'
 
 export function calculateProgress(
   activeScreenIndex: number,

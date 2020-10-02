@@ -55,10 +55,8 @@ export const LocaleProvider = ({
   )
   const [messagesDict, setMessagesDict] = useState<MessagesDict>(messages)
   const [loadedNamespaces, setLoadedNamespaces] = useState<string[]>([])
-
-  const [fetchMessages, { loading: loadingMessages, data }] = useLazyQuery(
-    GET_TRANSLATIONS,
-  )
+  const [fetchMessages, { data }] = useLazyQuery(GET_TRANSLATIONS)
+  const [loadingMessages, setLoadingMessages] = useState<boolean>(false)
 
   useEffect(() => {
     let mounted = true
@@ -79,17 +77,28 @@ export const LocaleProvider = ({
   }, [locale, ready])
 
   useEffect(() => {
-    setActiveLocale(locale)
-    setMessagesDict(messages)
+    if (locale !== activeLocale) {
+      setActiveLocale(locale)
+      setMessagesDict(messages)
+    }
   }, [locale])
 
   useEffect(() => {
-    accumulateMessages(messages, data?.getTranslations ?? {})
-  }, [messages, data])
+    if (messages) {
+      setMessagesDict(Object.assign({}, messagesDict, messages))
+    }
+  }, [messages])
+
+  useEffect(() => {
+    if (data?.getTranslations) {
+      setLoadingMessages(false)
+      setMessagesDict(Object.assign({}, messagesDict, data?.getTranslations))
+    }
+  }, [data])
 
   async function changeLanguage(lang: Locale) {
+    setLoadingMessages(true)
     await polyfill(lang)
-    setMessagesDict({})
     setActiveLocale(lang)
     fetchMessages({
       variables: {
@@ -119,15 +128,6 @@ export const LocaleProvider = ({
         },
       })
     }
-  }
-
-  async function accumulateMessages(
-    messages: MessagesDict,
-    messagesFromQuery: any,
-  ) {
-    setMessagesDict(
-      Object.assign({}, messagesDict, messages, messagesFromQuery),
-    )
   }
 
   return (
