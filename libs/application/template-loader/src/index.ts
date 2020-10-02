@@ -6,11 +6,36 @@ import {
   ApplicationStateMeta,
   ApplicationStateSchema,
   ApplicationTemplateHelper,
+  FieldBaseProps,
 } from '@island.is/application/core'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
+import { FC } from 'react'
 
-const loadedTemplates: Record<string, unknown> = {}
+type UIFields = Record<string, FC<FieldBaseProps>>
+type TemplateLibraryModule = {
+  default: unknown
+  getFields?: () => Promise<UIFields>
+}
+const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
+
+async function loadTemplateLib(
+  templateId: ApplicationTypes,
+): Promise<TemplateLibraryModule> {
+  const loadedTemplateLib = loadedTemplateLibs[templateId]
+  if (loadedTemplateLib !== undefined) {
+    return loadedTemplateLib
+  }
+  try {
+    const templateLib = (await templateLoaders[
+      templateId
+    ]()) as TemplateLibraryModule
+    loadedTemplateLibs[templateId] = templateLib
+    return templateLib
+  } catch (e) {
+    return Promise.reject(`Could not load template with id ${templateId}`)
+  }
+}
 
 export async function getApplicationTemplateByTypeId<
   TContext extends ApplicationContext,
@@ -19,23 +44,22 @@ export async function getApplicationTemplateByTypeId<
 >(
   templateId: ApplicationTypes,
 ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
-  const loadedTemplate = loadedTemplates[templateId]
-  if (loadedTemplate !== undefined) {
-    return loadedTemplate as ApplicationTemplate<
-      TContext,
-      TStateSchema,
-      TEvents
-    >
+  const templateLib = await loadTemplateLib(templateId)
+  return templateLib.default as ApplicationTemplate<
+    TContext,
+    TStateSchema,
+    TEvents
+  >
+}
+
+export async function getApplicationUIFields(
+  templateId: ApplicationTypes,
+): Promise<UIFields> {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getFields) {
+    return await templateLib.getFields()
   }
-  try {
-    const template = (await templateLoaders[
-      templateId
-    ]()) as ApplicationTemplate<TContext, TStateSchema, TEvents>
-    loadedTemplates[templateId] = template
-    return template
-  } catch (e) {
-    return Promise.reject(`No template found with id ${templateId}`)
-  }
+  return Promise.resolve({})
 }
 
 export async function getApplicationStateInformation(

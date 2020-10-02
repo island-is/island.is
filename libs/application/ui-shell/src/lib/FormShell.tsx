@@ -1,25 +1,17 @@
 import React, { FC, useReducer } from 'react'
 import cn from 'classnames'
-import {
-  Application,
-  Form,
-  Schema,
-  Section,
-  SectionChildren,
-} from '@island.is/application/core'
+import { Application, Form, Schema } from '@island.is/application/core'
 import {
   Box,
-  FormStepperThemes,
   GridColumn,
   GridContainer,
   GridRow,
   Tag,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { FormStepper } from '@island.is/application/ui-fields'
 
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
-import FormStepper from '../components/fields/FormStepper'
 import {
   ApplicationReducer,
   initializeReducer,

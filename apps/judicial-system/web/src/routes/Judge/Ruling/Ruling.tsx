@@ -15,7 +15,6 @@ import { JudgeLogo } from '../../../shared-components/Logos'
 import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
 import * as Constants from '../../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../../utils/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 import { autoSave, updateState } from '../../../utils/stepHelper'
 import * as api from '../../../api'
 
@@ -54,15 +53,13 @@ export const Ruling: React.FC = () => {
     accusedPlea: caseDraftJSON.accusedPlea ?? '',
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
+    rejecting: caseDraftJSON.rejecting ?? false,
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
   })
 
-  const [requestRecjected, setRequestRejected] = useState(
-    caseDraftJSON.state === CaseState.REJECTED,
-  )
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
     AppealDecision
   >(caseDraftJSON.accusedAppealDecision)
@@ -70,24 +67,20 @@ export const Ruling: React.FC = () => {
     caseDraftJSON.prosecutorAppealDecision,
   )
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.ISOLATION,
-    ) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.ISOLATION) >
+      -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.VISITAION,
-    ) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.VISITAION) >
+      -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
+    caseDraftJSON.custodyRestrictions?.indexOf(
       CustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.MEDIA,
-    ) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.MEDIA) > -1,
   )
   const restrictions = [
     {
@@ -115,7 +108,7 @@ export const Ruling: React.FC = () => {
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
     },
     {
-      restriction: 'E - Fjölmiðlabanns',
+      restriction: 'E - Fjölmiðlabann',
       value: CustodyRestrictions.MEDIA,
       getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
@@ -178,28 +171,14 @@ export const Ruling: React.FC = () => {
                     name="rejectRequest"
                     label="Hafna kröfu"
                     onChange={({ target }) => {
-                      setRequestRejected(target.checked)
-                      // Save case
-                      api.saveCase(
-                        workingCase.id,
-                        parseString(
-                          'state',
-                          target.checked
-                            ? CaseState.REJECTED
-                            : CaseState.ACCEPTED,
-                        ),
-                      )
-
-                      updateState(
+                      autoSave(
                         workingCase,
-                        'state',
-                        target.checked
-                          ? CaseState.REJECTED
-                          : CaseState.ACCEPTED,
+                        'rejecting',
+                        target.checked,
                         setWorkingCase,
                       )
                     }}
-                    checked={requestRecjected}
+                    checked={workingCase.rejecting}
                     large
                   />
                 </GridColumn>
@@ -264,14 +243,19 @@ export const Ruling: React.FC = () => {
                             checked={restriction.getCheckbox}
                             tooltip={restriction.explination}
                             onChange={({ target }) => {
-                              // Toggle the checkbox on or off
-                              restriction.setCheckbox(target.checked)
-
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
+                              const restrictionIsSelected =
+                                copyOfState.custodyRestrictions.indexOf(
+                                  target.value as CustodyRestrictions,
+                                ) > -1
+
+                              // Toggle the checkbox on or off
+                              restriction.setCheckbox(!restrictionIsSelected)
+
                               // If the user is checking the box, add the restriction to the state
-                              if (target.checked) {
+                              if (!restrictionIsSelected) {
                                 copyOfState.custodyRestrictions.push(
                                   target.value as CustodyRestrictions,
                                 )
@@ -302,7 +286,7 @@ export const Ruling: React.FC = () => {
 
                               updateState(
                                 workingCase,
-                                'restrictions',
+                                'custodyRestrictions',
                                 copyOfState.custodyRestrictions,
                                 setWorkingCase,
                               )

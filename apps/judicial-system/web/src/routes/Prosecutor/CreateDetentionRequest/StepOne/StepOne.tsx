@@ -66,7 +66,7 @@ export const StepOne: React.FC = () => {
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
@@ -155,7 +155,7 @@ export const StepOne: React.FC = () => {
     if (isPossibleToSave) {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
-        accusedNationalId: accusedNationalIdRef.current.value,
+        accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
       })
 
       window.localStorage.setItem(
@@ -163,14 +163,17 @@ export const StepOne: React.FC = () => {
         JSON.stringify({
           ...workingCase,
           id: caseId,
-          accusedNationalId: accusedNationalIdRef.current.value,
+          accusedNationalId: accusedNationalIdRef.current.value.replace(
+            '-',
+            '',
+          ),
           policeCaseNumber: policeCaseNumberRef.current.value,
         }),
       )
       setWorkingCase({
         ...workingCase,
         id: caseId,
-        accusedNationalId: accusedNationalIdRef.current.value,
+        accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
         policeCaseNumber: policeCaseNumberRef.current.value,
       })
     }
@@ -225,7 +228,12 @@ export const StepOne: React.FC = () => {
                   hasError={policeCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
                     const validateField = validate(evt.target.value, 'empty')
-                    if (validateField.isValid) {
+                    const validateFieldFormat = validate(
+                      evt.target.value,
+                      'police-casenumber-format',
+                    )
+
+                    if (validateField.isValid && validateFieldFormat.isValid) {
                       createCaseIfPossible()
                       updateState(
                         workingCase,
@@ -235,7 +243,8 @@ export const StepOne: React.FC = () => {
                       )
                     } else {
                       setPoliceCaseNumberErrorMessage(
-                        validateField.errorMessage,
+                        validateField.errorMessage ||
+                          validateFieldFormat.errorMessage,
                       )
                     }
                   }}
@@ -261,17 +270,27 @@ export const StepOne: React.FC = () => {
                     hasError={nationalIdErrorMessage !== ''}
                     onBlur={(evt) => {
                       const validateField = validate(evt.target.value, 'empty')
+                      const validateFieldFormat = validate(
+                        evt.target.value,
+                        'national-id',
+                      )
 
-                      if (validateField.isValid) {
+                      if (
+                        validateField.isValid &&
+                        validateFieldFormat.isValid
+                      ) {
                         createCaseIfPossible()
                         updateState(
                           workingCase,
                           'accusedNationalId',
-                          evt.target.value,
+                          evt.target.value.replace('-', ''),
                           setWorkingCase,
                         )
                       } else {
-                        setNationalIdErrorMessage(validateField.errorMessage)
+                        setNationalIdErrorMessage(
+                          validateField.errorMessage ||
+                            validateFieldFormat.errorMessage,
+                        )
                       }
                     }}
                     onFocus={() => setNationalIdErrorMessage('')}
@@ -282,7 +301,7 @@ export const StepOne: React.FC = () => {
                   <Input
                     data-testid="accusedName"
                     name="accusedName"
-                    label="Fullt nafn kærða"
+                    label="Fullt nafn"
                     defaultValue={workingCase.accusedName}
                     errorMessage={accusedNameErrorMessage}
                     hasError={accusedNameErrorMessage !== ''}
@@ -492,7 +511,10 @@ export const StepOne: React.FC = () => {
                       name="courtDate"
                       label="Tímasetning"
                       placeholder="Settu inn tíma"
-                      defaultValue={caseDraftJSON.requestedCourtTime}
+                      defaultValue={formatDate(
+                        caseDraftJSON.requestedCourtDate,
+                        Constants.TIME_FORMAT,
+                      )}
                       disabled={!workingCase.requestedCourtDate}
                       onBlur={(evt) => {
                         const timeWithoutColon = evt.target.value.replace(
@@ -529,7 +551,7 @@ export const StepOne: React.FC = () => {
                 </GridRow>
               </Box>
               <FormFooter
-                previousUrl="/"
+                previousUrl={Constants.DETENTION_REQUESTS_ROUTE}
                 nextUrl={Constants.STEP_TWO_ROUTE}
                 onNextButtonClick={() => setModalVisible(true)}
                 nextIsDisabled={
@@ -543,7 +565,6 @@ export const StepOne: React.FC = () => {
                     ? true
                     : false
                 }
-                previousIsDisabled
               />
             </GridColumn>
           </GridRow>

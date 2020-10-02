@@ -6,12 +6,11 @@ import {
 } from '../types'
 import * as api from '../api'
 import { formatDate, parseString } from './formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 
 export const updateState = (
   state: Case,
   fieldToUpdate: string,
-  fieldValue: string | string[] | Date,
+  fieldValue: string | string[] | Date | boolean,
   stateSetter: (state: Case) => void,
 ) => {
   // Create a copy of the state
@@ -29,7 +28,7 @@ export const updateState = (
 export const autoSave = async (
   state: Case,
   caseField: string,
-  caseFieldValue: string | Date,
+  caseFieldValue: string | Date | boolean,
   stateSetter: (state: Case) => void,
 ) => {
   // Only save if the field has changes and the case exists
@@ -95,7 +94,7 @@ export const getAppealDecitionText = (
 }
 
 export const constructConclusion = (workingCase: Case) => {
-  return workingCase.state === CaseState.REJECTED
+  return workingCase.rejecting
     ? 'Beiðni um gæsluvarðhald hafnað'
     : `Kærði, ${workingCase.accusedName} kt.${
         workingCase.accusedNationalId
