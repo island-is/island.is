@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '../../../types'
+import { FieldBaseProps } from '@island.is/application/core'
 
 const ParentalLeaveCalculations: FC<FieldBaseProps> = ({
   error,

@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const detentionRequestsContainer = style({
   display: 'grid',
@@ -28,4 +29,8 @@ export const detentionRequestsTable = style({
 export const detentionRequestsError = style({
   gridRow: '3',
   gridColumn: '1 / 5',
+})
+
+export const detentionRequestsTableRow = style({
+  borderBottom: `1px solid ${theme.color.blue200}`,
 })

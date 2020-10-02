@@ -1,8 +1,12 @@
 import React, { FC } from 'react'
-import { FieldComponentProps, FieldDef } from '../types'
-import { getValueViaPath } from '../utils'
-import { getComponentByName } from './componentLoader'
-import { FormValue } from '@island.is/application/core'
+import { FieldDef } from '../types'
+import {
+  Field,
+  FieldBaseProps,
+  FormValue,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { useFields } from './FieldContext'
 
 const FormField: FC<{
   applicationId: string
@@ -19,24 +23,24 @@ const FormField: FC<{
   formValue,
   showFieldName,
 }) => {
+  const [allFields] = useFields()
   if (!field.isNavigable) {
     return null
   }
 
-  const error = getValueViaPath(errors, field.id, undefined)
-  const fieldProps = {
+  const error = getValueViaPath(errors, field.id, undefined) as
+    | string
+    | undefined
+  const fieldProps: FieldBaseProps = {
     applicationId,
     autoFocus,
     error,
-    field,
+    field: field as Field,
     formValue,
     showFieldName,
   }
-
-  const Component = getComponentByName(field.component) as FC<
-    FieldComponentProps
-  > | null
-  if (Component === null) {
+  const Component = allFields[field.component]
+  if (!Component) {
     return <p>We have not implemented this field yet {field.type}</p>
   }
 

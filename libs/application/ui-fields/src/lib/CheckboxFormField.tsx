@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
-import { CheckboxField } from '@island.is/application/core'
+import {
+  CheckboxField,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { CheckboxController, Typography, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '../../types'
-
-import { getValueViaPath } from '../../utils'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
