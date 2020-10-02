@@ -208,7 +208,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
 
 type AlternateAccordionItemBaseProps = Omit<
   AccordionItemBaseProps,
-  'labelVariant' | 'iconVariant'
+  'iconVariant'
 >
 
 export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
@@ -232,9 +232,10 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
   )
 }
 
-export const SidebarAccordion: FC<AlternateAccordionItemBaseProps> = (
-  props,
-) => {
+export const SidebarAccordion: FC<Omit<
+  AlternateAccordionItemBaseProps,
+  'labelVariant'
+>> = (props) => {
   return (
     <AccordionItem {...props} labelVariant="p" iconVariant="sidebar">
       {props.children}

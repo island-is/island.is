@@ -42,9 +42,9 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetLifeEventsInCategoryArgs,
+  Image,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { ApiImageSource } from '@island.is/web/components/Image/Image'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -352,9 +352,7 @@ const Category: Screen<CategoryProps> = ({
                       as={makePath('lifeEvent', slug)}
                       description={intro}
                       title={title}
-                      slug={slug}
-                      intro={intro}
-                      image={thumbnail || image}
+                      image={(thumbnail || image) as Image}
                       tags={[
                         {
                           title: n('categoryTag'),
