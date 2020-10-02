@@ -33,7 +33,7 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
             key={application.id}
             name={application.name || application.typeId}
             date={format(new Date(application.modified), 'MMMM')}
-            status={application.state === 'approved'}
+            isComplete={application.progress === 1}
             url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
             progress={application.progress ? application.progress * 100 : 0}
           />

@@ -16,12 +16,18 @@ import ProgressBar from '../ProgressBar/ProgressBar'
 interface Props {
   name: string
   date: string
-  status: boolean
+  isComplete: boolean
   url: string
   progress: number
 }
 
-const ApplicationCard: FC<Props> = ({ name, date, status, url, progress }) => {
+const ApplicationCard: FC<Props> = ({
+  name,
+  date,
+  isComplete,
+  url,
+  progress,
+}) => {
   return (
     <Box
       className={styles.wrapper}
@@ -41,7 +47,7 @@ const ApplicationCard: FC<Props> = ({ name, date, status, url, progress }) => {
             <Icon type="article" width={24} height={24} />
             <Typography variant="h3">{name}</Typography>
           </Inline>
-          <Tag variant={status ? 'mint' : 'purple'}>
+          <Tag variant={isComplete ? 'mint' : 'purple'}>
             {status ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
