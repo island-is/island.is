@@ -3,11 +3,7 @@ import { Box, BoxProps } from '@island.is/island-ui/core'
 import * as styles from './SidebarBox.treat'
 
 export const SidebarBox: FC<BoxProps> = ({ children, ...props }) => (
-  <Box
-    className={styles.container}
-    padding={[3, 3, 4]}
-    {...props}
-  >
+  <Box className={styles.container} padding={[3, 3, 4]} {...props}>
     {children}
   </Box>
 )
