@@ -21,6 +21,7 @@ export const user = {
   name: 'Ívar Oddsson',
   mobileNumber: '6904031',
   role: 'JUDGE',
+}
 
 const noGuard: CanActivate = {
   canActivate: jest.fn(async (context: ExecutionContext) => {
