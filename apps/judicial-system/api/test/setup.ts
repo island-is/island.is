@@ -15,13 +15,19 @@ import { test } from '../sequelize.config.js'
 import { JwtAuthGuard } from '../src/app/modules/auth'
 import { AppModule } from '../src/app'
 
+export const user = {
+  id: 'a1fd62db-18a6-4741-88eb-a7b7a7e05833',
+  nationalId: '2510654469',
+  name: 'Guðjón Guðjónsson',
+  mobileNumber: '8589030',
+  role: 'PROSECUTOR',
+}
+
 const noGuard: CanActivate = {
   canActivate: jest.fn((context: ExecutionContext) => {
     // Fake the logged in user - move somewhere else!!!
     const request = context.switchToHttp().getRequest()
-    request.user = request.user || {
-      nationalId: test.userSeed[0].national_id,
-    }
+    request.user = request.user || user
     return true
   }),
 }
