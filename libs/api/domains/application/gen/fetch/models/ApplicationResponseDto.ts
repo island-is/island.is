@@ -16,82 +16,94 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface Application
+ * @interface ApplicationResponseDto
  */
-export interface Application {
+export interface ApplicationResponseDto {
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     id: string;
     /**
      * 
      * @type {Date}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     created: Date;
     /**
      * 
      * @type {Date}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     modified: Date;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     applicant: string;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     assignee: string;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     externalId?: string;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     state: string;
     /**
      * 
      * @type {object}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     attachments?: object;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
-    typeId: ApplicationTypeIdEnum;
+    typeId: ApplicationResponseDtoTypeIdEnum;
     /**
      * 
      * @type {object}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     answers: object;
     /**
      * 
      * @type {object}
-     * @memberof Application
+     * @memberof ApplicationResponseDto
      */
     externalData: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof ApplicationResponseDto
+     */
+    name?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ApplicationResponseDto
+     */
+    progress?: number;
 }
 
-export function ApplicationFromJSON(json: any): Application {
-    return ApplicationFromJSONTyped(json, false);
+export function ApplicationResponseDtoFromJSON(json: any): ApplicationResponseDto {
+    return ApplicationResponseDtoFromJSONTyped(json, false);
 }
 
-export function ApplicationFromJSONTyped(json: any, ignoreDiscriminator: boolean): Application {
+export function ApplicationResponseDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): ApplicationResponseDto {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -108,10 +120,12 @@ export function ApplicationFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'typeId': json['typeId'],
         'answers': json['answers'],
         'externalData': json['externalData'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'progress': !exists(json, 'progress') ? undefined : json['progress'],
     };
 }
 
-export function ApplicationToJSON(value?: Application | null): any {
+export function ApplicationResponseDtoToJSON(value?: ApplicationResponseDto | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -131,6 +145,8 @@ export function ApplicationToJSON(value?: Application | null): any {
         'typeId': value.typeId,
         'answers': value.answers,
         'externalData': value.externalData,
+        'name': value.name,
+        'progress': value.progress,
     };
 }
 
@@ -138,7 +154,7 @@ export function ApplicationToJSON(value?: Application | null): any {
 * @export
 * @enum {string}
 */
-export enum ApplicationTypeIdEnum {
+export enum ApplicationResponseDtoTypeIdEnum {
     ExampleForm = 'ExampleForm',
     DrivingLessons = 'DrivingLessons',
     ParentalLeave = 'ParentalLeave'
