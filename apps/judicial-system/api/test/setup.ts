@@ -19,6 +19,7 @@ export const user = {
   id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
   nationalId: '1112902539',
   name: 'Ívar Oddsson',
+  title: 'héraðsdómari',
   mobileNumber: '6904031',
   role: 'JUDGE',
 }
