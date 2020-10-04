@@ -666,7 +666,7 @@ type ApiService {
   data: [DataCategory!]!
   type: [TypeCategory!]!
   access: [AccessCategory!]!
-  xroadIdentifier: [XroadInfo!]
+  xroadIdentifier: [XroadInfo!]!
 }
 
 enum PricingCategory {
@@ -675,6 +675,7 @@ enum PricingCategory {
 }
 
 enum DataCategory {
+  OPEN
   PUBLIC
   OFFICIAL
   PERSONAL
@@ -971,7 +972,7 @@ input GetTranslationsInput {
 }
 
 input GetApiCatalogueInput {
-  limit: Float!
+  limit: Int!
   cursor: String
   query: String
   pricing: [PricingCategory!]

@@ -6,7 +6,7 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { Service } from '@island.is/api-catalogue/types'
-import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator'
 import { PageInfo } from './pageInfo.model'
 import { XroadInfo } from './xroadIdentifier.model'
 
@@ -60,9 +60,9 @@ export class ApiService implements Service {
   @IsEnum(AccessCategory)
   access: Array<AccessCategory>
 
-  @Field((type) => [XroadInfo], { nullable: true })
-  @IsOptional()
-  xroadIdentifier?: Array<XroadInfo>
+  @Field((type) => [XroadInfo])
+  @IsArray()
+  xroadIdentifier: Array<XroadInfo>
 }
 
 @ObjectType()

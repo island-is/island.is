@@ -1,4 +1,4 @@
-import { Field, InputType, ID } from '@nestjs/graphql'
+import { Field, InputType, ID, Int } from '@nestjs/graphql'
 import {
   IsArray,
   IsEnum,
@@ -22,9 +22,10 @@ export class GetApiServiceInput {
 
 @InputType()
 export class GetApiCatalogueInput {
-  @Field((type) => Number)
+  @Field((type) => Int)
+  @IsOptional()
   @IsNumber()
-  limit: number
+  limit?: number
 
   @Field((type) => String, { nullable: true })
   @IsOptional()

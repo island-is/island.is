@@ -782,7 +782,7 @@ export type ApiService = {
   data: Array<DataCategory>
   type: Array<TypeCategory>
   access: Array<AccessCategory>
-  xroadIdentifier?: Maybe<Array<XroadInfo>>
+  xroadIdentifier: Array<XroadInfo>
 }
 
 export enum PricingCategory {
@@ -791,6 +791,7 @@ export enum PricingCategory {
 }
 
 export enum DataCategory {
+  OPEN = 'OPEN',
   PUBLIC = 'PUBLIC',
   OFFICIAL = 'OFFICIAL',
   PERSONAL = 'PERSONAL',
@@ -1253,7 +1254,7 @@ export type GetTranslationsInput = {
 }
 
 export type GetApiCatalogueInput = {
-  limit: Scalars['Float']
+  limit: Scalars['Int']
   cursor?: Maybe<Scalars['String']>
   query?: Maybe<Scalars['String']>
   pricing?: Maybe<Array<PricingCategory>>
@@ -3216,7 +3217,7 @@ export type ApiServiceResolvers<
     ContextType
   >
   xroadIdentifier?: Resolver<
-    Maybe<Array<ResolversTypes['XroadInfo']>>,
+    Array<ResolversTypes['XroadInfo']>,
     ParentType,
     ContextType
   >
