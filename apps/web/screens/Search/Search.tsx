@@ -434,4 +434,4 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
   )
 }
 
-export default withMainLayout(Search)
+export default withMainLayout(Search, { showSearchInHeader: false })

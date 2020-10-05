@@ -256,4 +256,4 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(Home)
+export default withMainLayout(Home, { showSearchInHeader: false })

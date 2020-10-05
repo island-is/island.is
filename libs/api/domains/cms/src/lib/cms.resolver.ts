@@ -41,7 +41,6 @@ import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
-import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
@@ -66,6 +65,9 @@ import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
 import { AboutSubPage } from './models/aboutSubPage.model'
 import { ContactUsInput } from './dto/contactUs.input'
 import { ContactUsPayload } from './models/contactUsPayload.model'
+import { GetNewsInput } from './dto/getNews.input'
+import { logger } from '@island.is/logging'
+import { LatestNewsSlice } from './models/latestNewsSlice.model'
 
 const { cacheTime } = environment
 
@@ -79,12 +81,6 @@ export class CmsResolver {
     private readonly cmsElasticsearchService: CmsElasticsearchService,
     private readonly mailService: MailService,
   ) {}
-
-  @Directive(cacheControlDirective())
-  @Query(() => PaginatedNews)
-  getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
-    return this.cmsContentfulService.getNewsList(input)
-  }
 
   @Directive(cacheControlDirective())
   @Query(() => PaginatedAdgerdirNews)
@@ -275,6 +271,15 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => Url, { nullable: true })
+  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
+    return this.cmsContentfulService.getUrl(
+      input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => [ArticleCategory])
   getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
@@ -316,12 +321,10 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Url, { nullable: true })
-  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
-    return this.cmsContentfulService.getUrl(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
-    )
+  @Query(() => [News])
+  getNews(@Args('input') { lang, size }: GetNewsInput): Promise<News[]> {
+    logger.info('inside')
+    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
   }
 
   @Mutation(() => ContactUsPayload)
@@ -332,19 +335,22 @@ export class CmsResolver {
       success: await this.mailService.deliverContactUs(input),
     }
   }
+  @Directive(cacheControlDirective())
+  @Query(() => PaginatedNews)
+  getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
+    return this.cmsContentfulService.getNewsList(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => [News])
-  async news() {
-    const { news } = await this.cmsContentfulService.getNewsList({
-      lang: 'is',
-      perPage: 3,
-    })
-    return news
+  async news(
+    @Parent() { news: { lang, size } }: LatestNewsSlice,
+  ): Promise<News[]> {
+    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
   }
 }
 
