@@ -306,7 +306,7 @@ export const Confirmation: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-            {uContext.user && (
+            {uContext?.user && (
               <Box marginBottom={15}>
                 <Typography variant="h3">
                   {`${uContext.user.name}, ${uContext.user.title}`}

@@ -233,7 +233,7 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                 </Accordion>
               </Box>
-              {uContext.user && (
+              {uContext?.user && (
                 <Box marginBottom={15}>
                   <Box marginBottom={1}>
                     <Typography>F.h.l</Typography>

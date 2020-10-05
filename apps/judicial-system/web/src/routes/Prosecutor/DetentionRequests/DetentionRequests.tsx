@@ -33,7 +33,7 @@ export const DetentionRequests: React.FC = () => {
     async function getCases(user: User) {
       const cases = await api.getCases()
 
-      if (user.role === UserRole.JUDGE) {
+      if (cases && user.role === UserRole.JUDGE) {
         const judgeCases = cases.filter((c) => {
           // Judges should see all cases excpet drafts
           return c.state !== CaseState.DRAFT
@@ -47,7 +47,7 @@ export const DetentionRequests: React.FC = () => {
       setIsLoading(false)
     }
 
-    if (uContext.user?.role) {
+    if (uContext?.user?.role) {
       getCases(uContext.user)
     }
   }, [uContext])
@@ -72,7 +72,7 @@ export const DetentionRequests: React.FC = () => {
   return (
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
-        {!uContext.user ? null : uContext.user.role === UserRole.JUDGE ? (
+        {!uContext?.user ? null : uContext.user.role === UserRole.JUDGE ? (
           <JudgeLogo />
         ) : (
           <ProsecutorLogo />
