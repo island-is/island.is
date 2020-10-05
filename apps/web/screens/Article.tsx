@@ -77,7 +77,7 @@ const createArticleNavigation = (
   if (article.subArticles.length === 0) {
     return createNavigation(article.body).map(({ id, text }) => ({
       title: text,
-      url: '#' + id,
+      url: article.slug + '#' + id,
     }))
   }
 
@@ -102,7 +102,7 @@ const createArticleNavigation = (
       nav = nav.concat(
         createSubArticleNavigation(subArticle.body).map(({ id, text }) => ({
           title: text,
-          url: '#' + id,
+          url: article.slug + '#' + id,
         })),
       )
     }
