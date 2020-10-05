@@ -22,23 +22,4 @@ export class UserService {
       where: { nationalId },
     })
   }
-
-  async setRoleByNationalId(
-    nationalId: string,
-    role: UserRole,
-  ): Promise<{ numberOfAffectedRows: number; updatedUser: User }> {
-    this.logger.debug(
-      `Setting role to ${role} for user with national id ${nationalId}`,
-    )
-
-    const [numberOfAffectedRows, [updatedUser]] = await this.userModel.update(
-      { role },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
-
-    return { numberOfAffectedRows, updatedUser }
-  }
 }

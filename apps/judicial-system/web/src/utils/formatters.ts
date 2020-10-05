@@ -16,7 +16,7 @@ export const parseString = (
   value: string | Date | boolean,
 ) => {
   try {
-    const json = JSON.parse(`{"${property}": "${value}"}`)
+    const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)
     return json
   } catch (e) {
     console.log(e)
