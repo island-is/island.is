@@ -1,7 +1,7 @@
 import { Box, GridColumn, GridRow, Typography } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { HikingFigure } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
+import * as styles from './Greeting.treat'
 import useAuth from '../../hooks/useAuth/useAuth'
 
 const Greeting: FC<{}> = () => {
@@ -25,7 +25,7 @@ const Greeting: FC<{}> = () => {
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
-        <HikingFigure />
+        <Box className={styles.figure} />
       </GridColumn>
     </GridRow>
   )

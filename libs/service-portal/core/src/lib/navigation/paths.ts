@@ -27,4 +27,6 @@ export enum ServicePortalPath {
   MenntunRoot = '/menntun',
   // Eignir
   EignirRoot = '/eignir',
+  // Skilabod
+  SkilabodRoot = '/skilabod',
 }

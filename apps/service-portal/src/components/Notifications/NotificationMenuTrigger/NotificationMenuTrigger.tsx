@@ -22,10 +22,8 @@ const NotificationMenuTrigger: FC<{}> = () => {
 
   return (
     <Box position="relative" ref={ref}>
-      <span className={styles.notificationCount}>5</span>
-      <Button variant="menu" onClick={handleClick} size="small">
-        <Icon type="lock" width={22} height={24} />
-      </Button>
+      <span className={styles.notificationCount}>1</span>
+      <Button variant="menu" onClick={handleClick} icon="lock" />
       <NotificationMenu state={notificationMenuState} />
     </Box>
   )

@@ -1,39 +1,56 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import {
-  Stack,
-  Typography,
-  Button,
-  Columns,
-  Column,
-  Box,
-} from '@island.is/island-ui/core'
+  ShoppingFigure,
+  InfoScreen,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+import { defineMessage } from 'react-intl'
 
-const DelegationGreeting: ServicePortalModuleComponent = ({ userInfo }) => {
+export const DelegationGreeting: ServicePortalModuleComponent = () => {
   return (
-    <Box marginBottom={8}>
-      <Columns collapseBelow="sm">
-        <Column width="7/12">
-          <Stack space={2}>
-            <Typography variant="h3">Umboðskerfi</Typography>
-            <Typography variant="p">
-              Sæl/l {userInfo.profile.name}, í umboðskerfinu getur þú veitt
-              aðilum umboð fyrir sjálfan þig eða fyrirtæki/stofnun sem þú hefur
-              aðgang að.
-            </Typography>
-          </Stack>
-          <Box marginTop={4}>
-            <a
-              href="https://innskraning.island.is/addonbehalf.aspx"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button icon="external">Fara í umboðskerfi</Button>
-            </a>
-          </Box>
-        </Column>
-      </Columns>
-    </Box>
+    <InfoScreen
+      title={defineMessage({
+        id: 'sp.settings:delegation',
+        defaultMessage: 'Umboð',
+      })}
+      intro={defineMessage({
+        id: 'sp.settings:delegation-about',
+        defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir umboð á næstunni`,
+      })}
+      list={{
+        title: defineMessage({
+          id: 'service.portal:incoming',
+          defaultMessage: 'Á döfinni',
+        }),
+        items: [
+          defineMessage({
+            id: 'sp.settings:delegation-inc-1',
+            defaultMessage:
+              'Yfirlit og hægt verður að deila umboði á milli einstaklinga og fyrirtækja',
+          }),
+        ],
+      }}
+      institutionTitle={defineMessage({
+        id: 'service.portal:digital-iceland',
+        defaultMessage: 'Ísland.is',
+      })}
+      institutionDescription={defineMessage({
+        id: 'sp.settings:delegation-institution-description',
+        defaultMessage: `
+          Markmið ríkisstjórnarinnar er að stafræn samskipti verði megin samskiptaleið
+          fólks og fyrirtækja við hið opinbera. Þannig má einfalda líf þeirra sem búa
+          og starfa á Íslandi. Stafrænt Ísland, sem heyrir undir fjármála- og
+          efnahagsráðuneytið, vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
+        `,
+      })}
+      institutionHref="https://innskraning.island.is/addonbehalf.aspx"
+      institutionLinkTitle={defineMessage({
+        id: 'sp.settings:institution:link-title',
+        defaultMessage:
+          'Núverandi umboðskerfi Ísland.is - www.innskraning.island.is',
+      })}
+      renderFigure={() => <ShoppingFigure />}
+    />
   )
 }
 

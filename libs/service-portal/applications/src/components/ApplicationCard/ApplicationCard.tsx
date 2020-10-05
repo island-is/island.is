@@ -43,10 +43,7 @@ const ApplicationCard: FC<Props> = ({
           alignItems="center"
           marginBottom={1}
         >
-          <Inline space={2} alignY="bottom">
-            <Icon type="article" width={24} height={24} />
-            <Typography variant="h3">{name}</Typography>
-          </Inline>
+          <Typography variant="h3">{name}</Typography>
           <Tag variant={isComplete ? 'mint' : 'purple'}>
             {status ? 'Lokið' : 'Í ferli'}
           </Tag>

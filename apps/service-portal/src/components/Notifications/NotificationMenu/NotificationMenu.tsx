@@ -5,6 +5,8 @@ import { Box, Typography, Stack, Button } from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'
 import { MenuState } from '../../../store/actions'
+import { Link } from 'react-router-dom'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 interface Props {
   state: MenuState
@@ -49,7 +51,9 @@ const NotificationMenu: FC<Props> = ({ state }) => {
           boxShadow="medium"
           background="white"
         >
-          <Button width="fluid">Sjá öll skilaboð</Button>
+          <Link to={ServicePortalPath.SkilabodRoot}>
+            <Button width="fluid">Sjá öll skilaboð</Button>
+          </Link>
         </Box>
       </Box>
     </Box>

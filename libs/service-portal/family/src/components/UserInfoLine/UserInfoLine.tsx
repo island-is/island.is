@@ -25,7 +25,7 @@ const UserInfoLine: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingY={2} paddingX={3} border="standard" borderRadius="large">
+    <Box paddingY={3} paddingX={4} border="standard" borderRadius="large">
       <Columns space={1} collapseBelow="sm" alignY="center">
         <Column width="5/12">
           <Box overflow="hidden">

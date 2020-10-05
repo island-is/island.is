@@ -6,7 +6,6 @@ import {
   ResponsiveSpace,
   ContentBlock,
   Button,
-  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
@@ -15,6 +14,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
+import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger'
 
 const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
@@ -78,6 +78,9 @@ export const Header: FC<{}> = () => {
                     </Box>
                   </Hidden>
                 )}
+                <Box marginLeft={spacing}>
+                  <NotificationMenuTrigger />
+                </Box>
               </Box>
             </Box>
           </ContentBlock>
