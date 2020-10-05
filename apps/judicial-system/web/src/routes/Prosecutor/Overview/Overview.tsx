@@ -63,7 +63,7 @@ export const Overview: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Yfirlit - Réttarvörslugátt'
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {

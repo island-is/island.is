@@ -36,7 +36,7 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
-    document.title = 'Yfirlit - Réttarvörslugátt'
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {

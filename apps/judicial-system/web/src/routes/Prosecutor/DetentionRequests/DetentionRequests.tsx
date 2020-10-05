@@ -30,7 +30,7 @@ export const DetentionRequests: React.FC = () => {
   const uContext = useContext(userContext)
 
   useEffect(() => {
-    document.title = 'Kröfur - Réttarvörslugátt'
+    document.title = 'Allar kröfur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {

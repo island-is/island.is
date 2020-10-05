@@ -32,7 +32,7 @@ export const Confirmation: React.FC = () => {
   const uContext = useContext(userContext)
 
   useEffect(() => {
-    document.title = 'Staðfesting - Réttarvörslugátt'
+    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
