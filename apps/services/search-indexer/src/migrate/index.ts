@@ -24,7 +24,7 @@ class App {
       esPackages = dictionary.getFakeEsPackages()
     }
 
-    const elasticMigrationResults = await this.migrateES(esPackages)
+    await this.migrateES(esPackages)
 
     // we remove unused AWS ES packages after ES migrate cause we cant/should not remove packages already in use
     if (hasAwsAccess) {
@@ -42,7 +42,7 @@ class App {
     logger.info('Starting aws migration')
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
     const awsDictionaryVersion = await aws.getDictionaryVersion()
-    let esPackages: aws.AwsEsPackage[]
+
     // we only try to update the dictionary files if we find a mismatch in version numbers
     if (repoDictionaryVersion !== awsDictionaryVersion) {
       logger.info('Dictionary version mismatch, updating dictionary', {
@@ -51,20 +51,29 @@ class App {
       })
       const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
       const uploadedS3Files = await aws.updateS3DictionaryFiles(dictionaries) // upload repo files to s3
-      esPackages = await aws.createAwsEsPackages(
+      const newEsPackages = await aws.createAwsEsPackages(
         uploadedS3Files,
         repoDictionaryVersion,
       ) // create packages for the new files in AWS ES
-      await aws.associatePackagesWithAwsEs(esPackages) // attach the new packages to our AWS ES instance
+      await aws.associatePackagesWithAwsEs(newEsPackages) // attach the new packages to our AWS ES instance
       await aws.updateDictionaryVersion(repoDictionaryVersion) // update version file last to ensure process runs again on failure
-    } else {
-      logger.info(
-        'No need to update dictionary, getting current package ids for elasticsearch migration',
-      )
-      esPackages = await aws.getAllDomainEsPackages()
     }
+
+    // we get the associated packages from AWS ES and return them
+    // this returns packages two versions back in time to support rollbacks
+    const esPackages = await aws.getAllDomainEsPackages()
+
+    /*
+    we only want to return packages of current version
+    else if dictionary is missing packages we might not see an error until old packages are deleted
+    */
+    const filteredAwsEsPackages = esPackages.filter((esPackage) => {
+      const { version } = aws.parsePackageName(esPackage.packageName)
+      return version === repoDictionaryVersion
+    })
+
     logger.info('Aws migration completed')
-    return esPackages // es config needs the package ids when generating the index template
+    return filteredAwsEsPackages // es config needs the package ids when generating the index template
   }
 
   private async migrateES(esPackages: aws.AwsEsPackage[]): Promise<elastic.MigrationInfo> {

@@ -25,7 +25,7 @@ const createPackageName = (
 }
 
 // break down the name used for packages in AWS ES
-const parsePackageName = (packageName: string) => {
+export const parsePackageName = (packageName: string) => {
   const [locale, analyzerType, version] = packageName.split('-')
   return {
     locale,
