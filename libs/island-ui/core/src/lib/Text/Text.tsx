@@ -80,16 +80,19 @@ export const Text = ({
         [defaultLineHeights[variant!]]: variant && !lineHeight,
       })}
     >
-      {React.Children.map(children, (child: any) => {
-        if (
-          typeof linkRenderer === 'function' &&
-          child.props &&
-          child.props.href
-        ) {
-          return linkRenderer(child.props.href, child.props.children)
-        }
-        return child
-      })}
+      {React.Children.map<React.ReactNode, React.ReactNode>(
+        children,
+        (child: any) => {
+          if (
+            typeof linkRenderer === 'function' &&
+            child.props &&
+            child.props.href
+          ) {
+            return linkRenderer(child.props.href, child.props.children)
+          }
+          return child
+        },
+      )}
     </Box>
   )
 }

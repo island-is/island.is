@@ -48,7 +48,7 @@ import { GridColumn, GridContainer, GridRow } from '../Grid'
   </Story>
 </Canvas>
 
-### Customize it with lineHeight/fontHeight
+### Customize it with lineHeight/fontWidth
 
 <Canvas>
   <Story name="Customize">
@@ -70,25 +70,27 @@ import { GridColumn, GridContainer, GridRow } from '../Grid'
 
 ### Custom links inside text
 
-Depending on which React router we're using we often need to control how links are managed.
+Depending on which React router we're using we often need to take control of how links are rendered.
 
 ```tsx
-import { Link } from 'next/Link'
+import Link from 'next/Link'
 
-;<Text
-  linkRenderer={(href, children) => (
-    <Link
-      href={{
-        pathname: href,
-        query: { slug: 'something' },
-      }}
-    >
-      <a>{children}</a>
-    </Link>
-  )}
->
-  This a <a href="/abc">link</a> that will be rendered as a Next Link
-</Text>
+return (
+  <Text
+    linkRenderer={(href, children) => (
+      <Link
+        href={{
+          pathname: href,
+          query: { slug: 'something' },
+        }}
+      >
+        <a>{children}</a>
+      </Link>
+    )}
+  >
+    This a <a href="/abc">link</a> that will be rendered as a Next Link
+  </Text>
+)
 ```
 
 #### Example:
@@ -102,7 +104,7 @@ import { Link } from 'next/Link'
         </Text>
       )}
     >
-      Here's a <a href="/test">custom link</a> and here's{" "}
+      Here's a <a href="/test">custom link</a> and here's{' '}
       <a href="/test2">another</a>.
     </Text>
   </Story>
@@ -114,7 +116,7 @@ import { Link } from 'next/Link'
   <Story name="Inline elements">
     <Text>
       Inline elements like <strong>strong</strong> and <em>em</em> are styled
-      globally. Just drop them <mark>right into</mark> your text.
+      globally. Just drop them <mark>right in your text</mark>.
     </Text>
   </Story>
 </Canvas>

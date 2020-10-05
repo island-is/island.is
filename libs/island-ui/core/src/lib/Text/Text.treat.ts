@@ -164,12 +164,17 @@ const variantStyles = (Object.keys(variants) as TextVariants[]).reduce(
 )
 
 globalStyle(`${base} em`, {
-  fontStyle: 'italic'
+  fontStyle: 'italic',
 })
 
 globalStyle(`${base} strong`, {
-  fontWeight: theme.typography.semiBold
+  fontWeight: theme.typography.semiBold,
 })
 
+globalStyle(`${base} mark`, {
+  backgroundColor: theme.color.mint400,
+  color: theme.color.dark400,
+  fontWeight: theme.typography.regular,
+})
 
 export default variantStyles
