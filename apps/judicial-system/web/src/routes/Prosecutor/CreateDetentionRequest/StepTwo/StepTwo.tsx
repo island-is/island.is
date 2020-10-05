@@ -64,7 +64,7 @@ export const StepTwo: React.FC = () => {
     litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
     ruling: caseDraftJSON.ruling ?? '',
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
   })
@@ -313,6 +313,13 @@ export const StepTwo: React.FC = () => {
                           requestedCustodyEndDateMinutes,
                           setWorkingCase,
                         )
+
+                        autoSave(
+                          workingCase,
+                          'custodyEndDate',
+                          requestedCustodyEndDateMinutes,
+                          setWorkingCase,
+                        )
                       } else {
                         setRequestedCustodyEndTimeErrorMessage(
                           validateTimeEmpty.errorMessage ||
@@ -375,14 +382,19 @@ export const StepTwo: React.FC = () => {
                             checked={provision.getCheckbox}
                             tooltip={provision.explination}
                             onChange={({ target }) => {
-                              // Toggle the checkbox on or off
-                              provision.setCheckbox(target.checked)
-
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
+                              const provisionIsSelected =
+                                copyOfState.custodyProvisions.indexOf(
+                                  target.value as CustodyProvisions,
+                                ) > -1
+
+                              // Toggle the checkbox on or off
+                              provision.setCheckbox(!provisionIsSelected)
+
                               // If the user is checking the box, add the broken law to the state
-                              if (target.checked) {
+                              if (!provisionIsSelected) {
                                 copyOfState.custodyProvisions.push(
                                   target.value as CustodyProvisions,
                                 )
@@ -448,14 +460,19 @@ export const StepTwo: React.FC = () => {
                           checked={restriction.getCheckbox}
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
-                            // Toggle the checkbox on or off
-                            restriction.setCheckbox(target.checked)
-
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
+                            const restrictionIsSelected =
+                              copyOfState.requestedCustodyRestrictions.indexOf(
+                                target.value as CustodyRestrictions,
+                              ) > -1
+
+                            // Toggle the checkbox on or off
+                            restriction.setCheckbox(!restrictionIsSelected)
+
                             // If the user is checking the box, add the restriction to the state
-                            if (target.checked) {
+                            if (!restrictionIsSelected) {
                               // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
                               copyOfState.requestedCustodyRestrictions.push(
                                 target.value as CustodyRestrictions,
@@ -499,7 +516,7 @@ export const StepTwo: React.FC = () => {
                                 copyOfState.requestedCustodyRestrictions,
                               ),
                             )
-
+                            // TODO: COMBINE IN A SINGLE API CALL
                             api.saveCase(
                               workingCase.id,
                               parseArray(
@@ -510,14 +527,14 @@ export const StepTwo: React.FC = () => {
 
                             updateState(
                               workingCase,
-                              'restrictions',
+                              'requestedCustodyRestrictions',
                               copyOfState.requestedCustodyRestrictions,
                               setWorkingCase,
                             )
 
                             updateState(
                               workingCase,
-                              'restrictions',
+                              'custodyRestrictions',
                               copyOfState.custodyRestrictions,
                               setWorkingCase,
                             )

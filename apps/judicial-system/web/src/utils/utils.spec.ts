@@ -38,6 +38,21 @@ describe('Formatters utils', () => {
       // Assert
       expect(parsedString).toEqual({ test: 'lorem' })
     })
+
+    test('given a value with special characters should parse correctly into JSON', () => {
+      //Arrange
+      const property = 'test'
+      const value = `lorem
+ipsum`
+
+      // Act
+      const parsedString = parseString(property, value)
+
+      // Assert
+      expect(parsedString).toEqual({
+        test: 'lorem\nipsum',
+      })
+    })
   })
 
   describe('Parse transition', () => {

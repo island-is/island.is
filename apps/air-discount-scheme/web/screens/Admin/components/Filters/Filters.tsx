@@ -46,6 +46,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
             <Stack space={2}>
               <Controller
                 name="period.from"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Frá"
@@ -58,6 +59,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
               <Controller
                 name="period.to"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Til"
@@ -74,6 +76,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Divider weight="alternate" />
               <Controller
                 name="airline"
+                defaultValue=""
                 render={({ onChange, value }) => {
                   return (
                     <Select
@@ -90,6 +93,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
               <Controller
                 name="flightLeg.from"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="flightLeg.from"
@@ -101,6 +105,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
               <Controller
                 name="flightLeg.to"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="flightLeg.to"
@@ -116,6 +121,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Divider weight="alternate" />
               <Controller
                 name="postalCode"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="postalCode"
@@ -127,6 +133,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
               <Controller
                 name="age.from"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="age.from"
@@ -138,6 +145,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
               <Controller
                 name="age.to"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="age.to"

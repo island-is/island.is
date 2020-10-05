@@ -62,6 +62,12 @@
             "passWithNoTests": true
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run web:codegen"
+          }
+        },
         "codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -287,6 +293,12 @@
             "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run gjafakort-api:codegen"
+          }
+        },
         "docker-express": {}
       }
     },
@@ -317,6 +329,18 @@
           "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "api:build"
+          }
+        },
+        "build-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run api:codegen"
           }
         },
         "lint": {
@@ -357,45 +381,16 @@
         "contentful-types": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "npx ts-node -O '{\"module\":\"commonjs\", \"lib\": [\"es2015\"]}' ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
+            "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
           }
         },
         "contentType": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
+            "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/api/domains/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
           }
         },
         "docker-express": {}
-      }
-    },
-    "api-domains-hello-world": {
-      "root": "libs/api/domains/hello-world",
-      "sourceRoot": "libs/api/domains/hello-world/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/domains/hello-world/tsconfig.lib.json",
-              "libs/api/domains/hello-world/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/hello-world/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api/domains/hello-world/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
       }
     },
     "api-domains-cms": {
@@ -739,6 +734,13 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
             "cwd": "apps/reference-backend"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/reference-backend/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
           }
         },
         "generate-schema": {
@@ -1590,6 +1592,16 @@
             "passWithNoTests": true
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts",
+              "yarn nx run air-discount-scheme-api:codegen"
+            ]
+          }
+        },
         "codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -1775,6 +1787,12 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
             "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "INIT_SCHEMA=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
           }
         },
         "generate-schema": {
@@ -2022,6 +2040,12 @@
             "cwd": "apps/application-system/api"
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
+          }
+        },
         "generate-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2143,6 +2167,18 @@
           "options": {
             "jestConfig": "apps/adgerdir/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config apps/adgerdir/codegen.yml"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run adgerdir:codegen"
           }
         },
         "docker-next": {}
@@ -2373,6 +2409,12 @@
             "cwd": "apps/judicial-system/api"
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildOpenApi.ts"
+          }
+        },
         "generate-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2401,11 +2443,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              {
-                "command": "../../../node_modules/.bin/sequelize-cli db:seed:all"
-              }
-            ],
+            "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
             "cwd": "apps/judicial-system/api"
           }
         },
@@ -2662,6 +2700,12 @@
           "options": {
             "jestConfig": "apps/skilavottord/ws/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
           }
         },
         "docker-express": {}

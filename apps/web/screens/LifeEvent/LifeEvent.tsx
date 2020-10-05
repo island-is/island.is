@@ -35,6 +35,7 @@ import {
 import { createNavigation } from '@island.is/web/utils/navigation'
 import ArticleLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -42,9 +43,10 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { image, title, intro, content },
+  lifeEvent: { id, image, title, intro, content },
   namespace,
 }) => {
+  useContentfulId(id)
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)

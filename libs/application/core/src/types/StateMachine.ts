@@ -41,6 +41,7 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
+  progress?: number
   roles?: RoleInState<T>[]
 }
 
