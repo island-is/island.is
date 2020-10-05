@@ -195,6 +195,7 @@ export const Ruling: React.FC = () => {
                   <DatePicker
                     label="Gæsluvarðhald til"
                     placeholderText="Veldu dagsetningu"
+                    locale="is"
                     selected={
                       workingCase.custodyEndDate
                         ? new Date(workingCase.custodyEndDate)
