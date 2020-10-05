@@ -6,7 +6,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Tag,
 } from '@island.is/island-ui/core'
 
 import Sidebar from '../components/Sidebar'

@@ -5,9 +5,10 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { FormMode, Section, SectionChildren } from '@island.is/application/core'
-import { FormModes } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+
+import { FormModes } from '../types'
 
 interface FormStepperProps {
   form: {

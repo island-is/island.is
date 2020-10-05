@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 
 import { Box } from '../Box'
 import { Typography } from '../Typography/Typography'
@@ -8,11 +8,11 @@ import * as styles from './FormStepper.treat'
 
 export const FormStepper: FC<{
   theme?: types.FormStepperThemes
-  tag?: React.ReactNode
+  tag?: ReactNode
   formName: string
   formIcon?: string
   activeSection: number
-  activeSubSection: number
+  activeSubSection?: number
   sections: types.FormStepperSection[]
   subSection?: string
   showSubSectionIcons?: boolean
@@ -22,7 +22,7 @@ export const FormStepper: FC<{
   formName,
   formIcon,
   activeSection,
-  activeSubSection,
+  activeSubSection = 0,
   sections,
   subSection = 'SUB_SECTION',
   showSubSectionIcons = false,
