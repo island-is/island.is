@@ -87,6 +87,10 @@ const Handover = (props) => {
               router.replace(makePath('myCars'))
               setModal(false)
             }}
+            title={t.cancelModal.title}
+            text={t.cancelModal.info}
+            continueButtonText={t.cancelModal.buttons.continue}
+            cancelButtonText={t.cancelModal.buttons.cancel}
           />
         </ProcessPageLayout>
       )}
