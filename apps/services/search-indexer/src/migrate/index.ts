@@ -4,13 +4,6 @@ import * as aws from './aws'
 import * as dictionary from './dictionary'
 import * as elastic from './elastic'
 
-interface RollbackInfo {
-  [key: string]: {
-    oldTemplate: string
-    newIndexVersion?: number
-  }
-}
-
 interface PromiseStatus {
   success: boolean
   error?: Error
@@ -31,18 +24,21 @@ class App {
       esPackages = dictionary.getFakeEsPackages()
     }
 
-    await this.migrateES(esPackages)
+    const elasticMigrationResults = await this.migrateES(esPackages)
 
     // we remove unused AWS ES packages after ES migrate cause we cant/should not remove packages already in use
     if (hasAwsAccess) {
       logger.info('Cleaning up unused packages')
-      await aws.disassociateUnusedPackagesFromAwsEs(esPackages) // we disassociate all but the files in unusedPackages
-      await aws.deleteUnusedPackagesFromAwsEs(esPackages) // we delete all but the files in esPackages
+      // we want to disassociate and delete all packages below old index version, since other packages might be in use
+      const dictionaryVersion = await dictionary.getDictionaryVersion()
+      const oldDictionaryVersion = parseInt(dictionaryVersion) - 1
+      await aws.disassociateUnusedPackagesFromAwsEs(oldDictionaryVersion)
+      await aws.deleteUnusedPackagesFromAwsEs(oldDictionaryVersion)
     }
     logger.info('Done!')
   }
 
-  private async migrateAws() {
+  private async migrateAws(): Promise<aws.AwsEsPackage[]> {
     logger.info('Starting aws migration')
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
     const awsDictionaryVersion = await aws.getDictionaryVersion()
@@ -71,10 +67,10 @@ class App {
     return esPackages // es config needs the package ids when generating the index template
   }
 
-  private async migrateES(esPackages: aws.AwsEsPackage[]) {
+  private async migrateES(esPackages: aws.AwsEsPackage[]): Promise<elastic.MigrationInfo> {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
-    const processedMigrations: RollbackInfo = {} // to rollback changes on failure
+    const processedMigrations: elastic.MigrationInfo = {} // to rollback changes on failure
     const locales = environment.locales
     const requests = locales.map(
       async (locale): Promise<PromiseStatus> => {
@@ -84,6 +80,11 @@ class App {
         const newIndexVersion = await elastic.getCurrentVersionFromConfig(
           locale,
         )
+
+        // old index version is used in aws cleanup so we allways set it
+        processedMigrations[locale] = {
+          oldIndexVersion
+        }
 
         if (oldIndexVersion !== newIndexVersion) {
           logger.info(
@@ -96,9 +97,7 @@ class App {
           )
 
           try {
-            processedMigrations[locale] = {
-              oldTemplate: await elastic.getEsTemplate(locale),
-            }
+            processedMigrations[locale].oldTemplate = await elastic.getEsTemplate(locale)
             await elastic.updateIndexTemplate(locale, esPackages)
             await elastic.createNewIndexVersion(locale, newIndexVersion)
             processedMigrations[locale].newIndexVersion = newIndexVersion
@@ -139,6 +138,7 @@ class App {
     )
 
     try {
+      // we wait for all promises to settle then we throw error if needed
       const results = await Promise.all(requests)
       results.forEach((result) => {
         if (!result.success) throw result.error
@@ -164,9 +164,11 @@ class App {
       })
       await Promise.all(reverts)
       logger.info('Done rolling back to earlier version')
+      throw error // we dont want this indexer to run if it could not migrate
     }
+
     logger.info('Elasticsearch migration completed')
-    return true
+    return processedMigrations
   }
 }
 
@@ -177,6 +179,6 @@ async function migrateBootstrap() {
 
 migrateBootstrap().catch((error) => {
   logger.error('ERROR: ', error)
-  // take down container on error
+  // take down container on error to prevent this search indexer from going live
   throw error
 })
