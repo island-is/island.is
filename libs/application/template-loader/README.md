@@ -1,6 +1,10 @@
 # application-template-loader
 
-This library was generated with [Nx](https://nx.dev).
+The sole purpose of this library is to lazily load application templates, forms, and fields. This ensures that bundle sizes are small, and only the currently viewed application template, form, and fields are part of the js bundle.
+
+## Adding a new template
+
+If you are building a new application template from scratch, add its type and import loader into `src/lib/templateLoaders.ts`. Then it can be used in the backend and frontend apps.
 
 ## Running unit tests
 
