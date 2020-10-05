@@ -43,7 +43,7 @@ export const Accordion = ({
       </Stack>
     </AccordionContext.Provider>
   ) : (
-    <Stack space={2} dividers>
+    <Stack space={2} dividers={dividers}>
       {children}
     </Stack>
   )

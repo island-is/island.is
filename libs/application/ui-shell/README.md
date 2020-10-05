@@ -8,13 +8,10 @@ This library uses [react-hook-form](https://react-hook-form.com/) for providing 
 
 ## How to create a new field
 
-First, follow the steps listed in the README for application-core for creating a new field. Then create a new file and add it to `src/components/fields/**` and make sure it is exported from `src/components/fields/index.ts`.
+New fields are either:
 
-If the field should update some state in the form (such as store answers by the user), it needs to have components that are wrapped in react-hook-form's `Controller` component, or inputs that are `register`-ed to the react-hook-form. An example of these can be viewed in `src/components/fields/custom/ExampleCountryField.tsx`.
-
-## Running
-
-After running the api project, run `yarn nx serve application-system-form`
+- reusable and should be added to the `application-ui-fields` library
+- custom for a specific application. Then it should be added to the library containing said application template and exported under `getFields`.
 
 ## Running unit tests
 

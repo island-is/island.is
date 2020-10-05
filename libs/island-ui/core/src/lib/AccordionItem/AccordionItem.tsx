@@ -141,6 +141,8 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
+            paddingX={[2, 2, 4]}
+            paddingY={2}
             onClick={onClick ? onClick : handleOpen}
           >
             <Columns space={2} alignY="center">
@@ -195,7 +197,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingTop={2} id={id}>
+          <Box paddingX={[2, 2, 4]} paddingBottom={2} id={id}>
             {children}
           </Box>
         </AnimateHeight>
@@ -220,8 +222,6 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
-      paddingX={[2, 2, 4]}
-      paddingY={2}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
