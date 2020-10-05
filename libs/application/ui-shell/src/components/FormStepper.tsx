@@ -86,7 +86,7 @@ const FormStepper: FC<FormStepperProps> = ({
     <CoreFormStepper
       theme={progressTheme[mode]}
       tag={showTag && <ProgressTag />}
-      formName={form.name}
+      formName={formatMessage(form.name)}
       formIcon={form.icon}
       sections={formattedSections}
       activeSection={activeSection}
