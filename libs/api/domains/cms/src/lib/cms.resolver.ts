@@ -8,6 +8,7 @@ import {
   Mutation,
 } from '@nestjs/graphql'
 import { Article } from './models/article.model'
+import { ContentSlug } from './models/contentSlug.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
@@ -40,7 +41,6 @@ import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
-import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
@@ -56,6 +56,7 @@ import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
+import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
@@ -64,6 +65,9 @@ import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
 import { AboutSubPage } from './models/aboutSubPage.model'
 import { ContactUsInput } from './dto/contactUs.input'
 import { ContactUsPayload } from './models/contactUsPayload.model'
+import { GetNewsInput } from './dto/getNews.input'
+import { logger } from '@island.is/logging'
+import { LatestNewsSlice } from './models/latestNewsSlice.model'
 
 const { cacheTime } = environment
 
@@ -77,12 +81,6 @@ export class CmsResolver {
     private readonly cmsElasticsearchService: CmsElasticsearchService,
     private readonly mailService: MailService,
   ) {}
-
-  @Directive(cacheControlDirective())
-  @Query(() => PaginatedNews)
-  getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
-    return this.cmsContentfulService.getNewsList(input)
-  }
 
   @Directive(cacheControlDirective())
   @Query(() => PaginatedAdgerdirNews)
@@ -125,6 +123,14 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return this.cmsContentfulService.getLandingPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ContentSlug, { nullable: true })
+  getContentSlug(
+    @Args('input') input: GetContentSlugInput,
+  ): Promise<ContentSlug | null> {
+    return this.cmsContentfulService.getContentSlug(input)
   }
 
   @Directive(cacheControlDirective())
@@ -265,6 +271,15 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => Url, { nullable: true })
+  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
+    return this.cmsContentfulService.getUrl(
+      input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => [ArticleCategory])
   getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
@@ -306,12 +321,10 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => Url, { nullable: true })
-  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
-    return this.cmsContentfulService.getUrl(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
-    )
+  @Query(() => [News])
+  getNews(@Args('input') { lang, size }: GetNewsInput): Promise<News[]> {
+    logger.info('inside')
+    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
   }
 
   @Mutation(() => ContactUsPayload)
@@ -322,19 +335,22 @@ export class CmsResolver {
       success: await this.mailService.deliverContactUs(input),
     }
   }
+  @Directive(cacheControlDirective())
+  @Query(() => PaginatedNews)
+  getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
+    return this.cmsContentfulService.getNewsList(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => [News])
-  async news() {
-    const { news } = await this.cmsContentfulService.getNewsList({
-      lang: 'is',
-      perPage: 3,
-    })
-    return news
+  async news(
+    @Parent() { news: { lang, size } }: LatestNewsSlice,
+  ): Promise<News[]> {
+    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
   }
 }
 

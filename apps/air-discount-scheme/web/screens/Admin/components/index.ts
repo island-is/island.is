@@ -1,4 +1,5 @@
 export { Filters } from './Filters'
 export { KeyValues } from './KeyValues'
+export { Modal } from './Modal'
 export { Panel } from './Panel'
 export { Summary } from './Summary'

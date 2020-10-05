@@ -33,6 +33,7 @@ import { CategoryLayout } from '@island.is/web/screens/Layouts/Layouts'
 import LifeEventInCategory from './LifeEventInCategory'
 
 import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
   GetLifeEventsInCategoryQuery,
   GetNamespaceQuery,
@@ -116,8 +117,12 @@ const Category: Screen<CategoryProps> = ({
     )
     .filter((x) => x)
 
+  const getCurrentCategory = () => categories.find((x) => x.slug === slug)
+
+  useContentfulId(getCurrentCategory()?.id)
+
   // find current category in categories list
-  const category = categories.find((x) => x.slug === slug)
+  const category = getCurrentCategory()
 
   useEffect(() => {
     const hashMatch = window.location.hash ?? ''
@@ -168,7 +173,10 @@ const Category: Screen<CategoryProps> = ({
     }
 
     setHash(newHash)
-    Router.replace(makePath('ArticleCategory', category.slug + `#${newHash}`))
+    Router.replace(
+      makePath('ArticleCategory', '/[slug]'),
+      makePath('ArticleCategory', category.slug + `#${newHash}`),
+    )
   }
 
   const sortArticles = (articles: Articles) => {
@@ -490,6 +498,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   const categoryExists = getArticleCategories.some(
     (category) => category.slug === slug,
   )
+
   // if requested category si not in returned list of categories we assume it does not exist
   if (!categoryExists) {
     throw new CustomNextError(404, 'Category not found')

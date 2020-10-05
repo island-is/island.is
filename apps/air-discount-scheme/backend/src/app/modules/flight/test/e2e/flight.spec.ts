@@ -66,6 +66,7 @@ describe('Create Flight', () => {
 
     expect(response.body).toEqual({
       id: expect.any(String),
+      nationalId: '123456xxx0',
       bookingDate: '2020-08-17T12:35:50.971Z',
       flightLegs: [
         {
