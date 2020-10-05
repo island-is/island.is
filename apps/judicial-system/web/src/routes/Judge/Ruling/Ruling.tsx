@@ -9,7 +9,7 @@ import {
   RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
@@ -116,6 +116,10 @@ export const Ruling: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
+
+  useEffect(() => {
+    document.title = 'Úrskurður - Réttarvörslugátt'
+  }, [])
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
