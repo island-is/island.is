@@ -71,6 +71,7 @@ export const slices = gql`
     id
     title
     news {
+      typename
       id
       title
       subtitle

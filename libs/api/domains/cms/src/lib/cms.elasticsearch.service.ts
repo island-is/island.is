@@ -6,6 +6,7 @@ import {
 } from '@island.is/api/content-search'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
+import { News } from './models/news.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -13,7 +14,7 @@ export class CmsElasticsearchService {
 
   async getArticleCategories(
     index: SearchIndexes,
-    { size = 100 }: { size?: number },
+    { size }: { size?: number },
   ): Promise<ArticleCategory[]> {
     const query = {
       types: ['webArticleCategory'],
@@ -32,9 +33,10 @@ export class CmsElasticsearchService {
 
   async getArticles(
     index: SearchIndexes,
-    { category = '', size = 100 }: { category: string; size?: number },
+    { category, size }: { category: string; size?: number },
   ): Promise<Article[]> {
     const query = {
+      types: ['webArticle'],
       tags: [{ type: 'category', key: category }],
       sort: { 'title.sort': 'asc' as sortDirection },
       size,
@@ -45,6 +47,25 @@ export class CmsElasticsearchService {
       query,
     )
     return articlesResponse.hits.hits.map<Article>((response) =>
+      JSON.parse(response._source.response),
+    )
+  }
+
+  async getNews(
+    index: SearchIndexes,
+    { size }: { size?: number },
+  ): Promise<News[]> {
+    const query = {
+      types: ['webNews'],
+      sort: { dateCreated: 'asc' as sortDirection },
+      size,
+    }
+
+    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+    return articlesResponse.hits.hits.map<News>((response) =>
       JSON.parse(response._source.response),
     )
   }
