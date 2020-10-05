@@ -313,6 +313,13 @@ export const StepTwo: React.FC = () => {
                           requestedCustodyEndDateMinutes,
                           setWorkingCase,
                         )
+
+                        autoSave(
+                          workingCase,
+                          'custodyEndDate',
+                          requestedCustodyEndDateMinutes,
+                          setWorkingCase,
+                        )
                       } else {
                         setRequestedCustodyEndTimeErrorMessage(
                           validateTimeEmpty.errorMessage ||
