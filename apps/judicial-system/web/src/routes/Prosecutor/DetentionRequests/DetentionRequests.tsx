@@ -28,6 +28,7 @@ export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const uContext = useContext(userContext)
+  const isJudge = uContext.user.role === UserRole.JUDGE
 
   useEffect(() => {
     async function getCases(user: User) {
@@ -72,22 +73,23 @@ export const DetentionRequests: React.FC = () => {
   return (
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
-        {!uContext?.user ? null : uContext.user.role === UserRole.JUDGE ? (
-          <JudgeLogo />
-        ) : (
-          <ProsecutorLogo />
-        )}
+        {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
       </div>
-      <div className={styles.addDetentionRequestButtonContainer}>
-        <Link to={Constants.STEP_ONE_ROUTE} style={{ textDecoration: 'none' }}>
-          <Button
-            icon="plus"
-            onClick={() => window.localStorage.removeItem('workingCase')}
+      {!isJudge && (
+        <div className={styles.addDetentionRequestButtonContainer}>
+          <Link
+            to={Constants.STEP_ONE_ROUTE}
+            style={{ textDecoration: 'none' }}
           >
-            Stofna nýja kröfu
-          </Button>
-        </Link>
-      </div>
+            <Button
+              icon="plus"
+              onClick={() => window.localStorage.removeItem('workingCase')}
+            >
+              Stofna nýja kröfu
+            </Button>
+          </Link>
+        </div>
+      )}
       {isLoading ? null : cases ? (
         <table
           className={styles.detentionRequestsTable}
