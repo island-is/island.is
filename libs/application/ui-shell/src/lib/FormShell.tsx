@@ -26,6 +26,7 @@ export const FormShell: FC<{
   form: Form
   dataSchema: Schema
 }> = ({ application, nationalRegistryId, form, dataSchema }) => {
+  const { formatMessage } = useLocale()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {

@@ -7,10 +7,11 @@ import {
 import { FormMode, Section, SectionChildren } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
 
 interface FormStepperProps {
   form: {
-    name: string
+    name: MessageDescriptor | string
     icon?: string
   }
   mode: FormMode

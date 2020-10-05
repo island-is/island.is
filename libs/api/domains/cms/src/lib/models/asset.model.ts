@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Asset as ContentfulAsset } from 'contentful'
 
 @ObjectType()

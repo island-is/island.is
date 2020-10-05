@@ -27,7 +27,7 @@ export type FormMode =
 
 export interface Form {
   id: ApplicationTypes
-  name: string
+  name: MessageDescriptor | string
   type: FormItemTypes.FORM
   mode?: FormMode
   icon?: string
