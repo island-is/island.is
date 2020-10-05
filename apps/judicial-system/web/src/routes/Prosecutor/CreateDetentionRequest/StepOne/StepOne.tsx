@@ -425,14 +425,14 @@ export const StepOne: React.FC = () => {
                             setWorkingCase,
                           )
                         }}
-                        handleCloseCalander={(date: Date) => {
+                        handleCloseCalendar={(date: Date) => {
                           if (isNull(date) || !isValid(date)) {
                             setArrestDateErrorMessage(
                               'Reitur má ekki vera tómur',
                             )
                           }
                         }}
-                        handleOpenCalander={() => setArrestDateErrorMessage('')}
+                        handleOpenCalendar={() => setArrestDateErrorMessage('')}
                         required
                       />
                     </GridColumn>

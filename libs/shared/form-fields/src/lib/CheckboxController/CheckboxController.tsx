@@ -1,9 +1,6 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Box } from '../Box/Box'
-import { Checkbox } from '../Checkbox/Checkbox'
-import { Stack } from '../Stack/Stack'
-import { Tooltip } from '../Tooltip/Tooltip'
+import { Box, Checkbox, Stack, Tooltip } from '@island.is/island-ui/core'
 
 interface Option {
   value: string

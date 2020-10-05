@@ -254,14 +254,14 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
-                    handleCloseCalander={(date: Date) => {
+                    handleCloseCalendar={(date: Date) => {
                       if (isNull(date) || !isValid(date)) {
                         setRequestedCustodyEndDateErrorMessage(
                           'Reitur má ekki vera tómur',
                         )
                       }
                     }}
-                    handleOpenCalander={() =>
+                    handleOpenCalendar={() =>
                       setRequestedCustodyEndDateErrorMessage('')
                     }
                   />

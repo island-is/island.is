@@ -24,31 +24,35 @@ interface DatePickerProps {
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
   selected?: ReactDatePickerProps['selected']
+  disabled?: boolean
   hasError?: boolean
   errorMessage?: string
+  id?: string
   handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
-  handleCloseCalander?: (date: Date | null) => void
-  handleOpenCalander?: () => void
+  handleCloseCalendar?: (date: Date | null) => void
+  handleOpenCalendar?: () => void
   required?: boolean
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
+  id,
   label,
   placeholderText,
   locale,
   value,
   minDate,
   selected,
+  disabled = false,
   hasError = false,
   errorMessage,
   handleChange,
   onInputClick,
-  handleCloseCalander,
-  handleOpenCalander,
+  handleCloseCalendar,
+  handleOpenCalendar,
   required,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -110,6 +114,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     <div className={coreStyles.root} data-testid="datepicker">
       <div className={cn(styles.root, 'island-ui-datepicker')}>
         <ReactDatePicker
+          id={id}
+          disabled={disabled}
           selected={selected ?? startDate}
           locale={locale}
           minDate={minDate}
@@ -126,11 +132,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           onCalendarOpen={() => {
             setDatePickerState('open')
-            handleOpenCalander && handleOpenCalander()
+            handleOpenCalendar && handleOpenCalendar()
           }}
           onCalendarClose={() => {
             setDatePickerState('closed')
-            handleCloseCalander && handleCloseCalander(startDate)
+            handleCloseCalendar && handleCloseCalendar(startDate)
           }}
           onChange={(date: Date) => {
             setStartDate(date)
