@@ -175,10 +175,7 @@ export class CaseService {
     })
   }
 
-  async requestSignature(
-    existingCase: Case,
-    user: User,
-  ): Promise<SigningServiceResponse> {
+  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case with id "${existingCase.id}"`,
     )
@@ -194,9 +191,9 @@ export class CaseService {
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        user.mobileNumber,
+        existingCase.judge.mobileNumber,
         'Undirrita dóm',
-        existingCase.accusedName,
+        existingCase.judge.name,
         'Ísland',
         'ruling.pdf',
         pdf,
