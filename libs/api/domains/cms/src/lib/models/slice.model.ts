@@ -1,6 +1,7 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+import { logger } from '@island.is/logging'
 
 import {
   ITimeline,
@@ -41,7 +42,6 @@ import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
-import { logger } from '@island.is/logging'
 import { TabSection, mapTabSection } from './tabSection.model'
 import { TeamList, mapTeamList } from './teamList.model'
 import { ContactUs, mapContactUs } from './contactUs.model'

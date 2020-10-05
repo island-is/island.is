@@ -15,6 +15,7 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, NotificationType } from './models'
 import { getPdf } from './case.pdf'
 import { writeDummySignedPdf } from './case.dummy.pdf'
+import { TransitionUpdate } from './case.state'
 
 @Injectable()
 export class CaseService {
@@ -34,7 +35,11 @@ export class CaseService {
 
     return this.caseModel.findAll({
       order: [['modified', 'DESC']],
-      include: [Notification],
+      include: [
+        Notification,
+        { model: User, as: 'prosecutor' },
+        { model: User, as: 'judge' },
+      ],
     })
   }
 
@@ -43,7 +48,11 @@ export class CaseService {
 
     return this.caseModel.findOne({
       where: { id },
-      include: [Notification],
+      include: [
+        Notification,
+        { model: User, as: 'prosecutor' },
+        { model: User, as: 'judge' },
+      ],
     })
   }
 
@@ -55,35 +64,14 @@ export class CaseService {
 
   async update(
     id: string,
-    caseToUpdate: UpdateCaseDto,
+    update: UpdateCaseDto | TransitionUpdate,
   ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
     this.logger.debug(`Updating case whith id "${id}"`)
 
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      caseToUpdate,
+      update,
       {
         where: { id },
-        returning: true,
-      },
-    )
-
-    return { numberOfAffectedRows, updatedCase }
-  }
-
-  async transition(
-    id: string,
-    modified: Date,
-    state: CaseState,
-  ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
-    this.logger.debug(`Transitioning case with id "${id}"`)
-
-    const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      { state },
-      {
-        where: {
-          id,
-          modified,
-        },
         returning: true,
       },
     )
@@ -164,7 +152,7 @@ export class CaseService {
     // Development without signing service access token
     return {
       controlCode: '0000',
-      documentToken: 'DEVELOPEMNT',
+      documentToken: 'DEVELOPMENT',
     }
   }
 

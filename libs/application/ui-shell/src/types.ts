@@ -8,15 +8,6 @@ import {
   Schema,
 } from '@island.is/application/core'
 
-export interface FieldBaseProps {
-  applicationId?: string
-  autoFocus?: boolean
-  error?: string
-  field: Field
-  formValue: FormValue
-  showFieldName?: boolean
-}
-
 export type FieldDef = {
   isNavigable?: boolean
 } & Field
@@ -58,14 +49,4 @@ export enum ProgressThemes {
   PURPLE = 'purple',
   RED = 'red',
 }
-
-export interface FieldComponentProps {
-  applicationId: string
-  autoFocus?: boolean
-  error?: unknown
-  field: FieldDef
-  formValue: FormValue
-  showFieldName?: boolean
-}
-
 export type ResolverContext = { formNode: FormNode; dataSchema: Schema }

@@ -45,7 +45,7 @@ export const JudgeOverview: React.FC = () => {
         JSON.stringify(currentCase.case),
       )
 
-      if (mounted) {
+      if (mounted && !workingCase) {
         setWorkingCase(currentCase.case)
       }
     }
@@ -57,7 +57,7 @@ export const JudgeOverview: React.FC = () => {
     return () => {
       mounted = false
     }
-  }, [id])
+  }, [id, workingCase, setWorkingCase])
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
@@ -119,7 +119,7 @@ export const JudgeOverview: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
                 <Typography variant="eyebrow" color="blue400">
-                  Fullt nafn kærða
+                  Fullt nafn
                 </Typography>
               </Box>
               <Typography>{workingCase?.accusedName}</Typography>

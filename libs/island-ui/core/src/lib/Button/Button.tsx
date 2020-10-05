@@ -64,6 +64,7 @@ export const Button = forwardRef<
       white,
       tabIndex,
       rounded = false,
+      ...rest
     },
     ref,
   ) => {
@@ -95,6 +96,7 @@ export const Button = forwardRef<
       tabIndex,
       className,
       onClick,
+      ...rest,
     }
 
     const buttonContent = {
@@ -226,7 +228,7 @@ const ButtonContent: FC<ButtonContentProps> = ({
           )}
         </span>
       ) : (
-        <Inline alignY="center" space={2}>
+        <Inline alignY="center" flexWrap="nowrap" space={2}>
           {isMenuButton && hasLeftContent ? (
             <LeftContentContainer>
               {leftImage ? (

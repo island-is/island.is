@@ -1,11 +1,11 @@
-import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { style } from 'treat'
 
 export const container = style({
+  position: 'fixed',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  position: 'fixed',
   width: '100%',
   height: '100%',
   top: 0,
@@ -21,29 +21,23 @@ export const overlay = style({
   left: 0,
   right: 0,
   bottom: 0,
-  zIndex: 1,
-  opacity: '30%',
-  backgroundColor: theme.color.blue600,
+  opacity: '70%',
   '@keyframes': {
     from: {
       opacity: 0,
     },
     to: {
-      opacity: 0.3,
+      opacity: 0.7,
     },
   },
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
 })
 
-export const modal = style({
+export const modalContainer = style({
   position: 'relative',
-  flexGrow: 0,
-
+  boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   zIndex: 1,
-  borderRadius: '16px',
-  boxSizing: 'border-box',
-  backgroundColor: theme.color.white,
   '@keyframes': {
     from: {
       opacity: 0,
@@ -54,14 +48,17 @@ export const modal = style({
   },
   animationTimingFunction: 'ease-out',
   animationDuration: '0.25s',
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      height: '100vh',
+    },
+  },
 })
 
 export const modalClose = style({
   position: 'absolute',
-  top: 15,
-  right: 15,
-  width: 40,
-  height: 40,
+  top: 30,
+  right: 30,
   lineHeight: 0,
   outline: 0,
 })

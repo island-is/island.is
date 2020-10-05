@@ -1,3 +1,4 @@
+import { CaseTransition } from '@island.is/judicial-system/types'
 import { isValid, format, parseISO } from 'date-fns'
 import { is } from 'date-fns/locale'
 
@@ -10,9 +11,27 @@ export const parseArray = (property: string, array: string[]) => {
   }
 }
 
-export const parseString = (property: string, value: string | Date) => {
+export const parseString = (
+  property: string,
+  value: string | Date | boolean,
+) => {
   try {
-    const json = JSON.parse(`{"${property}": "${value}"}`)
+    const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)
+    return json
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
+export const parseTransition = (
+  modified: string,
+  transition: CaseTransition,
+) => {
+  try {
+    const json = JSON.parse(
+      `{"modified": "${modified}", "transition": "${transition}"}`,
+    )
     return json
   } catch (e) {
     console.log(e)

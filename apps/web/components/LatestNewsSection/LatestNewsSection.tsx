@@ -13,7 +13,7 @@ import { NewsCard } from '../NewsCard'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsListQuery } from '@island.is/web/graphql/schema'
-import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
@@ -30,7 +30,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
 }) => {
   const newsItems = items.slice(0, 3)
   const { activeLocale, t } = useI18n()
-  const { globalNamespace } = useContext(GlobalNamespaceContext)
+  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
 

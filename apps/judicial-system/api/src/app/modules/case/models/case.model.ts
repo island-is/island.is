@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
   Table,
@@ -18,6 +20,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
 } from './case.types'
+import { User } from '../../user'
 
 @Table({
   tableName: 'case',
@@ -172,6 +175,18 @@ export class Case extends Model<Case> {
   // Athugasemdir til dómara
   comments: string
 
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorId: string
+
+  @BelongsTo(() => User, 'prosecutorId')
+  @ApiProperty({ type: User })
+  prosecutor: User
+
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -235,6 +250,14 @@ export class Case extends Model<Case> {
   ruling: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Hafna kröfu
+  rejecting: boolean
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
   })
@@ -267,6 +290,18 @@ export class Case extends Model<Case> {
   @ApiProperty({ enum: CaseAppealDecision })
   // Ákvörðun um kæru sækjanda
   prosecutorAppealDecision: CaseAppealDecision
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  judgeId: string
+
+  @BelongsTo(() => User, 'judgeId')
+  @ApiProperty({ type: User })
+  judge: User
 
   @HasMany(() => Notification)
   @ApiProperty({ type: Notification, isArray: true })

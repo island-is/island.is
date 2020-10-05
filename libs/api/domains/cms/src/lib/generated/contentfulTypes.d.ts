@@ -265,6 +265,28 @@ export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
   }
 }
 
+export interface IAuthorFields {
+  /** Name */
+  name: string
+}
+
+export interface IAuthor extends Entry<IAuthorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'author'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IBigBulletListFields {
   /** Title */
   title?: string | undefined
@@ -992,6 +1014,9 @@ export interface INewsFields {
 
   /** Date */
   date: string
+
+  /** Author */
+  author?: IAuthor | undefined
 
   /** Introduction */
   intro: string
@@ -2091,6 +2116,7 @@ export type CONTENT_TYPE =
   | 'articleCategory'
   | 'articleGroup'
   | 'articleSubgroup'
+  | 'author'
   | 'bigBulletList'
   | 'card'
   | 'cardSection'

@@ -31,40 +31,10 @@ export class UserController {
 
     if (!user) {
       throw new NotFoundException(
-        `User ${authUser && authUser.nationalId} not found`,
+        `User ${authUser && authUser?.nationalId} not found`,
       )
     }
 
     return user
-  }
-
-  // Temporary endpoint to enable role changes
-  @Get('user/:nationalId/admin')
-  @ApiOkResponse({ type: User })
-  async updateUserRole(
-    @Param('nationalId') nationalId: string,
-    @Query('role') role: UserRole,
-    @Req() req,
-  ): Promise<User> {
-    const authUser: AuthUser = req.user
-
-    const user = await this.userService.findByNationalId(authUser.nationalId)
-
-    if (!user || !['2510654469', '1112902539'].includes(user.nationalId)) {
-      throw new UnauthorizedException()
-    }
-
-    const {
-      numberOfAffectedRows,
-      updatedUser,
-    } = await this.userService.setRoleByNationalId(nationalId, role)
-
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `A user with the national id ${nationalId} does not exist`,
-      )
-    }
-
-    return updatedUser
   }
 }
