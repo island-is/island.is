@@ -56,7 +56,6 @@ const Overview: FC = () => {
           <Link href={'./'}>
             <a>Ísland.is</a>
           </Link>
-          <span>Content information</span>
           <span>{t.title}</span>
         </Breadcrumbs>
       </Box>

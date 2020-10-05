@@ -1,5 +1,5 @@
 export * from './AddAttachmentDto';
-export * from './Application';
+export * from './ApplicationResponseDto';
 export * from './CreateApplicationDto';
 export * from './DataProviderDto';
 export * from './DeleteAttachmentDto';
