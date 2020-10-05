@@ -43,13 +43,17 @@ jest.mock('puppeteer', function () {
         return {
           newPage: function () {
             return {
-              setContent: function () {},
+              setContent: function () {
+                return
+              },
               pdf: function () {
                 return 'pdf'
               },
             }
           },
-          close: function () {},
+          close: function () {
+            return
+          },
         }
       },
     },
