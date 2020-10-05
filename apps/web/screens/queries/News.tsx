@@ -36,6 +36,9 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
       date
       slug
       intro
+      author {
+        name
+      }
       content {
         ...AllSlices
       }
