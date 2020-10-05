@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import {
   Typography,
@@ -11,6 +11,10 @@ import * as styles from './Login.treat'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
+
+  useEffect(() => {
+    document.title = 'Réttarvörslugátt'
+  }, [])
 
   return (
     <div className={styles.loginContainer}>
