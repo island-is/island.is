@@ -68,7 +68,8 @@ export const FixedNav: FC = () => {
                 size="medium"
                 activeLocale={activeLocale}
                 placeholder={t.searchPlaceholder}
-                autocomplete={false}
+                autocomplete={true}
+                autosuggest={false}
               />
             </Box>
             <Box marginLeft={2}>

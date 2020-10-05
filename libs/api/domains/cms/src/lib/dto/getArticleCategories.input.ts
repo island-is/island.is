@@ -10,5 +10,5 @@ export class GetArticleCategoriesInput {
   @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
-  size?: number
+  size?: number = 100
 }

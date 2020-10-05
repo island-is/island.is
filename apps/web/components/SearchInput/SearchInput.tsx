@@ -196,6 +196,7 @@ interface SearchInputProps {
   initialInputValue?: string
   size?: AsyncSearchSizes
   autocomplete?: boolean
+  autosuggest?: boolean
   openOnFocus?: boolean
   placeholder?: string
   white?: boolean
@@ -214,6 +215,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       white = false,
       colored = true,
       autocomplete = true,
+      autosuggest = true,
       id = 'downshift',
     },
     ref,
@@ -327,6 +329,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                 highlightedIndex={highlightedIndex}
                 getItemProps={getItemProps}
                 locale={locale}
+                autosuggest={autosuggest}
               />
             )}
           </AsyncSearchInput>
@@ -342,7 +345,8 @@ const Results: FC<{
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
-}> = ({ locale, search, highlightedIndex, getItemProps }) => {
+  autosuggest: boolean
+}> = ({ locale, search, highlightedIndex, getItemProps, autosuggest }) => {
   const { makePath } = routeNames(locale)
 
   if (!search.term) {
@@ -391,7 +395,7 @@ const Results: FC<{
             })}
         </Stack>
       </div>{' '}
-      {search.results && search.results.items.length > 0 && (
+      {autosuggest && search.results && search.results.items.length > 0 && (
         <>
           <div className={styles.separatorHorizontal} />
           <div className={styles.menuRow}>
