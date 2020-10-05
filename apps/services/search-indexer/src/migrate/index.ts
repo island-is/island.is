@@ -76,7 +76,9 @@ class App {
     return filteredAwsEsPackages // es config needs the package ids when generating the index template
   }
 
-  private async migrateES(esPackages: aws.AwsEsPackage[]): Promise<elastic.MigrationInfo> {
+  private async migrateES(
+    esPackages: aws.AwsEsPackage[],
+  ): Promise<elastic.MigrationInfo> {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
     const processedMigrations: elastic.MigrationInfo = {} // to rollback changes on failure
@@ -92,7 +94,7 @@ class App {
 
         // old index version is used in aws cleanup so we allways set it
         processedMigrations[locale] = {
-          oldIndexVersion
+          oldIndexVersion,
         }
 
         if (oldIndexVersion !== newIndexVersion) {
@@ -106,7 +108,9 @@ class App {
           )
 
           try {
-            processedMigrations[locale].oldTemplate = await elastic.getEsTemplate(locale)
+            processedMigrations[
+              locale
+            ].oldTemplate = await elastic.getEsTemplate(locale)
             await elastic.updateIndexTemplate(locale, esPackages)
             await elastic.createNewIndexVersion(locale, newIndexVersion)
             processedMigrations[locale].newIndexVersion = newIndexVersion
