@@ -58,7 +58,8 @@ function formatNationalId(nationalId: string): string {
 }
 
 export function writeFile(fileName: string, documentContent: string) {
-  fs.writeFileSync(`./${fileName}`, documentContent, { encoding: 'binary' })
+  // In e2e tests, fs is null and we have not been able to mock fs
+  fs?.writeFileSync(`./${fileName}`, documentContent, { encoding: 'binary' })
 }
 
 export async function generateRulingPdf(existingCase: Case): Promise<string> {
