@@ -191,20 +191,6 @@ export class ContentfulService {
     return data.items
   }
 
-  /**
-   * Alias of linksToEntry
-   *
-   * @param linkId
-   * @param locale
-   * @private
-   */
-  private async getParentEntries(
-    linkId: string,
-    locale: string,
-  ): Promise<Entry<any>[]> {
-    return this.linksToEntry(linkId, locale)
-  }
-
   async getSyncEntries({
     fullSync,
     locale,
@@ -241,7 +227,7 @@ export class ContentfulService {
         // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
         // with regular sync, triggered by a webhook, these calls 1 - 2 at most
         const linkedEntries = await this.limiter.schedule(() => {
-          return this.getParentEntries(entryId, locale)
+          return this.linksToEntry(entryId, locale)
         })
         linkedEntries.forEach((entry) => {
           // No need to import the same document twice
