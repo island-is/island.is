@@ -40,6 +40,7 @@ export interface TextProps {
   marginY?: ResponsiveSpace
   fontWeight?: keyof typeof fontWeightStyles
   lineHeight?: keyof typeof lineHeightStyles
+  linkRenderer?: (href: string, children: React.ReactNode) => JSX.Element
 }
 
 export const Text = ({
@@ -55,6 +56,7 @@ export const Text = ({
   marginY,
   fontWeight,
   lineHeight,
+  linkRenderer,
   variant = 'p',
   as = 'p',
 }: TextProps) => {
@@ -68,20 +70,26 @@ export const Text = ({
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       paddingY={paddingY}
-      className={cn(
-        base,
-        variant ? styles[variant] : null,
-        color ? colors[color] : null,
-        fontWeight ? fontWeightStyles[fontWeight] : null,
-        lineHeight ? lineHeightStyles[lineHeight] : null,
-        {
-          [truncateStyle]: truncate,
-          [defaultFontWeights[variant!]]: variant && !fontWeight,
-          [defaultLineHeights[variant!]]: variant && !lineHeight,
-        },
-      )}
+      className={cn(base, {
+        [styles[variant]]: variant,
+        [colors[color]]: color,
+        [fontWeightStyles[fontWeight]]: fontWeight,
+        [lineHeightStyles[lineHeight]]: lineHeight,
+        [truncateStyle]: truncate,
+        [defaultFontWeights[variant!]]: variant && !fontWeight,
+        [defaultLineHeights[variant!]]: variant && !lineHeight,
+      })}
     >
-      {children}
+      {React.Children.map(children, (child: any) => {
+        if (
+          typeof linkRenderer === 'function' &&
+          child.props &&
+          child.props.href
+        ) {
+          return linkRenderer(child.props.href, child.props.children)
+        }
+        return child
+      })}
     </Box>
   )
 }

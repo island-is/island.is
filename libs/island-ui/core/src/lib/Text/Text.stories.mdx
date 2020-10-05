@@ -68,6 +68,23 @@ import { GridColumn, GridContainer, GridRow } from '../Grid'
   </Story>
 </Canvas>
 
+### Links inside text
+
+<Canvas>
+  <Story name="Custom link renderer">
+    <Text
+      linkRenderer={(href, children) => (
+        <Text as="a" href={href} color="red400" fontWeight="semiBold">
+          {children}
+        </Text>
+      )}
+    >
+      Here's a <a href="/test">custom link</a> and here's another{' '}
+      <a href="/test2">one</a>.
+    </Text>
+  </Story>
+</Canvas>
+
 # Props
 
 <Props of={Text} />
