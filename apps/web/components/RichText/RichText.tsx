@@ -5,7 +5,7 @@ import {
   defaultRenderComponent,
   RenderConfig,
 } from '@island.is/island-ui/contentful'
-import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { GridRow, GridColumn } from '@island.is/island-ui/core'
 import ContactUs from '../ContactUs/ContactUs'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
@@ -27,16 +27,14 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.
     // If that turns out not to always be the case we need to make this configurable
     children = (
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-          >
-            {children}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <GridRow>
+        <GridColumn
+          offset={['0', '0', '0', '0', '1/9']}
+          span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+        >
+          {children}
+        </GridColumn>
+      </GridRow>
     )
   }
 
