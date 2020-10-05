@@ -36,6 +36,10 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
+    document.title = 'Yfirlit - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     let mounted = true
 
     const getCurrentCase = async () => {
