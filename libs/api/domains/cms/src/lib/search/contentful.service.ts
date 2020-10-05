@@ -170,6 +170,14 @@ export class ContentfulService {
     return _.flatten(chunkedChanges)
   }
 
+  /**
+   * Search for entries which have a field linking to a specific entry.
+   * Useful to finding root/parent of an entry
+   *
+   * @param linkId
+   * @param locale
+   * @private
+   */
   private async linksToEntry(
     linkId: string,
     locale: string,
@@ -181,6 +189,20 @@ export class ContentfulService {
       locale: this.contentfulLocaleMap[locale],
     })
     return data.items
+  }
+
+  /**
+   * Alias of linksToEntry
+   *
+   * @param linkId
+   * @param locale
+   * @private
+   */
+  private async getParentEntries(
+    linkId: string,
+    locale: string,
+  ): Promise<Entry<any>[]> {
+    return this.linksToEntry(linkId, locale)
   }
 
   async getSyncEntries({
@@ -196,27 +218,29 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
-    const processEntries = entries
-      .filter((entry) => entry.sys.contentType.sys.id === 'processEntry')
+    const nestedEntries = entries
+      .filter((entry) => environment.nestedContentTypes.includes(entry.sys.contentType.sys.id))
       .map((entry) => entry.sys.id)
 
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
-      processEntries: processEntries.length,
+      nestedEntries: nestedEntries.length,
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const items = await this.getAllEntriesFromContentful(entries, locale)
 
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (!fullSync && processEntries) {
-      logger.info('Finding root entries from processEntries')
+    if (!fullSync && nestedEntries) {
+      logger.info('Finding root entries from nestedEntries')
       const alreadyProcessedIds = items.map((entry) => entry.sys.id)
-      for (const entryId of processEntries) {
+      for (const entryId of nestedEntries) {
         // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
         // with regular sync, triggered by a webhook, these calls 1 - 2 at most
-        const linkedEntries = await this.linksToEntry(entryId, locale)
+        const linkedEntries = await this.limiter.schedule(() => {
+          return this.getParentEntries(entryId, locale)
+        })
         linkedEntries.forEach((entry) => {
           // No need to import the same document twice
           if (
