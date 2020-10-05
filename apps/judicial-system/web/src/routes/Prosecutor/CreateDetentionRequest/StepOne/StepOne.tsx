@@ -268,7 +268,7 @@ export const StepOne: React.FC = () => {
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
                     <Typography as="h3" variant="h3">
-                      Ákærði
+                      Sakborningur
                     </Typography>
                   </Box>
                   <Box marginBottom={3}>
