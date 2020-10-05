@@ -3,7 +3,6 @@ import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   CustomField,
-  CustomFieldComponents,
   DateField,
   DividerField,
   FieldComponents,
@@ -206,7 +205,7 @@ export function buildCustomField(
     id: string
     name: MessageDescriptor | string
     required?: boolean
-    component: CustomFieldComponents
+    component: string
   },
   props: object,
 ): CustomField {
