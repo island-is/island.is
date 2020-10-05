@@ -68,7 +68,30 @@ import { GridColumn, GridContainer, GridRow } from '../Grid'
   </Story>
 </Canvas>
 
-### Links inside text
+### Custom links inside text
+
+Depending on which React router we're using we often need to control how links are managed.
+
+```tsx
+import { Link } from 'next/Link'
+
+;<Text
+  linkRenderer={(href, children) => (
+    <Link
+      href={{
+        pathname: href,
+        query: { slug: 'something' },
+      }}
+    >
+      <a>{children}</a>
+    </Link>
+  )}
+>
+  This a <a href="/abc">link</a> that will be rendered as a Next Link
+</Text>
+```
+
+#### Example:
 
 <Canvas>
   <Story name="Custom link renderer">
@@ -79,8 +102,19 @@ import { GridColumn, GridContainer, GridRow } from '../Grid'
         </Text>
       )}
     >
-      Here's a <a href="/test">custom link</a> and here's another{' '}
-      <a href="/test2">one</a>.
+      Here's a <a href="/test">custom link</a> and here's{" "}
+      <a href="/test2">another</a>.
+    </Text>
+  </Story>
+</Canvas>
+
+### strong, em, etc
+
+<Canvas>
+  <Story name="Inline elements">
+    <Text>
+      Inline elements like <strong>strong</strong> and <em>em</em> are styled
+      globally. Just drop them <mark>right into</mark> your text.
     </Text>
   </Story>
 </Canvas>

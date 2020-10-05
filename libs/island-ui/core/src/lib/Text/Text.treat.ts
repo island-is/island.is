@@ -163,4 +163,13 @@ const variantStyles = (Object.keys(variants) as TextVariants[]).reduce(
   },
 )
 
+globalStyle(`${base} em`, {
+  fontStyle: 'italic'
+})
+
+globalStyle(`${base} strong`, {
+  fontWeight: theme.typography.semiBold
+})
+
+
 export default variantStyles
