@@ -12,6 +12,7 @@ import {
   ForbiddenException,
   Query,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -20,7 +21,7 @@ import { SigningServiceResponse } from '@island.is/dokobit-signing'
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard } from '../auth'
-import { UserService } from '../user'
+import { UserRole, UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification } from './models'
 import { CaseService } from './case.service'
@@ -159,9 +160,14 @@ export class CaseController {
   })
   async requestSignature(
     @Param('id') id: string,
-    @Req() req,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
+
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling cannot be signed by a user with role ${existingCase.judge?.role}`,
+      )
+    }
 
     if (
       existingCase.state !== CaseState.ACCEPTED &&
@@ -172,9 +178,7 @@ export class CaseController {
       )
     }
 
-    const user = await this.userService.findByNationalId(req.user.nationalId)
-
-    return this.caseService.requestSignature(existingCase, user)
+    return this.caseService.requestSignature(existingCase)
   }
 
   @Get('case/:id/signature')
@@ -188,6 +192,12 @@ export class CaseController {
     @Query('documentToken') documentToken: string,
   ): Promise<Case> {
     const existingCase = await this.findCaseById(id)
+
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling signature cannot be verified by a user with role ${existingCase.judge?.role}`,
+      )
+    }
 
     if (
       existingCase.state !== CaseState.ACCEPTED &&
