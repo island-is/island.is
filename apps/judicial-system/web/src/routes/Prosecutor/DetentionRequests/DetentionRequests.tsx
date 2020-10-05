@@ -30,6 +30,10 @@ export const DetentionRequests: React.FC = () => {
   const uContext = useContext(userContext)
 
   useEffect(() => {
+    document.title = 'Allar kröfur - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     async function getCases(user: User) {
       const cases = await api.getCases()
 

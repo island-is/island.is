@@ -189,6 +189,10 @@ export const StepOne: React.FC = () => {
   }, [workingCase, setWorkingCase])
 
   useEffect(() => {
+    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
       window.localStorage.setItem(
