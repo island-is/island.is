@@ -133,7 +133,7 @@ const RelatedArticles: FC<{
               key={article.slug}
               href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
-              withUnderline
+              underline="normal"
             >
               {article.title}
             </Link>
@@ -468,7 +468,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                     <Link
                       passHref
                       href={processEntry.processLink}
-                      withUnderline
+                      underline="normal"
                     >
                       <span>
                         {processEntry.buttonText || n('processLinkButtonText')}

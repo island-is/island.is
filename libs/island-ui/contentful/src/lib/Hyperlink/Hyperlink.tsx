@@ -9,7 +9,12 @@ interface HyperlinkProps {
 }
 
 export const Hyperlink: FC<HyperlinkProps> = ({ href, children }) => (
-  <Link withUnderline href={href} color="blue400">
+  <Link
+    href={href}
+    color="blue400"
+    underline="small"
+    underlineVisibility="always"
+  >
     {children}
   </Link>
 )
