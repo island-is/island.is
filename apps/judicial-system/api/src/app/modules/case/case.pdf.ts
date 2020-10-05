@@ -34,6 +34,25 @@ function formatDate(date: Date): string {
   return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`
 }
 
+function formatDayOfWeek(date: Date): string {
+  switch (date.getDay()) {
+    case 0:
+      return 'sunnudagsins'
+    case 1:
+      return 'mánudagsins'
+    case 2:
+      return 'þriðjudagsins'
+    case 3:
+      return 'miðvikudagsins'
+    case 4:
+      return 'fimmtudagsins'
+    case 5:
+      return 'föstudagsins'
+    case 6:
+      return 'laugardagsins'
+  }
+}
+
 function formatNationalId(nationalId: string): string {
   return `${nationalId.slice(0, 5)}-${nationalId.slice(6)}`
 }
@@ -63,6 +82,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     ruling: existingCase.ruling,
     accusedName: existingCase.accusedName,
     nationalId: formatNationalId(existingCase.accusedNationalId),
+    custodyEndDay: formatDayOfWeek(existingCase.custodyEndDate),
     custodyEndDate: formatDate(existingCase.custodyEndDate),
     custodyEndTime: formatTime(existingCase.custodyEndDate),
     isolation: existingCase.custodyRestrictions.includes(
