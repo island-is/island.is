@@ -4,8 +4,7 @@ import { INestApplication } from '@nestjs/common'
 
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
-import { setup } from '../../../../../test/setup'
-import { test } from '../../../../../sequelize.config.js'
+import { setup, user } from '../../../../../test/setup'
 import {
   Case,
   CaseCustodyRestrictions,
@@ -343,7 +342,7 @@ describe('Case', () => {
           expect(response.body.caseId).toBe(value.id)
           expect(response.body.type).toBe(NotificationType.HEADS_UP)
           expect(response.body.message).toBe(
-            `Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: ${test.userSeed[0].name}.`,
+            `Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: ${user.name}.`,
           )
 
           // Check the data in the database

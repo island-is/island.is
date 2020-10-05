@@ -22,4 +22,6 @@ export interface Application {
   attachments: object
   answers: FormValue
   externalData: ExternalData
+  name?: string
+  progress?: number
 }

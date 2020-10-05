@@ -35,7 +35,7 @@
     "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
-      "continue": "Login again to sign"
+      "continue": "Confirm with icekey"
     },
     "checkbox": {
       "label": "I agree to the",
@@ -81,5 +81,10 @@
       "cancel": "No",
       "continue": "Yes"
     }
-  }
+  },
+  "processSteps": [
+    "Confirm car for recycling",
+    "Recycle the car",
+    "Get money back"
+  ]
 }

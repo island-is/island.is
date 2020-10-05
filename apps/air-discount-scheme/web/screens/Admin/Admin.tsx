@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 import { SubmitHandler } from 'react-hook-form'
 
@@ -17,7 +17,7 @@ import {
   SkeletonLoader,
   Button,
 } from '@island.is/island-ui/core'
-import { Filters, Panel, Summary } from './components'
+import { Filters, Panel, Summary, Modal } from './components'
 import { FilterInput } from './consts'
 import { Screen } from '../../types'
 import { isCSVAvailable, downloadCSV } from './utils'
@@ -45,42 +45,68 @@ const FlightLegsQuery = gql`
   }
 `
 
+const ConfirmInvoiceMutation = gql`
+  mutation ConfirmInvoiceMutation($input: ConfirmInvoiceInput!) {
+    confirmInvoice(input: $input) {
+      id
+      financialState
+    }
+  }
+`
+
 const TODAY = new Date()
 
 const Admin: Screen = ({}) => {
   const { user } = useContext(UserContext)
+  const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FilterInput>({
     state: [],
     period: {
-      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0),
-      to: TODAY,
+      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
+      to: new Date(
+        TODAY.getFullYear(),
+        TODAY.getMonth(),
+        TODAY.getDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
     },
   } as any)
-  const { data, loading, error } = useQuery(FlightLegsQuery, {
-    ssr: false,
-    variables: {
-      input: {
-        ...filters,
-        airline:
-          filters.airline?.value === Airlines.norlandair
-            ? Airlines.icelandair
-            : filters.airline?.value,
-        cooperation:
-          filters.airline?.value === Airlines.norlandair
-            ? Airlines.norlandair
-            : undefined,
-        gender:
-          filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
-        age: {
-          from: parseInt(Number(filters.age?.from).toString()) || -1,
-          to: parseInt(Number(filters.age?.to).toString()) || 1000,
-        },
-        postalCode: filters.postalCode
-          ? parseInt(filters.postalCode.toString())
-          : undefined,
+  const input = {
+    ...filters,
+    airline:
+      filters.airline?.value === Airlines.norlandair
+        ? Airlines.icelandair
+        : filters.airline?.value,
+    cooperation:
+      filters.airline?.value === Airlines.norlandair
+        ? Airlines.norlandair
+        : undefined,
+    gender:
+      filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
+    age: {
+      from: parseInt(Number(filters.age?.from).toString()) || -1,
+      to: parseInt(Number(filters.age?.to).toString()) || 1000,
+    },
+    postalCode: filters.postalCode
+      ? parseInt(filters.postalCode.toString())
+      : undefined,
+  }
+  const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
+    ConfirmInvoiceMutation,
+  )
+  const { data, loading: queryLoading, error, refetch } = useQuery(
+    FlightLegsQuery,
+    {
+      ssr: false,
+      fetchPolicy: 'network-only',
+      variables: {
+        input,
       },
     },
-  })
+  )
   const { flightLegs = [] } = data ?? {}
 
   if (!user) {
@@ -92,8 +118,10 @@ const Admin: Screen = ({}) => {
     return <NotFound />
   }
 
+  const loading = queryLoading || confirmInvoiceLoading
   const applyFilters: SubmitHandler<FilterInput> = (data: FilterInput) => {
     setFilters(data)
+    refetch()
   }
 
   return (
@@ -142,6 +170,23 @@ const Admin: Screen = ({}) => {
                   disabled={!isCSVAvailable(filters)}
                 >
                   Prenta yfirlit
+                </Button>
+              </Box>
+              <Box paddingTop={3}>
+                <Button
+                  width="fluid"
+                  variant="redGhost"
+                  onClick={() => setModal(true)}
+                  disabled={!isCSVAvailable(filters)}
+                >
+                  <Box
+                    display="inlineFlex"
+                    flexDirection="column"
+                    alignItems="center"
+                  >
+                    <Box>Gjaldfæra</Box>
+                    <Box>Endurgreiða</Box>
+                  </Box>
                 </Button>
               </Box>
             </Box>
@@ -194,6 +239,23 @@ const Admin: Screen = ({}) => {
           </GridRow>
         </GridColumn>
       </GridRow>
+      <Modal
+        show={showModal}
+        onCancel={() => setModal(false)}
+        onContinue={() => {
+          confirmInvoice({ variables: { input } })
+          setModal(false)
+        }}
+        t={{
+          title: 'Gjaldfæra og endurgreiða',
+          info:
+            'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
+          buttons: {
+            cancel: 'Hætta við',
+            continue: 'Halda áfram',
+          },
+        }}
+      />
     </GridContainer>
   )
 }

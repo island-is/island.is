@@ -8,6 +8,7 @@ import {
   Mutation,
 } from '@nestjs/graphql'
 import { Article } from './models/article.model'
+import { ContentSlug } from './models/contentSlug.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
@@ -56,6 +57,7 @@ import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
+import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
@@ -125,6 +127,14 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return this.cmsContentfulService.getLandingPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ContentSlug, { nullable: true })
+  getContentSlug(
+    @Args('input') input: GetContentSlugInput,
+  ): Promise<ContentSlug | null> {
+    return this.cmsContentfulService.getContentSlug(input)
   }
 
   @Directive(cacheControlDirective())

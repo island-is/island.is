@@ -27,7 +27,7 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
-import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { GlobalContextProvider, GlobalContext } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
@@ -96,7 +96,7 @@ const Layout: NextComponentType<
 
   const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
   return (
-    <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
+    <GlobalContextProvider namespace={namespace}>
       <Page>
         <Head>
           <link
@@ -231,7 +231,7 @@ const Layout: NextComponentType<
           }
         `}</style>
       </Page>
-    </GlobalNamespaceContext.Provider>
+    </GlobalContextProvider>
   )
 }
 
