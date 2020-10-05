@@ -6,23 +6,29 @@ import {
   ResponsiveSpace,
   ContentBlock,
   Button,
+  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
-import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/NotificationMenuTrigger'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
+import { useStore } from '../../store/stateProvider'
+import { ActionType } from '../../store/actions'
 
 const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<{}> = () => {
   const { lang } = useLocale()
+  const [{ mobileMenuState }, dispatch] = useStore()
   const { changeLanguage } = useNamespaces(['service.portal'])
 
-  const handleLangClick = (value: Locale) => {
-    changeLanguage(value)
-  }
+  const handleLangClick = (value: Locale) => changeLanguage(value)
+  const handleMobileMenuClose = () =>
+    dispatch({
+      type: ActionType.SetMobileMenuState,
+      payload: 'closed',
+    })
 
   return (
     <>
@@ -61,6 +67,17 @@ export const Header: FC<{}> = () => {
                 <Box marginLeft={spacing}>
                   <UserMenu />
                 </Box>
+                {mobileMenuState === 'open' && (
+                  <Hidden above="md">
+                    <Box marginLeft={spacing}>
+                      <Button
+                        variant="menu"
+                        icon="close"
+                        onClick={handleMobileMenuClose}
+                      />
+                    </Box>
+                  </Hidden>
+                )}
               </Box>
             </Box>
           </ContentBlock>

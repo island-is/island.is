@@ -17,3 +17,7 @@ export const icon = style({
 export const burger = style({
   marginLeft: 'auto',
 })
+
+export const menuItem = style({
+  whiteSpace: 'nowrap',
+})

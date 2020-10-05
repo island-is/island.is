@@ -16,6 +16,7 @@ interface MenuItemProps {
 
 const MenuItem: FC<MenuItemProps> = ({ active, title, icon, onClick }) => (
   <Box
+    className={styles.menuItem}
     display="flex"
     flexDirection="column"
     alignItems="center"
@@ -55,6 +56,14 @@ const MobileToolbar: FC<{}> = () => {
       payload: mobileMenuState === 'open' ? 'closed' : 'open',
     })
 
+  const handleLinkClick = () =>
+    mobileMenuState === 'open'
+      ? dispatch({
+          type: ActionType.SetMobileMenuState,
+          payload: 'closed',
+        })
+      : null
+
   return (
     <Box
       display="flex"
@@ -65,21 +74,21 @@ const MobileToolbar: FC<{}> = () => {
       paddingX={1}
       overflow="auto"
     >
-      <Link to={ServicePortalPath.RafraenSkjolRoot}>
+      <Link to={ServicePortalPath.RafraenSkjolRoot} onClick={handleLinkClick}>
         <MenuItem
           active={pathname === ServicePortalPath.RafraenSkjolRoot}
           icon="file"
           title="Rafræn skjöl"
         />
       </Link>
-      <Link to={ServicePortalPath.UmsoknirRoot}>
+      <Link to={ServicePortalPath.UmsoknirRoot} onClick={handleLinkClick}>
         <MenuItem
           active={pathname === ServicePortalPath.UmsoknirRoot}
           icon="download"
           title="Umsóknir"
         />
       </Link>
-      <Link to={ServicePortalPath.StillingarRoot}>
+      <Link to={ServicePortalPath.StillingarRoot} onClick={handleLinkClick}>
         <MenuItem
           active={pathname === ServicePortalPath.StillingarRoot}
           icon="globe"
@@ -89,7 +98,7 @@ const MobileToolbar: FC<{}> = () => {
       <Box className={styles.burger}>
         <MenuItem
           active={mobileMenuState === 'open'}
-          icon="burger"
+          icon="logo"
           title="Valmynd"
           onClick={handleMenuTriggerClick}
         />

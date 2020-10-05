@@ -30,9 +30,8 @@ const UserMenu: FC<{}> = () => {
           variant="menu"
           onClick={setIsOpen.bind(null, !isOpen)}
           size="small"
-        >
-          <Icon type="user" width={22} height={24} />
-        </Button>
+          icon="user"
+        />
       </Hidden>
       {userInfo && (
         <Menu

@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
+import React from 'react'
 
-export const ShoppingFigure: FC<{}> = () => {
+export const ShoppingFigure = () => {
   return (
     <svg viewBox="0 0 432 445" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
