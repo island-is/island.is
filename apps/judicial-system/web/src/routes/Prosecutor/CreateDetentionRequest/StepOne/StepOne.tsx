@@ -202,7 +202,6 @@ export const StepOne: React.FC = () => {
   }, [id])
 
   return (
-<<<<<<< HEAD
     workingCase && (
       <>
         <Box marginTop={7} marginBottom={30}>
@@ -228,74 +227,6 @@ export const StepOne: React.FC = () => {
                       LÖKE málsnúmer
                     </Typography>
                   </Box>
-=======
-    <>
-      <Box marginTop={7} marginBottom={30}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={'3/12'}>
-              <ProsecutorLogo />
-            </GridColumn>
-            <GridColumn span={'8/12'} offset={'1/12'}>
-              <Typography as="h1" variant="h1">
-                Krafa um gæsluvarðhald
-              </Typography>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn span={['12/12', '3/12']}>
-              <Typography>Hliðarstika</Typography>
-            </GridColumn>
-            <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
-              <Box component="section" marginBottom={7}>
-                <Box marginBottom={2}>
-                  <Typography as="h3" variant="h3">
-                    LÖKE málsnúmer
-                  </Typography>
-                </Box>
-                <Input
-                  data-testid="policeCaseNumber"
-                  name="policeCaseNumber"
-                  label="Slá inn LÖKE málsnúmer"
-                  defaultValue={workingCase.policeCaseNumber}
-                  ref={policeCaseNumberRef}
-                  errorMessage={policeCaseNumberErrorMessage}
-                  hasError={policeCaseNumberErrorMessage !== ''}
-                  onBlur={(evt) => {
-                    const validateField = validate(evt.target.value, 'empty')
-                    const validateFieldFormat = validate(
-                      evt.target.value,
-                      'police-casenumber-format',
-                    )
-
-                    if (validateField.isValid && validateFieldFormat.isValid) {
-                      createCaseIfPossible()
-                      updateState(
-                        workingCase,
-                        'policeCaseNumber',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-                    } else {
-                      setPoliceCaseNumberErrorMessage(
-                        validateField.errorMessage ||
-                          validateFieldFormat.errorMessage,
-                      )
-                    }
-                  }}
-                  onFocus={() => setPoliceCaseNumberErrorMessage('')}
-                  required
-                  autoFocus
-                />
-              </Box>
-              <Box component="section" marginBottom={7}>
-                <Box marginBottom={2}>
-                  <Typography as="h3" variant="h3">
-                    Sakborningur
-                  </Typography>
-                </Box>
-                <Box marginBottom={3}>
->>>>>>> Move getUser to parent component
                   <Input
                     data-testid="policeCaseNumber"
                     name="policeCaseNumber"

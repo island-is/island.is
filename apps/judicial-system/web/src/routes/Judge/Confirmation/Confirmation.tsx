@@ -9,7 +9,7 @@ import {
   GridRow,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { AppealDecitionRole, Case } from '../../../types'
@@ -25,9 +25,11 @@ import { capitalize } from 'lodash'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import { CaseTransition } from '@island.is/judicial-system/types'
 import * as api from '../../../api'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
+  const uContext = useContext(userContext)
 
   useEffect(() => {
     const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
@@ -304,6 +306,13 @@ export const Confirmation: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+            {uContext.user && (
+              <Box marginBottom={15}>
+                <Typography variant="h3">
+                  {`${uContext.user.name}, ${uContext.user.title}`}
+                </Typography>
+              </Box>
+            )}
             <FormFooter
               previousUrl={Constants.RULING_ROUTE}
               nextUrl={Constants.DETENTION_REQUESTS_ROUTE}

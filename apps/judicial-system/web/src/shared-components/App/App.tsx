@@ -23,7 +23,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      console.log(user)
       if (!user) {
         const user = await api.getUser()
         setUser(user)

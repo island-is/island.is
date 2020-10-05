@@ -18,7 +18,6 @@ import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -35,7 +34,6 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useWorkingCase()
-  const uContext = useContext(userContext)
 
   useEffect(() => {
     let mounted = true
@@ -264,13 +262,6 @@ export const JudgeOverview: React.FC = () => {
                 </AccordionItem>
               </Accordion>
             </Box>
-            {uContext.user && (
-              <Box marginBottom={15}>
-                <Typography variant="h3">
-                  {`${uContext.user.name}, ${uContext.user.title}`}
-                </Typography>
-              </Box>
-            )}
             <FormFooter
               nextUrl={Constants.COURT_DOCUMENT_ROUTE}
               nextIsDisabled={workingCase?.courtCaseNumber === ''}
