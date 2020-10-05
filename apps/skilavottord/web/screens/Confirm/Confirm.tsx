@@ -15,6 +15,8 @@ import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const Confirm = (props) => {
   const [checkbox, setCheckbox] = useState(false)
@@ -29,6 +31,9 @@ const Confirm = (props) => {
 
   const { apolloState } = props
   const car = apolloState[`Car:${id}`]
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   useEffect(() => {
     if (!car) {
@@ -103,9 +108,18 @@ const Confirm = (props) => {
               display="inlineFlex"
               justifyContent="spaceBetween"
             >
-              <Button variant="ghost" onClick={onCancel}>
-                {t.buttons.cancel}
-              </Button>
+              {isMobile ? (
+                <Button
+                  variant="ghost"
+                  onClick={onCancel}
+                  rounded
+                  icon="arrowLeft"
+                ></Button>
+              ) : (
+                <Button variant="ghost" onClick={onCancel}>
+                  {t.buttons.cancel}
+                </Button>
+              )}
               <Button
                 variant="normal"
                 disabled={!checkbox}
