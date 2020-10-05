@@ -7,17 +7,10 @@ import {
 } from '@island.is/api/domains/cms'
 import { TagCount } from './tagCount'
 
-const types = {
-  webArticle: Article,
-  webLifeEventPage: LifeEventPage,
-  webNews: News,
-  webAboutPage: AboutPage,
-}
-
 const Items = createUnionType({
   name: 'Items',
-  types: () => Object.values(types),
-  resolveType: (document) => types[document.__typename], // __typename is appended to request on indexing
+  types: () => [Article, LifeEventPage, News, AboutPage],
+  resolveType: (document) => document.typename, // typename is appended to request on mapping
 })
 
 @ObjectType()

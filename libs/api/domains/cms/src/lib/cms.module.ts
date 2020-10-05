@@ -17,13 +17,13 @@ import { CmsHealthIndicator } from './cms.health'
   providers: [
     CmsResolver,
     ArticleResolver,
-    LatestNewsSliceResolver,
     ElasticService,
     CmsContentfulService,
     CmsElasticsearchService,
     MailService,
     ContentfulRepository,
     CmsHealthIndicator,
+    LatestNewsSliceResolver,
   ],
   exports: [ContentfulRepository, CmsHealthIndicator],
 })
