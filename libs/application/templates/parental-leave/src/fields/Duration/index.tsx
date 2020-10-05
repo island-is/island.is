@@ -7,10 +7,7 @@ import Slider from '../components/Slider'
 
 import { theme } from '@island.is/island-ui/theme'
 
-const ParentalLeaveCalculations: FC<FieldBaseProps> = ({
-  field,
-  formValue,
-}) => {
+const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
 
@@ -63,4 +60,4 @@ const ParentalLeaveCalculations: FC<FieldBaseProps> = ({
   )
 }
 
-export default ParentalLeaveCalculations
+export default ParentalLeaveUsage
