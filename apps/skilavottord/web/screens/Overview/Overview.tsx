@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import Link from 'next/link'
 import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
 import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { ActionCard, ProgressCard } from './components'
+import { ActionCard, ProgressCard, Error } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
 import { GET_CARS } from '@island.is/skilavottord-web/graphql/queries'
@@ -23,7 +23,11 @@ const Overview: FC = () => {
   const { makePath } = useRouteNames()
 
   if (error || (loading && !data)) {
-    return <>Loading</>
+    return (
+      <PageWrapper t={t}>
+        <Error />
+      </PageWrapper>
+    )
   }
 
   const { cars } = data.getVehiclesForNationalId || {}
@@ -50,18 +54,7 @@ const Overview: FC = () => {
   }
 
   return (
-    <PageLayout>
-      <Box paddingBottom={6}>
-        <Breadcrumbs>
-          <Link href={'./'}>
-            <a>Ísland.is</a>
-          </Link>
-          <span>{t.title}</span>
-        </Breadcrumbs>
-      </Box>
-      <Box paddingBottom={4}>
-        <Typography variant="h1">{t.title}</Typography>
-      </Box>
+    <PageWrapper t={t}>
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.pending}</Typography>
@@ -102,6 +95,25 @@ const Overview: FC = () => {
           ))}
         </Stack>
       </Box>
+    </PageWrapper>
+  )
+}
+
+const PageWrapper = ({ children, t }) => {
+  return (
+    <PageLayout>
+      <Box paddingBottom={6}>
+        <Breadcrumbs>
+          <Link href={'./'}>
+            <a>Ísland.is</a>
+          </Link>
+          <span>{t.title}</span>
+        </Breadcrumbs>
+      </Box>
+      <Box paddingBottom={4}>
+        <Typography variant="h1">{t.title}</Typography>
+      </Box>
+      {children}
     </PageLayout>
   )
 }
