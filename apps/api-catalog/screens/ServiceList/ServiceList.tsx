@@ -72,7 +72,8 @@ export interface ServiceListProps {
   nextCursor: string
   prevCursor: string
   parameters: GetServicesParameters,
-  pageContent: Page
+  pageContent: Page,
+  filterStrings: Page
 }
 
 //Todo: add to contentful
@@ -105,7 +106,7 @@ export default function ServiceList(props: ServiceListProps) {
       case DATA_CATEGORY.HEALTH:
       case DATA_CATEGORY.FINANCIAL: filter = props.parameters.data;
         break;
-      case TYPE_CATEGORY.REACT:
+      case TYPE_CATEGORY.REST:
       case TYPE_CATEGORY.SOAP:
       case TYPE_CATEGORY.GRAPHQL: filter = props.parameters.type;
         break;
@@ -259,6 +260,7 @@ export default function ServiceList(props: ServiceListProps) {
                 parameters={props.parameters}
                 onInputChange={input => onSearchChange(input.target.value)}
                 onCheckCategoryChanged={({ target }) => { updateCategoryCheckBox(target) }}
+                strings={props.filterStrings.strings}
               />
             </AccordionItem>
           </div>
@@ -272,6 +274,7 @@ export default function ServiceList(props: ServiceListProps) {
               parameters={props.parameters}
               onInputChange={input => onSearchChange(input.target.value)}
               onCheckCategoryChanged={({ target }) => { updateCategoryCheckBox(target) }}
+              strings={props.filterStrings.strings}
             />
           )
 
@@ -307,6 +310,7 @@ ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
   }
 
   const pageContent = await client.fetchPageBySlug('services', locale);
+  const filterStrings = await client.fetchPageBySlug('service-filter', locale);
 
   const params: GetServicesParameters = {
     cursor: null,
@@ -323,6 +327,7 @@ ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
     parameters: params,
     prevCursor: null,
     nextCursor: null,
-    pageContent: pageContent
+    pageContent: pageContent,
+    filterStrings: filterStrings
   }
 }
