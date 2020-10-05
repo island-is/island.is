@@ -103,6 +103,12 @@ export interface CreateCaseRequest {
 }
 
 export interface User {
+  id: string
+  created: string
+  modified: string
   nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
   role: string
 }

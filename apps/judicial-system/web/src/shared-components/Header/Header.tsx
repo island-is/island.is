@@ -26,7 +26,7 @@ const Header: React.FC = () => {
           </Box>
         </Box>
       </Link>
-      {uContext.user && (
+      {uContext?.user && (
         <Button variant="text" size="small" onClick={() => api.logOut()}>
           Útskráning
         </Button>
