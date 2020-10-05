@@ -22,46 +22,12 @@ import * as styles from './DetentionRequests.treat'
 import { UserRole } from '../../../utils/authenticate'
 import * as Constants from '../../../utils/constants'
 import { Link } from 'react-router-dom'
-import { userContext } from '../../../utils/userContext'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
-interface DetentionRequestsProps {
-  onGetUser: (user: User) => void
-}
-
-export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
-  onGetUser,
-}: DetentionRequestsProps) => {
+export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
-  const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const uContext = useContext(userContext)
-
-  useEffect(() => {
-    let isMounted = true
-
-    async function getData() {
-      const userResponse = await api.getUser()
-
-      if (isMounted && userResponse) {
-        setUser({
-          nationalId: userResponse.nationalId,
-          role: userResponse.role,
-        })
-
-        onGetUser({
-          nationalId: userResponse.nationalId,
-          role: userResponse.role,
-        })
-      }
-    }
-    if (!user) {
-      getData()
-    }
-
-    return () => {
-      isMounted = false
-    }
-  }, [user, onGetUser])
 
   useEffect(() => {
     async function getCases(user: User) {
@@ -81,10 +47,10 @@ export const DetentionRequests: React.FC<DetentionRequestsProps> = ({
       setIsLoading(false)
     }
 
-    if (user) {
-      getCases(user)
+    if (uContext.user?.role) {
+      getCases(uContext.user)
     }
-  }, [user])
+  }, [uContext])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,

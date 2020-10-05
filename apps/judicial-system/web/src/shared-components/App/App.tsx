@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Header } from '../Header'
 import * as Constants from '../../utils/constants'
@@ -16,12 +16,22 @@ import JudgeOverview from '../../routes/Judge/Overview/Overview'
 import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
 import Ruling from '../../routes/Judge/Ruling/Ruling'
 import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
+import * as api from '../../api'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
-  const onGetUser = (u: User) => {
-    setUser(u)
-  }
+
+  useEffect(() => {
+    const getUser = async () => {
+      console.log(user)
+      if (!user) {
+        const user = await api.getUser()
+        setUser(user)
+      }
+    }
+
+    getUser()
+  }, [user, setUser])
 
   return (
     <userContext.Provider value={{ user: user }}>
@@ -54,7 +64,7 @@ const App: React.FC = () => {
               <StepOne />
             </Route>
             <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
-              <DetentionRequests onGetUser={onGetUser} />
+              <DetentionRequests />
             </Route>
             <Route path="/">
               <Login />
