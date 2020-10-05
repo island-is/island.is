@@ -9,9 +9,7 @@ export default {
     'news',
     'page',
   ],
-  nestedContentTypes: [
-    'processEntry',
-  ],
+  nestedContentTypes: ['processEntry'],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test',

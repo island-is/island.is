@@ -219,7 +219,9 @@ export class ContentfulService {
     } = await this.getSyncData(typeOfSync)
 
     const nestedEntries = entries
-      .filter((entry) => environment.nestedContentTypes.includes(entry.sys.contentType.sys.id))
+      .filter((entry) =>
+        environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
+      )
       .map((entry) => entry.sys.id)
 
     logger.info('Sync found entries', {
