@@ -18,9 +18,9 @@ import {
     AddAttachmentDto,
     AddAttachmentDtoFromJSON,
     AddAttachmentDtoToJSON,
-    Application,
-    ApplicationFromJSON,
-    ApplicationToJSON,
+    ApplicationResponseDto,
+    ApplicationResponseDtoFromJSON,
+    ApplicationResponseDtoToJSON,
     CreateApplicationDto,
     CreateApplicationDtoFromJSON,
     CreateApplicationDtoToJSON,
@@ -56,6 +56,16 @@ export interface ApplicationControllerFindAllRequest {
     typeId: string;
 }
 
+export interface ApplicationControllerFindApplicantApplicationsRequest {
+    nationalRegistryId: string;
+    typeId?: string;
+}
+
+export interface ApplicationControllerFindAssigneeApplicationsRequest {
+    nationalRegistryId: string;
+    typeId?: string;
+}
+
 export interface ApplicationControllerFindOneRequest {
     id: string;
 }
@@ -78,11 +88,11 @@ export interface ApplicationControllerUpdateExternalDataRequest {
 /**
  * 
  */
-export class ApplicationApi extends runtime.BaseAPI {
+export class ApplicationsApi extends runtime.BaseAPI {
 
     /**
      */
-    async applicationControllerAddAttachmentRaw(requestParameters: ApplicationControllerAddAttachmentRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerAddAttachmentRaw(requestParameters: ApplicationControllerAddAttachmentRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerAddAttachment.');
         }
@@ -98,26 +108,26 @@ export class ApplicationApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/application/{id}/attachments`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/applications/{id}/attachments`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: AddAttachmentDtoToJSON(requestParameters.addAttachmentDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerAddAttachment(requestParameters: ApplicationControllerAddAttachmentRequest): Promise<Application> {
+    async applicationControllerAddAttachment(requestParameters: ApplicationControllerAddAttachmentRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerAddAttachmentRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerCreateRaw(requestParameters: ApplicationControllerCreateRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerCreateRaw(requestParameters: ApplicationControllerCreateRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.createApplicationDto === null || requestParameters.createApplicationDto === undefined) {
             throw new runtime.RequiredError('createApplicationDto','Required parameter requestParameters.createApplicationDto was null or undefined when calling applicationControllerCreate.');
         }
@@ -129,26 +139,26 @@ export class ApplicationApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/application`,
+            path: `/applications`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: CreateApplicationDtoToJSON(requestParameters.createApplicationDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerCreate(requestParameters: ApplicationControllerCreateRequest): Promise<Application> {
+    async applicationControllerCreate(requestParameters: ApplicationControllerCreateRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerCreateRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerDeleteAttachmentRaw(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerDeleteAttachmentRaw(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerDeleteAttachment.');
         }
@@ -164,26 +174,26 @@ export class ApplicationApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/application/{id}/attachments`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/applications/{id}/attachments`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
             body: DeleteAttachmentDtoToJSON(requestParameters.deleteAttachmentDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerDeleteAttachment(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<Application> {
+    async applicationControllerDeleteAttachment(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerDeleteAttachmentRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerFindAllRaw(requestParameters: ApplicationControllerFindAllRequest): Promise<runtime.ApiResponse<Array<Application>>> {
+    async applicationControllerFindAllRaw(requestParameters: ApplicationControllerFindAllRequest): Promise<runtime.ApiResponse<Array<ApplicationResponseDto>>> {
         if (requestParameters.typeId === null || requestParameters.typeId === undefined) {
             throw new runtime.RequiredError('typeId','Required parameter requestParameters.typeId was null or undefined when calling applicationControllerFindAll.');
         }
@@ -197,25 +207,89 @@ export class ApplicationApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/application`,
+            path: `/`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApplicationFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApplicationResponseDtoFromJSON));
     }
 
     /**
      */
-    async applicationControllerFindAll(requestParameters: ApplicationControllerFindAllRequest): Promise<Array<Application>> {
+    async applicationControllerFindAll(requestParameters: ApplicationControllerFindAllRequest): Promise<Array<ApplicationResponseDto>> {
         const response = await this.applicationControllerFindAllRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerFindOneRaw(requestParameters: ApplicationControllerFindOneRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerFindApplicantApplicationsRaw(requestParameters: ApplicationControllerFindApplicantApplicationsRequest): Promise<runtime.ApiResponse<Array<ApplicationResponseDto>>> {
+        if (requestParameters.nationalRegistryId === null || requestParameters.nationalRegistryId === undefined) {
+            throw new runtime.RequiredError('nationalRegistryId','Required parameter requestParameters.nationalRegistryId was null or undefined when calling applicationControllerFindApplicantApplications.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.typeId !== undefined) {
+            queryParameters['typeId'] = requestParameters.typeId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/applicants/{nationalRegistryId}/applications`.replace(`{${"nationalRegistryId"}}`, encodeURIComponent(String(requestParameters.nationalRegistryId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApplicationResponseDtoFromJSON));
+    }
+
+    /**
+     */
+    async applicationControllerFindApplicantApplications(requestParameters: ApplicationControllerFindApplicantApplicationsRequest): Promise<Array<ApplicationResponseDto>> {
+        const response = await this.applicationControllerFindApplicantApplicationsRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerFindAssigneeApplicationsRaw(requestParameters: ApplicationControllerFindAssigneeApplicationsRequest): Promise<runtime.ApiResponse<Array<ApplicationResponseDto>>> {
+        if (requestParameters.nationalRegistryId === null || requestParameters.nationalRegistryId === undefined) {
+            throw new runtime.RequiredError('nationalRegistryId','Required parameter requestParameters.nationalRegistryId was null or undefined when calling applicationControllerFindAssigneeApplications.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.typeId !== undefined) {
+            queryParameters['typeId'] = requestParameters.typeId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/assignees/{nationalRegistryId}/applications`.replace(`{${"nationalRegistryId"}}`, encodeURIComponent(String(requestParameters.nationalRegistryId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApplicationResponseDtoFromJSON));
+    }
+
+    /**
+     */
+    async applicationControllerFindAssigneeApplications(requestParameters: ApplicationControllerFindAssigneeApplicationsRequest): Promise<Array<ApplicationResponseDto>> {
+        const response = await this.applicationControllerFindAssigneeApplicationsRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerFindOneRaw(requestParameters: ApplicationControllerFindOneRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerFindOne.');
         }
@@ -225,25 +299,25 @@ export class ApplicationApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/application/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/applications/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerFindOne(requestParameters: ApplicationControllerFindOneRequest): Promise<Application> {
+    async applicationControllerFindOne(requestParameters: ApplicationControllerFindOneRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerFindOneRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerSubmitApplicationRaw(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerSubmitApplicationRaw(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerSubmitApplication.');
         }
@@ -259,26 +333,26 @@ export class ApplicationApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/application/{id}/submit`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/applications/{id}/submit`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: UpdateApplicationStateDtoToJSON(requestParameters.updateApplicationStateDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerSubmitApplication(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<Application> {
+    async applicationControllerSubmitApplication(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerSubmitApplicationRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerUpdateRaw(requestParameters: ApplicationControllerUpdateRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerUpdateRaw(requestParameters: ApplicationControllerUpdateRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerUpdate.');
         }
@@ -294,26 +368,26 @@ export class ApplicationApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/application/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/applications/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: UpdateApplicationDtoToJSON(requestParameters.updateApplicationDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerUpdate(requestParameters: ApplicationControllerUpdateRequest): Promise<Application> {
+    async applicationControllerUpdate(requestParameters: ApplicationControllerUpdateRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerUpdateRaw(requestParameters);
         return await response.value();
     }
 
     /**
      */
-    async applicationControllerUpdateExternalDataRaw(requestParameters: ApplicationControllerUpdateExternalDataRequest): Promise<runtime.ApiResponse<Application>> {
+    async applicationControllerUpdateExternalDataRaw(requestParameters: ApplicationControllerUpdateExternalDataRequest): Promise<runtime.ApiResponse<ApplicationResponseDto>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerUpdateExternalData.');
         }
@@ -329,19 +403,19 @@ export class ApplicationApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/application/{id}/externalData`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            path: `/applications/{id}/externalData`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
             body: PopulateExternalDataDtoToJSON(requestParameters.populateExternalDataDto),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationResponseDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async applicationControllerUpdateExternalData(requestParameters: ApplicationControllerUpdateExternalDataRequest): Promise<Application> {
+    async applicationControllerUpdateExternalData(requestParameters: ApplicationControllerUpdateExternalDataRequest): Promise<ApplicationResponseDto> {
         const response = await this.applicationControllerUpdateExternalDataRaw(requestParameters);
         return await response.value();
     }

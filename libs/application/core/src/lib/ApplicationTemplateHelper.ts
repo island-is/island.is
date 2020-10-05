@@ -44,6 +44,12 @@ export class ApplicationTemplateHelper<
     )
   }
 
+  getApplicationProgress(stateKey: string = this.application.state): number {
+    return (
+      this.template.stateMachineConfig.states[stateKey]?.meta?.progress ?? 0
+    )
+  }
+
   getApplicationStateInformation(
     stateKey: string = this.application.state,
   ): ApplicationStateMeta | undefined {
