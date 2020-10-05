@@ -10,24 +10,19 @@ export const detentionRequestsContainer = style({
 })
 
 export const logoContainer = style({
+  display: 'flex',
+  justifyContent: 'space-between',
   gridColumn: '1 / -1',
-  marginBottom: 32,
-})
-
-export const addDetentionRequestButtonContainer = style({
-  gridRow: '2',
-  gridColumn: '1 / 13',
-  justifySelf: 'end',
-  marginBottom: 64,
+  marginBottom: theme.spacing[9],
 })
 
 export const detentionRequestsTable = style({
-  gridRow: '3',
+  gridRow: '2',
   gridColumn: '1 / -1',
 })
 
 export const detentionRequestsError = style({
-  gridRow: '3',
+  gridRow: '2',
   gridColumn: '1 / 5',
 })
 

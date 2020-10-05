@@ -74,9 +74,7 @@ export const DetentionRequests: React.FC = () => {
     <div className={styles.detentionRequestsContainer}>
       <div className={styles.logoContainer}>
         {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
-      </div>
-      {!isJudge && (
-        <div className={styles.addDetentionRequestButtonContainer}>
+        {!isJudge && (
           <Link
             to={Constants.STEP_ONE_ROUTE}
             style={{ textDecoration: 'none' }}
@@ -88,15 +86,15 @@ export const DetentionRequests: React.FC = () => {
               Stofna nýja kröfu
             </Button>
           </Link>
-        </div>
-      )}
+        )}
+      </div>
       {isLoading ? null : cases ? (
         <table
           className={styles.detentionRequestsTable}
           data-testid="detention-requests-table"
         >
           <Typography as="caption" variant="h3">
-            <Box marginBottom={2}>Gæsluvarðhaldskröfur</Box>
+            <Box marginBottom={3}>Gæsluvarðhaldskröfur</Box>
           </Typography>
           <thead>
             <tr>
