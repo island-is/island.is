@@ -1,0 +1,166 @@
+import { styleMap, style, globalStyle } from 'treat'
+import * as CSS from 'csstype'
+import { theme } from '@island.is/island-ui/theme'
+import { mapToStyleProperty } from '../../utils'
+import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
+
+export type TextVariants =
+  | 'p'
+  | 'small'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'intro'
+  | 'eyebrow'
+  | 'tag'
+
+type ResponsiveProps<T> = {
+  xs?: T
+  sm?: T
+  md?: T
+  lg?: T
+  xl?: T
+}
+
+type Variants = {
+  [Type in TextVariants]: CSS.Properties<
+    string | ResponsiveProps<string | number>
+  >
+}
+
+type defaultFontWeights = {
+  [Type in TextVariants]: number
+}
+
+export const truncate = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
+export const base = style({
+  ['-webkit-font-smoothing' as any]: 'antialiased',
+})
+
+const fontWeightMap = {
+  light: theme.typography.light,
+  regular: theme.typography.regular,
+  medium: theme.typography.medium,
+  semiBold: theme.typography.semiBold,
+}
+
+const availableLineHeights = {
+  xs: 1,
+  sm: 1.25,
+  md: 1.5,
+  lg: 1.75,
+  xl: 2,
+}
+
+const availableFontSizes = {
+  xs: { xs: 12, md: 14 },
+  sm: { xs: 15, md: 18 },
+  md: { xs: 18, md: 20 },
+  lg: { xs: 20, md: 24 },
+  xl: { xs: 26, md: 34 },
+  xxl: { xs: 32, md: 42 },
+}
+
+const lineHeightMap = {
+  xs: availableLineHeights.xs,
+  sm: availableLineHeights.sm,
+  md: availableLineHeights.md,
+  lg: availableLineHeights.lg,
+  xl: availableLineHeights.xl,
+}
+
+const defaultFontWeightsMap: defaultFontWeights = {
+  h1: theme.typography.headingsFontWeight,
+  h2: theme.typography.headingsFontWeight,
+  h3: theme.typography.headingsFontWeight,
+  h4: theme.typography.headingsFontWeight,
+  h5: theme.typography.headingsFontWeight,
+  p: theme.typography.light,
+  small: theme.typography.regular,
+  intro: theme.typography.light,
+  eyebrow: theme.typography.medium,
+  tag: theme.typography.semiBold,
+}
+
+const defaultLineHeightsMap: defaultFontWeights = {
+  h1: availableLineHeights.sm,
+  h2: availableLineHeights.sm,
+  h3: availableLineHeights.md,
+  h4: availableLineHeights.md,
+  h5: availableLineHeights.md,
+  p: availableLineHeights.md,
+  small: availableLineHeights.md,
+  intro: availableLineHeights.md,
+  eyebrow: availableLineHeights.md,
+  tag: availableLineHeights.xs,
+}
+
+export const fontWeight = styleMap(
+  mapToStyleProperty(fontWeightMap, 'fontWeight'),
+)
+
+export const lineHeight = styleMap(
+  mapToStyleProperty(lineHeightMap, 'lineHeight'),
+)
+
+export const defaultFontWeights = styleMap(
+  mapToStyleProperty(defaultFontWeightsMap, 'fontWeight'),
+)
+
+export const defaultLineHeights = styleMap(
+  mapToStyleProperty(defaultLineHeightsMap, 'lineHeight'),
+)
+
+export const variants: Variants = {
+  h1: {
+    fontSize: availableFontSizes.xxl,
+  },
+  h2: {
+    fontSize: availableFontSizes.xl,
+  },
+  h3: {
+    fontSize: availableFontSizes.lg,
+  },
+  h4: {
+    fontSize: availableFontSizes.md,
+  },
+  h5: {
+    fontSize: availableFontSizes.sm,
+  },
+  p: {
+    fontSize: availableFontSizes.sm,
+  },
+  small: {
+    fontSize: availableFontSizes.xs,
+  },
+  intro: {
+    fontSize: availableFontSizes.lg,
+  },
+  eyebrow: {
+    fontSize: availableFontSizes.xs,
+  },
+  tag: {
+    fontSize: availableFontSizes.xs,
+  },
+}
+
+export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
+
+const variantStyles = (Object.keys(variants) as TextVariants[]).reduce(
+  (acc, variantKey) => {
+    acc[variantKey] = responsiveStyleMap(variants[variantKey])
+    return acc
+  },
+  {} as {
+    [Type in TextVariants]: string
+  },
+)
+
+export default variantStyles
