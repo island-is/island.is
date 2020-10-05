@@ -9,6 +9,9 @@ import { Slice, mapDocument } from './slice.model'
 @ObjectType()
 export class News {
   @Field()
+  typename: string
+
+  @Field()
   id: string
 
   @Field()
@@ -37,6 +40,7 @@ export class News {
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
+  typename: 'News',
   id: sys.id,
   slug: fields.slug ?? '',
   title: fields.title ?? '',

@@ -3,15 +3,15 @@ import { IsString } from 'class-validator'
 
 @InputType()
 export class AddAttachmentInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   id: string
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   key: string
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   url: string
 }

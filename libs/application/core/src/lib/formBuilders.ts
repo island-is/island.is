@@ -21,7 +21,7 @@ import { MessageDescriptor } from 'react-intl'
 export function buildForm(data: {
   id: ApplicationTypes
   ownerId: string
-  name: string
+  name: MessageDescriptor | string
   mode?: FormMode
   children: FormChildren[]
   icon?: string

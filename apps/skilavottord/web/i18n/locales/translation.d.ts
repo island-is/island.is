@@ -13,7 +13,7 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  cancelModal: CancelModal
+  processSteps: string[]
 }
 
 export interface Home {
@@ -43,6 +43,7 @@ export interface Handover {
   subTitles: HandoverSubTitles
   info: string
   buttons: HandoverButtons
+  cancelModal: CancelModal
 }
 
 export interface Completed {

@@ -1,4 +1,5 @@
-import { Tag } from '@island.is/api/schema'
+import { Tag } from '../dto/searcher.input'
+
 import { tagQuery } from './documentByMetaData'
 
 interface SearchInput {

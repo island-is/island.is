@@ -15,6 +15,7 @@ export interface ApplicationTemplate<
   TEvents extends EventObject
 > {
   readonly type: ApplicationTypes
+  readonly name: string
   readonly dataSchema: Schema
   readonly dataProviders: DataProvider[]
   readonly stateMachineConfig: MachineConfig<

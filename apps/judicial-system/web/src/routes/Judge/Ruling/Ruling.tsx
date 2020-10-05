@@ -15,7 +15,6 @@ import { JudgeLogo } from '../../../shared-components/Logos'
 import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
 import * as Constants from '../../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../../utils/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 import { autoSave, updateState } from '../../../utils/stepHelper'
 import * as api from '../../../api'
 
@@ -56,7 +55,7 @@ export const Ruling: React.FC = () => {
     ruling: caseDraftJSON.ruling ?? '',
     rejecting: caseDraftJSON.rejecting ?? false,
     custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.CustodyRestrictions ?? [],
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
   })
@@ -68,24 +67,20 @@ export const Ruling: React.FC = () => {
     caseDraftJSON.prosecutorAppealDecision,
   )
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.ISOLATION,
-    ) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.ISOLATION) >
+      -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.VISITAION,
-    ) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.VISITAION) >
+      -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
+    caseDraftJSON.custodyRestrictions?.indexOf(
       CustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    caseDraftJSON.requestedCustodyRestrictions?.indexOf(
-      CustodyRestrictions.MEDIA,
-    ) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.MEDIA) > -1,
   )
   const restrictions = [
     {
@@ -248,14 +243,19 @@ export const Ruling: React.FC = () => {
                             checked={restriction.getCheckbox}
                             tooltip={restriction.explination}
                             onChange={({ target }) => {
-                              // Toggle the checkbox on or off
-                              restriction.setCheckbox(target.checked)
-
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
+                              const restrictionIsSelected =
+                                copyOfState.custodyRestrictions.indexOf(
+                                  target.value as CustodyRestrictions,
+                                ) > -1
+
+                              // Toggle the checkbox on or off
+                              restriction.setCheckbox(!restrictionIsSelected)
+
                               // If the user is checking the box, add the restriction to the state
-                              if (target.checked) {
+                              if (!restrictionIsSelected) {
                                 copyOfState.custodyRestrictions.push(
                                   target.value as CustodyRestrictions,
                                 )
@@ -286,7 +286,7 @@ export const Ruling: React.FC = () => {
 
                               updateState(
                                 workingCase,
-                                'restrictions',
+                                'custodyRestrictions',
                                 copyOfState.custodyRestrictions,
                                 setWorkingCase,
                               )

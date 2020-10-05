@@ -20,6 +20,7 @@ import { StandardLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { GET_SINGLE_NEWS_ITEM_QUERY } from '@island.is/web/screens/queries'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
   ContentLanguage,
   GetSingleNewsItemQuery,
@@ -33,6 +34,7 @@ interface NewsItemProps {
 }
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
+  useContentfulId(newsItem?.id)
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()

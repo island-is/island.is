@@ -16,8 +16,6 @@ import { CarDetailsBox } from '../Confirm/components'
 import { Button } from '@island.is/skilavottord-web/components'
 
 const Completed = (props) => {
-  const { car } = props
-
   const {
     activeLocale,
     t: { completed: t },
@@ -25,6 +23,10 @@ const Completed = (props) => {
   const { makePath } = useRouteNames(activeLocale)
 
   const router = useRouter()
+  const { id } = router.query
+
+  const { apolloState } = props
+  const car = apolloState[`Car:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -41,7 +43,7 @@ const Completed = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout>
+        <ProcessPageLayout step={3}>
           <Stack space={3}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={4}>
@@ -129,19 +131,6 @@ const Completed = (props) => {
       )}
     </>
   )
-}
-
-Completed.getInitialProps = (ctx) => {
-  const { apolloClient, query } = ctx
-  const {
-    cache: {
-      data: { data },
-    },
-  } = apolloClient
-
-  const car = data[`Car:${query.id}`]
-
-  return { car }
 }
 
 export default Completed
