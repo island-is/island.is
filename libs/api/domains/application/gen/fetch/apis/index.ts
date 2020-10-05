@@ -1,2 +1,2 @@
-export * from './ApplicationApi';
+export * from './ApplicationsApi';
 export * from './InternalApi';
