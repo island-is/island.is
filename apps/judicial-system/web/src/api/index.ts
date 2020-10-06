@@ -7,6 +7,8 @@ import {
   Notification,
   SendNotificationResponse,
   User,
+  RequestSignatureResponse,
+  RequestSignature,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
@@ -182,5 +184,33 @@ export const sendNotification: (
     return {
       httpStatusCode: response.status,
     }
+  }
+}
+
+export const requestSignature: (
+  id: string,
+) => Promise<RequestSignatureResponse> = async (id: string) => {
+  try {
+    const response = await fetch(`/api/case/${id}/signature`, {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${csrfToken}`,
+      },
+    })
+
+    if (response.ok) {
+      const rs: RequestSignature = await response.json()
+
+      return {
+        httpStatusCode: response.status,
+        response: rs,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
+    }
+  } catch (e) {
+    console.log(e)
   }
 }

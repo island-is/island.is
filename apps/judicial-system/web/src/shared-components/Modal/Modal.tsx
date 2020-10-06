@@ -26,16 +26,21 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.modalContainer}>
-        <Box position="absolute" top={0} right={0}>
-          <button className={styles.closeButton} onClick={handleClose}>
-            <Icon type="close" />
-          </button>
-        </Box>
+        {handleClose && (
+          <Box position="absolute" top={0} right={0}>
+            <button className={styles.closeButton} onClick={handleClose}>
+              <Icon type="close" />
+            </button>
+          </Box>
+        )}
         <Box marginBottom={4}>
           <Typography variant="h1">{title}</Typography>
         </Box>
         <Box marginBottom={6}>
-          <Typography>{text}</Typography>
+          {
+            // Check if text is a string or Element
+            React.isValidElement(text) ? text : <Typography>{text}</Typography>
+          }
         </Box>
         <Box display="flex">
           {handleSecondaryButtonClick && (
