@@ -63,11 +63,13 @@ import { Url } from './models/url.model'
 import { GetSingleArticleInput } from './dto/getSingleArticle.input'
 import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
 import { AboutSubPage } from './models/aboutSubPage.model'
+import { GetHomepageInput } from './dto/getHomepage.input'
 import { ContactUsInput } from './dto/contactUs.input'
 import { ContactUsPayload } from './models/contactUsPayload.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { logger } from '@island.is/logging'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
+import { Homepage } from './models/homepage.model'
 
 const { cacheTime } = environment
 
@@ -335,10 +337,17 @@ export class CmsResolver {
       success: await this.mailService.deliverContactUs(input),
     }
   }
+
   @Directive(cacheControlDirective())
   @Query(() => PaginatedNews)
   getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
     return this.cmsContentfulService.getNewsList(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Homepage)
+  getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
+    return this.cmsContentfulService.getHomepage(input)
   }
 }
 
