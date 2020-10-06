@@ -33,7 +33,7 @@ export class NewsSyncService {
                 type: 'slug',
               },
             ],
-            dateCreated: mapped.date,
+            dateCreated: mapped.date || new Date().getTime().toString(),
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
