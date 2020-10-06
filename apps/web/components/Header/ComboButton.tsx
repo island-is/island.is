@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
-import { Box, Icon } from '@island.is/island-ui/core'
+import React, { FC, useContext } from 'react'
+import { Box, Icon, ColorSchemeContext } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './ComboButton.treat'
 import cn from 'classnames'
@@ -19,24 +19,41 @@ export const ComboButton: FC<ComboButtonProps> = ({
   showSearch,
 }) => {
   const { t } = useI18n()
+  const { colorScheme } = useContext(ColorSchemeContext)
+  const colorSchemeIsWhite = colorScheme === 'white'
 
   return (
     <>
       {showSearch && (
         <Box
           component={ReaButton}
-          className={cn(styles.buttonBase, styles.searchButton)}
+          as={'button'}
+          className={cn(styles.buttonBase, styles.searchButton, {
+            [styles.white]: colorSchemeIsWhite,
+          })}
           onClick={sideMenuSearchFocus}
         >
-          <Icon type={'search'} width={15} color="blue400" />
+          <Icon
+            type={'search'}
+            width={15}
+            color={colorSchemeIsWhite ? 'white' : 'blue400'}
+          />
         </Box>
       )}
       <Box
         component={ReaButton}
-        className={cn(styles.buttonBase, styles.menuButton)}
+        as={'button'}
+        className={cn(styles.buttonBase, {
+          [styles.menuButton]: showSearch,
+          [styles.white]: colorSchemeIsWhite,
+        })}
         onClick={sideBarMenuOpen}
       >
-        <Icon type={'burger'} width={15} color="blue400" />
+        <Icon
+          type={'burger'}
+          width={15}
+          color={colorSchemeIsWhite ? 'white' : 'blue400'}
+        />
         <span className={styles.buttonText}>{t.menuCaption}</span>
       </Box>
     </>
