@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import cn from 'classnames'
 
 import styles, {
@@ -14,6 +14,7 @@ import styles, {
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 import { Box } from '../Box'
+import { LinkContext } from '../LinkContext'
 
 export interface TextProps {
   id?: string
@@ -40,7 +41,6 @@ export interface TextProps {
   marginY?: ResponsiveSpace
   fontWeight?: keyof typeof fontWeightStyles
   lineHeight?: keyof typeof lineHeightStyles
-  linkRenderer?: (href: string, children: React.ReactNode) => JSX.Element
 }
 
 export const Text = ({
@@ -56,10 +56,10 @@ export const Text = ({
   marginY,
   fontWeight,
   lineHeight,
-  linkRenderer,
   variant = 'p',
   as = 'p',
 }: TextProps) => {
+  const { linkRenderer } = useContext(LinkContext)
   return (
     <Box
       id={id}
@@ -73,17 +73,18 @@ export const Text = ({
       className={cn(base, {
         [styles[variant]]: variant,
         [colors[color]]: color,
-        [fontWeightStyles[fontWeight]]: fontWeight,
-        [lineHeightStyles[lineHeight]]: lineHeight,
-        [truncateStyle]: truncate,
+        [fontWeightStyles[fontWeight!]]: fontWeight,
+        [lineHeightStyles[lineHeight!]]: lineHeight,
         [defaultFontWeights[variant!]]: variant && !fontWeight,
         [defaultLineHeights[variant!]]: variant && !lineHeight,
+        [truncateStyle]: truncate,
       })}
     >
       {React.Children.map<React.ReactNode, React.ReactNode>(
         children,
         (child: any) => {
-          if (typeof linkRenderer === 'function' && child.prop?.href) {
+          if (typeof linkRenderer === 'function' && child.props?.href) {
+            console.log(linkRenderer)
             return linkRenderer(child.props.href, child.props.children)
           }
           return child

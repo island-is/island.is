@@ -5,6 +5,7 @@ import { select } from '@storybook/addon-knobs'
 import { Colors } from '@island.is/island-ui/theme'
 import { VariantTypes } from './Text.treat'
 import { GridColumn, GridContainer, GridRow } from '../Grid'
+import { LinkContext } from '../LinkContext'
 
 <Meta title="Core/Text" component={Text} />
 
@@ -71,42 +72,35 @@ import { GridColumn, GridContainer, GridRow } from '../Grid'
 ### Custom links inside text
 
 Depending on which React router we're using we often need to take control of how links are rendered.
-
-```tsx
-import Link from 'next/Link'
-
-return (
-  <Text
-    linkRenderer={(href, children) => (
-      <Link
-        href={{
-          pathname: href,
-          query: { slug: 'something' },
-        }}
-      >
-        <a>{children}</a>
-      </Link>
-    )}
-  >
-    This a <a href="/abc">link</a> that will be rendered as a Next Link
-  </Text>
-)
-```
+Wrap your app in `<LinkContext.Provider />` and provide a custom renderer function.
 
 #### Example:
 
 <Canvas>
   <Story name="Custom link renderer">
-    <Text
-      linkRenderer={(href, children) => (
-        <Text as="a" href={href} color="red400" fontWeight="semiBold">
-          {children}
-        </Text>
-      )}
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <a
+            style={{
+              color: 'deeppink',
+              fontWeight: 500,
+              textShadow: '1px 1px 0 rebeccapurple',
+            }}
+            href={href}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {children + '✨'}
+          </a>
+        ),
+      }}
     >
-      Here's a <a href="/test">custom link</a> and here's{' '}
-      <a href="/test2">another</a>.
-    </Text>
+      <Text>
+        Here's a <a href="/test">custom link</a> and here's{' '}
+        <a href="/test2">another</a>.
+      </Text>
+    </LinkContext.Provider>
   </Story>
 </Canvas>
 
