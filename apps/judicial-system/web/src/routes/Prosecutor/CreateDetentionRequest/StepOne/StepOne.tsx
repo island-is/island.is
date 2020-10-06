@@ -119,6 +119,7 @@ export const StepOne: React.FC = () => {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
         accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
+        court: workingCase.court,
       })
 
       window.localStorage.setItem(
@@ -187,6 +188,10 @@ export const StepOne: React.FC = () => {
       })
     }
   }, [workingCase, setWorkingCase])
+
+  useEffect(() => {
+    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+  }, [])
 
   useEffect(() => {
     const getCurrentCase = async () => {
@@ -277,7 +282,7 @@ export const StepOne: React.FC = () => {
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
                     <Typography as="h3" variant="h3">
-                      Ákærði
+                      Sakborningur
                     </Typography>
                   </Box>
                   <Box marginBottom={3}>

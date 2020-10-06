@@ -32,6 +32,10 @@ export const Confirmation: React.FC = () => {
   const uContext = useContext(userContext)
 
   useEffect(() => {
+    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
 
     if (wc && !workingCase) {

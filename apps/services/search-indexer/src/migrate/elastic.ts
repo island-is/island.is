@@ -5,6 +5,14 @@ import { AwsEsPackage } from './aws'
 
 const esService = new ElasticService()
 
+export interface MigrationInfo {
+  [key: string]: {
+    oldIndexVersion: number
+    oldTemplate?: string
+    newIndexVersion?: number
+  }
+}
+
 const getIndexBaseName = (locale: string) => {
   return `island-${locale}`
 }

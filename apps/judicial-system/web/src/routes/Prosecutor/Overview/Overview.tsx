@@ -63,6 +63,10 @@ export const Overview: React.FC = () => {
   }
 
   useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     const caseDraft = window.localStorage.getItem('workingCase')
     const caseDraftJSON = JSON.parse(caseDraft)
 
