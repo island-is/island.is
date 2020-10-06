@@ -1,0 +1,124 @@
+import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
+
+import { ContentBlock } from '../ContentBlock'
+import { Box } from '../Box'
+import { Typography } from '../Typography/Typography'
+import { Stack } from '../Stack/Stack'
+import Accordion from './Accordion'
+import {
+  AccordionItem,
+  AccordionCard,
+  SidebarAccordion,
+} from './AccordionItem/AccordionItem'
+
+<Meta title="Components/Accordion" component={Accordion} />
+
+# Accordion
+
+The **Accordion** component has three different type of items that can be rendered.
+
+- `<AccordionItem />` rendered inside the **Accordion** component
+- `<AccordionCard />` and `<SidebarAccordion />` rendered as standalone
+
+<br />
+
+### Basic usage
+
+We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
+
+<Canvas>
+  <Story name="Default">
+    <Accordion singleExpand>
+      <AccordionItem id="id_1" label="Hvenær þarf að skila umsókn?">
+        <Typography variant="p" as="p">
+          Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+          faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+          frumritið.
+        </Typography>
+      </AccordionItem>
+      <AccordionItem
+        id="id_2"
+        label="Er hægt að leggja inn greiðslur á bankareikning maka?"
+      >
+        <Typography variant="p" as="p">
+          Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+          faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+          frumritið.
+        </Typography>
+      </AccordionItem>
+      <AccordionItem id="id_3" label="Hvernig kem ég umsókninni til ykkar?">
+        <Typography variant="p" as="p">
+          Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+          faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+          frumritið.
+        </Typography>
+      </AccordionItem>
+    </Accordion>
+  </Story>
+</Canvas>
+
+### With single card
+
+We use the standalone `<AccordionCard />` component
+
+<Canvas>
+  <Story name="Single card">
+    <ContentBlock>
+      <Box paddingY={[1, 2]}>
+        <AccordionCard
+          id="id_1"
+          label="Hvenær þarf að skila umsókn?"
+          visibleContent={
+            <Box paddingY={2} paddingBottom={1}>
+              <Typography variant="p" as="p">
+                Hér getur komið eitthvað meira efni sem sést alltaf og er birt
+                fyrir neðan titil.
+              </Typography>
+            </Box>
+          }
+        >
+          <Typography variant="p" as="p">
+            Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+            faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+            frumritið.
+          </Typography>
+        </AccordionCard>
+      </Box>
+    </ContentBlock>
+  </Story>
+</Canvas>
+
+### As a sidebar
+
+We use the standalone `<SidebarAccordion />` component
+
+<Canvas>
+  <Story name="Sidebar">
+    <ContentBlock>
+      <div style={{ maxWidth: 300 }}>
+        <Box paddingY={[1, 2]}>
+          <SidebarAccordion id="mini_accordion" label="Sýna flokka">
+            <Stack space={[1, 1, 2]}>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+            </Stack>
+          </SidebarAccordion>
+        </Box>
+      </div>
+    </ContentBlock>
+  </Story>
+</Canvas>
+
+# Props
+
+<Props of={Accordion} />
