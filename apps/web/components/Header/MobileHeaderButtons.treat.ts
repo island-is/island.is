@@ -1,6 +1,5 @@
-import { styleMap, style, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { borderRightWidth } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
+import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const searchButton = style({
   borderRadius: `${theme.border.radius.large} 0 0 ${theme.border.radius.large}`,

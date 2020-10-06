@@ -89,16 +89,25 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 justifyContent="flexEnd"
                 width="full"
               >
-                <MobileHeaderButtons
-                  sideBarMenuOpen={() => {
-                    setSideMenuSearchFocus(false)
-                    setSideMenuOpen(true)
-                  }}
-                  sideMenuSearchFocus={() => {
-                    setSideMenuSearchFocus(true)
-                    setSideMenuOpen(true)
-                  }}
-                />
+                <Hidden above="sm" inline>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="flexEnd"
+                    width="full"
+                  >
+                    <MobileHeaderButtons
+                      sideBarMenuOpen={() => {
+                        setSideMenuSearchFocus(false)
+                        setSideMenuOpen(true)
+                      }}
+                      sideMenuSearchFocus={() => {
+                        setSideMenuSearchFocus(true)
+                        setSideMenuOpen(true)
+                      }}
+                    />
+                  </Box>
+                </Hidden>
                 {showSearchInHeader && (
                   <>
                     <Hidden below="lg">

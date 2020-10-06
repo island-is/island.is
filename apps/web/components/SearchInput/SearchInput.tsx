@@ -221,34 +221,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
 
-    const scrollTo = (ref) => {
-      if (ref && ref.current) {
-        if (window.innerWidth < theme.breakpoints.md) {
-          const positionRelativeToWindow = ref.current.getBoundingClientRect()
-            .top
-          const positionOfParent = ref.current.offsetParent.offsetTop
-          const windowPos = window.pageYOffset
-
-          const scrollPos =
-            positionRelativeToWindow + windowPos - positionOfParent
-          window.scrollTo(0, scrollPos)
-        }
-      }
-    }
-
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
       setHasFocus(true)
-      scrollTo(ref)
     }, [setHasFocus])
-
-    const placy = String(hasFocus)
 
     return (
       <>
-        {String(hasFocus)}
         <Downshift<string>
           id={id}
           initialInputValue={initialInputValue}
@@ -314,7 +295,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                   }
                 },
                 onBlur,
-                placeholder: placy,
+                placeholder,
                 colored,
                 onKeyDown: (e) => {
                   if (e.key === 'Enter' && highlightedIndex == null) {
