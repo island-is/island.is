@@ -119,6 +119,7 @@ export const StepOne: React.FC = () => {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
         accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
+        court: workingCase.court,
       })
 
       window.localStorage.setItem(
