@@ -6,56 +6,42 @@ import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'
 import { MenuState } from '../../../store/actions'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { Menu, ServicePortalPath } from '@island.is/service-portal/core'
 
 interface Props {
   state: MenuState
+  onClose: () => void
 }
 
-const NotificationMenu: FC<Props> = ({ state }) => {
+const NotificationMenu: FC<Props> = ({ state, onClose }) => {
   return (
-    <Box
-      className={cn(styles.wrapper, {
-        [styles.active]: state === 'open',
-      })}
-    >
-      <Box
-        position="relative"
-        boxShadow="large"
-        background="white"
-        className={styles.inner}
-      >
-        <Box padding={4}>
-          {notifications.sections.map((section, index) => (
-            <Box marginBottom={3} key={index}>
-              <Stack space={1}>
-                <Box marginBottom={1} textAlign="right">
-                  <Typography variant="eyebrow" as="span" color="purple400">
-                    Í dag
-                  </Typography>
-                </Box>
-                {section.cards.map((card) => (
-                  <NotificationCard key={card.id} card={card} />
-                ))}
-              </Stack>
-            </Box>
-          ))}
+    <Box position="relative">
+      <Menu isOpen={state === 'open'} onCloseMenu={onClose}>
+        <Box className={styles.menu}>
+          <Typography variant="h3">Skilaboð</Typography>
+          <Box className={styles.messages}>
+            {notifications.sections.map((section, index) => (
+              <Box marginBottom={3} key={index}>
+                <Stack space={1}>
+                  <Box marginBottom={1} textAlign="right">
+                    <Typography variant="eyebrow" as="span" color="purple400">
+                      Í dag
+                    </Typography>
+                  </Box>
+                  {section.cards.map((card) => (
+                    <NotificationCard key={card.id} card={card} />
+                  ))}
+                </Stack>
+              </Box>
+            ))}
+          </Box>
+          <Box marginTop={4}>
+            <Link to={ServicePortalPath.SkilabodRoot}>
+              <Button width="fluid">Sjá öll skilaboð</Button>
+            </Link>
+          </Box>
         </Box>
-        <Box
-          className={styles.sticky}
-          left={0}
-          bottom={0}
-          width="full"
-          paddingY={4}
-          paddingX={3}
-          boxShadow="medium"
-          background="white"
-        >
-          <Link to={ServicePortalPath.SkilabodRoot}>
-            <Button width="fluid">Sjá öll skilaboð</Button>
-          </Link>
-        </Box>
-      </Box>
+      </Menu>
     </Box>
   )
 }

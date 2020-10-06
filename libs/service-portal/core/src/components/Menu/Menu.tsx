@@ -24,9 +24,8 @@ export const Menu: FC<Props> = ({ isOpen, children, onCloseMenu }) => {
       />
       <Box
         position="relative"
-        width="full"
         background="white"
-        paddingX={3}
+        padding={3}
         borderRadius="large"
         className={cn(styles.menu, {
           [styles.isOpen]: isOpen,

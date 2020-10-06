@@ -16,19 +16,20 @@ export const menu = style({
   position: 'fixed',
   top: 0,
   left: 0,
-  zIndex: zIndex.userMenu,
+  width: '100%',
+  zIndex: zIndex.menu,
   opacity: 0,
   overflowY: 'auto',
   visibility: 'hidden',
-  transform: `0, -${theme.spacing['2']}px, 0)`,
+  transform: `translate3d(0, -${theme.spacing['2']}px, 0)`,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
   transition: 'opacity 300ms, transform 200ms',
   ...themeUtils.responsiveStyle({
     md: {
-      top: theme.spacing['2'],
+      top: 'auto',
       left: 'auto',
-      width: 360,
-      transform: `translate3d(-${theme.spacing['15']}px, -${theme.spacing['2']}px, 0)`,
+      width: 'auto',
+      transform: `translate3d(-100%, -${theme.spacing['2']}px, 0)`,
     },
   }),
 })
@@ -38,16 +39,16 @@ export const overlay = style({
   visibility: 'hidden',
   transition: 'opacity 300ms',
   backgroundColor: `rgba(${hexToRgb(theme.color.dark400)}, 0.2)`,
-  zIndex: zIndex.userMenu - 1,
+  zIndex: zIndex.menu - 1,
 })
 
 export const isOpen = style({
   opacity: 1,
   visibility: 'visible',
-  transform: `translate3d(0px, 0px, 0px)`,
+  transform: `translate3d(0%, 0px, 0px)`,
   ...themeUtils.responsiveStyle({
     md: {
-      transform: `translate3d(-${theme.spacing['15']}px, 0px, 0)`,
+      transform: `translate3d(-100%, 0px, 0)`,
     },
   }),
 })
@@ -60,8 +61,8 @@ export const overlayIsOpen = style({
 
 export const closeButton = style({
   position: 'absolute',
-  top: theme.spacing['2'],
-  right: theme.spacing['2'],
+  top: theme.spacing['1'],
+  right: theme.spacing['1'],
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

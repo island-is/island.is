@@ -21,10 +21,13 @@ const NotificationMenuTrigger: FC<{}> = () => {
   useClickAway(ref, () => setMenuState('closed'))
 
   return (
-    <Box position="relative" ref={ref}>
+    <Box position="relative" display="flex" ref={ref}>
       <span className={styles.notificationCount}>1</span>
       <Button variant="menu" onClick={handleClick} icon="lock" />
-      <NotificationMenu state={notificationMenuState} />
+      <NotificationMenu
+        state={notificationMenuState}
+        onClose={setMenuState.bind(null, 'closed')}
+      />
     </Box>
   )
 }

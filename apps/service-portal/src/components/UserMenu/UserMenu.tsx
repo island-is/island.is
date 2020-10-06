@@ -26,7 +26,7 @@ const UserMenu: FC<{}> = () => {
   useClickAway(ref, () => (isOpen ? setIsOpen(false) : null))
 
   return (
-    <Box position="relative" height="full" ref={ref}>
+    <Box display="flex" position="relative" height="full" ref={ref}>
       <Hidden below="md">
         <Button
           variant="menu"
@@ -48,68 +48,72 @@ const UserMenu: FC<{}> = () => {
         />
       </Hidden>
       {userInfo && (
-        <Menu isOpen={isOpen} onCloseMenu={setIsOpen.bind(null, false)}>
-          <Box display="flex" alignItems="center" paddingY={3}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              background="blue200"
-              className={styles.avatar}
-            >
-              <Icon type="user" width={30} height={30} />
+        <Box position="relative">
+          <Menu isOpen={isOpen} onCloseMenu={setIsOpen.bind(null, false)}>
+            <Box className={styles.menu}>
+              <Box display="flex" alignItems="center" marginBottom={3}>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  background="blue200"
+                  className={styles.avatar}
+                >
+                  <Icon type="user" width={30} height={30} />
+                </Box>
+                <Typography variant="h4">{userInfo?.profile.name}</Typography>
+              </Box>
+              <Box padding={3} background="blue100">
+                <Stack space={1}>
+                  <NavItem
+                    path={ServicePortalPath.MinarUpplysingar}
+                    onClick={setIsOpen.bind(null, false)}
+                    icon="user"
+                    active={false}
+                    variant="blue"
+                  >
+                    {formatMessage({
+                      id: 'service.portal:my-info',
+                      defaultMessage: 'Mínar upplýsingar',
+                    })}
+                  </NavItem>
+                  <NavItem
+                    path={ServicePortalPath.StillingarRoot}
+                    onClick={setIsOpen.bind(null, false)}
+                    icon="globe"
+                    active={false}
+                    variant="blue"
+                  >
+                    {formatMessage({
+                      id: 'service.portal:settings',
+                      defaultMessage: 'Stillingar',
+                    })}
+                  </NavItem>
+                  <NavItem
+                    path={ServicePortalPath.StillingarUmbod}
+                    onClick={setIsOpen.bind(null, false)}
+                    icon="lock"
+                    active={false}
+                    variant="blue"
+                  >
+                    {formatMessage({
+                      id: 'service.portal:delegation',
+                      defaultMessage: 'Umboð',
+                    })}
+                  </NavItem>
+                </Stack>
+              </Box>
+              <Box marginTop={3}>
+                <Button width="fluid" onClick={handleLogoutClick}>
+                  {formatMessage({
+                    id: 'global:logout',
+                    defaultMessage: 'Útskráning',
+                  })}
+                </Button>
+              </Box>
             </Box>
-            <Typography variant="h4">{userInfo?.profile.name}</Typography>
-          </Box>
-          <Box padding={3} background="blue100">
-            <Stack space={1}>
-              <NavItem
-                path={ServicePortalPath.MinarUpplysingar}
-                onClick={setIsOpen.bind(null, false)}
-                icon="user"
-                active={false}
-                variant="blue"
-              >
-                {formatMessage({
-                  id: 'service.portal:my-info',
-                  defaultMessage: 'Mínar upplýsingar',
-                })}
-              </NavItem>
-              <NavItem
-                path={ServicePortalPath.StillingarRoot}
-                onClick={setIsOpen.bind(null, false)}
-                icon="globe"
-                active={false}
-                variant="blue"
-              >
-                {formatMessage({
-                  id: 'service.portal:settings',
-                  defaultMessage: 'Stillingar',
-                })}
-              </NavItem>
-              <NavItem
-                path={ServicePortalPath.StillingarUmbod}
-                onClick={setIsOpen.bind(null, false)}
-                icon="lock"
-                active={false}
-                variant="blue"
-              >
-                {formatMessage({
-                  id: 'service.portal:delegation',
-                  defaultMessage: 'Umboð',
-                })}
-              </NavItem>
-            </Stack>
-          </Box>
-          <Box marginY={3}>
-            <Button width="fluid" onClick={handleLogoutClick}>
-              {formatMessage({
-                id: 'global:logout',
-                defaultMessage: 'Útskráning',
-              })}
-            </Button>
-          </Box>
-        </Menu>
+          </Menu>
+        </Box>
       )}
     </Box>
   )

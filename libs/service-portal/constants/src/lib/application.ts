@@ -8,5 +8,5 @@ export const zIndex = {
   mobileToolbar: 10,
   notificationSidebar: 11,
   actionSidebar: 12,
-  userMenu: 13,
+  menu: 13,
 }
