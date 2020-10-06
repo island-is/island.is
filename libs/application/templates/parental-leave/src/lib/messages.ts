@@ -51,6 +51,17 @@ export const m = defineMessages({
     defaultMessage: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
     description: 'Some description',
   },
+  durationSubsection: {
+    id: 'pl.application:duration.subsection',
+    defaultMessage: 'Duration',
+    description: 'Some description.',
+  },
+  duration: {
+    id: 'pl.application:duration',
+    defaultMessage: 'Please confirm your leave duration',
+    description:
+      'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjsting thier income. Please confirm your choice below.',
+  },
   calculationsSubsection: {
     id: 'pl.application:calculations.subsection',
     defaultMessage: 'Útreikningur',

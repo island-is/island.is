@@ -115,7 +115,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'organization',
       include: 10,
-      limit: 100,
+      limit: 1000,
     }
 
     const result = await this.contentfulRepository
