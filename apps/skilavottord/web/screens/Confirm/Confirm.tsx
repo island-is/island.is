@@ -17,6 +17,7 @@ import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { api } from '@island.is/skilavottord-web/services'
 
 const Confirm = (props) => {
   const [checkbox, setCheckbox] = useState(false)
@@ -51,13 +52,11 @@ const Confirm = (props) => {
   }
 
   const onConfirm = (id) => {
-    // Login with return URL
-    // with car info
-    // Mutate data on DB
-    router.replace(
-      `${routePrefix}/recycle-vehicle/[id]/handover`,
-      makePath('recycleVehicle', id, 'handover'),
-    )
+    api.confirmRecycle(makePath('recycleVehicle', id, 'handover'))
+
+    // router.replace(
+    //   `${AUTH_URL}?returnUrl=${makePath('recycleVehicle', id, 'handover')}`,
+    // )
   }
 
   const checkboxLabel = (
