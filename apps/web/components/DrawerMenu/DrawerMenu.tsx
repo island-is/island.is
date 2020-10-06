@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
@@ -105,10 +105,15 @@ const DRAWER_EXPANDED_PADDING_TOP = STICKY_NAV_HEIGHT + theme.spacing[4]
 
 const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
   const [mounted, setMounted] = useState(false)
+  const [contentHeight, setContentHeight] = useState(0)
+  const [contentTop, setContentTop] = useState(0)
+  const contentRef = useRef(null)
+  const containerRef = useRef(null)
   const [isOpen, setOpen] = useState(false)
+  const [useScroll, setUseScroll] = useState<boolean>(false)
+  const [initialOverflow, setInitialOverflow] = useState(null)
   const { height: viewportHeight } = useWindowSize()
   const [mainCategory, ...rest] = categories
-  const offsetY = viewportHeight - DRAWER_HEADING_HEIGHT
   const router = useRouter()
 
   const handleClose = () => {
@@ -128,36 +133,101 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
 
   useEffect(() => {
     if (typeof window === 'object') {
+      setInitialOverflow(document.body.style.overflow)
       setMounted(true)
     }
   }, [])
 
+  const onResize = useCallback(() => {
+    if (contentRef?.current) {
+      setContentHeight(contentRef.current.offsetHeight)
+    }
+  }, [contentRef])
+
+  useEffect(() => {
+    onResize()
+
+    window.addEventListener('resize', onResize, { passive: true })
+
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  }, [onResize, containerRef])
+
+  const handleClickContainer = (e) => {
+    if (e.target === containerRef.current) {
+      handleClose()
+    }
+  }
+
+  useEffect(() => {
+    onResize()
+
+    document.body.style.overflow = isOpen && useScroll ? 'hidden' : 'visible'
+
+    isOpen
+      ? containerRef?.current?.addEventListener('click', handleClickContainer, {
+          passive: true,
+        })
+      : containerRef?.current?.removeEventListener(
+          'click',
+          handleClickContainer,
+        )
+
+    return () => {
+      containerRef?.current?.removeEventListener('click', handleClickContainer)
+      document.body.style.overflow = initialOverflow
+    }
+  }, [isOpen, useScroll])
+
+  useEffect(() => {
+    let val = contentHeight > viewportHeight
+
+    setContentTop(
+      val
+        ? -viewportHeight + DRAWER_HEADING_HEIGHT + DRAWER_EXPANDED_PADDING_TOP
+        : -contentHeight + DRAWER_HEADING_HEIGHT,
+    )
+
+    setUseScroll(contentHeight > viewportHeight)
+  }, [contentHeight, isOpen])
+
   return (
     mounted && (
       <div
-        className={styles.root}
+        ref={containerRef}
+        className={cn(styles.container, {
+          [styles.containerOpen]: isOpen,
+          [styles.containerScroll]: isOpen && useScroll,
+        })}
         style={{
-          top: offsetY,
-          transform: `translateY(${
-            isOpen ? `${-offsetY + DRAWER_EXPANDED_PADDING_TOP}px` : 0
-          })`,
-          minHeight: viewportHeight - DRAWER_EXPANDED_PADDING_TOP,
+          height: isOpen ? 'auto' : DRAWER_HEADING_HEIGHT,
         }}
       >
-        <DrawerMenuCategory
-          main
-          title={mainCategory.title}
-          items={mainCategory.items}
-          onClick={() => setOpen(!isOpen)}
-          isOpen={isOpen}
-        />
-        {rest.map((category) => (
+        <div
+          ref={contentRef}
+          className={styles.root}
+          style={{
+            height: 'auto',
+            top: isOpen ? viewportHeight - DRAWER_HEADING_HEIGHT : 0,
+            transform: `translateY(${isOpen ? `${contentTop}px` : 0})`,
+          }}
+        >
           <DrawerMenuCategory
-            key={category.title}
-            title={category.title}
-            items={category.items}
+            main
+            title={mainCategory.title}
+            items={mainCategory.items}
+            onClick={() => setOpen(!isOpen)}
+            isOpen={isOpen}
           />
-        ))}
+          {rest.map((category) => (
+            <DrawerMenuCategory
+              key={category.title}
+              title={category.title}
+              items={category.items}
+            />
+          ))}
+        </div>
       </div>
     )
   )
