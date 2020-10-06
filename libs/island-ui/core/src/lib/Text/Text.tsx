@@ -71,8 +71,8 @@ export const Text = ({
       paddingBottom={paddingBottom}
       paddingY={paddingY}
       className={cn(base, {
-        [styles[variant]]: variant,
-        [colors[color]]: color,
+        [styles[variant!]]: variant,
+        [colors[color!]]: color,
         [fontWeightStyles[fontWeight!]]: fontWeight,
         [lineHeightStyles[lineHeight!]]: lineHeight,
         [defaultFontWeights[variant!]]: variant && !fontWeight,
