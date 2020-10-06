@@ -13,7 +13,7 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  processSteps: string[]
+  processSections: string[]
 }
 
 export interface Home {

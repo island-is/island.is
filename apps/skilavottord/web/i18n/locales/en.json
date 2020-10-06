@@ -86,9 +86,9 @@
       "close": "Close"
     }
   },
-  "processSteps": [
+  "processSections": [
     "Confirm car for recycling",
     "Recycle the car",
-    "Get money back"
+    "Receive payment"
   ]
 }

@@ -35,24 +35,30 @@ const Overview: FC = () => {
   const { cars } = data.getVehiclesForNationalId || {}
 
   const onRecycleCar = (id: string) => {
-    router.push(
-      `${routePrefix}/recycle-vehicle/[id]/confirm`,
-      makePath('recycleVehicle', id, 'confirm'),
-    )
+    router
+      .push(
+        '/recycle-vehicle/[id]/confirm',
+        makePath('recycleVehicle', id, 'confirm'),
+      )
+      .then(() => window.scrollTo(0, 0))
   }
 
   const onOpenProcess = (id: string) => {
-    router.push(
-      `${routePrefix}/recycle-vehicle/[id]/handover`,
-      makePath('recycleVehicle', id, 'handover'),
-    )
+    router
+      .push(
+        '/recycle-vehicle/[id]/handover',
+        makePath('recycleVehicle', id, 'handover'),
+      )
+      .then(() => window.scrollTo(0, 0))
   }
 
   const onSeeDetails = (id: string) => {
-    router.push(
-      `${routePrefix}/recycle-vehicle/[id]/completed`,
-      makePath('recycleVehicle', id, 'completed'),
-    )
+    router
+      .push(
+        '/recycle-vehicle/[id]/completed',
+        makePath('recycleVehicle', id, 'completed'),
+      )
+      .then(() => window.scrollTo(0, 0))
   }
 
   return (
