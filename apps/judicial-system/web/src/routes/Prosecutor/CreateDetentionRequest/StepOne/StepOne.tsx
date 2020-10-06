@@ -34,51 +34,6 @@ export const StepOne: React.FC = () => {
 
   const [workingCase, setWorkingCase] = useState<Case>(null)
 
-  useEffect(() => {
-    const caseDraft = window.localStorage.getItem('workingCase')
-
-    if (caseDraft !== 'undefined' && !workingCase) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.investigationProgress ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
-      })
-    }
-  }, [workingCase, setWorkingCase])
-
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
@@ -164,6 +119,7 @@ export const StepOne: React.FC = () => {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
         accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
+        court: workingCase.court,
       })
 
       window.localStorage.setItem(
@@ -178,6 +134,7 @@ export const StepOne: React.FC = () => {
           policeCaseNumber: policeCaseNumberRef.current.value,
         }),
       )
+
       setWorkingCase({
         ...workingCase,
         id: caseId,
@@ -186,6 +143,55 @@ export const StepOne: React.FC = () => {
       })
     }
   }
+
+  useEffect(() => {
+    const caseDraft = window.localStorage.getItem('workingCase')
+
+    if (caseDraft !== 'undefined' && !workingCase) {
+      const caseDraftJSON = JSON.parse(caseDraft || '{}')
+
+      setWorkingCase({
+        id: caseDraftJSON.id ?? '',
+        created: caseDraftJSON.created ?? '',
+        modified: caseDraftJSON.modified ?? '',
+        state: caseDraftJSON.state ?? '',
+        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
+        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
+        accusedName: caseDraftJSON.accusedName ?? '',
+        accusedAddress: caseDraftJSON.accusedAddress ?? '',
+        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
+        arrestDate: caseDraftJSON.arrestDate ?? null,
+        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
+        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
+        lawsBroken: caseDraftJSON.lawsBroken ?? '',
+        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
+        requestedCustodyRestrictions:
+          caseDraftJSON.requestedCustodyRestrictions ?? [],
+        caseFacts: caseDraftJSON.caseFacts ?? '',
+        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
+        investigationProgress: caseDraftJSON.investigationProgress ?? '',
+        legalArguments: caseDraftJSON.legalArguments ?? '',
+        comments: caseDraftJSON.comments ?? '',
+        notifications: caseDraftJSON.Notification ?? [],
+        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+        courtStartTime: caseDraftJSON.courtStartTime ?? '',
+        courtEndTime: caseDraftJSON.courtEndTime ?? '',
+        courtAttendees: caseDraftJSON.courtAttendees ?? '',
+        policeDemands: caseDraftJSON.policeDemands ?? '',
+        accusedPlea: caseDraftJSON.accusedPlea ?? '',
+        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+        ruling: caseDraftJSON.ruling ?? '',
+        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
+        accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
+        prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
+      })
+    }
+  }, [workingCase, setWorkingCase])
+
+  useEffect(() => {
+    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+  }, [])
 
   useEffect(() => {
     const getCurrentCase = async () => {
@@ -241,18 +247,26 @@ export const StepOne: React.FC = () => {
                         evt.target.value,
                         'police-casenumber-format',
                       )
-
                       if (
                         validateField.isValid &&
                         validateFieldFormat.isValid
                       ) {
-                        createCaseIfPossible()
-                        updateState(
-                          workingCase,
-                          'policeCaseNumber',
-                          evt.target.value,
-                          setWorkingCase,
-                        )
+                        if (workingCase.id !== '') {
+                          autoSave(
+                            workingCase,
+                            'policeCaseNumber',
+                            evt.target.value,
+                            setWorkingCase,
+                          )
+                        } else {
+                          createCaseIfPossible()
+                          updateState(
+                            workingCase,
+                            'policeCaseNumber',
+                            evt.target.value,
+                            setWorkingCase,
+                          )
+                        }
                       } else {
                         setPoliceCaseNumberErrorMessage(
                           validateField.errorMessage ||
@@ -268,7 +282,7 @@ export const StepOne: React.FC = () => {
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
                     <Typography as="h3" variant="h3">
-                      Ákærði
+                      Sakborningur
                     </Typography>
                   </Box>
                   <Box marginBottom={3}>
@@ -294,13 +308,22 @@ export const StepOne: React.FC = () => {
                           validateField.isValid &&
                           validateFieldFormat.isValid
                         ) {
-                          createCaseIfPossible()
-                          updateState(
-                            workingCase,
-                            'accusedNationalId',
-                            evt.target.value.replace('-', ''),
-                            setWorkingCase,
-                          )
+                          if (workingCase.id !== '') {
+                            autoSave(
+                              workingCase,
+                              'accusedNationalId',
+                              evt.target.value,
+                              setWorkingCase,
+                            )
+                          } else {
+                            createCaseIfPossible()
+                            updateState(
+                              workingCase,
+                              'accusedNationalId',
+                              evt.target.value.replace('-', ''),
+                              setWorkingCase,
+                            )
+                          }
                         } else {
                           setNationalIdErrorMessage(
                             validateField.errorMessage ||

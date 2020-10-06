@@ -203,14 +203,16 @@ const ButtonContent: FC<ButtonContentProps> = ({
                   whiteSpace: 'nowrap',
                 }}
               >
-                &nbsp;&nbsp;
                 {icon ? (
-                  <Icon
-                    showRightIcon={showRightIcon}
-                    icon={icon}
-                    loading={!!loading}
-                    isExternal={!!isExternal}
-                  />
+                  <>
+                    &nbsp;&nbsp;
+                    <Icon
+                      showRightIcon={showRightIcon}
+                      icon={icon}
+                      loading={!!loading}
+                      isExternal={!!isExternal}
+                    />
+                  </>
                 ) : null}
               </span>
             </span>
@@ -248,14 +250,16 @@ const ButtonContent: FC<ButtonContentProps> = ({
                   whiteSpace: 'nowrap',
                 }}
               >
-                &nbsp;&nbsp;
                 {icon ? (
-                  <Icon
-                    showRightIcon={showRightIcon}
-                    icon={icon}
-                    loading={!!loading}
-                    isExternal={!!isExternal}
-                  />
+                  <>
+                    &nbsp;&nbsp;
+                    <Icon
+                      showRightIcon={showRightIcon}
+                      icon={icon}
+                      loading={!!loading}
+                      isExternal={!!isExternal}
+                    />
+                  </>
                 ) : null}
               </span>
             </span>

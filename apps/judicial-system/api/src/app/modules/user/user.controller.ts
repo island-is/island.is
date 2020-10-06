@@ -4,16 +4,12 @@ import {
   Get,
   Req,
   NotFoundException,
-  UnauthorizedException,
-  Param,
-  Query,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
 import { AuthUser } from '../auth/auth.types'
 import { JwtAuthGuard } from '../auth/auth.guard'
 import { User } from './user.model'
-import { UserRole } from './user.types'
 import { UserService } from './user.service'
 
 @UseGuards(JwtAuthGuard)

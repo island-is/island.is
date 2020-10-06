@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
+
+import { Icon } from '../../../Icon/Icon'
+import { Typography } from '../../../Typography/Typography'
+import { Box } from '../../../Box'
+import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionItem.treat'
-import { Icon, Typography, Box } from '@island.is/island-ui/core'
-import SectionNumberColumn from '../SectionNumberColumn'
 
 interface SubSectionItemProps {
   currentState: 'active' | 'previous' | 'next'
@@ -28,8 +31,8 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
     <Typography
       variant={
         currentState === 'active'
-          ? 'formProgressSectionActive'
-          : 'formProgressSection'
+          ? 'formStepperSectionActive'
+          : 'formStepperSection'
       }
       as="span"
     >
@@ -37,5 +40,3 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
     </Typography>
   </Box>
 )
-
-export default SubSectionItem

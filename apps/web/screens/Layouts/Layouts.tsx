@@ -60,12 +60,12 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
+        <GridColumn span={['0', '0', '4/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
         <GridColumn
           span={['12/12', '12/12', '8/12']}
-          offset={['0', '0', '0', '1/12']}
+          offset={['0', '0', '0', '0', '1/12']}
         >
           <Box paddingBottom={[5, 5, 10]}>{children}</Box>
           {belowContent && belowContent}

@@ -80,6 +80,7 @@ export const Card: FC<CardProps> = ({
 
   const items = [
     <Box
+      key={1}
       className={cn(styles.cardContent, {
         [styles.cardContentNarrower]: image && !stackImage,
       })}
@@ -125,25 +126,24 @@ export const Card: FC<CardProps> = ({
         )}
       </Stack>
     </Box>,
-    <>
-      {!!image && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          className={cn(styles.imageContainer, {
-            [styles.imageContainerStacked]: stackImage,
-          })}
-        >
-          <BackgroundImage
-            positionX={!stackImage ? 'right' : null}
-            background="transparent"
-            backgroundSize="contain"
-            image={image}
-          />
-        </Box>
-      )}
-    </>,
+    !!image && (
+      <Box
+        key={2}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        className={cn(styles.imageContainer, {
+          [styles.imageContainerStacked]: stackImage,
+        })}
+      >
+        <BackgroundImage
+          positionX={!stackImage ? 'right' : null}
+          background="transparent"
+          backgroundSize="contain"
+          image={image}
+        />
+      </Box>
+    ),
   ]
 
   if (stackImage) {

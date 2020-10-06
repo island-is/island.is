@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { User } from './user.model'
-import { UserRole } from './user.types'
 
 @Injectable()
 export class UserService {
