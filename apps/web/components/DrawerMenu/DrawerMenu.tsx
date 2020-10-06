@@ -77,9 +77,15 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
     )}
     <Box component="ul" padding={3} position="relative">
       {items.map((item, id) => {
-        const linkProps = {
-          ...(item.url && { href: item.url }),
-          ...(item.as && { as: item.as }),
+        let linkProps = {
+          href: item.url,
+        }
+
+        if (!item.url.startsWith('#')) {
+          linkProps = {
+            ...(item.url && { href: item.url }),
+            ...(item.as && { as: item.as }),
+          }
         }
 
         return (
@@ -98,6 +104,7 @@ const DRAWER_HEADING_HEIGHT = 77
 const DRAWER_EXPANDED_PADDING_TOP = STICKY_NAV_HEIGHT + theme.spacing[4]
 
 const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
+  const [mounted, setMounted] = useState(false)
   const [isOpen, setOpen] = useState(false)
   const { height: viewportHeight } = useWindowSize()
   const [mainCategory, ...rest] = categories
@@ -119,37 +126,40 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
     }
   }, [router.events])
 
-  if (viewportHeight === Infinity) {
-    // We're on the server, try again later.
-    return null
-  }
+  useEffect(() => {
+    if (typeof window === 'object') {
+      setMounted(true)
+    }
+  }, [])
 
   return (
-    <div
-      className={styles.root}
-      style={{
-        top: offsetY,
-        transform: `translateY(${
-          isOpen ? `${-offsetY + DRAWER_EXPANDED_PADDING_TOP}px` : 0
-        })`,
-        minHeight: viewportHeight - DRAWER_EXPANDED_PADDING_TOP,
-      }}
-    >
-      <DrawerMenuCategory
-        main
-        title={mainCategory.title}
-        items={mainCategory.items}
-        onClick={() => setOpen(!isOpen)}
-        isOpen={isOpen}
-      />
-      {rest.map((category) => (
+    mounted && (
+      <div
+        className={styles.root}
+        style={{
+          top: offsetY,
+          transform: `translateY(${
+            isOpen ? `${-offsetY + DRAWER_EXPANDED_PADDING_TOP}px` : 0
+          })`,
+          minHeight: viewportHeight - DRAWER_EXPANDED_PADDING_TOP,
+        }}
+      >
         <DrawerMenuCategory
-          key={category.title}
-          title={category.title}
-          items={category.items}
+          main
+          title={mainCategory.title}
+          items={mainCategory.items}
+          onClick={() => setOpen(!isOpen)}
+          isOpen={isOpen}
         />
-      ))}
-    </div>
+        {rest.map((category) => (
+          <DrawerMenuCategory
+            key={category.title}
+            title={category.title}
+            items={category.items}
+          />
+        ))}
+      </div>
+    )
   )
 }
 
