@@ -31,6 +31,10 @@ export const DetentionRequests: React.FC = () => {
   const isJudge = uContext.user.role === UserRole.JUDGE
 
   useEffect(() => {
+    document.title = 'Allar kröfur - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     async function getCases(user: User) {
       const cases = await api.getCases()
 
