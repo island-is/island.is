@@ -14,17 +14,30 @@ export const Default = () => (
   </Box>
 )
 
-export const DefaulUnderline = () => (
+export const DefaultUnderline = () => (
   <Box padding={4}>
-    <Link href="/something" color="blue400" withUnderline>
+    <Link href="/something" color="blue400" underline="normal">
       Default
     </Link>
   </Box>
 )
 
-export const DefaultBlue = () => (
+export const UnderlineAlwaysVisible = () => (
   <Box padding={4}>
-    <Link href="/something" color="blue400">
+    <Link
+      href="/something"
+      color="blue400"
+      underline="normal"
+      underlineVisibility="always"
+    >
+      Default
+    </Link>
+  </Box>
+)
+
+export const SmallUnderline = () => (
+  <Box padding={4}>
+    <Link href="/something" color="blue400" underline="small">
       Default
     </Link>
   </Box>
