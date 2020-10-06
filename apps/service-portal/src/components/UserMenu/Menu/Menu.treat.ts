@@ -1,9 +1,16 @@
 import { style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import {
-  SERVICE_PORTAL_HEADER_HEIGHT_SM,
-  zIndex,
-} from '@island.is/service-portal/constants'
+import { zIndex } from '@island.is/service-portal/constants'
+
+const hexToRgb = (hex: string) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+
+  return result
+    ? `${parseInt(result[1], 16)}, ` +
+        `${parseInt(result[2], 16)}, ` +
+        `${parseInt(result[3], 16)}`
+    : null
+}
 
 export const menu = style({
   position: 'fixed',
@@ -14,6 +21,7 @@ export const menu = style({
   overflowY: 'auto',
   visibility: 'hidden',
   transform: `0, -${theme.spacing['2']}px, 0)`,
+  filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
   transition: 'opacity 300ms, transform 200ms',
   ...themeUtils.responsiveStyle({
     md: {
@@ -29,12 +37,11 @@ export const overlay = style({
   opacity: 0,
   visibility: 'hidden',
   transition: 'opacity 300ms',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backgroundColor: `rgba(${hexToRgb(theme.color.dark400)}, 0.2)`,
   zIndex: zIndex.userMenu - 1,
 })
 
 export const isOpen = style({
-  zIndex: 1,
   opacity: 1,
   visibility: 'visible',
   transform: `translate3d(0px, 0px, 0px)`,

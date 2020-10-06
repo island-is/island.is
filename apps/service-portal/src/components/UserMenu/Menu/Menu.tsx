@@ -36,6 +36,7 @@ export const Menu: FC<Props> = ({ isOpen, userInfo, onCloseMenu }) => {
         width="full"
         background="white"
         paddingX={3}
+        borderRadius="large"
         className={cn(styles.menu, {
           [styles.isOpen]: isOpen,
         })}

@@ -110,20 +110,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Stillingar
       {
         name: defineMessage({
-          id: 'service.portal:settings',
-          defaultMessage: 'Stillingar',
+          id: 'service.portal:delegation',
+          defaultMessage: 'Umboð',
         }),
-        path: ServicePortalPath.StillingarRoot,
+        path: ServicePortalPath.StillingarUmbod,
         icon: 'lock',
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:delegation',
-              defaultMessage: 'Umboð',
-            }),
-            path: ServicePortalPath.StillingarUmbod,
-          },
-        ],
       },
 
       // Greidslur
