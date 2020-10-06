@@ -52,6 +52,7 @@ export interface IconProps {
   fill?: string
   title?: string
   spin?: boolean
+  className?: string
 }
 
 export interface SvgPathContainerProps {
@@ -64,6 +65,7 @@ export interface SvgPathContainerProps {
   title?: string
   circle?: object
   spin?: boolean
+  className?: string
 }
 
 const iconsConf: Icons = {
@@ -278,6 +280,7 @@ const SvgPathContainer = ({
   title,
   circle,
   spin,
+  className,
 }: SvgPathContainerProps) => {
   return (
     <svg
@@ -286,7 +289,7 @@ const SvgPathContainer = ({
       height={height}
       fill={fill}
       viewBox={viewBox}
-      className={cn({ [styles.spin]: spin })}
+      className={cn(className, { [styles.spin]: spin })}
     >
       {title && <title>{title}</title>}
       {path && <path className={styles.colors[color]} d={path}></path>}
@@ -303,6 +306,7 @@ export const Icon = ({
   fill = 'none',
   title,
   spin,
+  className,
 }: IconProps) => {
   return (
     <SvgPathContainer
@@ -315,6 +319,7 @@ export const Icon = ({
       fill={fill}
       title={title}
       spin={spin}
+      className={className}
     />
   )
 }

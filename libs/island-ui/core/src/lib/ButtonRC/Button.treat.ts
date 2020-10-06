@@ -1,7 +1,9 @@
-import { Style, styleMap } from 'treat'
+import { style, Style, styleMap } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const buttonBase = {
+  display: 'flex',
+  alignItems: 'center',
   fontWeight: theme.typography.semiBold,
   borderRadius: 8,
   outline: 'none',
@@ -14,6 +16,7 @@ const buttonBase = {
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
 }
+
 const textBase = {
   fontWeight: theme.typography.semiBold,
   outline: 'none',
@@ -100,6 +103,33 @@ export const padding = styleMap({
     ...themeUtils.responsiveStyle({
       md: {
         padding: '23px 32px',
+      },
+    }),
+  },
+})
+
+export const circleSizes = styleMap({
+  default: {
+    width: 32,
+    height: 32,
+    ...themeUtils.responsiveStyle({
+      md: {
+        width: 40,
+        height: 40,
+      },
+    }),
+  },
+  small: {
+    width: 24,
+    height: 24,
+  },
+  large: {
+    width: 48,
+    height: 48,
+    ...themeUtils.responsiveStyle({
+      md: {
+        width: 64,
+        height: 64,
       },
     }),
   },
@@ -208,6 +238,11 @@ export const colors = {
       theme.color.roseTinted400,
       theme.color.red200,
     ),
+    negative: ghostColors(
+      theme.color.white,
+      theme.color.dark100,
+      theme.color.dark200,
+    ),
   }),
   text: styleMap({
     default: textColors(
@@ -222,3 +257,33 @@ export const colors = {
     ),
   }),
 }
+
+export const circle = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  padding: 0,
+})
+
+export const icon = style({
+  width: 20,
+  height: 20,
+  marginLeft: 15,
+  selectors: {
+    [`${circle} &`]: {
+      marginLeft: 0,
+      width: '50%',
+      height: '50%',
+    },
+    [`${size.small} &`]: {
+      width: 15,
+      height: 15,
+    },
+    [`${variants.text} &`]: {
+      width: 15,
+      height: 15,
+      marginLeft: 8,
+    },
+  },
+})

@@ -8,10 +8,12 @@ export default {
   component: Button,
 }
 
-const sizes = ['default', 'small', 'large'] as ButtonProps['size'][]
-const colorSchemes = ['default', 'destructive'] as ButtonProps['colorScheme'][]
+type colorScheme = 'default' | 'destructive' | 'negative'
 
-const makeButton = (variant: ButtonProps['variant']) => (
+const sizes = ['default', 'small', 'large'] as ButtonProps['size'][]
+const colorSchemes = ['default', 'destructive'] as colorScheme[]
+
+const makeButton = (variant) => (
   <Box padding={2}>
     <Stack space={3} dividers="regular">
       {colorSchemes.map((color) =>
@@ -46,6 +48,37 @@ const makeButton = (variant: ButtonProps['variant']) => (
           multiline
         </Button>
       </Stack>
+      <Stack space={3}>
+        <p>Button with icon</p>
+        <Button variant={variant} icon="arrowRight">
+          Button text
+        </Button>
+      </Stack>
+      <Stack space={3}>
+        <p>Button multiline with icon</p>
+        <Button variant={variant} icon="arrowRight">
+          Button text
+          <br />
+          multiline
+        </Button>
+      </Stack>
+      {variant !== 'text' &&
+        colorSchemes.map((color) =>
+          sizes.map((size) => (
+            <Stack space={3}>
+              <p>
+                Circle, color: {color}, size: {size}
+              </p>
+              <Button
+                variant={variant}
+                colorScheme={color}
+                size={size}
+                circle
+                icon="arrowRight"
+              />
+            </Stack>
+          )),
+        )}
     </Stack>
   </Box>
 )
