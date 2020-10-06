@@ -16,7 +16,8 @@ import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import { autoSave } from '../../../utils/stepHelper'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
-import { formatDate } from '../../../utils/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -79,7 +80,7 @@ export const CourtRecord: React.FC = () => {
                     placeholder="Veldu tíma"
                     defaultValue={formatDate(
                       workingCase.courtStartTime,
-                      Constants.TIME_FORMAT,
+                      TIME_FORMAT,
                     )}
                     onBlur={(evt) => {
                       const validateTimeEmpty = validate(
@@ -135,7 +136,7 @@ export const CourtRecord: React.FC = () => {
                   placeholder="Veldu tíma"
                   defaultValue={formatDate(
                     workingCase.courtEndTime,
-                    Constants.TIME_FORMAT,
+                    TIME_FORMAT,
                   )}
                   onBlur={(evt) => {
                     const validateTimeEmpty = validate(

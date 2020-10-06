@@ -10,14 +10,19 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { JudgeLogo } from '../../../shared-components/Logos'
-import { formatDate, capitalize } from '../../../utils/formatters'
-import { autoSave, renderRestrictons } from '../../../utils/stepHelper'
+import {
+  formatDate,
+  capitalize,
+  formatCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
+import { autoSave } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
+import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -154,10 +159,7 @@ export const JudgeOverview: React.FC = () => {
                 {workingCase?.arrestDate &&
                   `${capitalize(
                     formatDate(workingCase?.arrestDate, 'PPPP'),
-                  )} kl. ${formatDate(
-                    workingCase?.arrestDate,
-                    Constants.TIME_FORMAT,
-                  )}`}
+                  )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
               </Typography>
             </Box>
             {workingCase?.requestedCourtDate && (
@@ -172,7 +174,7 @@ export const JudgeOverview: React.FC = () => {
                     formatDate(workingCase?.requestedCourtDate, 'PPPP'),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
-                    Constants.TIME_FORMAT,
+                    TIME_FORMAT,
                   )}`}
                 </Typography>
               </Box>
@@ -189,7 +191,7 @@ export const JudgeOverview: React.FC = () => {
                           'PPP',
                         )} kl. ${formatDate(
                           workingCase.requestedCustodyEndDate,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )}`}
                     </strong>
                   </Typography>
@@ -205,7 +207,7 @@ export const JudgeOverview: React.FC = () => {
                   startExpanded
                 >
                   <Typography variant="p" as="p">
-                    {renderRestrictons(
+                    {formatCustodyRestrictions(
                       workingCase.requestedCustodyRestrictions,
                     )}
                   </Typography>

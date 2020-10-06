@@ -12,15 +12,15 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
-import { Notification } from './notification.model'
 import {
-  CaseAppealDecision,
+  CaseState,
   CaseCustodyProvisions,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
-} from './case.types'
+} from '@island.is/judicial-system/types'
+
 import { User } from '../../user'
+import { Notification } from './notification.model'
 
 @Table({
   tableName: 'case',

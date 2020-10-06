@@ -184,10 +184,6 @@ export class CaseService {
 
     const pdf = await generateRulingPdf(existingCase)
 
-    if (!environment.production) {
-      writeFile(`${existingCase.id}-ruling.pdf`, pdf)
-    }
-
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
