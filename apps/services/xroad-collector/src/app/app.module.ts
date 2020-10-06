@@ -14,6 +14,9 @@ import { RestMetadataService } from './restmetadata.service'
 import { RestServiceCollector } from './restservicecollector.service'
 import { CollectorController } from './collector.controller'
 
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './tasks/tasks.module'
+
 const XROAD_BASE_PATH = 'http://testcomss01.playground.x-road.global'
 const XROAD_CLIENT = {
   xroadInstance: 'PLAYGROUND',
@@ -23,7 +26,10 @@ const XROAD_CLIENT = {
 }
 
 @Module({
-  imports: [],
+  imports: [
+    ScheduleModule.forRoot(), 
+    TasksModule
+  ],
   controllers: [AppController, CollectorController],
   providers: [
     AppService,
