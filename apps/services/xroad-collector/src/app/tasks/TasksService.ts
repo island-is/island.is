@@ -16,20 +16,20 @@ export class TasksService {
   @Cron(
     '30 0 * * * *',  // run on the thirtieth second and on the zero minute, every hour
     {
-      name: 'x-road-collector',
+      name: 'TaskXRoadCollector',
     },
   )
-  handleCron() {
-    this.logger.debug('Running job x-road-Collector')
+  TaskXRoadCollector() {
+    this.logger.debug('Running job TaskXRoadCollector')
 
     const options = {
       url: 'http://localhost:3333/api/collector/index/rest',
-      timeout: 1000,
+      timeout: 10000,
     }
     const debugLogger = this.logger
     request(options, function(error) {
       if (error?.code === 'ESOCKETTIMEDOUT') {
-        debugLogger.debug('x-road-collector called, but no response.')
+        debugLogger.debug('TaskXRoadCollector called, but no response api collector.')
       }
     })
   }
