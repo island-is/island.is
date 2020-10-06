@@ -5,7 +5,7 @@ import { select } from '@storybook/addon-knobs'
 import { Colors } from '@island.is/island-ui/theme'
 import { VariantTypes } from './Text.treat'
 import { GridColumn, GridContainer, GridRow } from '../Grid'
-import { LinkContext } from '../LinkContext'
+import { LinkContext } from '../context'
 
 <Meta title="Core/Text" component={Text} />
 
@@ -20,7 +20,7 @@ import { LinkContext } from '../LinkContext'
 <Canvas>
   <Story name="Variants">
     <Text>
-      This is the default <code>(p)</code> variant
+      This is the <code>default</code> variant
     </Text>
     <Text variant="h1">
       This is the <code>h1</code> variant
@@ -126,17 +126,17 @@ Wrap your app in `<LinkContext.Provider />` and provide a custom renderer functi
           <Text as="h1" variant="h1" paddingBottom={2}>
             Typical text layout
           </Text>
-          <Text as="p" variant="intro">
+          <Text variant="intro">
             Control vertical rhythm using Text's <em>padding</em> or{' '}
             <em>margin</em> props.
           </Text>
-          <Text as="p" variant="intro" paddingBottom={6}>
+          <Text variant="intro" paddingBottom={6}>
             Don't rely on the <strong>Stack</strong> for vertical text spacing.
           </Text>
           <Text as="h2" variant="h2" paddingBottom={2}>
             Lorem ipsum time
           </Text>
-          <Text as="p" variant="p" paddingBottom={2}>
+          <Text paddingBottom={2}>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus
             minus doloremque quis minima adipisci sunt fugit unde officiis? Qui
             et animi asperiores excepturi ut, amet consectetur dignissimos rerum

@@ -11,5 +11,3 @@ export const LinkContext = createContext<LinkContextInterface>({
     </a>
   ),
 })
-
-export default LinkContext

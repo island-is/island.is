@@ -1,6 +1,18 @@
 import React, { useContext } from 'react'
 import cn from 'classnames'
 
+type TextElements =
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'p'
+  | 'span'
+  | 'div'
+  | 'label'
+  | 'caption'
+
 import styles, {
   base,
   TextVariants,
@@ -14,23 +26,13 @@ import styles, {
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 import { Box } from '../Box'
-import { LinkContext } from '../LinkContext'
+import { LinkContext } from '../context'
 
 export interface TextProps {
   id?: string
   variant?: TextVariants
   children?: React.ReactNode
-  as?:
-    | 'h1'
-    | 'h2'
-    | 'h3'
-    | 'h4'
-    | 'h5'
-    | 'p'
-    | 'span'
-    | 'div'
-    | 'label'
-    | 'caption'
+  as?: TextElements
   color?: Colors
   truncate?: boolean
   paddingTop?: ResponsiveSpace
@@ -56,7 +58,7 @@ export const Text = ({
   marginY,
   fontWeight,
   lineHeight,
-  variant = 'p',
+  variant = 'default',
   as = 'p',
 }: TextProps) => {
   const { linkRenderer } = useContext(LinkContext)

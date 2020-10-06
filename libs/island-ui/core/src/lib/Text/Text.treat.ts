@@ -5,7 +5,7 @@ import { mapToStyleProperty } from '../../utils'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
 export type TextVariants =
-  | 'p'
+  | 'default'
   | 'small'
   | 'h1'
   | 'h2'
@@ -77,12 +77,12 @@ const lineHeightMap = {
 }
 
 const defaultFontWeightsMap: defaultFontWeights = {
+  default: theme.typography.light,
   h1: theme.typography.headingsFontWeight,
   h2: theme.typography.headingsFontWeight,
   h3: theme.typography.headingsFontWeight,
   h4: theme.typography.headingsFontWeight,
   h5: theme.typography.headingsFontWeight,
-  p: theme.typography.light,
   small: theme.typography.regular,
   intro: theme.typography.light,
   eyebrow: theme.typography.medium,
@@ -90,12 +90,12 @@ const defaultFontWeightsMap: defaultFontWeights = {
 }
 
 const defaultLineHeightsMap: defaultFontWeights = {
+  default: availableLineHeights.md,
   h1: availableLineHeights.sm,
   h2: availableLineHeights.sm,
   h3: availableLineHeights.md,
   h4: availableLineHeights.md,
   h5: availableLineHeights.md,
-  p: availableLineHeights.md,
   small: availableLineHeights.md,
   intro: availableLineHeights.md,
   eyebrow: availableLineHeights.md,
@@ -119,6 +119,9 @@ export const defaultLineHeights = styleMap(
 )
 
 export const variants: Variants = {
+  default: {
+    fontSize: availableFontSizes.sm,
+  },
   h1: {
     fontSize: availableFontSizes.xxl,
   },
@@ -132,9 +135,6 @@ export const variants: Variants = {
     fontSize: availableFontSizes.md,
   },
   h5: {
-    fontSize: availableFontSizes.sm,
-  },
-  p: {
     fontSize: availableFontSizes.sm,
   },
   small: {
