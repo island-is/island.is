@@ -20,6 +20,7 @@ import * as api from '../../api'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const getUser = async () => {
@@ -30,48 +31,54 @@ const App: React.FC = () => {
     }
 
     getUser()
-  }, [user, setUser])
+
+    return () => {
+      setIsLoading(false)
+    }
+  }, [user, setUser, setIsLoading])
 
   return (
-    <userContext.Provider value={{ user: user }}>
-      <BrowserRouter>
-        <Header />
-        <main className={styles.mainConainer}>
-          <Switch>
-            <Route path={Constants.CONFIRMATION_ROUTE}>
-              <Confirmation />
-            </Route>
-            <Route path={Constants.RULING_ROUTE}>
-              <Ruling />
-            </Route>
-            <Route path={Constants.COURT_DOCUMENT_ROUTE}>
-              <CourtRecord />
-            </Route>
-            <Route path={Constants.STEP_THREE_ROUTE}>
-              <Overview />
-            </Route>
-            <Route path={Constants.STEP_TWO_ROUTE}>
-              <StepTwo />
-            </Route>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <JudgeOverview />
-            </Route>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-            <Route path={Constants.STEP_ONE_ROUTE}>
-              <StepOne />
-            </Route>
-            <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
-              <DetentionRequests />
-            </Route>
-            <Route path="/">
-              <Login />
-            </Route>
-          </Switch>
-        </main>
-      </BrowserRouter>
-    </userContext.Provider>
+    !isLoading && (
+      <userContext.Provider value={{ user: user }}>
+        <BrowserRouter>
+          <Header />
+          <main className={styles.mainConainer}>
+            <Switch>
+              <Route path={Constants.CONFIRMATION_ROUTE}>
+                <Confirmation />
+              </Route>
+              <Route path={Constants.RULING_ROUTE}>
+                <Ruling />
+              </Route>
+              <Route path={Constants.COURT_DOCUMENT_ROUTE}>
+                <CourtRecord />
+              </Route>
+              <Route path={Constants.STEP_THREE_ROUTE}>
+                <Overview />
+              </Route>
+              <Route path={Constants.STEP_TWO_ROUTE}>
+                <StepTwo />
+              </Route>
+              <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+                <JudgeOverview />
+              </Route>
+              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+                <StepOne />
+              </Route>
+              <Route path={Constants.STEP_ONE_ROUTE}>
+                <StepOne />
+              </Route>
+              <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
+                <DetentionRequests />
+              </Route>
+              <Route path="/">
+                <Login />
+              </Route>
+            </Switch>
+          </main>
+        </BrowserRouter>
+      </userContext.Provider>
+    )
   )
 }
 
