@@ -97,6 +97,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     width="full"
                   >
                     <MobileHeaderButtons
+                      showSearch={showSearchInHeader}
                       sideBarMenuOpen={() => {
                         setSideMenuSearchFocus(false)
                         setSideMenuOpen(true)

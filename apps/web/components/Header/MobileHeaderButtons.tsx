@@ -7,25 +7,29 @@ import * as styles from './MobileHeaderButtons.treat'
 interface MobileHeaderButtonsProps {
   sideBarMenuOpen: () => void
   sideMenuSearchFocus: () => void
+  showSearch: boolean
 }
 
 export const MobileHeaderButtons: FC<MobileHeaderButtonsProps> = ({
   sideBarMenuOpen,
   sideMenuSearchFocus,
+  showSearch,
 }) => {
   const { t } = useI18n()
 
   return (
     <>
+      {showSearch && (
+        <Button
+          variant="menu"
+          icon="search"
+          customClassName={styles.searchButton}
+          onClick={sideMenuSearchFocus}
+        />
+      )}
       <Button
         variant="menu"
-        icon="search"
-        customClassName={styles.searchButton}
-        onClick={sideMenuSearchFocus}
-      />
-      <Button
-        variant="menu"
-        customClassName={styles.menuButton}
+        customClassName={showSearch ? styles.menuButton : ''}
         onClick={sideBarMenuOpen}
         leftIcon="burger"
       >
