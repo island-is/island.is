@@ -18,7 +18,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'
-import MobileHeaderButtons from './MobileHeaderButtons'
+import ComboButton from './ComboButton'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -96,7 +96,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     justifyContent="flexEnd"
                     width="full"
                   >
-                    <MobileHeaderButtons
+                    <ComboButton
                       showSearch={showSearchInHeader}
                       sideBarMenuOpen={() => {
                         setSideMenuSearchFocus(false)

@@ -1,0 +1,41 @@
+import { style, globalStyle } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
+
+export const buttonBase = style({
+  minHeight: 40,
+  padding: '0 12px',
+  display: 'flex',
+  alignItems: 'center',
+  outline: 'none',
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
+  transition: 'box-shadow .25s, color .25s',
+  ':hover': {
+    boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
+  },
+  ':focus': {
+    color: theme.color.dark400,
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+  ':active': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+})
+
+export const searchButton = style({
+  borderRadius: `${theme.border.radius.large} 0 0 ${theme.border.radius.large}`,
+  marginRight: '-1px',
+})
+
+export const menuButton = style({
+  borderRadius: `0 ${theme.border.radius.large}  ${theme.border.radius.large} 0`,
+  fontFamily: 'IBM Plex Sans, sans-serif',
+  fontStyle: 'normal',
+  fontWeight: theme.typography.semiBold,
+  fontSize: 12,
+  lineHeight: 1.333333,
+})
+
+export const buttonText = style({
+  marginLeft: '8px',
+})
