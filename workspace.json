@@ -449,7 +449,7 @@
             "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**/*"]
           }
         },
-        "storybook": {
+        "serve": {
           "builder": "@nrwl/storybook:storybook",
           "options": {
             "uiFramework": "@storybook/react",
