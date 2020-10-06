@@ -47,6 +47,7 @@ export { NewsletterSignup } from './lib/NewsletterSignup'
 export * from './lib/DatePicker/DatePicker'
 export * from './lib/AlertBanner/AlertBanner'
 export * from './lib/ProfileCard/ProfileCard'
+export { LinkContext } from './lib/LinkContext'
 
 // Layout
 export * from './lib/Box/Box'
