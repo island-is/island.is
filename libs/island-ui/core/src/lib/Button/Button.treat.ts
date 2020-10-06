@@ -526,7 +526,6 @@ export const leftSpacer = style({
 })
 
 export const leftContentContainer = style({
-  backgroundColor: theme.color.blue100,
   borderTopLeftRadius: theme.border.radius.large,
   borderBottomLeftRadius: theme.border.radius.large,
   ...themeUtils.responsiveStyle({

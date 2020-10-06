@@ -13,6 +13,7 @@ export type ButtonVariant = 'normal' | 'ghost' | 'redGhost' | 'text' | 'menu'
 export type ButtonWidth = 'normal' | 'fluid' | 'fixed'
 
 export interface ButtonProps {
+  customClassName?: string
   disabled?: boolean
   onClick?:
     | ((
@@ -49,6 +50,7 @@ export const Button = forwardRef<
     {
       children,
       onClick,
+      customClassName,
       disabled,
       htmlType = 'button',
       variant = 'normal',
@@ -71,6 +73,7 @@ export const Button = forwardRef<
     const { colorScheme } = useContext(ColorSchemeContext)
 
     const className = cn(
+      customClassName,
       styles.button,
       styles.variants[variant],
       styles.sizes[size],

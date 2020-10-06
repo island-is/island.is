@@ -44,10 +44,16 @@ interface Tab {
 interface Props {
   tabs?: Tab[]
   isVisible: boolean
+  searchBarFous: boolean
   handleClose: () => void
 }
 
-export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
+export const SideMenu: FC<Props> = ({
+  tabs = [],
+  isVisible,
+  searchBarFous,
+  handleClose,
+}) => {
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
   const { activeLocale, t } = useI18n()
@@ -119,6 +125,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                     activeLocale={activeLocale}
                     placeholder={t.searchPlaceholder}
                     size="medium"
+                    inputFocused={searchBarFous}
                   />
                 </GridColumn>
               </GridRow>

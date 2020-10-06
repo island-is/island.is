@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useState, useContext } from 'react'
-import { useRouter } from 'next/router'
+import React, { FC, useState, useEffect, useContext } from 'react'
 import {
   Logo,
   Columns,
@@ -16,10 +15,10 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'
+import MobileHeaderButtons from './MobileHeaderButtons'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -29,10 +28,14 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
-  const Router = useRouter()
-  const { makePath } = routeNames(activeLocale)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
+  const [sideMenuSearchFocus, setSideMenuSearchFocus] = useState(false)
   const { colorScheme } = useContext(ColorSchemeContext)
+
+  useEffect(() => {
+    console.log('listent to focus -- has focus: ', sideMenuSearchFocus, " menu open: ", sideMenuOpen)
+    setSideMenuOpen(sideMenuSearchFocus)
+  }, [sideMenuSearchFocus])
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -91,6 +94,10 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 justifyContent="flexEnd"
                 width="full"
               >
+                <MobileHeaderButtons
+                  sideBarMenuOpen={() => setSideMenuOpen(true)}
+                  sideMenuSearchFocus={() => setSideMenuSearchFocus(true)}
+                />
                 {showSearchInHeader && (
                   <>
                     <Hidden below="lg">
@@ -100,18 +107,6 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                         activeLocale={locale}
                         placeholder={t.searchPlaceholder}
                         autocomplete={false}
-                      />
-                    </Hidden>
-                    <Hidden above="md">
-                      <Button
-                        variant="menu"
-                        icon="search"
-                        onClick={() => {
-                          Router.push({
-                            pathname: makePath('search'),
-                            query: { focus: true },
-                          })
-                        }}
                       />
                     </Hidden>
                   </>
@@ -130,15 +125,17 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 <Box marginLeft={marginLeft}>
                   <LanguageToggler hideWhenMobile />
                 </Box>
-                <Box marginLeft={marginLeft} position="relative">
-                  <Button
-                    variant="menu"
-                    onClick={() => setSideMenuOpen(true)}
-                    leftIcon="burger"
-                  >
-                    {t.menuCaption}
-                  </Button>
-                </Box>
+                <Hidden below="md">
+                  <Box marginLeft={marginLeft} position="relative">
+                    <Button
+                      variant="menu"
+                      onClick={() => setSideMenuOpen(true)}
+                      leftIcon="burger"
+                    >
+                      {t.menuCaption}
+                    </Button>
+                  </Box>
+                </Hidden>
               </Box>
             </Column>
           </Columns>
@@ -147,7 +144,8 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
       <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
         <SideMenu
           isVisible={sideMenuOpen}
-          handleClose={() => setSideMenuOpen(false)}
+          handleClose={() => setSideMenuSearchFocus(false)}
+          searchBarFous={sideMenuSearchFocus}
         />
       </ColorSchemeContext.Provider>
     </GridContainer>

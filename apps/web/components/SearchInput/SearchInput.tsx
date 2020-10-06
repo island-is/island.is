@@ -196,6 +196,7 @@ interface SearchInputProps {
   initialInputValue?: string
   size?: AsyncSearchSizes
   autocomplete?: boolean
+  inputFocused?: boolean
   openOnFocus?: boolean
   placeholder?: string
   white?: boolean
@@ -210,6 +211,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       activeLocale: locale,
       initialInputValue = '',
       openOnFocus = false,
+      inputFocused = false,
       size = 'medium',
       white = false,
       colored = true,
@@ -237,14 +239,18 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     }
 
     const onSubmit = useSubmit(locale)
-    const [hasFocus, setHasFocus] = useState(false)
+    const [hasFocus, setHasFocus] = useState(inputFocused)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
       setHasFocus(true)
       scrollTo(ref)
     }, [setHasFocus])
 
+    const placy = String(hasFocus)
+
     return (
+      <>
+      {String(hasFocus)}
       <Downshift<string>
         id={id}
         initialInputValue={initialInputValue}
@@ -283,12 +289,14 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           closeMenu,
           inputValue,
         }) => (
+          
           <AsyncSearchInput
             ref={ref}
             white={white}
             hasFocus={hasFocus}
             loading={search.isLoading}
             rootProps={getRootProps()}
+            
             menuProps={{
               comp: 'div',
               ...getMenuProps(),
@@ -310,7 +318,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                 }
               },
               onBlur,
-              placeholder,
+              placeholder: placy,
               colored,
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
@@ -332,6 +340,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           </AsyncSearchInput>
         )}
       </Downshift>
+      </>
     )
   },
 )
