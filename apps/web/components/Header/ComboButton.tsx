@@ -25,7 +25,6 @@ export const ComboButton: FC<ComboButtonProps> = ({
       {showSearch && (
         <Box
           component={ReaButton}
-          as={'button'}
           className={cn(styles.buttonBase, styles.searchButton)}
           onClick={sideMenuSearchFocus}
         >
@@ -34,7 +33,6 @@ export const ComboButton: FC<ComboButtonProps> = ({
       )}
       <Box
         component={ReaButton}
-        as={'button'}
         className={cn(styles.buttonBase, styles.menuButton)}
         onClick={sideBarMenuOpen}
       >

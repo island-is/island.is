@@ -43,7 +43,7 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { id, image, title, intro, content },
+  lifeEvent: { id, slug, image, title, intro, content },
   namespace,
 }) => {
   useContentfulId(id)
@@ -57,7 +57,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
   const mobileNavigation = navigation.map((x) => ({
     title: x.text,
-    url: '#' + x.id,
+    url: slug + '#' + x.id,
   }))
 
   const metaTitle = `${title} | Ísland.is`

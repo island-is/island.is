@@ -10,11 +10,14 @@ const isLinkInternal = (href: string) => {
 }
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
+export type UnderlineVisibility = 'always' | 'hover'
+export type UnderlineVariants = 'normal' | 'small'
 
 interface Props extends LinkProps {
   color?: LinkColor
   className?: string
-  withUnderline?: boolean
+  underline?: UnderlineVariants
+  underlineVisibility?: UnderlineVisibility
   onClick?: () => void
   pureChildren?: boolean
 }
@@ -31,7 +34,8 @@ const Link: React.FC<Props> = ({
   prefetch,
   color,
   className,
-  withUnderline,
+  underline,
+  underlineVisibility = 'hover',
   pureChildren,
   ...linkProps
 }) => {
@@ -39,10 +43,11 @@ const Link: React.FC<Props> = ({
   const classNames = cn(
     styles.link,
     color ? styles.colors[color] : undefined,
+    underline ? styles.underlines[underline] : undefined,
+    underline && underlineVisibility
+      ? styles.underlineVisibilities[underlineVisibility]
+      : undefined,
     className,
-    {
-      [styles.withUnderline]: withUnderline,
-    },
   )
 
   // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be

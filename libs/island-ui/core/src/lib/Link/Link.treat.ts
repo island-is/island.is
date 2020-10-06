@@ -8,14 +8,46 @@ export const link = style({
   },
 })
 
-export const withUnderline = style({
+const mediumBoxShadow = `inset 0 -2px 0 0 currentColor`
+const smallBoxShadow = `inset 0 -1px 0 0 currentColor`
+
+const underline = {
   textDecoration: 'none',
   boxShadow: 'none',
   transition: 'color .2s, box-shadow .2s',
-  paddingBottom: 4,
-  ':hover': {
-    boxShadow: `inset 0 -2px 0 0 currentColor`,
-    textDecoration: 'none',
+}
+
+export const underlines = styleMap({
+  normal: {
+    ...underline,
+    paddingBottom: 4,
+  },
+  small: {
+    ...underline,
+    paddingBottom: 1,
+  },
+})
+
+export const underlineVisibilities = styleMap({
+  always: {
+    selectors: {
+      [`&${underlines.normal}`]: {
+        boxShadow: mediumBoxShadow,
+      },
+      [`&${underlines.small}`]: {
+        boxShadow: smallBoxShadow,
+      },
+    },
+  },
+  hover: {
+    selectors: {
+      [`&${underlines.normal}:hover`]: {
+        boxShadow: mediumBoxShadow,
+      },
+      [`&${underlines.small}:hover`]: {
+        boxShadow: smallBoxShadow,
+      },
+    },
   },
 })
 

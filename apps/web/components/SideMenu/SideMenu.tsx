@@ -54,6 +54,7 @@ export const SideMenu: FC<Props> = ({
   searchBarFocus,
   handleClose,
 }) => {
+  const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
   const searchInputRef = useRef(null)
@@ -87,12 +88,22 @@ export const SideMenu: FC<Props> = ({
   }, [isVisible, searchBarFocus, searchInputRef])
 
   useEffect(() => {
+    if (typeof window === 'object') {
+      setMounted(true)
+    }
+  }, [])
+
+  useEffect(() => {
     document.addEventListener('click', handleClickOutside, true)
 
     return () => {
       document.removeEventListener('click', handleClickOutside, true)
     }
   }, [isVisible, ref, handleClickOutside])
+
+  const logoProps = {
+    ...(mounted && { width: isMobile ? 30 : 40 }),
+  }
 
   return (
     <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
@@ -111,7 +122,7 @@ export const SideMenu: FC<Props> = ({
             paddingBottom={3}
             justifyContent="spaceBetween"
           >
-            <Logo width={isMobile ? 30 : 40} iconOnly id="sideMenuLogo" />
+            <Logo {...logoProps} iconOnly id="sideMenuLogo" />
             <Box display="flex" alignItems="center">
               <FocusableBox
                 component="button"
