@@ -102,43 +102,45 @@ const useDrag = ({ onDragStart, onDragEnd, onDragMove }: UseDragOptions) => {
 }
 
 interface TrackProps {
-  totalCells: number
-  sharedCells: number
-  currentIndex: number
-  onChange?: (index: number) => void
-  snap?: boolean
-  min?: number
+  min: number
+  max: number
   step?: number
-  showToolTip?: boolean
+  snap?: boolean
+  trackStyle?: CSSProperties
+  calculateCellStyle: (index: number) => CSSProperties
   showLabel?: boolean
+  showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
-  fadeRemainderCells?: boolean
+  showToolTip?: boolean
   label: {
     singular: string
     plural: string
   }
+  currentIndex: number
+  onChange?: (index: number) => void
 }
 
 const Slider = ({
-  totalCells,
-  sharedCells,
+  min = 0,
+  max,
+  step = 0.5,
+  snap = true,
+  trackStyle,
+  calculateCellStyle,
+  showLabel = false,
+  showMinMaxLabels = false,
+  showRemainderOverlay = true,
+  showToolTip = false,
+  label,
   currentIndex,
   onChange,
-  snap = true,
-  min = 0,
-  step = 0.5,
-  showToolTip = false,
-  showLabel = true,
-  showRemainderOverlay = true,
-  fadeRemainderCells = false,
-  label,
 }: TrackProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const ref = useRef(null)
   const size = useComponentSize(ref)
   const dragX = useRef<number>()
   const indexRef = useLatest(currentIndex)
-  const sizePerCell = size.width / totalCells
+  const sizePerCell = size.width / max
   const x = sizePerCell * currentIndex
 
   useEffect(() => {
@@ -210,7 +212,7 @@ const Slider = ({
         }
         break
       case 'ArrowRight':
-        if (currentIndex < totalCells) {
+        if (currentIndex < max) {
           onChange(currentIndex + step)
         }
         break
@@ -229,6 +231,16 @@ const Slider = ({
 
   return (
     <Box>
+      {showMinMaxLabels && (
+        <Box display="flex" justifyContent="spaceBetween" width="full">
+          <Typography color="blue400" variant="eyebrow">
+            {min}
+          </Typography>
+          <Typography color="blue400" variant="eyebrow">
+            {max}
+          </Typography>
+        </Box>
+      )}
       {showLabel && (
         <Typography variant="h4" as="p">
           {formatTooltip(currentIndex)}
@@ -237,26 +249,21 @@ const Slider = ({
       <Box
         className={styles.TrackGrid}
         marginTop={1}
-        style={{ gridTemplateColumns: `repeat(${totalCells || 12}, 1fr)` }}
+        style={{ gridTemplateColumns: `repeat(${max}, 1fr)`, ...trackStyle }}
         ref={ref}
       >
-        {Array.from({ length: totalCells }).map((_, index) => {
-          const isShared = index >= totalCells - sharedCells
-          const isActive = index < currentIndex
+        {Array.from({ length: max }).map((_, index) => {
           return (
             <Box
               className={styles.TrackCell}
               key={index}
-              style={{
-                background: isShared ? '#00E4CA' : '#0061FF',
-                opacity: isActive ? 1 : fadeRemainderCells ? 0.3 : undefined,
-              }}
+              style={calculateCellStyle(index)}
               onClick={(e) => onCellClick(index, e)}
             />
           )
         })}
         {showToolTip && (
-          <Tooltip style={tooltipStyle} atEnd={currentIndex === totalCells}>
+          <Tooltip style={tooltipStyle} atEnd={currentIndex === max}>
             {formatTooltip(currentIndex)}
           </Tooltip>
         )}

@@ -15,8 +15,10 @@ import {
   GetNamespaceQuery,
   GetNewsListQuery,
   GetLifeEventsQuery,
+  GetHomepageQuery,
   QueryGetNewsListArgs,
   QueryGetLifeEventsArgs,
+  QueryGetHomepageArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -24,6 +26,7 @@ import {
   GET_FRONTPAGE_SLIDES_QUERY,
   GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
+  GET_HOMEPAGE_QUERY,
 } from './queries'
 import {
   IntroductionSection,
@@ -43,6 +46,7 @@ interface HomeProps {
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsListQuery['getNewsList']['news']
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
+  page: GetHomepageQuery['getHomepage']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -51,6 +55,7 @@ const Home: Screen<HomeProps> = ({
   namespace,
   news,
   lifeEvents,
+  page,
 }) => {
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
@@ -73,8 +78,6 @@ const Home: Screen<HomeProps> = ({
     as: makePath('ArticleCategory', slug),
   }))
 
-  const featuredArticles = n('featuredArticles', [])
-
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
       <Stack space={4}>
@@ -89,14 +92,13 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={2}>
-          {featuredArticles.map(({ title, url }, index) => {
-            const isLatest = index + 1 === featuredArticles.length
+          {page.featuredThings.map(({ title, attention, thing }, index) => {
             return (
               <Tag
-                href={url}
-                key={url}
+                key={title}
+                href={makePath('article', thing.slug)}
                 variant="darkerBlue"
-                attention={isLatest}
+                attention={attention}
               >
                 {title}
               </Tag>
@@ -178,6 +180,9 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     {
       data: { getLifeEvents },
     },
+    {
+      data: { getHomepage },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<
@@ -219,6 +224,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
+    apolloClient.query<GetHomepageQuery, QueryGetHomepageArgs>({
+      query: GET_HOMEPAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -229,21 +242,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => {
-        // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(res.data.getNamespace.fields)
-
-        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-        return {
-          ...namespaceObject,
-          featuredArticles: namespaceObject.featuredArticles.map(
-            (featuredArticle) => {
-              const [title = '', url = ''] = featuredArticle.split(':')
-              return { title, url }
-            },
-          ),
-        }
-      }),
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
@@ -251,6 +250,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     lifeEvents: getLifeEvents,
     frontpageSlides: items,
     categories: getArticleCategories,
+    page: getHomepage,
     namespace,
     showSearchInHeader: false,
   }
