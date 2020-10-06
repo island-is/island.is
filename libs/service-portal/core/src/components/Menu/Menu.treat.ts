@@ -58,22 +58,25 @@ export const overlayIsOpen = style({
   visibility: 'visible',
 })
 
-export const avatar = style({
-  width: 56,
-  height: 56,
-  marginRight: theme.spacing['3'],
-  backgroundSize: 'cover',
-  borderRadius: '100%',
-})
-
 export const closeButton = style({
-  alignSelf: 'flex-start',
-  marginLeft: 'auto',
-  marginTop: -theme.spacing['1'],
-  marginRight: -theme.spacing['1'],
+  position: 'absolute',
+  top: theme.spacing['2'],
+  right: theme.spacing['2'],
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 44,
+  height: 44,
   cursor: 'pointer',
-  transition: 'transform 200ms',
+  border: '1px solid transparent',
+  backgroundColor: theme.color.white,
+  borderRadius: '100%',
+  transition: 'background-color 250ms, border-color 250ms',
   ':hover': {
-    transform: 'scale(1.3)',
+    backgroundColor: theme.color.dark100,
+  },
+  ':focus': {
+    outline: 'none',
+    borderColor: theme.color.mint200,
   },
 })
