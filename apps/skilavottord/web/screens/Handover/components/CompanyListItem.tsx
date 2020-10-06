@@ -45,9 +45,6 @@ export const CompanyListItem: FC<CompanyProps> = ({
           </Typography>
         </Stack>
       </Box>
-      <Button href={website} size="small" variant="ghost">
-        {t.buttons.website}
-      </Button>
     </Box>
   )
 }

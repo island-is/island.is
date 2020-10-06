@@ -53,6 +53,10 @@ const Handover = (props) => {
               <Typography variant="h1">{t.title}</Typography>
               <Typography variant="p">{t.info}</Typography>
             </Stack>
+            <Stack space={2}>
+              <Typography variant="h3">{t.subTitles.nextStep}</Typography>
+              <Typography variant="p">{t.subInfo}</Typography>
+            </Stack>
             <Stack space={[3, 3, 4, 4]}>
               <Typography variant="h3">{t.subTitles.companies}</Typography>
               <CompanyList companies={companies} />
@@ -76,7 +80,7 @@ const Handover = (props) => {
                 onClick={onContinue}
                 width={isMobile ? 'fluid' : 'normal'}
               >
-                {t.buttons.continue}
+                {t.buttons.close}
               </Button>
             </Box>
           </Stack>
