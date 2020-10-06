@@ -1,3 +1,6 @@
+/**
+ * @deprecated Use `Text` instead.
+ */
 import React from 'react'
 import cn from 'classnames'
 
@@ -11,7 +14,9 @@ import styles, {
   defaultFontWeights,
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
+import IsDeprecated from './IsDeprecated'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
+
 import { Box } from '../Box'
 
 export interface TypographyProps {
@@ -84,4 +89,4 @@ export const Typography = ({
   )
 }
 
-export default Typography
+export default IsDeprecated(Typography, 'please use <Text /> instead.')
