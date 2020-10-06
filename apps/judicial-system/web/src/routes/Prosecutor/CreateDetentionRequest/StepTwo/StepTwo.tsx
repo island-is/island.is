@@ -390,7 +390,7 @@ export const StepTwo: React.FC = () => {
 
                               const provisionIsSelected =
                                 copyOfState.custodyProvisions.indexOf(
-                                  target.value as CustodyProvisions,
+                                  target.value as CaseCustodyProvisions,
                                 ) > -1
 
                               // Toggle the checkbox on or off
@@ -399,7 +399,7 @@ export const StepTwo: React.FC = () => {
                               // If the user is checking the box, add the broken law to the state
                               if (!provisionIsSelected) {
                                 copyOfState.custodyProvisions.push(
-                                  target.value as CustodyProvisions,
+                                  target.value as CaseCustodyProvisions,
                                 )
                               }
                               // If the user is unchecking the box, remove the broken law from the state
@@ -408,7 +408,7 @@ export const StepTwo: React.FC = () => {
 
                                 provisions.splice(
                                   provisions.indexOf(
-                                    target.value as CustodyProvisions,
+                                    target.value as CaseCustodyProvisions,
                                   ),
                                   1,
                                 )
