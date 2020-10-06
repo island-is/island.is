@@ -6,6 +6,7 @@ import {
   ResponsiveSpace,
   ContentBlock,
   Button,
+  Inline,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
@@ -15,8 +16,6 @@ import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger'
-
-const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<{}> = () => {
   const { lang } = useLocale()
@@ -52,24 +51,21 @@ export const Header: FC<{}> = () => {
                   <Logo />
                 </Hidden>
               </Link>
-              <Box display="flex">
-                <Box marginLeft={spacing}>
-                  <Button
-                    variant="menu"
-                    onClick={handleLangClick.bind(
-                      null,
-                      lang === 'is' ? 'en' : 'is',
-                    )}
-                  >
-                    {lang === 'is' ? 'EN' : 'IS'}
-                  </Button>
-                </Box>
-                <Box marginLeft={spacing}>
-                  <UserMenu />
-                </Box>
+              <Inline space={[1, 1, 1, 2]}>
+                <Button
+                  variant="menu"
+                  onClick={handleLangClick.bind(
+                    null,
+                    lang === 'is' ? 'en' : 'is',
+                  )}
+                >
+                  {lang === 'is' ? 'EN' : 'IS'}
+                </Button>
+                <UserMenu />
+                <NotificationMenuTrigger />
                 {mobileMenuState === 'open' && (
                   <Hidden above="md">
-                    <Box marginLeft={spacing}>
+                    <Box>
                       <Button
                         variant="menu"
                         icon="close"
@@ -78,10 +74,7 @@ export const Header: FC<{}> = () => {
                     </Box>
                   </Hidden>
                 )}
-                <Box marginLeft={spacing}>
-                  <NotificationMenuTrigger />
-                </Box>
-              </Box>
+              </Inline>
             </Box>
           </ContentBlock>
         </Box>

@@ -53,7 +53,7 @@ const ApplicationCard: FC<Props> = ({
             !status ? 'ekki ' : ''
           } lokið umsóknarferli fyrir ${name}`}
         </Typography>
-        <Columns space={8} alignY="center">
+        <Columns space={8} alignY="center" collapseBelow="md">
           <Column width="8/12">
             <ProgressBar progress={progress} />
           </Column>

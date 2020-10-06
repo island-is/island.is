@@ -29,14 +29,18 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
                     </Typography>
                   </Box>
                   {section.cards.map((card) => (
-                    <NotificationCard key={card.id} card={card} />
+                    <NotificationCard
+                      key={card.id}
+                      card={card}
+                      onClick={onClose}
+                    />
                   ))}
                 </Stack>
               </Box>
             ))}
           </Box>
           <Box marginTop={4}>
-            <Link to={ServicePortalPath.SkilabodRoot}>
+            <Link to={ServicePortalPath.SkilabodRoot} onClick={onClose}>
               <Button width="fluid">Sjá öll skilaboð</Button>
             </Link>
           </Box>

@@ -4,7 +4,7 @@ import { style } from 'treat'
 export const wrapper = style({})
 
 export const figure = style({
-  paddingTop: '60%',
+  paddingTop: '100%',
   backgroundSize: 'cover',
   backgroundPosition: '50% 50%',
   backgroundImage: 'url(/assets/images/school.jpg)',

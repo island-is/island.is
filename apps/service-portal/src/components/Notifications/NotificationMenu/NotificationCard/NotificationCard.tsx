@@ -8,9 +8,10 @@ import { ActionMenu, ActionMenuItem } from '@island.is/service-portal/core'
 
 interface Props {
   card: Card
+  onClick: () => void
 }
 
-const NotificationCard: FC<Props> = ({ card }) => {
+const NotificationCard: FC<Props> = ({ card, onClick }) => {
   return (
     <Box
       position="relative"
@@ -35,7 +36,7 @@ const NotificationCard: FC<Props> = ({ card }) => {
           {card.text}
         </Typography>
         <Box textAlign="right">
-          <Link to={card.link.url} className={styles.link}>
+          <Link to={card.link.url} className={styles.link} onClick={onClick}>
             <Button variant="text" size="small" icon="arrowRight">
               {card.link.title}
             </Button>
