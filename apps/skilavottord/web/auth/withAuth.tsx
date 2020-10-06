@@ -8,7 +8,7 @@ const withAuth = (WrappedComponent: NextComponentType) =>
   class extends Component {
     static async getInitialProps(ctx) {
       if (!isAuthenticated(ctx)) {
-        const authUrl = `${AUTH_URL}?returnUrl=${ctx.asPath}`
+        const authUrl = `${AUTH_URL}/login?returnUrl=${ctx.asPath}`
         const { res } = ctx
         if (res) {
           res.writeHead(302, {

@@ -8,12 +8,3 @@ export const logout = () =>
       'Content-Type': 'application/json',
     },
   })
-
-export const confirmRecycle = (returnUrl) =>
-  fetch(`${AUTH_URL}?returnUrl=${returnUrl}`, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-  })
