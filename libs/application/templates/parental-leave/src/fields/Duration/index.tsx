@@ -14,13 +14,13 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   const monthsToUse = (formValue.usage as number) || 1
-  const [monthsToSpread, setMonthsToSpread] = useState<number>(monthsToUse)
+  const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const minMonths = 1
   const maxMonths = 24
 
   useEffect(() => {
     // TODO: Calculate the percentage they can receive based on the duration spread
-  }, [monthsToSpread, monthsToUse])
+  }, [chosenDuration, monthsToUse])
 
   return (
     <Box marginTop={8}>
@@ -33,10 +33,8 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
             max={maxMonths}
             trackStyle={{ gridTemplateRows: 8 }}
             calculateCellStyle={(index: number) => {
-              const isActive =
-                (value && index < value) ||
-                (monthsToSpread && index < monthsToSpread) ||
-                index < monthsToUse
+              const isActive = index < value
+
               return {
                 background: isActive
                   ? theme.color.mint400
@@ -46,11 +44,11 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
             showMinMaxLabels
             showToolTip
             label={{ singular: 'mánuður', plural: 'mánuðir' }}
-            currentIndex={value || monthsToSpread || monthsToUse}
-            onChange={(selectedMonthsToSpread: number) => {
+            currentIndex={value}
+            onChange={(selectedMonths: number) => {
               clearErrors(id)
-              onChange(selectedMonthsToSpread)
-              setMonthsToSpread(selectedMonthsToSpread)
+              onChange(selectedMonths)
+              setChosenDuration(selectedMonths)
             }}
           />
         )}
