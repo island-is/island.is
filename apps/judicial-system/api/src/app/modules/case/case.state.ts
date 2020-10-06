@@ -1,5 +1,5 @@
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
-import { ForbiddenException } from '@nestjs/common'
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common'
 
 import { User, UserRole } from '../user'
 import { TransitionCaseDto } from './dto'
@@ -65,7 +65,7 @@ export const transitionCase = function (
   const agent: Agent = rule.agent
 
   if (user.role !== agent.role) {
-    throw new ForbiddenException(
+    throw new UnauthorizedException(
       `The transition ${transition.transition} cannot be applied by a user with role ${user.role}`,
     )
   }

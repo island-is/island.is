@@ -116,7 +116,8 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                         size="medium"
                         activeLocale={locale}
                         placeholder={t.searchPlaceholder}
-                        autocomplete={false}
+                        autocomplete={true}
+                        autosuggest={false}
                       />
                     </Hidden>
                   </>

@@ -141,6 +141,8 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
+            paddingX={[2, 2, 4]}
+            paddingY={2}
             onClick={onClick ? onClick : handleOpen}
           >
             <Columns space={2} alignY="center">
@@ -154,7 +156,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </Typography>
                 {visibleContent && (
                   <div className={styles.visibleContent}>
-                    <Typography variant="pSmall">{visibleContent}</Typography>
+                    <Typography variant="p">{visibleContent}</Typography>
                   </div>
                 )}
               </Column>
@@ -195,7 +197,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingTop={2} id={id}>
+          <Box paddingX={[2, 2, 4]} paddingBottom={2} id={id}>
             {children}
           </Box>
         </AnimateHeight>
@@ -206,7 +208,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
 
 type AlternateAccordionItemBaseProps = Omit<
   AccordionItemBaseProps,
-  'labelVariant' | 'iconVariant'
+  'iconVariant'
 >
 
 export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
@@ -220,8 +222,7 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
-      paddingX={[2, 2, 4]}
-      paddingY={2}
+      padding={[2, 2, 4]}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
@@ -231,9 +232,10 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
   )
 }
 
-export const SidebarAccordion: FC<AlternateAccordionItemBaseProps> = (
-  props,
-) => {
+export const SidebarAccordion: FC<Omit<
+  AlternateAccordionItemBaseProps,
+  'labelVariant'
+>> = (props) => {
   return (
     <AccordionItem {...props} labelVariant="p" iconVariant="sidebar">
       {props.children}

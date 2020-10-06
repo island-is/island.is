@@ -14,8 +14,8 @@ import {
   LinkCard,
   Option,
   Link,
-  Accordion,
   FocusableBox,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -30,8 +30,6 @@ import {
 } from '@island.is/web/screens/queries'
 import { CategoryLayout } from '@island.is/web/screens/Layouts/Layouts'
 
-import LifeEventInCategory from './LifeEventInCategory'
-
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
@@ -44,6 +42,7 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetLifeEventsInCategoryArgs,
+  Image,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 
@@ -173,7 +172,10 @@ const Category: Screen<CategoryProps> = ({
     }
 
     setHash(newHash)
-    Router.replace(makePath('ArticleCategory', category.slug + `#${newHash}`))
+    Router.replace(
+      makePath('ArticleCategory', '/[slug]'),
+      makePath('ArticleCategory', category.slug + `#${newHash}`),
+    )
   }
 
   const sortArticles = (articles: Articles) => {
@@ -238,140 +240,128 @@ const Category: Screen<CategoryProps> = ({
           />
         }
         belowContent={
-          <>
+          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
             <Stack space={2}>
-              <Accordion
-                dividerOnBottom={false}
-                dividerOnTop={false}
-                dividers={false}
-                singleExpand={false}
-              >
-                {sortedGroups.map((groupSlug, index) => {
-                  const { title, description, articles } = groups[groupSlug]
+              {sortedGroups.map((groupSlug, index) => {
+                const { title, description, articles } = groups[groupSlug]
 
-                  const { articlesBySubgroup } = groupArticlesBySubgroup(
-                    articles,
-                  )
+                const { articlesBySubgroup } = groupArticlesBySubgroup(articles)
 
-                  const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
-                  const expanded = hash.includes(groupSlug)
+                const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
+                const expanded = hash.includes(groupSlug)
 
-                  return (
-                    <div
-                      key={index}
-                      id={groupSlug}
-                      ref={(el) => (itemsRef.current[index] = el)}
-                    >
-                      <AccordionCard
-                        id={`accordion-item-${groupSlug}`}
-                        label={title}
-                        labelUse="h2"
-                        startExpanded={expanded}
-                        visibleContent={description}
-                        onClick={() => {
-                          handleAccordionClick(groupSlug)
-                        }}
-                      >
-                        <Box paddingY={2}>
-                          {sortedSubgroupKeys.map((subgroup, index) => {
-                            const {
-                              sortedArticles,
-                              isSortedAlphabetically,
-                            } = sortArticles(articlesBySubgroup[subgroup])
-
-                            // Articles with 1 subgroup only have the "other" group and don't get a heading.
-                            const hasSubgroups = sortedSubgroupKeys.length > 1
-
-                            // Single articles that don't belong to a subgroup don't get a heading
-                            const isSingleArticle = sortedArticles.length === 1
-
-                            // Rename 'undefined' group to 'Other'
-                            const subgroupName =
-                              subgroup === 'undefined' ||
-                              subgroup === 'null' ||
-                              !subgroup
-                                ? n('other')
-                                : subgroup
-
-                            const heading = hasSubgroups
-                              ? subgroupName
-                              : isSortedAlphabetically && !isSingleArticle
-                              ? n('sortedAlphabetically', 'A til Ö')
-                              : '' // No subgroup and custom sorting = no heading
-
-                            return (
-                              <React.Fragment key={subgroup}>
-                                {heading && (
-                                  <Typography
-                                    variant="h5"
-                                    paddingBottom={3}
-                                    paddingTop={index === 0 ? 0 : 3}
-                                  >
-                                    {heading}
-                                  </Typography>
-                                )}
-                                <Stack space={2}>
-                                  {sortedArticles.map(
-                                    ({
-                                      title,
-                                      slug,
-                                      containsApplicationForm,
-                                    }) => {
-                                      return (
-                                        <FocusableBox
-                                          key={slug}
-                                          href={makePath('article', '/[slug]')}
-                                          as={makePath('article', slug)}
-                                          borderRadius="large"
-                                        >
-                                          {({ isFocused }) => (
-                                            <LinkCard
-                                              isFocused={isFocused}
-                                              tag={
-                                                containsApplicationForm &&
-                                                n(
-                                                  'applicationProcess',
-                                                  'Umsókn',
-                                                )
-                                              }
-                                            >
-                                              {title}
-                                            </LinkCard>
-                                          )}
-                                        </FocusableBox>
-                                      )
-                                    },
-                                  )}
-                                </Stack>
-                              </React.Fragment>
-                            )
-                          })}
-                        </Box>
-                      </AccordionCard>
-                    </div>
-                  )
-                })}
-              </Accordion>
-            </Stack>
-            <Stack space={2}>
-              {lifeEvents.map((lifeEvent, index) => {
                 return (
-                  <LifeEventInCategory
+                  <div
                     key={index}
-                    title={lifeEvent.title}
-                    slug={lifeEvent.slug}
-                    intro={lifeEvent.intro}
-                    image={
-                      lifeEvent.thumbnail
-                        ? lifeEvent.thumbnail.url
-                        : lifeEvent.image.url
-                    }
-                    categoryTag={n('categoryTag', 'Lífsviðburður')}
-                  />
+                    id={groupSlug}
+                    ref={(el) => (itemsRef.current[index] = el)}
+                  >
+                    <AccordionCard
+                      id={`accordion-item-${groupSlug}`}
+                      label={title}
+                      labelUse="h2"
+                      labelVariant="h3"
+                      startExpanded={expanded}
+                      visibleContent={description}
+                      onClick={() => {
+                        handleAccordionClick(groupSlug)
+                      }}
+                    >
+                      <Box paddingTop={2}>
+                        {sortedSubgroupKeys.map((subgroup, index) => {
+                          const {
+                            sortedArticles,
+                            isSortedAlphabetically,
+                          } = sortArticles(articlesBySubgroup[subgroup])
+
+                          // Articles with 1 subgroup only have the "other" group and don't get a heading.
+                          const hasSubgroups = sortedSubgroupKeys.length > 1
+
+                          // Single articles that don't belong to a subgroup don't get a heading
+                          const isSingleArticle = sortedArticles.length === 1
+
+                          // Rename 'undefined' group to 'Other'
+                          const subgroupName =
+                            subgroup === 'undefined' ||
+                            subgroup === 'null' ||
+                            !subgroup
+                              ? n('other')
+                              : subgroup
+
+                          const heading = hasSubgroups
+                            ? subgroupName
+                            : isSortedAlphabetically && !isSingleArticle
+                            ? n('sortedAlphabetically', 'A til Ö')
+                            : '' // No subgroup and custom sorting = no heading
+
+                          return (
+                            <React.Fragment key={subgroup}>
+                              {heading && (
+                                <Typography
+                                  variant="h5"
+                                  paddingBottom={3}
+                                  paddingTop={index === 0 ? 0 : 3}
+                                >
+                                  {heading}
+                                </Typography>
+                              )}
+                              <Stack space={2}>
+                                {sortedArticles.map(
+                                  ({
+                                    title,
+                                    slug,
+                                    containsApplicationForm,
+                                  }) => {
+                                    return (
+                                      <FocusableBox
+                                        key={slug}
+                                        href={makePath('article', '/[slug]')}
+                                        as={makePath('article', slug)}
+                                        borderRadius="large"
+                                      >
+                                        {({ isFocused }) => (
+                                          <LinkCard
+                                            isFocused={isFocused}
+                                            tag={
+                                              containsApplicationForm &&
+                                              n('applicationProcess', 'Umsókn')
+                                            }
+                                          >
+                                            {title}
+                                          </LinkCard>
+                                        )}
+                                      </FocusableBox>
+                                    )
+                                  },
+                                )}
+                              </Stack>
+                            </React.Fragment>
+                          )
+                        })}
+                      </Box>
+                    </AccordionCard>
+                  </div>
                 )
               })}
-            </Stack>
-            <Stack space={2}>
+              {lifeEvents.map(
+                ({ title, slug, intro, thumbnail, image }, index) => {
+                  return (
+                    <Card
+                      key={index}
+                      href={makePath('lifeEvent', '[slug]')}
+                      as={makePath('lifeEvent', slug)}
+                      description={intro}
+                      title={title}
+                      image={(thumbnail || image) as Image}
+                      tags={[
+                        {
+                          title: n('categoryTag'),
+                        },
+                      ]}
+                    />
+                  )
+                },
+              )}
               {cards.map(({ title, content, slug }, index) => {
                 return (
                   <Card
@@ -384,7 +374,7 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
-          </>
+          </ColorSchemeContext.Provider>
         }
       >
         <Box paddingBottom={2}>

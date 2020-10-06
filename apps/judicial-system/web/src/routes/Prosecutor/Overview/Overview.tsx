@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import {
@@ -24,6 +24,7 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
 import * as api from '../../../api'
 import { Case } from '@island.is/judicial-system-web/src/types'
+import { userContext } from '../../../utils/userContext'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -31,6 +32,7 @@ export const Overview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
 
   const history = useHistory()
+  const uContext = useContext(userContext)
 
   const handleNextButtonClick = async () => {
     try {
@@ -59,6 +61,10 @@ export const Overview: React.FC = () => {
       return false
     }
   }
+
+  useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
 
   useEffect(() => {
     const caseDraft = window.localStorage.getItem('workingCase')
@@ -160,7 +166,7 @@ export const Overview: React.FC = () => {
                   </Typography>
                 </Box>
               )}
-              <Box component="section" marginBottom={5}>
+              <Box component="section" marginBottom={10}>
                 <Accordion>
                   <AccordionItem id="id_1" label="Dómkröfur">
                     <Typography variant="p" as="p">
@@ -231,6 +237,16 @@ export const Overview: React.FC = () => {
                   </AccordionItem>
                 </Accordion>
               </Box>
+              {uContext?.user && (
+                <Box marginBottom={15}>
+                  <Box marginBottom={1}>
+                    <Typography>F.h.l</Typography>
+                  </Box>
+                  <Typography variant="h3">
+                    {`${uContext.user.name}, ${uContext.user.title}`}
+                  </Typography>
+                </Box>
+              )}
               <FormFooter
                 previousUrl={Constants.STEP_TWO_ROUTE}
                 nextUrl="/"

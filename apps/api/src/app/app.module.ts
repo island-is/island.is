@@ -12,14 +12,14 @@ import { HealthController } from './health.controller'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-
+const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
 @Module({
   controllers: [HealthController],
   imports: [
     GraphQLModule.forRoot({
       debug,
       playground,
-      autoSchemaFile: 'apps/api/src/api.graphql',
+      autoSchemaFile,
       path: '/api/graphql',
       plugins: [
         responseCachePlugin({

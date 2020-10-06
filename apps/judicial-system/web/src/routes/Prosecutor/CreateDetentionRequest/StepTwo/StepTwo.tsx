@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
@@ -205,6 +205,10 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
+
+  useEffect(() => {
+    document.title = 'Málsatvik og lagarök - Réttarvörslugátt'
+  }, [])
 
   return (
     <Box marginTop={7} marginBottom={30}>
