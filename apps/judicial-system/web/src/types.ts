@@ -113,3 +113,18 @@ export interface User {
   mobileNumber: string
   role: string
 }
+
+export interface RequestSignature {
+  controlCode: string
+  documentToken: string
+}
+
+export interface RequestSignatureResponse {
+  httpStatusCode: number
+  response?: RequestSignature
+}
+
+export interface ConfirmSignatureResponse {
+  httpStatusCode: number
+  response?: Case
+}
