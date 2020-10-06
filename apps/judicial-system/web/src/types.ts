@@ -100,6 +100,7 @@ export interface SendNotificationResponse {
 export interface CreateCaseRequest {
   policeCaseNumber: string
   accusedNationalId: string
+  court: string
 }
 
 export interface User {

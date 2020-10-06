@@ -24,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   isPrimaryButtonLoading,
 }: ModalProps) => {
   return (
-    <div className={styles.container}>
+    <div className={styles.container} test-id="modal">
       <div className={styles.modalContainer}>
         {handleClose && (
           <Box position="absolute" top={0} right={0}>
@@ -74,6 +74,9 @@ const ModalPortal = ({
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
 }: ModalProps) => {
+  const modalRoot =
+    document.getElementById('modal') ?? document.createElement('div')
+
   return ReactDOM.createPortal(
     <Modal
       title={title}
@@ -84,7 +87,7 @@ const ModalPortal = ({
       handlePrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
     />,
-    document.getElementById('modal'),
+    modalRoot,
   )
 }
 

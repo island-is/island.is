@@ -53,7 +53,6 @@ export const Confirmation: React.FC = () => {
 
   useEffect(() => {
     const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
-
     if (wc && !workingCase) {
       setWorkingCase(wc)
     }
@@ -373,21 +372,22 @@ export const Confirmation: React.FC = () => {
                   // Request signature to get control code
                   const signature = await api.requestSignature(workingCase.id)
 
-                  if (signature.httpStatusCode === 201) {
+                  if (
+                    signature.httpStatusCode >= 200 &&
+                    signature.httpStatusCode < 300
+                  ) {
                     setSignatureResponse(signature)
+                    setModalVisible(true)
+                    setIsLoading(false)
+
+                    // Confirm requested signature
+                    const confirmSignature = await api.confirmSignature(
+                      workingCase.id,
+                      signature.response.documentToken,
+                    )
+
+                    setConfirmSignatureResponse(confirmSignature)
                   }
-
-                  setModalVisible(true)
-                  setIsLoading(false)
-
-                  // Confirm requested signature
-                  const confirmSignature = await api.confirmSignature(
-                    workingCase.id,
-                    signature.response.documentToken,
-                  )
-
-                  setConfirmSignatureResponse(confirmSignature)
-                  console.log(confirmSignature)
                 }}
                 nextIsLoading={isLoading}
               />
