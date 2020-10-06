@@ -13,7 +13,7 @@ export type FieldWidth = 'full' | 'half'
 
 export interface BaseField extends FormItem {
   readonly id: string
-  readonly component: FieldComponents | CustomFieldComponents // TODO maybe this does not belong here, and application-form lib has a map from type to component
+  readonly component: FieldComponents | string
   readonly name: MessageDescriptor | string
   readonly children: undefined
   width?: FieldWidth
@@ -25,7 +25,7 @@ export interface BaseField extends FormItem {
 
 export enum FieldTypes {
   CHECKBOX = 'CHECKBOX',
-  CUSTOM = 'CUSTOM', // TODO if we map type to component, then we must have unique field type for each custom field
+  CUSTOM = 'CUSTOM',
   DATE = 'DATE',
   INTRO = 'INTRO',
   RADIO = 'RADIO',
@@ -35,13 +35,6 @@ export enum FieldTypes {
   FILEUPLOAD = 'FILEUPLOAD',
   REVIEW = 'REVIEW',
   DIVIDER = 'DIVIDER',
-}
-
-export enum CustomFieldComponents {
-  Country = 'ExampleCountryField',
-  PARENTAL_LEAVE_CALCULATIONS = 'ParentalLeaveCalculations',
-  PARENTAL_LEAVE_PERIODS = 'ParentalLeavePeriods',
-  PARENTAL_LEAVE_USAGE = 'ParentalLeaveUsage',
 }
 
 export enum FieldComponents {
@@ -125,7 +118,7 @@ export interface DividerField extends BaseField {
 
 export interface CustomField extends Question {
   readonly type: FieldTypes.CUSTOM
-  readonly component: CustomFieldComponents
+  readonly component: string
   props?: object
 }
 

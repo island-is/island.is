@@ -9,7 +9,7 @@ import {
   RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
@@ -117,6 +117,10 @@ export const Ruling: React.FC = () => {
     },
   ]
 
+  useEffect(() => {
+    document.title = 'Úrskurður - Réttarvörslugátt'
+  }, [])
+
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -195,6 +199,7 @@ export const Ruling: React.FC = () => {
                   <DatePicker
                     label="Gæsluvarðhald til"
                     placeholderText="Veldu dagsetningu"
+                    locale="is"
                     selected={
                       workingCase.custodyEndDate
                         ? new Date(workingCase.custodyEndDate)

@@ -8,7 +8,6 @@ import {
   buildIntroductionField,
   Form,
   ApplicationTypes,
-  CustomFieldComponents,
   DataProviderTypes,
 } from '@island.is/application/core'
 import { m } from './messages'
@@ -64,7 +63,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'usage',
                 name: m.usage,
                 required: true,
-                component: CustomFieldComponents.PARENTAL_LEAVE_USAGE,
+                component: 'ParentalLeaveUsage',
               },
               {},
             ),
@@ -79,7 +78,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'spread',
                 name: m.spread,
                 required: true,
-                component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
+                component: 'ParentalLeaveCalculations',
               },
               {},
             ),
@@ -87,7 +86,7 @@ export const ParentalLeaveForm: Form = buildForm({
               {
                 id: 'periods',
                 name: m.periods,
-                component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
+                component: 'ParentalLeaveCalculations',
               },
               {},
             ),

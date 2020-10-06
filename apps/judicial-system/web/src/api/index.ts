@@ -6,6 +6,7 @@ import {
   GetCaseByIdResponse,
   Notification,
   SendNotificationResponse,
+  User,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
@@ -136,7 +137,7 @@ export const transitionCase: (
   return response.status
 }
 
-export const getUser = async () => {
+export const getUser = async (): Promise<User> => {
   const response = await fetch('/api/user', {
     headers: {
       Authorization: `Bearer ${csrfToken}`,
