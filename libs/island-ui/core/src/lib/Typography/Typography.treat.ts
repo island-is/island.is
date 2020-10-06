@@ -20,8 +20,8 @@ export type VariantTypes =
   | 'sideMenu'
   | 'placeholderText'
   | 'datepickerHeaderText'
-  | 'formProgressSection'
-  | 'formProgressSectionActive'
+  | 'formStepperSection'
+  | 'formStepperSectionActive'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -74,8 +74,8 @@ const defaultFontWeightsMap: defaultFontWeights = {
   sideMenu: theme.typography.medium,
   placeholderText: theme.typography.light,
   datepickerHeaderText: theme.typography.semiBold,
-  formProgressSection: theme.typography.light,
-  formProgressSectionActive: theme.typography.semiBold,
+  formStepperSection: theme.typography.light,
+  formStepperSectionActive: theme.typography.semiBold,
 }
 
 export const fontWeight = styleMap(
@@ -191,14 +191,14 @@ export const variants: Variants = {
     },
     lineHeight: 1.666,
   },
-  formProgressSection: {
+  formStepperSection: {
     fontSize: {
       xs: 16,
       md: 18,
     },
     lineHeight: 1.75,
   },
-  formProgressSectionActive: {
+  formStepperSectionActive: {
     fontSize: {
       xs: 16,
       md: 18,

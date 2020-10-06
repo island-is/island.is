@@ -477,6 +477,34 @@ export interface IFaqList extends Entry<IFaqListFields> {
   }
 }
 
+export interface IFeaturedFields {
+  /** Title */
+  title: string
+
+  /** Special attention */
+  attention?: boolean | undefined
+
+  /** Featured article */
+  thing?: IArticle | undefined
+}
+
+export interface IFeatured extends Entry<IFeaturedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featured'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFrontpageSliderFields {
   /** Titill */
   title: string
@@ -583,6 +611,28 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
     contentType: {
       sys: {
         id: 'genericPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IHomepageFields {
+  /** Featured articles */
+  featured?: IFeatured[] | undefined
+}
+
+export interface IHomepage extends Entry<IHomepageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'homepage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2123,9 +2173,11 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'embeddedVideo'
   | 'faqList'
+  | 'featured'
   | 'frontpageSlider'
   | 'frontpageSliderList'
   | 'genericPage'
+  | 'homepage'
   | 'iconBullet'
   | 'landingPage'
   | 'latestNewsSlice'
