@@ -16,6 +16,7 @@ import Modal from '../../../shared-components/Modal/Modal'
 import {
   AppealDecitionRole,
   Case,
+  ConfirmSignatureResponse,
   RequestSignatureResponse,
 } from '../../../types'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
@@ -28,9 +29,10 @@ import * as Constants from '../../../utils/constants'
 import { formatDate, parseTransition } from '../../../utils/formatters'
 import { capitalize } from 'lodash'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
-import { CaseTransition } from '@island.is/judicial-system/types'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import * as api from '../../../api'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { useHistory } from 'react-router-dom'
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -38,7 +40,12 @@ export const Confirmation: React.FC = () => {
   const [signatureResponse, setSignatureResponse] = useState<
     RequestSignatureResponse
   >()
+  const [confirmSignatureResponse, setConfirmSignatureResponse] = useState<
+    ConfirmSignatureResponse
+  >()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const uContext = useContext(userContext)
+  const history = useHistory()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -52,52 +59,54 @@ export const Confirmation: React.FC = () => {
     }
   }, [workingCase, setWorkingCase])
 
+  useEffect(() => {
+    if (!modalVisible) {
+      setSignatureResponse(null)
+      setConfirmSignatureResponse(null)
+    }
+  }, [modalVisible, setSignatureResponse, setConfirmSignatureResponse])
+
   const handleNextButtonClick = async () => {
     try {
-      // Parse the transition request
-      const transitionRequest = parseTransition(
-        workingCase.modified,
-        workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
-      )
+      if (workingCase.state === CaseState.SUBMITTED) {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+        )
 
-      // Transition the case
-      const response = await api.transitionCase(
-        workingCase.id,
-        transitionRequest,
-      )
+        // Transition the case
+        const response = await api.transitionCase(
+          workingCase.id,
+          transitionRequest,
+        )
 
-      if (response !== 200) {
-        // Improve error handling at some point
-        return false
+        if (response !== 200) {
+          // Improve error handling at some point
+          return false
+        }
+
+        return true
       }
-
-      return true
     } catch (e) {
       return false
     }
   }
 
-  const mapStatusCodeToText = (code: number) => {
-    switch (code) {
-      case 200: {
-        return (
-          <>
-            <Box marginBottom={2}>
-              <Typography variant="h2" color="blue400">
-                {`Öryggistala: ${signatureResponse.response.controlCode}`}
-              </Typography>
-            </Box>
-            <Typography>
-              Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
-              öryggistala birtist í símanum þínum.
-            </Typography>
-          </>
-        )
-      }
-      default: {
-        return 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
-      }
-    }
+  const renderContolCode = () => {
+    return (
+      <>
+        <Box marginBottom={2}>
+          <Typography variant="h2" color="blue400">
+            {`Öryggistala: ${signatureResponse.response.controlCode}`}
+          </Typography>
+        </Box>
+        <Typography>
+          Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
+          öryggistala birtist í símanum þínum.
+        </Typography>
+      </>
+    )
   }
 
   return workingCase ? (
@@ -355,13 +364,32 @@ export const Confirmation: React.FC = () => {
                 nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
                 nextButtonText="Staðfesta úrskurð"
                 onNextButtonClick={async () => {
+                  // Set loading indicator on the Continue button in the footer
+                  setIsLoading(true)
+
+                  // Accept or reject case
+                  await handleNextButtonClick()
+
+                  // Request signature to get control code
                   const signature = await api.requestSignature(workingCase.id)
 
-                  if (signature.httpStatusCode === 200) {
+                  if (signature.httpStatusCode === 201) {
                     setSignatureResponse(signature)
                   }
+
                   setModalVisible(true)
+                  setIsLoading(false)
+
+                  // Confirm requested signature
+                  const confirmSignature = await api.confirmSignature(
+                    workingCase.id,
+                    signature.response.documentToken,
+                  )
+
+                  setConfirmSignatureResponse(confirmSignature)
+                  console.log(confirmSignature)
                 }}
+                nextIsLoading={isLoading}
               />
             </GridColumn>
           </GridRow>
@@ -369,19 +397,40 @@ export const Confirmation: React.FC = () => {
       </Box>
       {modalVisible && (
         <Modal
-          title="Rafræn undirritun"
-          text={mapStatusCodeToText(signatureResponse?.httpStatusCode)}
-          primaryButtonText="Senda tilkynningu"
-          // handleSecondaryButtonClick={() =>
-          //   history.push(Constants.STEP_TWO_ROUTE)
-          // }
-          // handlePrimaryButtonClick={async () => {
-          //   setIsSendingNotification(true)
-          //   await api.sendNotification(workingCase.id)
-          //   setIsSendingNotification(false)
-          //   history.push(Constants.STEP_TWO_ROUTE)
-          // }}
-          // isPrimaryButtonLoading={isSendingNotification}
+          title={
+            confirmSignatureResponse?.httpStatusCode > 400
+              ? 'Auðkenning tókst ekki'
+              : confirmSignatureResponse?.httpStatusCode >= 200 &&
+                confirmSignatureResponse?.httpStatusCode < 300
+              ? 'Úrskurður hefur verið staðfestur og undirritaður'
+              : 'Rafræn undirritun'
+          }
+          text={
+            confirmSignatureResponse?.httpStatusCode > 400
+              ? 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+              : confirmSignatureResponse?.httpStatusCode >= 200 &&
+                confirmSignatureResponse?.httpStatusCode < 300
+              ? 'Tilkynning um úrskurð hefur verið send á ákæranda, verjanda og fangelsi.'
+              : renderContolCode()
+          }
+          primaryButtonText={
+            !confirmSignatureResponse
+              ? null
+              : confirmSignatureResponse.httpStatusCode >= 200 &&
+                confirmSignatureResponse.httpStatusCode < 300
+              ? 'Loka glugga og fara í yfirlit krafna'
+              : 'Loka og reyna aftur'
+          }
+          handlePrimaryButtonClick={async () => {
+            if (
+              confirmSignatureResponse.httpStatusCode >= 200 &&
+              confirmSignatureResponse.httpStatusCode < 300
+            ) {
+              history.push(Constants.DETENTION_REQUESTS_ROUTE)
+            } else {
+              setModalVisible(false)
+            }
+          }}
         />
       )}
     </>

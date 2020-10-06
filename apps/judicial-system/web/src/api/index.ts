@@ -1,4 +1,5 @@
 import 'isomorphic-fetch'
+import { useHistory } from 'react-router-dom'
 import {
   DetentionRequest,
   CreateCaseRequest,
@@ -9,13 +10,12 @@ import {
   User,
   RequestSignatureResponse,
   RequestSignature,
+  ConfirmSignatureResponse,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
 const csrfToken = getCookie('judicial-system.csrf')
-
 const { API_URL = '' } = process.env
-
 export const apiUrl = API_URL
 
 export const getCases: () => Promise<DetentionRequest[]> = async () => {
@@ -146,7 +146,11 @@ export const getUser = async (): Promise<User> => {
     },
   })
 
-  return response.json()
+  if (response.ok) {
+    return response.json()
+  } else if (window.location.pathname !== '/') {
+    window.location.assign('/')
+  }
 }
 
 export const logOut = async () => {
@@ -200,6 +204,41 @@ export const requestSignature: (
 
     if (response.ok) {
       const rs: RequestSignature = await response.json()
+
+      return {
+        httpStatusCode: response.status,
+        response: rs,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const confirmSignature: (
+  id: string,
+  documentToken: string,
+) => Promise<ConfirmSignatureResponse> = async (
+  id: string,
+  documentToken: string,
+) => {
+  try {
+    const response = await fetch(
+      `/api/case/${id}/signature?documentToken=${documentToken}`,
+      {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${csrfToken}`,
+        },
+      },
+    )
+
+    if (response.ok) {
+      const rs: Case = await response.json()
 
       return {
         httpStatusCode: response.status,

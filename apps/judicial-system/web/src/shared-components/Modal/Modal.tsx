@@ -50,13 +50,15 @@ const Modal: React.FC<ModalProps> = ({
               </Button>
             </Box>
           )}
-          <Button
-            onClick={handlePrimaryButtonClick}
-            icon={isPrimaryButtonLoading ? 'loading' : null}
-            loading={isPrimaryButtonLoading}
-          >
-            {primaryButtonText}
-          </Button>
+          {primaryButtonText && (
+            <Button
+              onClick={handlePrimaryButtonClick}
+              icon={isPrimaryButtonLoading ? 'loading' : null}
+              loading={isPrimaryButtonLoading}
+            >
+              {primaryButtonText}
+            </Button>
+          )}
         </Box>
       </div>
     </div>
