@@ -6,6 +6,7 @@ import {
   GetCaseByIdResponse,
   Notification,
   SendNotificationResponse,
+  User,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
@@ -40,18 +41,25 @@ export const getCases: () => Promise<DetentionRequest[]> = async () => {
 export const getCaseById: (
   caseId: string,
 ) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
-  const response = await fetch(`/api/case/${caseId}`)
+  try {
+    const response = await fetch(`/api/case/${caseId}`, {
+      method: 'get',
+      headers: { Authorization: `Bearer ${csrfToken}` },
+    })
 
-  if (response.ok) {
-    const theCase: Case = await response.json()
-    return {
-      httpStatusCode: response.status,
-      case: theCase,
+    if (response.ok) {
+      const theCase: Case = await response.json()
+      return {
+        httpStatusCode: response.status,
+        case: theCase,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
     }
-  } else {
-    return {
-      httpStatusCode: response.status,
-    }
+  } catch (e) {
+    console.log(e)
   }
 }
 
@@ -129,7 +137,7 @@ export const transitionCase: (
   return response.status
 }
 
-export const getUser = async () => {
+export const getUser = async (): Promise<User> => {
   const response = await fetch('/api/user', {
     headers: {
       Authorization: `Bearer ${csrfToken}`,
@@ -153,13 +161,6 @@ export const logOut = async () => {
     // TODO: Handle error
   }
 }
-
-/**
- *
- * export const getCaseById: (
-  caseId: string,
-) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
- */
 
 export const sendNotification: (
   caseId: string,

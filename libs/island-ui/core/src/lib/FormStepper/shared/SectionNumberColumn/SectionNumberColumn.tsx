@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
-import { Box } from '@island.is/island-ui/core'
 
+import { Box } from '../../../Box'
 import * as styles from './SectionNumberColumn.treat'
 
-const SectionNumberColumn: FC<{ children?: React.ReactNode }> = ({
+export const SectionNumberColumn: FC<{ children?: React.ReactNode }> = ({
   children,
 }) => (
   <Box
@@ -17,5 +17,3 @@ const SectionNumberColumn: FC<{ children?: React.ReactNode }> = ({
     {children}
   </Box>
 )
-
-export default SectionNumberColumn

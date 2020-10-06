@@ -13,6 +13,7 @@ import {
   Notification,
   NotificationType,
 } from '../models'
+import { User } from '../../user'
 
 let app: INestApplication
 
@@ -141,6 +142,10 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   )
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
+  expect(caseOne.prosecutorId || null).toStrictEqual(
+    caseTwo.prosecutorId || null,
+  )
+  expect(caseOne.prosecutor || null).toStrictEqual(caseTwo.prosecutor || null)
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
@@ -162,6 +167,8 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   expect(caseOne.prosecutorAppealDecision || null).toBe(
     caseTwo.prosecutorAppealDecision || null,
   )
+  expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
+  expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
   expect(caseOne.notifications).toStrictEqual(caseTwo.notifications)
 }
 
@@ -186,7 +193,11 @@ describe('Case', () => {
         // Check the data in the database
         await Case.findOne({
           where: { id: response.body.id },
-          include: [Notification],
+          include: [
+            Notification,
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
         }).then((value) => {
           expectCasesToMatch(dbCaseToCase(value), {
             ...response.body,
@@ -216,7 +227,11 @@ describe('Case', () => {
         // Check the data in the database
         await Case.findOne({
           where: { id: response.body.id },
-          include: [Notification],
+          include: [
+            Notification,
+            { model: User, as: 'prosecutor' },
+            { model: User, as: 'judge' },
+          ],
         }).then((value) => {
           expectCasesToMatch(dbCaseToCase(value), {
             ...response.body,
@@ -250,7 +265,11 @@ describe('Case', () => {
           // Check the data in the database
           await Case.findOne({
             where: { id: response.body.id },
-            include: [Notification],
+            include: [
+              Notification,
+              { model: User, as: 'prosecutor' },
+              { model: User, as: 'judge' },
+            ],
           }).then((newValue) => {
             expectCasesToMatch(dbCaseToCase(newValue), {
               ...response.body,
@@ -262,40 +281,52 @@ describe('Case', () => {
   })
 
   it('Put /api/case/:id/state should transition case to a new state', async () => {
-    await Case.create(getCaseData()).then(async (value) => {
-      const data = {
-        modified: value.modified.toISOString(),
-        transition: CaseTransition.SUBMIT,
-      }
+    await Case.create({ ...getCaseData(), state: CaseState.SUBMITTED }).then(
+      async (value) => {
+        const data = {
+          modified: value.modified.toISOString(),
+          transition: CaseTransition.ACCEPT,
+        }
 
-      await request(app.getHttpServer())
-        .put(`/api/case/${value.id}/state`)
-        .send(data)
-        .expect(200)
-        .then(async (response) => {
-          // Check the response
-          const dbCase = dbCaseToCase(value)
+        await request(app.getHttpServer())
+          .put(`/api/case/${value.id}/state`)
+          .send(data)
+          .expect(200)
+          .then(async (response) => {
+            // Check the response
+            const dbCase = dbCaseToCase(value)
 
-          expect(response.body.modified).not.toBe(dbCase.modified)
-          expect(response.body.state).not.toBe(dbCase.state)
-          expectCasesToMatch(response.body, {
-            ...dbCase,
-            modified: response.body.modified,
-            state: CaseState.SUBMITTED,
-          } as Case)
+            expect(response.body.modified).not.toBe(dbCase.modified)
+            expect(response.body.state).not.toBe(dbCase.state)
+            expectCasesToMatch(response.body, {
+              ...dbCase,
+              modified: response.body.modified,
+              state: CaseState.ACCEPTED,
+              judgeId: user.id,
+            } as Case)
 
-          // Check the data in the database
-          await Case.findOne({
-            where: { id: response.body.id },
-            include: [Notification],
-          }).then((newValue) => {
-            expectCasesToMatch(dbCaseToCase(newValue), {
-              ...response.body,
-              notifications: [],
+            // Check the data in the database
+            await Case.findOne({
+              where: { id: response.body.id },
+              include: [
+                Notification,
+                { model: User, as: 'prosecutor' },
+                { model: User, as: 'judge' },
+              ],
+            }).then((newValue) => {
+              expectCasesToMatch(dbCaseToCase(newValue), {
+                ...response.body,
+                judge: {
+                  ...user,
+                  created: newValue.judge.created,
+                  modified: newValue.judge.modified,
+                },
+                notifications: [],
+              })
             })
           })
-        })
-    })
+      },
+    )
   })
 
   it('Get /api/cases should get all cases', async () => {
@@ -346,14 +377,14 @@ describe('Case', () => {
           )
 
           // Check the data in the database
-          await Notification.findOne({ where: { id: response.body.id } }).then(
-            (value) => {
-              expect(value.id).toBe(response.body.id)
-              expect(value.created.toISOString()).toBe(response.body.created)
-              expect(value.type).toBe(response.body.type)
-              expect(value.message).toBe(response.body.message)
-            },
-          )
+          await Notification.findOne({
+            where: { id: response.body.id },
+          }).then((value) => {
+            expect(value.id).toBe(response.body.id)
+            expect(value.created.toISOString()).toBe(response.body.created)
+            expect(value.type).toBe(response.body.type)
+            expect(value.message).toBe(response.body.message)
+          })
         })
     })
   })
@@ -379,89 +410,65 @@ describe('Case', () => {
   })
 
   it('GET /api/case/:id should include notifications', async () => {
-    await Case.create(getCaseData()).then(async (caseValue) => {
-      await Notification.create({
-        caseId: caseValue.id,
-        type: NotificationType.HEADS_UP,
-        message: 'Test Message',
-      }).then(async (notificationValue) => {
-        await request(app.getHttpServer())
-          .get(`/api/case/${caseValue.id}`)
-          .send()
-          .expect(200)
-          .then((response) => {
-            // Check the response
-            const dbCase = dbCaseToCase(caseValue)
-            expectCasesToMatch(response.body, {
-              ...dbCase,
-              notifications: [dbNotificationToNotification(notificationValue)],
-            } as Case)
-          })
-      })
-    })
+    await Case.create({ ...getCaseData(), state: CaseState.REJECTED }).then(
+      async (caseValue) => {
+        await Notification.create({
+          caseId: caseValue.id,
+          type: NotificationType.HEADS_UP,
+          message: 'Test Message',
+        }).then(async (notificationValue) => {
+          await request(app.getHttpServer())
+            .get(`/api/case/${caseValue.id}`)
+            .send()
+            .expect(200)
+            .then((response) => {
+              // Check the response
+              const dbCase = dbCaseToCase(caseValue)
+              expectCasesToMatch(response.body, {
+                ...dbCase,
+                notifications: [
+                  dbNotificationToNotification(notificationValue),
+                ],
+              } as Case)
+            })
+        })
+      },
+    )
   })
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {
-    await Case.create(getCaseData()).then(async (value) => {
+    await Case.create({
+      ...getCaseData(true, true),
+      state: CaseState.REJECTED,
+      judgeId: user.id,
+    }).then(async (value) => {
       await request(app.getHttpServer())
-        .put(`/api/case/${value.id}/state`)
-        .send({
-          modified: value.modified.toISOString(),
-          transition: CaseTransition.SUBMIT,
-        })
-        .expect(200)
+        .post(`/api/case/${value.id}/signature`)
+        .expect(201)
         .then(async (response) => {
-          await request(app.getHttpServer())
-            .put(`/api/case/${response.body.id}/state`)
-            .send({
-              modified: response.body.modified,
-              transition: CaseTransition.ACCEPT,
-            })
-            .expect(200)
-            .then(async (response) => {
-              await request(app.getHttpServer())
-                .post(`/api/case/${response.body.id}/signature`)
-                .expect(201)
-                .then(async (response) => {
-                  // Check the response
-                  expect(response.body.controlCode).toBe('0000')
-                  expect(response.body.documentToken).toBe('DEVELOPMENT')
-                })
-            })
+          // Check the response
+          expect(response.body.controlCode).toBe('0000')
+          expect(response.body.documentToken).toBe('DEVELOPMENT')
         })
     })
   })
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
-    await Case.create(getCaseData()).then(async (value) => {
+    await Case.create({
+      ...getCaseData(),
+      state: CaseState.ACCEPTED,
+      judgeId: user.id,
+    }).then(async (value) => {
       await request(app.getHttpServer())
-        .put(`/api/case/${value.id}/state`)
-        .send({
-          modified: value.modified.toISOString(),
-          transition: CaseTransition.SUBMIT,
-        })
+        .get(`/api/case/${value.id}/signature`)
+        .query({ documentToken: 'DEVELOPMENT' })
         .expect(200)
         .then(async (response) => {
-          await request(app.getHttpServer())
-            .put(`/api/case/${response.body.id}/state`)
-            .send({
-              modified: response.body.modified,
-              transition: CaseTransition.ACCEPT,
-            })
-            .expect(200)
-            .then(async (updateResponse) => {
-              await request(app.getHttpServer())
-                .get(`/api/case/${response.body.id}/signature`)
-                .query({ documentToken: 'DEVELOPMENT' })
-                .expect(200)
-                .then(async (signatureResponse) => {
-                  // Check the response
-                  expectCasesToMatch(signatureResponse.body, {
-                    ...updateResponse.body,
-                    notifications: [],
-                  })
-                })
-            })
+          // Check the response
+          expectCasesToMatch(response.body, {
+            ...response.body,
+            notifications: [],
+          })
         })
     })
   })
