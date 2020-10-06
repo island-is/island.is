@@ -82,8 +82,6 @@ export const Thumb = style({
 export const TrackGrid = style({
   position: 'relative',
   display: 'grid',
-  gridTemplateRows: 40,
-  gridGap: 2,
 })
 
 export const TrackCell = style({

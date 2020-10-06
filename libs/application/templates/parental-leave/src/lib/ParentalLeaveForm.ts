@@ -70,23 +70,15 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'calculations',
-          name: m.calculationsSubsection,
+          id: 'duration',
+          name: m.durationSubsection,
           children: [
             buildCustomField(
               {
-                id: 'spread',
-                name: m.spread,
+                id: 'duration',
+                name: m.duration,
                 required: true,
-                component: 'ParentalLeaveCalculations',
-              },
-              {},
-            ),
-            buildCustomField(
-              {
-                id: 'periods',
-                name: m.periods,
-                component: 'ParentalLeaveCalculations',
+                component: 'ParentalLeaveDuration',
               },
               {},
             ),
