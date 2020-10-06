@@ -101,8 +101,8 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                     <Box paddingY={2}>
                       <Image
                         {...newsItem.image}
-                        url={newsItem.image.url + '?w=774'}
-                        thumbnail={newsItem.image.url + '?w=50'}
+                        url={newsItem.image.url + '?w=774&fm=webp&q=80'}
+                        thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
                       />
                     </Box>
                   )}

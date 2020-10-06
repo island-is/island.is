@@ -288,11 +288,7 @@ const Category: Screen<CategoryProps> = ({
                               ? n('other')
                               : subgroup
 
-                          const heading = hasSubgroups
-                            ? subgroupName
-                            : isSortedAlphabetically && !isSingleArticle
-                            ? n('sortedAlphabetically', 'A til Ö')
-                            : '' // No subgroup and custom sorting = no heading
+                          const heading = hasSubgroups ? subgroupName : ''
 
                           return (
                             <React.Fragment key={subgroup}>

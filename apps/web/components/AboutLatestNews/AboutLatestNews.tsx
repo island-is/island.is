@@ -110,7 +110,7 @@ const BigNewsItem = ({
         <Box
           component="img"
           marginTop={4}
-          src={news.image.url}
+          src={`${news.image.url}?fm=webp&q=80`}
           alt={news.image.title}
           borderRadius="large"
           overflow="hidden"
