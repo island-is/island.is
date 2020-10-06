@@ -84,7 +84,6 @@ export const Text = ({
         children,
         (child: any) => {
           if (typeof linkRenderer === 'function' && child.props?.href) {
-            console.log(linkRenderer)
             return linkRenderer(child.props.href, child.props.children)
           }
           return child
