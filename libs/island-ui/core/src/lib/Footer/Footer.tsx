@@ -74,7 +74,7 @@ export const Footer = ({
                       variant="intro"
                       paddingBottom={isLast ? 5 : 2}
                     >
-                      <Link href={href} color="blue600" withUnderline>
+                      <Link href={href} color="blue600" underline="normal">
                         {title}
                       </Link>
                     </Typography>
@@ -142,7 +142,7 @@ export const Footer = ({
                     {middleLinks.map(({ title, href }, index) => {
                       return (
                         <Typography key={index} variant="h5" fontWeight="light">
-                          <Link href={href} color="blue400" withUnderline>
+                          <Link href={href} color="blue400" underline="normal">
                             {title}
                           </Link>
                         </Typography>
@@ -206,7 +206,7 @@ export const Footer = ({
                         fontWeight="light"
                         paddingBottom={2}
                       >
-                        <Link href={href} color="blue600" withUnderline>
+                        <Link href={href} color="blue600" underline="normal">
                           {title}
                         </Link>
                       </Typography>
