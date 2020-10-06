@@ -1,5 +1,19 @@
-import React, { useContext } from 'react'
+import { Colors } from '@island.is/island-ui/theme'
 import cn from 'classnames'
+import React, { useContext } from 'react'
+import { Box } from '../Box'
+import { ResponsiveSpace } from '../Box/useBoxStyles'
+import { LinkContext } from '../context'
+import styles, {
+  base,
+  colors,
+  defaultFontWeights,
+  defaultLineHeights,
+  fontWeight as fontWeightStyles,
+  lineHeight as lineHeightStyles,
+  TextVariants,
+  truncate as truncateStyle,
+} from './Text.treat'
 
 type TextElements =
   | 'h1'
@@ -12,21 +26,6 @@ type TextElements =
   | 'div'
   | 'label'
   | 'caption'
-
-import styles, {
-  base,
-  TextVariants,
-  colors,
-  truncate as truncateStyle,
-  fontWeight as fontWeightStyles,
-  lineHeight as lineHeightStyles,
-  defaultFontWeights,
-  defaultLineHeights,
-} from './Text.treat'
-import { Colors } from '@island.is/island-ui/theme'
-import { ResponsiveSpace } from '../Box/useBoxStyles'
-import { Box } from '../Box'
-import { LinkContext } from '../context'
 
 export interface TextProps {
   id?: string
