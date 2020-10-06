@@ -9,7 +9,6 @@ import { FieldBaseProps } from '@island.is/application/core'
 import * as uiFields from '@island.is/application/ui-fields'
 
 type Fields = { [key: string]: FC<FieldBaseProps> }
-
 type Dispatch = (fields: Fields) => void
 type FieldStateProviderProps = { children: ReactNode }
 
