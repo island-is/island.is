@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { FieldBaseProps } from '@island.is/application/core'
-import Slider from './components/Slider'
+import Slider from '../components/Slider'
 import { Box, Typography } from '@island.is/island-ui/core'
 
 import * as styles from './Usage.treat'
@@ -12,6 +12,9 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
   const defaultUsage = 4
   const { id } = field
   const { clearErrors } = useFormContext()
+
+  const sharedMonths = 3
+  const maxMonths = 6
 
   return (
     <Box marginTop={4} marginBottom={6}>
@@ -39,15 +42,24 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
           name={id}
           render={({ onChange, value }) => (
             <Slider
-              totalCells={6}
-              sharedCells={3}
               min={1}
+              max={maxMonths}
+              trackStyle={{ gridGap: 2, gridTemplateRows: 40 }}
+              calculateCellStyle={(index: number) => {
+                const isShared = index >= maxMonths - sharedMonths
+                return {
+                  background: isShared
+                    ? theme.color.mint400
+                    : theme.color.blue400,
+                }
+              }}
+              showLabel
+              label={{ singular: 'mánuður', plural: 'mánuðir' }}
               currentIndex={value || defaultUsage}
               onChange={(selectedMonths: number) => {
                 clearErrors(id)
                 onChange(selectedMonths)
               }}
-              label={{ singular: 'mánuður', plural: 'mánuðir' }}
             />
           )}
         />
