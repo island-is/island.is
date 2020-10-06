@@ -9,21 +9,22 @@ interface SearchInput {
   limit: number
   searchAfter?: string[]
   query?: string
-  pricing?: PricingCategory[]
-  data?: DataCategory[]
-  type?: TypeCategory[]
-  access?: AccessCategory[]
+  pricing?: string[]
+  data?: string[]
+  type?: string[]
+  access?: string[]
 }
 
 export const searchQuery = ({
   limit = 25,
   searchAfter = [],
-  query,
+  query = '',
   pricing = [],
   data = [],
   type = [],
   access = [],
 }: SearchInput) => {
+  console.log(pricing)
   const should = []
   //minimum_should_match makes sure that we match all available categories in the should part
   // eslint-disable-next-line @typescript-eslint/camelcase

@@ -80,10 +80,10 @@ export class ElasticService {
     limit: number,
     searchAfter?: string[],
     query?: string,
-    pricing?: PricingCategory[],
-    data?: DataCategory[],
-    type?: TypeCategory[],
-    access?: AccessCategory[],
+    pricing?: string[],
+    data?: string[],
+    type?: string[],
+    access?: string[],
   ) {
     logger.debug('Fetch paginated results')
 

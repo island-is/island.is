@@ -972,13 +972,13 @@ input GetTranslationsInput {
 }
 
 input GetApiCatalogueInput {
-  limit: Int!
+  limit: Int
   cursor: String
   query: String
-  pricing: [PricingCategory!]
-  data: [DataCategory!]
-  type: [TypeCategory!]
-  access: [AccessCategory!]
+  pricing: [String!]
+  data: [String!]
+  type: [String!]
+  access: [String!]
 }
 
 input GetApiServiceInput {

@@ -1254,13 +1254,13 @@ export type GetTranslationsInput = {
 }
 
 export type GetApiCatalogueInput = {
-  limit: Scalars['Int']
+  limit?: Maybe<Scalars['Int']>
   cursor?: Maybe<Scalars['String']>
   query?: Maybe<Scalars['String']>
-  pricing?: Maybe<Array<PricingCategory>>
-  data?: Maybe<Array<DataCategory>>
-  type?: Maybe<Array<TypeCategory>>
-  access?: Maybe<Array<AccessCategory>>
+  pricing?: Maybe<Array<Scalars['String']>>
+  data?: Maybe<Array<Scalars['String']>>
+  type?: Maybe<Array<Scalars['String']>>
+  access?: Maybe<Array<Scalars['String']>>
 }
 
 export type GetApiServiceInput = {

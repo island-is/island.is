@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
@@ -7,28 +7,35 @@ import {
   GridRow,
   GridColumn,
   Icon,
-  Typography, AccordionItem, GridContainer
-} from '@island.is/island-ui/core';
+  Typography,
+  AccordionItem,
+  GridContainer,
+} from '@island.is/island-ui/core'
 
-import * as styles from './ServiceList.treat';
+import * as styles from './ServiceList.treat'
 import cn from 'classnames'
 import {
-  PRICING_CATEGORY,
-  DATA_CATEGORY,
-  TYPE_CATEGORY,
-  ACCESS_CATEGORY,
-  GetServicesParameters,
-  getServices,
-  ServiceCardInformation,
   ServiceCard,
   ServiceFilter,
-  ServiceCardMessage
-} from '../../components';
-
+  ServiceCardMessage,
+} from '../../components'
 import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
-import { theme } from '@island.is/island-ui/theme';
+import { theme } from '@island.is/island-ui/theme'
+import { GET_CATALOGUE_QUERY } from '../Queries'
+import { useQuery } from 'react-apollo'
+import {
+  GetApiCatalogueInput,
+  Query,
+  QueryGetApiCatalogueArgs,
+} from '@island.is/api/schema'
 
+import {
+  AccessCategory,
+  PricingCategory,
+  DataCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
 
 interface PropTypes {
   top?: ReactNode
@@ -39,40 +46,42 @@ interface PropTypes {
   listClassNames?: string
 }
 
-function ServiceLayout({ top, bottom, left, right, className, listClassNames: listClasses }: PropTypes) {
+function ServiceLayout({
+  top,
+  bottom,
+  left,
+  right,
+  className,
+  listClassNames: listClasses,
+}: PropTypes) {
   return (
     <Box paddingX="gutter">
       <GridContainer className={className}>
-        {<ContentBlock >
-          {top}
-        </ContentBlock>}
+        {<ContentBlock>{top}</ContentBlock>}
         <ContentBlock>
           <GridRow className={listClasses}>
-          <GridColumn span={['12/12',  '8/12',  '8/12', '9/12', '9/12']}
-                    offset={[    '0',     '0',  '0',    '0', '0']}>
+            <GridColumn
+              span={['12/12', '8/12', '8/12', '9/12', '9/12']}
+              offset={['0', '0', '0', '0', '0']}
+            >
               {left}
             </GridColumn>
-            <GridColumn span={[ '12/12',  '4/12',  '4/12', '3/12', '3/12']}
-                      offset={[    '0',      '0',     '0',    '0',    '0']}>
+            <GridColumn
+              span={['12/12', '4/12', '4/12', '3/12', '3/12']}
+              offset={['0', '0', '0', '0', '0']}
+            >
               {right}
             </GridColumn>
           </GridRow>
         </ContentBlock>
-        {<ContentBlock >
-          {bottom}
-        </ContentBlock>}
+        {<ContentBlock>{bottom}</ContentBlock>}
       </GridContainer>
     </Box>
   )
 }
 
-
-
 export interface ServiceListProps {
-  nextCursor: string
-  prevCursor: string
-  parameters: GetServicesParameters,
-  pageContent: Page,
+  pageContent: Page
   filterStrings: Page
 }
 
@@ -80,169 +89,165 @@ export interface ServiceListProps {
 const TEXT_SEARCHING = 'Leita ...'
 const TEXT_NOT_FOUND = 'Engin þjónusta fannast'
 
-
 export default function ServiceList(props: ServiceListProps) {
+  const [parameters, setParameters] = useState<GetApiCatalogueInput>({
+    cursor: null,
+    limit: 2,
+    query: '',
+    pricing: [],
+    data: [],
+    type: [],
+    access: [],
+  })
+  const [timer, setTimer] = useState(null)
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
+  // prettier-ignore
+  const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY, 
+  {
+    variables: {
+      input: parameters,
+    },
+  })
 
-
-
-  const onPageMoreButtonClick = () => {
-    props.parameters.cursor = nextCursor;
-    setFirstGet(false);
-    setNextFetch(nextCursor);
+  const onLoadMore = () => {
+    const { nextCursor } = data?.getApiCatalogue.pageInfo
+    const param = { ...parameters, cursor: nextCursor }
+    fetchMore({
+      variables: { input: param },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        fetchMoreResult.getApiCatalogue.services = [
+          ...prevResult.getApiCatalogue.services,
+          ...fetchMoreResult.getApiCatalogue.services,
+        ]
+        return fetchMoreResult
+      },
+    })
   }
 
   const updateCategoryCheckBox = (target) => {
-    const categoryValue: string = target.value;
-    const checked: boolean = target.checked;
-    props.parameters.cursor = null;
-    let filter: Array<string>;
-    switch (categoryValue) {
-      case PRICING_CATEGORY.FREE:
-      case PRICING_CATEGORY.PAID: filter = props.parameters.pricing;
-        break;
-      case DATA_CATEGORY.PUBLIC:
-      case DATA_CATEGORY.OFFICIAL:
-      case DATA_CATEGORY.PERSONAL:
-      case DATA_CATEGORY.HEALTH:
-      case DATA_CATEGORY.FINANCIAL: filter = props.parameters.data;
-        break;
-      case TYPE_CATEGORY.REST:
-      case TYPE_CATEGORY.SOAP:
-      case TYPE_CATEGORY.GRAPHQL: filter = props.parameters.type;
-        break;
-      case ACCESS_CATEGORY.X_ROAD:
-      case ACCESS_CATEGORY.API_GW: filter = props.parameters.access;
-        break;
+    const name: string = target.name
+    const categoryValue: string = target.value
+    const checked: boolean = target.checked
+    let temp = parameters
 
-      default:
-        console.error('Invalid checkbox value')
-        return;
-    }
-
-    if (filter === null) {
-      filter = [];
-    }
     if (checked) {
-      if (!filter.includes(categoryValue)) {
-        filter.push(categoryValue)
+      if (!temp[name].includes(categoryValue)) {
+        temp[name].push(categoryValue)
       }
     } else {
-      filter.splice(filter.indexOf(categoryValue), 1);
+      temp[name].splice(temp[name].indexOf(categoryValue), 1)
     }
-
-    setStatusQueryString(createStatusQueryString());
-    setFirstGet(true);
-
+    setParameters({ ...temp })
+    refetch()
   }
 
-  const createStatusQueryString = (): string => {
-    let str: string = props.parameters.cursor === null ? 'null' : props.parameters.cursor.toString();
-    str += `|${props.parameters.text}`
-    str += `|${props.parameters.pricing.sort().join()}|${props.parameters.data.sort().join()}|${props.parameters.type.sort().join()}|${props.parameters.access.sort().join()}`;
-    return str;
-  }
+  const onSearchChange = function(inputValue: string) {
+    setParameters({ ...parameters, query: inputValue })
 
-  const onSearchChange = function (inputValue: string) {
-    props.parameters.text = inputValue;
-    setSearchValue(inputValue);
+    //setSearchValue(inputValue)
+    /*
     if (timer !== null) {
-      clearTimeout(timer);
+      clearTimeout(timer)
     }
-    setTimer(setTimeout(function () {
-      setStatusQueryString(createStatusQueryString());
-      setFirstGet(true);
-    }, 600))
+    setTimer(
+      setTimeout(function() {
+        //setStatusQueryString(createStatusQueryString());
+        //setFirstGet(true);
+      }, 600),
+    )*/
   }
-  const [isLoading, setLoading] = useState<boolean>(true);
-  const [services, setServices] = useState<Array<ServiceCardInformation>>(null);
-  const [nextCursor, setNextCursor] = useState<string>(props.nextCursor);
-  const [nextFetch, setNextFetch] = useState<string>(null);
-  const [firstGet, setFirstGet] = useState<boolean>(true);
-  const [searchValue, setSearchValue] = useState('');
-  const [StatusQueryString, setStatusQueryString] = useState<string>(createStatusQueryString());
-  const [timer, setTimer] = useState(null);
-  const { width } = useWindowSize();
-  const [emptyListText, setEmptyListText] = useState(TEXT_SEARCHING);
-
-  const [isMobile, setIsMobile] = useState(false)
 
   useIsomorphicLayoutEffect(() => {
-    if (width < 576) {
-      //if (width < theme.breakpoints.md) {
+    if (width < theme.breakpoints.sm) {
       return setIsMobile(true)
     }
     setIsMobile(false)
   }, [width])
 
-  useEffect(() => {
-
-    const appendData = async () => {
-      setLoading(true);
-      setEmptyListText(TEXT_SEARCHING)
-      const response = await getServices(props.parameters);
-      services.push(...response.result);
-      setEmptyListText(TEXT_NOT_FOUND);
-      setNextCursor(response.nextCursor);
-      setLoading(false);
-    }
-
-    if (!firstGet && nextFetch) {
-      appendData();
-    }
-  }, [firstGet, nextFetch, props.parameters, services]);
-
-  useEffect(() => {
-
-    const loadData = async () => {
-      setLoading(true);
-      setEmptyListText(TEXT_SEARCHING)
-      setFirstGet(true);
-      props.parameters.cursor = null;
-      const response = await getServices(props.parameters);
-      setEmptyListText(TEXT_NOT_FOUND);
-      setNextCursor(response.nextCursor);
-      setServices(response.result);
-      setLoading(false);
-    }
-    if (firstGet)
-      loadData();
-  }, [firstGet, StatusQueryString, props.parameters]);
-
   return (
-    <ServiceLayout className={cn(isMobile ? styles.LayoutMobile : {})} listClassNames={cn(isMobile ? styles.serviceLayoutMobile : {})}
+    <ServiceLayout
+      className={cn(isMobile ? styles.LayoutMobile : {})}
+      listClassNames={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
-        <div className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}>
-          <Typography variant="h1">{props.pageContent.strings.find(s => s.id === 'catalog-title').text}</Typography>
+        <div
+          className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}
+        >
+          <Typography variant="h1">
+            {
+              props.pageContent.strings.find((s) => s.id === 'catalog-title')
+                .text
+            }
+          </Typography>
           <div className={cn(styles.topSectionText)}>
-            <Typography variant="intro">{props.pageContent.strings.find(s => s.id === 'catalog-intro').text}</Typography>
+            <Typography variant="intro">
+              {
+                props.pageContent.strings.find((s) => s.id === 'catalog-intro')
+                  .text
+              }
+            </Typography>
           </div>
         </div>
       }
       left={
-        <Box className={cn(isMobile ? styles.serviceListMobile : styles.serviceList, "service-list")} marginBottom="containerGutter" marginTop={1}>
-          {services?.length > 0 ?
-            (
-              services?.map((item) => {
-                return <ServiceCard cardWidth={styles.cardWidth} key={item.id} service={item} />
-              })
-            )
-            :
-            ( <span className={cn(isLoading? styles.displayHidden: {})}>
+        <Box
+          className={cn(
+            isMobile ? styles.serviceListMobile : styles.serviceList,
+            'service-list',
+          )}
+          marginBottom="containerGutter"
+          marginTop={1}
+        >
+          {data?.getApiCatalogue.services.length > 0 ? (
+            data.getApiCatalogue.services?.map((item) => {
+              return (
+                <ServiceCard
+                  cardWidth={styles.cardWidth}
+                  key={item.id}
+                  service={item}
+                />
+              )
+            })
+          ) : (
+            <span className={cn(loading ? styles.displayHidden : {})}>
               <ServiceCardMessage
                 messageType="default"
                 borderStyle="standard"
-                title={emptyListText}
+                title={TEXT_NOT_FOUND}
               />
-              </span>
-            )
-          }
-          <Box className={cn(isMobile ? styles.navigationMobile : styles.navigation)} borderRadius="large">
-            <div className={cn(isLoading ? styles.displayInline : styles.displayHidden)}>
-              <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
+            </span>
+          )}
+          <Box
+            className={cn(
+              isMobile ? styles.navigationMobile : styles.navigation,
+            )}
+            borderRadius="large"
+          >
+            <div
+              className={cn(
+                loading ? styles.displayInline : styles.displayHidden,
+              )}
+            >
+              <Icon
+                width="32"
+                height="32"
+                spin={true}
+                type="loading"
+                color="blue600"
+              />
             </div>
-            <div className={cn(isLoading ? styles.displayHidden : {})}>
-              <Button width="normal" variant="text" disabled={nextCursor === null} onClick={() => onPageMoreButtonClick()} >
-                {props.pageContent.strings.find(s => s.id === 'catalog-fetch-more-button').text}
+            <div className={cn(loading ? styles.displayHidden : {})}>
+              <Button
+                width="normal"
+                variant="text"
+                disabled={data?.getApiCatalogue.pageInfo.nextCursor === null}
+                onClick={() => onLoadMore()}
+              >
+                {
+                  props.pageContent.strings.find(
+                    (s) => s.id === 'catalog-fetch-more-button',
+                  ).text
+                }
               </Button>
             </div>
           </Box>
@@ -251,83 +256,56 @@ export default function ServiceList(props: ServiceListProps) {
       right={
         isMobile ? (
           <div className={cn(styles.accordionMobile)}>
-            <AccordionItem id="serviceFilter" label="Sía" labelVariant="sideMenu" iconVariant="default">
+            <AccordionItem
+              id="serviceFilter"
+              label="Sía"
+              labelVariant="sideMenu"
+              iconVariant="default"
+            >
               <ServiceFilter
                 iconVariant="default"
-                rootClasses={cn(styles.filterMobile, "filter")}
-                searchValue={searchValue}
-                isLoading={isLoading}
-                parameters={props.parameters}
-                onInputChange={input => onSearchChange(input.target.value)}
-                onCheckCategoryChanged={({ target }) => { updateCategoryCheckBox(target) }}
+                rootClasses={cn(styles.filterMobile, 'filter')}
+                isLoading={loading}
+                parameters={parameters}
+                onInputChange={(input) => onSearchChange(input.target.value)}
+                onCheckCategoryChanged={({ target }) => {
+                  updateCategoryCheckBox(target)
+                }}
                 strings={props.filterStrings.strings}
               />
             </AccordionItem>
           </div>
+        ) : (
+          <ServiceFilter
+            rootClasses={cn(styles.filter, 'filter')}
+            isLoading={loading}
+            parameters={parameters}
+            onInputChange={(input) => onSearchChange(input.target.value)}
+            onCheckCategoryChanged={({ target }) => {
+              updateCategoryCheckBox(target)
+            }}
+            strings={props.filterStrings.strings}
+          />
         )
-          :
-          (
-            <ServiceFilter
-              rootClasses={cn(styles.filter, "filter")}
-              searchValue={searchValue}
-              isLoading={isLoading}
-              parameters={props.parameters}
-              onInputChange={input => onSearchChange(input.target.value)}
-              onCheckCategoryChanged={({ target }) => { updateCategoryCheckBox(target) }}
-              strings={props.filterStrings.strings}
-            />
-          )
-
       }
-
-
     />
   )
 }
 
-ServiceList.defaultProps = {
-  parameters: {
-    cursor: null,
-    limit: null,
-    owner: null,
-    name: null,
-    pricing: [],
-    data: [],
-    type: [],
-    access: [],
-    text: null
-  }
-}
-
 ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
+  const client = new ContentfulApi()
+  let locale = 'is-IS'
 
-  const client = new ContentfulApi();
-  let locale = 'is-IS';
-
-  const pathLocale = ctx.pathname.split('/')[1];
+  const pathLocale = ctx.pathname.split('/')[1]
   if (pathLocale === 'en') {
-    locale = 'en-GB';
+    locale = 'en-GB'
   }
 
-  const pageContent = await client.fetchPageBySlug('services', locale);
-  const filterStrings = await client.fetchPageBySlug('service-filter', locale);
+  const pageContent = await client.fetchPageBySlug('services', locale)
+  const filterStrings = await client.fetchPageBySlug('service-filter', locale)
 
-  const params: GetServicesParameters = {
-    cursor: null,
-    limit: null,
-    owner: null,
-    name: null,
-    pricing: [],
-    data: [],
-    type: [],
-    access: [],
-    text: ''
-  };
   return {
-    parameters: params,
-    prevCursor: null,
-    nextCursor: null,
     pageContent: pageContent,
-    filterStrings: filterStrings
+    filterStrings: filterStrings,
   }
 }

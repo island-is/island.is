@@ -18,7 +18,7 @@ export class ApiCatalogueService {
     let searchAfter = []
     const { limit, cursor, query, pricing, data, type, access } = input
 
-    if (cursor || cursor !== null) {
+    if (typeof cursor !== 'undefined' && cursor !== null) {
       const temp = Buffer.from(input.cursor, 'base64').toString()
       searchAfter = temp.split(',')
     }
