@@ -36,8 +36,8 @@ export type IconTypes =
 
 type Icons = {
   [Type in IconTypes]: {
-    width: string | number
-    height: string | number
+    width: string | number | 'none'
+    height: string | number | 'none'
     viewBox: string
     path?: string
     circle?: object
@@ -285,8 +285,10 @@ const SvgPathContainer = ({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={width}
-      height={height}
+      {...{
+        width: width !== 'none' ? width : null,
+        height: height !== 'none' ? height : null,
+      }}
       fill={fill}
       viewBox={viewBox}
       className={cn(className, { [styles.spin]: spin })}
