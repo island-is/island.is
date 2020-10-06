@@ -7,11 +7,12 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
-  Post,
+  Post,, NotImplementedException
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
+import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pipe'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 
@@ -20,22 +21,6 @@ import { UserProfileService } from './userProfile.service'
 export class UserProfileController {
 
   constructor(private userProfileService: UserProfileService) { }
-
-  @Get(':id')
-  @ApiOkResponse({ type: UserProfile })
-  async findOne(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<UserProfile> {
-    const profile = await this.userProfileService.findById(id)
-
-    if (!profile) {
-      throw new NotFoundException(
-        `A User profile with the id ${id} does not exist`,
-      )
-    }
-
-    return profile
-  }
 
   @Get(':nationalId')
   @ApiOkResponse({ type: UserProfile })
@@ -76,5 +61,14 @@ export class UserProfileController {
       throw new NotFoundException(`A user profile with ${id} does not exist`)
     }
     return updatedUserProfile
+  }
+
+  @Put(':nationalId/profileImage')
+  @ApiOkResponse({ type: UserProfile })
+  async addImage(
+    @Param('nationalId', UserProfileByNationalIdPipe)
+    userProfile: UserProfile,
+  ) {
+    throw new NotImplementedException()
   }
 }
