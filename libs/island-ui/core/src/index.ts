@@ -45,6 +45,8 @@ export * from './lib/AlertBanner/AlertBanner'
 export * from './lib/ProfileCard/ProfileCard'
 export * from './lib/FormStepper/FormStepper'
 export * from './lib/FormStepper/types'
+export * from './lib/Accordion/Accordion'
+export * from './lib/Accordion/AccordionItem/AccordionItem'
 
 // Layout
 export * from './lib/Box/Box'
@@ -56,8 +58,6 @@ export * from './lib/Stack/Stack'
 export * from './lib/Hidden/Hidden'
 export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
-export * from './lib/Accordion/Accordion'
-export * from './lib/AccordionItem/AccordionItem'
 export * from './lib/Sleeve/Sleeve'
 
 // Context
