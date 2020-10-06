@@ -14,9 +14,8 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   const monthsToUse = (formValue.usage as number) || 1
-  const [monthsToSpread, setMonthsToSpread] = useState<number | undefined>(
-    undefined,
-  )
+  const [monthsToSpread, setMonthsToSpread] = useState<number>(monthsToUse)
+  const minMonths = 1
   const maxMonths = 24
 
   useEffect(() => {
@@ -30,7 +29,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
         name={id}
         render={({ onChange, value }) => (
           <Slider
-            min={monthsToUse}
+            min={minMonths}
             max={maxMonths}
             trackStyle={{ gridTemplateRows: 8 }}
             calculateCellStyle={(index: number) => {
@@ -47,7 +46,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
             showMinMaxLabels
             showToolTip
             label={{ singular: 'mánuður', plural: 'mánuðir' }}
-            currentIndex={monthsToSpread || monthsToUse}
+            currentIndex={value || monthsToSpread || monthsToUse}
             onChange={(selectedMonthsToSpread: number) => {
               clearErrors(id)
               onChange(selectedMonthsToSpread)
