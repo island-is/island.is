@@ -10,8 +10,8 @@ export const FinanceOverview: ServicePortalModuleComponent = () => {
   return (
     <InfoScreen
       title={defineMessage({
-        id: 'sp.assets:title',
-        defaultMessage: 'Eignir',
+        id: 'sp.finance:title',
+        defaultMessage: 'Fjármál',
       })}
       intro={defineMessage({
         id: 'sp.assets:intro',

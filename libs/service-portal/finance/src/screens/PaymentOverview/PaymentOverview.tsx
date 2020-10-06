@@ -1,17 +1,17 @@
 import React from 'react'
 import {
-  HikingFigure,
   InfoScreen,
   ServicePortalModuleComponent,
+  ShoppingFigure,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 
-export const HealthOverview: ServicePortalModuleComponent = () => {
+export const PaymentOverview: ServicePortalModuleComponent = () => {
   return (
     <InfoScreen
       title={defineMessage({
-        id: 'sp.health:title',
-        defaultMessage: 'Heilsa',
+        id: 'sp.payments:title',
+        defaultMessage: 'Greiðslur',
       })}
       intro={defineMessage({
         id: 'sp.assets:intro',
@@ -57,9 +57,9 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
         id: 'sp.assets:institution:link-title',
         defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
       })}
-      renderFigure={() => <HikingFigure />}
+      renderFigure={() => <ShoppingFigure />}
     />
   )
 }
 
-export default HealthOverview
+export default PaymentOverview

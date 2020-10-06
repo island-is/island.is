@@ -3,6 +3,7 @@ import {
   ServicePortalNavigationItem,
   servicePortalMasterNavigation,
   ServicePortalRoute,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import { cloneDeep } from 'lodash'
@@ -20,7 +21,7 @@ const filterNavigationTree = (
         (Array.isArray(route.path) &&
           item.path &&
           route.path.includes(item.path)),
-    ) || item.systemRoute === true
+    ) !== undefined || item.systemRoute === true
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
@@ -33,7 +34,7 @@ const filterNavigationTree = (
     !included && Array.isArray(item.children) && item.children.length > 0
   if (onlyDescendantsIncluded) item.path = undefined
 
-  return included !== undefined || onlyDescendantsIncluded
+  return included || onlyDescendantsIncluded
 }
 
 /**

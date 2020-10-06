@@ -39,16 +39,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // Eignir
-      {
-        name: defineMessage({
-          id: 'service.portal:assets',
-          defaultMessage: 'Eignir',
-        }),
-        path: ServicePortalPath.EignirRoot,
-        icon: 'calendar',
-      },
-
       // Fjarmal
       {
         name: defineMessage({
@@ -60,11 +50,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             name: defineMessage({
-              id: 'service.portal:vehicles',
-              defaultMessage: 'Ökutæki',
+              id: 'service.portal:assets',
+              defaultMessage: 'Eignir',
             }),
-            path: ServicePortalPath.FjarmalOkutaeki,
-            external: true,
+            path: ServicePortalPath.EignirRoot,
+            icon: 'calendar',
           },
         ],
       },
@@ -134,6 +124,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.StillingarUmbod,
           },
         ],
+      },
+
+      // Greidslur
+
+      {
+        name: defineMessage({
+          id: 'service.portal:payments',
+          defaultMessage: 'Greiðslur',
+        }),
+        path: ServicePortalPath.FjarmalGreidslur,
+        icon: 'toasterInfo',
       },
     ],
   },

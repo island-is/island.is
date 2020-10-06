@@ -10,8 +10,8 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
   return (
     <InfoScreen
       title={defineMessage({
-        id: 'sp.assets:title',
-        defaultMessage: 'Eignir',
+        id: 'sp.education:title',
+        defaultMessage: 'Menntun',
       })}
       intro={defineMessage({
         id: 'sp.assets:intro',
