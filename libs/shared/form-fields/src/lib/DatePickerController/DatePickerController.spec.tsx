@@ -45,7 +45,7 @@ describe('DatePickerController', () => {
     expect(getByText('great placeholder')).toBeInTheDocument()
   })
 
-  it('should render no placeholder if the daatepicker has a selected value', () => {
+  it('should render no placeholder if the datepicker has a selected value', () => {
     const { getByText, queryByText } = render(
       <Wrapper defaultValues={{ id: '2020-10-02' }}>
         <DatePickerController
