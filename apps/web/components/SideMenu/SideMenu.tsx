@@ -44,18 +44,19 @@ interface Tab {
 interface Props {
   tabs?: Tab[]
   isVisible: boolean
-  searchBarFous: boolean
+  searchBarFocus: boolean
   handleClose: () => void
 }
 
 export const SideMenu: FC<Props> = ({
   tabs = [],
   isVisible,
-  searchBarFous,
+  searchBarFocus,
   handleClose,
 }) => {
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
+  const searchInputRef = useRef(null)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
   const tabRefs = useRef<Array<HTMLElement | null>>([])
@@ -77,7 +78,13 @@ export const SideMenu: FC<Props> = ({
 
   useEffect(() => {
     setActiveTab(0)
-  }, [isVisible])
+
+    if (searchBarFocus) {
+      if (searchInputRef?.current) {
+        searchInputRef.current.focus()
+      }
+    }
+  }, [isVisible, searchBarFocus, searchInputRef])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true)
@@ -121,11 +128,11 @@ export const SideMenu: FC<Props> = ({
               <GridRow>
                 <GridColumn span="12/12">
                   <SearchInput
+                    ref={searchInputRef}
                     id="search_input_side_menu"
                     activeLocale={activeLocale}
                     placeholder={t.searchPlaceholder}
                     size="medium"
-                    inputFocused={searchBarFous}
                   />
                 </GridColumn>
               </GridRow>

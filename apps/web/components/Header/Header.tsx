@@ -32,11 +32,6 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const [sideMenuSearchFocus, setSideMenuSearchFocus] = useState(false)
   const { colorScheme } = useContext(ColorSchemeContext)
 
-  useEffect(() => {
-    console.log('listent to focus -- has focus: ', sideMenuSearchFocus, " menu open: ", sideMenuOpen)
-    setSideMenuOpen(sideMenuSearchFocus)
-  }, [sideMenuSearchFocus])
-
   const locale = activeLocale
   const english = activeLocale === 'en'
   const isWhite = colorScheme === 'white'
@@ -95,8 +90,14 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 width="full"
               >
                 <MobileHeaderButtons
-                  sideBarMenuOpen={() => setSideMenuOpen(true)}
-                  sideMenuSearchFocus={() => setSideMenuSearchFocus(true)}
+                  sideBarMenuOpen={() => {
+                    setSideMenuSearchFocus(false)
+                    setSideMenuOpen(true)
+                  }}
+                  sideMenuSearchFocus={() => {
+                    setSideMenuSearchFocus(true)
+                    setSideMenuOpen(true)
+                  }}
                 />
                 {showSearchInHeader && (
                   <>
@@ -144,8 +145,11 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
       <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
         <SideMenu
           isVisible={sideMenuOpen}
-          handleClose={() => setSideMenuSearchFocus(false)}
-          searchBarFous={sideMenuSearchFocus}
+          searchBarFocus={sideMenuSearchFocus}
+          handleClose={() => {
+            setSideMenuSearchFocus(false)
+            setSideMenuOpen(false)
+          }}
         />
       </ColorSchemeContext.Provider>
     </GridContainer>
