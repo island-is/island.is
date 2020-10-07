@@ -12,6 +12,7 @@ import {
   Form,
   DataProviderTypes,
   ApplicationTypes,
+  buildDateField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -35,6 +36,11 @@ export const DrivingLessonsApplication: Form = buildForm({
               id: 'student.name',
               name: m.studentName,
               disabled: false,
+            }),
+            buildDateField({
+              id: 'student.birthDate',
+              name: 'Date baby',
+              placeholder: 'sick',
             }),
             buildTextField({
               id: 'student.parentEmail',

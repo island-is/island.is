@@ -10,8 +10,8 @@ UNAFFECTED=""
 
 for TARGET in "$@"
 do
-    AFFECTED=`$DIR/_nx-affected-targets.sh $TARGET | tr -d '\n'`
-    ALL=`AFFECTED_ALL=7913-${BRANCH} $DIR/_nx-affected-targets.sh $TARGET | tr -d '\n'`
+    AFFECTED=`$DIR/nx-affected-targets.sh $TARGET | tr -d '\n'`
+    ALL=`AFFECTED_ALL=7913-${BRANCH} $DIR/nx-affected-targets.sh $TARGET | tr -d '\n'`
 
     UNAFFECTED_ADD=`node << EOM
         const affectedProjects = "$AFFECTED".split(",").map(e => e.trim()).filter(e => e.length > 0)
@@ -28,5 +28,5 @@ EOM
     fi
 done
 
-echo "Unaffected Docker images: ${UNAFFECTED}"
-export UNAFFECTED="$UNAFFECTED"
+>&2 echo "Unaffected Docker images: ${UNAFFECTED}"
+echo $UNAFFECTED
