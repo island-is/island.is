@@ -222,118 +222,104 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
 
-    const scrollTo = (ref) => {
-      if (ref && ref.current) {
-        if (window.innerWidth < theme.breakpoints.md) {
-          const positionRelativeToWindow = ref.current.getBoundingClientRect()
-            .top
-          const positionOfParent = ref.current.offsetParent.offsetTop
-          const windowPos = window.pageYOffset
-
-          const scrollPos =
-            positionRelativeToWindow + windowPos - positionOfParent
-          window.scrollTo(0, scrollPos)
-        }
-      }
-    }
-
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
       setHasFocus(true)
-      scrollTo(ref)
     }, [setHasFocus])
 
     return (
-      <Downshift<string>
-        id={id}
-        initialInputValue={initialInputValue}
-        onChange={(q) => {
-          return onSubmit(`${search.prefix} ${q}`.trim() || '')
-        }}
-        onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) => {
-          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+      <>
+        <Downshift<string>
+          id={id}
+          initialInputValue={initialInputValue}
+          onChange={(q) => {
+            return onSubmit(`${search.prefix} ${q}`.trim() || '')
+          }}
+          onInputValueChange={(q) => setSearchTerm(q)}
+          itemToString={(v) => {
+            const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
 
-          if (str === 'null') {
-            return ''
-          }
+            if (str === 'null') {
+              return ''
+            }
 
-          return str
-        }}
-        stateReducer={(state, changes) => {
-          // pressing tab when input is not empty should move focus to the
-          // search icon, so we need to prevent downshift from closing on blur
-          const shouldIgnore =
-            changes.type === Downshift.stateChangeTypes.mouseUp ||
-            (changes.type === Downshift.stateChangeTypes.blurInput &&
-              state.inputValue !== '')
+            return str
+          }}
+          stateReducer={(state, changes) => {
+            // pressing tab when input is not empty should move focus to the
+            // search icon, so we need to prevent downshift from closing on blur
+            const shouldIgnore =
+              changes.type === Downshift.stateChangeTypes.mouseUp ||
+              (changes.type === Downshift.stateChangeTypes.blurInput &&
+                state.inputValue !== '')
 
-          return shouldIgnore ? {} : changes
-        }}
-      >
-        {({
-          highlightedIndex,
-          isOpen,
-          getRootProps,
-          getInputProps,
-          getItemProps,
-          getMenuProps,
-          openMenu,
-          closeMenu,
-          inputValue,
-        }) => (
-          <AsyncSearchInput
-            ref={ref}
-            white={white}
-            hasFocus={hasFocus}
-            loading={search.isLoading}
-            rootProps={getRootProps()}
-            menuProps={{
-              comp: 'div',
-              ...getMenuProps(),
-            }}
-            buttonProps={{
-              onClick: () => {
-                closeMenu()
-                onSubmit(inputValue)
-              },
-              onFocus,
-              onBlur,
-            }}
-            inputProps={getInputProps({
-              inputSize: size,
-              onFocus: () => {
-                onFocus()
-                if (openOnFocus) {
-                  openMenu()
-                }
-              },
-              onBlur,
-              placeholder,
-              colored,
-              onKeyDown: (e) => {
-                if (e.key === 'Enter' && highlightedIndex == null) {
-                  e.currentTarget.blur()
+            return shouldIgnore ? {} : changes
+          }}
+        >
+          {({
+            highlightedIndex,
+            isOpen,
+            getRootProps,
+            getInputProps,
+            getItemProps,
+            getMenuProps,
+            openMenu,
+            closeMenu,
+            inputValue,
+          }) => (
+            <AsyncSearchInput
+              ref={ref}
+              white={white}
+              hasFocus={hasFocus}
+              loading={search.isLoading}
+              rootProps={getRootProps()}
+              menuProps={{
+                comp: 'div',
+                ...getMenuProps(),
+              }}
+              buttonProps={{
+                onClick: () => {
                   closeMenu()
-                  onSubmit(e.currentTarget.value)
-                }
-              },
-            })}
-          >
-            {isOpen && !isEmpty(search) && (
-              <Results
-                search={search}
-                highlightedIndex={highlightedIndex}
-                getItemProps={getItemProps}
-                locale={locale}
-                autosuggest={autosuggest}
-              />
-            )}
-          </AsyncSearchInput>
-        )}
-      </Downshift>
+                  onSubmit(inputValue)
+                },
+                onFocus,
+                onBlur,
+              }}
+              inputProps={getInputProps({
+                inputSize: size,
+                onFocus: () => {
+                  onFocus()
+                  if (openOnFocus) {
+                    openMenu()
+                  }
+                },
+                onBlur,
+                placeholder,
+                colored,
+                onKeyDown: (e) => {
+                  if (e.key === 'Enter' && highlightedIndex == null) {
+                    e.currentTarget.blur()
+                    closeMenu()
+                    onSubmit(e.currentTarget.value)
+                  }
+                },
+              })}
+            >
+              {isOpen && !isEmpty(search) && (
+                <Results
+                  search={search}
+                  highlightedIndex={highlightedIndex}
+                  getItemProps={getItemProps}
+                  locale={locale}
+                  autosuggest={autosuggest}
+                />
+              )}
+            </AsyncSearchInput>
+          )}
+        </Downshift>
+      </>
     )
   },
 )

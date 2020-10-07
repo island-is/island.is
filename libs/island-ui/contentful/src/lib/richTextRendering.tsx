@@ -33,6 +33,7 @@ import {
 } from './SectionWithImage/SectionWithImage'
 import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
+import { Location, LocationProps } from './Location/Location'
 
 type HtmlSlice = { __typename: 'Html'; document: any }
 type FaqListSlice = { __typename: 'FaqList' } & FaqListProps
@@ -42,6 +43,7 @@ type AssetSlice = { __typename: 'Asset' } & AssetLinkProps
 type ProcessEntrySlice = { __typename: 'ProcessEntry' } & ProcessEntryProps
 type EmbeddedVideoSlice = { __typename: 'EmbeddedVideo' } & EmbeddedVideoProps
 type TeamListSlice = { __typename: 'TeamList' } & TeamListProps
+type LocationSlice = { __typename: 'Location' } & LocationProps
 type ContactUsSlice = { __typename: 'ContactUs' } & Omit<
   ContactUsProps,
   'state' | 'onSubmit'
@@ -60,6 +62,7 @@ type Slice =
   | EmbeddedVideoSlice
   | TeamListSlice
   | ContactUsSlice
+  | LocationSlice
   | SectionWithImageSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
@@ -131,6 +134,9 @@ export const defaultRenderComponent = (
 
     case 'TeamList':
       return <TeamList {...slice} />
+
+    case 'Location':
+      return <Location {...slice} />
 
     case 'ContactUs':
       // NB: ContactUs needs to be connected with submit logic higher up

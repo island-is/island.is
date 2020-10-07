@@ -4,6 +4,7 @@ import { Screen } from '@island.is/web/types'
 import { Text, Box } from '@island.is/island-ui/core'
 import { I18nContext } from '@island.is/web/i18n/I18n'
 import * as styles from './Error.treat'
+import { nlToBr } from '@island.is/web/utils/nlToBr'
 
 // We'll use these defaults if the top-level (screen) component was unable to
 // fetch translations from our CMS
@@ -14,14 +15,6 @@ const defaultTranslations = {
   error500Body:
     'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
 } as const
-
-const nlToBr = (text: string): ReactNode =>
-  text.split(/\r\n|\r|\n/g).map((s, i) => (
-    <Fragment key={i}>
-      {i > 0 && <br />}
-      {s}
-    </Fragment>
-  ))
 
 const formatBody = (body: string, path: string): ReactNode =>
   body.split('{PATH}').map((s, i) => (

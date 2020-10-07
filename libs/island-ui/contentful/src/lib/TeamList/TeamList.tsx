@@ -13,22 +13,20 @@ export interface TeamListProps {
 
 export const TeamList: FC<TeamListProps> = ({ teamMembers }) => {
   return (
-    <Background background="dotted" paddingY={10}>
-      <GridRow>
-        {teamMembers.map((member, index) => (
-          <GridColumn span={['12/12', '6/12', '6/12', '4/12']} key={index}>
-            <Box paddingBottom={3} height="full">
-              <ProfileCard
-                title={member.name}
-                description={member.title}
-                image={member.image.url}
-                heightFull
-              />
-            </Box>
-          </GridColumn>
-        ))}
-      </GridRow>
-    </Background>
+    <GridRow>
+      {teamMembers.map((member, index) => (
+        <GridColumn span={['12/12', '6/12', '6/12', '4/12']} key={index}>
+          <Box paddingBottom={3} height="full">
+            <ProfileCard
+              title={member.name}
+              description={member.title}
+              image={member.image.url}
+              heightFull
+            />
+          </Box>
+        </GridColumn>
+      ))}
+    </GridRow>
   )
 }
 
