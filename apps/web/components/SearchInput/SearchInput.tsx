@@ -378,7 +378,11 @@ const Results: FC<{
                 ? suggestion.replace(search.term, '')
                 : ''
               return (
-                <div key={suggestion} {...getItemProps({ item: suggestion })} className={styles.suggestion}>
+                <div
+                  key={suggestion}
+                  {...getItemProps({ item: suggestion })}
+                  className={styles.suggestion}
+                >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
                     <strong>{endOfString}</strong>
