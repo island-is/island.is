@@ -81,7 +81,7 @@ const Confirm = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout step={1}>
+        <ProcessPageLayout activeSection={0} activeCar={id.toString()}>
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>

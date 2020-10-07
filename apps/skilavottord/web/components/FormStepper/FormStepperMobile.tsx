@@ -1,23 +1,29 @@
 import React, { useEffect } from 'react'
-import { Box, Icon, Typography } from '@island.is/island-ui/core'
-import * as styles from './ProcessStepper.treat'
+import {
+  Box,
+  FormStepperSection,
+  Icon,
+  Typography,
+} from '@island.is/island-ui/core'
+import * as styles from './FormStepperMobile.treat'
 
 interface ProcessProps {
-  steps: string[]
-  currentStep: number
+  sections: FormStepperSection[]
+  activeSection: number
 }
 
-const ProcessStepper = ({ steps, currentStep }: ProcessProps) => {
+const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => {
   useEffect(() => {
-    if (steps.length < currentStep) {
-      currentStep = 1
+    const section = document.getElementById(activeSection.toString())
+    // Scrolls current step into view unless it is the first or last step
+    if (activeSection !== 0 && section) {
+      section.scrollIntoView({
+        block: 'end',
+        inline: 'start',
+        behavior: 'smooth',
+      })
     }
-    // Scrolls current step into view unless it is the first step
-    if (currentStep !== 1) {
-      const step = document.getElementById(currentStep.toString())
-      step.scrollIntoView({ block: 'end', inline: 'start', behavior: 'smooth' })
-    }
-  }, [currentStep, steps])
+  }, [activeSection, sections])
 
   return (
     <Box
@@ -29,14 +35,13 @@ const ProcessStepper = ({ steps, currentStep }: ProcessProps) => {
       overflow="auto"
       position="relative"
     >
-      {steps.map((step, index) => {
-        // the second checks in isCompleted and isActive is because design wants the last step to be marked as completed as well
+      {sections.map((section, index) => {
         const isCompleted =
-          index + 1 < currentStep || currentStep === steps.length
-        const isActive = currentStep === index + 1 && !isCompleted
+          index < activeSection || activeSection > sections.length
+        const isActive = index === activeSection
         return (
           <Box
-            id={(index + 1).toString()}
+            id={index.toString()}
             key={index}
             className={styles.step}
             display="flex"
@@ -49,7 +54,7 @@ const ProcessStepper = ({ steps, currentStep }: ProcessProps) => {
                   <Icon type="check" color="white" width="16px" />
                 ) : (
                   <Typography variant="h5" color="white">
-                    {currentStep}
+                    {activeSection + 1}
                   </Typography>
                 )}
               </IconBackground>
@@ -62,7 +67,9 @@ const ProcessStepper = ({ steps, currentStep }: ProcessProps) => {
                 marginRight={1}
               ></Box>
             )}
-            <Typography variant={isActive ? 'h5' : 'p'}>{step}</Typography>
+            <Typography variant={isActive ? 'h5' : 'p'}>
+              {section.name}
+            </Typography>
           </Box>
         )
       })}
@@ -84,4 +91,4 @@ const IconBackground = ({ children }) => (
   </Box>
 )
 
-export default ProcessStepper
+export default FormStepperMobile
