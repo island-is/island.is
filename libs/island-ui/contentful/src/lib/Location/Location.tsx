@@ -27,7 +27,8 @@ export const Location: FC<LocationProps> = ({
 }) => {
   return (
     <div className={styles.container}>
-      <Box
+      {console.log(title, background, subTitle, link)}
+{background &&      <Box
         className={styles.background}
         style={{ backgroundImage: `url(${background.url})` }}
       >
@@ -88,6 +89,6 @@ export const Location: FC<LocationProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
-    </div>
+  }  </div>
   )
 }
