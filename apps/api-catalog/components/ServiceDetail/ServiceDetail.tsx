@@ -1,18 +1,129 @@
 import React from 'react'
-import { Box, Link } from '@island.is/island-ui/core'
+import { Box, GridContainer, Link, Select } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { ApiService } from '@island.is/api/schema'
 
 export interface ServiceDetailProps {
-  service: ApiService
+    service: ApiService
+
 }
 
 export const ServiceDetail = (props: ServiceDetailProps) => {
+
+    if (props.service === null) {
+        return (
+            <GridContainer>
+                <Box>
+                    <h3>Þjónusta finnst ekki</h3>
+                </Box>
+            </GridContainer>
+        )
+    }
+    type SelectOption = {
+        label: string,
+        value: string
+    }
+
+    enum CATEGORY {
+        DATA,
+        PRICING,
+        ACCESS
+    }
+
+    let versionOptions: Array<SelectOption> = props.service.xroadIdentifier.map((e) => ({
+        label: e.serviceCode.split('-').pop(),
+        value: e.serviceCode
+    }))
+    if (versionOptions.length > 0) {
+        versionOptions = versionOptions.sort((a, b) => b.label.localeCompare(a.label))
+    }
+
+    const onChange = (value: SelectOption) => {
+
+        console.log(value);
+    }
+
+    const showOpenAPI = (url: string) => {
+        return (
+            <div>Need url or Json object</div>
+        )
+    }
+
+    const showCategory = (category: CATEGORY) => {
+        let title = ""
+        let cat = null;
+        switch (category) {
+            case CATEGORY.DATA:
+                title = "Gögn";
+                cat = props.service.data;
+                break;
+            case CATEGORY.PRICING: title = "Verð";
+                cat = props.service.pricing;
+                break;
+            case CATEGORY.ACCESS: title = "Aðgengi";
+                cat = props.service.access;
+                break;
+        }
+        return (
+            <div>
+                <h2> {title}</h2>
+                <div className={cn([styles.category])}>
+                    {cat?.map((item, index) => {
+                        return (
+                            <div className={cn(styles.categoryItem)} key={index}>
+                                {item}
+                            </div>
+                        )
+
+                    })}
+                </div>
+            </div>
+        )
+
+    }
+
+
     return (
-        <div>
-            <div className={cn(styles.root)}>{props.service}</div>
-            <div>Stuffs happening</div>
-        </div>
+        <GridContainer>
+            <Box className={cn(styles.root)}>
+                <div>
+                    <h1 className="name" data-id={props.service.id} >{props.service.name}</h1>
+                    <Box className={cn(styles.selectContainer)} >
+                        <div>
+                            <Select
+                                label="Version"
+                                name="version"
+                                defaultValue={versionOptions[0]}
+                                options={versionOptions}
+                                onChange={onChange}
+                                noOptionsMessage="Engar útgáfuupplýsingar"
+                            />
+                        </div>
+                    </Box>
+
+                </div>
+                <div className={cn(styles.section)}>
+                    <h2 className={cn(styles.sectionTitle)}>{props.service.name}</h2>
+                    <p>{props.service.description}</p>
+                </div>
+                <div className={cn(styles.section)}>
+                    <h2>{props.service.owner}</h2>
+                    <p>todo: Hér vantar lýsingu á owner</p>
+                </div>
+
+                <div className={cn(styles.section)}>
+                    {showCategory(CATEGORY.ACCESS)}
+                    {showCategory(CATEGORY.DATA)}
+                    {showCategory(CATEGORY.PRICING)}
+                </div>
+
+                <div className={cn(styles.section)}>
+                    <h2>OpenAPI skjölun</h2>
+                    {showOpenAPI('https.stuff')}
+                </div>
+
+            </Box>
+        </GridContainer>
     )
 }
