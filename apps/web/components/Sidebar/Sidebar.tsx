@@ -190,7 +190,7 @@ export const Sidebar: FC<SidebarProps> = ({
                   textAlign="left"
                   onClick={onClick}
                 >
-                  <Text variant="default" as="span">
+                  <Text as="span">
                     <span
                       className={cn({
                         [styles.active]: selected,
@@ -217,9 +217,7 @@ export const Sidebar: FC<SidebarProps> = ({
                 <Icon type="bullet" color="red400" />
               </span>
             )}
-            <Text variant="default" as="span">
-              {active ? <strong>{title}</strong> : title}
-            </Text>
+            <Text as="span">{active ? <strong>{title}</strong> : title}</Text>
           </FocusableBox>
         ))}
         {children && <Divider weight="alternate" />}

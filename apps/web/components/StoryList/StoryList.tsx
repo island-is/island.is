@@ -56,9 +56,7 @@ const Story: FC<StoryProps> = ({
         <Text variant="h2" as="h2" color="white">
           {title}
         </Text>
-        <Text variant="default" color="white">
-          {intro}
-        </Text>
+        <Text color="white">{intro}</Text>
         {!!(linkedPage || link) && (
           <ContentLink pageData={linkedPage} fallbackLink={link}>
             <Button variant="text" size="medium" white icon="arrowRight">

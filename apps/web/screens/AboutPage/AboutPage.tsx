@@ -188,9 +188,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                   <Text variant="h1" as="h1" color="white">
                     {slice.title}
                   </Text>
-                  <Text variant="default" as="p" color="white">
-                    {slice.introduction}
-                  </Text>
+                  <Text color="white">{slice.introduction}</Text>
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -214,7 +212,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       paddingBottom={2}
                       display="inlineBlock"
                     >
-                      <Text variant="default" color={colors.main}>
+                      <Text color={colors.main}>
                         {navigationTitle.id === currentSliceId ? (
                           <b>{navigationTitle.text}</b>
                         ) : (
@@ -245,11 +243,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       <span key={index}>
                         <Box paddingY={1}>
                           <Link href={url}>
-                            <Text
-                              variant="default"
-                              as="div"
-                              color={colors.secondary}
-                            >
+                            <Text as="div" color={colors.secondary}>
                               {text}
                             </Text>
                           </Link>

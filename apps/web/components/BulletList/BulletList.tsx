@@ -43,9 +43,7 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
             <Text variant="h3" as="h3">
               {bullet.title}
             </Text>
-            <Text variant="default" as="p">
-              {bullet.body}
-            </Text>
+            <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
               <Button variant="text" href={bullet.url} icon="arrowRight">
                 {bullet.linkText}
@@ -94,9 +92,7 @@ const NumberSection: FC<{ group: NumberBulletGroup }> = ({ group }) => {
         <Text variant="h4" as="h3">
           {bullet.title}
         </Text>
-        <Text variant="default" as="p">
-          {bullet.body}
-        </Text>
+        <Text>{bullet.body}</Text>
       </Stack>
     </Row>
   ))

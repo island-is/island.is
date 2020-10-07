@@ -45,7 +45,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
         </Text>
         <Divider weight="alternate" />
         <Link href="/um-island-is">
-          <Text variant="default">{parentPage.pageHeader.navigationText}</Text>
+          <Text>{parentPage.pageHeader.navigationText}</Text>
         </Link>
         {parentPage.pageHeader.links.map(({ text, url }, i) => (
           <Link key={i} href={url}>

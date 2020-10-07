@@ -27,11 +27,7 @@ export const EmailSignup: FC<EmailSignupProps> = ({
         <Text variant="h3" as="h3" color="blue400">
           {title}
         </Text>
-        {description && (
-          <Text variant="default" as="p">
-            {description}
-          </Text>
-        )}
+        {description && <Text>{description}</Text>}
       </div>
       <Columns alignY="center" space={[2, 2, 8]} collapseBelow="md">
         <Column>

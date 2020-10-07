@@ -128,7 +128,7 @@ const RelatedArticles: FC<{
         </Text>
         <Divider weight="alternate" />
         {articles.map((article) => (
-          <Text key={article.slug} variant="default" as="span">
+          <Text key={article.slug} as="span">
             <Link
               key={article.slug}
               href={makePath('article', '[slug]')}
@@ -198,7 +198,7 @@ const SubArticleNavigation: FC<{
         </Text>
         <Divider weight="alternate" />
         <div ref={!selectedSubArticle ? setBullet : null}>
-          <Text variant="default" as="p">
+          <Text>
             <Link
               shallow
               href={makePath('article', '[slug]')}
@@ -220,7 +220,7 @@ const SubArticleNavigation: FC<{
                   : null
               }
             >
-              <Text variant="default" as="span">
+              <Text as="span">
                 <Link
                   shallow
                   href={makePath('article', '[slug]/[subSlug]')}
@@ -294,9 +294,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
             textAlign="left"
             onClick={() => navigate(id)}
           >
-            <Text variant="default">
-              {id === activeId ? <strong>{text}</strong> : text}
-            </Text>
+            <Text>{id === activeId ? <strong>{text}</strong> : text}</Text>
           </Box>
         ))}
       </Stack>

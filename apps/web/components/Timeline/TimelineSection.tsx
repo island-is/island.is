@@ -31,9 +31,7 @@ export const TimelineSection: FC<TimelineSectionProps> = ({
       <GridRow>
         <GridColumn offset={[null, null, null, '1/9']}>
           <Box paddingTop={2} paddingBottom={[0, 0, 5]}>
-            <Text variant="default" as="p" color="white">
-              {title}
-            </Text>
+            <Text color="white">{title}</Text>
           </Box>
         </GridColumn>
       </GridRow>

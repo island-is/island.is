@@ -52,9 +52,7 @@ const LifeEventInCategory: FC<LifeEventInCategoryProps> = ({
               <Text variant="h4" as="h4" color="blue400">
                 {title}
               </Text>
-              <Text variant="default" paddingBottom={2}>
-                {intro}
-              </Text>
+              <Text paddingBottom={2}>{intro}</Text>
               <div className={styles.pushDown}>
                 <Tag>{categoryTag}</Tag>
               </div>

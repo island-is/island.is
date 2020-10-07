@@ -98,7 +98,7 @@ export const Card: FC<CardProps> = ({
             )}
           </Box>
         </Text>
-        {description && <Text variant="default">{description}</Text>}
+        {description && <Text>{description}</Text>}
         {tags.length > 0 && (
           <Box paddingTop={3} flexGrow={0} position="relative">
             <Inline space={1}>

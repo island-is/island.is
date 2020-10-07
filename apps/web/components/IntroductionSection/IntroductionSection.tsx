@@ -71,7 +71,7 @@ export const IntroductionSection: FC<Props> = ({
           <Text variant="intro" paddingBottom={text ? 2 : 0}>
             {introText}
           </Text>
-          <Text variant="default">{text}</Text>
+          <Text>{text}</Text>
           <Box paddingY={2}>
             <ArrowLink href={linkUrl} color="blue400">
               {linkText}

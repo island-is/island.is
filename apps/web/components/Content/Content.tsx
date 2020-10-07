@@ -97,7 +97,7 @@ const embeddedNodes = () => ({
             <Text variant="h4">{title}</Text>
             <Divider weight="alternate" />
             {links.map(({ fields: { text, url } }, index) => (
-              <Text variant="default" color="blue400" key={index}>
+              <Text color="blue400" key={index}>
                 <Link href={url}>{text}</Link>
               </Text>
             ))}
@@ -126,11 +126,7 @@ const options = (type) => ({
     text.split('\n').map((text, i) => [i > 0 && <br key={i} />, text]),
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
-      return (
-        <Text variant="default" links>
-          {children}
-        </Text>
-      )
+      return <Text>{children}</Text>
     },
     [BLOCKS.EMBEDDED_ASSET]: (node) => {
       const {

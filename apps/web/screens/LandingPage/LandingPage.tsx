@@ -54,9 +54,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
       {page.links && (
         <Box background="purple100" padding={4} borderRadius="large">
           <Stack space={2}>
-            {page.links.title && (
-              <Text variant="default">{page.links.title}</Text>
-            )}
+            {page.links.title && <Text>{page.links.title}</Text>}
             {page.links.links.map(({ url, text }, index) => (
               <Hyperlink key={index} href={url}>
                 {text}

@@ -47,9 +47,7 @@ export const SidebarNavigation: FC<SidebarNavigationProps> = ({
             textAlign="left"
             onClick={() => navigate(id)}
           >
-            <Text variant="default">
-              {id === activeId ? <b>{text}</b> : text}
-            </Text>
+            <Text>{id === activeId ? <b>{text}</b> : text}</Text>
           </Box>
         ))}
       </Stack>

@@ -126,13 +126,13 @@ const NewsList: Screen<NewsListProps> = ({
         }}
       />
       {selectedYear && (
-        <Text variant="default" as="p">
+        <Text>
           <Link href={makeHref(selectedYear)}>{allMonthsString}</Link>
           {selectedMonth === undefined && <Bullet align="right" />}
         </Text>
       )}
       {months.map((date: Date) => (
-        <Text key={date.toISOString()} variant="default" as="p">
+        <Text key={date.toISOString()}>
           <Link href={makeHref(date.getFullYear(), date.getMonth())}>
             {capitalize(format(date, 'MMMM'))}
           </Link>

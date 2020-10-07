@@ -68,9 +68,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         <Text variant="h3" as="h3" paddingBottom={1}>
           {title}
         </Text>
-        <Text variant="default" paddingBottom={3}>
-          {introduction}
-        </Text>
+        <Text paddingBottom={3}>{introduction}</Text>
         <div className={styles.readMore}>
           <ArrowLink>{readMoreText}</ArrowLink>
         </div>

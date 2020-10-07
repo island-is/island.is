@@ -47,9 +47,7 @@ const LinkCard: FC<LinkCardProps> = ({ title, body, link, linkText }) => {
           </Text>
         </Box>
         <Box paddingBottom={2}>
-          <Text variant="default" as="p">
-            {body}
-          </Text>
+          <Text>{body}</Text>
         </Box>
       </div>
       <div>

@@ -427,7 +427,7 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
       onClick={onClick}
       {...props}
     >
-      <Text variant="default" as="div" truncate={truncate}>
+      <Text as="div" truncate={truncate}>
         {selected ? <strong>{text}</strong> : text}
       </Text>
     </Box>
