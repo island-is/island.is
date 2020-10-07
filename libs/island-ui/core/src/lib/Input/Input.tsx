@@ -1,7 +1,7 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
 import * as styles from './Input.treat'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import Tooltip from '../Tooltip/Tooltip'
 
 type InputBackgroundColor = 'white' | 'blue'

@@ -3,7 +3,7 @@ import cn from 'classnames'
 
 import * as styles from './RadioButton.treat'
 import Tooltip from '../Tooltip/Tooltip'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 
 export interface RadioButtonProps {
   name?: string

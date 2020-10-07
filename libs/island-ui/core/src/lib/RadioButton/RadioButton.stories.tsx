@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { RadioButton } from './RadioButton'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 import { Stack } from '../Stack/Stack'
 

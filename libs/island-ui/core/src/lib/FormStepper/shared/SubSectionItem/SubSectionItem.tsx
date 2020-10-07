@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 
 import { Icon } from '../../../Icon/Icon'
 import { Typography } from '../../../Typography/Typography'
-import { Box } from '../../../Box'
+import { Box } from '../../../Box/Box'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionItem.treat'
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Checkbox } from './Checkbox'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {

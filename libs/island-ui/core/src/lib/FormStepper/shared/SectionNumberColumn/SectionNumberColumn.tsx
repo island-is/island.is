@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box } from '../../../Box'
+import { Box } from '../../../Box/Box'
 import * as styles from './SectionNumberColumn.treat'
 
 export const SectionNumberColumn: FC<{ children?: React.ReactNode }> = ({

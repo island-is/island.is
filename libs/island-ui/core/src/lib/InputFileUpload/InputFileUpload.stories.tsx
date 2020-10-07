@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { InputFileUpload, fileToObject, UploadFile } from './InputFileUpload'
 
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {

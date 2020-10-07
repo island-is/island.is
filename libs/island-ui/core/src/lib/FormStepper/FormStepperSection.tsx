@@ -1,7 +1,7 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { SectionNumber, SubSections } from './shared'
 import * as types from './types'

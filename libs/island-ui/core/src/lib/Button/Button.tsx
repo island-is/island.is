@@ -1,6 +1,6 @@
 import React, { forwardRef, ReactNode, FC, useContext } from 'react'
 import cn from 'classnames'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { Inline } from '../Inline/Inline'
 import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
 import { ColorSchemeContext } from '../context'

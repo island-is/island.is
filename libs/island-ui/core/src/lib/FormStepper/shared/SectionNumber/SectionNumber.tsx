@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Colors } from '@island.is/island-ui/theme'
 
-import { Box } from '../../../Box'
+import { Box } from '../../../Box/Box'
 import { Icon } from '../../../Icon/Icon'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as types from '../../types'

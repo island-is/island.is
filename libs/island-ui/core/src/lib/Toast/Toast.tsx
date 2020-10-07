@@ -4,8 +4,8 @@ import {
   toast as toastify,
   Slide,
 } from 'react-toastify'
-import { Box } from '../Box'
-import Icon from '../Icon/Icon'
+import { Box } from '../Box/Box'
+import { Icon } from '../Icon/Icon'
 import Typography from '../Typography/Typography'
 import * as toastStyles from './Toast.treat'
 import { toastKeyframes } from './toastKeyframes'
@@ -54,7 +54,7 @@ const RenderMessage = ({
   )
 }
 
-const ToastContainer: React.FC<ToastProps> = ({
+export const ToastContainer: React.FC<ToastProps> = ({
   hideProgressBar = false,
   timeout = 5000,
 }) => {
@@ -85,5 +85,3 @@ export const toast = {
   warning: (message: string) =>
     toastify.warning(<RenderMessage type="warning" message={message} />),
 }
-
-export default ToastContainer

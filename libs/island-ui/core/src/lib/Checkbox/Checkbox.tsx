@@ -2,9 +2,8 @@ import React from 'react'
 import cn from 'classnames'
 
 import * as styles from './Checkbox.treat'
-import Icon from '../Icon/Icon'
-import Tooltip from '../Tooltip/Tooltip'
-import { Box } from '../Box'
+import { Icon } from '../Icon/Icon'
+import { Tooltip } from '../Tooltip/Tooltip'
 
 export interface CheckboxProps {
   name?: string

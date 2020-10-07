@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { FormStepperSection } from './FormStepperSection'
 import * as types from './types'
