@@ -84,7 +84,7 @@ export const m = defineMessages({
   startDateDescription: {
     id: 'pl.application:periods.startdate.description',
     defaultMessage:
-      'You can choose to start from one month before the date of birth, on the date of birth, or on a specific date. <span style="font-weight: bold;">Please note, that your rights end 18 months after the date of birth.</span>',
+      'You can choose to start from one month before the date of birth, on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
     description: 'Some description',
   },
   startDateOption1: {
