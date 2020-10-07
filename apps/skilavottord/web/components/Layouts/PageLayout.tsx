@@ -8,16 +8,17 @@ import {
   GridColumn,
   Footer,
 } from '@island.is/island-ui/core'
-import ProcessStepper from '../ProcessStepper/ProcessStepper'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import FormStepperMobile from '../FormStepper/FormStepperMobile'
+import FormStepper from '../FormStepper/FormStepper'
 
 interface PageProps {
   children: ReactNode
 }
 
 interface ProcessPageProps extends PageProps {
-  right?: ReactNode
-  step: number
+  activeSection: number
+  activeCar: string
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
@@ -41,24 +42,30 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
 
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
-  right,
-  step,
+  activeSection,
+  activeCar,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const {
-    t: { processSteps: t },
+    t: { processSections: t },
   } = useI18n()
+
+  const sections = t.map((section) => {
+    return { name: section }
+  })
 
   return (
     <Box
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
     >
-      {isMobile && <ProcessStepper steps={t} currentStep={step} />}
+      {isMobile && (
+        <FormStepperMobile sections={sections} activeSection={activeSection} />
+      )}
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
               paddingY={[3, 3, 3, 6]}
               background="white"
@@ -73,11 +80,14 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
               </GridColumn>
             </Box>
           </GridColumn>
-          <GridColumn
-            span={['0', '0', '0', '3/12']}
-            offset={['0', '0', '0', '1/12']}
-          >
-            {!isMobile && right}
+          <GridColumn span={['0', '0', '3/12', '3/12']}>
+            {!isMobile && (
+              <FormStepper
+                sections={sections}
+                activeSection={activeSection}
+                activeCar={activeCar}
+              />
+            )}
           </GridColumn>
         </GridRow>
       </GridContainer>
