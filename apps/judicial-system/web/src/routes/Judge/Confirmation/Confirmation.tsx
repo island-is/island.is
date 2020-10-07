@@ -23,10 +23,14 @@ import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import {
   constructConclusion,
   getAppealDecitionText,
-  renderRestrictons,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { formatDate, parseTransition } from '../../../utils/formatters'
+import {
+  TIME_FORMAT,
+  formatDate,
+  formatCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
+import { parseTransition } from '../../../utils/formatters'
 import { capitalize } from 'lodash'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
@@ -179,7 +183,7 @@ export const Confirmation: React.FC = () => {
                         formatDate(workingCase.arrestDate, 'PPPP'),
                       )} kl. ${formatDate(
                         workingCase.arrestDate,
-                        Constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </AccordionListItem>
                     <AccordionListItem title="Ósk um fyrirtökudag og tíma">
@@ -187,7 +191,7 @@ export const Confirmation: React.FC = () => {
                         formatDate(workingCase.requestedCourtDate, 'PPPP'),
                       )} kl. ${formatDate(
                         workingCase.requestedCourtDate,
-                        Constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </AccordionListItem>
                     <AccordionListItem title="Dómkröfur">
@@ -195,7 +199,7 @@ export const Confirmation: React.FC = () => {
                         formatDate(workingCase.custodyEndDate, 'PPP'),
                       )} kl. ${formatDate(
                         workingCase.custodyEndDate,
-                        Constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </AccordionListItem>
                     <AccordionListItem title="Lagaákvæði">
@@ -206,7 +210,9 @@ export const Confirmation: React.FC = () => {
                     </Box>
                     <Box marginBottom={4}>
                       <Typography>
-                        {renderRestrictons(workingCase.custodyRestrictions)}
+                        {formatCustodyRestrictions(
+                          workingCase.custodyRestrictions,
+                        )}
                       </Typography>
                     </Box>
                     <Box marginBottom={2}>
@@ -237,10 +243,10 @@ export const Confirmation: React.FC = () => {
                       <Typography>
                         {`Þinghald frá kl. ${formatDate(
                           workingCase.courtStartTime,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )} til kl. ${formatDate(
                           workingCase.courtEndTime,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
                       </Typography>
                     </Box>

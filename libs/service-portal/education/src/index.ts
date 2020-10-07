@@ -11,7 +11,8 @@ export const educationModule: ServicePortalModule = {
     {
       name: 'Menntun',
       path: ServicePortalPath.MenntunRoot,
-      render: () => lazy(() => import('./lib/service-portal-education')),
+      render: () =>
+        lazy(() => import('./screens/EducationOverview/EducationOverview')),
     },
   ],
 }

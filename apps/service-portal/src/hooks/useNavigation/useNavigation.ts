@@ -3,23 +3,25 @@ import {
   ServicePortalNavigationItem,
   servicePortalMasterNavigation,
   ServicePortalRoute,
-  UserWithMeta,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import { cloneDeep } from 'lodash'
+import { User } from 'oidc-client'
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
-  userInfo: UserWithMeta,
+  userInfo: User,
 ): boolean => {
-  const included = routes.find(
-    (route) =>
-      route.path === item.path ||
-      (Array.isArray(route.path) &&
-        item.path &&
-        route.path.includes(item.path)),
-  )
+  const included =
+    routes.find(
+      (route) =>
+        route.path === item.path ||
+        (Array.isArray(route.path) &&
+          item.path &&
+          route.path.includes(item.path)),
+    ) !== undefined || item.systemRoute === true
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
@@ -32,7 +34,7 @@ const filterNavigationTree = (
     !included && Array.isArray(item.children) && item.children.length > 0
   if (onlyDescendantsIncluded) item.path = undefined
 
-  return included !== undefined || onlyDescendantsIncluded
+  return included || onlyDescendantsIncluded
 }
 
 /**

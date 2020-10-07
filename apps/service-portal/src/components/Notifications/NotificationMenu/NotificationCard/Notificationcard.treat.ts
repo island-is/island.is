@@ -23,3 +23,7 @@ export const link = style({
     textDecoration: 'none',
   },
 })
+
+export const title = style({
+  maxWidth: '80%',
+})

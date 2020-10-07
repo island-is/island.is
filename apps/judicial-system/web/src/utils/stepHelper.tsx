@@ -1,13 +1,13 @@
 import React from 'react'
-import {
-  AppealDecision,
-  AppealDecitionRole,
-  Case,
-  CustodyRestrictions,
-} from '../types'
+import { AppealDecitionRole, Case } from '../types'
 import * as api from '../api'
-import { formatDate, parseString } from './formatters'
+import { parseString } from './formatters'
 import { Typography } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system/types'
 
 export const updateState = (
   state: Case,
@@ -50,44 +50,22 @@ export const autoSave = async (
   }
 }
 
-export const getRestrictionByValue = (value: CustodyRestrictions) => {
-  switch (value) {
-    case CustodyRestrictions.COMMUNICATION:
-      return 'D - Bréfskoðun, símabann'
-    case CustodyRestrictions.ISOLATION:
-      return 'B - Einangrun'
-    case CustodyRestrictions.MEDIA:
-      return 'E - Fjölmiðlabann'
-    case CustodyRestrictions.VISITAION:
-      return 'C - Heimsóknarbann'
-  }
-}
-
-export const renderRestrictons = (restrictions: CustodyRestrictions[]) => {
-  return restrictions && restrictions.length > 0
-    ? restrictions
-        .map((restriction) => getRestrictionByValue(restriction))
-        .toString()
-        .replace(',', ', ')
-    : 'Lausagæsla'
-}
-
 export const getAppealDecitionText = (
   role: AppealDecitionRole,
-  appealDecition: AppealDecision,
+  appealDecition: CaseAppealDecision,
 ) => {
   switch (appealDecition) {
-    case AppealDecision.APPEAL: {
+    case CaseAppealDecision.APPEAL: {
       return `${
         role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } kærir málið`
     }
-    case AppealDecision.ACCEPT: {
+    case CaseAppealDecision.ACCEPT: {
       return `${
         role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } unir úrskurðinum`
     }
-    case AppealDecision.POSTPONE: {
+    case CaseAppealDecision.POSTPONE: {
       return `${
         role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } tekur sér lögboðinn frest`
@@ -128,26 +106,27 @@ export const constructConclusion = (workingCase: Case) => {
                   const isOnly = workingCase.custodyRestrictions.length === 1
 
                   return custodyRestriction ===
-                    CustodyRestrictions.ISOLATION ? (
+                    CaseCustodyRestrictions.ISOLATION ? (
                     <Typography as="span" key={index}>
                       {` einangrun${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
                       }`}
                     </Typography>
                   ) : custodyRestriction ===
-                    CustodyRestrictions.COMMUNICATION ? (
+                    CaseCustodyRestrictions.COMMUNICATION ? (
                     <Typography as="span" key={index}>
                       {` bréfa, og símabanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
                     </Typography>
-                  ) : custodyRestriction === CustodyRestrictions.MEDIA ? (
+                  ) : custodyRestriction === CaseCustodyRestrictions.MEDIA ? (
                     <Typography as="span" key={index}>
                       {` fjölmiðlabanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
                     </Typography>
-                  ) : custodyRestriction === CustodyRestrictions.VISITAION ? (
+                  ) : custodyRestriction ===
+                    CaseCustodyRestrictions.VISITAION ? (
                     <Typography as="span" key={index}>
                       {` heimsóknarbanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','

@@ -1,13 +1,10 @@
+import { parseArray, parseString, parseTransition } from './formatters'
+import { constructConclusion } from './stepHelper'
+import { Case } from '../types'
 import {
-  formatDate,
-  parseArray,
-  parseString,
-  parseTransition,
-} from './formatters'
-import * as Constants from './constants'
-import { constructConclusion, renderRestrictons } from './stepHelper'
-import { Case, CustodyRestrictions } from '../types'
-import { CaseTransition } from '@island.is/judicial-system/types'
+  CaseTransition,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render } from '@testing-library/react'
 
@@ -70,65 +67,6 @@ ipsum`
         modified: 'timestamp',
         transition: CaseTransition.SUBMIT,
       })
-    })
-  })
-
-  describe('formatDate', () => {
-    test('should return null if date parameter is not provided or is invalid', () => {
-      // Arrange
-      const date = null
-      const date2 = undefined
-
-      // Act
-      const time = formatDate(date, Constants.TIME_FORMAT)
-      const time2 = formatDate(date2, Constants.TIME_FORMAT)
-
-      // Assert
-      expect(time).toBeNull()
-      expect(time2).toBeNull()
-    })
-
-    test('should return the time with 24h format', () => {
-      // Arrange
-      const date = '2020-09-10T09:36:57.287Z'
-      const date2 = '2020-09-23T23:36:57.287Z'
-
-      // Act
-      const time = formatDate(date, Constants.TIME_FORMAT)
-      const time2 = formatDate(date2, Constants.TIME_FORMAT)
-
-      // Assert
-      expect(time).toEqual('09:36')
-      expect(time2).toEqual('23:36')
-    })
-  })
-})
-
-describe('Step helper', () => {
-  describe('renderRestrictions', () => {
-    test('should return a comma separated list of restrictions', () => {
-      // Arrange
-      const restrictions: CustodyRestrictions[] = [
-        CustodyRestrictions.ISOLATION,
-        CustodyRestrictions.COMMUNICATION,
-      ]
-
-      // Act
-      const r = renderRestrictons(restrictions)
-
-      // Assert
-      expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
-    })
-
-    test('should return "Lausgæsla" if no custody restriction is supplyed', () => {
-      // Arrange
-      const restrictions: CustodyRestrictions[] = []
-
-      // Act
-      const r = renderRestrictons(restrictions)
-
-      // Assert
-      expect(r).toEqual('Lausagæsla')
     })
   })
 })
@@ -209,7 +147,7 @@ describe('Validation', () => {
       // Arrange
       const wc = {
         rejecting: false,
-        custodyRestrictions: [CustodyRestrictions.MEDIA],
+        custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
         custodyEndDate: '2020-10-22T12:31:00.000Z',
@@ -241,8 +179,8 @@ describe('Validation', () => {
       const wc = {
         rejecting: false,
         custodyRestrictions: [
-          CustodyRestrictions.MEDIA,
-          CustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
         ],
         accusedName: 'Doe',
         accusedNationalId: '0123456789',
@@ -276,9 +214,9 @@ describe('Validation', () => {
     const wc = {
       rejecting: false,
       custodyRestrictions: [
-        CustodyRestrictions.MEDIA,
-        CustodyRestrictions.VISITAION,
-        CustodyRestrictions.ISOLATION,
+        CaseCustodyRestrictions.MEDIA,
+        CaseCustodyRestrictions.VISITAION,
+        CaseCustodyRestrictions.ISOLATION,
       ],
       accusedName: 'Doe',
       accusedNationalId: '0123456789',
