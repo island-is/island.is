@@ -77,7 +77,7 @@ const createArticleNavigation = (
   if (article.subArticles.length === 0) {
     return createNavigation(article.body).map(({ id, text }) => ({
       title: text,
-      url: '#' + id,
+      url: article.slug + '#' + id,
     }))
   }
 
@@ -102,7 +102,7 @@ const createArticleNavigation = (
       nav = nav.concat(
         createSubArticleNavigation(subArticle.body).map(({ id, text }) => ({
           title: text,
-          url: '#' + id,
+          url: article.slug + '#' + id,
         })),
       )
     }
@@ -133,7 +133,7 @@ const RelatedArticles: FC<{
               key={article.slug}
               href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
-              withUnderline
+              underline="normal"
             >
               {article.title}
             </Link>
@@ -468,7 +468,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                     <Link
                       passHref
                       href={processEntry.processLink}
-                      withUnderline
+                      underline="normal"
                     >
                       <span>
                         {processEntry.buttonText || n('processLinkButtonText')}
@@ -484,7 +484,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           </GridColumn>
         </GridRow>
         <Box paddingTop={subArticle ? 2 : 4}>
-          <RichText body={(subArticle ?? article).body} />
+          <RichText
+            body={(subArticle ?? article).body}
+            config={{ defaultPadding: 4 }}
+          />
         </Box>
       </ArticleLayout>
     </>

@@ -23,6 +23,8 @@ import { SidebarBox, Bullet, RichText } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
+import { Background } from '@island.is/island-ui/contentful'
+import * as styles from './AboutSubPage.treat'
 
 export interface AboutSubPageProps {
   page: GetAboutSubPageQuery['getAboutSubPage']
@@ -70,35 +72,49 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
       <Head>
         <title>{page.title}</title>
       </Head>
-      <StandardLayout sidebar={{ position: 'right', node: sidebar }}>
-        <GridRow>
-          <GridColumn
-            span={['9/9', '9/9', '7/8', '7/8', '7/9']}
-            offset={['0', '0', '0', '0', '1/9']}
-          >
-            <Box paddingBottom={1}>
-              <Breadcrumbs>
-                <Link href="/">Ísland.is</Link>
-                <Link href="/um-island-is">{parentPage.title}</Link>
-              </Breadcrumbs>
-            </Box>
-            <Stack space={2}>
-              <Typography variant="h1" as="h1">
-                {page.title}
-              </Typography>
-              {Boolean(page.description) && (
-                <Typography variant="intro">{page.description}</Typography>
-              )}
-              {Boolean(page.subDescription) && (
-                <Typography variant="p">{page.subDescription}</Typography>
-              )}
-            </Stack>
-          </GridColumn>
-        </GridRow>
-        <Box paddingTop={10}>
-          <RichText body={page.slices} />
-        </Box>
-      </StandardLayout>
+      <Box overflow="hidden">
+        <StandardLayout
+          sidebar={{ position: 'right', node: sidebar }}
+          contentBoxProps={{
+            paddingBottom: page.bottomSlices.length > 0 ? 0 : undefined,
+          }}
+        >
+          <GridRow>
+            <GridColumn
+              span={['9/9', '9/9', '7/8', '7/8', '7/9']}
+              offset={['0', '0', '0', '0', '1/9']}
+            >
+              <Box paddingBottom={1}>
+                <Breadcrumbs>
+                  <Link href="/">Ísland.is</Link>
+                  <Link href="/um-island-is">{parentPage.title}</Link>
+                </Breadcrumbs>
+              </Box>
+              <Stack space={2}>
+                <Typography variant="h1" as="h1">
+                  {page.title}
+                </Typography>
+                {Boolean(page.description) && (
+                  <Typography variant="intro">{page.description}</Typography>
+                )}
+                {Boolean(page.subDescription) && (
+                  <Typography variant="p">{page.subDescription}</Typography>
+                )}
+              </Stack>
+            </GridColumn>
+          </GridRow>
+          <Box paddingTop={5}>
+            <Background
+              background="dotted"
+              paddingTop={10}
+              paddingBottom={page.bottomSlices.length ? 20 : 10}
+            >
+              <RichText body={page.slices} />
+            </Background>
+          </Box>
+        </StandardLayout>
+        <RichText body={page.bottomSlices} />
+      </Box>
     </>
   )
 }

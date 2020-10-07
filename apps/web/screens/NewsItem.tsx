@@ -101,14 +101,17 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                     <Box paddingY={2}>
                       <Image
                         {...newsItem.image}
-                        url={newsItem.image.url + '?w=774'}
-                        thumbnail={newsItem.image.url + '?w=50'}
+                        url={newsItem.image.url + '?w=774&fm=webp&q=80'}
+                        thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
                       />
                     </Box>
                   )}
                 </GridColumn>
               </GridRow>
-              <RichText body={newsItem.content} />
+              <RichText
+                body={newsItem.content}
+                config={{ defaultPadding: 4 }}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
               <Sticky>

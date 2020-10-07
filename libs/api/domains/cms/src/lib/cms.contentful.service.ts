@@ -45,6 +45,7 @@ import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
 import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
+import { Homepage, mapHomepage } from './models/homepage.model'
 
 const makePage = (
   page: number,
@@ -114,7 +115,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'organization',
       include: 10,
-      limit: 100,
+      limit: 1000,
     }
 
     const result = await this.contentfulRepository
@@ -492,5 +493,17 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEventsInCategory'))
 
     return result.items.map(mapLifeEventPage)
+  }
+
+  async getHomepage({ lang }: { lang: string }): Promise<Homepage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IHomepageFields>(lang, {
+        ['content_type']: 'homepage',
+        include: 10,
+        order: '-sys.createdAt',
+      })
+      .catch(errorHandler('getHomepage'))
+
+    return result.items.map(mapHomepage)[0]
   }
 }

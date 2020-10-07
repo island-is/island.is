@@ -119,6 +119,7 @@ export const StepOne: React.FC = () => {
       const caseId = await api.createCase({
         policeCaseNumber: policeCaseNumberRef.current.value,
         accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
+        court: workingCase.court,
       })
 
       window.localStorage.setItem(
@@ -447,14 +448,14 @@ export const StepOne: React.FC = () => {
                             setWorkingCase,
                           )
                         }}
-                        handleCloseCalander={(date: Date) => {
+                        handleCloseCalendar={(date: Date) => {
                           if (isNull(date) || !isValid(date)) {
                             setArrestDateErrorMessage(
                               'Reitur má ekki vera tómur',
                             )
                           }
                         }}
-                        handleOpenCalander={() => setArrestDateErrorMessage('')}
+                        handleOpenCalendar={() => setArrestDateErrorMessage('')}
                         required
                       />
                     </GridColumn>
