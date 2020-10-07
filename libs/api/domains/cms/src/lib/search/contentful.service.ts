@@ -32,6 +32,12 @@ export class ContentfulService {
   private limiter: Bottleneck
   private defaultIncludeDepth = 10
   private contentfulClient: ContentfulClientApi
+  // TODO: Make the contentful locale reflect the api locale
+  // contentful locale does not always reflect the api locale so we need this map
+  private contentfulLocaleMap = {
+    is: 'is-IS',
+    en: 'en',
+  }
 
   constructor(private readonly elasticService: ElasticService) {
     const params: CreateClientParams = {
@@ -66,16 +72,10 @@ export class ContentfulService {
     chunkIds: string,
     locale: keyof typeof SearchIndexes,
   ) {
-    // TODO: Make the contentful locale reflect the api locale
-    // contentful locale does not always reflect the api locale so we need this map
-    const contentfulLocaleMap = {
-      is: 'is-IS',
-      en: 'en',
-    }
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,
       'sys.id[in]': chunkIds,
-      locale: contentfulLocaleMap[locale],
+      locale: this.contentfulLocaleMap[locale],
     })
     return data.items
   }
@@ -170,6 +170,27 @@ export class ContentfulService {
     return _.flatten(chunkedChanges)
   }
 
+  /**
+   * Search for entries which have a field linking to a specific entry.
+   * Useful to finding root/parent of an entry
+   *
+   * @param linkId
+   * @param locale
+   * @private
+   */
+  private async linksToEntry(
+    linkId: string,
+    locale: string,
+  ): Promise<Entry<any>[]> {
+    const data = await this.contentfulClient.getEntries({
+      include: this.defaultIncludeDepth,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      links_to_entry: linkId,
+      locale: this.contentfulLocaleMap[locale],
+    })
+    return data.items
+  }
+
   async getSyncEntries({
     fullSync,
     locale,
@@ -183,13 +204,42 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
+    const nestedEntries = entries
+      .filter((entry) =>
+        environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
+      )
+      .map((entry) => entry.sys.id)
+
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
+      nestedEntries: nestedEntries.length,
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const items = await this.getAllEntriesFromContentful(entries, locale)
+
+    // In case of delta updates, we need to resolve embedded entries to their root model
+    if (!fullSync && nestedEntries) {
+      logger.info('Finding root entries from nestedEntries')
+      const alreadyProcessedIds = items.map((entry) => entry.sys.id)
+      for (const entryId of nestedEntries) {
+        // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
+        // with regular sync, triggered by a webhook, these calls 1 - 2 at most
+        const linkedEntries = await this.limiter.schedule(() => {
+          return this.linksToEntry(entryId, locale)
+        })
+        linkedEntries.forEach((entry) => {
+          // No need to import the same document twice
+          if (
+            !alreadyProcessedIds.includes(entry.sys.id) &&
+            environment.indexableTypes.includes(entry.sys.contentType.sys.id)
+          ) {
+            items.push(entry)
+          }
+        })
+      }
+    }
 
     // extract ids from deletedEntries
     const deletedItems = deletedEntries.map((entry) => entry.sys.id)

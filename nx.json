@@ -276,6 +276,9 @@
     },
     "application-ui-fields": {
       "tags": []
+    },
+    "shared-form-fields": {
+      "tags": []
     }
   },
   "affected": {

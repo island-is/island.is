@@ -7,6 +7,7 @@ import * as styles from './FormFooter.treat'
 interface Props {
   nextUrl?: string
   nextIsDisabled?: boolean
+  nextIsLoading?: boolean
   nextButtonText?: string
   onNextButtonClick?: () => void
   previousUrl?: string
@@ -31,6 +32,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         <Button
           icon="arrowRight"
           disabled={props.nextIsDisabled}
+          loading={props.nextIsLoading}
           onClick={() => {
             props.onNextButtonClick
               ? props.onNextButtonClick()

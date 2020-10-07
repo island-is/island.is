@@ -147,7 +147,8 @@
       ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
-      ]
+      ],
+      "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
