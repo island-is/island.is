@@ -15,6 +15,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:overview',
           defaultMessage: 'Yfirlit',
         }),
+        systemRoute: true,
         path: ServicePortalPath.MinarSidurRoot,
         icon: 'globe',
       },
@@ -22,7 +23,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: defineMessage({
           id: 'service.portal:family',
-          defaultMessage: 'Default fjolskyldan',
+          defaultMessage: 'Fjölskyldan',
         }),
         path: ServicePortalPath.FjolskyldanRoot,
         icon: 'user',
@@ -38,16 +39,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
       },
 
-      // Eignir
-      {
-        name: defineMessage({
-          id: 'service.portal:assets',
-          defaultMessage: 'Eignir',
-        }),
-        path: ServicePortalPath.EignirRoot,
-        icon: 'calendar',
-      },
-
       // Fjarmal
       {
         name: defineMessage({
@@ -55,15 +46,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Fjármál',
         }),
         path: ServicePortalPath.FjarmalRoot,
-        icon: 'user',
+        icon: 'info',
         children: [
           {
             name: defineMessage({
-              id: 'service.portal:vehicles',
-              defaultMessage: 'Ökutæki',
+              id: 'service.portal:assets',
+              defaultMessage: 'Eignir',
             }),
-            path: ServicePortalPath.FjarmalOkutaeki,
-            external: true,
+            path: ServicePortalPath.EignirRoot,
+            icon: 'calendar',
           },
         ],
       },
@@ -85,7 +76,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Menntun',
         }),
         path: ServicePortalPath.MenntunRoot,
-        icon: 'search',
+        icon: 'calendar',
       },
     ],
   },
@@ -103,7 +94,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Umsóknir',
         }),
         path: ServicePortalPath.UmsoknirRoot,
-        icon: 'user',
+        icon: 'file',
       },
 
       // Rafraen skjol
@@ -119,20 +110,22 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Stillingar
       {
         name: defineMessage({
-          id: 'service.portal:settings',
-          defaultMessage: 'Stillingar',
+          id: 'service.portal:delegation',
+          defaultMessage: 'Umboð',
         }),
-        path: ServicePortalPath.StillingarRoot,
+        path: ServicePortalPath.StillingarUmbod,
         icon: 'lock',
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:delegation',
-              defaultMessage: 'Umboð',
-            }),
-            path: ServicePortalPath.StillingarUmbod,
-          },
-        ],
+      },
+
+      // Greidslur
+
+      {
+        name: defineMessage({
+          id: 'service.portal:payments',
+          defaultMessage: 'Greiðslur',
+        }),
+        path: ServicePortalPath.FjarmalGreidslur,
+        icon: 'toasterInfo',
       },
     ],
   },

@@ -9,30 +9,15 @@ import { lazy } from 'react'
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
   widgets: () => [],
-  routes: ({ userInfo }) => {
+  routes: () => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Heilsa',
         path: ServicePortalPath.HeilsaRoot,
-        render: () => lazy(() => import('./lib/service-portal-health')),
-      },
-      {
-        name: 'Umsóknir um lyfseðla',
-        path: ServicePortalPath.UmsoknirLyfsedlar,
-        render: () => lazy(() => import('./lib/prescriptionApplications')),
+        render: () =>
+          lazy(() => import('./screens/HealthOverview/HealthOverview')),
       },
     ]
-
-    if (userHasAccessToScope(userInfo, 'heilsuvera?')) {
-      routes.push({
-        name: 'Heilsuvera',
-        path: ServicePortalPath.HeilsaHeilsuvera,
-      })
-      routes.push({
-        name: 'Bólusetningar',
-        path: ServicePortalPath.HeilsaBolusetningar,
-      })
-    }
 
     return routes
   },

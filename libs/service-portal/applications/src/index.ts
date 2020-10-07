@@ -15,8 +15,8 @@ export const applicationsModule: ServicePortalModule = {
   widgets: () => [
     {
       name: rootName,
+      render: () => lazy(() => import('./widgets/applicationList')),
       weight: 0,
-      render: () => lazy(() => import('./widgets')),
     },
   ],
   routes: () => {

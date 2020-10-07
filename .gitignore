@@ -60,3 +60,4 @@ schema.tsx
 schema.ts
 possibleTypes.json
 fragmentTypes.json
+**/gen/fetch/**

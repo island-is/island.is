@@ -1053,6 +1053,9 @@ export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
 
+  /** Type */
+  type?: ('News item' | 'Project story')[] | undefined
+
   /** Title */
   title: string
 
@@ -1079,6 +1082,9 @@ export interface INewsFields {
 
   /** Read More Text */
   readMoreText?: string | undefined
+
+  /** Tags */
+  items?: (IOrganization | IOrganizationTag)[] | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -1302,15 +1308,6 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
 }
 
 export interface IProcessEntryFields {
-  /** Title */
-  title: string
-
-  /** Subtitle */
-  subtitle?: string | undefined
-
-  /** Details */
-  details?: Document | undefined
-
   /** Type */
   type:
     | 'Digital'
@@ -1321,12 +1318,6 @@ export interface IProcessEntryFields {
 
   /** Process title */
   processTitle: string
-
-  /** Process description (OLD field) */
-  processDescription?: string | undefined
-
-  /** Process info */
-  processInfo?: Document | undefined
 
   /** Process link */
   processLink: string

@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import useScrollSpy from '../../hooks/useScrollSpy'
 import { SidebarBox } from '../SidebarBox/SidebarBox'
 import { Bullet } from '../Bullet/Bullet'
-import { Typography, Divider, Box, Stack } from '@island.is/island-ui/core'
+import { Text, Divider, Box, Stack } from '@island.is/island-ui/core'
 
 export interface SidebarNavigationProps {
   title?: string
@@ -31,9 +31,9 @@ export const SidebarNavigation: FC<SidebarNavigationProps> = ({
       <Stack space={[1, 1, 2]}>
         {Boolean(title) && (
           <>
-            <Typography variant="h4" as="h2">
+            <Text variant="h4" as="h2">
               {title}
-            </Typography>
+            </Text>
             <Divider weight="alternate" />
           </>
         )}
@@ -47,9 +47,7 @@ export const SidebarNavigation: FC<SidebarNavigationProps> = ({
             textAlign="left"
             onClick={() => navigate(id)}
           >
-            <Typography variant="p">
-              {id === activeId ? <b>{text}</b> : text}
-            </Typography>
+            <Text>{id === activeId ? <b>{text}</b> : text}</Text>
           </Box>
         ))}
       </Stack>

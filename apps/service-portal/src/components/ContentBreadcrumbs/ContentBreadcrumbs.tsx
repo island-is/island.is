@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Breadcrumbs, Box, Hidden } from '@island.is/island-ui/core'
+import { Breadcrumbs, Box, Hidden, Tag } from '@island.is/island-ui/core'
 import {
   ServicePortalPath,
   ServicePortalNavigationItem,
@@ -34,11 +34,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
       else return acc
     },
     {
-      name: defineMessage({
-        id: 'service.portal:application-name',
-        defaultMessage: 'Mitt Ísland',
-      }),
-      path: ServicePortalPath.MinarSidurRoot,
+      name: 'root',
       children: navigation,
     },
     [] as ServicePortalNavigationItem[],
@@ -50,13 +46,18 @@ const ContentBreadcrumbs: FC<{}> = () => {
     <Hidden below="lg">
       <Box paddingY={2}>
         <Breadcrumbs color="purple400" separatorColor="purple400">
-          {items.map(
-            (item, index) =>
-              item.path !== undefined && (
+          {items.map((item, index) =>
+            item.path !== undefined ? (
+              index === items.length - 1 ? (
+                <Tag key={index} variant="purple">
+                  {formatMessage(item.name)}
+                </Tag>
+              ) : (
                 <Link key={index} to={item.path}>
                   {formatMessage(item.name)}
                 </Link>
-              ),
+              )
+            ) : null,
           )}
         </Breadcrumbs>
       </Box>

@@ -5,7 +5,7 @@ import Head from 'next/head'
 import {
   ContentBlock,
   Box,
-  Typography,
+  Text,
   Breadcrumbs,
   ColorSchemeContext,
   Link,
@@ -73,9 +73,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
         </GridRow>
         <GridRow>
           <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
-            <Typography variant="h1" as="h1" paddingBottom={2}>
+            <Text variant="h1" as="h1" paddingBottom={2}>
               {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
-            </Typography>
+            </Text>
           </GridColumn>
         </GridRow>
       </ArticleLayout>

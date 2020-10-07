@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import {
-  Typography,
+  Text,
   GridRow,
   GridColumn,
   GridContainer,
@@ -27,9 +27,9 @@ export const Categories: FC<CategoriesProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h2" paddingBottom={4}>
+          <Text variant="h3" as="h2" paddingBottom={4}>
             {title}
-          </Typography>
+          </Text>
         </GridColumn>
       </GridRow>
 
