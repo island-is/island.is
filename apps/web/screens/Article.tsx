@@ -484,7 +484,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           </GridColumn>
         </GridRow>
         <Box paddingTop={subArticle ? 2 : 4}>
-          <RichText body={(subArticle ?? article).body} />
+          <RichText
+            body={(subArticle ?? article).body}
+            config={{ defaultPadding: 4 }}
+          />
         </Box>
       </ArticleLayout>
     </>
