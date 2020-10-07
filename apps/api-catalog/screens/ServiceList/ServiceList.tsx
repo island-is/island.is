@@ -104,7 +104,6 @@ export default function ServiceList(props: ServiceListProps) {
   })
 
   const onClear = () => {
-    console.log('clear filters')
     setParameters({
       cursor: null,
       limit: 2,
