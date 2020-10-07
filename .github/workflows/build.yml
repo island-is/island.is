@@ -289,7 +289,7 @@ jobs:
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel-native.sh 20_lint
+        run: ./scripts/run-in-parallel-native.sh lint
 
   docker-express:
     needs: [prepare, tests]
