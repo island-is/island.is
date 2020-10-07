@@ -654,7 +654,6 @@ export const StepTwo: React.FC = () => {
               </Box>
             </Box>
             <FormFooter
-              previousUrl={Constants.STEP_ONE_ROUTE}
               nextUrl={Constants.STEP_THREE_ROUTE}
               nextIsDisabled={
                 workingCase.lawsBroken === '' &&

@@ -258,7 +258,6 @@ export const Overview: React.FC = () => {
                 </Box>
               )}
               <FormFooter
-                previousUrl={Constants.STEP_TWO_ROUTE}
                 nextUrl="/"
                 nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
                 onNextButtonClick={() => {

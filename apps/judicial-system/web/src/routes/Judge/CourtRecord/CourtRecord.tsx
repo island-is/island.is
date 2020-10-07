@@ -293,7 +293,6 @@ export const CourtRecord: React.FC = () => {
               />
             </Box>
             <FormFooter
-              previousUrl="/"
               nextUrl={Constants.RULING_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime
