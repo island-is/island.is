@@ -39,6 +39,7 @@ export enum FieldTypes {
 
 export enum FieldComponents {
   CHECKBOX = 'CheckboxFormField',
+  DATE = 'DateFormField',
   TEXT = 'TextFormField',
   INTRO = 'IntroductionFormField',
   RADIO = 'RadioFormField',
@@ -61,7 +62,8 @@ export interface CheckboxField extends Question {
 
 export interface DateField extends Question {
   readonly type: FieldTypes.DATE
-  component: FieldComponents.TEXT // TODO needs a component
+  placeholder?: MessageDescriptor | string
+  component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
 }

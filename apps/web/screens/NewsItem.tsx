@@ -105,7 +105,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
               </GridRow>
               <RichText
                 body={newsItem.content}
-                config={{ defaultPadding: 10 }}
+                config={{ defaultPadding: 4 }}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>

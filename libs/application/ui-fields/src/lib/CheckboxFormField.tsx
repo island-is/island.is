@@ -4,7 +4,8 @@ import {
   FieldBaseProps,
   getValueViaPath,
 } from '@island.is/application/core'
-import { CheckboxController, Typography, Box } from '@island.is/island-ui/core'
+import { Typography, Box } from '@island.is/island-ui/core'
+import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import Input from '../Input/Input'
+import { Input } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 
 interface Props {
