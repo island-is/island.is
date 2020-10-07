@@ -282,13 +282,13 @@ const SvgPathContainer = ({
   spin,
   className,
 }: SvgPathContainerProps) => {
+  const widthProps = width === 'none' ? {} : { width }
+  const heightProps = height === 'none' ? {} : { height }
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      {...{
-        width: width !== 'none' ? width : null,
-        height: height !== 'none' ? height : null,
-      }}
+      {...widthProps}
+      {...heightProps}
       fill={fill}
       viewBox={viewBox}
       className={cn(className, { [styles.spin]: spin })}
