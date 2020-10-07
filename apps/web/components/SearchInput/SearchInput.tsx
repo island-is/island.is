@@ -8,7 +8,6 @@ import React, {
   ReactElement,
   useReducer,
 } from 'react'
-import Link from 'next/link'
 import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
@@ -23,6 +22,7 @@ import {
   Box,
   Text,
   Stack,
+  Link,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
 import * as styles from './SearchInput.treat'
@@ -378,11 +378,8 @@ const Results: FC<{
                 ? suggestion.replace(search.term, '')
                 : ''
               return (
-                <div key={suggestion} {...getItemProps({ item: suggestion })}>
-                  <Text
-                    links
-                    color={i === highlightedIndex ? 'blue400' : 'dark400'}
-                  >
+                <div key={suggestion} {...getItemProps({ item: suggestion })} className={styles.suggestion}>
+                  <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
                     <strong>{endOfString}</strong>
                   </Text>
@@ -402,13 +399,17 @@ const Results: FC<{
               {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
-                  <div key={id} {...getItemProps({ item: '' })}>
-                    <Text links variant="h5" color="blue400">
-                      <Link href={makePath('article', slug)}>
-                        <a>{title}</a>
-                      </Link>
-                    </Text>
-                  </div>
+                  <Text
+                    as="div"
+                    variant="h5"
+                    color="blue400"
+                    key={id}
+                    {...getItemProps({ item: '' })}
+                  >
+                    <Link href={makePath('article', slug)}>
+                      <a>{title}</a>
+                    </Link>
+                  </Text>
                 ))}
             </Stack>
           </div>
