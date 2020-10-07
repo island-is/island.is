@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  ShoppingFigure,
   InfoScreen,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
@@ -49,7 +48,7 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
         defaultMessage:
           'Núverandi umboðskerfi Ísland.is - www.innskraning.island.is',
       })}
-      renderFigure={() => <ShoppingFigure />}
+      figure="/assets/images/school.jpg"
     />
   )
 }

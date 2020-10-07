@@ -2,7 +2,6 @@ import React from 'react'
 import {
   InfoScreen,
   ServicePortalModuleComponent,
-  ShoppingFigure,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 
@@ -57,7 +56,7 @@ export const PaymentOverview: ServicePortalModuleComponent = () => {
         id: 'sp.assets:institution:link-title',
         defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
       })}
-      renderFigure={() => <ShoppingFigure />}
+      figure="/assets/images/working.jpg"
     />
   )
 }

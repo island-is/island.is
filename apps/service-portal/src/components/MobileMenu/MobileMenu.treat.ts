@@ -25,7 +25,10 @@ export const wrapper = style({
 
 export const figure = style({
   width: '100%',
-  height: '26vw',
+  paddingTop: '95%',
+  backgroundSize: 'contain',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: '50% 50%',
 })
 
 export const icon = style({

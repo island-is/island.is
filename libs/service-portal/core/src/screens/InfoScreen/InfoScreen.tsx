@@ -23,7 +23,7 @@ interface Props {
   institutionDescription: MessageDescriptor
   institutionHref: string
   institutionLinkTitle: MessageDescriptor
-  renderFigure: () => JSX.Element | null
+  figure: string
 }
 
 export const InfoScreen: FC<Props> = ({
@@ -34,7 +34,7 @@ export const InfoScreen: FC<Props> = ({
   institutionDescription,
   institutionHref,
   institutionLinkTitle,
-  renderFigure,
+  figure,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -66,7 +66,9 @@ export const InfoScreen: FC<Props> = ({
               )}
             </Box>
           </GridColumn>
-          <GridColumn span={['12/12', '5/12']}>{renderFigure()}</GridColumn>
+          <GridColumn span={['12/12', '5/12']}>
+            <img src={figure} alt={`skrautmynd fyrir ${title}`} />
+          </GridColumn>
         </GridRow>
       </Box>
       <Box

@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  ShoppingFigure,
   InfoScreen,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
@@ -57,7 +56,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
         id: 'sp.assets:institution:link-title',
         defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
       })}
-      renderFigure={() => <ShoppingFigure />}
+      figure="/assets/images/bedroom.jpg"
     />
   )
 }

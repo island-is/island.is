@@ -42,7 +42,7 @@ const MobileMenu: FC<{}> = () => {
       <GridRow>
         {info?.children?.map((navItem, index) => {
           if (navItem.path === ServicePortalPath.MinarSidurRoot) return null
-          const Figure = getMobileMenuFigure(navItem.path)
+          const figure = getMobileMenuFigure(navItem.path)
 
           return (
             <GridColumn key={`info-${index}`} span={['1/2', '1/4']}>
@@ -62,9 +62,11 @@ const MobileMenu: FC<{}> = () => {
                   borderRadius="large"
                   textAlign="center"
                 >
-                  <Box className={styles.figure} marginBottom={2}>
-                    <Figure />
-                  </Box>
+                  <Box
+                    className={styles.figure}
+                    style={{ backgroundImage: `url(${figure})` }}
+                    marginBottom={2}
+                  />
                   <Typography variant="h5">
                     {formatMessage(navItem.name)}
                   </Typography>
