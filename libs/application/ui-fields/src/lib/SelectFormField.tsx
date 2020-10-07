@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { FieldBaseProps, SelectField } from '@island.is/application/core'
-import { SelectController, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
+import { SelectController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {

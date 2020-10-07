@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import * as types from '../generated/contentfulTypes'
-import { Slice, mapDocument } from './slice.model'
+import { Slice, mapDocument, safelyMapSlices } from './slice.model'
 
 @ObjectType()
 export class AboutSubPage {
@@ -21,6 +21,9 @@ export class AboutSubPage {
 
   @Field(() => [Slice])
   slices: Array<typeof Slice>
+
+  @Field(() => [Slice])
+  bottomSlices: Array<typeof Slice>
 }
 
 export const mapAboutSubPage = ({
@@ -35,4 +38,7 @@ export const mapAboutSubPage = ({
   slices: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  bottomSlices: (fields.belowContent ?? [])
+    .map(safelyMapSlices)
+    .filter(Boolean),
 })
