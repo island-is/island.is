@@ -36,6 +36,10 @@ export const JudgeOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
 
   useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     let mounted = true
 
     const getCurrentCase = async () => {
@@ -174,13 +178,8 @@ export const JudgeOverview: React.FC = () => {
               </Box>
             )}
             <Box component="section" marginBottom={5}>
-              <Accordion>
-                <AccordionItem
-                  id="id_1"
-                  label="Dómkröfur"
-                  expanded={accordionItemOneExpanded}
-                  onToggle={() => setAccordionItemOneExpanded(false)}
-                >
+              <Accordion singleExpand={false}>
+                <AccordionItem id="id_1" label="Dómkröfur" startExpanded>
                   <Typography variant="p" as="p">
                     Gæsluvarðhald til
                     <strong>
@@ -195,12 +194,7 @@ export const JudgeOverview: React.FC = () => {
                     </strong>
                   </Typography>
                 </AccordionItem>
-                <AccordionItem
-                  id="id_2"
-                  label="Lagaákvæði"
-                  expanded={accordionItemTwoExpanded}
-                  onToggle={() => setAccordionItemTwoExpanded(false)}
-                >
+                <AccordionItem id="id_2" label="Lagaákvæði" startExpanded>
                   <Typography variant="p" as="p">
                     {workingCase?.lawsBroken}
                   </Typography>
@@ -208,8 +202,7 @@ export const JudgeOverview: React.FC = () => {
                 <AccordionItem
                   id="id_3"
                   label="Takmarkanir á gæslu"
-                  expanded={accordionItemThreeExpanded}
-                  onToggle={() => setAccordionItemThreeExpanded(false)}
+                  startExpanded
                 >
                   <Typography variant="p" as="p">
                     {renderRestrictons(
@@ -220,8 +213,7 @@ export const JudgeOverview: React.FC = () => {
                 <AccordionItem
                   id="id_4"
                   label="Greinagerð um málsatvik og lagarök"
-                  expanded={accordionItemFourExpanded}
-                  onToggle={() => setAccordionItemFourExpanded(false)}
+                  startExpanded
                 >
                   {workingCase?.caseFacts && (
                     <Box marginBottom={2}>

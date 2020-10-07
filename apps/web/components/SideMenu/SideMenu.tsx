@@ -44,12 +44,20 @@ interface Tab {
 interface Props {
   tabs?: Tab[]
   isVisible: boolean
+  searchBarFocus?: boolean
   handleClose: () => void
 }
 
-export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
+export const SideMenu: FC<Props> = ({
+  tabs = [],
+  isVisible,
+  searchBarFocus = false,
+  handleClose,
+}) => {
+  const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
+  const searchInputRef = useRef(null)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
   const tabRefs = useRef<Array<HTMLElement | null>>([])
@@ -71,7 +79,19 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
 
   useEffect(() => {
     setActiveTab(0)
-  }, [isVisible])
+
+    if (searchBarFocus) {
+      if (searchInputRef?.current) {
+        searchInputRef.current.focus()
+      }
+    }
+  }, [isVisible, searchBarFocus, searchInputRef])
+
+  useEffect(() => {
+    if (typeof window === 'object') {
+      setMounted(true)
+    }
+  }, [])
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true)
@@ -80,6 +100,10 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
       document.removeEventListener('click', handleClickOutside, true)
     }
   }, [isVisible, ref, handleClickOutside])
+
+  const logoProps = {
+    ...(mounted && { width: isMobile ? 30 : 40 }),
+  }
 
   return (
     <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
@@ -98,7 +122,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
             paddingBottom={3}
             justifyContent="spaceBetween"
           >
-            <Logo width={isMobile ? 30 : 40} iconOnly id="sideMenuLogo" />
+            <Logo {...logoProps} iconOnly id="sideMenuLogo" />
             <Box display="flex" alignItems="center">
               <FocusableBox
                 component="button"
@@ -115,6 +139,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
               <GridRow>
                 <GridColumn span="12/12">
                   <SearchInput
+                    ref={searchInputRef}
                     id="search_input_side_menu"
                     activeLocale={activeLocale}
                     placeholder={t.searchPlaceholder}

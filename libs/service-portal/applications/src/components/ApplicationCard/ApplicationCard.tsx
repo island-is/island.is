@@ -48,12 +48,12 @@ const ApplicationCard: FC<Props> = ({
             <Typography variant="h3">{name}</Typography>
           </Inline>
           <Tag variant={isComplete ? 'mint' : 'purple'}>
-            {status ? 'Lokið' : 'Í ferli'}
+            {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
         <Typography variant="p">
           {`Þú hefur ${
-            !status ? 'ekki ' : ''
+            !isComplete ? 'ekki ' : ''
           } lokið umsóknarferli fyrir ${name}`}
         </Typography>
         <Columns space={8} alignY="center">
@@ -64,7 +64,7 @@ const ApplicationCard: FC<Props> = ({
             <Box display="flex" justifyContent="flexEnd">
               <a href={url} target="_blank" rel="noopener noreferrer">
                 <Button variant="text">
-                  {status ? 'Skoða umsókn' : 'Halda áfram'}
+                  {isComplete ? 'Skoða umsókn' : 'Halda áfram'}
                 </Button>
               </a>
             </Box>

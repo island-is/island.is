@@ -42,10 +42,6 @@ const sanitizeData = (html: Document | TopLevelBlock) => ({
 
 @ObjectType()
 export class Html {
-  constructor(initializer: Html) {
-    Object.assign(this, initializer)
-  }
-
   @Field()
   typename: string
 
@@ -61,14 +57,14 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
 
   switch (newHtml.nodeType) {
     case BLOCKS.DOCUMENT:
-      return new Html({
+      return {
         typename: 'Html',
         id: String(id),
         document: newHtml as Document,
-      })
+      }
 
     default:
-      return new Html({
+      return {
         typename: 'Html',
         id: String(id),
         document: {
@@ -76,7 +72,7 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
           content: [newHtml as TopLevelBlock],
           data: {},
         },
-      })
+      }
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
@@ -206,6 +206,10 @@ export const StepTwo: React.FC = () => {
     },
   ]
 
+  useEffect(() => {
+    document.title = 'Málsatvik og lagarök - Réttarvörslugátt'
+  }, [])
+
   return (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -254,14 +258,14 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
-                    handleCloseCalander={(date: Date) => {
+                    handleCloseCalendar={(date: Date) => {
                       if (isNull(date) || !isValid(date)) {
                         setRequestedCustodyEndDateErrorMessage(
                           'Reitur má ekki vera tómur',
                         )
                       }
                     }}
-                    handleOpenCalander={() =>
+                    handleOpenCalendar={() =>
                       setRequestedCustodyEndDateErrorMessage('')
                     }
                   />
@@ -310,6 +314,13 @@ export const StepTwo: React.FC = () => {
                         autoSave(
                           workingCase,
                           'requestedCustodyEndDate',
+                          requestedCustodyEndDateMinutes,
+                          setWorkingCase,
+                        )
+
+                        autoSave(
+                          workingCase,
+                          'custodyEndDate',
                           requestedCustodyEndDateMinutes,
                           setWorkingCase,
                         )

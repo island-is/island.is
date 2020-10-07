@@ -30,6 +30,10 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   useEffect(() => {
+    document.title = 'Þingbók - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
 
     if (wc && !workingCase) {
