@@ -15,7 +15,7 @@ import {
   capitalize,
   formatCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { autoSave } from '../../../utils/stepHelper'
+import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'
@@ -26,14 +26,6 @@ import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const [accordionItemOneExpanded, setAccordionItemOneExpanded] = useState(true)
-  const [accordionItemTwoExpanded, setAccordionItemTwoExpanded] = useState(true)
-  const [accordionItemThreeExpanded, setAccordionItemThreeExpanded] = useState(
-    true,
-  )
-  const [accordionItemFourExpanded, setAccordionItemFourExpanded] = useState(
-    true,
-  )
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
@@ -71,19 +63,21 @@ export const JudgeOverview: React.FC = () => {
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <JudgeLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1" variant="h1">
-              Krafa um gæsluvarðhald
-            </Typography>
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Typography as="h1" variant="h1">
+                Krafa um gæsluvarðhald
+              </Typography>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 0)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={8}>

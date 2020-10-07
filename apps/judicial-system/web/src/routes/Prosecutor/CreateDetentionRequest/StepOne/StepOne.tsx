@@ -17,7 +17,11 @@ import {
 import { Case } from '../../../../types'
 import * as api from '../../../../api'
 import { validate } from '../../../../utils/validate'
-import { updateState, autoSave } from '../../../../utils/stepHelper'
+import {
+  updateState,
+  autoSave,
+  renderFormStepper,
+} from '../../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
@@ -213,19 +217,21 @@ export const StepOne: React.FC = () => {
       <>
         <Box marginTop={7} marginBottom={30}>
           <GridContainer>
-            <GridRow>
-              <GridColumn span={'3/12'}>
-                <ProsecutorLogo />
-              </GridColumn>
-              <GridColumn span={'8/12'} offset={'1/12'}>
-                <Typography as="h1" variant="h1">
-                  Krafa um gæsluvarðhald
-                </Typography>
-              </GridColumn>
-            </GridRow>
+            <Box marginBottom={7}>
+              <GridRow>
+                <GridColumn span={'3/12'}>
+                  <ProsecutorLogo />
+                </GridColumn>
+                <GridColumn span={'8/12'} offset={'1/12'}>
+                  <Typography as="h1" variant="h1">
+                    Krafa um gæsluvarðhald
+                  </Typography>
+                </GridColumn>
+              </GridRow>
+            </Box>
             <GridRow>
               <GridColumn span={['12/12', '3/12']}>
-                <Typography>Hliðarstika</Typography>
+                {renderFormStepper(0, 0)}
               </GridColumn>
               <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
                 <Box component="section" marginBottom={7}>
