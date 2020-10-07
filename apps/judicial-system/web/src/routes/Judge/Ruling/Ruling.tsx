@@ -15,7 +15,11 @@ import { JudgeLogo } from '../../../shared-components/Logos'
 import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
 import * as Constants from '../../../utils/constants'
 import { formatDate, parseArray, parseString } from '../../../utils/formatters'
-import { autoSave, updateState } from '../../../utils/stepHelper'
+import {
+  autoSave,
+  renderFormStepper,
+  updateState,
+} from '../../../utils/stepHelper'
 import * as api from '../../../api'
 
 export const Ruling: React.FC = () => {
@@ -138,7 +142,7 @@ export const Ruling: React.FC = () => {
         </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 2)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>

@@ -11,7 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { formatDate, capitalize } from '../../../utils/formatters'
-import { autoSave, renderRestrictons } from '../../../utils/stepHelper'
+import {
+  autoSave,
+  renderFormStepper,
+  renderRestrictons,
+} from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'
@@ -78,7 +82,7 @@ export const JudgeOverview: React.FC = () => {
         </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 0)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={8}>

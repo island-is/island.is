@@ -23,6 +23,7 @@ import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import {
   constructConclusion,
   getAppealDecitionText,
+  renderFormStepper,
   renderRestrictons,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
@@ -138,7 +139,7 @@ export const Confirmation: React.FC = () => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
-              <Typography>Hliðarstika</Typography>
+              {renderFormStepper(1, 3)}
             </GridColumn>
             <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
               <Box component="section" marginBottom={7}>

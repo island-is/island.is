@@ -17,7 +17,11 @@ import {
 import { Case } from '../../../../types'
 import * as api from '../../../../api'
 import { validate } from '../../../../utils/validate'
-import { updateState, autoSave } from '../../../../utils/stepHelper'
+import {
+  updateState,
+  autoSave,
+  renderFormStepper,
+} from '../../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
@@ -224,7 +228,7 @@ export const StepOne: React.FC = () => {
             </GridRow>
             <GridRow>
               <GridColumn span={['12/12', '3/12']}>
-                <Typography>Hliðarstika</Typography>
+                {renderFormStepper(0, 0)}
               </GridColumn>
               <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
                 <Box component="section" marginBottom={7}>

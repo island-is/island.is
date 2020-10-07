@@ -13,7 +13,7 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
-import { autoSave } from '../../../utils/stepHelper'
+import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { formatDate } from '../../../utils/formatters'
@@ -58,7 +58,7 @@ export const CourtRecord: React.FC = () => {
         </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 1)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>

@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   AppealDecision,
   AppealDecitionRole,
@@ -7,7 +6,8 @@ import {
 } from '../types'
 import * as api from '../api'
 import { formatDate, parseString } from './formatters'
-import { Typography } from '@island.is/island-ui/core'
+import React from 'react'
+import { FormStepper } from '@island.is/island-ui/core'
 
 export const updateState = (
   state: Case,
@@ -96,73 +96,62 @@ export const getAppealDecitionText = (
 }
 
 export const constructConclusion = (workingCase: Case) => {
-  if (workingCase.rejecting) {
-    return <Typography as="span">Beiðni um gæsluvarðhald hafnað</Typography>
-  } else {
-    return (
-      <>
-        <Typography as="span">{`Kærði, `}</Typography>
-        <Typography as="span" color="blue400" fontWeight="semiBold">
-          {`${workingCase.accusedName} kt.${workingCase.accusedNationalId} `}
-        </Typography>
-        <Typography as="span">
-          skal sæta gæsluvarðhaldi, þó ekki lengur en til
-        </Typography>
-        <Typography as="span" color="blue400" fontWeight="semiBold">
-          {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
-        </Typography>
-        {workingCase.custodyRestrictions.length === 0 ? (
-          <Typography as="span">
-            Engar takmarkanir skulu vera á gæslunni.
-          </Typography>
-        ) : (
-          <Typography as="span">
-            Kærði skal sæta
-            <Typography as="span" color="blue400" fontWeight="semiBold">
-              {workingCase.custodyRestrictions.map(
-                (custodyRestriction, index) => {
-                  const isNextLast =
-                    index === workingCase.custodyRestrictions.length - 2
-                  const isLast =
-                    index === workingCase.custodyRestrictions.length - 1
-                  const isOnly = workingCase.custodyRestrictions.length === 1
+  return workingCase.rejecting
+    ? 'Beiðni um gæsluvarðhald hafnað'
+    : `Kærði, ${workingCase.accusedName} kt.${
+        workingCase.accusedNationalId
+      } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
+        workingCase.custodyEndDate,
+        'PPPp',
+      )}. ${
+        workingCase.custodyRestrictions?.length === 0
+          ? 'Engar takmarkanir skulu vera á gæslunni.'
+          : `Kærði skal sæta ${workingCase.custodyRestrictions?.map(
+              (custodyRestriction, index) => {
+                const isNextLast =
+                  index === workingCase.custodyRestrictions.length - 1
 
-                  return custodyRestriction ===
-                    CustodyRestrictions.ISOLATION ? (
-                    <Typography as="span" key={index}>
-                      {` einangrun${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
-                      }`}
-                    </Typography>
-                  ) : custodyRestriction ===
-                    CustodyRestrictions.COMMUNICATION ? (
-                    <Typography as="span" key={index}>
-                      {` bréfa, og símabanni${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ','
-                      }`}
-                    </Typography>
-                  ) : custodyRestriction === CustodyRestrictions.MEDIA ? (
-                    <Typography as="span" key={index}>
-                      {` fjölmiðlabanni${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ','
-                      }`}
-                    </Typography>
-                  ) : custodyRestriction === CustodyRestrictions.VISITAION ? (
-                    <Typography as="span" key={index}>
-                      {` heimsóknarbanni${
-                        isLast ? '' : isNextLast && !isOnly ? ' og' : ','
-                      }`}
-                    </Typography>
-                  ) : (
-                    ''
-                  )
-                },
-              )}
-            </Typography>
-            {` á meðan á gæsluvarðhaldinu stendur.`}
-          </Typography>
-        )}
-      </>
-    )
-  }
+                return custodyRestriction === CustodyRestrictions.ISOLATION
+                  ? `einangrun${isNextLast && ' og '}`
+                  : custodyRestriction === CustodyRestrictions.COMMUNICATION
+                  ? `bréfa, og símabanni${isNextLast && ' og '}`
+                  : custodyRestriction === CustodyRestrictions.MEDIA
+                  ? `fjölmiðlabanni${isNextLast && ' og '}`
+                  : custodyRestriction === CustodyRestrictions.VISITAION
+                  ? `fjölmiðlabanni${isNextLast && ' og '}`
+                  : ''
+              },
+            )} á meðan á gæsluvarðhaldinu stendur.`
+      }`
+}
+
+export const renderFormStepper = (
+  activeSection: number,
+  activeSubsection: number,
+) => {
+  return (
+    <FormStepper
+      sections={[
+        {
+          name: 'Krafa um gæsluvarðahald',
+          children: [
+            { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
+            { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
+            { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+          ],
+        },
+        {
+          name: 'Úrskurður Héraðsdóms',
+          children: [
+            { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+            { type: 'SUB_SECTION', name: 'Þingbók' },
+            { type: 'SUB_SECTION', name: 'Úrskurður' },
+            { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+          ],
+        },
+      ]}
+      activeSection={activeSection}
+      activeSubSection={activeSubsection}
+    />
+  )
 }

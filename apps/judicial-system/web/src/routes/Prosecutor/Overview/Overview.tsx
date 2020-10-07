@@ -19,7 +19,7 @@ import {
   capitalize,
   parseTransition,
 } from '../../../utils/formatters'
-import { renderRestrictons } from '../../../utils/stepHelper'
+import { renderFormStepper, renderRestrictons } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
 import * as api from '../../../api'
@@ -91,7 +91,7 @@ export const Overview: React.FC = () => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
-              <Typography>Hliðarstika</Typography>
+              {renderFormStepper(0, 2)}
             </GridColumn>
             <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
               <Box component="section" marginBottom={5}>
