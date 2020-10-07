@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import {
-  Typography,
+  Text,
   Box,
   Stack,
   GridColumn,
@@ -52,9 +52,9 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
       <div className={styles.indent}>
         {Boolean(title) && (
           <Box paddingBottom={[4, 4, 8]}>
-            <Typography variant="h1" as="h2">
+            <Text variant="h1" as="h2">
               {title}
-            </Typography>
+            </Text>
           </Box>
         )}
         {first && (
@@ -116,13 +116,13 @@ const BigNewsItem = ({
           overflow="hidden"
         />
       )}
-      <Typography variant="eyebrow" color="purple400">
+      <Text variant="eyebrow" color="purple400">
         {format(new Date(news.date), 'do MMMM yyyy')}
-      </Typography>
-      <Typography variant="h2" as="h3">
+      </Text>
+      <Text variant="h2" as="h3">
         {news.title}
-      </Typography>
-      <Typography variant="intro">{news.intro}</Typography>
+      </Text>
+      <Text variant="intro">{news.intro}</Text>
       <ArrowLink as={as} href={href}>
         {readMore}
       </ArrowLink>

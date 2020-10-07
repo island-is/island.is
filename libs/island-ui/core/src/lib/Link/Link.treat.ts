@@ -3,6 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const link = style({
   textDecoration: 'none',
+  cursor: 'pointer',
   ':hover': {
     textDecoration: 'none',
   },

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   useState,
@@ -9,7 +8,6 @@ import React, {
   ReactElement,
   useReducer,
 } from 'react'
-import Link from 'next/link'
 import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
@@ -22,8 +20,9 @@ import {
   AsyncSearchInput,
   AsyncSearchSizes,
   Box,
-  Typography,
+  Text,
   Stack,
+  Link,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
 import * as styles from './SearchInput.treat'
@@ -338,12 +337,9 @@ const Results: FC<{
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Typography
-          links
-          color={i === highlightedIndex ? 'blue400' : 'dark400'}
-        >
+        <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
           {suggestion}
-        </Typography>
+        </Text>
       </div>
     ))
 
@@ -368,14 +364,15 @@ const Results: FC<{
                 ? suggestion.replace(search.term, '')
                 : ''
               return (
-                <div key={suggestion} {...getItemProps({ item: suggestion })}>
-                  <Typography
-                    links
-                    color={i === highlightedIndex ? 'blue400' : 'dark400'}
-                  >
+                <div
+                  key={suggestion}
+                  {...getItemProps({ item: suggestion })}
+                  className={styles.suggestion}
+                >
+                  <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
                     <strong>{endOfString}</strong>
-                  </Typography>
+                  </Text>
                 </div>
               )
             })}
@@ -386,19 +383,23 @@ const Results: FC<{
           <div className={styles.separatorHorizontal} />
           <div className={styles.menuRow}>
             <Stack space={2}>
-              <Typography variant="eyebrow" color="purple400">
+              <Text variant="eyebrow" color="purple400">
                 Beint að efninu
-              </Typography>
+              </Text>
               {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
-                  <div key={id} {...getItemProps({ item: '' })}>
-                    <Typography links variant="h5" color="blue400">
-                      <Link href={makePath('article', slug)}>
-                        <a>{title}</a>
-                      </Link>
-                    </Typography>
-                  </div>
+                  <Text
+                    as="div"
+                    variant="h5"
+                    color="blue400"
+                    key={id}
+                    {...getItemProps({ item: '' })}
+                  >
+                    <Link href={makePath('article', slug)}>
+                      <a>{title}</a>
+                    </Link>
+                  </Text>
                 ))}
             </Stack>
           </div>
@@ -434,9 +435,9 @@ const CommonSearchTerms = ({
       <div className={styles.menuColumn}>
         <Stack space={2}>
           <Box marginBottom={1}>
-            <Typography variant="eyebrow" color="blue400">
+            <Text variant="eyebrow" color="blue400">
               Algeng leitarorð
-            </Typography>
+            </Text>
           </Box>
           {width < STACK_WIDTH ? suggestions : left}
         </Stack>
