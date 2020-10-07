@@ -1,22 +1,9 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-// TODO: Add infra next server here
-import { Logger } from '@nestjs/common'
-import { NestFactory } from '@nestjs/core'
-
+import '@island.is/infra-tracing'
 import { AppModule } from './app/app.module'
+import { bootstrap } from '@island.is/infra-nest-server'
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
-  const globalPrefix = ''
-  app.setGlobalPrefix(globalPrefix)
-  const port = process.env.PORT || 3333
-  await app.listen(port, () => {
-    Logger.log('Listening at http://localhost:' + port + '/' + globalPrefix)
-  })
-}
-
-bootstrap()
+bootstrap({
+  appModule: AppModule,
+  name: 'search-indexer',
+  port: 3333,
+})
