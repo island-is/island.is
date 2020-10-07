@@ -22,9 +22,10 @@ const Confirm = (props) => {
   const [checkbox, setCheckbox] = useState(false)
 
   const {
+    activeLocale,
     t: { confirm: t },
   } = useI18n()
-  const { makePath } = useRouteNames()
+  const { makePath, routePrefix } = useRouteNames(activeLocale)
 
   const router = useRouter()
   const { id } = router.query
@@ -54,7 +55,7 @@ const Confirm = (props) => {
     // with car info
     // Mutate data on DB
     router.replace(
-      '/recycle-vehicle/[id]/handover',
+      `${routePrefix}/recycle-vehicle/[id]/handover`,
       makePath('recycleVehicle', id, 'handover'),
     )
   }

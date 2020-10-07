@@ -33,7 +33,7 @@ import { AuthService } from './auth.service'
 
 const { samlEntryPoint, jwtSecret } = environment.auth
 
-export const JWT_EXPIRES_IN_SECONDS = 1800
+export const JWT_EXPIRES_IN_SECONDS = 4 * 60 * 60
 export const ONE_HOUR = 60 * 60 * 1000
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 

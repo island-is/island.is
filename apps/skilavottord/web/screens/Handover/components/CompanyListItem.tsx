@@ -35,7 +35,9 @@ export const CompanyListItem: FC<CompanyProps> = ({
         <Stack space={[2, 2, 1, 1]}>
           <Typography variant="h5">{name}</Typography>
           <Typography variant="p">{address}</Typography>
-          <Typography variant="p">{phone}</Typography>
+          <Typography variant="p" color="blue400">
+            {phone}
+          </Typography>
           <Typography variant="p">
             <Link href={website} color="blue400">
               {website}

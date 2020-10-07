@@ -23,6 +23,7 @@ export type PathTypes =
 
 export const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {
+    routePrefix: locale === 'en' ? '/en' : '',
     makePath: (type?: PathTypes, subfix?: string, step?: string) => {
       let path = ''
 

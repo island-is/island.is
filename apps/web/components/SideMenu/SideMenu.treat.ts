@@ -19,7 +19,6 @@ export const root = style({
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       height: 'auto',
       left: 'auto',
-      position: 'absolute',
       top: theme.spacing[3],
       right: theme.spacing[3],
       paddingBottom: theme.spacing[3],
