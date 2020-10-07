@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer'
 import fs from 'fs'
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import {
+  TIME_FORMAT,
   capitalize,
   formatDate,
   formatLawsBroken,
@@ -33,25 +34,28 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     accusedName: existingCase.accusedName,
     accusedAddress: existingCase.accusedAddress,
     arrestDate: capitalize(formatDate(existingCase.arrestDate, 'PPPP')),
-    arrestTime: formatDate(existingCase.arrestDate, 'HH:mm'),
+    arrestTime: formatDate(existingCase.arrestDate, TIME_FORMAT),
     requestedCourtDate: capitalize(
       formatDate(existingCase.requestedCourtDate, 'PPPP'),
     ),
-    requestedCourtTime: formatDate(existingCase.requestedCourtDate, 'HH:mm'),
+    requestedCourtTime: formatDate(
+      existingCase.requestedCourtDate,
+      TIME_FORMAT,
+    ),
     requestedCustodyEndDate: formatDate(
       existingCase.requestedCustodyEndDate,
       'PPP',
     ),
     requestedCustodyEndTime: formatDate(
       existingCase.requestedCustodyEndDate,
-      'HH:mm',
+      TIME_FORMAT,
     ),
     lawsBroken: formatLawsBroken(
       existingCase.lawsBroken,
       existingCase.custodyProvisions,
     ),
     custodyRestrictions: formatCustodyRestrictions(
-      existingCase.custodyRestrictions,
+      existingCase.requestedCustodyRestrictions,
     ),
     caseFacts: existingCase.caseFacts,
     witnessAccounts: existingCase.witnessAccounts,
@@ -90,8 +94,8 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
   const html = compiledFunction({
     courtCaseNumber: existingCase.courtCaseNumber,
     policeCaseNumber: existingCase.policeCaseNumber,
-    courtStartTime: formatDate(existingCase.courtStartTime, 'HH:mm'),
-    courtEndTime: formatDate(existingCase.courtEndTime, 'HH:mm'),
+    courtStartTime: formatDate(existingCase.courtStartTime, TIME_FORMAT),
+    courtEndTime: formatDate(existingCase.courtEndTime, TIME_FORMAT),
     courtDate: formatDate(existingCase.courtStartTime, 'PPP'),
     policeDemands: existingCase.policeDemands,
     courtAttendees: existingCase.courtAttendees,
@@ -101,7 +105,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     accusedName: existingCase.accusedName,
     accusedNationalId: formatNationalId(existingCase.accusedNationalId),
     custodyEndDate: formatDate(existingCase.custodyEndDate, 'PPP'),
-    custodyEndTime: formatDate(existingCase.custodyEndDate, 'HH:mm'),
+    custodyEndTime: formatDate(existingCase.custodyEndDate, TIME_FORMAT),
     isolation: existingCase.custodyRestrictions.includes(
       CaseCustodyRestrictions.ISOLATION,
     ),
