@@ -23,7 +23,8 @@ import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
-import { formatDate } from '@island.is/judicial-system-web/src/utils/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -183,8 +184,8 @@ export const StepOne: React.FC = () => {
         ruling: caseDraftJSON.ruling ?? '',
         custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
         custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
+        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
+        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
       })
     }
   }, [workingCase, setWorkingCase])
@@ -470,7 +471,7 @@ export const StepOne: React.FC = () => {
                         hasError={arrestTimeErrorMessage !== ''}
                         defaultValue={formatDate(
                           workingCase.arrestDate,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )}
                         ref={arrestTimeRef}
                         onBlur={(evt) => {
@@ -561,7 +562,7 @@ export const StepOne: React.FC = () => {
                         placeholder="Settu inn tíma"
                         defaultValue={formatDate(
                           workingCase.requestedCourtDate,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )}
                         disabled={!workingCase.requestedCourtDate}
                         onBlur={(evt) => {
