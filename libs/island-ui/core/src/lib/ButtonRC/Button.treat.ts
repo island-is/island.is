@@ -178,7 +178,7 @@ const ghostColors: GhostColors = (main, hover, disabled) => ({
   },
   ':hover': {
     backgroundColor: theme.color.transparent,
-    boxShadow: `inset 0 0 0 1px ${hover}`,
+    boxShadow: `inset 0 0 0 2px ${hover}`,
     color: hover,
   },
   selectors: {
@@ -201,7 +201,7 @@ const textColors: GhostColors = (main, hover, disabled) => ({
   },
   ':hover': {
     backgroundColor: theme.color.transparent,
-    boxShadow: `inset 0 -1px 0 0 ${hover}`,
+    boxShadow: `inset 0 -2px 0 0 ${hover}`,
     color: hover,
   },
   selectors: {
@@ -225,6 +225,12 @@ export const colors = {
       theme.color.white,
       theme.color.roseTinted400,
       theme.color.red200,
+    ),
+    negative: primaryColors(
+      theme.color.white,
+      theme.color.blue400,
+      theme.color.blueberry100,
+      theme.color.blue300,
     ),
   }),
   ghost: styleMap({
@@ -254,6 +260,11 @@ export const colors = {
       theme.color.red600,
       theme.color.roseTinted400,
       theme.color.red200,
+    ),
+    negative: textColors(
+      theme.color.white,
+      theme.color.dark100,
+      theme.color.dark200,
     ),
   }),
 }

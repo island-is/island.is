@@ -6,6 +6,8 @@ import { Box } from '../Box'
 import * as styles from './Button.treat'
 import Icon, { IconTypes } from '../Icon/Icon'
 
+// TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
+
 type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
 type Variants =
   | {
@@ -26,6 +28,8 @@ type Variants =
 export interface ButtonProps {
   id?: NativeButtonProps['id']
   onClick?: NativeButtonProps['onClick']
+  onFocus?: NativeButtonProps['onFocus']
+  onBlur?: NativeButtonProps['onBlur']
   children?: ReactNode
   size?: keyof typeof styles.size
   disabled?: boolean
