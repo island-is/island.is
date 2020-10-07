@@ -1,23 +1,27 @@
 import {
+  ExternalDataProvider,
   Field,
   findSectionIndexForScreen,
   findSubSectionIndexForScreen,
+  Form,
   FormItemTypes,
   FormLeaf,
+  FormNode,
   FormValue,
   getSubSectionsInSection,
-  MultiField,
-  ExternalDataProvider,
-  Repeater,
-  shouldShowFormLeaf,
   getValueViaPath,
+  isValidScreen,
+  MultiField,
+  Repeater,
+  Section,
+  shouldShowFormItem,
 } from '@island.is/application/core'
 import { ApplicationUIState } from './ReducerTypes'
 import {
+  ExternalDataProviderScreen,
   FieldDef,
   FormScreen,
   MultiFieldScreen,
-  ExternalDataProviderScreen,
   RepeaterScreen,
 } from '../types'
 
@@ -127,135 +131,183 @@ export const moveToScreen = (
   }
 }
 
-function immutableSplice<T>(
-  arr: T[],
-  start: number,
-  deleteCount: number,
-  ...items: T[]
-): T[] {
-  return [...arr.slice(0, start), ...items, ...arr.slice(start + deleteCount)]
+function updateNodeInTree(source: FormNode, target: FormNode): FormNode {
+  if (source.type === target.type && source.id === target.id) {
+    return target
+  } else if (source.children !== undefined) {
+    const newChildren: FormNode[] = []
+    source.children.forEach((child: FormNode) => {
+      newChildren.push(updateNodeInTree(child, target))
+    })
+    return {
+      ...source,
+      children: newChildren,
+    } as FormNode
+  }
+  return source
 }
 
 export function expandRepeater(
   repeaterIndex: number,
-  formLeaves: FormLeaf[],
+  form: Form,
   screens: FormScreen[],
-  answers: FormValue,
-): [FormLeaf[], FormScreen[]] {
-  const repeater = formLeaves[repeaterIndex]
+): Form | undefined {
+  const repeater = screens[repeaterIndex]
   if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
-    return [[], []]
+    return undefined
   }
-  const { children, id, repetitions = 0 } = repeater
-  let newFormLeaves = immutableSplice(formLeaves, repeaterIndex, 1, {
-    ...repeater,
-    repetitions: repetitions + 1,
-  })
-  let newFormScreens = immutableSplice(
-    screens,
-    repeaterIndex,
-    1,
-    convertLeafToScreen(
-      {
-        ...repeater,
-        repetitions: repetitions + 1,
-      },
-      answers,
-    ),
-  )
-  const improvedFormLeaves: FormLeaf[] = []
-  const improvedFormScreens: FormScreen[] = []
-  for (let k = 0; k < children.length; k++) {
-    const child = children[k]
-    const improvedChild = {
-      ...child,
-      repeaterIndex,
-      id: `${id}[${repetitions}].${child.id}`,
-    }
-    improvedFormLeaves[k] = improvedChild
-    improvedFormScreens[k] = convertLeafToScreen(improvedChild, answers)
-  }
-  newFormLeaves = immutableSplice(
-    newFormLeaves,
-    repeaterIndex + 1 + children.length * repetitions,
-    0,
-    ...improvedFormLeaves,
-  )
-  newFormScreens = immutableSplice(
-    newFormScreens,
-    repeaterIndex + 1 + children.length * repetitions,
-    0,
-    ...improvedFormScreens,
-  )
-
-  return [newFormLeaves, newFormScreens]
+  const newRepeater = { ...repeater, repetitions: repeater.repetitions + 1 }
+  return updateNodeInTree(form, newRepeater) as Form
 }
 
-function convertFieldToScreen(field: Field, answers: FormValue): FieldDef {
+function convertFieldToScreen(
+  field: Field,
+  answers: FormValue,
+  isParentNavigable = true,
+): FieldDef {
   return {
     ...field,
-    isNavigable: shouldShowFormLeaf(field as Field, answers),
+    isNavigable:
+      isParentNavigable && shouldShowFormItem(field as Field, answers),
   } as FieldDef
 }
 
 function convertDataProviderToScreen(
   externalDataProvider: ExternalDataProvider,
+  answers: FormValue,
+  isParentNavigable = true,
 ): ExternalDataProviderScreen {
-  return { ...externalDataProvider, isNavigable: true }
+  return {
+    ...externalDataProvider,
+    isNavigable:
+      isParentNavigable && shouldShowFormItem(externalDataProvider, answers),
+  }
 }
 
 export function convertMultiFieldToScreen(
   multiField: MultiField,
   answers: FormValue,
+  isParentNavigable = true,
 ): MultiFieldScreen {
   let isMultiFieldVisible = false
   const children: FieldDef[] = []
   multiField.children.forEach((field) => {
-    const isFieldVisible = shouldShowFormLeaf(field, answers)
+    const isFieldVisible = shouldShowFormItem(field, answers)
     if (isFieldVisible) {
       isMultiFieldVisible = true
     }
-    children.push({ ...field, isNavigable: isFieldVisible })
+    children.push({
+      ...field,
+      isNavigable: isFieldVisible && isParentNavigable,
+    })
   })
   return {
     ...multiField,
-    isNavigable: isMultiFieldVisible,
+    isNavigable: isMultiFieldVisible && isParentNavigable,
     children,
   } as MultiFieldScreen
 }
 
-function convertRepeaterToScreen(
+function convertRepeaterToScreens(
   repeater: Repeater,
   answers: FormValue,
-): RepeaterScreen {
-  const children: FormScreen[] = []
-  repeater.children.forEach((field) => {
-    children.push(convertLeafToScreen(field, answers))
-  })
-  return {
-    ...repeater,
-    isNavigable: shouldShowFormLeaf(repeater, answers),
-    children,
-  } as RepeaterScreen
+  isParentNavigable = true,
+): FormScreen[] {
+  const { id, children, repetitions } = repeater
+  const newScreens: FormScreen[] = []
+  for (let i = 0; i < repetitions; i++) {
+    children.forEach((field, index) => {
+      newScreens.push(
+        ...convertLeafToScreens(
+          {
+            ...field,
+            id: `${id}[${i}].${field.id}`,
+            repeaterIndex: index + children.length * i,
+          },
+          answers,
+          isParentNavigable,
+        ),
+      )
+    })
+  }
+  return [
+    {
+      ...repeater,
+      isNavigable: isParentNavigable && shouldShowFormItem(repeater, answers),
+    } as RepeaterScreen,
+    ...newScreens,
+  ]
 }
 
-export function convertLeafToScreen(
+export function convertLeafToScreens(
   leaf: FormLeaf,
   answers: FormValue,
-): FormScreen {
+  isParentNavigable = true,
+): FormScreen[] {
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
-    return convertMultiFieldToScreen(leaf, answers)
+    return [convertMultiFieldToScreen(leaf, answers, isParentNavigable)]
   } else if (leaf.type === FormItemTypes.REPEATER) {
-    return convertRepeaterToScreen(leaf, answers)
+    return convertRepeaterToScreens(leaf, answers, isParentNavigable)
   } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-    return convertDataProviderToScreen(leaf)
+    return [convertDataProviderToScreen(leaf, answers, isParentNavigable)]
   }
-  return convertFieldToScreen(leaf, answers)
+  return [convertFieldToScreen(leaf, answers, isParentNavigable)]
 }
 
-export function convertLeavesToScreens(
-  formLeaves: FormLeaf[],
+function convertFormNodeToScreens(
+  formNode: FormNode,
+  answers: FormValue,
+  isParentNavigable: boolean,
+): FormScreen[] {
+  const { children } = formNode
+  if (isValidScreen(formNode)) {
+    return convertLeafToScreens(
+      formNode as FormLeaf,
+      answers,
+      isParentNavigable,
+    )
+  }
+  let screens: FormScreen[] = []
+  let newScreens: FormScreen[] = []
+  if (children) {
+    for (let i = 0; i < children.length; i++) {
+      newScreens = convertFormNodeToScreens(
+        children[i],
+        answers,
+        isParentNavigable && shouldShowFormItem(children[i], answers),
+      )
+      if (newScreens.length) {
+        screens = [...screens, ...newScreens]
+      }
+    }
+  }
+  return screens
+}
+
+export function convertFormToScreens(
+  form: Form,
   answers: FormValue,
 ): FormScreen[] {
-  return formLeaves.map((leaf) => convertLeafToScreen(leaf, answers))
+  return convertFormNodeToScreens(form, answers, true)
+}
+
+export function getNavigableSectionsInForm(
+  form: Form,
+  answers: FormValue,
+): Section[] {
+  const sections: Section[] = []
+  form.children.forEach((child) => {
+    if (
+      child.type === FormItemTypes.SECTION &&
+      shouldShowFormItem(child, answers)
+    ) {
+      sections.push({
+        ...(child as Section),
+        children: child.children.filter((sectionChild) =>
+          shouldShowFormItem(sectionChild, answers),
+        ),
+      })
+    }
+  })
+  return sections
 }
