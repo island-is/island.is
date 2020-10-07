@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react'
+import React, { useState, ReactNode } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
@@ -29,13 +29,6 @@ import {
   Query,
   QueryGetApiCatalogueArgs,
 } from '@island.is/api/schema'
-
-import {
-  AccessCategory,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
 
 interface PropTypes {
   top?: ReactNode
@@ -87,7 +80,8 @@ export interface ServiceListProps {
 
 //Todo: add to contentful
 const TEXT_SEARCHING = 'Leita ...'
-const TEXT_NOT_FOUND = 'Engin þjónusta fannast'
+const TEXT_NOT_FOUND = 'Engin þjónusta fannst'
+const TEXT_ERROR = 'Upp kom villa, reynið aftur'
 
 export default function ServiceList(props: ServiceListProps) {
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
@@ -99,8 +93,7 @@ export default function ServiceList(props: ServiceListProps) {
     type: [],
     access: [],
   })
-  const [timer, setTimer] = useState(null)
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState<boolean>(false)
   const { width } = useWindowSize()
   // prettier-ignore
   const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY, 
@@ -110,8 +103,25 @@ export default function ServiceList(props: ServiceListProps) {
     },
   })
 
+  const onClear = () => {
+    console.log('clear filters')
+    setParameters({
+      cursor: null,
+      limit: 2,
+      query: '',
+      pricing: [],
+      data: [],
+      type: [],
+      access: [],
+    })
+  }
+
   const onLoadMore = () => {
-    const { nextCursor } = data?.getApiCatalogue.pageInfo
+    if (data?.getApiCatalogue.pageInfo?.nextCursor == null) {
+      return
+    }
+
+    const { nextCursor } = data?.getApiCatalogue?.pageInfo
     const param = { ...parameters, cursor: nextCursor }
     fetchMore({
       variables: { input: param },
@@ -144,18 +154,6 @@ export default function ServiceList(props: ServiceListProps) {
 
   const onSearchChange = function(inputValue: string) {
     setParameters({ ...parameters, query: inputValue })
-
-    //setSearchValue(inputValue)
-    /*
-    if (timer !== null) {
-      clearTimeout(timer)
-    }
-    setTimer(
-      setTimeout(function() {
-        //setStatusQueryString(createStatusQueryString());
-        //setFirstGet(true);
-      }, 600),
-    )*/
   }
 
   useIsomorphicLayoutEffect(() => {
@@ -199,27 +197,37 @@ export default function ServiceList(props: ServiceListProps) {
           marginTop={1}
         >
           {data?.getApiCatalogue.services.length > 0 ? (
-            data.getApiCatalogue.services?.map((item) => {
+            data.getApiCatalogue.services.map((item) => {
               return (
                 <ServiceCard
                   cardWidth={styles.cardWidth}
                   key={item.id}
                   service={item}
+                  strings={props.filterStrings.strings}
                 />
               )
             })
           ) : (
             <span className={cn(loading ? styles.displayHidden : {})}>
-              <ServiceCardMessage
-                messageType="default"
-                borderStyle="standard"
-                title={TEXT_NOT_FOUND}
-              />
+              {error ? (
+                <ServiceCardMessage
+                  messageType="error"
+                  borderStyle="standard"
+                  title={TEXT_ERROR}
+                />
+              ) : (
+                <ServiceCardMessage
+                  messageType="default"
+                  borderStyle="standard"
+                  title={TEXT_NOT_FOUND}
+                />
+              )}
             </span>
           )}
           <Box
             className={cn(
               isMobile ? styles.navigationMobile : styles.navigation,
+              error ? styles.displayHidden : {},
             )}
             borderRadius="large"
           >
@@ -240,7 +248,7 @@ export default function ServiceList(props: ServiceListProps) {
               <Button
                 width="normal"
                 variant="text"
-                disabled={data?.getApiCatalogue.pageInfo.nextCursor === null}
+                disabled={data?.getApiCatalogue?.pageInfo?.nextCursor == null}
                 onClick={() => onLoadMore()}
               >
                 {
@@ -255,10 +263,10 @@ export default function ServiceList(props: ServiceListProps) {
       }
       right={
         isMobile ? (
-          <div className={cn(styles.accordionMobile)}>
+          <div>
             <AccordionItem
               id="serviceFilter"
-              label="Sía"
+              label="Sýna flokka"
               labelVariant="sideMenu"
               iconVariant="default"
             >
@@ -268,6 +276,7 @@ export default function ServiceList(props: ServiceListProps) {
                 isLoading={loading}
                 parameters={parameters}
                 onInputChange={(input) => onSearchChange(input.target.value)}
+                onClear={onClear}
                 onCheckCategoryChanged={({ target }) => {
                   updateCategoryCheckBox(target)
                 }}
@@ -281,6 +290,7 @@ export default function ServiceList(props: ServiceListProps) {
             isLoading={loading}
             parameters={parameters}
             onInputChange={(input) => onSearchChange(input.target.value)}
+            onClear={onClear}
             onCheckCategoryChanged={({ target }) => {
               updateCategoryCheckBox(target)
             }}

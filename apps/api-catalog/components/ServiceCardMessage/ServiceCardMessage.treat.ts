@@ -2,7 +2,7 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 const wrapperOrg = {
-  width: 320,
+  width: 310,
   height: 144,
   marginBottom: 20,
   fontFamily: theme.typography.fontFamily,
@@ -11,7 +11,8 @@ const wrapperOrg = {
   borderStyle: 'solid',
   display: 'flex',
   alignItems: 'center',
-  alignContent: 'center',
+  justifyContent: 'center',
+  marginRight: 20,
 }
 const errorColor = theme.color.red400
 export const wrapper = style(wrapperOrg)
@@ -62,4 +63,8 @@ export const textError = style({
   ...{
     color: errorColor,
   },
+})
+
+export const displayHidden = style({
+  display: 'none',
 })

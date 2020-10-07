@@ -10,21 +10,25 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { ContentfulString } from 'apps/api-catalog/services/contentful.types'
 
 export interface ServiceCardProps {
   service: ApiService
   cardWidth: number
+  strings: Array<ContentfulString>
 }
 
 export const ServiceCard = (props: ServiceCardProps) => {
   const dragProps = useHorizontalDragScroll()
 
   const preventDragHandler = (e) => {
-    console.log('preventing')
     e.preventDefault()
   }
   return (
-    <div style={{ width: props.cardWidth }} onDragStart={preventDragHandler}>
+    <div
+      style={{ width: props.cardWidth, marginRight: 20 }}
+      onDragStart={preventDragHandler}
+    >
       <Box borderRadius="large" className={cn(styles.card, 'service-card')}>
         <Link href={`./services/${props.service.id}`}>
           <div className={cn(styles.cardTexts)}>
@@ -37,12 +41,26 @@ export const ServiceCard = (props: ServiceCardProps) => {
           <div className={cn(styles.category)}>
             {props.service.pricing?.map((item, index) => (
               <div className={cn(styles.categoryItem, 'no-select')} key={index}>
-                {PricingCategory[item]}
+                {
+                  props.strings.find(
+                    (s) =>
+                      s.id ===
+                      `catalog-filter-pricing-${PricingCategory[
+                        item
+                      ].toLowerCase()}`,
+                  ).text
+                }
               </div>
             ))}
             {props.service.data?.map((item, index) => (
               <div className={cn(styles.categoryItem, 'no-select')} key={index}>
-                {DataCategory[item]}
+                {
+                  props.strings.find(
+                    (s) =>
+                      s.id ===
+                      `catalog-filter-data-${DataCategory[item].toLowerCase()}`,
+                  ).text
+                }
               </div>
             ))}
             {props.service.type?.map((item, index) => (

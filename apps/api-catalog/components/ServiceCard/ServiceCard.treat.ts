@@ -41,6 +41,7 @@ export const scrollBoxWrapper = style({
   height: '100%',
   overflowY: 'hidden',
   overflowX: 'hidden',
+  borderBottomLeftRadius: 7,
 })
 
 export const category = style({

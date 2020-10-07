@@ -24,3 +24,12 @@ export const inputSearch = style({
 export const filterItem = style({
   marginTop: 0,
 })
+
+export const clear = style({
+  textDecorationLine: 'underline',
+  marginBottom: 5,
+  color: theme.color.blue400,
+  fontSize: 13,
+  display: 'flex',
+  justifyContent: 'flex-end',
+})

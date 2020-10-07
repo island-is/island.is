@@ -11,6 +11,7 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+
 type IconVariantTypes = 'default' | 'sidebar'
 
 export interface ServiceFilterProps {
@@ -22,18 +23,17 @@ export interface ServiceFilterProps {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   onCheckCategoryChanged: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onClear: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
   strings: Array<ContentfulString>
-}
-
-function getEnumKeyByEnumValue(myEnum, enumValue) {
-  let keys = Object.keys(myEnum).filter((x) => myEnum[x] == enumValue)
-  return keys.length > 0 ? keys[0] : null
 }
 
 export const ServiceFilter = (props: ServiceFilterProps) => {
   return (
     <Box className={props.rootClasses + ' filterX'}>
       <Box className={cn(styles.inputSearch)}>
+        <span onClick={props.onClear} className={cn(styles.clear)}>
+          Hreinsa
+        </span>
         <InputSearch
           name="text-search"
           value={props.parameters.query}

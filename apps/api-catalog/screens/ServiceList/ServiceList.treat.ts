@@ -5,7 +5,7 @@ export const serviceList = style({
   display: 'flex',
   flexWrap: 'wrap',
   minHeight: 350,
-  justifyContent: 'space-between',
+  flexDirection: 'row',
 })
 
 export const serviceListMobile = style({
@@ -32,9 +32,7 @@ export const filter = style({
   marginTop: filterOrg.marginTop,
   padding: filterOrg.padding,
   minWidth: filterOrg.minWidth,
-})
-export const accordionMobile = style({
-  marginLeft: 24,
+  marginBottom: 30,
 })
 
 export const filterMobile = style({
@@ -56,7 +54,7 @@ export const inputSearch = style({
   marginBottom: 20,
 })
 
-export const cardWidth = 320
+export const cardWidth = 310
 export const cardHeightMin = 144
 
 const navigationOrg = {
@@ -95,6 +93,7 @@ export const navigationMobile = style({
   textAlign: 'center',
   flexDirection: 'column',
   marginBottom: 20,
+  marginRight: 20,
 })
 
 export const displayInline = style({
