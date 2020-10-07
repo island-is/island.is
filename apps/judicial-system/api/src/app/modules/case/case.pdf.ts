@@ -14,6 +14,47 @@ import {
 import { environment } from '../../../environments'
 import { Case } from './models'
 
+export const formatConclusion = (existingCase: Case) => {
+  return existingCase.rejecting
+    ? 'Beiðni um gæsluvarðhald hafnað'
+    : `Kærði, ${existingCase.accusedName} kt.${
+        existingCase.accusedNationalId
+      } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
+        existingCase.custodyEndDate,
+        'PPPp',
+      )}. ${
+        existingCase.custodyRestrictions?.length === 0
+          ? 'Engar takmarkanir skulu vera á gæslunni.'
+          : `Kærði skal sæta ${existingCase.custodyRestrictions?.map(
+              (custodyRestriction, index) => {
+                const isNextLast =
+                  index === existingCase.custodyRestrictions.length - 2
+                const isLast =
+                  index === existingCase.custodyRestrictions.length - 1
+                const isOnly = existingCase.custodyRestrictions.length === 1
+
+                return custodyRestriction === CaseCustodyRestrictions.ISOLATION
+                  ? `einangrun${
+                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
+                    }`
+                  : custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
+                  ? `bréfa, og símabanni${
+                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
+                    }`
+                  : custodyRestriction === CaseCustodyRestrictions.MEDIA
+                  ? `fjölmiðlabanni${
+                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
+                    }`
+                  : custodyRestriction === CaseCustodyRestrictions.VISITAION
+                  ? `fjölmiðlabanni${
+                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
+                    }`
+                  : ''
+              },
+            )}á meðan á gæsluvarðhaldinu stendur.`
+      }`
+}
+
 export function writeFile(fileName: string, documentContent: string) {
   // In e2e tests, fs is null and we have not been able to mock fs
   fs?.writeFileSync(`../${fileName}`, documentContent, { encoding: 'binary' })
@@ -102,13 +143,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     accusedPlea: existingCase.accusedPlea,
     litigationPresentations: existingCase.litigationPresentations,
     ruling: existingCase.ruling,
-    accusedName: existingCase.accusedName,
-    accusedNationalId: formatNationalId(existingCase.accusedNationalId),
-    custodyEndDate: formatDate(existingCase.custodyEndDate, 'PPP'),
-    custodyEndTime: formatDate(existingCase.custodyEndDate, TIME_FORMAT),
-    isolation: existingCase.custodyRestrictions.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ),
+    conclusion: formatConclusion(existingCase),
     accusedAppealDecision: existingCase.accusedAppealDecision,
     prosecutorAppealDecision: existingCase.prosecutorAppealDecision,
     judgeName: existingCase.judge.name,
