@@ -29,6 +29,7 @@ import {
   SpanType,
   Tabs,
   Hidden,
+  Divider,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -400,7 +401,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={8} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={2} paddingBottom={[5, 5, 10]}>
               <Tabs
                 label={slice?.title}
                 tabs={slice?.tabs.map((tab) => ({
@@ -412,13 +413,14 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                         offset={[null, null, null, '1/9']}
                       >
                         <Box paddingTop={[4, 4, 9]} paddingBottom={[0, 0, 9]}>
-                          <Typography variant="h2" as="h2" marginBottom={3}>
-                            {tab.contentTitle}
-                          </Typography>
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}
                           />
+                          <Typography variant="h2" as="h2" marginBottom={3}>
+                            {tab.contentTitle}
+                          </Typography>
+
                           {tab.body && renderSlices(tab.body)}
                         </Box>
                       </GridColumn>
@@ -428,6 +430,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                 contentBackground="white"
               />
             </Box>
+            <Divider />
           </Layout>
         </Box>
       )
