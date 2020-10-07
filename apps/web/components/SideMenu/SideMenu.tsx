@@ -44,14 +44,14 @@ interface Tab {
 interface Props {
   tabs?: Tab[]
   isVisible: boolean
-  searchBarFocus: boolean
+  searchBarFocus?: boolean
   handleClose: () => void
 }
 
 export const SideMenu: FC<Props> = ({
   tabs = [],
   isVisible,
-  searchBarFocus,
+  searchBarFocus = false,
   handleClose,
 }) => {
   const [mounted, setMounted] = useState(false)
