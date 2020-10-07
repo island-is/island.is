@@ -3,7 +3,7 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
-  Typography,
+  Text,
   ArrowLink,
   Box,
   Swiper,
@@ -38,17 +38,17 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']}>
-          <Typography variant="h3" as="h2" paddingBottom={2}>
+          <Text variant="h3" as="h2" paddingBottom={2}>
             {label}
-          </Typography>
+          </Text>
         </GridColumn>
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Typography variant="h5" as="p" paddingBottom={2}>
+            <Text variant="h5" as="p" paddingBottom={2}>
               <ArrowLink href={makePath('news')} arrowHeight={16}>
                 {n('seeMore')}
               </ArrowLink>
-            </Typography>
+            </Text>
           </Box>
         </GridColumn>
       </GridRow>

@@ -22,7 +22,7 @@ import {
   AsyncSearchInput,
   AsyncSearchSizes,
   Box,
-  Typography,
+  Text,
   Stack,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -352,12 +352,12 @@ const Results: FC<{
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Typography
+        <Text
           links
           color={i === highlightedIndex ? 'blue400' : 'dark400'}
         >
           {suggestion}
-        </Typography>
+        </Text>
       </div>
     ))
 
@@ -383,13 +383,13 @@ const Results: FC<{
                 : ''
               return (
                 <div key={suggestion} {...getItemProps({ item: suggestion })}>
-                  <Typography
+                  <Text
                     links
                     color={i === highlightedIndex ? 'blue400' : 'dark400'}
                   >
                     {`${search.prefix} ${startOfString}`}
                     <strong>{endOfString}</strong>
-                  </Typography>
+                  </Text>
                 </div>
               )
             })}
@@ -400,18 +400,18 @@ const Results: FC<{
           <div className={styles.separatorHorizontal} />
           <div className={styles.menuRow}>
             <Stack space={2}>
-              <Typography variant="eyebrow" color="purple400">
+              <Text variant="eyebrow" color="purple400">
                 Beint að efninu
-              </Typography>
+              </Text>
               {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
                   <div key={id} {...getItemProps({ item: '' })}>
-                    <Typography links variant="h5" color="blue400">
+                    <Text links variant="h5" color="blue400">
                       <Link href={makePath('article', slug)}>
                         <a>{title}</a>
                       </Link>
-                    </Typography>
+                    </Text>
                   </div>
                 ))}
             </Stack>
@@ -448,9 +448,9 @@ const CommonSearchTerms = ({
       <div className={styles.menuColumn}>
         <Stack space={2}>
           <Box marginBottom={1}>
-            <Typography variant="eyebrow" color="blue400">
+            <Text variant="eyebrow" color="blue400">
               Algeng leitarorð
-            </Typography>
+            </Text>
           </Box>
           {width < STACK_WIDTH ? suggestions : left}
         </Stack>

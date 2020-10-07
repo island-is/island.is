@@ -4,7 +4,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Typography,
+  Text,
   Box,
   ArrowLink,
 } from '@island.is/island-ui/core'
@@ -62,16 +62,16 @@ export const IntroductionSection: FC<Props> = ({
           offset={[null, null, '1/12']}
           paddingTop={4}
         >
-          <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
+          <Text variant="eyebrow" color="purple400" paddingBottom={2}>
             {subtitle}
-          </Typography>
-          <Typography as="h2" variant="h1" paddingBottom={2}>
+          </Text>
+          <Text as="h2" variant="h1" paddingBottom={2}>
             {title}
-          </Typography>
-          <Typography variant="intro" paddingBottom={text ? 2 : 0}>
+          </Text>
+          <Text variant="intro" paddingBottom={text ? 2 : 0}>
             {introText}
-          </Typography>
-          <Typography variant="p">{text}</Typography>
+          </Text>
+          <Text variant="default">{text}</Text>
           <Box paddingY={2}>
             <ArrowLink href={linkUrl} color="blue400">
               {linkText}

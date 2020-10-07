@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import {
   Columns,
   Column,
-  Typography,
+  Text,
   Stack,
   Input,
   Button,
@@ -24,13 +24,13 @@ export const EmailSignup: FC<EmailSignupProps> = ({
   return (
     <Stack space={4}>
       <div>
-        <Typography variant="h3" as="h3" color="blue400">
+        <Text variant="h3" as="h3" color="blue400">
           {title}
-        </Typography>
+        </Text>
         {description && (
-          <Typography variant="p" as="p">
+          <Text variant="default" as="p">
             {description}
-          </Typography>
+          </Text>
         )}
       </div>
       <Columns alignY="center" space={[2, 2, 8]} collapseBelow="md">

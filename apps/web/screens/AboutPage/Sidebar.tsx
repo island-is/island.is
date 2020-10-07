@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useState } from 'react'
 import cn from 'classnames'
 import {
   Box,
-  Typography,
+  Text,
   Divider,
   DividerProps,
 } from '@island.is/island-ui/core'
@@ -75,9 +75,9 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
               <Box paddingX={4} paddingY={3}>
                 {title && (
                   <>
-                    <Typography variant="h3" as="h3" color={colors.main}>
+                    <Text variant="h3" as="h3" color={colors.main}>
                       {title}
-                    </Typography>
+                    </Text>
                     <Box paddingY={2}>
                       <Divider weight={colors.divider} />
                     </Box>

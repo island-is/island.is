@@ -16,7 +16,7 @@ import {
   DrawerMenu,
 } from '@island.is/web/components'
 import {
-  Typography,
+  Text,
   Box,
   BoxProps,
   Breadcrumbs,
@@ -186,12 +186,12 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                     <Link href={makePath()}>Ísland.is</Link>
                     <span>{page.title}</span>
                   </Breadcrumbs>
-                  <Typography variant="h1" as="h1" color="white">
+                  <Text variant="h1" as="h1" color="white">
                     {slice.title}
-                  </Typography>
-                  <Typography variant="p" as="p" color="white">
+                  </Text>
+                  <Text variant="default" as="p" color="white">
                     {slice.introduction}
-                  </Typography>
+                  </Text>
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -215,13 +215,13 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       paddingBottom={2}
                       display="inlineBlock"
                     >
-                      <Typography variant="p" color={colors.main}>
+                      <Text variant="default" color={colors.main}>
                         {navigationTitle.id === currentSliceId ? (
                           <b>{navigationTitle.text}</b>
                         ) : (
                           navigationTitle.text
                         )}
-                      </Typography>
+                      </Text>
                     </Box>
                     <Box
                       borderLeftWidth="standard"
@@ -235,13 +235,13 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                             href={'#' + id}
                             onClick={() => navigate(id)}
                           >
-                            <Typography
-                              variant="pSmall"
+                            <Text
+                              variant="small"
                               as="p"
                               color={colors.main}
                             >
                               {id === currentSliceId ? <b>{text}</b> : text}
-                            </Typography>
+                            </Text>
                           </a>
                         </Box>
                       ))}
@@ -250,13 +250,13 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       <span key={index}>
                         <Box paddingY={1}>
                           <Link href={url}>
-                            <Typography
-                              variant="p"
+                            <Text
+                              variant="default"
                               as="div"
                               color={colors.secondary}
                             >
                               {text}
-                            </Typography>
+                            </Text>
                           </Link>
                         </Box>
                       </span>
@@ -412,9 +412,9 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                         offset={[null, null, null, '1/9']}
                       >
                         <Box paddingTop={[4, 4, 9]} paddingBottom={[0, 0, 9]}>
-                          <Typography variant="h2" as="h2" marginBottom={3}>
+                          <Text variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}
-                          </Typography>
+                          </Text>
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}

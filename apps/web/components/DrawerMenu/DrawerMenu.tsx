@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import ToggleButton from './components/ToggleButton/ToggleButton'
-import { Typography, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 import * as styles from './DrawerMenu.treat'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 import { theme } from '@island.is/island-ui/theme'
@@ -42,7 +42,7 @@ const MainCategoryHeader = ({ title, onClick, isOpen }) => (
     padding={3}
     onClick={onClick}
   >
-    <Typography variant="h4">{title}</Typography>
+    <Text variant="h4">{title}</Text>
     <ToggleButton isActive={isOpen} onClick={onClick} />
   </Box>
 )
@@ -72,7 +72,7 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
         marginBottom={3}
         padding={3}
       >
-        <Typography variant="h4">{title}</Typography>
+        <Text variant="h4">{title}</Text>
       </Box>
     )}
     <Box component="ul" padding={3} position="relative">
@@ -90,9 +90,9 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
 
         return (
           <Box key={id} component="li">
-            <Typography as="p" paddingBottom={2}>
+            <Text as="p" paddingBottom={2}>
               <Link {...linkProps}>{item.title}</Link>
-            </Typography>
+            </Text>
           </Box>
         )
       })}

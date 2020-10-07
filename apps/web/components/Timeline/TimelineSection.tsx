@@ -1,5 +1,5 @@
 import React, { FC, useMemo, ReactNode } from 'react'
-import { Box, Typography, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useDateUtils } from '../../i18n/useDateUtils'
 import { Timeline, TimelineEvent } from './Timeline'
 
@@ -31,9 +31,9 @@ export const TimelineSection: FC<TimelineSectionProps> = ({
       <GridRow>
         <GridColumn offset={[null, null, null, '1/9']}>
           <Box paddingTop={2} paddingBottom={[0, 0, 5]}>
-            <Typography variant="p" as="p" color="white">
+            <Text variant="default" as="p" color="white">
               {title}
-            </Typography>
+            </Text>
           </Box>
         </GridColumn>
       </GridRow>

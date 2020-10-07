@@ -20,7 +20,7 @@ import {
   Button,
   Stack,
   Tag,
-  Typography,
+  Text,
   Inline,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
@@ -338,9 +338,9 @@ const EventBar = forwardRef(
             <Icon type="user" color="purple400" width="24" height="24" />
           </Box>
           <Box paddingLeft={2} paddingRight={3}>
-            <Typography variant="h5" color="purple400">
+            <Text variant="h5" color="purple400">
               {event.title}
-            </Typography>
+            </Text>
           </Box>
         </Box>
         {!!event.value && (
@@ -401,21 +401,21 @@ const EventModal = forwardRef(
               paddingLeft={2}
               paddingRight={4}
             >
-              <Typography variant="h2" color="purple400" as="span">
+              <Text variant="h2" color="purple400" as="span">
                 {formatNumber(event.value)}
-              </Typography>
+              </Text>
               {!!event.maxValue && (
-                <Typography
+                <Text
                   variant="h2"
                   color="purple400"
                   as="span"
                   fontWeight="light"
                 >
                   /{formatNumber(event.maxValue)}
-                </Typography>
+                </Text>
               )}
               <Box marginLeft={1}>
-                <Typography
+                <Text
                   variant="eyebrow"
                   color="purple400"
                   fontWeight="semiBold"
@@ -426,7 +426,7 @@ const EventModal = forwardRef(
                       <br />
                     </Fragment>
                   ))}
-                </Typography>
+                </Text>
               </Box>
             </Box>
           )}
@@ -436,9 +436,9 @@ const EventModal = forwardRef(
             <Icon type="close" />
           </button>
           <Stack space={2}>
-            <Typography variant="h2" as="h3" color="purple400">
+            <Text variant="h2" as="h3" color="purple400">
               {event.title}
-            </Typography>
+            </Text>
             {event.data?.labels && (
               <Inline space={2}>
                 {event.data.labels.map((label, index) => (

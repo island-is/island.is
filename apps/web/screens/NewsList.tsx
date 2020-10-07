@@ -11,7 +11,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import routeNames from '@island.is/web/i18n/routeNames'
 import {
   Box,
-  Typography,
+  Text,
   Stack,
   Breadcrumbs,
   Divider,
@@ -111,9 +111,9 @@ const NewsList: Screen<NewsListProps> = ({
 
   const sidebar = (
     <Stack space={3}>
-      <Typography variant="h4" as="h4">
+      <Text variant="h4" as="h4">
         {n('newsTitle', 'Fréttir og tilkynningar')}
-      </Typography>
+      </Text>
       <Divider weight="alternate" />
       <NativeSelect
         name="year"
@@ -126,18 +126,18 @@ const NewsList: Screen<NewsListProps> = ({
         }}
       />
       {selectedYear && (
-        <Typography variant="p" as="p">
+        <Text variant="default" as="p">
           <Link href={makeHref(selectedYear)}>{allMonthsString}</Link>
           {selectedMonth === undefined && <Bullet align="right" />}
-        </Typography>
+        </Text>
       )}
       {months.map((date: Date) => (
-        <Typography key={date.toISOString()} variant="p" as="p">
+        <Text key={date.toISOString()} variant="default" as="p">
           <Link href={makeHref(date.getFullYear(), date.getMonth())}>
             {capitalize(format(date, 'MMMM'))}
           </Link>
           {selectedMonth === date.getMonth() && <Bullet align="right" />}
-        </Typography>
+        </Text>
       ))}
     </Stack>
   )
@@ -157,9 +157,9 @@ const NewsList: Screen<NewsListProps> = ({
           </Breadcrumbs>
           {selectedYear && (
             <Hidden below="lg">
-              <Typography variant="h1" as="h1">
+              <Text variant="h1" as="h1">
                 {selectedYear}
-              </Typography>
+              </Text>
             </Hidden>
           )}
 

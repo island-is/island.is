@@ -13,7 +13,7 @@ import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
   Box,
-  Typography,
+  Text,
   Stack,
   Breadcrumbs,
   Hidden,
@@ -123,12 +123,12 @@ const RelatedArticles: FC<{
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h2">
+        <Text variant="h4" as="h2">
           {title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
         {articles.map((article) => (
-          <Typography key={article.slug} variant="p" as="span">
+          <Text key={article.slug} variant="default" as="span">
             <Link
               key={article.slug}
               href={makePath('article', '[slug]')}
@@ -137,7 +137,7 @@ const RelatedArticles: FC<{
             >
               {article.title}
             </Link>
-          </Typography>
+          </Text>
         ))}
       </Stack>
     </SidebarBox>
@@ -193,12 +193,12 @@ const SubArticleNavigation: FC<{
       {!isFirstMount && <Bullet align="left" top={bullet?.offsetTop ?? 0} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Text variant="h4" as="h4">
           {title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
         <div ref={!selectedSubArticle ? setBullet : null}>
-          <Typography variant="p" as="p">
+          <Text variant="default" as="p">
             <Link
               shallow
               href={makePath('article', '[slug]')}
@@ -209,7 +209,7 @@ const SubArticleNavigation: FC<{
                 !selectedSubArticle,
               )}
             </Link>
-          </Typography>
+          </Text>
         </div>
         {article.subArticles.map((subArticle, id) => (
           <Fragment key={id}>
@@ -220,7 +220,7 @@ const SubArticleNavigation: FC<{
                   : null
               }
             >
-              <Typography variant="p" as="span">
+              <Text variant="default" as="span">
                 <Link
                   shallow
                   href={makePath('article', '[slug]/[subSlug]')}
@@ -231,7 +231,7 @@ const SubArticleNavigation: FC<{
                     subArticle === selectedSubArticle,
                   )}
                 </Link>
-              </Typography>
+              </Text>
             </div>
             {subArticle === selectedSubArticle && navigation.length > 0 && (
               <SidebarSubNav>
@@ -244,9 +244,9 @@ const SubArticleNavigation: FC<{
                         textAlign="left"
                         onClick={() => navigate(id)}
                       >
-                        <Typography variant="pSmall">
+                        <Text variant="small">
                           {maybeBold(text, id === activeId)}
-                        </Typography>
+                        </Text>
                       </Box>
                     </div>
                   ))}
@@ -280,9 +280,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
       {bullet && <Bullet align="left" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h2">
+        <Text variant="h4" as="h2">
           {title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
 
         {navigation.map(({ id, text }) => (
@@ -294,9 +294,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
             textAlign="left"
             onClick={() => navigate(id)}
           >
-            <Typography variant="p">
+            <Text variant="default">
               {id === activeId ? <strong>{text}</strong> : text}
-            </Typography>
+            </Text>
           </Box>
         ))}
       </Stack>
@@ -448,13 +448,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             offset={['0', '0', '0', '0', '1/9']}
             span={['9/9', '9/9', '9/9', '9/9', '7/9']}
           >
-            <Typography variant="h1" as="h1">
+            <Text variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
-            </Typography>
+            </Text>
             {subArticle && (
-              <Typography variant="h2" as="h2" paddingTop={7}>
+              <Text variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>
-              </Typography>
+              </Text>
             )}
             {!!processEntry && (
               <Hidden above="sm">
@@ -464,7 +464,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   marginY={3}
                   borderRadius="large"
                 >
-                  <Typography variant="h4" as="span" color="blue400">
+                  <Text variant="h4" as="span" color="blue400">
                     <Link
                       passHref
                       href={processEntry.processLink}
@@ -477,7 +477,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                         <Icon type="external" width="15" />
                       </Box>
                     </Link>
-                  </Typography>
+                  </Text>
                 </Box>
               </Hidden>
             )}

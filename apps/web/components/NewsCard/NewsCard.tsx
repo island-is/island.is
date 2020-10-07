@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Link, Box, ArrowLink } from '@island.is/island-ui/core'
+import { Text, Link, Box, ArrowLink } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { Image } from '../../graphql/schema'
@@ -57,25 +57,25 @@ const NewsCard: React.FC<NewsCardProps> = ({
         paddingBottom={5}
         height="full"
       >
-        <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
+        <Text variant="eyebrow" color="purple400" paddingBottom={2}>
           {subtitle}
-        </Typography>
+        </Text>
         {date && (
-          <Typography
+          <Text
             variant="eyebrow"
             as="p"
             color="purple400"
             paddingBottom={2}
           >
             {format(new Date(date), 'do MMMM yyyy')}
-          </Typography>
+          </Text>
         )}
-        <Typography variant="h3" as="h3" paddingBottom={1}>
+        <Text variant="h3" as="h3" paddingBottom={1}>
           {title}
-        </Typography>
-        <Typography variant="p" paddingBottom={3}>
+        </Text>
+        <Text variant="default" paddingBottom={3}>
           {introduction}
-        </Typography>
+        </Text>
         <div className={styles.readMore}>
           <ArrowLink>{readMoreText}</ArrowLink>
         </div>

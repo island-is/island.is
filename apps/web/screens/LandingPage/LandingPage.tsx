@@ -9,7 +9,7 @@ import { useI18n } from '@island.is/web/i18n'
 import {
   Stack,
   Button,
-  Typography,
+  Text,
   Box,
   Breadcrumbs,
   Link,
@@ -55,7 +55,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
         <Box background="purple100" padding={4} borderRadius="large">
           <Stack space={2}>
             {page.links.title && (
-              <Typography variant="p">{page.links.title}</Typography>
+              <Text variant="default">{page.links.title}</Text>
             )}
             {page.links.links.map(({ url, text }, index) => (
               <Hyperlink key={index} href={url}>
@@ -81,12 +81,12 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                 <Link href={makePath()}>Ísland.is</Link>
                 <Link href={'/' + page.slug}>{page.title}</Link>
               </Breadcrumbs>
-              <Typography id={makeId(page.title)} variant="h1" as="h1">
+              <Text id={makeId(page.title)} variant="h1" as="h1">
                 {page.title}
-              </Typography>
-              <Typography variant="intro" as="p">
+              </Text>
+              <Text variant="intro" as="p">
                 {page.introduction}
-              </Typography>
+              </Text>
               {page.image && (
                 <Image
                   {...page.image}

@@ -9,7 +9,7 @@ import {
   Breadcrumbs,
   Link,
   Tag,
-  Typography,
+  Text,
   Box,
   Hidden,
 } from '@island.is/island-ui/core'
@@ -125,13 +125,13 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   {n('lifeEventTitle', 'Lífsviðburður')}
                 </Tag>
               </Breadcrumbs>
-              <Typography variant="h1" as="h1">
+              <Text variant="h1" as="h1">
                 <span id={slugify(title)}>{title}</span>
-              </Typography>
+              </Text>
               {intro && (
-                <Typography variant="intro" as="p" paddingTop={2}>
+                <Text variant="intro" as="p" paddingTop={2}>
                   <span id={slugify(intro)}>{intro}</span>
-                </Typography>
+                </Text>
               )}
             </GridColumn>
           </GridRow>

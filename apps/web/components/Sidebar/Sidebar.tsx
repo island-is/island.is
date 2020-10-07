@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, FC } from 'react'
 import cn from 'classnames'
 import {
   Box,
-  Typography,
+  Text,
   Icon,
   Stack,
   Divider,
@@ -174,9 +174,9 @@ export const Sidebar: FC<SidebarProps> = ({
         </span>
       )}
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h2">
+        <Text variant="h4" as="h2">
           {title}
-        </Typography>
+        </Text>
         {headingLinks && links.length ? (
           <Stack space={[1, 1, 2]}>
             <Divider weight="alternate" />
@@ -190,7 +190,7 @@ export const Sidebar: FC<SidebarProps> = ({
                   textAlign="left"
                   onClick={onClick}
                 >
-                  <Typography variant="p" as="span">
+                  <Text variant="default" as="span">
                     <span
                       className={cn({
                         [styles.active]: selected,
@@ -198,7 +198,7 @@ export const Sidebar: FC<SidebarProps> = ({
                     >
                       {title}
                     </span>
-                  </Typography>
+                  </Text>
                 </FocusableBox>
               )
             })}
@@ -217,9 +217,9 @@ export const Sidebar: FC<SidebarProps> = ({
                 <Icon type="bullet" color="red400" />
               </span>
             )}
-            <Typography variant="p" as="span">
+            <Text variant="default" as="span">
               {active ? <strong>{title}</strong> : title}
-            </Typography>
+            </Text>
           </FocusableBox>
         ))}
         {children && <Divider weight="alternate" />}

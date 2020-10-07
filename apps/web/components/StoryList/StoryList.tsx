@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Button, Typography, Stack } from '@island.is/island-ui/core'
+import { Button, Text, Stack } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
 
@@ -50,15 +50,15 @@ const Story: FC<StoryProps> = ({
         <IconBullet variant="gradient" image={logoUrl} />
       </div>
       <Stack space={2}>
-        <Typography variant="eyebrow" color="white">
+        <Text variant="eyebrow" color="white">
           {label}
-        </Typography>
-        <Typography variant="h2" as="h2" color="white">
+        </Text>
+        <Text variant="h2" as="h2" color="white">
           {title}
-        </Typography>
-        <Typography variant="p" color="white">
+        </Text>
+        <Text variant="default" color="white">
           {intro}
-        </Typography>
+        </Text>
         {!!(linkedPage || link) && (
           <ContentLink pageData={linkedPage} fallbackLink={link}>
             <Button variant="text" size="medium" white icon="arrowRight">
