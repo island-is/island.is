@@ -391,10 +391,10 @@ const Results: FC<{
               </Typography>
               {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
-                .map(({ id, title, slug }) => (
+                .map(({ id, title, slug, __typename }) => (
                   <div key={id} {...getItemProps({ item: '' })}>
                     <Typography links variant="h5" color="blue400">
-                      <Link href={makePath('article', slug)}>
+                      <Link href={makePath(__typename, slug)}>
                         <a>{title}</a>
                       </Link>
                     </Typography>
