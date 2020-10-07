@@ -61,15 +61,26 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
 )
 
 const Row: FC<{ left: ReactNode }> = ({ left, children }) => (
-  <Box alignItems="stretch" display="flex" paddingY={2}>
-    <Box display="flex" justifyContent="center" className={styles.leftCol}>
+  <Box
+    alignItems="stretch"
+    display="flex"
+    flexDirection={['column', 'row', 'row']}
+    paddingY={2}
+  >
+    <Box
+      display="flex"
+      justifyContent="center"
+      className={styles.leftCol}
+      marginBottom={[4, 0, 0]}
+    >
       {left}
     </Box>
     <Box
       display="flex"
       flexDirection="column"
       justifyContent="center"
-      paddingLeft={3}
+      paddingLeft={[0, 3, 3]}
+      className={styles.textBody}
     >
       {children}
     </Box>

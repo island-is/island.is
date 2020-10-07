@@ -301,7 +301,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
-            <Box paddingTop={[6, 6, 15]} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
               <Heading {...slice} />
             </Box>
           </Layout>
@@ -311,7 +311,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={8} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
             </Box>
           </Layout>
@@ -321,7 +321,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="blue100">
           <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
-            <Box paddingTop={[4, 4, 10]} paddingBottom={[3, 3, 7]}>
+            <Box paddingTop={[4, 4, 10]} paddingBottom={[4, 3, 7]}>
               <RenderForm
                 namespace={namespace}
                 heading={slice.title}
@@ -337,7 +337,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={[8, 8, 12]} paddingBottom={[8, 8, 10]}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
               <StoryList
                 {...slice}
                 stories={(slice.stories as any[]).map((story) => ({
@@ -353,7 +353,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={[8, 8, 15]} paddingBottom={[6, 6, 12]}>
+            <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
               <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
           </Layout>
@@ -363,7 +363,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={[8, 8, 12]} paddingBottom={5}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
               <LogoList
                 {...slice}
                 images={slice.images.map((img) => img.url)}
@@ -376,7 +376,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div id={slice.id} key={slice.id}>
           <Layout width={mainContentSpan}>
-            <Box paddingBottom={[5, 5, 10]}>
+            <Box paddingBottom={[8, 5, 10]}>
               <BulletList
                 bullets={slice.bullets.map((bullet) => {
                   switch (bullet.__typename) {
@@ -394,6 +394,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                 })}
               />
             </Box>
+            <Divider />
           </Layout>
         </div>
       )
@@ -401,7 +402,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={2} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs
                 label={slice?.title}
                 tabs={slice?.tabs.map((tab) => ({
@@ -412,7 +413,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                         span={['9/9', '9/9', '9/9', '7/9']}
                         offset={[null, null, null, '1/9']}
                       >
-                        <Box paddingTop={[4, 4, 9]} paddingBottom={[0, 0, 9]}>
+                        <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}
