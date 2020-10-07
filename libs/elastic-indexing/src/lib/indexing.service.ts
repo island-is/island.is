@@ -22,7 +22,7 @@ export class IndexingService {
     const {
       fullSync = false,
       locale = 'is',
-      elasticIndex = SearchIndexes[locale],
+      elasticIndex = SearchIndexes[options.locale],
     } = options
     const {
       postSyncOptions,

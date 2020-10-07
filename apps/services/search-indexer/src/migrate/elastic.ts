@@ -263,11 +263,6 @@ export const moveAliasToNewIndex = async (
     },
   }
 
-  logger.info('Trying to move alias new index', {
-    newIndexName,
-    oldIndexName,
-    params,
-  })
   const client = await esService.getClient()
   await client.indices.updateAliases(params)
   logger.info('Moved alias to new index', { newIndexName, oldIndexName })
