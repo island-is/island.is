@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Typography,
+  Text,
   GridContainer,
   GridRow,
   GridColumn,
@@ -55,9 +55,9 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span="12/12">
-          <Typography variant="h3" as="h2" paddingBottom={4}>
+          <Text variant="h3" as="h2" paddingBottom={4}>
             {title}
-          </Typography>
+          </Text>
         </GridColumn>
       </GridRow>
       <GridRow>

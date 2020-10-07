@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Accordion from './Accordion'
 import { ContentBlock } from '../ContentBlock'
 import { Box } from '../Box'
@@ -41,6 +41,50 @@ export const Basic = () => {
             </Typography>
           </AccordionItem>
           <AccordionItem id="id_3" label="Hvernig kem ég umsókninni til ykkar?">
+            <Typography variant="p" as="p">
+              Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+              faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+              frumritið.
+            </Typography>
+          </AccordionItem>
+        </Accordion>
+      </Box>
+    </ContentBlock>
+  )
+}
+
+export const DefaultOpen = () => {
+  return (
+    <ContentBlock>
+      <Box paddingY={[1, 2]}>
+        <Accordion singleExpand={false}>
+          <AccordionItem
+            id="id_1"
+            label="Hvenær þarf að skila umsókn?"
+            startExpanded
+          >
+            <Typography variant="p" as="p">
+              Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+              faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+              frumritið.
+            </Typography>
+          </AccordionItem>
+          <AccordionItem
+            id="id_2"
+            label="Er hægt að leggja inn greiðslur á bankareikning maka?"
+            startExpanded
+          >
+            <Typography variant="p" as="p">
+              Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+              faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+              frumritið.
+            </Typography>
+          </AccordionItem>
+          <AccordionItem
+            id="id_3"
+            label="Hvernig kem ég umsókninni til ykkar?"
+            startExpanded
+          >
             <Typography variant="p" as="p">
               Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
               faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum

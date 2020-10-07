@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import {
   Box,
+  BoxProps,
   GridContainer,
   GridRow,
   GridColumn,
@@ -12,11 +13,13 @@ export interface StandardLayoutProps {
     position: 'left' | 'right'
     node: ReactNode
   }
+  contentBoxProps?: BoxProps
 }
 
 export const StandardLayout: FC<StandardLayoutProps> = ({
   sidebar,
   children,
+  contentBoxProps = {},
 }) => {
   const columns = [
     <GridColumn
@@ -37,7 +40,7 @@ export const StandardLayout: FC<StandardLayoutProps> = ({
 
   return (
     <GridContainer>
-      <Box paddingY={[2, 2, 10]}>
+      <Box paddingY={[2, 2, 10]} {...contentBoxProps}>
         <GridRow>{columns}</GridRow>
       </Box>
     </GridContainer>

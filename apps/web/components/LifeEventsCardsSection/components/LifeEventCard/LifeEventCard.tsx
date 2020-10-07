@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography, Link, FocusableBox } from '@island.is/island-ui/core'
+import { Box, Text, Link, FocusableBox } from '@island.is/island-ui/core'
 import * as styles from './LifeEventCard.treat'
 
 interface Props {
@@ -43,10 +43,10 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, href, as }) => {
           marginRight={[2, 2, 2, 2, 1]}
           marginTop={[3, 3, 0]}
         >
-          <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
+          <Text variant="h3" as="h3" paddingBottom={1} color="blue400">
             {title}
-          </Typography>
-          <Typography variant="p">{intro}</Typography>
+          </Text>
+          <Text variant="default">{intro}</Text>
         </Box>
 
         <div

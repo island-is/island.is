@@ -11,7 +11,7 @@ import {
 } from '@island.is/web/components'
 import {
   Box,
-  Typography,
+  Text,
   Stack,
   Breadcrumbs,
   Hidden,
@@ -312,17 +312,17 @@ const Search: Screen<CategoryProps> = ({
 
           {filteredItems.length === 0 ? (
             <>
-              <Typography variant="intro" as="p">
+              <Text variant="intro" as="p">
                 {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
                 <strong>{q}</strong>
-              </Typography>
+              </Text>
 
-              <Typography variant="intro" as="p">
+              <Text variant="intro" as="p">
                 {n('nothingFoundExtendedExplanation')}
-              </Typography>
+              </Text>
             </>
           ) : (
-            <Typography variant="intro" as="p">
+            <Text variant="intro" as="p">
               {grandTotalSearchResultCount}{' '}
               {grandTotalSearchResultCount === 1
                 ? n('searchResult', 'leitarniðurstaða')
@@ -340,7 +340,7 @@ const Search: Screen<CategoryProps> = ({
                   )}
                 </>
               )}
-            </Typography>
+            </Text>
           )}
         </Stack>
       </CategoryLayout>
@@ -427,9 +427,9 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
       onClick={onClick}
       {...props}
     >
-      <Typography variant="p" as="div" truncate={truncate}>
+      <Text as="div" truncate={truncate}>
         {selected ? <strong>{text}</strong> : text}
-      </Typography>
+      </Text>
     </Box>
   )
 }

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Select, Option } from '../Select/Select'
+import { Select, Option } from '@island.is/island-ui/core'
 
 interface Props {
   error?: string

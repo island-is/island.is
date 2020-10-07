@@ -2,7 +2,7 @@ import React, { FC, useState, ReactNode } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import IconBullet from '../IconBullet/IconBullet'
-import { Stack, Box, Typography, Icon, Button } from '@island.is/island-ui/core'
+import { Stack, Box, Text, Icon, Button } from '@island.is/island-ui/core'
 import * as styles from './BulletList.treat'
 
 type IconBullet = {
@@ -40,12 +40,10 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
           left={<IconBullet variant="blue" size="large" image={bullet.icon} />}
         >
           <Stack space={1}>
-            <Typography variant="h3" as="h3">
+            <Text variant="h3" as="h3">
               {bullet.title}
-            </Typography>
-            <Typography variant="p" as="p">
-              {bullet.body}
-            </Typography>
+            </Text>
+            <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
               <Button variant="text" href={bullet.url} icon="arrowRight">
                 {bullet.linkText}
@@ -91,12 +89,10 @@ const NumberSection: FC<{ group: NumberBulletGroup }> = ({ group }) => {
       }
     >
       <Stack space={1}>
-        <Typography variant="h4" as="h3">
+        <Text variant="h4" as="h3">
           {bullet.title}
-        </Typography>
-        <Typography variant="p" as="p">
-          {bullet.body}
-        </Typography>
+        </Text>
+        <Text>{bullet.body}</Text>
       </Stack>
     </Row>
   ))
@@ -123,9 +119,9 @@ const NumberSection: FC<{ group: NumberBulletGroup }> = ({ group }) => {
             }
           >
             <Box cursor="pointer" onClick={toggleExpand}>
-              <Typography variant="h4" as="h4" color="blue400">
+              <Text variant="h4" as="h4" color="blue400">
                 Sjá {expanded ? 'minna' : 'meira'}
-              </Typography>
+              </Text>
             </Box>
           </Row>
         </>
