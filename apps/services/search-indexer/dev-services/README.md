@@ -14,6 +14,16 @@ In about 30 seconds
 You should have Elasticsearch running on `localhost:9200`  
 And Kibana running on port `localhost:5601`
 
+### Import data
+
+**You must have access to Contentful for the indexer to work correctly**  
+To import map templates create indexes and import data run
+
+```bash
+yarn nx run services-search-indexer:build
+yarn nx run services-search-indexer:migrate
+```
+
 ### Nice to know
 
 Dictionaries for icelandic are pulled into the elastic docker container on build under `analyzers/`  
