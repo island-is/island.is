@@ -18,7 +18,7 @@ export const containerScroll = style({
   overflow: 'scroll',
 })
 
-export const root = style({
+export const content = style({
   bottom: 0,
   display: 'flex',
   flexDirection: 'column',

@@ -154,43 +154,45 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
     }
   }, [onResize, containerRef])
 
-  const handleClickContainer = (e) => {
-    if (e.target === containerRef.current) {
-      handleClose()
-    }
-  }
+  const handleClickContainer = useCallback(
+    (e) => {
+      if (containerRef?.current && e.target === containerRef.current) {
+        handleClose()
+      }
+    },
+    [containerRef],
+  )
 
   useEffect(() => {
     onResize()
 
     document.body.style.overflow = isOpen && useScroll ? 'hidden' : 'visible'
 
-    isOpen
-      ? containerRef?.current?.addEventListener('click', handleClickContainer, {
+    const el = containerRef?.current
+
+    el && isOpen
+      ? el.addEventListener('click', handleClickContainer, {
           passive: true,
         })
-      : containerRef?.current?.removeEventListener(
-          'click',
-          handleClickContainer,
-        )
+      : el && el.removeEventListener('click', handleClickContainer)
 
     return () => {
-      containerRef?.current?.removeEventListener('click', handleClickContainer)
+      el && el.removeEventListener('click', handleClickContainer)
       document.body.style.overflow = initialOverflow
     }
-  }, [isOpen, useScroll])
+  }, [isOpen, useScroll, handleClickContainer, initialOverflow, onResize])
 
   useEffect(() => {
-    let val = contentHeight > viewportHeight
+    const tallContent = contentHeight > viewportHeight
 
     setContentTop(
-      val
+      tallContent
         ? -viewportHeight + DRAWER_HEADING_HEIGHT + DRAWER_EXPANDED_PADDING_TOP
         : -contentHeight + DRAWER_HEADING_HEIGHT,
     )
 
     setUseScroll(contentHeight > viewportHeight)
-  }, [contentHeight, isOpen])
+  }, [contentHeight, isOpen, viewportHeight])
 
   return (
     mounted && (
@@ -206,7 +208,7 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
       >
         <div
           ref={contentRef}
-          className={styles.root}
+          className={styles.content}
           style={{
             height: 'auto',
             top: isOpen ? viewportHeight - DRAWER_HEADING_HEIGHT : 0,
