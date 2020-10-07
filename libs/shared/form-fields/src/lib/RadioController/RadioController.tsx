@@ -1,8 +1,5 @@
 import React, { FC } from 'react'
-import { Box } from '../Box/Box'
-import { RadioButton } from '../RadioButton/RadioButton'
-import { Stack } from '../Stack/Stack'
-import { Tooltip } from '../Tooltip/Tooltip'
+import { Box, RadioButton, Stack, Tooltip } from '@island.is/island-ui/core'
 import { useFormContext, Controller } from 'react-hook-form'
 
 interface Option {
