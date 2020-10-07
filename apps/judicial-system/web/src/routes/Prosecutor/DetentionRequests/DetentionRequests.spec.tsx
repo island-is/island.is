@@ -2,7 +2,6 @@ import React from 'react'
 import fetchMock from 'fetch-mock'
 import { render, waitFor } from '@testing-library/react'
 import { DetentionRequests } from './'
-import { UserRole } from '../../../utils/authenticate'
 import { CaseState } from '@island.is/judicial-system/types'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
@@ -84,6 +83,25 @@ describe('Detention requests route', () => {
     await waitFor(() => getByTestId('judge-logo'))
 
     expect(getByTestId('judge-logo')).toBeTruthy()
+  })
+
+  test('should not display a button to create a request if you are a judge', async () => {
+    const history = createMemoryHistory()
+
+    const { queryByText } = render(
+      <userContext.Provider
+        value={{
+          user: mockJudge,
+        }}
+      >
+        <Router history={history}>
+          <DetentionRequests />
+        </Router>
+      </userContext.Provider>,
+    )
+
+    await waitFor(() => queryByText('Stofna nýja kröfu'))
+    expect(queryByText('Stofna nýja kröfu')).toBeNull()
   })
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {

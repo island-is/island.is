@@ -43,7 +43,7 @@ const Completed = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout step={3}>
+        <ProcessPageLayout activeSection={2} activeCar={id.toString()}>
           <Stack space={3}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={4}>
