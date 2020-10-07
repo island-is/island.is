@@ -21,7 +21,11 @@ import {
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { parseArray, parseString } from '../../../utils/formatters'
-import { autoSave, updateState } from '../../../utils/stepHelper'
+import {
+  autoSave,
+  renderFormStepper,
+  updateState,
+} from '../../../utils/stepHelper'
 import * as api from '../../../api'
 
 export const Ruling: React.FC = () => {
@@ -133,21 +137,21 @@ export const Ruling: React.FC = () => {
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <JudgeLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Box marginBottom={10}>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">
                 Krafa um gæsluvarðhald
               </Typography>
-            </Box>
-          </GridColumn>
-        </GridRow>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 2)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>
