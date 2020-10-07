@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import { ServiceId } from '../../gen/fetch-xrd-rest'
 
 export enum SortOrder {
@@ -33,4 +34,17 @@ export const serviceIdSort = (
   else if (codeA > codeB) return sortOrder === SortOrder.ASC ? 1 : -1
 
   return 0
+}
+
+export const exceptionHandler = async (err) => {
+  if (err instanceof Response) {
+    // Error from X-Road calling getOpenApi
+    logger.error(
+      `Error calling X-Road Service.\nReturned HTTP status ${err.status} ${
+        err.statusText
+      }\nMessage: ${await err.text()}`,
+    )
+  } else {
+    logger.error(err)
+  }
 }

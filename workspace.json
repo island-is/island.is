@@ -3779,13 +3779,39 @@
             "tsConfig": "apps/services/xroad-collector/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "api-catalogue-services": {
+      "root": "libs/api-catalogue/services",
+      "sourceRoot": "libs/api-catalogue/services/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/api-catalogue/services/tsconfig.lib.json",
+              "libs/api-catalogue/services/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/services/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalogue/services/jest.config.js",
+            "tsConfig": "libs/api-catalogue/services/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
         },
         "codegen-xrd": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               {
-                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o apps/services/xroad-collector/gen/fetch-xrd -i apps/services/xroad-collector/config/xrd-meta-oas.yaml"
+                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch-xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml"
               }
             ]
           }
@@ -3795,7 +3821,7 @@
           "options": {
             "commands": [
               {
-                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o apps/services/xroad-collector/gen/fetch-xrd-rest -i apps/services/xroad-collector/config/xrd-rest-meta-oas.yaml"
+                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch-xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
               }
             ]
           }

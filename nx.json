@@ -313,6 +313,9 @@
     },
     "services-xroad-collector": {
       "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
     }
   },
   "affected": {
