@@ -250,7 +250,7 @@ export class ContentfulService {
       token: newNextSyncToken,
       items,
       deletedItems,
-      elasticIndex
+      elasticIndex,
     }
   }
 }

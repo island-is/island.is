@@ -47,7 +47,7 @@ export class CmsSyncService {
       items,
       deletedItems,
       token,
-      elasticIndex
+      elasticIndex,
     } = await this.contentfulService.getSyncEntries(options)
     logger.info('Got sync data')
 

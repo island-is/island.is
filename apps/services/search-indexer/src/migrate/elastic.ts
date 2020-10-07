@@ -215,11 +215,12 @@ export const importContentToNewIndex = async (
   locale: locales,
   newIndexVersion: number,
 ) => {
-  // we do a full sync here to
+  // we do a full sync here to import data
   const elasticIndex = getIndexNameForVersion(locale, newIndexVersion)
   const app = await NestFactory.create(IndexingModule)
   const indexingService = app.get(IndexingService)
   await indexingService.doSync({ fullSync: true, locale, elasticIndex })
+  await app.close()
 
   logger.info('Imported all content into new index')
   return true
