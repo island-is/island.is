@@ -14,7 +14,7 @@ import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
 
 export interface PostSyncOptions {
-  locale: keyof typeof SearchIndexes
+  elasticIndex: string
   token: string
 }
 
@@ -47,6 +47,7 @@ export class CmsSyncService {
       items,
       deletedItems,
       token,
+      elasticIndex
     } = await this.contentfulService.getSyncEntries(options)
     logger.info('Got sync data')
 
@@ -63,7 +64,7 @@ export class CmsSyncService {
       add: _.flatten(importableData),
       remove: deletedItems,
       postSyncOptions: {
-        locale: options.locale,
+        elasticIndex,
         token,
       },
     }

@@ -2,6 +2,9 @@ import fs from 'fs'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/api/content-search'
 import { AwsEsPackage } from './aws'
+import { IndexingModule, IndexingService } from '@island.is/elastic-indexing'
+import { NestFactory } from '@nestjs/core'
+import { locales } from '.'
 
 const esService = new ElasticService()
 
@@ -208,37 +211,17 @@ export const removeIndexesBelowVersion = async (
   return true
 }
 
-export const moveOldContentToNewIndex = async (
-  locale: string,
+export const importContentToNewIndex = async (
+  locale: locales,
   newIndexVersion: number,
-  oldIndexVersion: number,
 ) => {
-  // if we found no older index there is nothing to move
-  if (oldIndexVersion === 0) {
-    return false
-  }
-  const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
-  const newIndexName = getIndexNameForVersion(locale, newIndexVersion)
+  // we do a full sync here to
+  const elasticIndex = getIndexNameForVersion(locale, newIndexVersion)
+  const app = await NestFactory.create(IndexingModule)
+  const indexingService = app.get(IndexingService)
+  await indexingService.doSync({ fullSync: true, locale, elasticIndex })
 
-  logger.info('Moving content from old index to new index', {
-    oldIndexName,
-    newIndexName,
-  })
-
-  const params = {
-    waitForCompletion: true,
-    body: {
-      source: {
-        index: oldIndexName,
-      },
-      dest: {
-        index: newIndexName,
-      },
-    },
-  }
-  const client = await esService.getClient()
-  await client.reindex(params)
-  logger.info('Moved all content to new index')
+  logger.info('Imported all content into new index')
   return true
 }
 
@@ -279,6 +262,11 @@ export const moveAliasToNewIndex = async (
     },
   }
 
+  logger.info('Trying to move alias new index', {
+    newIndexName,
+    oldIndexName,
+    params,
+  })
   const client = await esService.getClient()
   await client.indices.updateAliases(params)
   logger.info('Moved alias to new index', { newIndexName, oldIndexName })

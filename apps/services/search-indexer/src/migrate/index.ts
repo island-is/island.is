@@ -9,6 +9,8 @@ interface PromiseStatus {
   error?: Error
 }
 
+export type locales = 'is' | 'en'
+
 class App {
   async run() {
     logger.info('Starting migration of dictionaries and ES config', environment)
@@ -84,7 +86,7 @@ class App {
     const processedMigrations: elastic.MigrationInfo = {} // to rollback changes on failure
     const locales = environment.locales
     const requests = locales.map(
-      async (locale): Promise<PromiseStatus> => {
+      async (locale: locales): Promise<PromiseStatus> => {
         const oldIndexVersion = await elastic.getCurrentVersionFromIndices(
           locale,
         )
@@ -114,11 +116,7 @@ class App {
             await elastic.updateIndexTemplate(locale, esPackages)
             await elastic.createNewIndexVersion(locale, newIndexVersion)
             processedMigrations[locale].newIndexVersion = newIndexVersion
-            await elastic.moveOldContentToNewIndex(
-              locale,
-              newIndexVersion,
-              oldIndexVersion,
-            )
+            await elastic.importContentToNewIndex(locale, newIndexVersion)
             await elastic.moveAliasToNewIndex(
               locale,
               newIndexVersion,
