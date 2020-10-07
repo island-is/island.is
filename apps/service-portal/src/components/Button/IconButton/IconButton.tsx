@@ -12,15 +12,7 @@ interface Props {
 }
 
 const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
-  <Box
-    display="flex"
-    alignItems="center"
-    cursor="pointer"
-    className={cn(styles.wrapper, {
-      [styles.active]: active,
-    })}
-    onClick={onClick}
-  >
+  <Box display="flex" alignItems="center" cursor="pointer" onClick={onClick}>
     <Box marginRight={2}>
       {icon ? (
         <Icon type={icon} color={active ? 'purple400' : 'dark300'} />

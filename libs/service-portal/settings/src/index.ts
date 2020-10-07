@@ -19,7 +19,12 @@ export const settingsModule: ServicePortalModule = {
         name: 'Umboð',
         path: ServicePortalPath.StillingarUmbod,
         render: () =>
-          lazy(() => import('./screens/delegation/DelegationGreeting')),
+          lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
+      },
+      {
+        name: 'Skilaboð',
+        path: ServicePortalPath.SkilabodRoot,
+        render: () => lazy(() => import('./screens/Messages/Messages')),
       },
     ]
 

@@ -43,10 +43,7 @@ const ApplicationCard: FC<Props> = ({
           alignItems="center"
           marginBottom={1}
         >
-          <Inline space={2} alignY="bottom">
-            <Icon type="article" width={24} height={24} />
-            <Typography variant="h3">{name}</Typography>
-          </Inline>
+          <Typography variant="h3">{name}</Typography>
           <Tag variant={isComplete ? 'mint' : 'purple'}>
             {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
@@ -56,7 +53,7 @@ const ApplicationCard: FC<Props> = ({
             !isComplete ? 'ekki ' : ''
           } lokið umsóknarferli fyrir ${name}`}
         </Typography>
-        <Columns space={8} alignY="center">
+        <Columns space={8} alignY="center" collapseBelow="md">
           <Column width="8/12">
             <ProgressBar progress={progress} />
           </Column>

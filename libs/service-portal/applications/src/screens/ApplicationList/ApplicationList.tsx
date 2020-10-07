@@ -11,7 +11,7 @@ import { Application } from '@island.is/application/core'
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data: applications, loading, error } = useListApplications(
-    userInfo.user.profile.natreg,
+    userInfo.profile.natreg,
   )
 
   return (

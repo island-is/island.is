@@ -13,7 +13,7 @@ import {
   Link,
   Stack,
   Divider,
-  Typography,
+  Text,
   GridRow,
   GridColumn,
   Box,
@@ -40,26 +40,24 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
   const sidebar = (
     <SidebarBox background="blue100">
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h2">
+        <Text variant="h4" as="h2">
           {parentPage.title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
         <Link href="/um-island-is">
-          <Typography variant="p">
-            {parentPage.pageHeader.navigationText}
-          </Typography>
+          <Text>{parentPage.pageHeader.navigationText}</Text>
         </Link>
         {parentPage.pageHeader.links.map(({ text, url }, i) => (
           <Link key={i} href={url}>
             {asPath === url ? (
               <>
                 <Bullet align="left" />
-                <Typography variant="h5" color="blue400">
+                <Text variant="h5" color="blue400">
                   {text}
-                </Typography>
+                </Text>
               </>
             ) : (
-              <Typography variant="p">{text}</Typography>
+              <Text>{text}</Text>
             )}
           </Link>
         ))}
@@ -91,14 +89,14 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                 </Breadcrumbs>
               </Box>
               <Stack space={2}>
-                <Typography variant="h1" as="h1">
+                <Text variant="h1" as="h1">
                   {page.title}
-                </Typography>
+                </Text>
                 {Boolean(page.description) && (
-                  <Typography variant="intro">{page.description}</Typography>
+                  <Text variant="intro">{page.description}</Text>
                 )}
                 {Boolean(page.subDescription) && (
-                  <Typography variant="p">{page.subDescription}</Typography>
+                  <Text>{page.subDescription}</Text>
                 )}
               </Stack>
             </GridColumn>

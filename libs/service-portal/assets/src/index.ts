@@ -6,18 +6,13 @@ import { lazy } from 'react'
 
 export const assetsModule: ServicePortalModule = {
   name: 'Eignir',
-  widgets: () => [
-    {
-      name: 'Eignir',
-      weight: 1,
-      render: () => lazy(() => import('./widgets/AssetsCards')),
-    },
-  ],
+  widgets: () => [],
   routes: () => [
     {
       name: 'Eignir',
       path: ServicePortalPath.EignirRoot,
-      render: () => lazy(() => import('./lib/service-portal-assets')),
+      render: () =>
+        lazy(() => import('./screens/AssetsOverview/AssetsOverview')),
     },
   ],
 }

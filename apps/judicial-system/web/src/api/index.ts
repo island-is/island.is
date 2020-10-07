@@ -1,5 +1,4 @@
 import 'isomorphic-fetch'
-import { useHistory } from 'react-router-dom'
 import {
   DetentionRequest,
   CreateCaseRequest,

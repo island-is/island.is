@@ -39,7 +39,7 @@ const ModuleErrorScreen: FC<Props> = ({ name }) => {
         {formatMessage({
           id: 'service.portal:could-not-fetch',
           defaultMessage: 'Tókst ekki að sækja',
-        })}
+        })}{' '}
         {formatMessage(name)},
         {formatMessage({
           id: 'service.portal:something-went-wrong',

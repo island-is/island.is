@@ -84,7 +84,7 @@ export const Text = ({
       {React.Children.map<React.ReactNode, React.ReactNode>(
         children,
         (child: any) => {
-          if (typeof linkRenderer === 'function' && child.props?.href) {
+          if (typeof linkRenderer === 'function' && child?.props?.href) {
             return linkRenderer(child.props.href, child.props.children)
           }
           return child

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Typography,
+  Text,
   Link,
   FocusableBox,
   GridContainer,
@@ -49,12 +49,10 @@ const LifeEventInCategory: FC<LifeEventInCategoryProps> = ({
         <GridRow>
           <GridColumn span={['8/12', '8/12', '6/12', '7/12', '9/12']}>
             <GridRow className={styles.textWrapper}>
-              <Typography variant="h4" as="h4" color="blue400">
+              <Text variant="h4" as="h4" color="blue400">
                 {title}
-              </Typography>
-              <Typography variant="p" paddingBottom={2}>
-                {intro}
-              </Typography>
+              </Text>
+              <Text paddingBottom={2}>{intro}</Text>
               <div className={styles.pushDown}>
                 <Tag>{categoryTag}</Tag>
               </div>
