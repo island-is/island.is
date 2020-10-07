@@ -142,7 +142,7 @@ export const RenderForm: React.FC<{
         id="email"
         heading={headingByStatus}
         text={textByStatus}
-        placeholder="Netfangið þitt"
+        placeholder=""
         label={inputLabel}
         variant="blue"
         buttonText={submitButtonText}
