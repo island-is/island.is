@@ -1,11 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react'
 import cn from 'classnames'
-import {
-  Box,
-  Text,
-  Divider,
-  DividerProps,
-} from '@island.is/island-ui/core'
+import { Box, Text, Divider, DividerProps } from '@island.is/island-ui/core'
 import Bullet from '../../components/Bullet/Bullet'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import * as styles from './Sidebar.treat'

@@ -415,11 +415,7 @@ const EventModal = forwardRef(
                 </Text>
               )}
               <Box marginLeft={1}>
-                <Text
-                  variant="eyebrow"
-                  color="purple400"
-                  fontWeight="semiBold"
-                >
+                <Text variant="eyebrow" color="purple400" fontWeight="semiBold">
                   {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
                     <Fragment key={i}>
                       {line}

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   useState,
@@ -352,10 +351,7 @@ const Results: FC<{
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Text
-          links
-          color={i === highlightedIndex ? 'blue400' : 'dark400'}
-        >
+        <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
           {suggestion}
         </Text>
       </div>

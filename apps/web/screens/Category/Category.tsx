@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
@@ -401,12 +400,7 @@ const Category: Screen<CategoryProps> = ({
             />
           </Box>
         </Hidden>
-        <Text
-          variant="h1"
-          as="h1"
-          paddingTop={[4, 4, 0]}
-          paddingBottom={2}
-        >
+        <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
           {category.title}
         </Text>
         <Text variant="intro" as="p">

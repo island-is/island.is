@@ -50,12 +50,7 @@ export const ErrorPage: Screen<ErrorPageProps> = ({ statusCode }) => {
       className={styles.container}
       textAlign="center"
     >
-      <Text
-        variant="eyebrow"
-        as="div"
-        paddingBottom={2}
-        color="purple400"
-      >
+      <Text variant="eyebrow" as="div" paddingBottom={2} color="purple400">
         {statusCode}
       </Text>
       <Text variant="h1" as="h1" paddingBottom={3}>

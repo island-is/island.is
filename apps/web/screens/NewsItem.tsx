@@ -86,12 +86,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                       {t.newsAndAnnouncements}
                     </Link>
                   </Breadcrumbs>
-                  <Text
-                    variant="h1"
-                    as="h1"
-                    paddingTop={1}
-                    paddingBottom={2}
-                  >
+                  <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
                     {newsItem.title}
                   </Text>
                   <Text variant="intro" as="p" paddingBottom={2}>

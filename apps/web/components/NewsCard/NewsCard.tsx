@@ -61,12 +61,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
           {subtitle}
         </Text>
         {date && (
-          <Text
-            variant="eyebrow"
-            as="p"
-            color="purple400"
-            paddingBottom={2}
-          >
+          <Text variant="eyebrow" as="p" color="purple400" paddingBottom={2}>
             {format(new Date(date), 'do MMMM yyyy')}
           </Text>
         )}

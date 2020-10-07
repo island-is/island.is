@@ -302,11 +302,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         style={{ minHeight: `${minHeight}px` }}
                       >
                         <Stack space={3}>
-                          <Text
-                            variant="eyebrow"
-                            as="p"
-                            color="purple400"
-                          >
+                          <Text variant="eyebrow" as="p" color="purple400">
                             <span className={styles.textItem}>{subtitle}</span>
                           </Text>
                           <Text variant="h1" as="h1">

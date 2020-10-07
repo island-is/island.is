@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
@@ -235,11 +234,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                             href={'#' + id}
                             onClick={() => navigate(id)}
                           >
-                            <Text
-                              variant="small"
-                              as="p"
-                              color={colors.main}
-                            >
+                            <Text variant="small" as="p" color={colors.main}>
                               {id === currentSliceId ? <b>{text}</b> : text}
                             </Text>
                           </a>
