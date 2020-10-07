@@ -7,7 +7,7 @@ import {
   StepOne,
   StepTwo,
 } from '../../routes/Prosecutor/CreateDetentionRequest'
-import { DetentionRequests } from '../../routes/Prosecutor/DetentionRequests'
+import { DetentionRequests } from '../../routes/DetentionRequests'
 import { Login } from '../../routes/Login'
 import * as styles from './App.treat'
 import { User } from '../../types'
