@@ -13,7 +13,7 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  processSteps: string[]
+  processSections: string[]
 }
 
 export interface Home {
@@ -43,6 +43,7 @@ export interface Handover {
   title: string
   subTitles: HandoverSubTitles
   info: string
+  subInfo: string
   buttons: HandoverButtons
   cancelModal: CancelModal
 }
@@ -103,12 +104,12 @@ export interface CheckBox {
 }
 
 export interface HandoverSubTitles {
-  recycle: string
+  nextStep: string
   companies: string
 }
 
 export interface HandoverButtons extends ProcessButtons {
-  website: string
+  close: string
 }
 
 export interface CompletedSubTitles {

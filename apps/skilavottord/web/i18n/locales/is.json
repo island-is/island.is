@@ -47,15 +47,16 @@
     }
   },
   "handover": {
-    "title": "Hand over the car for recycling",
+    "title": "Successfully confirmed for recycling",
+    "info": "The car has been successfully confirmed for recycling and is now ready to be handed over to a recycling company.",
     "subTitles": {
-      "companies": "Recycling companies"
+      "nextStep": "Next step: Handover the car to recycling company",
+      "companies": "Available recycling companies"
     },
-    "info": "Hand over the car to any of the connected recycling companies for recycling. Once the car has been handed over you will recive your payment within 2 business days.",
+    "subInfo": "Handover the car to any of the recylcing companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will recive your payment within 2 business days.",
     "buttons": {
       "cancel": "Cancel recycling",
-      "continue": "Back to my cars",
-      "website": "Go to website"
+      "close": "Close"
     },
     "cancelModal": {
       "title": "Cancel the recycling process for this car",
@@ -86,9 +87,5 @@
       "close": "Close"
     }
   },
-  "processSteps": [
-    "Confirm car for recycling",
-    "Recycle the car",
-    "Get money back"
-  ]
+  "processSections": ["Confirm car for recycling", "Handover car to recycle"]
 }
