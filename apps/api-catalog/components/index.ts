@@ -13,6 +13,7 @@ export { ServiceCardMessage } from './ServiceCardMessage'
 export type { ServiceCardMessageTypes, ServiceBorderStyleTypes } from './ServiceCardMessage'
 export { FocusableClickBox } from './FocusableClickBox'
 export { useHorizontalDragScroll } from './HorizontalDragScroll'
+export { ServiceDetail } from './ServiceDetail';
 
 export { SideMenu } from './SideMenu';
 export type { SideMenuLink, SideMenuProps } from './SideMenu';

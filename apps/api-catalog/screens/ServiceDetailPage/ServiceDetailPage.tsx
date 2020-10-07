@@ -5,11 +5,11 @@ import { GET_API_SERVICE_QUERY } from '../Queries'
 import { Query, QueryGetApiServiceByIdArgs } from '@island.is/api/schema'
 import { NextPage } from 'next'
 
-export interface ServiceDetailProps {
+export interface ServiceDetailPageProps {
   id: string
 }
 
-const ServiceDetail: NextPage<ServiceDetailProps> = ({ id }) => {
+export const ServiceDetailPage: NextPage<ServiceDetailPageProps> = ({ id }) => {
   const { data, loading, error } = useQuery<Query, QueryGetApiServiceByIdArgs>(
     GET_API_SERVICE_QUERY,
     {
@@ -30,14 +30,14 @@ const ServiceDetail: NextPage<ServiceDetailProps> = ({ id }) => {
 
   return (
     <div>
-      <div>{JSON.stringify(data.getApiServiceById, null, 2)}</div>
+      {<div>{JSON.stringify(data.getApiServiceById, null, 2)}</div>}
+      {console.log(data.getApiServiceById)}
+      {/*<ServiceDetail service={data.getApiServiceById} />*/}
     </div>
   )
 }
 
-ServiceDetail.getInitialProps = async (ctx): Promise<ServiceDetailProps> => {
+ServiceDetailPage.getInitialProps = async (ctx): Promise<ServiceDetailPageProps> => {
   const { query } = ctx
   return { id: query.service[0] }
 }
-
-export default ServiceDetail

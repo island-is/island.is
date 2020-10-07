@@ -1,0 +1,1 @@
+export { ServiceDetailPage } from './ServiceDetailPage'
