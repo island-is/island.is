@@ -128,18 +128,20 @@ export const Ruling: React.FC = () => {
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <JudgeLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Box marginBottom={10}>
-              <Typography as="h1" variant="h1">
-                Krafa um gæsluvarðhald
-              </Typography>
-            </Box>
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Box marginBottom={10}>
+                <Typography as="h1" variant="h1">
+                  Krafa um gæsluvarðhald
+                </Typography>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
             {renderFormStepper(1, 2)}

@@ -113,30 +113,32 @@ export const Confirmation: React.FC = () => {
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span={'3/12'}>
-              <JudgeLogo />
-            </GridColumn>
-            <GridColumn span={'8/12'} offset={'1/12'}>
-              <Box marginBottom={10}>
-                <Typography as="h1" variant="h1">
-                  Krafa um gæsluvarðhald
-                </Typography>
-                <Box display="flex" marginTop={1}>
-                  <Box marginRight={2}>
-                    <Typography variant="pSmall">{`Krafa stofnuð: ${formatDate(
-                      workingCase.created,
+          <Box marginBottom={7}>
+            <GridRow>
+              <GridColumn span={'3/12'}>
+                <JudgeLogo />
+              </GridColumn>
+              <GridColumn span={'8/12'} offset={'1/12'}>
+                <Box marginBottom={10}>
+                  <Typography as="h1" variant="h1">
+                    Krafa um gæsluvarðhald
+                  </Typography>
+                  <Box display="flex" marginTop={1}>
+                    <Box marginRight={2}>
+                      <Typography variant="pSmall">{`Krafa stofnuð: ${formatDate(
+                        workingCase.created,
+                        'P',
+                      )}`}</Typography>
+                    </Box>
+                    <Typography variant="pSmall">{`Þinghald: ${formatDate(
+                      workingCase.courtStartTime,
                       'P',
                     )}`}</Typography>
                   </Box>
-                  <Typography variant="pSmall">{`Þinghald: ${formatDate(
-                    workingCase.courtStartTime,
-                    'P',
-                  )}`}</Typography>
                 </Box>
-              </Box>
-            </GridColumn>
-          </GridRow>
+              </GridColumn>
+            </GridRow>
+          </Box>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
               {renderFormStepper(1, 3)}

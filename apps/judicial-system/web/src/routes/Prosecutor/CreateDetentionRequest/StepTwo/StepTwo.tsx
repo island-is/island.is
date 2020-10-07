@@ -217,16 +217,18 @@ export const StepTwo: React.FC = () => {
   return (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <ProsecutorLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1" variant="h1">
-              Krafa um gæsluvarðhald
-            </Typography>
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <ProsecutorLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Typography as="h1" variant="h1">
+                Krafa um gæsluvarðhald
+              </Typography>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
             {renderFormStepper(0, 1)}

@@ -25,14 +25,6 @@ import * as Constants from '../../../utils/constants'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
-  const [accordionItemOneExpanded, setAccordionItemOneExpanded] = useState(true)
-  const [accordionItemTwoExpanded, setAccordionItemTwoExpanded] = useState(true)
-  const [accordionItemThreeExpanded, setAccordionItemThreeExpanded] = useState(
-    true,
-  )
-  const [accordionItemFourExpanded, setAccordionItemFourExpanded] = useState(
-    true,
-  )
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
@@ -70,16 +62,18 @@ export const JudgeOverview: React.FC = () => {
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <JudgeLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1" variant="h1">
-              Krafa um gæsluvarðhald
-            </Typography>
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Typography as="h1" variant="h1">
+                Krafa um gæsluvarðhald
+              </Typography>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
             {renderFormStepper(1, 0)}
