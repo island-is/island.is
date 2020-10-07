@@ -11,7 +11,7 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { GetApplicationsByUserInput } from './dto/getApplicationByUser.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 
-const handleError = (error) => {
+const handleError = (error: any) => {
   logger.error(error)
   throw new ApolloError('Failed to resolve request', error.status)
 }

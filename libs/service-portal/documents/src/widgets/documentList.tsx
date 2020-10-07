@@ -15,7 +15,7 @@ const dateTo = new Date()
 
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data, loading, error } = useListDocuments(
-    userInfo.user.profile.natreg,
+    userInfo.profile.natreg,
     dateFrom,
     dateTo,
     1,
