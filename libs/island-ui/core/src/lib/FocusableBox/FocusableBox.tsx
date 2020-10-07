@@ -7,8 +7,8 @@ import React, {
 } from 'react'
 import cn from 'classnames'
 import { useToggle } from 'react-use'
-import { Link } from '../Link'
-import { Box } from '../Box'
+import { Link } from '../Link/Link'
+import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import {
   ColorSchemeContext,
@@ -37,7 +37,7 @@ type NoNullColorScheme = Exclude<ColorSchemes, null>
 // Most props are forwarded to Box.
 // By default it renders as a Link component.
 
-const FocusableBox = forwardRef<HTMLElement, Props>(
+export const FocusableBox = forwardRef<HTMLElement, Props>(
   (
     {
       component = Link,
@@ -76,5 +76,3 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
     )
   },
 )
-
-export default FocusableBox

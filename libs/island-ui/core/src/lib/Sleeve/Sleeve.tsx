@@ -3,7 +3,7 @@ import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 
 import * as styles from './Sleeve.treat'
-import Icon from '../Icon/Icon'
+import { Icon } from '../Icon/Icon'
 export type SleeveBoxShadow = 'normal' | 'purple'
 
 interface SleeveProps {

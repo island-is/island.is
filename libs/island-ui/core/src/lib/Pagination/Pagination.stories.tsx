@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Pagination from './Pagination'
 import { number } from '@storybook/addon-knobs'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 
 export default {
   title: 'Navigation/Pagination',

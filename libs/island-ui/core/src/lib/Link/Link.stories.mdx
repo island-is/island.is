@@ -1,0 +1,53 @@
+import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
+
+import { Link } from './Link'
+import { ArrowLink } from './ArrowLink/ArrowLink'
+import { Box } from '../Box/Box'
+
+<Meta title="Core/Link" component={Link} />
+
+# Link
+
+### Default
+
+<Canvas>
+  <Story name="Default">
+  <Box padding={4}>
+    <Link href="/something">Default</Link>
+  </Box>
+  </Story>
+</Canvas>
+
+### With underline
+
+<Canvas>
+  <Story name="Underline">
+  <Box padding={4}>
+    <Link href="/something" color="blue400" withUnderline>
+      Default
+    </Link>
+  </Box>
+  </Story>
+</Canvas>
+
+### With blue color
+
+<Canvas>
+  <Story name="">
+  <Box padding={4}>
+    <Link href="/something" color="blue400">
+      Default
+    </Link>
+  </Box>
+  </Story>
+</Canvas>
+
+### Arrow link
+
+<Canvas>
+  <Story name="">
+  <Box padding={4}>
+    <ArrowLink href="/something">Arrow link</ArrowLink>
+  </Box>
+  </Story>
+</Canvas>

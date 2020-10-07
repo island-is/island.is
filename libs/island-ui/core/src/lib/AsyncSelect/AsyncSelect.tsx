@@ -17,7 +17,7 @@ import {
 import Async from 'react-select/async'
 import cn from 'classnames'
 import * as styles from './AsyncSelect.treat'
-import Icon from '../Icon/Icon'
+import { Icon } from '../Icon/Icon'
 
 export type AsyncSelectOption = {
   label: string

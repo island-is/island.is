@@ -1,1 +1,0 @@
-export { GridColumn } from './GridColumn'

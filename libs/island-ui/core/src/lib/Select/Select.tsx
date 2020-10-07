@@ -15,7 +15,7 @@ import ReactSelect, {
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
-import Icon from '../Icon/Icon'
+import { Icon } from '../Icon/Icon'
 
 export type Option = {
   label: string
