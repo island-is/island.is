@@ -449,7 +449,7 @@
             "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**/*"]
           }
         },
-        "storybook": {
+        "serve": {
           "builder": "@nrwl/storybook:storybook",
           "options": {
             "uiFramework": "@storybook/react",
@@ -1877,7 +1877,7 @@
               "apps/application-system/form/src/favicon.ico",
               "apps/application-system/form/src/assets"
             ],
-            "styles": [],
+            "styles": ["apps/application-system/form/src/styles.scss"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js"
           },
@@ -3402,6 +3402,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/application/ui-fields/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-form-fields": {
+      "root": "libs/shared/form-fields",
+      "sourceRoot": "libs/shared/form-fields/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/form-fields/tsconfig.lib.json",
+              "libs/shared/form-fields/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/form-fields/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/form-fields/jest.config.js",
             "passWithNoTests": true
           }
         }

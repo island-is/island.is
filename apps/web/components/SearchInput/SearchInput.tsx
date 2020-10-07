@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   useState,
@@ -9,7 +8,6 @@ import React, {
   ReactElement,
   useReducer,
 } from 'react'
-import Link from 'next/link'
 import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
@@ -22,8 +20,9 @@ import {
   AsyncSearchInput,
   AsyncSearchSizes,
   Box,
-  Typography,
+  Text,
   Stack,
+  Link,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
 import * as styles from './SearchInput.treat'
@@ -196,6 +195,7 @@ interface SearchInputProps {
   initialInputValue?: string
   size?: AsyncSearchSizes
   autocomplete?: boolean
+  autosuggest?: boolean
   openOnFocus?: boolean
   placeholder?: string
   white?: boolean
@@ -214,6 +214,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       white = false,
       colored = true,
       autocomplete = true,
+      autosuggest = true,
       id = 'downshift',
     },
     ref,
@@ -221,117 +222,104 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, searchTerm, autocomplete)
 
-    const scrollTo = (ref) => {
-      if (ref && ref.current) {
-        if (window.innerWidth < theme.breakpoints.md) {
-          const positionRelativeToWindow = ref.current.getBoundingClientRect()
-            .top
-          const positionOfParent = ref.current.offsetParent.offsetTop
-          const windowPos = window.pageYOffset
-
-          const scrollPos =
-            positionRelativeToWindow + windowPos - positionOfParent
-          window.scrollTo(0, scrollPos)
-        }
-      }
-    }
-
     const onSubmit = useSubmit(locale)
     const [hasFocus, setHasFocus] = useState(false)
     const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
     const onFocus = useCallback(() => {
       setHasFocus(true)
-      scrollTo(ref)
     }, [setHasFocus])
 
     return (
-      <Downshift<string>
-        id={id}
-        initialInputValue={initialInputValue}
-        onChange={(q) => {
-          return onSubmit(`${search.prefix} ${q}`.trim() || '')
-        }}
-        onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) => {
-          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+      <>
+        <Downshift<string>
+          id={id}
+          initialInputValue={initialInputValue}
+          onChange={(q) => {
+            return onSubmit(`${search.prefix} ${q}`.trim() || '')
+          }}
+          onInputValueChange={(q) => setSearchTerm(q)}
+          itemToString={(v) => {
+            const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
 
-          if (str === 'null') {
-            return ''
-          }
+            if (str === 'null') {
+              return ''
+            }
 
-          return str
-        }}
-        stateReducer={(state, changes) => {
-          // pressing tab when input is not empty should move focus to the
-          // search icon, so we need to prevent downshift from closing on blur
-          const shouldIgnore =
-            changes.type === Downshift.stateChangeTypes.mouseUp ||
-            (changes.type === Downshift.stateChangeTypes.blurInput &&
-              state.inputValue !== '')
+            return str
+          }}
+          stateReducer={(state, changes) => {
+            // pressing tab when input is not empty should move focus to the
+            // search icon, so we need to prevent downshift from closing on blur
+            const shouldIgnore =
+              changes.type === Downshift.stateChangeTypes.mouseUp ||
+              (changes.type === Downshift.stateChangeTypes.blurInput &&
+                state.inputValue !== '')
 
-          return shouldIgnore ? {} : changes
-        }}
-      >
-        {({
-          highlightedIndex,
-          isOpen,
-          getRootProps,
-          getInputProps,
-          getItemProps,
-          getMenuProps,
-          openMenu,
-          closeMenu,
-          inputValue,
-        }) => (
-          <AsyncSearchInput
-            ref={ref}
-            white={white}
-            hasFocus={hasFocus}
-            loading={search.isLoading}
-            rootProps={getRootProps()}
-            menuProps={{
-              comp: 'div',
-              ...getMenuProps(),
-            }}
-            buttonProps={{
-              onClick: () => {
-                closeMenu()
-                onSubmit(inputValue)
-              },
-              onFocus,
-              onBlur,
-            }}
-            inputProps={getInputProps({
-              inputSize: size,
-              onFocus: () => {
-                onFocus()
-                if (openOnFocus) {
-                  openMenu()
-                }
-              },
-              onBlur,
-              placeholder,
-              colored,
-              onKeyDown: (e) => {
-                if (e.key === 'Enter' && highlightedIndex == null) {
-                  e.currentTarget.blur()
+            return shouldIgnore ? {} : changes
+          }}
+        >
+          {({
+            highlightedIndex,
+            isOpen,
+            getRootProps,
+            getInputProps,
+            getItemProps,
+            getMenuProps,
+            openMenu,
+            closeMenu,
+            inputValue,
+          }) => (
+            <AsyncSearchInput
+              ref={ref}
+              white={white}
+              hasFocus={hasFocus}
+              loading={search.isLoading}
+              rootProps={getRootProps()}
+              menuProps={{
+                comp: 'div',
+                ...getMenuProps(),
+              }}
+              buttonProps={{
+                onClick: () => {
                   closeMenu()
-                  onSubmit(e.currentTarget.value)
-                }
-              },
-            })}
-          >
-            {isOpen && !isEmpty(search) && (
-              <Results
-                search={search}
-                highlightedIndex={highlightedIndex}
-                getItemProps={getItemProps}
-                locale={locale}
-              />
-            )}
-          </AsyncSearchInput>
-        )}
-      </Downshift>
+                  onSubmit(inputValue)
+                },
+                onFocus,
+                onBlur,
+              }}
+              inputProps={getInputProps({
+                inputSize: size,
+                onFocus: () => {
+                  onFocus()
+                  if (openOnFocus) {
+                    openMenu()
+                  }
+                },
+                onBlur,
+                placeholder,
+                colored,
+                onKeyDown: (e) => {
+                  if (e.key === 'Enter' && highlightedIndex == null) {
+                    e.currentTarget.blur()
+                    closeMenu()
+                    onSubmit(e.currentTarget.value)
+                  }
+                },
+              })}
+            >
+              {isOpen && !isEmpty(search) && (
+                <Results
+                  search={search}
+                  highlightedIndex={highlightedIndex}
+                  getItemProps={getItemProps}
+                  locale={locale}
+                  autosuggest={autosuggest}
+                />
+              )}
+            </AsyncSearchInput>
+          )}
+        </Downshift>
+      </>
     )
   },
 )
@@ -342,18 +330,16 @@ const Results: FC<{
   highlightedIndex: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
-}> = ({ locale, search, highlightedIndex, getItemProps }) => {
+  autosuggest: boolean
+}> = ({ locale, search, highlightedIndex, getItemProps, autosuggest }) => {
   const { makePath } = routeNames(locale)
 
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Typography
-          links
-          color={i === highlightedIndex ? 'blue400' : 'dark400'}
-        >
+        <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
           {suggestion}
-        </Typography>
+        </Text>
       </div>
     ))
 
@@ -378,37 +364,42 @@ const Results: FC<{
                 ? suggestion.replace(search.term, '')
                 : ''
               return (
-                <div key={suggestion} {...getItemProps({ item: suggestion })}>
-                  <Typography
-                    links
-                    color={i === highlightedIndex ? 'blue400' : 'dark400'}
-                  >
+                <div
+                  key={suggestion}
+                  {...getItemProps({ item: suggestion })}
+                  className={styles.suggestion}
+                >
+                  <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
                     {`${search.prefix} ${startOfString}`}
                     <strong>{endOfString}</strong>
-                  </Typography>
+                  </Text>
                 </div>
               )
             })}
         </Stack>
       </div>{' '}
-      {search.results && search.results.items.length > 0 && (
+      {autosuggest && search.results && search.results.items.length > 0 && (
         <>
           <div className={styles.separatorHorizontal} />
           <div className={styles.menuRow}>
             <Stack space={2}>
-              <Typography variant="eyebrow" color="purple400">
+              <Text variant="eyebrow" color="purple400">
                 Beint að efninu
-              </Typography>
+              </Text>
               {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
-                  <div key={id} {...getItemProps({ item: '' })}>
-                    <Typography links variant="h5" color="blue400">
-                      <Link href={makePath('article', slug)}>
-                        <a>{title}</a>
-                      </Link>
-                    </Typography>
-                  </div>
+                  <Text
+                    as="div"
+                    variant="h5"
+                    color="blue400"
+                    key={id}
+                    {...getItemProps({ item: '' })}
+                  >
+                    <Link href={makePath('article', slug)}>
+                      <a>{title}</a>
+                    </Link>
+                  </Text>
                 ))}
             </Stack>
           </div>
@@ -444,9 +435,9 @@ const CommonSearchTerms = ({
       <div className={styles.menuColumn}>
         <Stack space={2}>
           <Box marginBottom={1}>
-            <Typography variant="eyebrow" color="blue400">
+            <Text variant="eyebrow" color="blue400">
               Algeng leitarorð
-            </Typography>
+            </Text>
           </Box>
           {width < STACK_WIDTH ? suggestions : left}
         </Stack>

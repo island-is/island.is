@@ -437,35 +437,39 @@ describe('Case', () => {
   })
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {
-    await Case.create({ ...getCaseData(), state: CaseState.REJECTED }).then(
-      async (value) => {
-        await request(app.getHttpServer())
-          .post(`/api/case/${value.id}/signature`)
-          .expect(201)
-          .then(async (response) => {
-            // Check the response
-            expect(response.body.controlCode).toBe('0000')
-            expect(response.body.documentToken).toBe('DEVELOPMENT')
-          })
-      },
-    )
+    await Case.create({
+      ...getCaseData(true, true),
+      state: CaseState.REJECTED,
+      judgeId: user.id,
+    }).then(async (value) => {
+      await request(app.getHttpServer())
+        .post(`/api/case/${value.id}/signature`)
+        .expect(201)
+        .then(async (response) => {
+          // Check the response
+          expect(response.body.controlCode).toBe('0000')
+          expect(response.body.documentToken).toBe('DEVELOPMENT')
+        })
+    })
   })
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
-    await Case.create({ ...getCaseData(), state: CaseState.ACCEPTED }).then(
-      async (value) => {
-        await request(app.getHttpServer())
-          .get(`/api/case/${value.id}/signature`)
-          .query({ documentToken: 'DEVELOPMENT' })
-          .expect(200)
-          .then(async (response) => {
-            // Check the response
-            expectCasesToMatch(response.body, {
-              ...response.body,
-              notifications: [],
-            })
+    await Case.create({
+      ...getCaseData(),
+      state: CaseState.ACCEPTED,
+      judgeId: user.id,
+    }).then(async (value) => {
+      await request(app.getHttpServer())
+        .get(`/api/case/${value.id}/signature`)
+        .query({ documentToken: 'DEVELOPMENT' })
+        .expect(200)
+        .then(async (response) => {
+          // Check the response
+          expectCasesToMatch(response.body, {
+            ...response.body,
+            notifications: [],
           })
-      },
-    )
+        })
+    })
   })
 })

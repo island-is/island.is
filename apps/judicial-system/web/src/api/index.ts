@@ -6,13 +6,15 @@ import {
   GetCaseByIdResponse,
   Notification,
   SendNotificationResponse,
+  User,
+  RequestSignatureResponse,
+  RequestSignature,
+  ConfirmSignatureResponse,
 } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
 const csrfToken = getCookie('judicial-system.csrf')
-
 const { API_URL = '' } = process.env
-
 export const apiUrl = API_URL
 
 export const getCases: () => Promise<DetentionRequest[]> = async () => {
@@ -136,14 +138,18 @@ export const transitionCase: (
   return response.status
 }
 
-export const getUser = async () => {
+export const getUser = async (): Promise<User> => {
   const response = await fetch('/api/user', {
     headers: {
       Authorization: `Bearer ${csrfToken}`,
     },
   })
 
-  return response.json()
+  if (response.ok) {
+    return response.json()
+  } else if (window.location.pathname !== '/') {
+    window.location.assign('/')
+  }
 }
 
 export const logOut = async () => {
@@ -181,5 +187,68 @@ export const sendNotification: (
     return {
       httpStatusCode: response.status,
     }
+  }
+}
+
+export const requestSignature: (
+  id: string,
+) => Promise<RequestSignatureResponse> = async (id: string) => {
+  try {
+    const response = await fetch(`/api/case/${id}/signature`, {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${csrfToken}`,
+      },
+    })
+
+    if (response.ok) {
+      const rs: RequestSignature = await response.json()
+
+      return {
+        httpStatusCode: response.status,
+        response: rs,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const confirmSignature: (
+  id: string,
+  documentToken: string,
+) => Promise<ConfirmSignatureResponse> = async (
+  id: string,
+  documentToken: string,
+) => {
+  try {
+    const response = await fetch(
+      `/api/case/${id}/signature?documentToken=${documentToken}`,
+      {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${csrfToken}`,
+        },
+      },
+    )
+
+    if (response.ok) {
+      const rs: Case = await response.json()
+
+      return {
+        httpStatusCode: response.status,
+        response: rs,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
+    }
+  } catch (e) {
+    console.log(e)
   }
 }

@@ -100,9 +100,31 @@ export interface SendNotificationResponse {
 export interface CreateCaseRequest {
   policeCaseNumber: string
   accusedNationalId: string
+  court: string
 }
 
 export interface User {
+  id: string
+  created: string
+  modified: string
   nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
   role: string
+}
+
+export interface RequestSignature {
+  controlCode: string
+  documentToken: string
+}
+
+export interface RequestSignatureResponse {
+  httpStatusCode: number
+  response?: RequestSignature
+}
+
+export interface ConfirmSignatureResponse {
+  httpStatusCode: number
+  response?: Case
 }

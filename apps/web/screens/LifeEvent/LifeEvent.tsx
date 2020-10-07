@@ -9,7 +9,7 @@ import {
   Breadcrumbs,
   Link,
   Tag,
-  Typography,
+  Text,
   Box,
   Hidden,
 } from '@island.is/island-ui/core'
@@ -43,7 +43,7 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { id, image, title, intro, content },
+  lifeEvent: { id, slug, image, title, intro, content },
   namespace,
 }) => {
   useContentfulId(id)
@@ -57,7 +57,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
   const mobileNavigation = navigation.map((x) => ({
     title: x.text,
-    url: '#' + x.id,
+    url: slug + '#' + x.id,
   }))
 
   const metaTitle = `${title} | Ísland.is`
@@ -125,13 +125,13 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   {n('lifeEventTitle', 'Lífsviðburður')}
                 </Tag>
               </Breadcrumbs>
-              <Typography variant="h1" as="h1">
+              <Text variant="h1" as="h1">
                 <span id={slugify(title)}>{title}</span>
-              </Typography>
+              </Text>
               {intro && (
-                <Typography variant="intro" as="p" paddingTop={2}>
+                <Text variant="intro" as="p" paddingTop={2}>
                   <span id={slugify(intro)}>{intro}</span>
-                </Typography>
+                </Text>
               )}
             </GridColumn>
           </GridRow>

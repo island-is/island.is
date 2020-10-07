@@ -3,7 +3,6 @@ import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   CustomField,
-  CustomFieldComponents,
   DateField,
   DividerField,
   FieldComponents,
@@ -55,6 +54,7 @@ export function buildDateField(data: {
   condition?: Condition
   id: string
   name: MessageDescriptor | string
+  placeholder?: MessageDescriptor | string
   maxDate?: Date
   minDate?: Date
   required?: boolean
@@ -70,19 +70,21 @@ export function buildDateField(data: {
     required = false,
     disabled = false,
     width = 'full',
+    placeholder,
   } = data
   return {
     children: undefined,
     condition,
     id,
     required,
+    placeholder,
     disabled,
     width,
     name,
     maxDate,
     minDate,
     type: FieldTypes.DATE,
-    component: FieldComponents.TEXT,
+    component: FieldComponents.DATE,
   }
 }
 
@@ -206,7 +208,7 @@ export function buildCustomField(
     id: string
     name: MessageDescriptor | string
     required?: boolean
-    component: CustomFieldComponents
+    component: string
   },
   props: object,
 ): CustomField {

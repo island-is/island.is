@@ -24,6 +24,42 @@ export const user = {
   role: 'JUDGE',
 }
 
+jest.mock('pug', function () {
+  return {
+    default: {
+      compileFile: function () {
+        return function () {
+          return 'html'
+        }
+      },
+    },
+  }
+})
+
+jest.mock('puppeteer', function () {
+  return {
+    default: {
+      launch: function () {
+        return {
+          newPage: function () {
+            return {
+              setContent: function () {
+                return
+              },
+              pdf: function () {
+                return 'pdf'
+              },
+            }
+          },
+          close: function () {
+            return
+          },
+        }
+      },
+    },
+  }
+})
+
 const noGuard: CanActivate = {
   canActivate: jest.fn(async (context: ExecutionContext) => {
     // Fake the logged in user - move somewhere else!!!
