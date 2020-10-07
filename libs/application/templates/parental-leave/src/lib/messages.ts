@@ -54,13 +54,12 @@ export const m = defineMessages({
   durationSubsection: {
     id: 'pl.application:duration.subsection',
     defaultMessage: 'Duration',
-    description: 'Some description.',
+    description: 'Some description',
   },
   duration: {
     id: 'pl.application:duration',
     defaultMessage: 'Please confirm your leave duration',
-    description:
-      'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjsting thier income. Please confirm your choice below.',
+    description: 'Some description',
   },
   calculationsSubsection: {
     id: 'pl.application:calculations.subsection',
@@ -75,6 +74,27 @@ export const m = defineMessages({
   periods: {
     id: 'pl.application:periods',
     defaultMessage: 'Viltu breyta eða skipta upp tímabilinu?',
+    description: 'Some description',
+  },
+  startDateTitle: {
+    id: 'pl.application:periods.startdate',
+    defaultMessage: 'When do you want to start?',
+    description: 'Some description',
+  },
+  startDateDescription: {
+    id: 'pl.application:periods.startdate.description',
+    defaultMessage:
+      'You can choose to start from one month before the date of birth, on the date of birth, or on a specific date. <span style="font-weight: bold;">Please note, that your rights end 18 months after the date of birth.</span>',
+    description: 'Some description',
+  },
+  startDateOption1: {
+    id: 'pl.application:periods.startdate.description',
+    defaultMessage: 'On the date of birth',
+    description: 'Some description',
+  },
+  startDateOption2: {
+    id: 'pl.application:periods.startdate.description',
+    defaultMessage: 'On a specific date',
     description: 'Some description',
   },
   summarySection: {

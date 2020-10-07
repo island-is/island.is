@@ -15,6 +15,7 @@ export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
   readonly name: MessageDescriptor | string
+  readonly description?: MessageDescriptor | string
   readonly children: undefined
   width?: FieldWidth
   condition?: Condition
