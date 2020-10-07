@@ -2,28 +2,27 @@ import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
-  userHasAccessToScope,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
   widgets: () => [],
-  routes: ({ userInfo }) => {
+  routes: () => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Fjármál',
         path: ServicePortalPath.FjarmalRoot,
-        render: () => lazy(() => import('./lib/service-portal-finance')),
+        render: () =>
+          lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
+      },
+      {
+        name: 'Greiðslur',
+        path: ServicePortalPath.FjarmalGreidslur,
+        render: () =>
+          lazy(() => import('./screens/PaymentOverview/PaymentOverview')),
       },
     ]
-
-    if (userHasAccessToScope(userInfo, 'vehicles?')) {
-      routes.push({
-        name: 'Ökutæki',
-        path: ServicePortalPath.FjarmalOkutaeki,
-      })
-    }
 
     return routes
   },

@@ -10,17 +10,21 @@ export const Sidebar: FC<{}> = () => {
   return (
     <aside className={styles.sidebar}>
       <Stack space={3}>
-        {navigation.map((rootItem, index) => (
+        {navigation.map((rootItem, rootIndex) => (
           <Box
-            background={index === 0 ? 'purple100' : 'blueberry100'}
+            background={rootIndex === 0 ? 'blue100' : 'blueberry100'}
             paddingY={3}
             paddingX={4}
             borderRadius="large"
-            key={index}
+            key={rootIndex}
           >
             <Stack space={3}>
               {rootItem.children?.map((navRoot, index) => (
-                <ModuleNavigation key={index} nav={navRoot} />
+                <ModuleNavigation
+                  key={index}
+                  nav={navRoot}
+                  variant={rootIndex === 0 ? 'blue' : 'purple'}
+                />
               ))}
             </Stack>
           </Box>
