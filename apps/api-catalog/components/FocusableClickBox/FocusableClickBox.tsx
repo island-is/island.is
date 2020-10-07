@@ -39,12 +39,14 @@ export const FocusableClickBox = forwardRef<HTMLElement, Props>(
     onBlur,
     onClick,
     ...rest
-  }) => {
+  },
+    ref
+  ) => {
     const { colorScheme } = useContext(ColorSchemeContext)
     const [isFocused, toggle] = useToggle(false)
 
     return (
-      <Box
+      <Box ref={ref}
         component={component}
         display={display}
         borderRadius={borderRadius}
