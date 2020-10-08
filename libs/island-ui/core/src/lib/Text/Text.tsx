@@ -1,7 +1,7 @@
 import { Colors } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import React, { useContext } from 'react'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 import { LinkContext } from '../context'
 import styles, {

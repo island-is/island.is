@@ -1,28 +1,25 @@
 import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
 
-import { Tooltip } from './Tooltip/Tooltip'
+import { Tooltip } from './Tooltip'
 import { Inline } from '../Inline/Inline'
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 
-export default {
-  title: 'Components/Tooltip',
-  component: Tooltip,
-}
+export const tooltipText =
+  'Check out this cool tooltip. It has some text in it that you can read for more details.'
 
 <Meta title="Components/Tooltip" component={Tooltip} />
 
 # Tooltip
 
-export const tooltipText =
-  'Check out this cool tooltip. It has some text in it that you can read for more details.'
+<br />
 
-### WithDefaultIcon
+### With default icon
 
 <Canvas>
   <Story name="Default">
     <Box padding="gutter">
-      <Typography variant="p" as="span">
+      <Text variant="p" as="span">
         Here is some text that has a tooltip with the default icon at the end of
         it.{' '}
         <Tooltip
@@ -31,7 +28,7 @@ export const tooltipText =
           as="button"
           text={tooltipText}
         />
-      </Typography>
+      </Text>
     </Box>
   </Story>
 </Canvas>
@@ -40,36 +37,23 @@ export const tooltipText =
 
 <Canvas>
   <Story name="WithChildren">
-    <>
+    <Box>
       <Box padding="gutter">
-        <Typography variant="p" as="span">
+        <Text>
           Here is some text that has a tooltip wrapped around{' '}
-          <Tooltip
-            colored={false}
-            placement="top"
-            as="span"
-            text={tooltipText}
-          >
+          <Tooltip colored={false} placement="top" as="span" text="text">
             <span>this text</span>
           </Tooltip>
           .
-        </Typography>
+        </Text>
       </Box>
-
       <Box padding="gutter">
         <Inline space={1}>
-          <Typography variant="p" as="span">
-            Here is some text.
-          </Typography>
-          <Tooltip
-            colored={false}
-            placement="bottom"
-            text={tooltipText}
-          />
+          <Text>Here is some text.</Text>
+          <Tooltip colored={false} placement="bottom" text="text" />
         </Inline>
       </Box>
-    </>
-
+    </Box>
   </Story>
 </Canvas>
 
