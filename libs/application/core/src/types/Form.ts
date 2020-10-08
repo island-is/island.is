@@ -4,7 +4,7 @@ import { Field } from './Fields'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderTypes } from './DataProvider'
 import { MessageDescriptor } from 'react-intl'
-import { FormValue } from './Application'
+import { ExternalData, FormValue } from './Application'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -59,14 +59,13 @@ export interface SubSection extends FormItem {
 export interface Repeater extends FormItem {
   readonly id: string
   type: FormItemTypes.REPEATER
+  // Repeaters always have custom representation
+  component: string
   children: FormLeaf[]
   condition?: Condition
   repetitions: number
   required?: boolean
   repeaterIndex?: number
-  labelKey: string
-  // todo how do we handle presentation of different repeaters? maybe a map to a react component?
-  // presentation: RepeaterPresentorsEnum....
 }
 
 export interface MultiField extends FormItem {
@@ -99,4 +98,12 @@ export interface FieldBaseProps {
   field: Field
   formValue: FormValue
   showFieldName?: boolean
+}
+
+export type RepeaterProps = {
+  expandRepeater: () => void
+  error?: string
+  repeater: Repeater
+  formValue: FormValue
+  externalData: ExternalData
 }

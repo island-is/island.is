@@ -3,7 +3,7 @@
 // @ts-ignore
 const merge = require('deepmerge')
 
-import { Answer, FormValue } from '../types/Application'
+import { FormValue } from '../types/Application'
 import {
   Form,
   FormNode,
