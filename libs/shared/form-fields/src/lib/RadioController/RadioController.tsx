@@ -37,12 +37,6 @@ export const RadioController: FC<Props> = ({
         return (
           <Stack space={2}>
             {options.map((option, index) => (
-              // <Box
-              //   display="flex"
-              //   alignItems="center"
-              //   key={option.value}
-              //   background="white"
-              // >
               <RadioButton
                 large={largeButtons}
                 filled={emphasize}
@@ -62,7 +56,6 @@ export const RadioController: FC<Props> = ({
                 errorMessage={index === options.length - 1 ? error : undefined}
                 hasError={error !== undefined}
               />
-              // </Box>
             ))}
           </Stack>
         )
