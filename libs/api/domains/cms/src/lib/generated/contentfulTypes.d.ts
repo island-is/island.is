@@ -146,6 +146,15 @@ export interface IArticleFields {
   /** Subgroup */
   subgroup?: IArticleSubgroup | undefined
 
+  /** Other categories */
+  otherCategories?: IArticleCategory[] | undefined
+
+  /** Other groups */
+  otherGroups?: IArticleGroup[] | undefined
+
+  /** Other subgroups */
+  otherSubgroups?: IArticleSubgroup[] | undefined
+
   /** Organization */
   organization?: IOrganization[] | undefined
 

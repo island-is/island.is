@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import { intersection } from 'lodash'
 import { theme } from '@island.is/island-ui/theme'
 import {
   Text,
@@ -70,6 +71,8 @@ const Category: Screen<CategoryProps> = ({
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
 
+  const getCurrentCategory = () => categories.find((x) => x.slug === slug)
+
   const scrollToSelectOnMobile = (e) => {
     if (e.currentTarget && typeof window === 'object') {
       if (window.innerWidth < theme.breakpoints.md) {
@@ -81,8 +84,14 @@ const Category: Screen<CategoryProps> = ({
   }
 
   // group articles
-  const { groups, cards } = articles.reduce(
+  const { groups, cards, otherArticles } = articles.reduce(
     (content, article) => {
+      // check if this is not the main category for this article
+      if (article?.category?.title !== getCurrentCategory().title) {
+        content.otherArticles.push(article)
+        return content
+      }
+
       if (article?.group?.slug && !content.groups[article?.group?.slug]) {
         // group does not exist create the collection
         content.groups[article?.group?.slug] = {
@@ -102,6 +111,7 @@ const Category: Screen<CategoryProps> = ({
     {
       groups: {},
       cards: [],
+      otherArticles: [],
     },
   )
 
@@ -114,8 +124,6 @@ const Category: Screen<CategoryProps> = ({
         index,
     )
     .filter((x) => x)
-
-  const getCurrentCategory = () => categories.find((x) => x.slug === slug)
 
   useContentfulId(getCurrentCategory()?.id)
 
@@ -141,16 +149,28 @@ const Category: Screen<CategoryProps> = ({
   }))
 
   const groupArticlesBySubgroup = (articles: Articles) => {
-    const articlesBySubgroup = articles.reduce(
-      (result, item) => ({
+    const bySubgroup = articles.reduce((result, item) => {
+      return {
         ...result,
         [item?.subgroup?.title]: [
           ...(result[item?.subgroup?.title] || []),
           item,
         ],
-      }),
-      {},
-    )
+      }
+    }, {})
+
+    // add "other" articles as well
+    const articlesBySubgroup = otherArticles.reduce((result, item) => {
+      const titles = item.otherSubgroups.map((x) => x.title)
+      const found = intersection(Object.keys(result), titles)
+
+      return found.reduce((r, k) => {
+        return {
+          ...r,
+          [k]: [...r[k], item],
+        }
+      }, result)
+    }, bySubgroup)
 
     return { articlesBySubgroup }
   }

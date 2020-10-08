@@ -31,6 +31,14 @@ export const GET_ARTICLES_QUERY = gql`
         title
         importance
       }
+      otherSubgroups {
+        title
+        slug
+      }
+      otherGroups {
+        title
+        slug
+      }
     }
   }
 `
