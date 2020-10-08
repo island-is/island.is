@@ -6,12 +6,13 @@ import {
 } from '../types/Condition'
 import { FormValue } from '../types/Application'
 import { buildTextField } from '../lib/fieldBuilders'
-import { shouldShowFormLeaf } from './conditionUtils'
+import { shouldShowFormItem } from './conditionUtils'
+import { buildSection, buildSubSection } from '@island.is/application/core'
 
 describe('conditions', () => {
   it('should show a field which has no condition whatsoever', () => {
     expect(
-      shouldShowFormLeaf(
+      shouldShowFormItem(
         buildTextField({
           id: 'asdf',
           name: 'asdf',
@@ -24,7 +25,7 @@ describe('conditions', () => {
   describe('dynamic', () => {
     it('should show a field where the current form value fulfills the dynamic condition', () => {
       expect(
-        shouldShowFormLeaf(
+        shouldShowFormItem(
           buildTextField({
             id: 'asdf',
             name: 'asdf',
@@ -35,7 +36,7 @@ describe('conditions', () => {
         ),
       ).toBeTruthy()
       expect(
-        shouldShowFormLeaf(
+        shouldShowFormItem(
           buildTextField({
             id: 'asdf',
             name: 'asdf',
@@ -46,7 +47,7 @@ describe('conditions', () => {
         ),
       ).toBeTruthy()
       expect(
-        shouldShowFormLeaf(
+        shouldShowFormItem(
           buildTextField({
             id: 'asdf',
             name: 'asdf',
@@ -60,7 +61,7 @@ describe('conditions', () => {
     })
     it('should NOT show a field with a violated dynamic condition', () => {
       expect(
-        shouldShowFormLeaf(
+        shouldShowFormItem(
           buildTextField({
             id: 'asdf',
             name: 'asdf',
@@ -71,7 +72,7 @@ describe('conditions', () => {
         ),
       ).toBeFalsy()
       expect(
-        shouldShowFormLeaf(
+        shouldShowFormItem(
           buildTextField({
             id: 'asdf',
             name: 'asdf',
@@ -82,7 +83,7 @@ describe('conditions', () => {
         ),
       ).toBeFalsy()
       expect(
-        shouldShowFormLeaf(
+        shouldShowFormItem(
           buildTextField({
             id: 'asdf',
             name: 'asdf',
@@ -96,6 +97,56 @@ describe('conditions', () => {
     })
   })
   describe('static', () => {
+    it('should show a section which has a fulfilled static condition', () => {
+      const field = buildTextField({
+        id: 'asdf',
+        name: 'asdf',
+        required: true,
+      })
+
+      const section = buildSection({
+        id: 'section',
+        name: 'Section title',
+        children: [field],
+        condition: {
+          questionId: 'anotherQuestion',
+          value: 'Great Answer',
+          comparator: Comparators.EQUALS,
+        },
+      })
+
+      expect(
+        shouldShowFormItem(section, { anotherQuestion: 'Great Answer' }),
+      ).toBeTruthy()
+      expect(
+        shouldShowFormItem(section, { anotherQuestion: 'bad answer' }),
+      ).toBeFalsy()
+    })
+    it('should show a sub-section which has a fulfilled static condition', () => {
+      const field = buildTextField({
+        id: 'asdf',
+        name: 'asdf',
+        required: true,
+      })
+
+      const subSection = buildSubSection({
+        id: 'section',
+        name: 'Section title',
+        children: [field],
+        condition: {
+          questionId: 'anotherQuestion',
+          value: 'Great Answer',
+          comparator: Comparators.EQUALS,
+        },
+      })
+
+      expect(
+        shouldShowFormItem(subSection, { anotherQuestion: 'Great Answer' }),
+      ).toBeTruthy()
+      expect(
+        shouldShowFormItem(subSection, { anotherQuestion: 'bad answer' }),
+      ).toBeFalsy()
+    })
     it('should show a field which has a fulfilled static condition', () => {
       const field = buildTextField({
         id: 'asdf',
@@ -109,10 +160,10 @@ describe('conditions', () => {
       })
 
       expect(
-        shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+        shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
       ).toBeTruthy()
       expect(
-        shouldShowFormLeaf(field, { anotherQuestion: 'bad answer' }),
+        shouldShowFormItem(field, { anotherQuestion: 'bad answer' }),
       ).toBeFalsy()
     })
     it('should show a field which has a fulfilled static condition for a separate nested field', () => {
@@ -128,10 +179,10 @@ describe('conditions', () => {
       })
 
       expect(
-        shouldShowFormLeaf(field, { nested: { question: 'Great Answer' } }),
+        shouldShowFormItem(field, { nested: { question: 'Great Answer' } }),
       ).toBeTruthy()
       expect(
-        shouldShowFormLeaf(field, { nested: { question: 'bad answer' } }),
+        shouldShowFormItem(field, { nested: { question: 'bad answer' } }),
       ).toBeFalsy()
     })
   })
@@ -176,7 +227,7 @@ describe('conditions', () => {
             check: [],
           },
         })
-        expect(shouldShowFormLeaf(field, {})).toBeTruthy()
+        expect(shouldShowFormItem(field, {})).toBeTruthy()
       })
       describe('if it has a single static check', () => {
         it('where an answer should be equal to some value', () => {
@@ -188,10 +239,10 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'bad answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'bad answer' }),
           ).toBeFalsy()
         })
         it('where an answer should NOT equal to some value', () => {
@@ -205,10 +256,10 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               anotherQuestion: 'This is going to be true',
             }),
           ).toBeTruthy()
@@ -225,15 +276,15 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               anotherQuestion: 'Another Great Answer',
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Terrible' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Terrible' }),
           ).toBeFalsy()
         })
         it('where an answer should be less than or equal to some value', () => {
@@ -247,15 +298,15 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               anotherQuestion: 'Another Great Answer',
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Terrible' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Terrible' }),
           ).toBeFalsy()
         })
         it('where an answer should be greater than some value', () => {
@@ -269,13 +320,13 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Perfect Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Perfect Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'A very bad answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'A very bad answer' }),
           ).toBeFalsy()
         })
         it('where an answer should be greater than or equal to some value', () => {
@@ -290,13 +341,13 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Perfect Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Perfect Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'A very bad answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'A very bad answer' }),
           ).toBeFalsy()
         })
       })
@@ -328,7 +379,7 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Great Answer',
               shouldNotEqual: 'another answer',
               shouldBeLessThan: 'AAArdvak',
@@ -336,21 +387,21 @@ describe('conditions', () => {
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Not a Great Answer',
               shouldNotEqual: 'another answer',
               shouldBeLessThan: 'AAArdvak',
             }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Great Answer',
               shouldNotEqual: 'Same answer',
               shouldBeLessThan: 'AAArdvak',
             }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Great Answer',
               shouldNotEqual: 'another answer',
               shouldBeLessThan: 'Zebra',
@@ -385,35 +436,35 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Great Answer',
               shouldNotEqual: 'another answer',
               shouldBeLessThan: 'AAArdvak',
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Great Answer',
               shouldNotEqual: 'Same answer',
               shouldBeLessThan: 'Zebra',
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Not a Great Answer',
               shouldNotEqual: 'another answer',
               shouldBeLessThan: 'Zebra',
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Not a Great Answer',
               shouldNotEqual: 'another answer',
               shouldBeLessThan: 'AAArdvak',
             }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               shouldEqual: 'Not a Great Answer',
               shouldNotEqual: 'Same answer',
               shouldBeLessThan: 'Zebra',
@@ -435,7 +486,7 @@ describe('conditions', () => {
             check: [],
           },
         })
-        expect(shouldShowFormLeaf(field, {})).toBeFalsy()
+        expect(shouldShowFormItem(field, {})).toBeFalsy()
       })
       it('if it has an "ALL" condition but not answers that are needed for the condition checks', () => {
         const field = buildTextField({
@@ -464,30 +515,30 @@ describe('conditions', () => {
         })
 
         expect(
-          shouldShowFormLeaf(field, {
+          shouldShowFormItem(field, {
             shouldNotEqual: 'another answer',
             shouldBeLessThan: 'AAArdvak',
           }),
         ).toBeFalsy()
         expect(
-          shouldShowFormLeaf(field, {
+          shouldShowFormItem(field, {
             shouldEqual: 'Not a Great Answer',
             shouldBeLessThan: 'AAArdvak',
           }),
         ).toBeFalsy()
         expect(
-          shouldShowFormLeaf(field, {
+          shouldShowFormItem(field, {
             shouldEqual: 'Great Answer',
             shouldNotEqual: 'Same answer',
           }),
         ).toBeFalsy()
         expect(
-          shouldShowFormLeaf(field, {
+          shouldShowFormItem(field, {
             shouldEqual: 'Great Answer',
           }),
         ).toBeFalsy()
         expect(
-          shouldShowFormLeaf(field, {
+          shouldShowFormItem(field, {
             thisIsAWeirdQuestion: 'Great Answer',
           }),
         ).toBeFalsy()
@@ -515,7 +566,7 @@ describe('conditions', () => {
         })
 
         expect(
-          shouldShowFormLeaf(field, {
+          shouldShowFormItem(field, {
             anotherWeirdQuestion: 'Great Answer',
             thisIsAWeirdQuestion: 'Great Answer a',
           }),
@@ -531,10 +582,10 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'bad answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'bad answer' }),
           ).toBeTruthy()
         })
         it('an answer that should NOT equal to some value', () => {
@@ -549,10 +600,10 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               anotherQuestion: 'This is going to be true',
             }),
           ).toBeFalsy()
@@ -570,15 +621,15 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               anotherQuestion: 'Another Great Answer',
             }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Terrible' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Terrible' }),
           ).toBeTruthy()
         })
         it('an answer that should be less than or equal to some value', () => {
@@ -593,15 +644,15 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, {
+            shouldShowFormItem(field, {
               anotherQuestion: 'Another Great Answer',
             }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Terrible' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Terrible' }),
           ).toBeTruthy()
         })
         it('an answer that should be greater than some value', () => {
@@ -616,13 +667,13 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Perfect Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Perfect Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeTruthy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'A very bad answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'A very bad answer' }),
           ).toBeTruthy()
         })
         it('an answer that should be greater than or equal to some value', () => {
@@ -638,13 +689,13 @@ describe('conditions', () => {
           })
 
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Perfect Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Perfect Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'Great Answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'Great Answer' }),
           ).toBeFalsy()
           expect(
-            shouldShowFormLeaf(field, { anotherQuestion: 'A very bad answer' }),
+            shouldShowFormItem(field, { anotherQuestion: 'A very bad answer' }),
           ).toBeTruthy()
         })
       })
