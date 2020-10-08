@@ -1,9 +1,8 @@
 import React from 'react'
 import cn from 'classnames'
 
-import * as styles from './RadioButton.treat'
 import Tooltip from '../Tooltip/Tooltip'
-import { Box } from '../Box'
+import * as styles from './RadioButton.treat'
 
 export interface RadioButtonProps {
   name?: string
