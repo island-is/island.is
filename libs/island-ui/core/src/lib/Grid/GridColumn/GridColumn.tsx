@@ -12,7 +12,7 @@ import * as styles from './GridColumn.treat'
 import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
 type Breakpoint = keyof typeof theme['breakpoints']
-type position = 'relative' | 'fixed' | 'absolute'
+type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
 export type SpanType = ResponsiveProp<styles.GridColumns>
 export interface GridColumnProps {
