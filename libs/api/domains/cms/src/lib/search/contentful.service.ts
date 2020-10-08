@@ -111,7 +111,6 @@ export class ContentfulService {
     return this.elasticService.index(elasticIndex, nextSyncTokenDocument)
   }
 
-  interface
   private async getTypeOfSync({
     fullSync,
     elasticIndex,
