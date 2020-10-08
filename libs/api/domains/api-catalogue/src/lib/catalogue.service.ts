@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { ApiCatalogue, ApiService } from './models/catalogue.model'
 import { GetApiCatalogueInput } from './dto/catalogue.input'
 import { ElasticService } from '@island.is/api-catalogue/elastic'
+import { RestMetadataService } from '@island.is/api-catalogue/services'
+import { GetOpenApiInput } from './dto/openapi.input'
+import { OpenApi } from './models/openapi.model'
 
 @Injectable()
 export class ApiCatalogueService {
-  constructor(private elastic: ElasticService) {}
+  constructor(
+    private readonly elastic: ElasticService,
+    private readonly restMetadataService: RestMetadataService,
+  ) {}
 
   async getCatalogue(input: GetApiCatalogueInput): Promise<ApiCatalogue> {
     const res: ApiCatalogue = {
@@ -56,5 +62,18 @@ export class ApiCatalogueService {
     }
 
     return null
+  }
+
+  async getOpenApi(input: GetOpenApiInput): Promise<OpenApi> {
+    const openApi = new OpenApi()
+    openApi.spec = await this.restMetadataService.getOpenApiString({
+      instance: input.instance,
+      memberClass: input.memberClass,
+      memberCode: input.memberCode,
+      subsystemCode: input.subsystemCode,
+      serviceCode: input.serviceCode,
+    })
+
+    return openApi
   }
 }

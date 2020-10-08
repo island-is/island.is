@@ -7,8 +7,6 @@ import {
   SecurityRequirementObject,
   TagObject,
   ExternalDocumentationObject,
-  ContactObject,
-  LicenseObject,
 } from 'openapi3-ts'
 
 export interface OpenApi {

@@ -84,20 +84,34 @@ export class RestMetadataService {
    */
   async getOpenApi(xroadIdentifier: XroadIdentifier): Promise<OpenApi> {
     try {
-      const openApiYaml = await this.xrdRestMetaservice.getOpenAPI({
+      return YamlParser.safeLoad(
+        await this.getOpenApiString(xroadIdentifier),
+      ) as OpenApi
+    } catch (err) {
+      exceptionHandler(err)
+    }
+
+    return null
+  }
+
+  /**
+   * Returns the OpenApi YAML string
+   * @param xroadIdentifier
+   */
+  async getOpenApiString(xroadIdentifier: XroadIdentifier): Promise<string> {
+    try {
+      return await this.xrdRestMetaservice.getOpenAPI({
         xRoadInstance: xroadIdentifier.instance,
         memberClass: xroadIdentifier.memberClass,
         memberCode: xroadIdentifier.memberCode,
         subsystemCode: xroadIdentifier.subsystemCode,
         serviceCode: xroadIdentifier.serviceCode,
       })
-
-      return YamlParser.safeLoad(openApiYaml) as OpenApi
     } catch (err) {
       exceptionHandler(err)
     }
 
-    return null
+    return ''
   }
 
   private async getServiceCodes(

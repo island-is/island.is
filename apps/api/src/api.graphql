@@ -645,6 +645,10 @@ type DocumentCategory {
   name: String!
 }
 
+type OpenApi {
+  spec: String!
+}
+
 type PageInfo {
   nextCursor: String
 }
@@ -742,6 +746,7 @@ type Query {
   getTranslations(input: GetTranslationsInput!): JSON
   getApiCatalogue(input: GetApiCatalogueInput!): ApiCatalogue!
   getApiServiceById(input: GetApiServiceInput!): ApiService
+  getOpenApi(input: GetOpenApiInput!): OpenApi!
 }
 
 input GetAdgerdirNewsListInput {
@@ -983,6 +988,14 @@ input GetApiCatalogueInput {
 
 input GetApiServiceInput {
   id: ID!
+}
+
+input GetOpenApiInput {
+  instance: String!
+  memberClass: String!
+  memberCode: String!
+  subsystemCode: String!
+  serviceCode: String!
 }
 
 type Mutation {

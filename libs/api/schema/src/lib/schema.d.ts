@@ -758,6 +758,11 @@ export type DocumentCategory = {
   name: Scalars['String']
 }
 
+export type OpenApi = {
+  __typename?: 'OpenApi'
+  spec: Scalars['String']
+}
+
 export type PageInfo = {
   __typename?: 'PageInfo'
   nextCursor?: Maybe<Scalars['String']>
@@ -860,6 +865,7 @@ export type Query = {
   getTranslations?: Maybe<Scalars['JSON']>
   getApiCatalogue: ApiCatalogue
   getApiServiceById?: Maybe<ApiService>
+  getOpenApi: OpenApi
 }
 
 export type QueryGetAdgerdirNewsListArgs = {
@@ -1024,6 +1030,10 @@ export type QueryGetApiCatalogueArgs = {
 
 export type QueryGetApiServiceByIdArgs = {
   input: GetApiServiceInput
+}
+
+export type QueryGetOpenApiArgs = {
+  input: GetOpenApiInput
 }
 
 export type GetAdgerdirNewsListInput = {
@@ -1265,6 +1275,14 @@ export type GetApiCatalogueInput = {
 
 export type GetApiServiceInput = {
   id: Scalars['ID']
+}
+
+export type GetOpenApiInput = {
+  instance: Scalars['String']
+  memberClass: Scalars['String']
+  memberCode: Scalars['String']
+  subsystemCode: Scalars['String']
+  serviceCode: Scalars['String']
 }
 
 export type Mutation = {
@@ -1645,6 +1663,7 @@ export type ResolversTypes = {
   Document: ResolverTypeWrapper<Document>
   DocumentDetails: ResolverTypeWrapper<DocumentDetails>
   DocumentCategory: ResolverTypeWrapper<DocumentCategory>
+  OpenApi: ResolverTypeWrapper<OpenApi>
   PageInfo: ResolverTypeWrapper<PageInfo>
   XroadInfo: ResolverTypeWrapper<XroadInfo>
   ApiService: ResolverTypeWrapper<ApiService>
@@ -1699,6 +1718,7 @@ export type ResolversTypes = {
   GetTranslationsInput: GetTranslationsInput
   GetApiCatalogueInput: GetApiCatalogueInput
   GetApiServiceInput: GetApiServiceInput
+  GetOpenApiInput: GetOpenApiInput
   Mutation: ResolverTypeWrapper<{}>
   ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
@@ -1858,6 +1878,7 @@ export type ResolversParentTypes = {
   Document: Document
   DocumentDetails: DocumentDetails
   DocumentCategory: DocumentCategory
+  OpenApi: OpenApi
   PageInfo: PageInfo
   XroadInfo: XroadInfo
   ApiService: ApiService
@@ -1904,6 +1925,7 @@ export type ResolversParentTypes = {
   GetTranslationsInput: GetTranslationsInput
   GetApiCatalogueInput: GetApiCatalogueInput
   GetApiServiceInput: GetApiServiceInput
+  GetOpenApiInput: GetOpenApiInput
   Mutation: {}
   ContactUsInput: ContactUsInput
   CreateApplicationInput: CreateApplicationInput
@@ -3164,6 +3186,14 @@ export type DocumentCategoryResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type OpenApiResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['OpenApi'] = ResolversParentTypes['OpenApi']
+> = {
+  spec?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type PageInfoResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']
@@ -3496,6 +3526,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetApiServiceByIdArgs, 'input'>
   >
+  getOpenApi?: Resolver<
+    ResolversTypes['OpenApi'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetOpenApiArgs, 'input'>
+  >
 }
 
 export type MutationResolvers<
@@ -3639,6 +3675,7 @@ export type Resolvers<ContextType = Context> = {
   Document?: DocumentResolvers<ContextType>
   DocumentDetails?: DocumentDetailsResolvers<ContextType>
   DocumentCategory?: DocumentCategoryResolvers<ContextType>
+  OpenApi?: OpenApiResolvers<ContextType>
   PageInfo?: PageInfoResolvers<ContextType>
   XroadInfo?: XroadInfoResolvers<ContextType>
   ApiService?: ApiServiceResolvers<ContextType>
