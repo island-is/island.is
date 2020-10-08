@@ -32,7 +32,6 @@ export const FormShell: FC<{
       nationalRegistryId,
       dataSchema,
       form,
-      formLeaves: [],
       activeSection: 0,
       activeSubSection: 0,
       activeScreen: 0,
