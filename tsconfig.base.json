@@ -151,7 +151,8 @@
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
-      ]
+      ],
+      "@island.is/email-service": ["libs/email-service/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
