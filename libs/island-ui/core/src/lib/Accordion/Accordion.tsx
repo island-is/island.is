@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react'
+
 import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 import { Box } from '../Box/Box'
 import { Stack } from '../Stack/Stack'
@@ -56,5 +57,3 @@ export const Accordion = ({
     </Box>
   )
 }
-
-export default Accordion
