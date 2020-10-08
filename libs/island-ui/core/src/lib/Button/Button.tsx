@@ -7,6 +7,7 @@ import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
 import { ColorSchemeContext } from '../context'
 
 import * as styles from './Button.treat'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'redGhost' | 'text' | 'menu'
@@ -70,9 +71,10 @@ export const Button = forwardRef<
     },
     ref,
   ) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('ButtonDeprecated has been deprecated in favor of Button.')
-    }
+    useDeprecatedComponent(
+      'Button',
+      'ButtonDeprecated has been deprecated in favor of Button.',
+    )
     const { colorScheme } = useContext(ColorSchemeContext)
 
     const className = cn(
