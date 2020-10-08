@@ -74,6 +74,7 @@ export const LanguageToggler: FC<{
       variant="menu"
       onClick={otherLanguage === 'en' ? null : onClick}
       width="fluid"
+      aria-label={t.otherLanguageAria}
     >
       {t.otherLanguageName}
     </Button>

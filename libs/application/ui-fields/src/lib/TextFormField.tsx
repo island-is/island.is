@@ -4,6 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: TextField
@@ -14,25 +15,29 @@ const TextFormField: FC<Props> = ({
   field,
   showFieldName,
 }) => {
-  const { id, disabled, name } = field
+  const { id, disabled, name, description } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop={2}>
-      <InputController
-        disabled={disabled}
-        id={id}
-        label={showFieldName ? (formatMessage(name) as string) : undefined}
-        autoFocus={autoFocus}
-        error={error}
-        onChange={() => {
-          if (error) {
-            clearErrors(id)
-          }
-        }}
-      />
-    </Box>
+    <div>
+      {description && <Description description={formatMessage(description)} />}
+
+      <Box paddingTop={2}>
+        <InputController
+          disabled={disabled}
+          id={id}
+          label={showFieldName ? (formatMessage(name) as string) : undefined}
+          autoFocus={autoFocus}
+          error={error}
+          onChange={() => {
+            if (error) {
+              clearErrors(id)
+            }
+          }}
+        />
+      </Box>
+    </div>
   )
 }
 
