@@ -141,9 +141,11 @@ const Screen: FC<ScreenProps> = ({
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
+                errors={errors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
                 formValue={formValue}
+                externalData={externalData}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
