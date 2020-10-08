@@ -9,6 +9,7 @@ const userSeed = JSON.parse(
         "name": "Guðjón Guðjónsson",
         "title": "aðstoðarsaksóknari",
         "mobile_number": "8589030",
+        "email": "gudjon@kolibri.is",
         "role": "PROSECUTOR"
       },
       {
@@ -17,6 +18,7 @@ const userSeed = JSON.parse(
         "name": "Baldur Kristjánsson",
         "title": "dómritari",
         "mobile_number": "8949946",
+        "email": "baldur@kolibri.is",
         "role": "REGISTRAR"
       },
       {
@@ -25,6 +27,7 @@ const userSeed = JSON.parse(
         "name": "Ívar Oddsson",
         "title": "héraðsdómari",
         "mobile_number": "6904031",
+        "email": "ivaro@kolibri.is",
         "role": "JUDGE"
       }
     ]`,

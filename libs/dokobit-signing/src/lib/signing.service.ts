@@ -57,9 +57,9 @@ interface DokobitStatusResponse {
 export class SigningService extends DataSource {
   constructor(
     @Inject(SIGNING_OPTIONS)
-    private options: SigningServiceOptions,
+    private readonly options: SigningServiceOptions,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {
     super()
   }

@@ -7,13 +7,14 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import { EmailService } from '@island.is/email-service'
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, NotificationType } from './models'
-import { generateRulingPdf, writeFile } from './case.pdf'
+import { generateRequestPdf, generateRulingPdf, writeFile } from './case.pdf'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()
@@ -21,6 +22,8 @@ export class CaseService {
   constructor(
     private readonly smsService: SmsService,
     private readonly signingService: SigningService,
+    @Inject(EmailService)
+    private readonly emailService: EmailService,
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
     @InjectModel(Notification)
@@ -73,11 +76,51 @@ export class CaseService {
     return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
   }
 
-  // Not implemented yet
-  private sendRulingAsSignedPdf(existingCase: Case, signedPdf: string): void {
+  private async sendRulingAsSignedPdf(
+    existingCase: Case,
+    signedRulingPdf: string,
+  ): Promise<void> {
     if (!environment.production) {
-      writeFile(`${existingCase.id}-ruling-signed.pdf`, signedPdf)
+      writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
+
+    const requestPdf = await generateRequestPdf(existingCase)
+
+    await this.emailService.sendEmail({
+      from: {
+        name: environment.email.fromName,
+        address: environment.email.fromEmail,
+      },
+      replyTo: {
+        name: environment.email.replyToName,
+        address: environment.email.replyToEmail,
+      },
+      to: [
+        {
+          name: existingCase.prosecutor?.name,
+          address: existingCase.prosecutor?.email,
+        },
+        {
+          name: existingCase.judge?.name,
+          address: existingCase.judge?.email,
+        },
+      ],
+      subject: `Úrskurður í máli ${existingCase.courtCaseNumber}`,
+      text: 'Sjá viðhengi',
+      html: 'Sjá viðhengi',
+      attachments: [
+        {
+          filename: `${existingCase.policeCaseNumber}.pdf`,
+          content: requestPdf,
+          encoding: 'binary',
+        },
+        {
+          filename: `${existingCase.courtCaseNumber}.pdf`,
+          content: signedRulingPdf,
+          encoding: 'binary',
+        },
+      ],
+    })
   }
 
   getAll(): Promise<Case[]> {
@@ -94,7 +137,7 @@ export class CaseService {
   }
 
   findById(id: string): Promise<Case> {
-    this.logger.debug(`Finding case with id "${id}"`)
+    this.logger.debug(`Finding case ${id}`)
 
     return this.caseModel.findOne({
       where: { id },
@@ -107,7 +150,7 @@ export class CaseService {
   }
 
   create(caseToCreate: CreateCaseDto): Promise<Case> {
-    this.logger.debug(`Creating case ${caseToCreate}`)
+    this.logger.debug('Creating a new case')
 
     return this.caseModel.create(caseToCreate)
   }
@@ -116,7 +159,7 @@ export class CaseService {
     id: string,
     update: UpdateCaseDto | TransitionUpdate,
   ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
-    this.logger.debug(`Updating case whith id "${id}"`)
+    this.logger.debug(`Updating case ${id}`)
 
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
       update,
@@ -130,9 +173,7 @@ export class CaseService {
   }
 
   getAllNotificationsByCaseId(existingCase: Case): Promise<Notification[]> {
-    this.logger.debug(
-      `Getting all notifications for case with id "${existingCase.id}"`,
-    )
+    this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
 
     return this.notificationModel.findAll({
       where: { caseId: existingCase.id },
@@ -144,9 +185,7 @@ export class CaseService {
     existingCase: Case,
     user: User,
   ): Promise<Notification> {
-    this.logger.debug(
-      `Sending a notification for case with id "${existingCase.id}"`,
-    )
+    this.logger.debug(`Sending a notification for case ${existingCase.id}`)
 
     // This method should only be called if the case state is DRAFT or SUBMITTED
 
@@ -177,7 +216,7 @@ export class CaseService {
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
-      `Requesting signature of ruling for case with id "${existingCase.id}"`,
+      `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
     // This method should only be called if the csae state is ACCEPTED or REJECTED
@@ -208,7 +247,7 @@ export class CaseService {
     documentToken: string,
   ): Promise<Case> {
     this.logger.debug(
-      `Confirming signature of ruling for case with id "${existingCase.id}"`,
+      `Confirming signature of ruling for case ${existingCase.id}`,
     )
 
     // This method should only be called if the csae state is ACCEPTED or REJECTED and
