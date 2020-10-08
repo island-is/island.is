@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 
 import { Box } from '../Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { FormStepperSection } from './FormStepperSection'
 import * as types from './types'
 import * as styles from './FormStepper.treat'
@@ -48,7 +48,7 @@ export const FormStepper: FC<{
 
           {formName && (
             <Box marginLeft={formIcon ? 1 : 0}>
-              <Typography variant="h4">{formName}</Typography>
+              <Text variant="h4">{formName}</Text>
             </Box>
           )}
         </Box>

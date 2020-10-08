@@ -1,10 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import cn from 'classnames'
 
-import * as styles from './Checkbox.treat'
 import Icon from '../Icon/Icon'
 import Tooltip from '../Tooltip/Tooltip'
-import { Box } from '../Box'
+import * as styles from './Checkbox.treat'
 
 export interface CheckboxProps {
   name?: string
@@ -73,9 +73,7 @@ export const Checkbox = ({
           <Icon
             type="check"
             width={styles.checkMarkWidth}
-            color={
-              checked ? styles.checkMarkColor : styles.checkMarkColorUnchecked
-            }
+            color={checked ? 'white' : 'transparent'}
           />
         </div>
         {label}
