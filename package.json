@@ -291,6 +291,7 @@
     "quicktype": "15.0.245",
     "react-docgen-typescript-loader": "^3.7.2",
     "sequelize-cli": "5.5.1",
+    "ts-dedent": "2.0.0",
     "ts-jest": "26.1.4",
     "ts-node": "9.0.0",
     "typescript": "3.9.7"
