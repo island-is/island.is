@@ -60,22 +60,20 @@ export const ToastContainer: React.FC<ToastProps> = ({
   closeButton = false,
 }) => {
   return (
-    <>
-      <div className={toastStyles.root}>
-        <ToastifyContainer
-          position="bottom-right"
-          autoClose={timeout}
-          hideProgressBar={hideProgressBar}
-          closeButton={closeButton}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          transition={Slide}
-        />
-        <style jsx>{toastKeyframes}</style>
-      </div>
-    </>
+    <div className={toastStyles.root}>
+      <ToastifyContainer
+        position="bottom-right"
+        autoClose={timeout}
+        hideProgressBar={hideProgressBar}
+        closeButton={closeButton}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        transition={Slide}
+      />
+      <style jsx>{toastKeyframes}</style>
+    </div>
   )
 }
 
