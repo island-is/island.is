@@ -407,7 +407,7 @@ describe('reducerUtils', () => {
         ...buildRepeater({
           id: 'id',
           name: 'repeater',
-          labelKey: 'asdf',
+          component: 'asdf',
           children,
         }),
       }
