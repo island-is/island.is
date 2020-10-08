@@ -2,8 +2,8 @@
 # Remove fallback rule while graphql files are in the way.
 # *                               @island-is/core
 
-/*                              	@island-is/core
-/.github/                       	@island-is/core
+/*                                @island-is/core
+/.github/                         @island-is/core
 
 # Add new projects here.
 # Project folders are usually owned by the team assigned.
@@ -12,35 +12,35 @@
 # Make sure that team names are correct or everything stops working.
 # Organisation name is @island-is, not @island.is
 
-/apps/adgerdir*/                	@island-is/kosmos-kaos
-/apps/web*/                     	@island-is/kosmos-kaos @island-is/aranja
-/libs/api/domains/cms/          	@island-is/kosmos-kaos @island-is/aranja
+/apps/adgerdir*/                  @island-is/kosmos-kaos
+/apps/web*/                       @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/cms/            @island-is/kosmos-kaos @island-is/aranja
 
 /*/air-discount-scheme/           @island-is/vice-versa
 /*/gjafakort/                     @island-is/vice-versa
 
-/apps/application-system/       	@island-is/aranja
-/libs/api/domains/application/  	@island-is/aranja
-/libs/application/              	@island-is/aranja
+/apps/application-system/         @island-is/aranja
+/libs/api/domains/application/    @island-is/aranja
+/libs/application/                @island-is/aranja
 
-/apps/judicial-system/          	@island-is/kolibri
-/libs/judicial-system/          	@island-is/kolibri
-/libs/nova-sms/                 	@island-is/kolibri
-/libs/dokobit-signing           	@island-is/kolibri
+/apps/judicial-system/            @island-is/kolibri
+/libs/judicial-system/            @island-is/kolibri
+/libs/nova-sms/                   @island-is/kolibri
+/libs/dokobit-signing             @island-is/kolibri
 /libs/email-service               @island-is/kolibri
 
 /*/service-portal*/               @island-is/sendiradid
-/libs/api/domains/documents/    	@island-is/sendiradid
+/libs/api/domains/documents/      @island-is/sendiradid
 
-/apps/services/search-indexer/  	@island-is/stefna @island-is/kosmos-kaos @island-is/aranja
+/apps/services/search-indexer/    @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/content-search/         @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/ @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 
-/libs/island-ui/                	@island-is/island-ui
+/libs/island-ui/                  @island-is/island-ui
 
-/.github/actions/               	@island-is/devops
-/.github/workflows/             	 @island-is/devops
-/apps/reference-backend/        	@island-is/devops
-/libs/infra*/                   	@island-is/devops
-/libs/logging/                  	@island-is/devops
-/scripts/                       	@island-is/devops
+/.github/actions/                 @island-is/devops
+/.github/workflows/                @island-is/devops
+/apps/reference-backend/          @island-is/devops
+/libs/infra*/                     @island-is/devops
+/libs/logging/                    @island-is/devops
+/scripts/                         @island-is/devops
