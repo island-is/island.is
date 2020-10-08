@@ -11,7 +11,7 @@ export enum ProviderType {
    * PROTECTED providers are added to Elastic indexing but
    * not API Gateway
    */
-  PROTECTED = 'protected',
+  PROTECTED = 'service',
 
   /**
    * PUBLIC providers are added to API Gateway additionally to the

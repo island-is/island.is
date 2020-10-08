@@ -7,10 +7,29 @@ import { ApiService } from '@island.is/api/schema'
 import pets from './petstore.json';
 import { RedocStandalone } from 'redoc';
 
+import gql from 'graphql-tag'
+
+import {
+    GetOpenApiInput,
+    Query,
+    QueryGetOpenApiArgs
+} from '@island.is/api/schema';
+import { useLazyQuery, useQuery } from 'react-apollo'
+
+
+
 export interface ServiceDetailProps {
     service: ApiService
 
 }
+
+export const GET_OPEN_API_QUERY = gql`
+query GetOpenApi($input: GetOpenApiInput!) {
+  getOpenApi(input: $input) {
+    spec
+  }
+}
+`
 
 export const ServiceDetail = (props: ServiceDetailProps) => {
 
@@ -24,7 +43,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
         )
     }
 
-    const [OpenApiObject, setOpenApiObject] = useState<any>(null)
+
 
     type SelectOption = {
         label: string,
@@ -45,9 +64,20 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
         versionOptions = versionOptions.sort((a, b) => b.label.localeCompare(a.label))
     }
 
-    const onSelectChange = (value: SelectOption) => {
+    const [openApiObject, setOpenApiObject] = useState<GetOpenApiInput>(null)
+    
+    const [getOpenApi, { data, loading, error }] = useLazyQuery<Query, QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
+        {
 
+            variables: {
+                input: openApiObject,
+            },
+        })
+
+    const onSelectChange = (value: SelectOption) => {
+        setOpenApiObject(value.value);
         console.log(value);
+        getOpenApi()
     }
 
     const showCategory = (category: CATEGORY) => {
@@ -120,7 +150,8 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
                 <div className={cn(styles.section)}>
                     <h2>OpenAPI skjölun</h2>
-                    <RedocStandalone  spec={pets}/>
+                    {data.getOpenApi.spec}
+                    {/*<RedocStandalone spec={pets} />*/}
                 </div>
 
             </Box>
