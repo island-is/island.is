@@ -10,7 +10,6 @@ interface Props {
   nextIsLoading?: boolean
   nextButtonText?: string
   onNextButtonClick?: () => void
-  previousUrl?: string
   previousIsDisabled?: boolean
 }
 
@@ -23,7 +22,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         variant="ghost"
         disabled={props.previousIsDisabled}
         onClick={() => {
-          history.push(props.previousUrl)
+          history.goBack()
         }}
       >
         Til baka

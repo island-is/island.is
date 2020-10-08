@@ -17,14 +17,20 @@ import Modal from '../../../shared-components/Modal/Modal'
 import {
   formatDate,
   capitalize,
-  parseTransition,
-} from '../../../utils/formatters'
-import { renderRestrictons } from '../../../utils/stepHelper'
+  formatNationalId,
+  formatLawsBroken,
+} from '@island.is/judicial-system/formatters'
+import { parseTransition } from '../../../utils/formatters'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
+import {
+  TIME_FORMAT,
+  formatCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
 import * as api from '../../../api'
 import { Case } from '@island.is/judicial-system-web/src/types'
 import { userContext } from '../../../utils/userContext'
+import { renderFormStepper } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -79,19 +85,21 @@ export const Overview: React.FC = () => {
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span={'3/12'}>
-              <ProsecutorLogo />
-            </GridColumn>
-            <GridColumn span={'8/12'} offset={'1/12'}>
-              <Typography as="h1" variant="h1">
-                Krafa um gæsluvarðhald
-              </Typography>
-            </GridColumn>
-          </GridRow>
+          <Box marginBottom={7}>
+            <GridRow>
+              <GridColumn span={'3/12'}>
+                <ProsecutorLogo />
+              </GridColumn>
+              <GridColumn span={'8/12'} offset={'1/12'}>
+                <Typography as="h1" variant="h1">
+                  Krafa um gæsluvarðhald
+                </Typography>
+              </GridColumn>
+            </GridRow>
+          </Box>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
-              <Typography>Hliðarstika</Typography>
+              {renderFormStepper(0, 2)}
             </GridColumn>
             <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
               <Box component="section" marginBottom={5}>
@@ -108,7 +116,9 @@ export const Overview: React.FC = () => {
                     Kennitala
                   </Typography>
                 </Box>
-                <Typography>{workingCase.accusedNationalId}</Typography>
+                <Typography>
+                  {formatNationalId(workingCase.accusedNationalId)}
+                </Typography>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -143,10 +153,7 @@ export const Overview: React.FC = () => {
                 <Typography>
                   {`${capitalize(
                     formatDate(workingCase.arrestDate, 'PPPP'),
-                  )} kl. ${formatDate(
-                    workingCase?.arrestDate,
-                    Constants.TIME_FORMAT,
-                  )}`}
+                  )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
                 </Typography>
               </Box>
               {workingCase.requestedCourtDate && (
@@ -161,7 +168,7 @@ export const Overview: React.FC = () => {
                       formatDate(workingCase.requestedCourtDate, 'PPPP'),
                     )} kl. ${formatDate(
                       workingCase?.requestedCourtDate,
-                      Constants.TIME_FORMAT,
+                      TIME_FORMAT,
                     )}`}
                   </Typography>
                 </Box>
@@ -177,19 +184,22 @@ export const Overview: React.FC = () => {
                           'PPP',
                         )} kl. ${formatDate(
                           workingCase?.requestedCustodyEndDate,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )}`}
                       </strong>
                     </Typography>
                   </AccordionItem>
                   <AccordionItem id="id_2" label="Lagaákvæði">
                     <Typography variant="p" as="p">
-                      {workingCase.lawsBroken}
+                      {formatLawsBroken(
+                        workingCase.lawsBroken,
+                        workingCase.custodyProvisions,
+                      )}
                     </Typography>
                   </AccordionItem>
                   <AccordionItem id="id_3" label="Takmarkanir á gæslu">
                     <Typography variant="p" as="p">
-                      {renderRestrictons(
+                      {formatCustodyRestrictions(
                         workingCase.requestedCustodyRestrictions,
                       )}
                     </Typography>
@@ -248,7 +258,6 @@ export const Overview: React.FC = () => {
                 </Box>
               )}
               <FormFooter
-                previousUrl={Constants.STEP_TWO_ROUTE}
                 nextUrl="/"
                 nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
                 onNextButtonClick={() => {
