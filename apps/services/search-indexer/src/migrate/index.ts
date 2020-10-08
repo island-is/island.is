@@ -1,3 +1,4 @@
+import { SyncOptions } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { environment } from '../environments/environment'
 import * as aws from './aws'
@@ -8,8 +9,6 @@ interface PromiseStatus {
   success: boolean
   error?: Error
 }
-
-export type locales = 'is' | 'en'
 
 class App {
   async run() {
@@ -86,7 +85,7 @@ class App {
     const processedMigrations: elastic.MigrationInfo = {} // to rollback changes on failure
     const locales = environment.locales
     const requests = locales.map(
-      async (locale: locales): Promise<PromiseStatus> => {
+      async (locale: SyncOptions['locale']): Promise<PromiseStatus> => {
         const oldIndexVersion = await elastic.getCurrentVersionFromIndices(
           locale,
         )

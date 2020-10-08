@@ -1,10 +1,9 @@
 import fs from 'fs'
 import { logger } from '@island.is/logging'
-import { ElasticService } from '@island.is/api/content-search'
+import { ElasticService, SyncOptions } from '@island.is/api/content-search'
 import { AwsEsPackage } from './aws'
 import { IndexingModule, IndexingService } from '@island.is/elastic-indexing'
 import { NestFactory } from '@nestjs/core'
-import { locales } from '.'
 
 const esService = new ElasticService()
 
@@ -212,7 +211,7 @@ export const removeIndexesBelowVersion = async (
 }
 
 export const importContentToNewIndex = async (
-  locale: locales,
+  locale: SyncOptions['locale'],
   newIndexVersion: number,
 ) => {
   // we do a full sync here to import data
