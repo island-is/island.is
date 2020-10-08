@@ -117,7 +117,6 @@ describe('ApplicationFormReducer', () => {
     nationalRegistryId: '1111112199',
     screens: [],
     progress: 0,
-    formLeaves: [],
     sections: [],
   }
   let initializedState: ApplicationUIState
@@ -313,7 +312,6 @@ describe('ApplicationFormReducer', () => {
           ...application,
           answers: { historyCars: ['VW', 'Tesla'] },
         },
-        formLeaves: [],
         activeSection: 0,
         activeSubSection: 0,
         activeScreen: 0,
@@ -351,7 +349,7 @@ describe('ApplicationFormReducer', () => {
       expect(updatedState.screens.length).toBe(6)
       expect(updatedState.screens[1].repeaterIndex).toBe(0)
       expect(updatedState.screens[1].id).toBe('person[0].name')
-      expect(updatedState.screens[2].repeaterIndex).toBe(0)
+      expect(updatedState.screens[2].repeaterIndex).toBe(1)
       expect(updatedState.screens[2].id).toBe('person[0].age')
       expect(updatedState.screens[3].id).toBe('familyName')
     })
@@ -363,9 +361,9 @@ describe('ApplicationFormReducer', () => {
 
       expect(updatedState.screens.length).toBe(8)
       expect(updatedState.screens[1].repeaterIndex).toBe(0)
-      expect(updatedState.screens[2].repeaterIndex).toBe(0)
-      expect(updatedState.screens[3].repeaterIndex).toBe(0)
-      expect(updatedState.screens[4].repeaterIndex).toBe(0)
+      expect(updatedState.screens[2].repeaterIndex).toBe(1)
+      expect(updatedState.screens[3].repeaterIndex).toBe(2)
+      expect(updatedState.screens[4].repeaterIndex).toBe(3)
       expect(updatedState.screens[1].id).toBe('person[0].name')
       expect(updatedState.screens[2].id).toBe('person[0].age')
       expect(updatedState.screens[3].id).toBe('person[1].name')

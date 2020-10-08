@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import Typography from './Typography'
+import { Button } from './Button'
 
-describe(' Typography', () => {
+describe('Button', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Typography />)
+    const { baseElement } = render(<Button>Button</Button>)
     expect(baseElement).toBeTruthy()
   })
 })
