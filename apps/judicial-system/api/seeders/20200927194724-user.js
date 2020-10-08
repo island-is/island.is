@@ -25,7 +25,7 @@ const userSeed = JSON.parse(
         "name": "Ívar Oddsson",
         "title": "héraðsdómari",
         "mobile_number": "6904031",
-        "role": "PROSECUTOR"
+        "role": "JUDGE"
       }
     ]`,
 )
