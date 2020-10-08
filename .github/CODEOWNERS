@@ -36,7 +36,6 @@
 /libs/api/content-search/         @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/ @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 
-/.storybook/                    	@island-is/island-ui
 /libs/island-ui/                	@island-is/island-ui
 
 /.github/actions/               	@island-is/devops
