@@ -225,6 +225,9 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {

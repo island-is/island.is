@@ -26,6 +26,7 @@ export const GET_ARTICLES_QUERY = gql`
         slug
         title
         description
+        importance
       }
       subgroup {
         title
@@ -34,10 +35,12 @@ export const GET_ARTICLES_QUERY = gql`
       otherSubgroups {
         title
         slug
+        importance
       }
       otherGroups {
         title
         slug
+        importance
       }
     }
   }
