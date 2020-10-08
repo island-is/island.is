@@ -38,5 +38,6 @@ export const ServiceDetailPage: NextPage<ServiceDetailPageProps> = ({ id }) => {
 
 ServiceDetailPage.getInitialProps = async (ctx): Promise<ServiceDetailPageProps> => {
   const { query } = ctx
-  return { id: query.service[0] }
+  console.log(query)
+  return { id: query.service.toString() }
 }

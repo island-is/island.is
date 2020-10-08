@@ -150,7 +150,8 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
                 <div className={cn(styles.section)}>
                     <h2>OpenAPI skjölun</h2>
-                    {data.getOpenApi.spec}
+                    {data}
+                    {/*data?.getOpenApi?.spec*/}
                     {/*<RedocStandalone spec={pets} />*/}
                 </div>
 
