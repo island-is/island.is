@@ -42,6 +42,7 @@ export type SectionChildren = SubSection | FormLeaf
 
 export interface FormItem {
   readonly id?: string
+  condition?: Condition
   readonly type: string
   readonly name: MessageDescriptor | string
 }
@@ -60,7 +61,6 @@ export interface Repeater extends FormItem {
   readonly id: string
   type: FormItemTypes.REPEATER
   children: FormLeaf[]
-  condition?: Condition
   repetitions: number
   required?: boolean
   repeaterIndex?: number
@@ -72,14 +72,12 @@ export interface Repeater extends FormItem {
 export interface MultiField extends FormItem {
   type: FormItemTypes.MULTI_FIELD
   children: Field[]
-  condition?: Condition
   repeaterIndex?: number
 }
 
 export interface ExternalDataProvider extends FormItem {
   readonly type: FormItemTypes.EXTERNAL_DATA_PROVIDER
   readonly children: undefined
-  condition?: Condition
   repeaterIndex?: number
   dataProviders: DataProviderItem[]
 }

@@ -2,7 +2,7 @@ import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 
 import { Box } from '../Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { SectionNumber, SubSections } from './shared'
 import * as types from './types'
 
@@ -67,13 +67,9 @@ export const FormStepperSection: FC<{
           </Box>
 
           <Box paddingTop={2} width="full">
-            <Typography
-              variant={
-                isActive ? 'formStepperSectionActive' : 'formStepperSection'
-              }
-            >
+            <Text lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
               {section.name}
-            </Typography>
+            </Text>
           </Box>
         </Box>
 

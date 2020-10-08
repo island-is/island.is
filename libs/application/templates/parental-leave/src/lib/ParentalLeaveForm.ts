@@ -9,6 +9,7 @@ import {
   Form,
   ApplicationTypes,
   DataProviderTypes,
+  buildRadioField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -67,6 +68,22 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               {},
             ),
+            buildRadioField({
+              id: 'start',
+              name: m.startDateTitle,
+              description: m.startDateDescription,
+              required: true,
+              options: [
+                {
+                  value: 'dob',
+                  label: m.startDateOption1,
+                },
+                {
+                  value: 'customDate',
+                  label: m.startDateOption2,
+                },
+              ],
+            }),
           ],
         }),
         buildSubSection({
