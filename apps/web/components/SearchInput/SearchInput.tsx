@@ -36,8 +36,9 @@ import {
   Article,
   SearchableContentTypes,
   LifeEventPage,
+  AboutPage,
+  News,
 } from '@island.is/web/graphql/schema'
-import { theme } from '@island.is/island-ui/theme'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -116,6 +117,8 @@ const useSearch = (
               types: [
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebLifeEventPage'],
+                SearchableContentTypes['WebAboutPage'],
+                SearchableContentTypes['WebNews'],
               ],
             },
           },
@@ -386,23 +389,22 @@ const Results: FC<{
               <Text variant="eyebrow" color="purple400">
                 Beint að efninu
               </Text>
-              {(search.results.items as Article[] & LifeEventPage[])
+              {(search.results.items as Article[] &
+                LifeEventPage[] &
+                AboutPage[] &
+                News[])
                 .slice(0, 5)
                 .map(({ id, title, slug, __typename }) => (
-                  <Text
-                    as="div"
-                    variant="h5"
-                    color="blue400"
-                    key={id}
-                    {...getItemProps({ item: '' })}
-                  >
-                    <Link
-                      href={makePath(__typename, '[slug]')}
-                      as={makePath(__typename, slug)}
-                    >
-                      <a>{title}</a>
-                    </Link>
-                  </Text>
+                  <div key={id} {...getItemProps({ item: '' })}>
+                    <Text variant="h5" color="blue400">
+                      <Link
+                        href={makePath(__typename, '[slug]')}
+                        as={makePath(__typename, slug)}
+                      >
+                        <a>{title}</a>
+                      </Link>
+                    </Text>
+                  </div>
                 ))}
             </Stack>
           </div>

@@ -60,6 +60,27 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             height
           }
         }
+
+        ... on News {
+          id
+          intro
+          title
+          slug
+          image {
+            id
+            url
+            title
+            width
+            height
+            contentType
+          }
+        }
+
+        ... on AboutPage {
+          title
+          seoDescription
+          slug
+        }
       }
     }
   }
@@ -132,6 +153,27 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             width
             height
           }
+        }
+
+        ... on News {
+          id
+          intro
+          title
+          slug
+          image {
+            id
+            url
+            title
+            width
+            height
+            contentType
+          }
+        }
+
+        ... on AboutPage {
+          title
+          seoDescription
+          slug
         }
       }
       tagCounts {

@@ -39,6 +39,8 @@ import {
   GetNamespaceQuery,
   Article,
   LifeEventPage,
+  AboutPage,
+  News,
   SearchableContentTypes,
   SearchableTags,
 } from '../../graphql/schema'
@@ -59,7 +61,7 @@ const Search: Screen<CategoryProps> = ({
   searchResults,
   namespace,
 }) => {
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -98,10 +100,14 @@ const Search: Screen<CategoryProps> = ({
 
   const getLabels = (item) => {
     const labels = []
-
-    switch (item.__typename as LifeEventPage['__typename']) {
+    switch (
+      item.__typename as LifeEventPage['__typename'] & News['__typename']
+    ) {
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
+        break
+      case 'News':
+        labels.push(t.newsAndAnnouncements)
         break
       default:
         break
@@ -121,21 +127,23 @@ const Search: Screen<CategoryProps> = ({
 
     return labels
   }
-
-  const items = (searchResults.items as Array<Article & LifeEventPage>).map(
-    (item) => ({
-      title: item.title,
-      description: item.intro,
-      href: makePath(item.__typename, '[slug]'),
-      as: makePath(item.__typename, item.slug),
-      categorySlug: item.category?.slug,
-      category: item.category,
-      group: item.group,
-      ...(item.image && { image: item.image as Image }),
-      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
-      labels: getLabels(item),
-    }),
-  )
+  const items = (searchResults.items as Array<
+    Article & LifeEventPage & AboutPage & News
+  >).map((item) => ({
+    title: item.title,
+    description: item.intro ?? item.seoDescription,
+    href:
+      item.__typename === 'AboutPage'
+        ? item.slug
+        : makePath(item.__typename, '[slug]'),
+    as: makePath(item.__typename, item.slug),
+    categorySlug: item.category?.slug,
+    category: item.category,
+    group: item.group,
+    ...(item.image && { image: item.image as Image }),
+    ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+    labels: getLabels(item),
+  }))
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -197,7 +205,7 @@ const Search: Screen<CategoryProps> = ({
                       right: 40,
                       position: 'absolute',
                       left: '0',
-                      top: '-4px',
+                      top: '12px',
                       zIndex: 10, // to accommodate for being absolute
                     }}
                   >
@@ -378,6 +386,8 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           types: [
             'webArticle' as SearchableContentTypes,
             'webLifeEventPage' as SearchableContentTypes,
+            'webAboutPage' as SearchableContentTypes,
+            'webNews' as SearchableContentTypes,
           ],
           size: PerPage,
           ...tags,

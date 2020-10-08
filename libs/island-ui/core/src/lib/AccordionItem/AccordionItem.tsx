@@ -141,7 +141,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            paddingX={[2, 2, 4]}
+            paddingX={[2, 2, 0]}
             paddingY={2}
             onClick={onClick ? onClick : handleOpen}
           >
@@ -197,7 +197,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingX={[2, 2, 4]} paddingBottom={2} id={id}>
+          <Box paddingX={[2, 2, 0]} paddingBottom={2} id={id}>
             {children}
           </Box>
         </AnimateHeight>
