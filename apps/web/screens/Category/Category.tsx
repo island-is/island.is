@@ -294,6 +294,7 @@ const Category: Screen<CategoryProps> = ({
                               {heading && (
                                 <Text
                                   variant="h5"
+                                  as="h3"
                                   paddingBottom={3}
                                   paddingTop={index === 0 ? 0 : 3}
                                 >
