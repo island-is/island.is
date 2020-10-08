@@ -38,7 +38,7 @@ export const RadioController: FC<Props> = ({
           <Stack space={2}>
             {options.map((option, index) => (
               <RadioButton
-                large={largeButtons}
+                large={largeButtons || emphasize}
                 filled={emphasize}
                 tooltip={option.tooltip}
                 key={`${id}-${index}`}
