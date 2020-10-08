@@ -34,7 +34,7 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "ts-node": "ts-node -r tsconfig-paths/register -O '{\"module\":\"commonjs\",\"esModuleInterop\":true}'",
+    "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
     "schemas": "test -f libs/api/schema/src/lib/schema.d.ts || echo 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && yarn nx run api:contentful-types && yarn nx run application-system-api:build-schema && yarn nx run api-domains-application:codegen && yarn nx run api:build-schema && yarn affected:schemas",
     "postinstall": "if [ ! -z ${CI+x} ]; then exit 0; else yarn schemas; fi"
   },
@@ -267,6 +267,7 @@
     "@typescript-eslint/parser": "2.19.2",
     "@zeit/next-source-maps": "^0.0.3",
     "babel-loader": "8.0.6",
+    "cross-env": "7.0.2",
     "cross-spawn": "^7.0.3",
     "csstype": "^2.6.10",
     "cypress": "4.1.0",
