@@ -63,6 +63,13 @@ export class User extends Model<User> {
   mobileNumber: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  email: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(UserRole),

@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
   Breadcrumbs,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '../../i18n'

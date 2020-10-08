@@ -21,6 +21,7 @@ export const user = {
   name: 'Ívar Oddsson',
   title: 'héraðsdómari',
   mobileNumber: '6904031',
+  email: 'ivaro@kolibri.is',
   role: 'JUDGE',
 }
 

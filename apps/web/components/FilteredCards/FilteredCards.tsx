@@ -5,7 +5,7 @@ import cn from 'classnames'
 import {
   Box,
   Tiles,
-  Button,
+  ButtonDeprecated as Button,
   Stack,
   Text,
   Tag,

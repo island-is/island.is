@@ -5,7 +5,6 @@ export const gridRow = style({
   boxSizing: 'border-box',
   display: 'flex',
   flex: '0 1 auto',
-  flexDirection: 'row',
   flexWrap: 'wrap',
   marginLeft: `-${theme.grid.gutter.mobile / 2}px`,
   marginRight: `-${theme.grid.gutter.mobile / 2}px`,

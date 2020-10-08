@@ -13,7 +13,7 @@ import {
   FieldNumberInput,
   Box,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
 } from '@island.is/island-ui/core'
 

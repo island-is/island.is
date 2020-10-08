@@ -93,3 +93,9 @@ export const linksContent = style({
   paddingLeft: theme.spacing[3],
   width: '100%',
 })
+
+export const closeButton = style({
+  position: 'absolute',
+  right: theme.spacing[3],
+  top: theme.spacing[3],
+})

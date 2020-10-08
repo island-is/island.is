@@ -1,7 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import Link from 'next/link'
-import { Button, Text, Box, Tiles } from '@island.is/island-ui/core'
+import {
+  ButtonDeprecated as Button,
+  Text,
+  Box,
+  Tiles,
+} from '@island.is/island-ui/core'
 
 export interface LinkCardProps {
   title: string

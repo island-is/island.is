@@ -5,7 +5,7 @@ import {
   ContentBlock,
   Box,
   Icon,
-  Button,
+  ButtonDeprecated as Button,
   FocusableBox,
 } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'

@@ -1,7 +1,8 @@
 // Components
 export * from './lib/Pagination/Pagination'
 export * from './lib/AsyncSearch/AsyncSearch'
-export * from './lib/Button/Button'
+export { Button as ButtonDeprecated } from './lib/Button/Button'
+export * from './lib/ButtonRC/Button'
 export * from './lib/Logo/Logo'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
@@ -45,6 +46,8 @@ export * from './lib/AlertBanner/AlertBanner'
 export * from './lib/ProfileCard/ProfileCard'
 export * from './lib/FormStepper/FormStepper'
 export * from './lib/FormStepper/types'
+export * from './lib/Accordion/Accordion'
+export * from './lib/Accordion/AccordionItem/AccordionItem'
 
 // Layout
 export * from './lib/Box/Box'
@@ -56,8 +59,6 @@ export * from './lib/Stack/Stack'
 export * from './lib/Hidden/Hidden'
 export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
-export * from './lib/Accordion/Accordion'
-export * from './lib/AccordionItem/AccordionItem'
 export * from './lib/Sleeve/Sleeve'
 
 // Context
