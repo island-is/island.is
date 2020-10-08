@@ -35,8 +35,8 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
-    "schemas": "ts-node ./scripts/generate-schemas.js",
-    "postinstall": "ts-node ./scripts/postinstall.js"
+    "schemas": "node ./scripts/generate-schemas.js",
+    "postinstall": "node ./scripts/postinstall.js"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",
