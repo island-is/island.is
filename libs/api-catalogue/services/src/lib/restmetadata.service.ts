@@ -15,6 +15,7 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { serviceIdSort, exceptionHandler } from './utils'
+import { uuid } from 'uuidv4'
 
 @Injectable()
 export class RestMetadataService {
@@ -36,7 +37,9 @@ export class RestMetadataService {
       const sorted = value.sort(serviceIdSort)
 
       let service: Service = {
-        id: `${sorted[0].subsystemCode}-${key}`,
+        id: uuid()
+          .split('-')
+          .join(''),
         name: '',
         owner: '',
         description: '',
