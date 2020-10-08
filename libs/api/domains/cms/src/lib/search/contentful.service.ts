@@ -23,6 +23,7 @@ interface SyncerResult {
   items: Entry<any>[]
   deletedItems: string[]
   token: string | undefined
+  elasticIndex: string
 }
 
 type typeOfSync = { initial: boolean } | { nextSyncToken: string }
@@ -80,25 +81,23 @@ export class ContentfulService {
     return data.items
   }
 
-  private async getLastSyncToken(
-    locale: keyof typeof SearchIndexes,
-  ): Promise<string> {
+  private async getLastSyncToken(elasticIndex: string): Promise<string> {
     const query = {
       types: ['cmsNextSyncToken'],
       sort: { dateUpdated: 'desc' as sortDirection },
       size: 1,
     }
     logger.info('Getting next sync token from index', {
-      index: SearchIndexes[locale],
+      index: elasticIndex,
     })
     const document = await this.elasticService.getDocumentsByMetaData(
-      SearchIndexes[locale],
+      elasticIndex,
       query,
     )
     return document.hits.hits?.[0]?._source.title
   }
 
-  updateNextSyncToken({ locale, token }: PostSyncOptions) {
+  updateNextSyncToken({ elasticIndex, token }: PostSyncOptions) {
     // we get this next sync token from Contentful on sync request
     const nextSyncTokenDocument = {
       title: token,
@@ -109,25 +108,25 @@ export class ContentfulService {
 
     // write sync token to elastic here as it's own type
     logger.info('Writing next sync token to elasticsearch index')
-    return this.elasticService.index(
-      SearchIndexes[locale],
-      nextSyncTokenDocument,
-    )
+    return this.elasticService.index(elasticIndex, nextSyncTokenDocument)
   }
 
   private async getTypeOfSync({
     fullSync,
-    locale,
-  }: SyncOptions): Promise<typeOfSync> {
+    elasticIndex,
+  }: {
+    fullSync: boolean
+    elasticIndex: string
+  }): Promise<typeOfSync> {
     if (fullSync) {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
       return { initial: true }
     } else {
       // this is a partial sync, try and get the last sync token else do full sync
-      const nextSyncToken = await this.getLastSyncToken(locale)
+      const nextSyncToken = await this.getLastSyncToken(elasticIndex)
       logger.info('Getting data from last sync token found in Contentful', {
-        locale,
+        elasticIndex,
         nextSyncToken,
       })
       return nextSyncToken ? { nextSyncToken } : { initial: true }
@@ -191,11 +190,13 @@ export class ContentfulService {
     return data.items
   }
 
-  async getSyncEntries({
-    fullSync,
-    locale,
-  }: SyncOptions): Promise<SyncerResult> {
-    const typeOfSync = await this.getTypeOfSync({ fullSync, locale })
+  async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
+    const {
+      fullSync,
+      locale,
+      elasticIndex = SearchIndexes[options.locale],
+    } = options
+    const typeOfSync = await this.getTypeOfSync({ fullSync, elasticIndex })
 
     // gets all changes in all locales
     const {
@@ -248,6 +249,7 @@ export class ContentfulService {
       token: newNextSyncToken,
       items,
       deletedItems,
+      elasticIndex,
     }
   }
 }
