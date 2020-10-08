@@ -1,5 +1,6 @@
 import React from 'react'
 import { RadioButton } from './RadioButton'
+import { Box } from '../Box/Box'
 
 export default {
   title: 'Form/RadioButton',
@@ -24,3 +25,11 @@ Large.args = { label: 'Large version', large: true }
 
 export const WithTooltip = Template.bind({})
 WithTooltip.args = { label: 'With a tooltip', tooltip: 'This is the tooltip' }
+
+export const Filled = () => (
+  <>
+    <Box background={'blue100'} padding={3}>
+      <RadioButton label="Filled white background" filled large />
+    </Box>
+  </>
+)
