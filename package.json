@@ -35,7 +35,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
-    "schemas": "test -f libs/api/schema/src/lib/schema.d.ts || echo 'export default () => {}' >> libs/api/schema/src/lib/schema.d.ts && yarn nx run api:contentful-types && yarn nx run application-system-api:build-schema && yarn nx run api-domains-application:codegen && yarn nx run api:build-schema && yarn affected:schemas",
+    "schemas": "ts-node ./scripts/generate-schemas.js",
     "postinstall": "ts-node ./scripts/postinstall.js"
   },
   "dependencies": {
