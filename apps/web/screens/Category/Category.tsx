@@ -148,7 +148,7 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
-  const groupArticlesBySubgroup = (articles: Articles) => {
+  const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
       return {
         ...result,
@@ -162,9 +162,20 @@ const Category: Screen<CategoryProps> = ({
     // add "other" articles as well
     const articlesBySubgroup = otherArticles.reduce((result, item) => {
       const titles = item.otherSubgroups.map((x) => x.title)
-      const found = intersection(Object.keys(result), titles)
+      const subgroupsFound = intersection(Object.keys(result), titles)
 
-      return found.reduce((r, k) => {
+      // if there is no sub group found then at least show it in the group
+      if (
+        !subgroupsFound.length &&
+        item.otherGroups.find((x) => x.slug === groupSlug)
+      ) {
+        return {
+          ...result,
+          ['undefined']: [...(result['undefined'] || []), item],
+        }
+      }
+
+      return subgroupsFound.reduce((r, k) => {
         return {
           ...r,
           [k]: [...r[k], item],
@@ -264,7 +275,10 @@ const Category: Screen<CategoryProps> = ({
               {sortedGroups.map((groupSlug, index) => {
                 const { title, description, articles } = groups[groupSlug]
 
-                const { articlesBySubgroup } = groupArticlesBySubgroup(articles)
+                const { articlesBySubgroup } = groupArticlesBySubgroup(
+                  articles,
+                  groupSlug,
+                )
 
                 const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
                 const expanded = hash.includes(groupSlug)
