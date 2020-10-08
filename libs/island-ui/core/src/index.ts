@@ -31,6 +31,7 @@ export * from './lib/Link/ArrowLink/ArrowLink'
 export * from './lib/Divider/Divider'
 export * from './lib/Icon/Icon' // TODO: missing stories
 export * from './lib/Typography/Typography'
+export * from './lib/Text/Text'
 
 // Forms
 export * from './lib/AsyncSelect/AsyncSelect'
