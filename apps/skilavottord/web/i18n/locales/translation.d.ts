@@ -28,7 +28,7 @@ export interface MyCars {
   actions: CarActions
   status: CarStatus
   buttons: CarsButtons
-  tooltip: string
+  tooltip: ToolTip
   error: Errors
 }
 
@@ -88,6 +88,11 @@ export interface CarsButtons {
   openProcess: string
   seeDetails: string
   reload: string
+}
+
+export interface ToolTip {
+  text: string
+  link: string
 }
 
 export interface ConfirmSubTitles {

@@ -8,6 +8,7 @@ import {
   Stack,
   Tooltip,
   Inline,
+  Link,
 } from '@island.is/island-ui/core'
 import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -31,11 +32,20 @@ export const ActionCard: FC<ActionCardProps> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
+  const toolTipText = (
+    <>
+      {t.tooltip.text}{' '}
+      <Link href={t.tooltip.link} color="blue400">
+        {t.tooltip.link}
+      </Link>
+    </>
+  )
+
   return (
     <OutlinedBox backgroundColor="white">
       <GridContainer>
         <GridRow>
-          <GridColumn span={['10/10', '10/10', '7/10', '7/10']}>
+          <GridColumn span={['10/10', '10/10', '6/10', '7/10']}>
             <GridRow>
               <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
                 <Box paddingLeft={4} paddingY={4}>
@@ -56,7 +66,7 @@ export const ActionCard: FC<ActionCardProps> = ({
               </GridColumn>
             </GridRow>
           </GridColumn>
-          <GridColumn span={['10/10', '10/10', '3/10', '3/10']}>
+          <GridColumn span={['10/10', '10/10', '4/10', '3/10']}>
             {recyclable ? (
               <ColumnBox
                 background="blue100"
@@ -81,9 +91,12 @@ export const ActionCard: FC<ActionCardProps> = ({
                 width="full"
                 textAlign="center"
               >
-                <Inline space={'smallGutter'}>
-                  <Typography variant="pSmall">{t.actions.invalid}</Typography>
-                  <Tooltip text={t.tooltip} />
+                <Inline space="smallGutter">
+                  <Typography variant="pSmall">
+                    {t.actions.invalid}
+                    {' '}
+                    <Tooltip text={toolTipText.props.children} colored />
+                  </Typography>
                 </Inline>
               </ColumnBox>
             )}
