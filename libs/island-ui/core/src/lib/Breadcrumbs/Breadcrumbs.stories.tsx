@@ -1,6 +1,5 @@
 import React from 'react'
 import { Breadcrumbs } from './Breadcrumbs'
-import { Box } from '../Box'
 
 export default {
   title: 'Navigation/Breadcrumbs',
