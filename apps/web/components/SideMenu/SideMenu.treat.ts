@@ -99,4 +99,3 @@ export const closeButton = style({
   right: theme.spacing[3],
   top: theme.spacing[3],
 })
-
