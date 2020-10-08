@@ -44,6 +44,10 @@ export const tabPanelWrapper = style({
   position: 'relative',
 })
 
+export const tabPanelRow = style({
+  position: 'relative',
+})
+
 export const tabPanel = style({
   position: 'absolute',
   width: '100%',
@@ -151,4 +155,16 @@ export const searchContentContainer = style({
     marginRight: -24,
     width: `calc(100% + ${24 * 2}px)`,
   }),
+})
+
+export const tabListArrowLeft = style({
+  position: 'absolute',
+  top: 0,
+  left: 12,
+})
+
+export const tabListArrowRight = style({
+  position: 'absolute',
+  top: 0,
+  right: 12,
 })

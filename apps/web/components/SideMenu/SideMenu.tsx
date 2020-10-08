@@ -77,6 +77,21 @@ export const SideMenu: FC<Props> = ({
     [ref, isVisible, handleClose],
   )
 
+  const onKeyDown = useCallback((event, index) => {
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft':
+        if (index > 0) {
+          setActiveTab(index - 1)
+        }
+        break
+      case 'arrowright':
+        if (index < tabList.length - 1) {
+          setActiveTab(index + 1)
+        }
+        break
+    }
+  }, [])
+
   useEffect(() => {
     setActiveTab(0)
 
@@ -94,6 +109,10 @@ export const SideMenu: FC<Props> = ({
   }, [])
 
   useEffect(() => {
+    tabRefs.current[activeTab].focus()
+  }, [activeTab])
+
+  useEffect(() => {
     document.addEventListener('click', handleClickOutside, true)
 
     return () => {
@@ -107,7 +126,7 @@ export const SideMenu: FC<Props> = ({
 
   return (
     <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
-      <FocusLock>
+      <FocusLock noFocusGuards={true}>
         <Box
           className={cn(styles.root, {
             [styles.isVisible]: isVisible,
@@ -115,6 +134,8 @@ export const SideMenu: FC<Props> = ({
           background="white"
           borderRadius="large"
           height="full"
+          id="sideMenu"
+          aria-labelledby="sideMenuToggle"
         >
           <Box
             display="flex"
@@ -123,16 +144,6 @@ export const SideMenu: FC<Props> = ({
             justifyContent="spaceBetween"
           >
             <Logo {...logoProps} iconOnly id="sideMenuLogo" />
-            <Box display="flex" alignItems="center">
-              <FocusableBox
-                component="button"
-                onClick={handleClose}
-                tabIndex={-1}
-                padding={1}
-              >
-                <Icon type="close" />
-              </FocusableBox>
-            </Box>
           </Box>
           <Hidden above="sm">
             <GridContainer>
@@ -173,16 +184,23 @@ export const SideMenu: FC<Props> = ({
             </GridContainer>
           </Hidden>
 
-          <div className={styles.tabBar}>
+          <ul className={styles.tabBar} role="tablist">
             {tabList.map((tab, index) => (
-              <div key={index} className={styles.tabContainer}>
+              <li
+                key={index}
+                className={styles.tabContainer}
+                role="presentation"
+              >
                 <FocusableBox
                   ref={(el) => (tabRefs.current[index] = el)}
                   component="button"
                   role="tab"
                   aria-controls={`tab-content-${index}`}
                   aria-selected={activeTab === index}
+                  tabIndex={activeTab === index ? 0 : -1}
+                  id={`tab-${index}`}
                   onClick={() => setActiveTab(index)}
+                  onKeyDown={(e) => onKeyDown(e, index)}
                   className={styles.tabButton}
                 >
                   {({ isFocused }) => (
@@ -202,18 +220,20 @@ export const SideMenu: FC<Props> = ({
                     </div>
                   )}
                 </FocusableBox>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
           {tabList.map((tab, index) => {
             const hasExternalLinks =
               tab.externalLinks && tab.externalLinks.length
             return (
               <div
+                id={`tab-content-${index}`}
                 key={index}
                 aria-labelledby={`tab${index}`}
                 role="tabpanel"
                 className={styles.content}
+                aria-hidden={activeTab !== index}
                 hidden={activeTab !== index}
               >
                 <div className={styles.linksContent}>
@@ -276,6 +296,15 @@ export const SideMenu: FC<Props> = ({
               </div>
             )
           })}
+          <Box
+            display="flex"
+            alignItems="center"
+            className={styles.closeButton}
+          >
+            <FocusableBox component="button" onClick={handleClose} padding={1}>
+              <Icon type="close" />
+            </FocusableBox>
+          </Box>
         </Box>
       </FocusLock>
     </RemoveScroll>
