@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {
   ToastContainer as ToastifyContainer,
   toast as toastify,
@@ -54,24 +54,28 @@ const RenderMessage = ({
   )
 }
 
-const ToastContainer: React.FC<ToastProps> = ({
+export const ToastContainer: React.FC<ToastProps> = ({
   hideProgressBar = false,
   timeout = 5000,
+  closeButton = false,
 }) => {
   return (
-    <div className={toastStyles.root}>
-      <ToastifyContainer
-        position="bottom-right"
-        autoClose={timeout}
-        hideProgressBar={hideProgressBar}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        transition={Slide}
-      />
-      <style jsx>{toastKeyframes}</style>
-    </div>
+    <>
+      <div className={toastStyles.root}>
+        <ToastifyContainer
+          position="bottom-right"
+          autoClose={timeout}
+          hideProgressBar={hideProgressBar}
+          closeButton={closeButton}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          transition={Slide}
+        />
+        <style jsx>{toastKeyframes}</style>
+      </div>
+    </>
   )
 }
 
