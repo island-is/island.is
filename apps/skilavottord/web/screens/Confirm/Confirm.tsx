@@ -6,7 +6,7 @@ import {
   Box,
   Stack,
   Typography,
-  ButtonDeprecated as Button,
+  Button,
   Checkbox,
   Inline,
   Link,
@@ -14,7 +14,6 @@ import {
 
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { CarDetailsBox } from './components'
-import * as styles from './Confirm.treat'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 
@@ -55,19 +54,9 @@ const Confirm = ({ apolloState }) => {
 
   const checkboxLabel = (
     <>
-      <Inline space={1}>
-        {t.checkbox.label}
-        <Link
-          href=""
-          className={
-            checkbox
-              ? styles.checkboxLabelLinkChecked
-              : styles.checkboxLabelLink
-          }
-        >
-          {t.checkbox.linkLabel}
-        </Link>
-      </Inline>
+      <Text fontWeight={!checkbox ? 'light' : 'medium'}>
+        {t.checkbox.label} <a href="/">{t.checkbox.linkLabel}</a>
+      </Text>
     </>
   )
 
@@ -104,7 +93,8 @@ const Confirm = ({ apolloState }) => {
                 <Button
                   variant="ghost"
                   onClick={onCancel}
-                  rounded
+                  circle
+                  size="large"
                   icon="arrowLeft"
                 ></Button>
               ) : (
@@ -113,7 +103,6 @@ const Confirm = ({ apolloState }) => {
                 </Button>
               )}
               <Button
-                variant="normal"
                 disabled={!checkbox}
                 icon="arrowRight"
                 onClick={() => onConfirm(id.toString())}

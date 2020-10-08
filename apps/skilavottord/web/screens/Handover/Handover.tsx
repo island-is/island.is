@@ -1,18 +1,14 @@
-import React, { useState } from 'react'
-import {
-  Box,
-  Stack,
-  Text,
-  ButtonDeprecated as Button,
-} from '@island.is/island-ui/core'
-import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import CompanyList from './components/CompanyList'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 import { useWindowSize } from 'react-use'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Handover.treat'
+import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { Button } from '@island.is/skilavottord-web/components'
+import CompanyList from './components/CompanyList'
+import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 
 const Handover = () => {
   const [showModal, setModal] = useState(false)
@@ -63,9 +59,7 @@ const Handover = () => {
               {t.buttons.cancel}
             </Button>
           )}
-          <Button onClick={onContinue} width={isMobile ? 'fluid' : 'normal'}>
-            {t.buttons.close}
-          </Button>
+          <Button onClick={onContinue}>{t.buttons.close}</Button>
         </Box>
       </Stack>
       <Modal

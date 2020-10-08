@@ -1,14 +1,12 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Typography,
   GridContainer,
   GridRow,
   GridColumn,
   Stack,
   Tooltip,
-  Inline,
-  Link,
+  Text,
 } from '@island.is/island-ui/core'
 import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -34,10 +32,9 @@ export const ActionCard: FC<ActionCardProps> = ({
 
   const toolTipText = (
     <>
-      {t.tooltip.text}{' '}
-      <Link href={t.tooltip.link} color="blue400">
-        {t.tooltip.link}
-      </Link>
+      <Text variant="small">
+        {t.tooltip.text} <a href={t.tooltip.link}>{t.tooltip.link}</a>
+      </Text>
     </>
   )
 
@@ -50,17 +47,15 @@ export const ActionCard: FC<ActionCardProps> = ({
               <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
-                    <Typography variant="h5">{permno}</Typography>
-                    <Typography variant="p">
-                      {`${type}, ${newregdate}`}
-                    </Typography>
+                    <Text variant="h3">{permno}</Text>
+                    <Text>{`${type}, ${newregdate}`}</Text>
                   </Stack>
                 </Box>
               </GridColumn>
               <GridColumn span={['4/10', '2/10', '2/10', '3/10']}>
                 {isCoOwned && (
                   <ColumnBox width="full" paddingRight={[4, 4, 4, 1]}>
-                    <Typography variant="h5">{t.status.coOwned}</Typography>
+                    <Text variant="h5">{t.status.coOwned}</Text>
                   </ColumnBox>
                 )}
               </GridColumn>
@@ -91,13 +86,10 @@ export const ActionCard: FC<ActionCardProps> = ({
                 width="full"
                 textAlign="center"
               >
-                <Inline space="smallGutter">
-                  <Typography variant="pSmall">
-                    {t.actions.invalid}
-                    {' '}
-                    <Tooltip text={toolTipText.props.children} colored />
-                  </Typography>
-                </Inline>
+                <Text variant="small">
+                  {t.actions.invalid}{' '}
+                  <Tooltip text={toolTipText.props.children} />
+                </Text>
               </ColumnBox>
             )}
           </GridColumn>
