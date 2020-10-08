@@ -8,6 +8,6 @@ const useDeprecatedComponent = (
     if (process.env.NODE_ENV === 'development') {
       console.warn(customMsg)
     }
-  }, [componentName])
+  }, [customMsg])
 
 export default useDeprecatedComponent
