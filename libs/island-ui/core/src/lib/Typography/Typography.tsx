@@ -3,7 +3,8 @@
 import React from 'react'
 import cn from 'classnames'
 
-import styles, {
+import {
+  variantStyles,
   base,
   VariantTypes,
   colors,
@@ -75,7 +76,7 @@ export const Typography = ({
       paddingY={paddingY}
       className={cn(
         base,
-        variant ? styles[variant] : null,
+        variant ? variantStyles[variant] : null,
         color ? colors[color] : null,
         fontWeight ? fontWeightStyles[fontWeight] : null,
         {
@@ -89,5 +90,3 @@ export const Typography = ({
     </Box>
   )
 }
-
-export default Typography

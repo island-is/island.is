@@ -6,7 +6,7 @@ import {
 } from 'react-toastify'
 import { Box } from '../Box/Box'
 import { Icon } from '../Icon/Icon'
-import Typography from '../Typography/Typography'
+import { Typography } from '../Typography/Typography'
 import * as toastStyles from './Toast.treat'
 import { toastKeyframes } from './toastKeyframes'
 

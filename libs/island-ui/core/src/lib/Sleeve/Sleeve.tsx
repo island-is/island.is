@@ -42,5 +42,3 @@ export const Sleeve: FC<SleeveProps> = ({
     </div>
   )
 }
-
-export default Sleeve

@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone'
 import * as styles from './InputFileUpload.treat'
 
 import { Box } from '../Box/Box'
-import Typography from '../Typography/Typography'
+import { Typography } from '../Typography/Typography'
 import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon, IconTypes } from '../Icon/Icon'
@@ -218,5 +218,3 @@ export const InputFileUpload = ({
     </Box>
   )
 }
-
-export default InputFileUpload

@@ -4,7 +4,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.treat'
 import { Icon, IconTypes } from '../Icon/Icon'
-import Typography from '../Typography/Typography'
+import { Typography } from '../Typography/Typography'
 import { Link } from '../Link/Link'
 
 export type AlertBannerVariants =
@@ -146,5 +146,3 @@ export const AlertBanner: FC<AlertBannerProps> = ({
     </Box>
   )
 }
-
-export default AlertBanner

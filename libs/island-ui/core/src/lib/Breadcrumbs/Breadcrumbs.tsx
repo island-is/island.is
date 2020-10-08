@@ -35,5 +35,3 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
     </div>
   )
 }
-
-export default Breadcrumbs

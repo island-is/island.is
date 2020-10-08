@@ -1,6 +1,6 @@
 import React from 'react'
-import Typography from '../Typography/Typography'
-import Input from '../Input/Input'
+import { Typography } from '../Typography/Typography'
+import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
 
 import * as styles from './NewsletterSignup.treat'

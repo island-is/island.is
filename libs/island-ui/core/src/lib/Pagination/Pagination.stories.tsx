@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Pagination from './Pagination'
+import { Pagination } from './Pagination'
 import { number } from '@storybook/addon-knobs'
 import { Box } from '../Box/Box'
 

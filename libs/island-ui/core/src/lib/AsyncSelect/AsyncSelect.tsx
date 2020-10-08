@@ -177,5 +177,3 @@ const Control = (props: ControlProps<AsyncSelectOption>) => {
     </components.Control>
   )
 }
-
-export default AsyncSelect

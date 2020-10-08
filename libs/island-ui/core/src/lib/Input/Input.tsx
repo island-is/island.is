@@ -2,7 +2,7 @@ import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
 import * as styles from './Input.treat'
 import { Box } from '../Box/Box'
-import Tooltip from '../Tooltip/Tooltip'
+import { Tooltip } from '../Tooltip/Tooltip'
 
 type InputBackgroundColor = 'white' | 'blue'
 
@@ -178,5 +178,3 @@ export const Input = forwardRef(
     )
   },
 )
-
-export default Input

@@ -282,5 +282,3 @@ const defaultBottomLinks = [
     title: 'Tekjusagan',
   },
 ]
-
-export default Footer

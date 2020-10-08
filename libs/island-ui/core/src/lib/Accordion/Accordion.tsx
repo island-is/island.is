@@ -56,5 +56,3 @@ export const Accordion = ({
     </Box>
   )
 }
-
-export default Accordion

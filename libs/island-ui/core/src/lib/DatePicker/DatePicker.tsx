@@ -185,5 +185,3 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     </div>
   )
 }
-
-export default DatePicker

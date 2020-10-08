@@ -1,9 +1,9 @@
 import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
 
-import { Tooltip } from './Tooltip/Tooltip'
 import { Inline } from '../Inline/Inline'
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
+import { Tooltip } from './Tooltip'
 
 export default {
   title: 'Components/Tooltip',
@@ -22,7 +22,7 @@ export const tooltipText =
 <Canvas>
   <Story name="Default">
     <Box padding="gutter">
-      <Typography variant="p" as="span">
+      <Text variant="p" as="span">
         Here is some text that has a tooltip with the default icon at the end of
         it.{' '}
         <Tooltip
@@ -31,7 +31,7 @@ export const tooltipText =
           as="button"
           text={tooltipText}
         />
-      </Typography>
+      </Text>
     </Box>
   </Story>
 </Canvas>
@@ -40,36 +40,23 @@ export const tooltipText =
 
 <Canvas>
   <Story name="WithChildren">
-    <>
-      <Box padding="gutter">
-        <Typography variant="p" as="span">
-          Here is some text that has a tooltip wrapped around{' '}
-          <Tooltip
-            colored={false}
-            placement="top"
-            as="span"
-            text={tooltipText}
-          >
-            <span>this text</span>
-          </Tooltip>
-          .
-        </Typography>
-      </Box>
-
-      <Box padding="gutter">
-        <Inline space={1}>
-          <Typography variant="p" as="span">
-            Here is some text.
-          </Typography>
-          <Tooltip
-            colored={false}
-            placement="bottom"
-            text={tooltipText}
-          />
-        </Inline>
-      </Box>
-    </>
-
+    <Box padding="gutter">
+      <Text variant="p" as="span">
+        Here is some text that has a tooltip wrapped around{' '}
+        <Tooltip colored={false} placement="top" as="span" text={tooltipText}>
+          <span>this text</span>
+        </Tooltip>
+        .
+      </Text>
+    </Box>
+    <Box padding="gutter">
+      <Inline space={1}>
+        <Text variant="p" as="span">
+          Here is some text.
+        </Text>
+        <Tooltip colored={false} placement="bottom" text={tooltipText} />
+      </Inline>
+    </Box>
   </Story>
 </Canvas>
 

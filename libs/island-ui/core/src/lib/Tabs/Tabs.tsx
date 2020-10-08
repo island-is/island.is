@@ -93,5 +93,3 @@ export const Tabs: FC<TabInterface> = ({
     </Box>
   )
 }
-
-export default Tabs

@@ -164,5 +164,3 @@ const Control = (props: ControlProps<Option>) => {
     </components.Control>
   )
 }
-
-export default Select

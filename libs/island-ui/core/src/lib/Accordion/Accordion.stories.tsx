@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import Accordion from './Accordion'
+import React from 'react'
+import { Accordion } from './Accordion'
 import { ContentBlock } from '../ContentBlock'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import {
   AccordionItem,
   AccordionCard,

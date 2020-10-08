@@ -2,7 +2,7 @@ import React from 'react'
 import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 import { Logo } from '../Logo/Logo'
-import Typography from '../Typography/Typography'
+import { Typography } from '../Typography/Typography'
 import { Stack } from './Stack'
 
 export default {

@@ -64,5 +64,3 @@ export const BulletList: FC<BulletListProps> = ({
     </div>
   )
 }
-
-export default BulletList
