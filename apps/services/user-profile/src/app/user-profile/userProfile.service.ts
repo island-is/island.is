@@ -39,7 +39,7 @@ export class UserProfileService {
     numberOfAffectedRows: number
     updatedUserProfile: UserProfile
   }> {
-    this.logger.debug(`Updating user profile with id "${id}"`)
+    this.logger.debug(`Updating user profile with id "${nationalId}"`)
 
     const [
       numberOfAffectedRows,

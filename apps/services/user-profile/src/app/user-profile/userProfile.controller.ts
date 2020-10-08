@@ -8,7 +8,7 @@ import {
   Param,
   Post, NotImplementedException, Optional
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger'
 import { Queue } from 'bull'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateImageDto } from './dto/updateImageDto'
@@ -17,14 +17,14 @@ import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pip
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 
-@Controller('UserProfile')
-@Controller('user-profile')
+@ApiTags('User Profile')
+@Controller()
 export class UserProfileController {
 
   constructor(private userProfileService: UserProfileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue) { }
 
-  @Get(':nationalId')
+  @Get('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   async findOneByNationalId(
     @Param('nationalId') nationalId: string,
@@ -40,7 +40,7 @@ export class UserProfileController {
     return profile
   }
 
-  @Post()
+  @Post('userProfile/')
   @ApiCreatedResponse({ type: UserProfile })
   async create(
     @Body()
@@ -72,7 +72,7 @@ export class UserProfileController {
     return updatedUserProfile
   }
 
-  @Put(':nationalId/profileImage')
+  @Put('userProfile/:nationalId/profileImage')
   @ApiParam({
     name: 'nationalId',
     type: String,

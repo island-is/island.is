@@ -3525,6 +3525,18 @@
             "cwd": "apps/services/user-profile"
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run services-user-profile:build-schema"
+          }
+        },
+        "build-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
+          }
+        },
         "generate-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
