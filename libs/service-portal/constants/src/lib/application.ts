@@ -9,4 +9,5 @@ export const zIndex = {
   notificationSidebar: 11,
   actionSidebar: 12,
   menu: 13,
+  modal: 14,
 }

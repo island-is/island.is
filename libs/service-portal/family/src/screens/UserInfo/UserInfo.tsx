@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import {
   Typography,
   Box,
@@ -14,6 +14,7 @@ import UserInfoLine from '../../components/UserInfoLine/UserInfoLine'
 import * as styles from './UserInfo.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
+import { Modal } from '../../components/Modal'
 
 export type UserInfoSidebarType =
   | null
@@ -33,6 +34,12 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   // const handleSetActiveSidebar = (value: UserInfoSidebarType) =>
   //   setActiveSidebar(value)
 
+  const [showModal, setModal] = useState(false)
+
+  const onClickEvent = () => {
+    setModal(true)
+  }
+
   return (
     <>
       <Box marginBottom={6}>
@@ -45,17 +52,19 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Box display="flex" alignItems="center" marginBottom={4}>
         <Hidden below="sm">
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            marginRight={5}
-            borderRadius="circle"
-            background="purple200"
-            className={styles.avatar}
-          >
-            <Icon type="user" color="purple400" width={40} height={40} />
-          </Box>
+          <button onClick={onClickEvent}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              marginRight={5}
+              borderRadius="circle"
+              background="purple200"
+              className={styles.avatar}
+            >
+              <Icon type="user" color="purple400" width={40} height={40} />
+            </Box>
+          </button>
         </Hidden>
         <Typography variant="h2">{userInfo.profile.name}</Typography>
       </Box>
@@ -88,6 +97,35 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
+        <Modal
+          show={showModal}
+          onCancel={() => setModal(false)}
+          onContinue={() => {
+            setModal(false)
+          }}
+          onClickOutside={() => {
+            setModal(false)
+          }}
+          title="Skipta út mynd"
+        >
+          <Box
+            alignItems="center"
+            flexDirection="column"
+            justifyContent="center"
+            display="flex"
+            paddingY={[0, 0, 0, 4]}
+          >
+            <Typography variant="h4">
+              Dragðu mynd hingað til að hlaða upp
+            </Typography>
+            <Typography variant="p">
+              Tekið er við skjölum með endingu: .jpeg, .gif, .png
+            </Typography>
+            <Box paddingTop={[0, 0, 0, 4]}>
+              <Button variant="ghost">Veljið mynd til að hlaða upp</Button>
+            </Box>
+          </Box>
+        </Modal>
         {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine
           label="Kyn N/A"
