@@ -151,6 +151,9 @@
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
+      ],
+      "@island.is/api/domains/user-profile": [
+        "libs/api/domains/user-profile/src/index.ts"
       ]
     }
   },
