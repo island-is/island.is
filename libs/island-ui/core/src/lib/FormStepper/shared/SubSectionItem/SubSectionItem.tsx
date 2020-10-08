@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Icon } from '../../../Icon/Icon'
-import { Typography } from '../../../Typography/Typography'
+import { Text } from '../../../Text/Text'
 import { Box } from '../../../Box'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionItem.treat'
@@ -27,16 +27,12 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
         </span>
       )}
     </SectionNumberColumn>
-
-    <Typography
-      variant={
-        currentState === 'active'
-          ? 'formStepperSectionActive'
-          : 'formStepperSection'
-      }
+    <Text
       as="span"
+      lineHeight="lg"
+      fontWeight={currentState === 'active' ? 'semiBold' : 'light'}
     >
       {children}
-    </Typography>
+    </Text>
   </Box>
 )
