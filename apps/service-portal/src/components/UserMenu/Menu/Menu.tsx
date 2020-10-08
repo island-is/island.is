@@ -17,7 +17,6 @@ import useAuth from '../../../hooks/useAuth/useAuth'
 interface Props {
   isOpen: boolean
   userInfo: UserWithMeta
-  subjectList: SubjectListDto[]
   onSubjectSelection: (subjectNationalId: string) => void
   onCloseMenu: () => void
 }

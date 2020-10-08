@@ -18,6 +18,9 @@ export interface IAboutSubPageFields {
 
   /** Content */
   content: Document
+
+  /** belowContent */
+  belowContent?: ILocation[] | undefined
 }
 
 /** sub-page of the about-page */
@@ -154,6 +157,9 @@ export interface IArticleFields {
 
   /** Importance */
   importance?: number | undefined
+
+  /** User stories */
+  userStories?: Document | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -252,6 +258,28 @@ export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
     contentType: {
       sys: {
         id: 'articleSubgroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAuthorFields {
+  /** Name */
+  name: string
+}
+
+export interface IAuthor extends Entry<IAuthorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'author'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -468,6 +496,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Slide link */
+  slideLink?: ILink | undefined
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
@@ -712,6 +743,18 @@ export interface ILinkFields {
 
   /** URL */
   url: string
+
+  /** Linked page (deprecated) */
+  linkedPage?: ILinkedPage | undefined
+
+  /** Link reference */
+  linkReference?:
+    | IArticle
+    | IArticleCategory
+    | ILinkUrl
+    | INews
+    | IPage
+    | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -724,6 +767,31 @@ export interface ILink extends Entry<ILinkFields> {
     contentType: {
       sys: {
         id: 'link'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILinkedPageFields {
+  /** Title */
+  title: string
+
+  /** page */
+  page: IArticle | IArticleCategory | INews | IPage
+}
+
+export interface ILinkedPage extends Entry<ILinkedPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'linkedPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -749,6 +817,62 @@ export interface ILinkList extends Entry<ILinkListFields> {
     contentType: {
       sys: {
         id: 'linkList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILinkUrlFields {
+  /** url */
+  url: string
+}
+
+export interface ILinkUrl extends Entry<ILinkUrlFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'linkUrl'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILocationFields {
+  /** Title */
+  title: string
+
+  /** subTitle */
+  subTitle?: string | undefined
+
+  /** Address */
+  address?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Background */
+  background: Asset
+}
+
+export interface ILocation extends Entry<ILocationFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'location'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -890,6 +1014,9 @@ export interface INewsFields {
 
   /** Date */
   date: string
+
+  /** Author */
+  author?: IAuthor | undefined
 
   /** Introduction */
   intro: string
@@ -1362,6 +1489,12 @@ export interface IStoryFields {
 
   /** Link */
   link?: string | undefined
+
+  /** Linked page (new) */
+  page?: ILinkedPage | undefined
+
+  /** Link reference */
+  storyLink?: ILink | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {
@@ -1983,6 +2116,7 @@ export type CONTENT_TYPE =
   | 'articleCategory'
   | 'articleGroup'
   | 'articleSubgroup'
+  | 'author'
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
@@ -1997,7 +2131,10 @@ export type CONTENT_TYPE =
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'link'
+  | 'linkedPage'
   | 'linkList'
+  | 'linkUrl'
+  | 'location'
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'

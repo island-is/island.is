@@ -52,9 +52,6 @@
     "api": {
       "tags": []
     },
-    "api-domains-hello-world": {
-      "tags": []
-    },
     "api-domains-cms": {
       "tags": []
     },
@@ -104,12 +101,6 @@
       "tags": []
     },
     "gjafakort-consts": {
-      "tags": []
-    },
-    "application-template": {
-      "tags": []
-    },
-    "application-form": {
       "tags": []
     },
     "application-system-form": {
@@ -234,6 +225,12 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "skilavottord-consts": {
+      "tags": []
+    },
+    "skilavottord-types": {
+      "tags": []
+    },
     "elastic-indexing": {
       "tags": []
     },
@@ -260,6 +257,27 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "services-user-profile": {
+      "tags": []
+    },
+    "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-driving-lessons": {
+      "tags": []
+    },
+    "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-reference-template": {
+      "tags": []
+    },
+    "application-core": {
+      "tags": []
+    },
+    "application-ui-shell": {
+      "tags": []
+    },
+    "application-ui-fields": {
       "tags": []
     }
   },

@@ -9,7 +9,6 @@ export class UserProfileByNationalIdPipe
 
   async transform(nationalId: string): Promise<UserProfile> {
     const userProfile = await this.userProfileService.findByNationalId(nationalId)
-
     if (!userProfile) {
       throw new NotFoundException(
         `A user with the nationaliId ${nationalId} does not exist`,

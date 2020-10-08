@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsString, IsOptional } from 'class-validator'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateUserProfileDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @ApiProperty()
-  readonly mobilePhoneNumber!: string
+  @ApiPropertyOptional()
+  readonly mobilePhoneNumber?: string
 
   @IsOptional()
   @IsString()

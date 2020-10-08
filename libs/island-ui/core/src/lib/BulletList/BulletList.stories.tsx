@@ -31,3 +31,16 @@ export const Default = () => {
     </Box>
   )
 }
+
+export const Nested = () => {
+  return (
+    <Box padding="gutter">
+      <BulletList type="ul">
+        <Bullet>
+          First bullet
+          <Bullet>Nested bullet</Bullet>
+        </Bullet>
+      </BulletList>
+    </Box>
+  )
+}

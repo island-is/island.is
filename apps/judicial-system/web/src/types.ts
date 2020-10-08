@@ -27,6 +27,11 @@ export enum AppealDecision {
   POSTPONE = 'POSTPONE',
 }
 
+export enum AppealDecitionRole {
+  PROSECUTOR = 'PROSECUTOR',
+  ACCUSED = 'ACCUSED',
+}
+
 export interface DetentionRequest {
   id: string
   policeCaseNumber: string
@@ -39,8 +44,8 @@ export interface DetentionRequest {
 
 export interface Case {
   id: string
-  created: Date
-  modified: Date
+  created: string
+  modified: string
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
@@ -67,6 +72,7 @@ export interface Case {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
+  rejecting?: boolean
   custodyEndDate?: string
   custodyRestrictions?: CustodyRestrictions[]
   accusedAppealDecision?: AppealDecision
@@ -94,9 +100,16 @@ export interface SendNotificationResponse {
 export interface CreateCaseRequest {
   policeCaseNumber: string
   accusedNationalId: string
+  court: string
 }
 
 export interface User {
+  id: string
+  created: string
+  modified: string
   nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
   role: string
 }

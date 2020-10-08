@@ -1,18 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
-import { Typography, Button, Box, Alert } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Button,
+  Box,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { apiUrl } from '../../api'
 import * as styles from './Login.treat'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
 
+  useEffect(() => {
+    document.title = 'Réttarvörslugátt'
+  }, [])
+
   return (
     <div className={styles.loginContainer}>
       {urlParams.has('error') && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
-            <Alert
+            <AlertMessage
               type="info"
               title="Innskráning ógild"
               message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."

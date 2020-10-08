@@ -5,6 +5,7 @@ on:
     branches:
       - 'master'
       - 'release/**'
+      - 'hotfix/**'
     paths-ignore:
       - '**/*.md'
   pull_request:
@@ -14,6 +15,7 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
 jobs:
   prepare:
     #runs-on: self-hosted
@@ -67,39 +69,19 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
 
-      - name: GitHub envs
-        run: env | grep GITHUB
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
         name: Preparing HEAD tag
-      - run: |
-          if [[ ! -z "$GITHUB_BASE_REF" ]]
-          then
-            export BRANCH=$GIT_BASE_BRANCH
-          else
-            export BRANCH=$GIT_BRANCH
-          fi
-          # Consider all hashes between HEAD and our merge base ~20 as possibilities
-          MERGE_BASE=$(git merge-base origin/master HEAD)
-          LAST_GOOD_BUILD=`git log --format=%H $MERGE_BASE~20..HEAD | node .github/actions/dist/index.js`
-          LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
-          LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
-          LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
-          echo "Last successful build is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
-          echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
-          LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
-          export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
-          echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
-          echo "::set-env name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
-          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
 
+      - run: |
+          source ./scripts/00_prepare-base-tags.sh
+          echo "::set-env name=BASE::${BASE}"
+          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
         id: git_nx_base
         name: Preparing BASE tags
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BASE_BRANCH: ${{ env.GIT_BASE_BRANCH }}
 
       - name: Set publish flag
         id: publish_flag
@@ -110,7 +92,6 @@ jobs:
           else
             export PUBLISH=true
           fi
-          echo "::set-env name=PUBLISH::${PUBLISH}"
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -133,10 +114,6 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
-      - name: Building NodeJS dependencies - host OS
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
-
       - name: Set up Docker Buildx
         if: steps.cache-deps.outputs.cache-hit != 'true'
         id: buildx
@@ -147,67 +124,62 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: ./scripts/prepare_deps.sh
+        run: ./scripts/10_prepare-deps.sh
 
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
+      - name: Cache for generated files
+        id: generated-files-cache
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+
+      - name: Generate schemas
+        if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
+
       - name: Security audit Node modules
-        run: yarn run security-audit
+        run: ./scripts/20_security-audit.sh
 
       - name: License audit Node modules
-        run: yarn run license-audit
+        run: ./scripts/20_license-audit.sh
 
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh lint`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`CHUNK_SIZE=7 node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          CHUNK_SIZE=7 source ./scripts/generate-chunks.sh lint
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare test targets
         id: test_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh test`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh test
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare docker-express targets
         id: docker_express_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh docker-express`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh docker-express
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare docker-next targets
         id: docker_next_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh docker-next`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh docker-next
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare docker-static targets
         id: docker_static_projects
         run: |
-          PROJECTS=`./scripts/_nx-affected-targets.sh docker-static`
-          echo "Projects: ${PROJECTS}"
-          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: $CHUNKS"
+          source ./scripts/generate-chunks.sh docker-static
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare unaffected docker images
         id: docker_unaffected_projects
         run: |
-          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express docker-static`
-          echo "Unaffected Docker images: ${UNAFFECTED}"
+          source ./scripts/list-unaffected.sh docker-next docker-express docker-static
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
@@ -232,12 +204,24 @@ jobs:
         with:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+
+      - name: Cache for generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        run: tar zxvf generated_files.tar.gz
 
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
@@ -248,7 +232,7 @@ jobs:
 
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh test
+        run: ./scripts/run-in-parallel.sh 30_test
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
 
@@ -268,7 +252,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
       - name: Check formatting
-        run: ./scripts/check_formatting.sh
+        run: ./scripts/20_check-formatting.sh
 
   linting:
     needs: prepare
@@ -292,9 +276,20 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
+      - name: Cache for generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        run: tar zxvf generated_files.tar.gz
+
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh lint
+        run: ./scripts/run-in-parallel-native.sh 20_lint
 
   docker-express:
     needs: [prepare, tests]
@@ -311,6 +306,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        run: tar zxvf generated_files.tar.gz
+
       - name: Cache for dependencies Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
@@ -318,6 +325,7 @@ jobs:
         with:
           path: cache_output
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
@@ -327,7 +335,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -341,7 +349,7 @@ jobs:
 
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-express
+        run: ./scripts/run-in-parallel.sh 90_docker-express
 
   docker-static:
     needs: [prepare, tests]
@@ -358,6 +366,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        run: tar zxvf generated_files.tar.gz
+
       - name: Cache for dependencies Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
@@ -365,6 +385,7 @@ jobs:
         with:
           path: cache_output
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
@@ -374,7 +395,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -388,7 +409,7 @@ jobs:
 
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-static
+        run: ./scripts/run-in-parallel.sh 90_docker-static
 
   docker-next:
     needs: [prepare, tests]
@@ -405,6 +426,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v2
+        with:
+          path: generated_files.tar.gz
+          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+
+      - name: Untar generated files
+        if: ${{ matrix.projects != 'dummy' }}
+        run: tar zxvf generated_files.tar.gz
+
       - name: Cache for dependencies Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
@@ -412,6 +445,7 @@ jobs:
         with:
           path: cache_output
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
@@ -421,7 +455,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -435,7 +469,7 @@ jobs:
 
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-next
+        run: ./scripts/run-in-parallel.sh 90_docker-next
 
   retag-unaffected:
     runs-on: ubuntu-20.04

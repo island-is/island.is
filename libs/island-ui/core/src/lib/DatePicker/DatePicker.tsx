@@ -79,7 +79,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     const valueAsDate = value === undefined ? new Date() : new Date(value)
 
     return (
-      <button className={className} onClick={onClick}>
+      <button type="button" className={className} onClick={onClick}>
         <div className={styles.labelAndPlaceholderContainer}>
           <p className={cn(styles.label, { [styles.labelError]: hasError })}>
             {label}
@@ -152,6 +152,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             return (
               <div className={styles.customHeaderContainer}>
                 <button
+                  type="button"
                   onClick={decreaseMonth}
                   className={styles.decreaseButton}
                 >
@@ -161,6 +162,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   {`${capitalizedMonth} ${getYear(date)}`}
                 </Typography>
                 <button
+                  type="button"
                   onClick={increaseMonth}
                   className={styles.increaseButton}
                 >

@@ -1,6 +1,7 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+import { logger } from '@island.is/logging'
 
 import {
   ITimeline,
@@ -40,7 +41,6 @@ import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
-import { logger } from '@island.is/logging'
 import { TabSection, mapTabSection } from './tabSection.model'
 import { TeamList, mapTeamList } from './teamList.model'
 import { ContactUs, mapContactUs } from './contactUs.model'
@@ -90,7 +90,7 @@ export const Slice = createUnionType({
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
-  switch (slice.sys.contentType.sys.id) {
+  switch (slice.sys.contentType?.sys?.id) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':
@@ -163,7 +163,7 @@ export const mapDocument = (
         slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        if (block.data.target.fields.file) {
+        if (block.data.target.fields?.file) {
           block.data.target.fields.file.details?.image
             ? slices.push(mapImage(block.data.target))
             : slices.push(mapAsset(block.data.target))

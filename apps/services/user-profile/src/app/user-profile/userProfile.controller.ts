@@ -1,16 +1,17 @@
+import { InjectQueue } from '@nestjs/bull'
 import {
   Body,
   Controller,
-  UseInterceptors,
   Get,
   Put,
   NotFoundException,
   Param,
-  ParseUUIDPipe,
-  Post,, NotImplementedException
+  Post, NotImplementedException, Optional
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger'
+import { Queue } from 'bull'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
+import { UpdateImageDto } from './dto/updateImageDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { UserProfileByNationalIdPipe } from './pipes/userProfileByNationalId.pipe'
 import { UserProfile } from './userProfile.model'
@@ -20,7 +21,8 @@ import { UserProfileService } from './userProfile.service'
 @Controller('user-profile')
 export class UserProfileController {
 
-  constructor(private userProfileService: UserProfileService) { }
+  constructor(private userProfileService: UserProfileService,
+    @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue) { }
 
   @Get(':nationalId')
   @ApiOkResponse({ type: UserProfile })
@@ -47,28 +49,47 @@ export class UserProfileController {
     return await this.userProfileService.create(application)
   }
 
-  @Put('userProfile/:id')
+  @Put('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
+  @ApiParam({
+    name: 'nationalId',
+    type: String,
+    required: true,
+    description: 'The national id of the user profile to be updated.',
+    allowEmptyValue: false,
+  })
   async update(
-    @Param('id') id: string,
+    @Param('nationalId') nationalId: string,
     @Body() userProfileToUpdate: UpdateUserProfileDto,
   ): Promise<UserProfile> {
     const {
       numberOfAffectedRows,
       updatedUserProfile,
-    } = await this.userProfileService.update(id, userProfileToUpdate)
+    } = await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`A user profile with ${id} does not exist`)
+      throw new NotFoundException(`A user profile with national Id ${nationalId} does not exist`)
     }
     return updatedUserProfile
   }
 
   @Put(':nationalId/profileImage')
+  @ApiParam({
+    name: 'nationalId',
+    type: String,
+    required: true,
+    description: 'The national id of the user profile to update the profile image for.',
+    allowEmptyValue: false,
+  })
   @ApiOkResponse({ type: UserProfile })
   async addImage(
     @Param('nationalId', UserProfileByNationalIdPipe)
-    userProfile: UserProfile,
+    profile: UserProfile,
+    @Body() input: UpdateImageDto,
   ) {
-    throw new NotImplementedException()
+
+    return await this.uploadQueue.add('upload', {
+      profile: profile,
+      attachmentUrl: input.url,
+    })
   }
 }

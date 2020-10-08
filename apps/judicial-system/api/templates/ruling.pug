@@ -3,3 +3,59 @@ html
   head
   body
     h1 Krafa um gæsluvarðhald
+    p Mál nr. #{courtCaseNumber}
+    p LÖKE málsnr. #{policeCaseNumber}
+
+    h2 Þingbók
+    p Þinghald frá kl. #{courtStartTime} til kl. #{courtEndTime} #{courtDate}
+
+    h3 Krafa lögreglu
+    each par in policeDemands.split('\n')
+      p #{par}
+
+    h3 Viðstaddir
+    each par in courtAttendees.split('\n')
+      p #{par}
+
+    h3 Dómskjöl
+    p Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+
+    h3 Réttindi kærða
+    p Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga
+
+    h3 Afstaða kærða
+    each par in accusedPlea.split('\n')
+      p #{par}
+
+    h3 Málflutningur
+    each par in litigationPresentations.split('\n')
+      p #{par}
+
+    h3 Úrskurður
+    each par in ruling.split('\n')
+      p #{par}
+
+    h3 Úrskurðarorð
+    if isolation
+      p Kærði, <strong>#{accusedName} kt. #{nationalId}</strong>, skal sæta gæsluvarðhaldi, þó ekki lengur en <strong>til #{custodyEndDay} #{custodyEndDate} kl. #{custodyEndTime}.</strong> Kærði skal <strong>sæta einangrun</strong> á meðan á gæsluvarðhaldinu stendur.
+    else
+      p Kærði, <strong>#{accusedName} kt. #{nationalId}</strong>, skal sæta gæsluvarðhaldi, þó ekki lengur en <strong>til #{custodyEndDay} #{custodyEndDate} kl. #{custodyEndTime}.</strong>
+
+    h3 Ákvörðun um kæru
+    p Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+    case accusedAppealDecision
+      when 'APPEAL'
+        li <strong>Kærði kærir úrskurðinn.</strong>
+      when 'ACCEPT'
+        li <strong>Kærði unir úrskurðinum.</strong>
+      when 'POSTPONE'
+        li <strong>Kærði tekur sér lögboðinn frest.</strong>
+    case prosecutorAppealDecision
+      when 'APPEAL'
+        li <strong>Sækjandi kærir úrskurðinn.</strong>
+      when 'ACCEPT'
+        li <strong>Sækjandi unir úrskurðinum.</strong>
+      when 'POSTPONE'
+        li <strong>Sækjandi tekur sér lögboðinn frest.</strong>
+
+    p <strong>#{judgeName}, #{judgeTitle}</strong>

@@ -13,5 +13,5 @@ export class FrontpageSliderList {
 export const mapFrontpageSliderList = ({
   fields,
 }: IFrontpageSliderList): FrontpageSliderList => ({
-  items: fields.items.map(mapFrontpageSlider),
+  items: (fields.items ?? []).map(mapFrontpageSlider),
 })

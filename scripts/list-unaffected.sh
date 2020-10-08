@@ -28,4 +28,5 @@ EOM
     fi
 done
 
-echo "$UNAFFECTED"
+echo "Unaffected Docker images: ${UNAFFECTED}"
+export UNAFFECTED="$UNAFFECTED"

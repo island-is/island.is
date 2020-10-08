@@ -1,4 +1,11 @@
-import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
+import React, {
+  FC,
+  useState,
+  useMemo,
+  ReactNode,
+  Fragment,
+  useEffect,
+} from 'react'
 import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -36,16 +43,17 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  SubArticle,
-  Slice,
-  ProcessEntry,
+  AllSlicesFragment as Slice,
+  AllSlicesProcessEntryFragment as ProcessEntry,
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
+type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
 
 const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
   condition ? <b>{content}</b> : content
@@ -340,6 +348,7 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
@@ -362,9 +371,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
     : []
 
+  // tmp fix
   const processEntry =
     processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
-  const { buttonText, processLink } = processEntry
 
   return (
     <>
@@ -461,7 +470,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       href={processEntry.processLink}
                       withUnderline
                     >
-                      <span>{buttonText || n('processLinkButtonText')}</span>
+                      <span>
+                        {processEntry.buttonText || n('processLinkButtonText')}
+                      </span>
                       <Box component="span" marginLeft={2}>
                         <Icon type="external" width="15" />
                       </Box>
@@ -523,4 +534,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withMainLayout(ArticleScreen)
+export default withMainLayout(ArticleScreen, { hasDrawerMenu: true })

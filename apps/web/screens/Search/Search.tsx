@@ -154,8 +154,6 @@ const Search: Screen<CategoryProps> = ({
 
   const filteredItems = items.filter(byCategory)
 
-  const totalSearchResults = searchResults.total
-
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
     ?.category?.title
 
@@ -179,7 +177,6 @@ const Search: Screen<CategoryProps> = ({
     ? { label: categoryTitle, value: categorySlug }
     : { label: 'Allir flokkar', value: '' }
 
-  const resultsCountToShow = totalSearchResults
   return (
     <>
       <Head>
@@ -193,7 +190,7 @@ const Search: Screen<CategoryProps> = ({
                 position: 'relative',
               }}
             >
-              {totalSearchResults > 0 && (
+              {grandTotalSearchResultCount > 0 && (
                 <>
                   <div
                     style={{
@@ -268,11 +265,11 @@ const Search: Screen<CategoryProps> = ({
                 )
               },
             )}
-            {totalSearchResults > 0 && (
+            {grandTotalSearchResultCount > 0 && (
               <Box paddingTop={8}>
                 <Pagination
                   page={page}
-                  totalPages={Math.ceil(totalSearchResults / PerPage)}
+                  totalPages={Math.ceil(grandTotalSearchResultCount / PerPage)}
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
@@ -301,14 +298,16 @@ const Search: Screen<CategoryProps> = ({
             initialInputValue={q}
           />
           <Hidden above="md">
-            <Select
-              label={n('searchResult', 'Leitarflokkar')}
-              placeholder={n('categories', 'Flokkar')}
-              defaultValue={defaultSelectedCategory}
-              options={categorySelectOptions}
-              onChange={onChangeSelectCategoryOptions}
-              name="content-overview"
-            />
+            {grandTotalSearchResultCount > 0 && (
+              <Select
+                label={n('searchResult', 'Leitarflokkar')}
+                placeholder={n('categories', 'Flokkar')}
+                defaultValue={defaultSelectedCategory}
+                options={categorySelectOptions}
+                onChange={onChangeSelectCategoryOptions}
+                name="content-overview"
+              />
+            )}
           </Hidden>
 
           {filteredItems.length === 0 ? (
@@ -324,8 +323,8 @@ const Search: Screen<CategoryProps> = ({
             </>
           ) : (
             <Typography variant="intro" as="p">
-              {resultsCountToShow}{' '}
-              {resultsCountToShow === 1
+              {grandTotalSearchResultCount}{' '}
+              {grandTotalSearchResultCount === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
               {filters.category && (
@@ -435,4 +434,4 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
   )
 }
 
-export default withMainLayout(Search)
+export default withMainLayout(Search, { showSearchInHeader: false })

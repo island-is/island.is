@@ -13,8 +13,8 @@ import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, NotificationType } from './models'
-import { getPdf } from './case.pdf'
-import { writeDummySignedPdf } from './case.dummy.pdf'
+import { generateRulingPdf, writeFile } from './case.pdf'
+import { TransitionUpdate } from './case.state'
 
 @Injectable()
 export class CaseService {
@@ -29,12 +29,67 @@ export class CaseService {
     private readonly logger: Logger,
   ) {}
 
+  private constructHeadsUpSmsText(existingCase: Case, user: User): string {
+    // Prosecutor
+    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+
+    // Arrest date
+    const ad = existingCase.arrestDate?.toISOString()
+    const adText = ad
+      ? ` Viðkomandi handtekinn ${ad.substring(8, 10)}.${ad.substring(
+          5,
+          7,
+        )}.${ad.substring(0, 4)} kl. ${ad.substring(11, 13)}:${ad.substring(
+          14,
+          16,
+        )}.`
+      : ''
+
+    // Court date
+    const cd = existingCase.requestedCourtDate?.toISOString()
+    const cdText = cd
+      ? ` ÓE fyrirtöku ${cd.substring(8, 10)}.${cd.substring(
+          5,
+          7,
+        )}.${cd.substring(0, 4)} eftir kl. ${cd.substring(
+          11,
+          13,
+        )}:${cd.substring(14, 16)}.`
+      : ''
+
+    return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutor}${adText}${cdText}`
+  }
+
+  private constructReadyForCourtpSmsText(
+    existingCase: Case,
+    user: User,
+  ): string {
+    // Prosecutor
+    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+
+    // Court
+    const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
+
+    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
+  }
+
+  // Not implemented yet
+  private sendRulingAsSignedPdf(existingCase: Case, signedPdf: string): void {
+    if (!environment.production) {
+      writeFile(`${existingCase.id}-ruling-signed.pdf`, signedPdf)
+    }
+  }
+
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll({
       order: [['modified', 'DESC']],
-      include: [Notification],
+      include: [
+        Notification,
+        { model: User, as: 'prosecutor' },
+        { model: User, as: 'judge' },
+      ],
     })
   }
 
@@ -43,7 +98,11 @@ export class CaseService {
 
     return this.caseModel.findOne({
       where: { id },
-      include: [Notification],
+      include: [
+        Notification,
+        { model: User, as: 'prosecutor' },
+        { model: User, as: 'judge' },
+      ],
     })
   }
 
@@ -55,12 +114,12 @@ export class CaseService {
 
   async update(
     id: string,
-    caseToUpdate: UpdateCaseDto,
+    update: UpdateCaseDto | TransitionUpdate,
   ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
     this.logger.debug(`Updating case whith id "${id}"`)
 
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      caseToUpdate,
+      update,
       {
         where: { id },
         returning: true,
@@ -116,24 +175,25 @@ export class CaseService {
     })
   }
 
-  async requestSignature(
-    existingCase: Case,
-    user: User,
-  ): Promise<SigningServiceResponse> {
+  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case with id "${existingCase.id}"`,
     )
 
     // This method should only be called if the csae state is ACCEPTED or REJECTED
 
+    const pdf = await generateRulingPdf(existingCase)
+
+    if (!environment.production) {
+      writeFile(`${existingCase.id}-ruling.pdf`, pdf)
+    }
+
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
-      const pdf = await this.getRulingAsPdf()
-
       return this.signingService.requestSignature(
-        user.mobileNumber,
+        existingCase.judge.mobileNumber,
         'Undirrita dóm',
-        existingCase.accusedName,
+        existingCase.judge.name,
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -143,7 +203,7 @@ export class CaseService {
     // Development without signing service access token
     return {
       controlCode: '0000',
-      documentToken: 'DEVELOPEMNT',
+      documentToken: 'DEVELOPMENT',
     }
   }
 
@@ -165,65 +225,9 @@ export class CaseService {
         documentToken,
       )
 
-      this.sendRulingAsSignedPdf(signedPdf)
+      this.sendRulingAsSignedPdf(existingCase, signedPdf)
     }
 
     return existingCase
-  }
-
-  private constructHeadsUpSmsText(existingCase: Case, user: User): string {
-    // Prosecutor
-    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
-
-    // Arrest date
-    const ad = existingCase.arrestDate?.toISOString()
-    const adText = ad
-      ? ` Viðkomandi handtekinn ${ad.substring(8, 10)}.${ad.substring(
-          5,
-          7,
-        )}.${ad.substring(0, 4)} kl. ${ad.substring(11, 13)}:${ad.substring(
-          14,
-          16,
-        )}.`
-      : ''
-
-    // Court date
-    const cd = existingCase.requestedCourtDate?.toISOString()
-    const cdText = cd
-      ? ` ÓE fyrirtöku ${cd.substring(8, 10)}.${cd.substring(
-          5,
-          7,
-        )}.${cd.substring(0, 4)} eftir kl. ${cd.substring(
-          11,
-          13,
-        )}:${cd.substring(14, 16)}.`
-      : ''
-
-    return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutor}${adText}${cdText}`
-  }
-
-  private constructReadyForCourtpSmsText(
-    existingCase: Case,
-    user: User,
-  ): string {
-    // Prosecutor
-    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
-
-    // Court
-    const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
-
-    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
-  }
-
-  // Not implemented yet
-  private getRulingAsPdf(): Promise<string> {
-    return getPdf()
-  }
-
-  // Not implemented yet
-  private sendRulingAsSignedPdf(
-    signedPdf: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): void {
-    writeDummySignedPdf(signedPdf)
   }
 }

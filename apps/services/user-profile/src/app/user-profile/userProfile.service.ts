@@ -12,7 +12,7 @@ export class UserProfileService {
     private userProfileModel: typeof UserProfile,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+  ) { }
 
   async findById(id: string): Promise<UserProfile | null> {
     this.logger.debug(`Finding user profile by id - "${id}"`)
@@ -33,7 +33,7 @@ export class UserProfileService {
   }
 
   async update(
-    id: string,
+    nationalId: string,
     userProfileToUpdate: UpdateUserProfileDto,
   ): Promise<{
     numberOfAffectedRows: number
@@ -45,7 +45,7 @@ export class UserProfileService {
       numberOfAffectedRows,
       [updatedUserProfile],
     ] = await this.userProfileModel.update(userProfileToUpdate, {
-      where: { id },
+      where: { national_id: nationalId },
       returning: true,
     })
 

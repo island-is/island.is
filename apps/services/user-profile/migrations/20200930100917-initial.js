@@ -2,8 +2,6 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    console.log('UP user profile')
-    console.log(queryInterface)
     return queryInterface
       .createTable('user_profile', {
         id: {
@@ -45,7 +43,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    console.log('down user profile')
     return queryInterface.dropTable('user_profile')
   },
 }

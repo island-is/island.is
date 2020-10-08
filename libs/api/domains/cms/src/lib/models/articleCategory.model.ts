@@ -1,9 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IArticleCategory } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class ArticleCategory {
+  @Field(() => ID)
+  id: string
+
   @Field()
   title: string
 
@@ -15,8 +18,10 @@ export class ArticleCategory {
 }
 
 export const mapArticleCategory = ({
+  sys,
   fields,
 }: IArticleCategory): ArticleCategory => ({
+  id: sys.id,
   title: fields?.title ?? '',
   slug: fields?.slug ?? '',
   description: fields?.description ?? '',

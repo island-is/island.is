@@ -16,6 +16,6 @@ export class Statistic {
 
 export const mapStatistic = ({ fields, sys }: IStatistic): Statistic => ({
   id: sys.id,
-  value: fields.value,
-  label: fields.label,
+  value: fields.value ?? '',
+  label: fields.label ?? '',
 })

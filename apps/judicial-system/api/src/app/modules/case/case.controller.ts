@@ -11,6 +11,8 @@ import {
   Req,
   ForbiddenException,
   Query,
+  ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -18,12 +20,13 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
 import { CaseState } from '@island.is/judicial-system/types'
 
-import { JwtAuthGuard, AuthUser } from '../auth'
-import { UserService } from '../user'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { JwtAuthGuard } from '../auth'
+import { UserRole, UserService } from '../user'
+import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
+import { transitionCase as transitionUpdate } from './case.state'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -37,20 +40,8 @@ export class CaseController {
     private readonly logger: Logger,
   ) {}
 
-  @Get('cases')
-  @ApiOkResponse({ type: Case, isArray: true })
-  getAll(): Promise<Case[]> {
-    return this.caseService.getAll()
-  }
-
-  @Get('case/:id')
-  @ApiOkResponse({ type: Case })
-  async getById(@Param('id') id: string): Promise<Case> {
-    return this.findCaseById(id)
-  }
-
   @Post('case')
-  @ApiCreatedResponse({ type: Case })
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
     @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
@@ -59,7 +50,7 @@ export class CaseController {
   }
 
   @Put('case/:id')
-  @ApiOkResponse({ type: Case })
+  @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('id') id: string,
     @Body() caseToUpdate: UpdateCaseDto,
@@ -76,18 +67,58 @@ export class CaseController {
     return updatedCase
   }
 
-  @Get('case/:id/notifications')
-  @ApiOkResponse({ type: Notification, isArray: true })
-  async getAllNotificationsById(
+  @Put('case/:id/state')
+  @ApiOkResponse({
+    type: Case,
+    description: 'Transitions an existing case to a new state',
+  })
+  async transition(
     @Param('id') id: string,
-  ): Promise<Notification[]> {
+    @Body() transition: TransitionCaseDto,
+    @Req() req,
+  ): Promise<Case> {
     const existingCase = await this.findCaseById(id)
 
-    return this.caseService.getAllNotificationsByCaseId(existingCase)
+    const user = await this.userService.findByNationalId(req.user.nationalId)
+
+    const update = transitionUpdate(transition, existingCase, user)
+
+    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
+      id,
+      // existingCase.modified, Uncomment when client is ready to send last modified timestamp with all updates
+      update,
+    )
+
+    if (numberOfAffectedRows === 0) {
+      throw new ConflictException(
+        `A more recent version exists of the case with id ${id}`,
+      )
+    }
+
+    return updatedCase
+  }
+
+  @Get('cases')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all existing cases',
+  })
+  getAll(): Promise<Case[]> {
+    return this.caseService.getAll()
+  }
+
+  @Get('case/:id')
+  @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  async getById(@Param('id') id: string): Promise<Case> {
+    return this.findCaseById(id)
   }
 
   @Post('case/:id/notification')
-  @ApiOkResponse({ type: Notification })
+  @ApiCreatedResponse({
+    type: Notification,
+    description: 'Sends a new notification for an existing case',
+  })
   async sendNotificationByCaseId(
     @Param('id') id: string,
     @Req() req,
@@ -103,20 +134,40 @@ export class CaseController {
       )
     }
 
-    const authUser: AuthUser = req.user
-
-    const user = await this.userService.findByNationalId(authUser.nationalId)
+    const user = await this.userService.findByNationalId(req.user.nationalId)
 
     return this.caseService.sendNotificationByCaseId(existingCase, user)
   }
 
+  @Get('case/:id/notifications')
+  @ApiOkResponse({
+    type: Notification,
+    isArray: true,
+    description: 'Gets all existing notifications for an existing case',
+  })
+  async getAllNotificationsById(
+    @Param('id') id: string,
+  ): Promise<Notification[]> {
+    const existingCase = await this.findCaseById(id)
+
+    return this.caseService.getAllNotificationsByCaseId(existingCase)
+  }
+
   @Post('case/:id/signature')
-  @ApiOkResponse({ type: SigningServiceResponse })
+  @ApiCreatedResponse({
+    type: SigningServiceResponse,
+    description: 'Requests a signature for an existing case',
+  })
   async requestSignature(
     @Param('id') id: string,
-    @Req() req,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
+
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling cannot be signed by a user with role ${existingCase.judge?.role}`,
+      )
+    }
 
     if (
       existingCase.state !== CaseState.ACCEPTED &&
@@ -127,20 +178,26 @@ export class CaseController {
       )
     }
 
-    const authUser: AuthUser = req.user
-
-    const user = await this.userService.findByNationalId(authUser.nationalId)
-
-    return this.caseService.requestSignature(existingCase, user)
+    return this.caseService.requestSignature(existingCase)
   }
 
   @Get('case/:id/signature')
-  @ApiOkResponse({ type: Case })
+  @ApiOkResponse({
+    type: Case,
+    description:
+      'Confirms a previously requested signature for an existing case',
+  })
   async confirmSignature(
     @Param('id') id: string,
     @Query('documentToken') documentToken: string,
   ): Promise<Case> {
     const existingCase = await this.findCaseById(id)
+
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling signature cannot be verified by a user with role ${existingCase.judge?.role}`,
+      )
+    }
 
     if (
       existingCase.state !== CaseState.ACCEPTED &&

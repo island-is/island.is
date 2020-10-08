@@ -17,9 +17,9 @@ type UrlPageTypes = IArticle | IArticleCategory | INews | ILifeEventPage
 
 export const mapPage = ({ fields, sys }: UrlPageTypes) => ({
   id: sys.id,
-  contentType: sys.contentType.sys.id,
-  title: fields.title,
-  slug: fields.slug,
+  contentType: sys.contentType?.sys?.id ?? '',
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
 })
 
 export const UrlPage = createUnionType({
@@ -59,6 +59,6 @@ export class Url {
 export const mapUrl = ({ fields, sys }: IUrl): Url => ({
   id: sys.id,
   title: fields.title ?? '',
-  page: mapPage(fields.page),
-  urlsList: fields.urlsList,
+  page: fields.page ? mapPage(fields.page) : null,
+  urlsList: fields.urlsList ?? [],
 })
