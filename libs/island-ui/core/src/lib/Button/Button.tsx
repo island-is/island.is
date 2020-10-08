@@ -37,6 +37,7 @@ export interface ButtonProps {
   white?: boolean
   tabIndex?: number
   rounded?: boolean
+  id?: string
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
