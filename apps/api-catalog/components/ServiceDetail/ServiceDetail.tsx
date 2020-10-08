@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AccordionItem, Box, GridContainer, Select } from '@island.is/island-ui/core'
+import { Box, GridContainer, Select } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { ApiService } from '@island.is/api/schema'
@@ -77,7 +77,6 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
     }
     
 
-    const [expanded, setExpanded] = useState<boolean>(true);
     const [openApiObject, setOpenApiObject] = useState<GetOpenApiInput>(inputValuesFromOption(versionOptions[0]))
     const [getOpenApi, { data, loading, error }] = useLazyQuery<Query, QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
         {
@@ -194,9 +193,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
                     { data?.getOpenApi == null ? 
                         showError() 
                         :
-                        <AccordionItem id="open-api-spec" label="Skjal" expanded={expanded} onToggle = {setExpanded} >
-                            <RedocStandalone spec={JSON.parse(data.getOpenApi.spec)} />
-                        </AccordionItem>
+                        <RedocStandalone spec={JSON.parse(data.getOpenApi.spec)} />
                     }
                     
                 </div>
