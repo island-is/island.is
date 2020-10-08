@@ -368,7 +368,6 @@ export const Confirmation: React.FC = () => {
                 </Box>
               )}
               <FormFooter
-                previousUrl={Constants.RULING_ROUTE}
                 nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
                 nextButtonText="Staðfesta úrskurð"
                 onNextButtonClick={async () => {

@@ -546,7 +546,6 @@ export const Ruling: React.FC = () => {
               </Box>
             </Box>
             <FormFooter
-              previousUrl={Constants.COURT_DOCUMENT_ROUTE}
               nextUrl={Constants.CONFIRMATION_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime

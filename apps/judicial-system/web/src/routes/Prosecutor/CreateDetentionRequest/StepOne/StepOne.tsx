@@ -608,7 +608,6 @@ export const StepOne: React.FC = () => {
                   </GridRow>
                 </Box>
                 <FormFooter
-                  previousUrl={Constants.DETENTION_REQUESTS_ROUTE}
                   nextUrl={Constants.STEP_TWO_ROUTE}
                   onNextButtonClick={() => setModalVisible(true)}
                   nextIsDisabled={
