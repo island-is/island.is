@@ -198,6 +198,7 @@ const positionRules = {
   absolute: 'absolute',
   relative: 'relative',
   fixed: 'fixed',
+  static: 'static',
 }
 export const position = styleMap(mapToStyleProperty(positionRules, 'position'))
 
