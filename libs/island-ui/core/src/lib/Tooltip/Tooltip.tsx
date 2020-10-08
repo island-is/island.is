@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, ReactType } from 'react'
+import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
@@ -10,11 +10,7 @@ import * as styles from './Tooltip.treat'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
 
-interface InfoIconProps {
-  color?: string
-}
-
-const InfoIcon: FC<InfoIconProps> = ({ color = '#0061FF' }) => {
+const InfoIcon: FC = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +19,7 @@ const InfoIcon: FC<InfoIconProps> = ({ color = '#0061FF' }) => {
       viewBox={`0 0 20 20`}
     >
       <path
-        fill={color}
+        className={styles.iconPath}
         d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm0 15c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1-8H9V5h2v2z"
       ></path>
     </svg>
@@ -32,15 +28,9 @@ const InfoIcon: FC<InfoIconProps> = ({ color = '#0061FF' }) => {
 
 interface ArrowIconProps {
   placement: string
-  color?: string
-  colored?: boolean
 }
 
-const ArrowIcon: FC<ArrowIconProps> = ({
-  placement,
-  color = '#CCDFFF',
-  colored,
-}) => {
+const ArrowIcon: FC<ArrowIconProps> = ({ placement }) => {
   let deg = 0
 
   if (placement.startsWith('left')) {
@@ -62,12 +52,9 @@ const ArrowIcon: FC<ArrowIconProps> = ({
       viewBox="0 0 16 16"
       style={{ transform }}
     >
+      <path fill="#F2F7FF" d="M7 12l6.928-12H.072L7 12z"></path>
       <path
-        fill={colored ? '#F2F7FF' : '#FFFFFF'}
-        d="M7 12l6.928-12H.072L7 12z"
-      ></path>
-      <path
-        fill={color}
+        fill="#CCDFFF"
         fillRule="evenodd"
         d="M6.998 12L.07 0h13.856L6.998 12zm0-2L1.22 0h11.56L6.998 10z"
         clipRule="evenodd"
@@ -78,16 +65,14 @@ const ArrowIcon: FC<ArrowIconProps> = ({
 
 interface TooltipProps {
   placement?: Placement
-  colored?: boolean
   text: string
   iconSize?: number
   children?: ReactElement
-  as?: ReactType
+  as?: ElementType
 }
 
 export const Tooltip: FC<TooltipProps> = ({
   placement,
-  colored = false,
   text,
   iconSize = 14,
   children,
@@ -118,9 +103,9 @@ export const Tooltip: FC<TooltipProps> = ({
         </TooltipReference>
       )}
       <ReakitTooltip {...tooltip}>
-        <div className={cn(styles.tooltip, { [styles.colored]: colored })}>
+        <div className={styles.tooltip}>
           <TooltipArrow {...tooltip}>
-            <ArrowIcon colored={colored} placement={tooltip.placement} />
+            <ArrowIcon placement={tooltip.placement} />
           </TooltipArrow>
           {text}
         </div>
