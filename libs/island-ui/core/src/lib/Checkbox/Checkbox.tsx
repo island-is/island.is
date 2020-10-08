@@ -73,9 +73,7 @@ export const Checkbox = ({
           <Icon
             type="check"
             width={styles.checkMarkWidth}
-            color={
-              checked ? 'white' : 'transparent'
-            }
+            color={checked ? 'white' : 'transparent'}
           />
         </div>
         {label}
