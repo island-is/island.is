@@ -32,4 +32,5 @@ export const clear = style({
   fontSize: 13,
   display: 'flex',
   justifyContent: 'flex-end',
+  cursor: 'pointer',
 })
