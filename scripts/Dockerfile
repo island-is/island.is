@@ -7,6 +7,9 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock ./
+
+RUN mkdir -p /build/scripts
+ADD ./scripts/postinstall.js /build/scripts/
 RUN CI=true yarn install --frozen-lockfile && rm -rf /root/.cache
 
 FROM deps as src
