@@ -69,6 +69,7 @@ export function buildSubSection(data: {
 export function buildExternalDataProvider(data: {
   name: MessageDescriptor | string
   id: string
+  condition?: Condition
   dataProviders: DataProviderItem[]
 }): ExternalDataProvider {
   return {

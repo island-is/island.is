@@ -1,4 +1,4 @@
-import { FormLeaf } from '../types/Form'
+import { FormItem } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
 import {
   AllOrAny,
@@ -47,11 +47,11 @@ function applyStaticConditionalCheck(
   return isValid
 }
 
-export function shouldShowFormLeaf(
-  leaf: FormLeaf,
+export function shouldShowFormItem(
+  formItem: FormItem,
   formValue: FormValue,
 ): boolean {
-  const { condition } = leaf
+  const { condition } = formItem
   if (!condition) {
     return true
   }
