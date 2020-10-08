@@ -5,7 +5,7 @@ import {
   Stack,
   Columns,
   Column,
-  Button,
+  ButtonDeprecated as Button,
   Select,
   Input,
   Pagination,

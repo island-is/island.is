@@ -14,7 +14,7 @@ import {
   Text,
   Icon,
   Hidden,
-  Button,
+  ButtonDeprecated as Button,
   GridContainer,
   GridRow,
   GridColumn,

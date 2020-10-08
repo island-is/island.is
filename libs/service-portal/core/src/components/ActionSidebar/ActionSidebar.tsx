@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import * as styles from './ActionSidebar.treat'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
 
 interface Props {
   isActive: boolean

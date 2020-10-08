@@ -15,7 +15,7 @@ import {
   Text,
   Stack,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   GridContainer,
   GridRow,
   GridColumn,

@@ -95,7 +95,7 @@ describe('reducerUtils', () => {
     const repeater = buildRepeater({
       id: 'person',
       name: 'Family Member',
-      labelKey: 'name',
+      component: 'SomeComponent',
       children: [
         buildTextField({
           id: 'name',
@@ -223,9 +223,9 @@ describe('reducerUtils', () => {
         buildTextScreen('first'),
         buildRepeater({
           id: 'person',
-          labelKey: 'a',
           children: [buildTextScreen('a'), buildTextScreen('b')],
           name: 'This is a great screen',
+          component: 'SomeComponent',
         }) as RepeaterScreen,
         buildTextScreen('c'),
       ]
@@ -407,7 +407,7 @@ describe('reducerUtils', () => {
         ...buildRepeater({
           id: 'id',
           name: 'repeater',
-          labelKey: 'asdf',
+          component: 'asdf',
           children,
         }),
       }

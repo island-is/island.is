@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Stack, Typography, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Typography,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import CompanyList from './components/CompanyList'
 import { useRouter } from 'next/router'

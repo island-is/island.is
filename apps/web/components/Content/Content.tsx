@@ -6,7 +6,7 @@ import {
   Stack,
   Accordion,
   AccordionItem,
-  Button,
+  ButtonDeprecated as Button,
   Link,
   Divider,
 } from '@island.is/island-ui/core'

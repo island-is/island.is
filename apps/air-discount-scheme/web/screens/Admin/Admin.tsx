@@ -15,7 +15,7 @@ import {
   GridColumn,
   GridContainer,
   SkeletonLoader,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import { Filters, Panel, Summary, Modal } from './components'
 import { FilterInput } from './consts'

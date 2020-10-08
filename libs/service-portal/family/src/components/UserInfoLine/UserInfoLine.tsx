@@ -4,7 +4,7 @@ import {
   Columns,
   Column,
   Typography,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'

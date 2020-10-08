@@ -8,7 +8,7 @@ import {
   Typography,
   Divider,
   DatePicker,
-  Button,
+  ButtonDeprecated as Button,
   Input,
   Select,
 } from '@island.is/island-ui/core'
