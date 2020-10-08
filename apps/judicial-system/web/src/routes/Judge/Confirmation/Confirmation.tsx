@@ -23,10 +23,15 @@ import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import {
   constructConclusion,
   getAppealDecitionText,
-  renderRestrictons,
+  renderFormStepper,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
-import { formatDate, parseTransition } from '../../../utils/formatters'
+import {
+  TIME_FORMAT,
+  formatDate,
+  formatCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
+import { parseTransition } from '../../../utils/formatters'
 import { capitalize } from 'lodash'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
@@ -112,33 +117,35 @@ export const Confirmation: React.FC = () => {
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span={'3/12'}>
-              <JudgeLogo />
-            </GridColumn>
-            <GridColumn span={'8/12'} offset={'1/12'}>
-              <Box marginBottom={10}>
-                <Typography as="h1" variant="h1">
-                  Krafa um gæsluvarðhald
-                </Typography>
-                <Box display="flex" marginTop={1}>
-                  <Box marginRight={2}>
-                    <Typography variant="pSmall">{`Krafa stofnuð: ${formatDate(
-                      workingCase.created,
+          <Box marginBottom={7}>
+            <GridRow>
+              <GridColumn span={'3/12'}>
+                <JudgeLogo />
+              </GridColumn>
+              <GridColumn span={'8/12'} offset={'1/12'}>
+                <Box marginBottom={10}>
+                  <Typography as="h1" variant="h1">
+                    Krafa um gæsluvarðhald
+                  </Typography>
+                  <Box display="flex" marginTop={1}>
+                    <Box marginRight={2}>
+                      <Typography variant="pSmall">{`Krafa stofnuð: ${formatDate(
+                        workingCase.created,
+                        'P',
+                      )}`}</Typography>
+                    </Box>
+                    <Typography variant="pSmall">{`Þinghald: ${formatDate(
+                      workingCase.courtStartTime,
                       'P',
                     )}`}</Typography>
                   </Box>
-                  <Typography variant="pSmall">{`Þinghald: ${formatDate(
-                    workingCase.courtStartTime,
-                    'P',
-                  )}`}</Typography>
                 </Box>
-              </Box>
-            </GridColumn>
-          </GridRow>
+              </GridColumn>
+            </GridRow>
+          </Box>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
-              <Typography>Hliðarstika</Typography>
+              {renderFormStepper(1, 3)}
             </GridColumn>
             <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
               <Box component="section" marginBottom={7}>
@@ -179,7 +186,7 @@ export const Confirmation: React.FC = () => {
                         formatDate(workingCase.arrestDate, 'PPPP'),
                       )} kl. ${formatDate(
                         workingCase.arrestDate,
-                        Constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </AccordionListItem>
                     <AccordionListItem title="Ósk um fyrirtökudag og tíma">
@@ -187,7 +194,7 @@ export const Confirmation: React.FC = () => {
                         formatDate(workingCase.requestedCourtDate, 'PPPP'),
                       )} kl. ${formatDate(
                         workingCase.requestedCourtDate,
-                        Constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </AccordionListItem>
                     <AccordionListItem title="Dómkröfur">
@@ -195,7 +202,7 @@ export const Confirmation: React.FC = () => {
                         formatDate(workingCase.custodyEndDate, 'PPP'),
                       )} kl. ${formatDate(
                         workingCase.custodyEndDate,
-                        Constants.TIME_FORMAT,
+                        TIME_FORMAT,
                       )}`}
                     </AccordionListItem>
                     <AccordionListItem title="Lagaákvæði">
@@ -206,7 +213,9 @@ export const Confirmation: React.FC = () => {
                     </Box>
                     <Box marginBottom={4}>
                       <Typography>
-                        {renderRestrictons(workingCase.custodyRestrictions)}
+                        {formatCustodyRestrictions(
+                          workingCase.custodyRestrictions,
+                        )}
                       </Typography>
                     </Box>
                     <Box marginBottom={2}>
@@ -237,10 +246,10 @@ export const Confirmation: React.FC = () => {
                       <Typography>
                         {`Þinghald frá kl. ${formatDate(
                           workingCase.courtStartTime,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )} til kl. ${formatDate(
                           workingCase.courtEndTime,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
                       </Typography>
                     </Box>
@@ -359,7 +368,6 @@ export const Confirmation: React.FC = () => {
                 </Box>
               )}
               <FormFooter
-                previousUrl={Constants.RULING_ROUTE}
                 nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
                 nextButtonText="Staðfesta úrskurð"
                 onNextButtonClick={async () => {

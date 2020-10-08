@@ -3432,6 +3432,35 @@
           }
         }
       }
+    },
+    "judicial-system-formatters": {
+      "root": "libs/judicial-system/formatters",
+      "sourceRoot": "libs/judicial-system/formatters/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/formatters/tsconfig.lib.json",
+              "libs/judicial-system/formatters/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/formatters/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/formatters/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

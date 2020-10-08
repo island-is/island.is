@@ -37,7 +37,7 @@ const NewsletterSignup: React.FC<Props> = ({
   errorMessage,
 }) => {
   return (
-    <Box className={styles.variants[variant]} paddingY={[4, 6, 8]}>
+    <Box className={styles.variants[variant]}>
       <Typography variant="h3" as="h3" color="blue400" paddingBottom={1}>
         {heading}
       </Typography>
@@ -60,10 +60,10 @@ const NewsletterSignup: React.FC<Props> = ({
         </Box>
         <Box
           className={styles.buttonWrap}
-          paddingTop={[2, 2, 1]}
+          paddingTop={[3, 2, 1]}
           marginLeft={[0, 0, 8]}
         >
-          <Button variant="text" htmlType="submit">
+          <Button variant="text" htmlType="submit" icon="arrowRight">
             {buttonText}
           </Button>
         </Box>

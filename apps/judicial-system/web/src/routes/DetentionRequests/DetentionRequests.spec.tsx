@@ -5,8 +5,8 @@ import { DetentionRequests } from './'
 import { CaseState } from '@island.is/judicial-system/types'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
-import { userContext } from '../../../utils/userContext'
-import { mockJudge, mockProsecutor } from '../../../utils/mocks'
+import { userContext } from '../../utils/userContext'
+import { mockJudge, mockProsecutor } from '../../utils/mocks'
 
 const mockDetensionRequests = [
   {

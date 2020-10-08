@@ -17,13 +17,18 @@ import {
 import { Case } from '../../../../types'
 import * as api from '../../../../api'
 import { validate } from '../../../../utils/validate'
-import { updateState, autoSave } from '../../../../utils/stepHelper'
+import {
+  updateState,
+  autoSave,
+  renderFormStepper,
+} from '../../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
-import { formatDate } from '@island.is/judicial-system-web/src/utils/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -183,8 +188,8 @@ export const StepOne: React.FC = () => {
         ruling: caseDraftJSON.ruling ?? '',
         custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
         custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
+        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
+        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
       })
     }
   }, [workingCase, setWorkingCase])
@@ -212,19 +217,21 @@ export const StepOne: React.FC = () => {
       <>
         <Box marginTop={7} marginBottom={30}>
           <GridContainer>
-            <GridRow>
-              <GridColumn span={'3/12'}>
-                <ProsecutorLogo />
-              </GridColumn>
-              <GridColumn span={'8/12'} offset={'1/12'}>
-                <Typography as="h1" variant="h1">
-                  Krafa um gæsluvarðhald
-                </Typography>
-              </GridColumn>
-            </GridRow>
+            <Box marginBottom={7}>
+              <GridRow>
+                <GridColumn span={'3/12'}>
+                  <ProsecutorLogo />
+                </GridColumn>
+                <GridColumn span={'8/12'} offset={'1/12'}>
+                  <Typography as="h1" variant="h1">
+                    Krafa um gæsluvarðhald
+                  </Typography>
+                </GridColumn>
+              </GridRow>
+            </Box>
             <GridRow>
               <GridColumn span={['12/12', '3/12']}>
-                <Typography>Hliðarstika</Typography>
+                {renderFormStepper(0, 0)}
               </GridColumn>
               <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
                 <Box component="section" marginBottom={7}>
@@ -470,7 +477,7 @@ export const StepOne: React.FC = () => {
                         hasError={arrestTimeErrorMessage !== ''}
                         defaultValue={formatDate(
                           workingCase.arrestDate,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )}
                         ref={arrestTimeRef}
                         onBlur={(evt) => {
@@ -561,7 +568,7 @@ export const StepOne: React.FC = () => {
                         placeholder="Settu inn tíma"
                         defaultValue={formatDate(
                           workingCase.requestedCourtDate,
-                          Constants.TIME_FORMAT,
+                          TIME_FORMAT,
                         )}
                         disabled={!workingCase.requestedCourtDate}
                         onBlur={(evt) => {
@@ -601,7 +608,6 @@ export const StepOne: React.FC = () => {
                   </GridRow>
                 </Box>
                 <FormFooter
-                  previousUrl={Constants.DETENTION_REQUESTS_ROUTE}
                   nextUrl={Constants.STEP_TWO_ROUTE}
                   onNextButtonClick={() => setModalVisible(true)}
                   nextIsDisabled={
