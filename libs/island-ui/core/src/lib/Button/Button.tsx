@@ -1,3 +1,4 @@
+/** @deprecated ButtonDeprecated has been deprecated in favor of Button */
 import React, { forwardRef, ReactNode, FC, useContext } from 'react'
 import cn from 'classnames'
 import { Box } from '../Box'
@@ -69,6 +70,9 @@ export const Button = forwardRef<
     },
     ref,
   ) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('ButtonDeprecated has been deprecated in favor of Button.')
+    }
     const { colorScheme } = useContext(ColorSchemeContext)
 
     const className = cn(
