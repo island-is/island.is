@@ -1,10 +1,9 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { theme } from '@island.is/island-ui/theme'
 import {
-  Typography,
+  Text,
   Stack,
   Box,
   Breadcrumbs,
@@ -293,13 +292,13 @@ const Category: Screen<CategoryProps> = ({
                           return (
                             <React.Fragment key={subgroup}>
                               {heading && (
-                                <Typography
+                                <Text
                                   variant="h5"
                                   paddingBottom={3}
                                   paddingTop={index === 0 ? 0 : 3}
                                 >
                                   {heading}
-                                </Typography>
+                                </Text>
                               )}
                               <Stack space={2}>
                                 {sortedArticles.map(
@@ -401,17 +400,12 @@ const Category: Screen<CategoryProps> = ({
             />
           </Box>
         </Hidden>
-        <Typography
-          variant="h1"
-          as="h1"
-          paddingTop={[4, 4, 0]}
-          paddingBottom={2}
-        >
+        <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
           {category.title}
-        </Typography>
-        <Typography variant="intro" as="p">
+        </Text>
+        <Text variant="intro" as="p">
           {category.description}
-        </Typography>
+        </Text>
       </CategoryLayout>
     </>
   )

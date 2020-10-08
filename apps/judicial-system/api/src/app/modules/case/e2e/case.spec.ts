@@ -2,17 +2,16 @@ import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
 
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseTransition,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+  CaseAppealDecision,
+} from '@island.is/judicial-system/types'
 
 import { setup, user } from '../../../../../test/setup'
-import {
-  Case,
-  CaseCustodyRestrictions,
-  CaseCustodyProvisions,
-  CaseAppealDecision,
-  Notification,
-  NotificationType,
-} from '../models'
+import { Case, Notification, NotificationType } from '../models'
 import { User } from '../../user'
 
 let app: INestApplication

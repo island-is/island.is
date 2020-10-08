@@ -1,5 +1,5 @@
+import { User } from 'oidc-client'
 import { useState, useEffect } from 'react'
-import { UserWithMeta } from '@island.is/service-portal/core'
 
 interface NationalRegistryGeneralLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
@@ -14,7 +14,7 @@ interface NationalRegistryGeneralLookupResponse {
   error?: string
 }
 
-export const useNatRegGeneralLookup = (userInfo: UserWithMeta) => {
+export const useNatRegGeneralLookup = (userInfo: User) => {
   const [state, setState] = useState<{
     data: NationalRegistryGeneralLookupResponse | null
     loading: boolean
@@ -31,8 +31,8 @@ export const useNatRegGeneralLookup = (userInfo: UserWithMeta) => {
       setState({
         data: {
           source: 'Þjóðskrá',
-          ssn: userInfo.user.profile.natreg,
-          name: userInfo.user.profile.name || '',
+          ssn: userInfo.profile.natreg,
+          name: userInfo.profile.name || '',
           gender: 'kk',
           address: 'Íbúðastaðir 35d',
           postalcode: 119,

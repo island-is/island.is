@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Stack, Typography } from '@island.is/island-ui/core'
+import { Stack, Text } from '@island.is/island-ui/core'
 
 export interface HeadingProps {
   title: string
@@ -8,12 +8,12 @@ export interface HeadingProps {
 
 export const Heading: FC<HeadingProps> = ({ title, body }) => (
   <Stack space={3}>
-    <Typography variant="h1" as="h2">
+    <Text variant="h1" as="h2">
       {title}
-    </Typography>
-    <Typography variant="intro" as="p">
+    </Text>
+    <Text variant="intro" as="p">
       {body}
-    </Typography>
+    </Text>
   </Stack>
 )
 

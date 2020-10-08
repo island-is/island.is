@@ -31,3 +31,7 @@ export const separatorHorizontal = style({
   background: theme.color.blue200,
   margin: `${theme.spacing[2]}px 0`,
 })
+
+export const suggestion = style({
+  cursor: 'pointer',
+})

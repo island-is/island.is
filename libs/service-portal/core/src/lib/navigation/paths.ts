@@ -17,6 +17,7 @@ export enum ServicePortalPath {
   // Fjarmal
   FjarmalRoot = '/fjarmal',
   FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
+  FjarmalGreidslur = '/greidslur',
   // Rafræn skjöl
   RafraenSkjolRoot = '/rafraen-skjol',
   // Heilsa
@@ -27,4 +28,6 @@ export enum ServicePortalPath {
   MenntunRoot = '/menntun',
   // Eignir
   EignirRoot = '/eignir',
+  // Skilabod
+  SkilabodRoot = '/skilabod',
 }

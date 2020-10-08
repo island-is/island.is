@@ -11,7 +11,7 @@ import { RemoveScroll } from 'react-remove-scroll'
 import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
 import {
-  Typography,
+  Text,
   Icon,
   Hidden,
   Button,
@@ -192,13 +192,13 @@ export const SideMenu: FC<Props> = ({
                         [styles.tabFocused]: isFocused,
                       })}
                     >
-                      <Typography
-                        variant="menuTab"
+                      <Text
+                        variant="small"
                         fontWeight={activeTab === index ? 'medium' : 'light'}
                         color="blue400"
                       >
                         {tab.title}
-                      </Typography>
+                      </Text>
                     </div>
                   )}
                 </FocusableBox>
@@ -224,10 +224,10 @@ export const SideMenu: FC<Props> = ({
                     }
 
                     return (
-                      <Typography
+                      <Text
                         key={index}
-                        variant="sideMenu"
                         color="blue400"
+                        fontWeight="medium"
                         paddingBottom={index + 1 === tab.links.length ? 0 : 2}
                       >
                         <Box
@@ -238,7 +238,7 @@ export const SideMenu: FC<Props> = ({
                         >
                           <FocusableBox {...props}>{link.title}</FocusableBox>
                         </Box>
-                      </Typography>
+                      </Text>
                     )
                   })}
                 </div>
@@ -248,26 +248,27 @@ export const SideMenu: FC<Props> = ({
                     alignItems="center"
                     flexDirection="column"
                   >
-                    <Typography
-                      variant="menuTab"
+                    <Text
+                      variant="small"
+                      fontWeight="medium"
                       color="blue400"
                       paddingTop={3}
                       paddingBottom={3}
                     >
                       {tab.externalLinksHeading}
-                    </Typography>
+                    </Text>
                     <div className={styles.linksContent}>
                       {tab.externalLinks.map((link, index) => (
-                        <Typography
+                        <Text
                           key={index}
-                          variant="sideMenu"
+                          fontWeight="medium"
                           color="blue400"
                           paddingBottom={2}
                         >
                           <FocusableBox href={link.href}>
                             {link.title}
                           </FocusableBox>
-                        </Typography>
+                        </Text>
                       ))}
                     </div>
                   </Box>

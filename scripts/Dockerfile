@@ -59,12 +59,6 @@ WORKDIR /webapp
 
 COPY --from=deps /build/node_modules /webapp/node_modules
 
-RUN apk add bash python py-pip curl -U \
-    && rm -rf /var/cache/apk/*
-RUN apk add jq=1.6-r1 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
-    && rm -rf /var/cache/apk/*
-RUN pip install awscli
-
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 USER runner
