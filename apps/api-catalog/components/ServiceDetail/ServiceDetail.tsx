@@ -65,7 +65,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
     }
 
     const [openApiObject, setOpenApiObject] = useState<GetOpenApiInput>(null)
-    
+
     const [getOpenApi, { data, loading, error }] = useLazyQuery<Query, QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
         {
 
@@ -74,9 +74,16 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
             },
         })
 
-    const onSelectChange = (value: SelectOption) => {
-        setOpenApiObject(value.value);
-        console.log(value);
+    const onSelectChange = (option: SelectOption) => {
+        const inputValues: GetOpenApiInput = {
+            instance: option.value.instance,
+            memberClass: option.value.memberClass,
+            memberCode: option.value.memberCode,
+            serviceCode: option.value.serviceCode,
+            subsystemCode: option.value.subsystemCode
+        }
+        setOpenApiObject(inputValues);
+        console.log(inputValues);
         getOpenApi()
     }
 
@@ -110,9 +117,23 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
                 </div>
             </div>
         )
-
     }
 
+    const showError = () => {
+        return (
+            <div>
+                Villa átti sér stað
+            </div>
+        )
+    }
+
+    const showOpenApiSpec = (spec:any) => {
+        return (
+            JSON.stringify(spec)
+        )
+    }
+
+    
     // Main page
     return (
         <GridContainer>
@@ -150,9 +171,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
                 <div className={cn(styles.section)}>
                     <h2>OpenAPI skjölun</h2>
-                    {data}
-                    {/*data?.getOpenApi?.spec*/}
-                    {/*<RedocStandalone spec={pets} />*/}
+                    { data?.getOpenApi == null ? showError() : showOpenApiSpec(data.getOpenApi) }
                 </div>
 
             </Box>
