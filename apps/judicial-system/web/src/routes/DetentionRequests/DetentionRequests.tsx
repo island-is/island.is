@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   AlertMessage,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
   Tag,
   TagVariant,

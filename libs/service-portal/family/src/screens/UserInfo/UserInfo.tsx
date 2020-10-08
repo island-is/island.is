@@ -3,7 +3,7 @@ import {
   Typography,
   Box,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   Icon,
   Hidden,
 } from '@island.is/island-ui/core'

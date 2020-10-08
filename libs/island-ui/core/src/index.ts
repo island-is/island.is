@@ -1,7 +1,7 @@
 // Components
 export * from './lib/Pagination/Pagination'
 export * from './lib/AsyncSearch/AsyncSearch'
-export * from './lib/Button/Button'
+export { Button as ButtonDeprecated } from './lib/Button/Button'
 export * from './lib/Logo/Logo'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'

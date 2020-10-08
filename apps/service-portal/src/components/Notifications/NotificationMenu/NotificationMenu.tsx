@@ -1,7 +1,12 @@
 import React, { FC } from 'react'
 import * as styles from './NotificationMenu.treat'
 import cn from 'classnames'
-import { Box, Typography, Stack, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  Stack,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'
 import { MenuState } from '../../../store/actions'

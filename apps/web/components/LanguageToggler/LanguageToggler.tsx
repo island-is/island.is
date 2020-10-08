@@ -2,7 +2,11 @@ import React, { FC, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { findKey } from 'lodash'
 import { useApolloClient } from 'react-apollo'
-import { Button, Hidden, Text } from '@island.is/island-ui/core'
+import {
+  ButtonDeprecated as Button,
+  Hidden,
+  Text,
+} from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames, { PathTypes, routes } from '@island.is/web/i18n/routeNames'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'

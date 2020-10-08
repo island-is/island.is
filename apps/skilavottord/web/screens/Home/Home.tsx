@@ -5,7 +5,7 @@ import {
   Typography,
   Box,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   BulletList,
   Bullet,
   ArrowLink,

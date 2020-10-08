@@ -8,7 +8,12 @@ import {
   FormValue,
   Schema,
 } from '@island.is/application/core'
-import { Box, Button, GridColumn, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  GridColumn,
+  Typography,
+} from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,

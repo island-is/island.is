@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import { AdgerdirNews } from '@island.is/api/schema'
 import { Heading, BackgroundImage } from '@island.is/adgerdir/components'

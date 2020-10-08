@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import {
   Typography,
-  Button,
+  ButtonDeprecated as Button,
   Box,
   GridRow,
   GridColumn,

@@ -3,7 +3,7 @@ import {
   Box,
   Stack,
   Typography,
-  Button,
+  ButtonDeprecated as Button,
   Checkbox,
   Inline,
   Link,
