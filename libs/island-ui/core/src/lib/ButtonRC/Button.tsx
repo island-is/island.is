@@ -81,7 +81,7 @@ type ButtonIconProps = {
 
 const ButtonIcon = ({ icon }: ButtonIconProps) => (
   <Icon
-    type={icon}
+    type={icon!}
     width="none"
     height="none"
     color="currentColor"
