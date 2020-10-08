@@ -15,7 +15,7 @@ import {
   Bullet,
   Stack,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
 } from '@island.is/island-ui/core'
 

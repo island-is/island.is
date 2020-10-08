@@ -1,10 +1,13 @@
 import { useEffect } from 'react'
 
-const useDeprecatedComponent = (componentName: string) =>
+const useDeprecatedComponent = (
+  componentName: string,
+  customMsg = `${componentName} is deprecated`,
+) =>
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.warn(`${componentName} is deprecated`)
+      console.warn(customMsg)
     }
-  }, [componentName])
+  }, [customMsg])
 
 export default useDeprecatedComponent

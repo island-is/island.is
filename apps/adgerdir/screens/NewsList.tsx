@@ -25,7 +25,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'

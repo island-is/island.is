@@ -1,3 +1,4 @@
+/** @deprecated ButtonDeprecated has been deprecated in favor of Button */
 import React, { forwardRef, ReactNode, FC, useContext } from 'react'
 import cn from 'classnames'
 import { Box } from '../Box'
@@ -6,6 +7,7 @@ import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
 import { ColorSchemeContext } from '../context'
 
 import * as styles from './Button.treat'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'redGhost' | 'text' | 'menu'
@@ -69,6 +71,10 @@ export const Button = forwardRef<
     },
     ref,
   ) => {
+    useDeprecatedComponent(
+      'Button',
+      'ButtonDeprecated has been deprecated in favor of Button.',
+    )
     const { colorScheme } = useContext(ColorSchemeContext)
 
     const className = cn(

@@ -23,7 +23,7 @@ import {
   Divider,
   Link,
   Icon,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
