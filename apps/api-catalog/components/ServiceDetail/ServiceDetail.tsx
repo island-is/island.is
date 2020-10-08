@@ -4,8 +4,8 @@ import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { ApiService } from '@island.is/api/schema'
 
-import pets from './petstore.json';
 import { RedocStandalone } from 'redoc';
+import YamlParser from 'js-yaml'
 
 import gql from 'graphql-tag'
 
@@ -64,17 +64,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
         versionOptions = versionOptions.sort((a, b) => b.label.localeCompare(a.label))
     }
 
-    const [openApiObject, setOpenApiObject] = useState<GetOpenApiInput>(null)
-
-    const [getOpenApi, { data, loading, error }] = useLazyQuery<Query, QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
-        {
-
-            variables: {
-                input: openApiObject,
-            },
-        })
-
-    const onSelectChange = (option: SelectOption) => {
+    const inputValuesFromOption = (option: SelectOption):GetOpenApiInput => {
         const inputValues: GetOpenApiInput = {
             instance: option.value.instance,
             memberClass: option.value.memberClass,
@@ -82,10 +72,27 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
             serviceCode: option.value.serviceCode,
             subsystemCode: option.value.subsystemCode
         }
-        setOpenApiObject(inputValues);
-        console.log(inputValues);
-        getOpenApi()
+        return inputValues;
+
     }
+    
+
+    
+    const [openApiObject, setOpenApiObject] = useState<GetOpenApiInput>(inputValuesFromOption(versionOptions[0]))
+    const [getOpenApi, { data, loading, error }] = useLazyQuery<Query, QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
+        {
+            
+            variables: {
+                input: openApiObject,
+            },
+        })
+        
+        const onSelectChange = (option: SelectOption) => {
+            const inputValues = inputValuesFromOption(option);
+            setOpenApiObject(inputValues);
+            console.log(inputValues);
+            getOpenApi()
+        }   
 
     const showCategory = (category: CATEGORY) => {
         let title = ""
@@ -126,14 +133,26 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
             </div>
         )
     }
+/*
+    const showOpenApiSpec = (result:any) => {
+        console.log(result.spec);
+        let parsed = YamlParser.safeLoad(result.spec);
+        let obj:object = {};
+        if (typeof parsed !== "string") {
+            obj = parsed;
+        }
 
-    const showOpenApiSpec = (spec:any) => {
-        return (
-            JSON.stringify(spec)
-        )
+        <RedocStandalone spec={
+            pets
+            //JSON.parse(result.spec)
+        } />
+        
     }
 
+    }
+  */  
     
+
     // Main page
     return (
         <GridContainer>
@@ -171,7 +190,13 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
                 <div className={cn(styles.section)}>
                     <h2>OpenAPI skjölun</h2>
-                    { data?.getOpenApi == null ? showError() : showOpenApiSpec(data.getOpenApi) }
+                    
+                    { data?.getOpenApi == null ? 
+                        showError() 
+                        : 
+                        <RedocStandalone spec={JSON.parse(data.getOpenApi.spec)} />
+                    }
+                    
                 </div>
 
             </Box>
