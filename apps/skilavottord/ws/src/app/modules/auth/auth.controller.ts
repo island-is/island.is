@@ -108,20 +108,32 @@ export class AuthController {
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    console.log("---user---")
-    console.log(user)
-    console.log("---csrfToken---")
-    console.log(csrfToken)
-    console.log("---jwtToken---")
-    console.log(jwtToken)
-    console.log("---CSRF_COOKIE---") 
-    console.log(CSRF_COOKIE) 
-    console.log("---ACCESS_TOKEN_COOKIE---")   
-    console.log(ACCESS_TOKEN_COOKIE)    
-    console.log("---returnUrl---")
-    console.log(returnUrl)
-    console.log("---res---")
-    console.log(res)
+    this.logger.error("---user---")
+    this.logger.error(user)
+    this.logger.error("---csrfToken---")
+    this.logger.error(csrfToken)
+    this.logger.error("---jwtToken---")
+    this.logger.error(jwtToken)
+    this.logger.error("---CSRF_COOKIE---")
+    this.logger.error(CSRF_COOKIE)
+    this.logger.error("---ACCESS_TOKEN_COOKIE---")
+    this.logger.error(ACCESS_TOKEN_COOKIE)
+    this.logger.error("---returnUrl---")
+    this.logger.error(returnUrl)
+//    console.log("---user---")
+//    console.log(user)
+//    console.log("---csrfToken---")
+//    console.log(csrfToken)
+//    console.log("---jwtToken---")
+//    console.log(jwtToken)
+//    console.log("---CSRF_COOKIE---") 
+//    console.log(CSRF_COOKIE) 
+//    console.log("---ACCESS_TOKEN_COOKIE---")   
+//    console.log(ACCESS_TOKEN_COOKIE)    
+//    console.log("---returnUrl---")
+//    console.log(returnUrl)
+//    console.log("---res---")
+//    console.log(res)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -136,14 +148,14 @@ export class AuthController {
 
   @Get('/login')
   login(@Res() res, @Query() query) {
-    console.log("---/login starting---")
+    this.logger.error("---/login starting---")
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
-    console.log("---returnUrl---")
-    console.log(returnUrl)
-    console.log("---samlEntryPoint---")
-    console.log(samlEntryPoint)
+    this.logger.error("---returnUrl---")
+    this.logger.error(returnUrl)
+    this.logger.error("---samlEntryPoint---")
+    this.logger.error(samlEntryPoint)
     return res
       .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(samlEntryPoint)
