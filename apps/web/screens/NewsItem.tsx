@@ -2,7 +2,7 @@
 import React from 'react'
 import Head from 'next/head'
 import {
-  Typography,
+  Text,
   Breadcrumbs,
   Box,
   Link,
@@ -44,22 +44,22 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <Stack space={3}>
         {Boolean(newsItem.author) && (
           <Stack space={1}>
-            <Typography variant="eyebrow" as="p" color="blue400">
+            <Text variant="eyebrow" as="p" color="blue400">
               {t.author ?? 'Höfundur'}
-            </Typography>
-            <Typography variant="h5" as="p">
+            </Text>
+            <Text variant="h5" as="p">
               {newsItem.author.name}
-            </Typography>
+            </Text>
           </Stack>
         )}
         {Boolean(newsItem.date) && (
           <Stack space={1}>
-            <Typography variant="eyebrow" as="p" color="blue400">
+            <Text variant="eyebrow" as="p" color="blue400">
               {t.publishDate ?? 'Birt'}
-            </Typography>
-            <Typography variant="h5" as="p">
+            </Text>
+            <Text variant="h5" as="p">
               {format(new Date(newsItem.date), 'do MMMM yyyy')}
-            </Typography>
+            </Text>
           </Stack>
         )}
       </Stack>
@@ -86,29 +86,27 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                       {t.newsAndAnnouncements}
                     </Link>
                   </Breadcrumbs>
-                  <Typography
-                    variant="h1"
-                    as="h1"
-                    paddingTop={1}
-                    paddingBottom={2}
-                  >
+                  <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
                     {newsItem.title}
-                  </Typography>
-                  <Typography variant="intro" as="p" paddingBottom={2}>
+                  </Text>
+                  <Text variant="intro" as="p" paddingBottom={2}>
                     {newsItem.intro}
-                  </Typography>
+                  </Text>
                   {Boolean(newsItem.image) && (
                     <Box paddingY={2}>
                       <Image
                         {...newsItem.image}
-                        url={newsItem.image.url + '?w=774'}
-                        thumbnail={newsItem.image.url + '?w=50'}
+                        url={newsItem.image.url + '?w=774&fm=webp&q=80'}
+                        thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
                       />
                     </Box>
                   )}
                 </GridColumn>
               </GridRow>
-              <RichText body={newsItem.content} />
+              <RichText
+                body={newsItem.content}
+                config={{ defaultPadding: 4 }}
+              />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
               <Sticky>
@@ -116,22 +114,22 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                   <Stack space={3}>
                     {Boolean(newsItem.author) && (
                       <Stack space={1}>
-                        <Typography variant="eyebrow" as="p" color="blue400">
+                        <Text variant="eyebrow" as="p" color="blue400">
                           {t.author ?? 'Höfundur'}
-                        </Typography>
-                        <Typography variant="h5" as="p">
+                        </Text>
+                        <Text variant="h5" as="p">
                           {newsItem.author.name}
-                        </Typography>
+                        </Text>
                       </Stack>
                     )}
                     {Boolean(newsItem.date) && (
                       <Stack space={1}>
-                        <Typography variant="eyebrow" as="p" color="blue400">
+                        <Text variant="eyebrow" as="p" color="blue400">
                           {t.publishDate ?? 'Birt'}
-                        </Typography>
-                        <Typography variant="h5" as="p">
+                        </Text>
+                        <Text variant="h5" as="p">
                           {format(new Date(newsItem.date), 'do MMMM yyyy')}
-                        </Typography>
+                        </Text>
                       </Stack>
                     )}
                   </Stack>

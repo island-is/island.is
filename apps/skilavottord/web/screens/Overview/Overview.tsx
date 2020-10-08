@@ -8,6 +8,7 @@ import { useQuery } from '@apollo/client'
 import { GET_CARS } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
+import { MockCar } from '@island.is/skilavottord-web/types'
 
 const nationalId = '2222222222'
 
@@ -17,10 +18,11 @@ const Overview: FC = () => {
   })
 
   const {
+    activeLocale,
     t: { myCars: t },
   } = useI18n()
   const router = useRouter()
-  const { makePath } = useRouteNames()
+  const { makePath, routePrefix } = useRouteNames(activeLocale)
 
   if (error || (loading && !data)) {
     return (
@@ -33,24 +35,30 @@ const Overview: FC = () => {
   const { cars } = data.getVehiclesForNationalId || {}
 
   const onRecycleCar = (id: string) => {
-    router.push(
-      '/recycle-vehicle/[id]/confirm',
-      makePath('recycleVehicle', id, 'confirm'),
-    )
+    router
+      .push(
+        '/recycle-vehicle/[id]/confirm',
+        makePath('recycleVehicle', id, 'confirm'),
+      )
+      .then(() => window.scrollTo(0, 0))
   }
 
   const onOpenProcess = (id: string) => {
-    router.push(
-      '/recycle-vehicle/[id]/handover',
-      makePath('recycleVehicle', id, 'handover'),
-    )
+    router
+      .push(
+        '/recycle-vehicle/[id]/handover',
+        makePath('recycleVehicle', id, 'handover'),
+      )
+      .then(() => window.scrollTo(0, 0))
   }
 
   const onSeeDetails = (id: string) => {
-    router.push(
-      '/recycle-vehicle/[id]/completed',
-      makePath('recycleVehicle', id, 'completed'),
-    )
+    router
+      .push(
+        '/recycle-vehicle/[id]/completed',
+        makePath('recycleVehicle', id, 'completed'),
+      )
+      .then(() => window.scrollTo(0, 0))
   }
 
   return (
@@ -58,7 +66,7 @@ const Overview: FC = () => {
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.pending}</Typography>
-          {cars.map((car) => (
+          {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
               car={car}
@@ -71,7 +79,7 @@ const Overview: FC = () => {
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.active}</Typography>
           {cars.length > 0 ? (
-            cars.map((car) => (
+            cars.map((car: MockCar) => (
               <ActionCard
                 key={car.permno}
                 car={car}
@@ -86,7 +94,7 @@ const Overview: FC = () => {
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.done}</Typography>
-          {cars.map((car) => (
+          {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
               car={{ ...car, status: 'done' }}

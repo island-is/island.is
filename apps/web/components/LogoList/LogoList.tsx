@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Typography, Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './LogoList.treat'
 
 export interface LogoListProps {
@@ -10,13 +10,13 @@ export interface LogoListProps {
 
 export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
   <div>
-    <Typography variant="h1" as="h2" color="white">
+    <Text variant="h1" as="h2" color="white">
       {title}
-    </Typography>
+    </Text>
     <Box paddingTop={3} marginBottom={7}>
-      <Typography variant="intro" as="p" color="white">
+      <Text variant="intro" as="p" color="white">
         {body}
-      </Typography>
+      </Text>
     </Box>
     <Box
       display="flex"

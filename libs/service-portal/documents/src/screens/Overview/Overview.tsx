@@ -25,6 +25,7 @@ import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
+import { useLocale } from '@island.is/localization'
 
 const defaultCategory = { label: 'Allir flokkar', value: '' }
 const pageSize = 4
@@ -39,6 +40,7 @@ type FilterValues = {
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
+  const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
   const [filterValue, setFilterValue] = useState<FilterValues>({
@@ -48,7 +50,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   })
   const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
   const { data, loading, error } = useListDocuments(
-    userInfo.user.profile.natreg,
+    userInfo.profile.natreg,
     filterValue.dateFrom,
     filterValue.dateTo,
     page,
@@ -107,13 +109,19 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     <>
       <Stack space={3}>
         <Typography variant="h1" as="h1">
-          Rafræn skjöl
+          {formatMessage({
+            id: 'sp.documents:title',
+            defaultMessage: 'Rafræn skjöl',
+          })}
         </Typography>
         <Columns collapseBelow="sm">
           <Column width="7/12">
             <Typography variant="intro">
-              Hér getur þú fundið öll þau skjöl sem eru send til þín frá
-              stofnunum ríkisins.
+              {formatMessage({
+                id: 'sp.documents:intro',
+                defaultMessage:
+                  'Hér munt þú geta fundið öll þau skjöl sem eru send til þín frá stofnunum ríkisins',
+              })}
             </Typography>
           </Column>
         </Columns>
@@ -132,7 +140,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </div>
                 <Column width="content">
                   <Button
-                    icon={searchOpen ? 'close' : 'search'}
+                    variant="ghost"
+                    icon={searchOpen ? 'close' : 'burger'}
                     onClick={handleExtendSearchClick}
                   >
                     {searchOpen ? 'Loka ítarleit' : 'Ítarleit'}
@@ -196,18 +205,20 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {data?.map((document) => (
               <DocumentCard key={document.id} document={document} />
             ))}
-            <Pagination
-              page={page}
-              totalPages={data?.length === pageSize ? page + 1 : page}
-              renderLink={(page, className, children) => (
-                <button
-                  className={className}
-                  onClick={handlePageChange.bind(null, page)}
-                >
-                  {children}
-                </button>
-              )}
-            />
+            {data && data.length > 0 && (
+              <Pagination
+                page={page}
+                totalPages={data?.length === pageSize ? page + 1 : page}
+                renderLink={(page, className, children) => (
+                  <button
+                    className={className}
+                    onClick={handlePageChange.bind(null, page)}
+                  >
+                    {children}
+                  </button>
+                )}
+              />
+            )}
           </Stack>
         </Box>
       </Stack>

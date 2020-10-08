@@ -59,10 +59,6 @@ WORKDIR /webapp
 
 COPY --from=deps /build/node_modules /webapp/node_modules
 
-RUN apk add bash python py-pip jq curl -U \
-    && rm -rf /var/cache/apk/*
-RUN pip install awscli
-
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 USER runner

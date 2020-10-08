@@ -1438,6 +1438,17 @@
             "jestConfig": "libs/service-portal/family/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
         }
       }
     },
@@ -1866,7 +1877,7 @@
               "apps/application-system/form/src/favicon.ico",
               "apps/application-system/form/src/assets"
             ],
-            "styles": [],
+            "styles": ["apps/application-system/form/src/styles.scss"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js"
           },
@@ -2029,7 +2040,7 @@
             "cwd": "apps/application-system/api"
           }
         },
-        "init-schema": {
+        "build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
@@ -2956,6 +2967,17 @@
             "jestConfig": "libs/service-portal/assets/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
         }
       }
     },
@@ -3380,6 +3402,61 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/application/ui-fields/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-form-fields": {
+      "root": "libs/shared/form-fields",
+      "sourceRoot": "libs/shared/form-fields/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/form-fields/tsconfig.lib.json",
+              "libs/shared/form-fields/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/form-fields/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/form-fields/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "judicial-system-formatters": {
+      "root": "libs/judicial-system/formatters",
+      "sourceRoot": "libs/judicial-system/formatters/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/formatters/tsconfig.lib.json",
+              "libs/judicial-system/formatters/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/formatters/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/formatters/jest.config.js",
             "passWithNoTests": true
           }
         }

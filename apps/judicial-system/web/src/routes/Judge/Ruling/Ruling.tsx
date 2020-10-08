@@ -9,13 +9,23 @@ import {
   RadioButton,
   Typography,
 } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
-import { AppealDecision, Case, CustodyRestrictions } from '../../../types'
+import { Case } from '../../../types'
+import {
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
-import { formatDate, parseArray, parseString } from '../../../utils/formatters'
-import { autoSave, updateState } from '../../../utils/stepHelper'
+import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { parseArray, parseString } from '../../../utils/formatters'
+import {
+  autoSave,
+  renderFormStepper,
+  updateState,
+} from '../../../utils/stepHelper'
 import * as api from '../../../api'
 
 export const Ruling: React.FC = () => {
@@ -61,31 +71,34 @@ export const Ruling: React.FC = () => {
   })
 
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
-    AppealDecision
+    CaseAppealDecision
   >(caseDraftJSON.accusedAppealDecision)
   const [prosecutorAppealDecition, setProsecutorAppealDecition] = useState(
     caseDraftJSON.prosecutorAppealDecision,
   )
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.ISOLATION) >
-      -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(
+      CaseCustodyRestrictions.ISOLATION,
+    ) > -1,
   )
   const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.VISITAION) >
-      -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(
+      CaseCustodyRestrictions.VISITAION,
+    ) > -1,
   )
   const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
     caseDraftJSON.custodyRestrictions?.indexOf(
-      CustodyRestrictions.COMMUNICATION,
+      CaseCustodyRestrictions.COMMUNICATION,
     ) > -1,
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(CustodyRestrictions.MEDIA) > -1,
+    caseDraftJSON.custodyRestrictions?.indexOf(CaseCustodyRestrictions.MEDIA) >
+      -1,
   )
   const restrictions = [
     {
       restriction: 'B - Einangrun',
-      value: CustodyRestrictions.ISOLATION,
+      value: CaseCustodyRestrictions.ISOLATION,
       getCheckbox: restrictionCheckboxOne,
       setCheckbox: setRestrictionCheckboxOne,
       explination:
@@ -93,7 +106,7 @@ export const Ruling: React.FC = () => {
     },
     {
       restriction: 'C - Heimsóknarbann',
-      value: CustodyRestrictions.VISITAION,
+      value: CaseCustodyRestrictions.VISITAION,
       getCheckbox: restrictionCheckboxTwo,
       setCheckbox: setRestrictionCheckboxTwo,
       explination:
@@ -101,7 +114,7 @@ export const Ruling: React.FC = () => {
     },
     {
       restriction: 'D - Bréfskoðun, símabann',
-      value: CustodyRestrictions.COMMUNICATION,
+      value: CaseCustodyRestrictions.COMMUNICATION,
       getCheckbox: restrictionCheckboxThree,
       setCheckbox: setRestrictionCheckboxThree,
       explination:
@@ -109,7 +122,7 @@ export const Ruling: React.FC = () => {
     },
     {
       restriction: 'E - Fjölmiðlabann',
-      value: CustodyRestrictions.MEDIA,
+      value: CaseCustodyRestrictions.MEDIA,
       getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
       explination:
@@ -124,21 +137,21 @@ export const Ruling: React.FC = () => {
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <JudgeLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Box marginBottom={10}>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
               <Typography as="h1" variant="h1">
                 Krafa um gæsluvarðhald
               </Typography>
-            </Box>
-          </GridColumn>
-        </GridRow>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 2)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>
@@ -222,7 +235,7 @@ export const Ruling: React.FC = () => {
                     name="requestedCustodyEndTime"
                     defaultValue={formatDate(
                       workingCase.requestedCustodyEndDate,
-                      Constants.TIME_FORMAT,
+                      TIME_FORMAT,
                     )}
                     label="Tímasetning"
                   />
@@ -253,7 +266,7 @@ export const Ruling: React.FC = () => {
 
                               const restrictionIsSelected =
                                 copyOfState.custodyRestrictions.indexOf(
-                                  target.value as CustodyRestrictions,
+                                  target.value as CaseCustodyRestrictions,
                                 ) > -1
 
                               // Toggle the checkbox on or off
@@ -262,7 +275,7 @@ export const Ruling: React.FC = () => {
                               // If the user is checking the box, add the restriction to the state
                               if (!restrictionIsSelected) {
                                 copyOfState.custodyRestrictions.push(
-                                  target.value as CustodyRestrictions,
+                                  target.value as CaseCustodyRestrictions,
                                 )
                               }
                               // If the user is unchecking the box, remove the restriction from the state
@@ -271,7 +284,7 @@ export const Ruling: React.FC = () => {
                                   copyOfState.custodyRestrictions
                                 restrictions.splice(
                                   restrictions.indexOf(
-                                    target.value as CustodyRestrictions,
+                                    target.value as CaseCustodyRestrictions,
                                   ),
                                   1,
                                 )
@@ -334,23 +347,23 @@ export const Ruling: React.FC = () => {
                         name="accused-appeal-decition"
                         id="accused-appeal"
                         label="Kærði kærir málið"
-                        value={AppealDecision.APPEAL}
+                        value={CaseAppealDecision.APPEAL}
                         checked={
-                          accusedAppealDecition === AppealDecision.APPEAL
+                          accusedAppealDecition === CaseAppealDecision.APPEAL
                         }
                         onChange={() => {
-                          setAccusedAppealDecition(AppealDecision.APPEAL)
+                          setAccusedAppealDecition(CaseAppealDecision.APPEAL)
                           updateState(
                             workingCase,
                             'accusedAppealDecision',
-                            AppealDecision.APPEAL,
+                            CaseAppealDecision.APPEAL,
                             setWorkingCase,
                           )
                           api.saveCase(
                             workingCase.id,
                             parseString(
                               'accusedAppealDecision',
-                              AppealDecision.APPEAL,
+                              CaseAppealDecision.APPEAL,
                             ),
                           )
                         }}
@@ -362,17 +375,17 @@ export const Ruling: React.FC = () => {
                         name="accused-appeal-decition"
                         id="accused-accept"
                         label="Kærði unir úrskurðinum"
-                        value={AppealDecision.ACCEPT}
+                        value={CaseAppealDecision.ACCEPT}
                         checked={
-                          accusedAppealDecition === AppealDecision.ACCEPT
+                          accusedAppealDecition === CaseAppealDecision.ACCEPT
                         }
                         onChange={() => {
-                          setAccusedAppealDecition(AppealDecision.ACCEPT)
+                          setAccusedAppealDecition(CaseAppealDecision.ACCEPT)
 
                           updateState(
                             workingCase,
                             'accusedAppealDecision',
-                            AppealDecision.ACCEPT,
+                            CaseAppealDecision.ACCEPT,
                             setWorkingCase,
                           )
 
@@ -380,7 +393,7 @@ export const Ruling: React.FC = () => {
                             workingCase.id,
                             parseString(
                               'accusedAppealDecision',
-                              AppealDecision.ACCEPT,
+                              CaseAppealDecision.ACCEPT,
                             ),
                           )
                         }}
@@ -395,17 +408,17 @@ export const Ruling: React.FC = () => {
                       name="accused-appeal-decition"
                       id="accused-postpone"
                       label="Kærði tekur sér lögboðinn frest"
-                      value={AppealDecision.POSTPONE}
+                      value={CaseAppealDecision.POSTPONE}
                       checked={
-                        accusedAppealDecition === AppealDecision.POSTPONE
+                        accusedAppealDecition === CaseAppealDecision.POSTPONE
                       }
                       onChange={() => {
-                        setAccusedAppealDecition(AppealDecision.POSTPONE)
+                        setAccusedAppealDecition(CaseAppealDecision.POSTPONE)
 
                         updateState(
                           workingCase,
                           'accusedAppealDecision',
-                          AppealDecision.POSTPONE,
+                          CaseAppealDecision.POSTPONE,
                           setWorkingCase,
                         )
 
@@ -413,7 +426,7 @@ export const Ruling: React.FC = () => {
                           workingCase.id,
                           parseString(
                             'accusedAppealDecision',
-                            AppealDecision.POSTPONE,
+                            CaseAppealDecision.POSTPONE,
                           ),
                         )
                       }}
@@ -441,17 +454,17 @@ export const Ruling: React.FC = () => {
                         name="prosecutor-appeal-decition"
                         id="prosecutor-appeal"
                         label="Sækjandi kærir málið"
-                        value={AppealDecision.APPEAL}
+                        value={CaseAppealDecision.APPEAL}
                         checked={
-                          prosecutorAppealDecition === AppealDecision.APPEAL
+                          prosecutorAppealDecition === CaseAppealDecision.APPEAL
                         }
                         onChange={() => {
-                          setProsecutorAppealDecition(AppealDecision.APPEAL)
+                          setProsecutorAppealDecition(CaseAppealDecision.APPEAL)
 
                           updateState(
                             workingCase,
                             'prosecutorAppealDecision',
-                            AppealDecision.APPEAL,
+                            CaseAppealDecision.APPEAL,
                             setWorkingCase,
                           )
 
@@ -459,7 +472,7 @@ export const Ruling: React.FC = () => {
                             workingCase.id,
                             parseString(
                               'prosecutorAppealDecision',
-                              AppealDecision.APPEAL,
+                              CaseAppealDecision.APPEAL,
                             ),
                           )
                         }}
@@ -471,17 +484,17 @@ export const Ruling: React.FC = () => {
                         name="prosecutor-appeal-decition"
                         id="prosecutor-accept"
                         label="Sækjandi unir úrskurðinum"
-                        value={AppealDecision.ACCEPT}
+                        value={CaseAppealDecision.ACCEPT}
                         checked={
-                          prosecutorAppealDecition === AppealDecision.ACCEPT
+                          prosecutorAppealDecition === CaseAppealDecision.ACCEPT
                         }
                         onChange={() => {
-                          setProsecutorAppealDecition(AppealDecision.ACCEPT)
+                          setProsecutorAppealDecition(CaseAppealDecision.ACCEPT)
 
                           updateState(
                             workingCase,
                             'prosecutorAppealDecision',
-                            AppealDecision.ACCEPT,
+                            CaseAppealDecision.ACCEPT,
                             setWorkingCase,
                           )
 
@@ -489,7 +502,7 @@ export const Ruling: React.FC = () => {
                             workingCase.id,
                             parseString(
                               'prosecutorAppealDecision',
-                              AppealDecision.ACCEPT,
+                              CaseAppealDecision.ACCEPT,
                             ),
                           )
                         }}
@@ -504,17 +517,17 @@ export const Ruling: React.FC = () => {
                       name="prosecutor-appeal-decition"
                       id="prosecutor-postpone"
                       label="Sækjandi tekur sér lögboðinn frest"
-                      value={AppealDecision.POSTPONE}
+                      value={CaseAppealDecision.POSTPONE}
                       checked={
-                        prosecutorAppealDecition === AppealDecision.POSTPONE
+                        prosecutorAppealDecition === CaseAppealDecision.POSTPONE
                       }
                       onChange={() => {
-                        setProsecutorAppealDecition(AppealDecision.POSTPONE)
+                        setProsecutorAppealDecition(CaseAppealDecision.POSTPONE)
 
                         updateState(
                           workingCase,
                           'prosecutorAppealDecision',
-                          AppealDecision.POSTPONE,
+                          CaseAppealDecision.POSTPONE,
                           setWorkingCase,
                         )
 
@@ -522,7 +535,7 @@ export const Ruling: React.FC = () => {
                           workingCase.id,
                           parseString(
                             'prosecutorAppealDecision',
-                            AppealDecision.POSTPONE,
+                            CaseAppealDecision.POSTPONE,
                           ),
                         )
                       }}
@@ -533,7 +546,6 @@ export const Ruling: React.FC = () => {
               </Box>
             </Box>
             <FormFooter
-              previousUrl={Constants.COURT_DOCUMENT_ROUTE}
               nextUrl={Constants.CONFIRMATION_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime

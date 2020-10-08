@@ -13,20 +13,35 @@ import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBread
 import * as styles from './Layout.treat'
 import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
-import { footerProps } from './footerProps'
+import { getFooterProps } from './footerProps'
+import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
+import MobileToolbar from '../MobileToolbar/MobileToolbar'
+import MobileMenu from '../MobileMenu/MobileMenu'
+import { useFooterContent } from '@island.is/service-portal/graphql'
+import { useLocale } from '@island.is/localization'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
+  const { locale } = useLocale()
+  const data = useFooterContent(locale)
+  const { pathname } = useLocation()
+  useScrollTopOnUpdate([pathname])
+  const footerProps = getFooterProps(data)
 
   return (
     <>
       <UserInfoLoadingOverlay />
       <Header />
+      <Hidden above="md">
+        <MobileToolbar />
+        <MobileMenu />
+      </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper}>
         <ContentBlock>
           <Box paddingX={[2, 2, 4, 4, 6]} paddingY={[2, 2, 2, 7]}>
-            <Columns space={[0, 0, 0, 'containerGutter']}>
-              <Column width="content">
+            <Columns space={[0, 0, 0, 'containerGutter']} collapseBelow="lg">
+              <Column width="4/12">
                 <Hidden below="lg">
                   <Sidebar />
                 </Hidden>

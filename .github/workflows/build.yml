@@ -18,7 +18,6 @@ env:
 
 jobs:
   prepare:
-    #runs-on: self-hosted
     runs-on: ubuntu-20.04
     timeout-minutes: 40 #pulling dependencies potentially twice - host OS and docker layer
 
@@ -33,10 +32,11 @@ jobs:
       PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
-      DOCKER_NEXT_CHUNKS: ${{ steps.docker_next_projects.outputs.CHUNKS }}
-      DOCKER_STATIC_CHUNKS: ${{ steps.docker_static_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.docker_unaffected_projects.outputs.UNAFFECTED }}
+      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
+      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
+      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -94,28 +94,44 @@ jobs:
           fi
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
+      - name: Calculate cache key for node_modules
+        id: calculate_node_modules_hash
+        run: |
+          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
+          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
+          echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
+
+      - name: Calculate cache keys for generated files
+        id: calculate_generated_files_cache_key
+        run: |
+          export HASH=${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}
+          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
+          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
+          echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
+
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         uses: actions/cache@v2
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps
 
       - name: Cache for NodeJS dependencies - Docker layer
         uses: actions/cache@v2
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Set up Docker Buildx
-        if: steps.cache-deps.outputs.cache-hit != 'true'
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
@@ -123,7 +139,7 @@ jobs:
           qemu-version: latest
 
       - name: Building NodeJS dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/10_prepare-deps.sh
 
       - name: set BRANCH env var
@@ -134,7 +150,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
@@ -149,47 +165,44 @@ jobs:
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          CHUNK_SIZE=7 source ./scripts/generate-chunks.sh lint
+          CHUNKS=$(CHUNK_SIZE=7 ./scripts/generate-chunks.sh lint)
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare test targets
         id: test_projects
         run: |
-          source ./scripts/generate-chunks.sh test
+          CHUNKS=$(CHUNK_SIZE=7 ./scripts/generate-chunks.sh test)
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
-      - name: Prepare docker-express targets
-        id: docker_express_projects
+      - name: Prepare native build targets
+        id: build_projects
         run: |
-          source ./scripts/generate-chunks.sh docker-express
+          CHUNKS=$(CHUNK_SIZE=7 ./scripts/generate-chunks.sh build)
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
-      - name: Prepare docker-next targets
-        id: docker_next_projects
+      - name: Prepare docker build targets
+        id: build_map
         run: |
-          source ./scripts/generate-chunks.sh docker-next
-          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+          MAP=$(./scripts/generate-build-map.sh docker-express docker-next docker-static)
+          echo "MAP: '$MAP'"
+          echo "::set-output name=BUILD_MAP::$MAP"
 
-      - name: Prepare docker-static targets
-        id: docker_static_projects
+      - name: Gather unaffected docker images
+        id: unaffected
         run: |
-          source ./scripts/generate-chunks.sh docker-static
-          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
-
-      - name: Prepare unaffected docker images
-        id: docker_unaffected_projects
-        run: |
-          source ./scripts/list-unaffected.sh docker-next docker-express docker-static
+          UNAFFECTED=$(./scripts/list-unaffected.sh docker-next docker-express docker-static)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
-    needs: prepare
+    needs:
+      - prepare
     runs-on: ubuntu-20.04
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      MAX_JOBS: 4
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -203,21 +216,20 @@ jobs:
         uses: actions/cache@v2
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
-
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Cache for generated files
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Untar generated files
         if: ${{ matrix.projects != 'dummy' }}
@@ -237,12 +249,10 @@ jobs:
       #   run: yarn run affected:e2e --base origin/master
 
   formatting:
-    needs: prepare
+    needs:
+      - prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 5
-    env:
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
     steps:
       - uses: actions/checkout@v2
       - name: Cache for NodeJS dependencies - host OS
@@ -250,18 +260,18 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Check formatting
         run: ./scripts/20_check-formatting.sh
 
   linting:
-    needs: prepare
+    needs:
+      - prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 25 # linting has proven to be quite resource intensive
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      MAX_JOBS: 4
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -274,14 +284,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Cache for generated files
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Untar generated files
         if: ${{ matrix.projects != 'dummy' }}
@@ -289,205 +299,139 @@ jobs:
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel-native.sh 20_lint
+        run: ./scripts/run-in-parallel-native.sh lint
 
-  docker-express:
-    needs: [prepare, tests]
+  native-build:
+    if: needs.prepare.outputs.PUBLISH != 'true'
+    needs:
+      - prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+      MAX_JOBS: 4
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_EXPRESS_CHUNKS) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for NodeJS dependencies - host OS
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Cache for generated files
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Untar generated files
         if: ${{ matrix.projects != 'dummy' }}
         run: tar zxvf generated_files.tar.gz
 
-      - name: Cache for dependencies Docker layer
+      - name: Building
         if: ${{ matrix.projects != 'dummy' }}
-        id: cache-deps
-        uses: actions/cache@v2
-        with:
-          path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+        run: ./scripts/run-in-parallel-native.sh build
 
-      - name: Cache for NodeJS dependencies - Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
-
-      - name: Docker login to ECR repo
-        if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: ./scripts/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
-
-      - name: Building Docker images
-        if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh 90_docker-express
-
-  docker-static:
-    needs: [prepare, tests]
+  docker-build:
+    if: needs.prepare.outputs.PUBLISH == 'true'
+    needs:
+      - prepare
+      - tests
     runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+      MAX_JOBS: 4
+      PUBLISH: true
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_STATIC_CHUNKS) }}
+      matrix:
+        docker-type:
+          - express
+          - next
+          - static
     steps:
+      - name: Gather apps
+        id: gather
+        run: |
+          AFFECTED_PROJECTS=$(echo '${{ needs.prepare.outputs.BUILD_MAP }}' | jq -r '.["docker-${{ matrix.docker-type }}"]')
+          if [[ "$AFFECTED_PROJECTS" == "null" ]]; then
+            # Early exit
+            exit 1
+          fi
+          echo "::set-env name=AFFECTED_PROJECTS::$AFFECTED_PROJECTS"
+        continue-on-error: true
       - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
-
+        if: steps.gather.conclusion == 'success'
       - name: Cache for generated files
-        if: ${{ matrix.projects != 'dummy' }}
+        if: steps.gather.conclusion == 'success'
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Untar generated files
-        if: ${{ matrix.projects != 'dummy' }}
+        if: steps.gather.conclusion == 'success'
         run: tar zxvf generated_files.tar.gz
 
       - name: Cache for dependencies Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
+        if: steps.gather.conclusion == 'success'
         id: cache-deps
         uses: actions/cache@v2
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
+        if: steps.gather.conclusion == 'success'
         uses: actions/cache@v2
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
 
       - name: Docker login to ECR repo
-        if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
+        if: steps.gather.conclusion == 'success'
         run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
+        if: steps.gather.conclusion == 'success'
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
 
       - name: Building Docker images
-        if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh 90_docker-static
-
-  docker-next:
-    needs: [prepare, tests]
-    runs-on: ubuntu-20.04
-    timeout-minutes: 25
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_NEXT_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
-
-      - name: Cache for generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: generated_files.tar.gz
-          key: ${{ runner.os }}-${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}-generated-files
-
-      - name: Untar generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Cache for dependencies Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
-        id: cache-deps
-        uses: actions/cache@v2
-        with:
-          path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
-
-      - name: Cache for NodeJS dependencies - Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
-
-      - name: Docker login to ECR repo
-        if: ${{ matrix.projects != 'dummy' && env.PUBLISH == 'true'}}
-        run: ./scripts/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
-
-      - name: Building Docker images
-        if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh 90_docker-next
+        if: steps.gather.conclusion == 'success'
+        run: ./scripts/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
 
   retag-unaffected:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     needs:
-      [docker-express, docker-next, docker-static, prepare, linting, formatting]
+      - docker-build
+      - prepare
+    if: needs.prepare.outputs.PUBLISH == 'true'
     env:
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
-      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
+      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
 
     steps:
       - uses: actions/checkout@v2
-        if: env.PUBLISH == 'true'
       - name: Retag unaffected Docker images
-        if: env.PUBLISH == 'true'
         run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -495,20 +439,24 @@ jobs:
 
   deploy:
     runs-on: ubuntu-20.04
-    needs: [retag-unaffected, prepare]
+    if: needs.prepare.outputs.PUBLISH == 'true'
+    needs:
+      - retag-unaffected
+      - prepare
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
     strategy:
       matrix:
-        service: [islandis, gjafakort, air-discount-scheme]
+        service:
+          - islandis
+          - gjafakort
+          - air-discount-scheme
     outputs:
-      TRIGGER_FINISHED: ${{ steps.finished.outputs.TRIGGER_FINISHED }}
+      DEPLOY_FINISHED: ${{ steps.finished.outputs.DEPLOY_FINISHED }}
     steps:
       - uses: actions/checkout@v2
       - name: Trigger Deployment for service
-        if: env.PUBLISH == 'true'
         env:
           SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
@@ -520,18 +468,34 @@ jobs:
           "parameters": { "docker_tag": "$DOCKER_TAG" }
           }
           BODY
-      - id: finished
-        run: echo "::set-output name=TRIGGER_FINISHED::yes"
 
   success:
     runs-on: ubuntu-20.04
     if: always()
-    needs: deploy
-    env:
-      TRIGGER_FINISHED: ${{ needs.deploy.outputs.TRIGGER_FINISHED }}
+    needs:
+      - prepare
+      - deploy
+      - tests
+      - linting
+      - formatting
+      - native-build
     steps:
-      - name: Check success
-        run: '[[ $TRIGGER_FINISHED == "yes" ]] || exit 1'
+      # This is easier to clean up when we break up build.yml
+      - name: Check deploy success
+        if: needs.prepare.outputs.PUBLISH == 'true'
+        run: '[[ ${{ needs.deploy.result }} == "success" ]] || exit 1'
+      - name: Check tests success
+        if: needs.prepare.outputs.PUBLISH != 'true'
+        run: '[[ ${{ needs.tests.result }} == "success" ]] || exit 1'
+      - name: Check linting success
+        if: needs.prepare.outputs.PUBLISH != 'true'
+        run: '[[ ${{ needs.linting.result }} == "success" ]] || exit 1'
+      - name: Check formatting success
+        if: needs.prepare.outputs.PUBLISH != 'true'
+        run: '[[ ${{ needs.formatting.result }} == "success" ]] || exit 1'
+      - name: Check native-build success
+        if: needs.prepare.outputs.PUBLISH != 'true'
+        run: '[[ ${{ needs.native-build.result }} == "success" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
 
@@ -539,17 +503,11 @@ jobs:
     runs-on: ubuntu-20.04
     if: failure()
     needs:
-      [
-        docker-express,
-        docker-next,
-        docker-static,
-        prepare,
-        linting,
-        formatting,
-        deploy,
-      ]
-    env:
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+      - docker-build
+      - prepare
+      - linting
+      - formatting
+      - deploy
     steps:
       - name: Send Slack notification
         uses: 8398a7/action-slack@v3
@@ -560,4 +518,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: env.PUBLISH == 'true'
+        if: needs.prepare.outputs.PUBLISH == 'true'
