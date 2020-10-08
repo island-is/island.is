@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, GridContainer, Link, Select } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
 import { ApiService } from '@island.is/api/schema'
+
+import pets from './petstore.json';
+import { RedocStandalone } from 'redoc';
 
 export interface ServiceDetailProps {
     service: ApiService
@@ -20,9 +23,12 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
             </GridContainer>
         )
     }
+
+    const [OpenApiObject, setOpenApiObject] = useState<any>(null)
+
     type SelectOption = {
         label: string,
-        value: string
+        value: any
     }
 
     enum CATEGORY {
@@ -33,21 +39,15 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
     let versionOptions: Array<SelectOption> = props.service.xroadIdentifier.map((e) => ({
         label: e.serviceCode.split('-').pop(),
-        value: e.serviceCode
+        value: e
     }))
     if (versionOptions.length > 0) {
         versionOptions = versionOptions.sort((a, b) => b.label.localeCompare(a.label))
     }
 
-    const onChange = (value: SelectOption) => {
+    const onSelectChange = (value: SelectOption) => {
 
         console.log(value);
-    }
-
-    const showOpenAPI = (url: string) => {
-        return (
-            <div>Need url or Json object</div>
-        )
     }
 
     const showCategory = (category: CATEGORY) => {
@@ -83,7 +83,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
     }
 
-
+    // Main page
     return (
         <GridContainer>
             <Box className={cn(styles.root)}>
@@ -96,7 +96,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
                                 name="version"
                                 defaultValue={versionOptions[0]}
                                 options={versionOptions}
-                                onChange={onChange}
+                                onChange={onSelectChange}
                                 noOptionsMessage="Engar útgáfuupplýsingar"
                             />
                         </div>
@@ -120,7 +120,7 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
 
                 <div className={cn(styles.section)}>
                     <h2>OpenAPI skjölun</h2>
-                    {showOpenAPI('https.stuff')}
+                    <RedocStandalone  spec={pets}/>
                 </div>
 
             </Box>
