@@ -1,4 +1,4 @@
-import { getFormLeaves, getFormNodeLeaves } from './formUtils'
+import { getFormNodeLeaves } from './formUtils'
 import {
   ApplicationTypes,
   buildCheckboxField,
@@ -90,7 +90,7 @@ const ExampleForm: Form = buildForm({
 
 describe('application schema utility functions', () => {
   it('should get all screens in a form', () => {
-    const screens = getFormLeaves(ExampleForm)
+    const screens = getFormNodeLeaves(ExampleForm)
 
     expect(screens.length).toBe(5)
     expect(screens[0].id).toBe('field')
