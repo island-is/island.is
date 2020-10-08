@@ -12,7 +12,7 @@ import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import {
-  Typography,
+  Text,
   Stack,
   Box,
   Button,
@@ -302,19 +302,15 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         style={{ minHeight: `${minHeight}px` }}
                       >
                         <Stack space={3}>
-                          <Typography
-                            variant="eyebrow"
-                            as="p"
-                            color="purple400"
-                          >
+                          <Text variant="eyebrow" as="p" color="purple400">
                             <span className={styles.textItem}>{subtitle}</span>
-                          </Typography>
-                          <Typography variant="h1" as="h1">
+                          </Text>
+                          <Text variant="h1" as="h1">
                             <span className={styles.textItem}>{title}</span>
-                          </Typography>
-                          <Typography variant="p" as="p">
+                          </Text>
+                          <Text>
                             <span className={styles.textItem}>{content}</span>
-                          </Typography>
+                          </Text>
                           {linkUrls?.href ? (
                             <Link
                               as={linkUrls.as}

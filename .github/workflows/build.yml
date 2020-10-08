@@ -197,7 +197,7 @@ jobs:
     needs:
       - prepare
     runs-on: ubuntu-20.04
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -351,6 +351,7 @@ jobs:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       MAX_JOBS: 4
+      PUBLISH: true
     strategy:
       fail-fast: false
       matrix:
@@ -363,7 +364,7 @@ jobs:
         id: gather
         run: |
           AFFECTED_PROJECTS=$(echo '${{ needs.prepare.outputs.BUILD_MAP }}' | jq -r '.["docker-${{ matrix.docker-type }}"]')
-          if [[ "$AFFECTED_PROJECTS" == "" ]]; then
+          if [[ "$AFFECTED_PROJECTS" == "null" ]]; then
             # Early exit
             exit 1
           fi

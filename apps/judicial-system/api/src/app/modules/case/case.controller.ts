@@ -18,7 +18,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard } from '../auth'
 import { UserRole, UserService } from '../user'
@@ -27,6 +27,7 @@ import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 import { transitionCase as transitionUpdate } from './case.state'
+import { generateRequestPdf } from './case.pdf'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -93,6 +94,12 @@ export class CaseController {
       throw new ConflictException(
         `A more recent version exists of the case with id ${id}`,
       )
+    }
+
+    // Find a better place when we start sending email
+    if (transition.transition === CaseTransition.SUBMIT) {
+      const dbCase = await this.findCaseById(id)
+      generateRequestPdf(dbCase)
     }
 
     return updatedCase
@@ -163,18 +170,18 @@ export class CaseController {
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (existingCase.judge?.role !== UserRole.JUDGE) {
-      throw new UnauthorizedException(
-        `A ruling cannot be signed by a user with role ${existingCase.judge?.role}`,
-      )
-    }
-
     if (
       existingCase.state !== CaseState.ACCEPTED &&
       existingCase.state !== CaseState.REJECTED
     ) {
       throw new ForbiddenException(
         `Cannot sign a ruling for a case in state ${existingCase.state}`,
+      )
+    }
+
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling cannot be signed by a user with role ${existingCase.judge?.role}`,
       )
     }
 

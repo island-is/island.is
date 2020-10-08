@@ -30,7 +30,7 @@ export class ElasticService {
     logger.debug('Created ES Service')
   }
 
-  async index(index: SearchIndexes, { _id, ...body }: MappedData) {
+  async index(index: string, { _id, ...body }: MappedData) {
     try {
       const client = await this.getClient()
       return await client.index({
@@ -45,7 +45,7 @@ export class ElasticService {
   }
 
   // this can partially succeed
-  async bulk(index: SearchIndexes, documents: SyncRequest) {
+  async bulk(index: string, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
       added: documents.add.length,
@@ -108,7 +108,7 @@ export class ElasticService {
   }
 
   async findByQuery<ResponseBody, RequestBody>(
-    index: SearchIndexes,
+    index: string,
     query: RequestBody,
   ) {
     try {
@@ -126,10 +126,7 @@ export class ElasticService {
     }
   }
 
-  async getDocumentsByMetaData(
-    index: SearchIndexes,
-    query: DocumentByMetaDataInput,
-  ) {
+  async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
     const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
@@ -190,7 +187,7 @@ export class ElasticService {
     })
   }
 
-  async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
+  async deleteAllExcept(index: string, excludeIds: Array<string>) {
     const client = await this.getClient()
 
     return client.delete_by_query({

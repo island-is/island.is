@@ -1,3 +1,5 @@
+/** @deprecated Typography has been deprecated in favor of Text */
+
 import React from 'react'
 import cn from 'classnames'
 
@@ -57,6 +59,10 @@ export const Typography = ({
   fontWeight,
   as = 'p',
 }: TypographyProps) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('Typography has been deprecated in favor of Text.')
+  }
+
   return (
     <Box
       id={id}

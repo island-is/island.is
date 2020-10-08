@@ -114,11 +114,7 @@ class App {
             await elastic.updateIndexTemplate(locale, esPackages)
             await elastic.createNewIndexVersion(locale, newIndexVersion)
             processedMigrations[locale].newIndexVersion = newIndexVersion
-            await elastic.moveOldContentToNewIndex(
-              locale,
-              newIndexVersion,
-              oldIndexVersion,
-            )
+            await elastic.importContentToNewIndex(locale, newIndexVersion)
             await elastic.moveAliasToNewIndex(
               locale,
               newIndexVersion,

@@ -9,6 +9,9 @@ export const margin = style({
     [`screen and min-width(${theme.breakpoints.sm}px)`]: {
       paddingLeft: '90px',
     },
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      paddingLeft: '0',
+    },
   },
 })
 
@@ -16,4 +19,10 @@ export const icon = style({
   position: 'absolute',
   top: 0,
   left: 0,
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'none',
+    },
+  },
 })

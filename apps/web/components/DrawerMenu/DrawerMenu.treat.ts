@@ -1,11 +1,28 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const root = style({
+export const container = style({
+  position: 'fixed',
+  zIndex: 8,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  overflow: 'visible',
+})
+
+export const containerOpen = style({
+  top: 0,
+})
+
+export const containerScroll = style({
+  overflow: 'scroll',
+})
+
+export const content = style({
   bottom: 0,
   display: 'flex',
   flexDirection: 'column',
-  position: 'fixed',
+  position: 'relative',
   zIndex: 9,
   left: 0,
   margin: '0 auto',

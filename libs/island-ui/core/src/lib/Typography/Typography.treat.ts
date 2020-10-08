@@ -124,7 +124,7 @@ export const variants: Variants = {
   },
   p: {
     fontSize: {
-      xs: 15,
+      xs: 16,
       md: 18,
     },
     lineHeight: 1.5,

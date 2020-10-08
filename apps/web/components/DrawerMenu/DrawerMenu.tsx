@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import ToggleButton from './components/ToggleButton/ToggleButton'
-import { Typography, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 import * as styles from './DrawerMenu.treat'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 import { theme } from '@island.is/island-ui/theme'
@@ -42,7 +42,7 @@ const MainCategoryHeader = ({ title, onClick, isOpen }) => (
     padding={3}
     onClick={onClick}
   >
-    <Typography variant="h4">{title}</Typography>
+    <Text variant="h4">{title}</Text>
     <ToggleButton isActive={isOpen} onClick={onClick} />
   </Box>
 )
@@ -72,7 +72,7 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
         marginBottom={3}
         padding={3}
       >
-        <Typography variant="h4">{title}</Typography>
+        <Text variant="h4">{title}</Text>
       </Box>
     )}
     <Box component="ul" padding={3} position="relative">
@@ -90,9 +90,9 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
 
         return (
           <Box key={id} component="li">
-            <Typography as="p" paddingBottom={2}>
+            <Text as="p" paddingBottom={2}>
               <Link {...linkProps}>{item.title}</Link>
-            </Typography>
+            </Text>
           </Box>
         )
       })}
@@ -105,10 +105,15 @@ const DRAWER_EXPANDED_PADDING_TOP = STICKY_NAV_HEIGHT + theme.spacing[4]
 
 const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
   const [mounted, setMounted] = useState(false)
+  const [contentHeight, setContentHeight] = useState(0)
+  const [contentTop, setContentTop] = useState(0)
+  const contentRef = useRef(null)
+  const containerRef = useRef(null)
   const [isOpen, setOpen] = useState(false)
+  const [useScroll, setUseScroll] = useState<boolean>(false)
+  const [initialOverflow, setInitialOverflow] = useState(null)
   const { height: viewportHeight } = useWindowSize()
   const [mainCategory, ...rest] = categories
-  const offsetY = viewportHeight - DRAWER_HEADING_HEIGHT
   const router = useRouter()
 
   const handleClose = () => {
@@ -128,36 +133,103 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
 
   useEffect(() => {
     if (typeof window === 'object') {
+      setInitialOverflow(document.body.style.overflow)
       setMounted(true)
     }
   }, [])
 
+  const onResize = useCallback(() => {
+    if (contentRef?.current) {
+      setContentHeight(contentRef.current.offsetHeight)
+    }
+  }, [contentRef])
+
+  useEffect(() => {
+    onResize()
+
+    window.addEventListener('resize', onResize, { passive: true })
+
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  }, [onResize, containerRef])
+
+  const handleClickContainer = useCallback(
+    (e) => {
+      if (containerRef?.current && e.target === containerRef.current) {
+        handleClose()
+      }
+    },
+    [containerRef],
+  )
+
+  useEffect(() => {
+    onResize()
+
+    document.body.style.overflow = isOpen && useScroll ? 'hidden' : 'visible'
+
+    const el = containerRef?.current
+
+    el && isOpen
+      ? el.addEventListener('click', handleClickContainer, {
+          passive: true,
+        })
+      : el && el.removeEventListener('click', handleClickContainer)
+
+    return () => {
+      el && el.removeEventListener('click', handleClickContainer)
+      document.body.style.overflow = initialOverflow
+    }
+  }, [isOpen, useScroll, handleClickContainer, initialOverflow, onResize])
+
+  useEffect(() => {
+    const tallContent = contentHeight > viewportHeight
+
+    setContentTop(
+      tallContent
+        ? -viewportHeight + DRAWER_HEADING_HEIGHT + DRAWER_EXPANDED_PADDING_TOP
+        : -contentHeight + DRAWER_HEADING_HEIGHT,
+    )
+
+    setUseScroll(contentHeight > viewportHeight)
+  }, [contentHeight, isOpen, viewportHeight])
+
   return (
     mounted && (
       <div
-        className={styles.root}
+        ref={containerRef}
+        className={cn(styles.container, {
+          [styles.containerOpen]: isOpen,
+          [styles.containerScroll]: isOpen && useScroll,
+        })}
         style={{
-          top: offsetY,
-          transform: `translateY(${
-            isOpen ? `${-offsetY + DRAWER_EXPANDED_PADDING_TOP}px` : 0
-          })`,
-          minHeight: viewportHeight - DRAWER_EXPANDED_PADDING_TOP,
+          height: isOpen ? 'auto' : DRAWER_HEADING_HEIGHT,
         }}
       >
-        <DrawerMenuCategory
-          main
-          title={mainCategory.title}
-          items={mainCategory.items}
-          onClick={() => setOpen(!isOpen)}
-          isOpen={isOpen}
-        />
-        {rest.map((category) => (
+        <div
+          ref={contentRef}
+          className={styles.content}
+          style={{
+            height: 'auto',
+            top: isOpen ? viewportHeight - DRAWER_HEADING_HEIGHT : 0,
+            transform: `translateY(${isOpen ? `${contentTop}px` : 0})`,
+          }}
+        >
           <DrawerMenuCategory
-            key={category.title}
-            title={category.title}
-            items={category.items}
+            main
+            title={mainCategory.title}
+            items={mainCategory.items}
+            onClick={() => setOpen(!isOpen)}
+            isOpen={isOpen}
           />
-        ))}
+          {rest.map((category) => (
+            <DrawerMenuCategory
+              key={category.title}
+              title={category.title}
+              items={category.items}
+            />
+          ))}
+        </div>
       </div>
     )
   )
