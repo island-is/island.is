@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { useWindowSize } from 'react-use'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
   Stack,
@@ -8,13 +11,10 @@ import {
   Inline,
   Link,
 } from '@island.is/island-ui/core'
+
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
-import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 
@@ -83,19 +83,17 @@ const Confirm = ({ apolloState }) => {
             </Stack>
             <Stack space={2}>
               <CarDetailsBox car={car} />
-              <OutlinedBox backgroundColor="blue100" borderColor="white">
-                <Box padding={4}>
-                  <Checkbox
-                    name="confirm"
-                    label={checkboxLabel.props.children}
-                    onChange={({ target }) => {
-                      setCheckbox(target.checked)
-                    }}
-                    checked={checkbox}
-                    disabled={!car.recyclable}
-                  />
-                </Box>
-              </OutlinedBox>
+              <Box padding={4} background="blue100">
+                <Checkbox
+                  name="confirm"
+                  label={checkboxLabel.props.children}
+                  onChange={({ target }) => {
+                    setCheckbox(target.checked)
+                  }}
+                  checked={checkbox}
+                  disabled={!car.recyclable}
+                />
+              </Box>
             </Stack>
             <Box
               width="full"
