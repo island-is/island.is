@@ -3,7 +3,6 @@ const fs = require('fs')
 const { promisify } = require('util')
 
 SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
-
 YARN_COMMANDS = [
   'yarn nx run application-system-api:build-schema',
   'yarn nx run api-domains-application:codegen',
