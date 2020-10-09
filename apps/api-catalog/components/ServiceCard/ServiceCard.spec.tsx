@@ -7,12 +7,20 @@ import { ServiceCard } from '.'
 import { SERVICE_STATUS } from '..';
 import {
   ApiService,
+  XroadInfo,
+  AccessCategory,
+  PricingCategory,
+  DataCategory,
+  TypeCategory
+} from '@island.is/api/schema';
+
+/*
+import {
   AccessCategory,
   PricingCategory,
   DataCategory,
   TypeCategory,
-  XroadInfo,
-} from '@island.is/api/schema';
+} from '@island.is/api-catalogue/consts'*/
 
 //libs\api\schema\src\lib\schema.d.ts
 
