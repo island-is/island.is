@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Box,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 
 export interface ContactUsFormState {

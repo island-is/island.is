@@ -9,6 +9,14 @@ import { AsyncSearch } from './AsyncSearch'
 export default {
   title: 'Components/AsyncSearch',
   component: AsyncSearch,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=51%3A153)',
+      },
+    },
+  },
 }
 
 const items = [

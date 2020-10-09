@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react' // [1]
 import {
   ToastContainer as ToastifyContainer,
   toast as toastify,
@@ -57,6 +57,7 @@ const RenderMessage = ({
 export const ToastContainer: React.FC<ToastProps> = ({
   hideProgressBar = false,
   timeout = 5000,
+  closeButton = false,
 }) => {
   return (
     <div className={toastStyles.root}>
@@ -64,6 +65,7 @@ export const ToastContainer: React.FC<ToastProps> = ({
         position="bottom-right"
         autoClose={timeout}
         hideProgressBar={hideProgressBar}
+        closeButton={closeButton}
         closeOnClick
         pauseOnFocusLoss
         draggable
@@ -85,3 +87,6 @@ export const toast = {
   warning: (message: string) =>
     toastify.warning(<RenderMessage type="warning" message={message} />),
 }
+
+// [1] Used like that because of an Storybook bug. Using `import React from 'react'` results in
+// Storybook not being able to read and display available props.

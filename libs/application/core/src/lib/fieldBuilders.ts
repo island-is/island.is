@@ -119,6 +119,8 @@ export function buildRadioField(data: {
   description?: MessageDescriptor | string
   options: Option[]
   required?: boolean
+  emphasize?: boolean
+  largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): RadioField {
@@ -129,12 +131,16 @@ export function buildRadioField(data: {
     description,
     options,
     required = false,
+    emphasize = false,
+    largeButtons = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
     required,
+    emphasize,
+    largeButtons,
     disabled,
     width,
     condition,

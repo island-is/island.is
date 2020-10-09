@@ -73,6 +73,7 @@ export const ParentalLeaveForm: Form = buildForm({
               name: m.startDateTitle,
               description: m.startDateDescription,
               required: true,
+              emphasize: true,
               options: [
                 {
                   value: 'dob',

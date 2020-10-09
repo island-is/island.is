@@ -15,6 +15,8 @@ interface Props {
   id: string
   name?: string
   options?: Option[]
+  largeButtons?: boolean
+  emphasize?: boolean
 }
 export const RadioController: FC<Props> = ({
   defaultValue,
@@ -23,6 +25,8 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
+  largeButtons = false,
+  emphasize = false,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -33,35 +37,25 @@ export const RadioController: FC<Props> = ({
         return (
           <Stack space={2}>
             {options.map((option, index) => (
-              <Box display="flex" alignItems="center" key={option.value}>
-                <RadioButton
-                  key={`${id}-${index}`}
-                  onChange={({ target }) => {
-                    clearErrors(id)
-                    onChange(target.value)
-                    setValue(id, target.value)
-                  }}
-                  checked={option.value === value}
-                  id={`${id}-${index}`}
-                  name={`${id}`}
-                  label={option.label}
-                  value={option.value}
-                  disabled={disabled}
-                  errorMessage={
-                    index === options.length - 1 ? error : undefined
-                  }
-                  hasError={error !== undefined}
-                />
-                {option.tooltip && (
-                  <Box marginLeft={1}>
-                    <Tooltip
-                      colored={true}
-                      placement="top"
-                      text={option.tooltip}
-                    />
-                  </Box>
-                )}
-              </Box>
+              <RadioButton
+                large={largeButtons || emphasize}
+                filled={emphasize}
+                tooltip={option.tooltip}
+                key={`${id}-${index}`}
+                onChange={({ target }) => {
+                  clearErrors(id)
+                  onChange(target.value)
+                  setValue(id, target.value)
+                }}
+                checked={option.value === value}
+                id={`${id}-${index}`}
+                name={`${id}`}
+                label={option.label}
+                value={option.value}
+                disabled={disabled}
+                errorMessage={index === options.length - 1 ? error : undefined}
+                hasError={error !== undefined}
+              />
             ))}
           </Stack>
         )

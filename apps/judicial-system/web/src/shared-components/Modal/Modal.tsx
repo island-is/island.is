@@ -1,4 +1,9 @@
-import { Box, Button, Icon, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  Icon,
+  Typography,
+} from '@island.is/island-ui/core'
 import React from 'react'
 import ReactDOM from 'react-dom'
 

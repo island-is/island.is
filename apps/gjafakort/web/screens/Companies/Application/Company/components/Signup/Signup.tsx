@@ -12,7 +12,7 @@ import {
   Box,
   Tiles,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
   FieldSelect,
   FieldPolarQuestion,
