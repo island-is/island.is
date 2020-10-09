@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 
-import { Icon } from '../../../Icon/Icon'
-import { Text } from '../../../Text/Text'
-import { Box } from '../../../Box/Box'
+import { Icon } from '../../Icon/Icon'
+import { Text } from '../../Text/Text'
+import { Box } from '../../Box/Box'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionItem.treat'
 

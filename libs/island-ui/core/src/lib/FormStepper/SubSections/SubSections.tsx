@@ -1,10 +1,10 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 
-import { BulletList } from '../../../BulletList/BulletList'
-import { Box } from '../../../Box/Box'
+import { BulletList } from '../../BulletList/BulletList'
+import { Box } from '../../Box/Box'
 import { SubSectionItem } from '../SubSectionItem/SubSectionItem'
-import * as types from '../../types'
+import * as types from '../types'
 import * as styles from './SubSections.treat'
 
 export const SubSections: FC<{

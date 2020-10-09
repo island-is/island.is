@@ -3,7 +3,8 @@ import useComponentSize from '@rehooks/component-size'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
-import { SectionNumber, SubSections } from './shared'
+import { SectionNumber } from './SectionNumber/SectionNumber'
+import { SubSections } from './SubSections/SubSections'
 import * as types from './types'
 
 function getSubSectionsInSection(
