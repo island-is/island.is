@@ -11,94 +11,93 @@ import {
   Link,
   LinkContext,
   Icon,
+  Inline,
 } from './index'
 
 <Meta title="Welcome" />
 
-<GridContainer>
-  <GridRow>
-    <GridColumn paddingTop={6} paddingBottom={2}>
-      <img src={Cover} style={{ marginLeft: -30 }} />
-    </GridColumn>
-    <GridColumn span="8/12">
-      <Text variant="h2" paddingBottom={1}>
-        Welcome on the storybook
-      </Text>
-      <Text>
-        This UI library provides you guides, components and units to help you
-        build new projects faster and easier.
-      </Text>
-      <LinkContext.Provider
-        value={{
-          linkRenderer: (href, children) => (
-            <Link
-              href={href}
-              color="blue600"
-              underline="normal"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {children}
-            </Link>
-          ),
-        }}
+<LinkContext.Provider
+  value={{
+    linkRenderer: (href, children) => (
+      <Link
+        href={href}
+        color="blue600"
+        underline="normal"
+        rel="noopener noreferrer"
+        target="_blank"
       >
+        <Text as="span" fontWeight="semiBold">
+          {children}
+        </Text>
+      </Link>
+    ),
+  }}
+>
+  <GridContainer>
+    <GridRow>
+      <GridColumn
+        paddingTop={[0, 0, 6]}
+        paddingBottom={2}
+        span={['12/12', '12/12', '9/12']}
+      >
+        <img src={Cover} />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '9/12']}>
+        <Text variant="h2" paddingBottom={2}>
+          Welcome to the Ísland.is UI library
+        </Text>
+        <Text>
+          This library is part of the Ísland.is design system and is a
+          collection of guides, components and units to help you build new
+          projects faster and easier.
+        </Text>
         <Text paddingTop={2}>
           This UI library is used by all the{' '}
           <a href="https://github.com/island-is/island.is">digital portals</a>{' '}
           of <a href="https://island.is/">Ísland.is</a>.
         </Text>
-      </LinkContext.Provider>
-    </GridColumn>
-  </GridRow>
-  <Box marginTop={10} marginBottom={4}>
-    <GridRow>
-      <GridColumn span="8/12" paddingBottom={6}>
-        <Icon type="globe" width={32} height={32} />
-        <Text variant="h4" marginY={2}>
-          Purpose
-        </Text>
-        <Text>
-          The goal of the UI library is to have an unified library of components
-          than can be reused between the many Ísland.is projects. It will ensure
-          consistency in the look and feel, accessibility and ease to maintain.
-        </Text>
       </GridColumn>
-      <GridColumn span="8/12" paddingBottom={6}>
-        <Icon type="download" width={32} height={32} />
-        <Text variant="h4" marginY={2}>
-          Usage
-        </Text>
-        <Text>
-          All components from the UI library are accessible with a single
-          import. You can import one or many, separated with comma, depending
-          your needs.
-          <Source
-            language="tsx"
-            code={dedent`import { Box } from '@island.is/island-ui/core'`}
-          />
-        </Text>
-      </GridColumn>
-      <GridColumn span="8/12" paddingBottom={6}>
-        <Icon type="alert" width={32} height={32} />
-        <Text variant="h4" marginY={2}>
-          Issues and questions
-        </Text>
-        <LinkContext.Provider
-          value={{
-            linkRenderer: (href, children) => (
-              <Link
-                href={href}
-                color="blue600"
-                underline="normal"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {children}
-              </Link>
-            ),
-          }}
-        >
+    </GridRow>
+    <Box marginTop={[4, 4, 10]} marginBottom={4}>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '9/12']} paddingBottom={6}>
+          <Box display="flex" alignItems="center" marginY={2}>
+            <Icon type="globe" width={24} height={24} />
+            <Box paddingLeft={2}>
+              <Text variant="h3">Purpose</Text>
+            </Box>
+          </Box>
+          <Text>
+            The goal of the UI library is to have an unified library of
+            components than can be reused between the many Ísland.is projects.
+            It will ensure consistency in the look and feel, accessibility
+            and user experience.
+          </Text>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '9/12']} paddingBottom={3}>
+          <Box display="flex" alignItems="center" marginY={2}>
+            <Icon type="download" width={24} height={24} />
+            <Box paddingLeft={2}>
+              <Text variant="h3">Usage</Text>
+            </Box>
+          </Box>
+          <Text>
+            All components from the UI library are accessible with a single
+            import. You can import one or many, separated with comma, depending
+            your needs.
+            <Source
+              language="tsx"
+              code={dedent`import { Box } from '@island.is/island-ui/core'`}
+            />
+          </Text>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '9/12']} paddingBottom={6}>
+          <Box display="flex" alignItems="center" marginY={2}>
+            <Icon type="alert" width={24} height={24} />
+            <Box paddingLeft={2}>
+              <Text variant="h3">Issues and questions</Text>
+            </Box>
+          </Box>
           <Text>
             Feel free to open a new issue on the{' '}
             <a href="https://github.com/island-is/island.is/issues">
@@ -107,8 +106,8 @@ import {
             if you have a question or you think something is broken or looking
             off.
           </Text>
-        </LinkContext.Provider>
-      </GridColumn>
-    </GridRow>
-  </Box>
-</GridContainer>
+        </GridColumn>
+      </GridRow>
+    </Box>
+  </GridContainer>
+</LinkContext.Provider>
