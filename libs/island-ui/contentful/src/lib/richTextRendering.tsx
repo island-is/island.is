@@ -15,10 +15,10 @@ import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
 import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
 import {
-  Typography,
+  Text,
+  TextProps,
   Blockquote,
   Box,
-  TypographyProps,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
@@ -157,25 +157,26 @@ export const defaultRenderComponent = (
 }
 
 const typography = (
-  variant: TypographyProps['variant'] & TypographyProps['as'],
+  variant: TextProps['variant'],
+  as: TextProps['as'],
   withId = false,
 ) => (_: Block, children: ReactNode) => (
-  <Typography
+  <Text
     id={withId ? slugify(String(children)) : null}
     variant={variant}
-    as={variant}
+    as={as}
   >
     {children}
-  </Typography>
+  </Text>
 )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
-  [BLOCKS.HEADING_1]: typography('h1', true),
-  [BLOCKS.HEADING_2]: typography('h2', true),
-  [BLOCKS.HEADING_3]: typography('h3', true),
-  [BLOCKS.HEADING_4]: typography('h4'),
-  [BLOCKS.HEADING_5]: typography('h5'),
-  [BLOCKS.PARAGRAPH]: typography('p'),
+  [BLOCKS.HEADING_1]: typography('h1', 'h1', true),
+  [BLOCKS.HEADING_2]: typography('h2', 'h2', true),
+  [BLOCKS.HEADING_3]: typography('h3', 'h3', true),
+  [BLOCKS.HEADING_4]: typography('h4', 'h4', true),
+  [BLOCKS.HEADING_5]: typography('h5', 'h5'),
+  [BLOCKS.PARAGRAPH]: typography('default', 'p'),
   [BLOCKS.QUOTE]: (_node: Block, children: ReactNode): ReactNode => (
     <Blockquote>{children}</Blockquote>
   ),

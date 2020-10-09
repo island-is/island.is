@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import {
-  Typography,
+  Text,
   Stack,
   Input,
   GridRow,
@@ -63,9 +63,9 @@ export const ContactUs: FC<ContactUsProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack space={6}>
                 {Boolean(title) && (
-                  <Typography variant="h2" as="h2">
+                  <Text variant="h2" as="h2">
                     {title}
-                  </Typography>
+                  </Text>
                 )}
                 <Stack space={3}>
                   <GridRow>
@@ -132,9 +132,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                 <Box textAlign="right">
                   <Stack space={3}>
                     {state === 'success' ? (
-                      <Typography variant="p" color="blue400">
-                        {successMessage}
-                      </Typography>
+                      <Text color="blue400">{successMessage}</Text>
                     ) : (
                       <Button
                         htmlType="submit"
@@ -144,9 +142,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                       </Button>
                     )}
                     {state === 'error' && (
-                      <Typography variant="p" color="red400">
-                        {errorMessage}
-                      </Typography>
+                      <Text color="red400">{errorMessage}</Text>
                     )}
                   </Stack>
                 </Box>
