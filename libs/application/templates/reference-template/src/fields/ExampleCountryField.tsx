@@ -5,7 +5,7 @@ import {
   AsyncSearch,
   AsyncSearchOption,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Input,
   Typography,
 } from '@island.is/island-ui/core'

@@ -93,5 +93,3 @@ export const Pagination: FC<PaginationProps> = ({
     </Box>
   )
 }
-
-export default Pagination

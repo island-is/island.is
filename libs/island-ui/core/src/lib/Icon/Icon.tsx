@@ -325,5 +325,3 @@ export const Icon = ({
     />
   )
 }
-
-export default Icon

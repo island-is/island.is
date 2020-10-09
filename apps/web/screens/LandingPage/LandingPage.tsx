@@ -8,7 +8,7 @@ import Head from 'next/head'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   Text,
   Box,
   Breadcrumbs,

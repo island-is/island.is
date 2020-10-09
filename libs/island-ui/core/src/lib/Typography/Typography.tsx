@@ -3,7 +3,8 @@
 import React from 'react'
 import cn from 'classnames'
 
-import styles, {
+import {
+  variantStyles,
   base,
   VariantTypes,
   colors,
@@ -14,7 +15,7 @@ import styles, {
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 
 export interface TypographyProps {
   id?: string
@@ -75,7 +76,7 @@ export const Typography = ({
       paddingY={paddingY}
       className={cn(
         base,
-        variant ? styles[variant] : null,
+        variant ? variantStyles[variant] : null,
         color ? colors[color] : null,
         fontWeight ? fontWeightStyles[fontWeight] : null,
         {
@@ -89,5 +90,3 @@ export const Typography = ({
     </Box>
   )
 }
-
-export default Typography

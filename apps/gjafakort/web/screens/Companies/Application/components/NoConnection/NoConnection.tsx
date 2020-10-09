@@ -1,7 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { Box, Button, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  Typography,
+} from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 

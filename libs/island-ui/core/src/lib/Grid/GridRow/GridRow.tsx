@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import { Box } from '../../Box'
+import { Box } from '../../Box/Box'
 import * as styles from './GridRow.treat'
 import { ResponsiveProp } from '../../../utils/responsiveProp'
 import * as styleRefs from '../../Box/useBoxStyles.treat'

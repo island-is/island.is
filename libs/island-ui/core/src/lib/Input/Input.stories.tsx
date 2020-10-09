@@ -1,11 +1,19 @@
 import React from 'react'
 import { Input } from './Input'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {
   title: 'Form/Input',
   component: Input,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=42%3A1688)',
+      },
+    },
+  },
 }
 
 export const Default = () => (

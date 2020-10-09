@@ -1,6 +1,10 @@
 import React, { FC, useRef } from 'react'
 import * as styles from './NotificationMenuTrigger.treat'
-import { Button, Box, Icon } from '@island.is/island-ui/core'
+import {
+  ButtonDeprecated as Button,
+  Box,
+  Icon,
+} from '@island.is/island-ui/core'
 import { useStore } from '../../../store/stateProvider'
 import { ActionType, MenuState } from '../../../store/actions'
 import NotificationMenu from '../NotificationMenu/NotificationMenu'

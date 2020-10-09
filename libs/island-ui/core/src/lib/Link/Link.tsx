@@ -23,7 +23,7 @@ interface Props extends LinkProps {
 }
 
 // Next link that can handle external urls
-const Link: React.FC<Props> = ({
+export const Link: React.FC<Props> = ({
   children,
   href,
   as,
@@ -87,5 +87,3 @@ const Link: React.FC<Props> = ({
     )
   }
 }
-
-export default Link

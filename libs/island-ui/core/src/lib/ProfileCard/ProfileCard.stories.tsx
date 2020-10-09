@@ -1,7 +1,9 @@
 import React from 'react'
 import { ProfileCard } from './ProfileCard'
 import { Box } from '../Box/Box'
-import { GridColumn, GridContainer, GridRow } from '../Grid'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
 
 export default {
   title: 'Components/ProfileCard',

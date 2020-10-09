@@ -7,12 +7,13 @@ import {
   ApplicationStateSchema,
   ApplicationTemplateHelper,
   FieldBaseProps,
+  RepeaterProps,
 } from '@island.is/application/core'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 import { FC } from 'react'
 
-type UIFields = Record<string, FC<FieldBaseProps>>
+type UIFields = Record<string, FC<FieldBaseProps | RepeaterProps>>
 type TemplateLibraryModule = {
   default: unknown
   getFields?: () => Promise<UIFields>
