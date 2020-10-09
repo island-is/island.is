@@ -48,7 +48,7 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
-const laws = {
+export const laws = {
   _95_1_A: 'a-lið 1. mgr. 95. gr.',
   _95_1_B: 'b-lið 1. mgr. 95. gr.',
   _95_1_C: 'c-lið 1. mgr. 95. gr.',
