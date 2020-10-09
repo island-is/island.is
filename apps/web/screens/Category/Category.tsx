@@ -43,6 +43,7 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetLifeEventsInCategoryArgs,
   Image,
+  ArticleGroup,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 
@@ -98,6 +99,8 @@ const Category: Screen<CategoryProps> = ({
           title: article?.group?.title,
           description: article?.group?.description,
           articles: [article],
+          groupSlug: article?.group?.slug,
+          importance: article?.group?.importance,
         }
       } else if (article?.group?.slug) {
         // group should exists push into collection
@@ -150,12 +153,11 @@ const Category: Screen<CategoryProps> = ({
 
   const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
+      const key = item?.subgroup?.title ?? 'unknown'
+
       return {
         ...result,
-        [item?.subgroup?.title]: [
-          ...(result[item?.subgroup?.title] || []),
-          item,
-        ],
+        [key]: [...(result[key] || []), item],
       }
     }, {})
 
@@ -163,6 +165,7 @@ const Category: Screen<CategoryProps> = ({
     const articlesBySubgroup = otherArticles.reduce((result, item) => {
       const titles = item.otherSubgroups.map((x) => x.title)
       const subgroupsFound = intersection(Object.keys(result), titles)
+      const key = 'unknown'
 
       // if there is no sub group found then at least show it in the group
       if (
@@ -171,7 +174,7 @@ const Category: Screen<CategoryProps> = ({
       ) {
         return {
           ...result,
-          ['undefined']: [...(result['undefined'] || []), item],
+          [key]: [...(result[key] || []), item],
         }
       }
 
@@ -229,10 +232,10 @@ const Category: Screen<CategoryProps> = ({
 
   const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
     Object.keys(articlesBySubgroup).sort((a, b) => {
-      // 'undefined' is a valid subgroup key but we'll sort it to the bottom
-      if (a === 'undefined') {
+      // 'unknown' is a valid subgroup key but we'll sort it to the bottom
+      if (a === 'unknown') {
         return 1
-      } else if (b === 'undefined') {
+      } else if (b === 'unknown') {
         return -1
       }
 
@@ -252,8 +255,12 @@ const Category: Screen<CategoryProps> = ({
       return a.localeCompare(b)
     })
 
-  const sortedGroups = Object.keys(groups).sort((a, b) =>
-    a.localeCompare(b, 'is'),
+  const sortedGroups = Object.values(
+    groups,
+  ).sort((a: ArticleGroup, b: ArticleGroup) =>
+    a.importance > b.importance
+      ? -1
+      : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
   )
 
   return (
@@ -272,7 +279,7 @@ const Category: Screen<CategoryProps> = ({
         belowContent={
           <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
             <Stack space={2}>
-              {sortedGroups.map((groupSlug, index) => {
+              {sortedGroups.map(({ groupSlug }, index) => {
                 const { title, description, articles } = groups[groupSlug]
 
                 const { articlesBySubgroup } = groupArticlesBySubgroup(
@@ -302,21 +309,22 @@ const Category: Screen<CategoryProps> = ({
                     >
                       <Box paddingTop={2}>
                         {sortedSubgroupKeys.map((subgroup, index) => {
-                          const {
-                            sortedArticles,
-                            isSortedAlphabetically,
-                          } = sortArticles(articlesBySubgroup[subgroup])
+                          const { sortedArticles } = sortArticles(
+                            articlesBySubgroup[subgroup],
+                          )
 
                           // Articles with 1 subgroup only have the "other" group and don't get a heading.
                           const hasSubgroups = sortedSubgroupKeys.length > 1
 
-                          // Single articles that don't belong to a subgroup don't get a heading
-                          const isSingleArticle = sortedArticles.length === 1
+                          const noSubgroupNameKeys = [
+                            'unknown',
+                            'undefined',
+                            'null',
+                          ]
 
-                          // Rename 'undefined' group to 'Other'
+                          // Rename unknown group to 'Other'
                           const subgroupName =
-                            subgroup === 'undefined' ||
-                            subgroup === 'null' ||
+                            noSubgroupNameKeys.indexOf(subgroup) !== -1 ||
                             !subgroup
                               ? n('other')
                               : subgroup
