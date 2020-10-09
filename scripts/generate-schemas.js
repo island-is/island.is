@@ -1,5 +1,5 @@
-const { exec } = require('child_process')
 const fs = require('fs')
+const { exec } = require('child_process')
 const { promisify } = require('util')
 
 SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
