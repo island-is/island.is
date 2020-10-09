@@ -7,6 +7,7 @@ export interface DividerProps {
 }
 
 const defaultWeight = 'regular'
+
 export const Divider = ({ weight = defaultWeight }: DividerProps) => {
   const styles = {
     ...styleRefs,
