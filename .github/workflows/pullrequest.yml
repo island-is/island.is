@@ -243,6 +243,8 @@ jobs:
       - formatting
       - build
     steps:
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check linting success
