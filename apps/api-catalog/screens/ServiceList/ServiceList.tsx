@@ -80,9 +80,11 @@ export interface ServiceListProps {
 }
 
 export default function ServiceList(props: ServiceListProps) {
-
+  // prettier-ignore
   const TEXT_SEARCHING = props.pageContent.strings.find(s => s.id === 'catalog-searching').text;
+  // prettier-ignore
   const TEXT_NOT_FOUND = props.pageContent.strings.find(s => s.id === 'catalog-not-found').text;
+  // prettier-ignore
   const TEXT_ERROR = props.pageContent.strings.find(s => s.id === 'catalog-error').text;
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
@@ -94,8 +96,7 @@ export default function ServiceList(props: ServiceListProps) {
     type: [],
     access: [],
   })
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-
+  const [isMobile, setIsMobile] = useState<boolean>(false)
   const { width } = useWindowSize()
   // prettier-ignore
   const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY, 
@@ -163,7 +164,7 @@ export default function ServiceList(props: ServiceListProps) {
     }
     setIsMobile(false)
   }, [width])
-  
+
   return (
     <ServiceLayout
       className={cn(isMobile ? styles.LayoutMobile : {})}
@@ -171,13 +172,18 @@ export default function ServiceList(props: ServiceListProps) {
       top={
         <div>
           <Breadcrumbs>
-          <a href="/">
-                Ísland.is
-              </a>
-              <span>{props.pageContent.strings.find(s => s.id ==='catalog-title').text}</span>
+            <a href="/">Ísland.is</a>
+            <span>
+              {
+                props.pageContent.strings.find((s) => s.id === 'catalog-title')
+                  .text
+              }
+            </span>
           </Breadcrumbs>
           <div
-            className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}
+            className={cn(
+              isMobile ? styles.topSectionMobile : styles.topSection,
+            )}
           >
             <Typography variant="h1">
               {
@@ -188,14 +194,14 @@ export default function ServiceList(props: ServiceListProps) {
             <div className={cn(styles.topSectionText)}>
               <Typography variant="intro">
                 {
-                  props.pageContent.strings.find((s) => s.id === 'catalog-intro')
-                    .text
+                  props.pageContent.strings.find(
+                    (s) => s.id === 'catalog-intro',
+                  ).text
                 }
               </Typography>
             </div>
           </div>
         </div>
-        
       }
       left={
         <Box
@@ -206,7 +212,7 @@ export default function ServiceList(props: ServiceListProps) {
           marginBottom="containerGutter"
           marginTop={1}
         >
-          {data?.getApiCatalogue.services.length > 0 ? (
+          {data?.getApiCatalogue.services.length > 0 &&
             data.getApiCatalogue.services.map((item) => {
               return (
                 <ServiceCard
@@ -215,54 +221,58 @@ export default function ServiceList(props: ServiceListProps) {
                   strings={props.filterStrings.strings}
                 />
               )
-            })
-          ) : (
-            <span className={cn(loading ? styles.displayHidden : {})}>
-              {error ? (
-                <ServiceCardMessage
-                  messageType="error"
-                  borderStyle="standard"
-                  title={TEXT_ERROR}
+            })}
+
+          {loading && (
+            <Box className={cn(styles.navigation)} borderRadius="large">
+              <div>
+                <Icon
+                  width="32"
+                  height="32"
+                  spin={true}
+                  type="loading"
+                  color="blue600"
                 />
-              ) : (
-                <ServiceCardMessage
-                  messageType="default"
-                  borderStyle="standard"
-                  title={TEXT_NOT_FOUND}
-                />
-              )}
-            </span>
+              </div>
+            </Box>
           )}
-          <Box
-            className={cn(
-              isMobile ? styles.navigationMobile : styles.navigation,
-              error ? styles.displayHidden : {},
-              data?.getApiCatalogue?.pageInfo?.nextCursor === null ? styles.displayHidden : {}
-            )}
-            borderRadius="large"
-            onClick={() => onLoadMore()}
-          >
-            <div
+
+          {data?.getApiCatalogue?.services.length > 0 && (
+            <Box
               className={cn(
-                loading ? styles.displayInline : styles.displayHidden,
+                isMobile ? styles.navigationMobile : styles.navigation,
+                data?.getApiCatalogue?.pageInfo?.nextCursor == null
+                  ? styles.displayHidden
+                  : {},
               )}
+              borderRadius="large"
+              onClick={() => onLoadMore()}
             >
-              <Icon
-                width="32"
-                height="32"
-                spin={true}
-                type="loading"
-                color="blue600"
-              />
-            </div>
-            <div className={cn(loading ? styles.displayHidden : styles.navigationText)}>
-              {
-                props.pageContent.strings.find(
-                  (s) => s.id === 'catalog-fetch-more-button',
-                ).text
-              }
-            </div>
-          </Box>
+              <div className={cn(styles.navigationText)}>
+                {
+                  props.pageContent.strings.find(
+                    (s) => s.id === 'catalog-fetch-more-button',
+                  ).text
+                }
+              </div>
+            </Box>
+          )}
+
+          {data?.getApiCatalogue.services.length < 1 && !loading && (
+            <ServiceCardMessage
+              messageType="default"
+              borderStyle="standard"
+              title={TEXT_NOT_FOUND}
+            />
+          )}
+
+          {error && (
+            <ServiceCardMessage
+              messageType="error"
+              borderStyle="standard"
+              title={TEXT_ERROR}
+            />
+          )}
         </Box>
       }
       right={
