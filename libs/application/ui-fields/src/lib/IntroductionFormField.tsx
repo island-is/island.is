@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { IntroductionField } from '@island.is/application/core'
-import { Typography } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 const IntroductionFormField: FC<{
@@ -11,10 +11,8 @@ const IntroductionFormField: FC<{
 
   return (
     <div>
-      {showFieldName && (
-        <Typography variant="h2">{formatMessage(field.name)}</Typography>
-      )}
-      <Typography variant="p">{formatMessage(field.introduction)}</Typography>
+      {showFieldName && <Text variant="h2">{formatMessage(field.name)}</Text>}
+      <Text>{formatMessage(field.introduction)}</Text>
     </div>
   )
 }

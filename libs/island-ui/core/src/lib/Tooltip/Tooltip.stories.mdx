@@ -19,13 +19,7 @@ export const tooltipText =
     <Box padding="gutter">
       <Text variant="p" as="span">
         Here is some text that has a tooltip with the default icon at the end of
-        it.{' '}
-        <Tooltip
-          colored={false}
-          placement="right"
-          as="button"
-          text={tooltipText}
-        />
+        it. <Tooltip placement="right" as="button" text={tooltipText} />
       </Text>
     </Box>
   </Story>
@@ -38,7 +32,7 @@ export const tooltipText =
     <Box padding="gutter">
       <Text variant="p" as="span">
         Here is some text that has a tooltip wrapped around{' '}
-        <Tooltip colored={false} placement="top" as="span" text={tooltipText}>
+        <Tooltip placement="top" as="span" text={tooltipText}>
           <span>this text</span>
         </Tooltip>
         .
@@ -49,7 +43,7 @@ export const tooltipText =
         <Text variant="p" as="span">
           Here is some text.
         </Text>
-        <Tooltip colored={false} placement="bottom" text={tooltipText} />
+        <Tooltip placement="bottom" text={tooltipText} />
       </Inline>
     </Box>
   </Story>

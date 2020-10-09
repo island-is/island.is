@@ -71,11 +71,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                 />
                 {option.tooltip && (
                   <Box marginLeft={1}>
-                    <Tooltip
-                      colored={true}
-                      placement="top"
-                      text={option.tooltip}
-                    />
+                    <Tooltip placement="top" text={option.tooltip} />
                   </Box>
                 )}
               </Box>

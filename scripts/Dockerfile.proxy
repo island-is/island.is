@@ -4,4 +4,4 @@ RUN addgroup runners && adduser -D runner -G runners
 USER runner
 
 CMD aws eks --region eu-west-1 update-kubeconfig --name dev-cluster01 ; \
-    kubectl port-forward -n es-proxy svc/es-proxy-es-proxy-tunnel --address 0.0.0.0 9200:9200 
+    kubectl port-forward -n es-proxy svc/es-proxy --address 0.0.0.0 9200:9200 
