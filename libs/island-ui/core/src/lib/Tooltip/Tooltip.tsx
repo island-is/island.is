@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, ReactType } from 'react'
+import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
@@ -82,7 +82,7 @@ interface TooltipProps {
   text: string
   iconSize?: number
   children?: ReactElement
-  as?: ReactType
+  as?: ElementType
 }
 
 export const Tooltip: FC<TooltipProps> = ({

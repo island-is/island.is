@@ -19,17 +19,15 @@ export const SolidIconOnly = () => (
   <Logo width={200} iconOnly solid solidColor={color('Logo color', '#fff')} />
 )
 
-Solid.story = {
-  decorators: [
-    (story: any) => (
-      <div
-        style={{
-          backgroundColor: color('Background color', '#000'),
-          padding: 20,
-        }}
-      >
-        {story()}
-      </div>
-    ),
-  ],
-}
+Solid.decorators = [
+  (story: any) => (
+    <div
+      style={{
+        backgroundColor: color('Background color', '#000'),
+        padding: 20,
+      }}
+    >
+      {story()}
+    </div>
+  ),
+]
