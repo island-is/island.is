@@ -5,7 +5,7 @@ import {
   RadioField,
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { Typography, Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import Description from './components/Description'
 
@@ -31,9 +31,7 @@ const RadioFormField: FC<Props> = ({
 
   return (
     <div>
-      {showFieldName && (
-        <Typography variant="p">{formatMessage(name)}</Typography>
-      )}
+      {showFieldName && <Text>{formatMessage(name)}</Text>}
 
       {description && <Description description={formatMessage(description)} />}
 

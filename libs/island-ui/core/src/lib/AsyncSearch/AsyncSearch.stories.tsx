@@ -3,7 +3,7 @@ import { boolean } from '@storybook/addon-knobs'
 
 import { Stack } from '../Stack/Stack'
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { AsyncSearch } from './AsyncSearch'
 
 export default {
@@ -138,16 +138,16 @@ export const CustomItem: FC = () => {
       value: 'skraning-nafns',
       component: (props: ContainerProps) => (
         <Container {...props}>
-          <Typography
+          <Text
             variant="eyebrow"
             as="span"
             color={props.active ? 'blue400' : 'dark400'}
           >
             Fjölskyldumál og velferð - Nafn og kyn
-          </Typography>
-          <Typography variant="intro" as="span">
+          </Text>
+          <Text variant="intro" as="span">
             Skráning nafns
-          </Typography>
+          </Text>
         </Container>
       ),
     },
@@ -156,16 +156,16 @@ export const CustomItem: FC = () => {
       value: 'nafnbreyting',
       component: (props: ContainerProps) => (
         <Container {...props}>
-          <Typography
+          <Text
             variant="eyebrow"
             as="span"
             color={props.active ? 'blue400' : 'dark400'}
           >
             Fjölskyldumál og velferð - Nafn og kyn
-          </Typography>
-          <Typography variant="intro" as="span">
+          </Text>
+          <Text variant="intro" as="span">
             Nafnbreyting
-          </Typography>
+          </Text>
         </Container>
       ),
     },
@@ -174,16 +174,16 @@ export const CustomItem: FC = () => {
       value: 'breytt-ritun-nafns',
       component: (props: ContainerProps) => (
         <Container {...props}>
-          <Typography
+          <Text
             variant="eyebrow"
             as="span"
             color={props.active ? 'blue400' : 'dark400'}
           >
             Fjölskyldumál og velferð - Nafn og kyn
-          </Typography>
-          <Typography variant="intro" as="span">
+          </Text>
+          <Text variant="intro" as="span">
             Breytt ritun nafns
-          </Typography>
+          </Text>
         </Container>
       ),
     },
