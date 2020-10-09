@@ -1,61 +1,56 @@
 doctype html
 html
   head
-  body(style={fontFamily: 'Helvetica', fontSize: '12px', lineHeight: '20px', fontStyle: 'normal', color: '#000'})
-    h1(style={
-      textAlign: 'center', 
-      fontWeight: 'bold',
-      fontSize: '26px',
-      lineHeight: '52px',
-      marginTop: '48px',
-      marginBottom: '16px'
-      }) Krafa um gæsluvarðhald
-    p(style={testAlign: 'center', fontSize: '16px', marginBottom: '8px'}) LÖKE málsnúmer #{policeCaseNumber}
-    p(style={testAlign: 'center', marginBottom: '40px'}) Dómstóll: #{court}
+    style
+      include styles.css
+  body
+    h1 Krafa um gæsluvarðhald
+    p(class="subtitle-one") LÖKE málsnúmer #{policeCaseNumber}
+    p(class="subtitle-two") Dómstóll: #{court}
 
-    h2(style={fontWeight: 'bold', fontSize: '18px', lineHeight: '20px', marginBottom: '8px'}) Grunnupplýsingar
-    div(style={fontSize: '12px', lineHeight: '20px', marginBottom: "16px"})
+    h2 Grunnupplýsingar
+    div(class="mb-16")
       p Kennitala: #{accusedNationalId}
       p Fullt nafn: #{accusedName}
       p Lögheimili: #{accusedAddress}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Tími handtöku
-    p(style={marginBottom: '16px'}) #{arrestDate} kl. #{arrestTime}.
+    h3 Tími handtöku
+    p(class="mb-16") #{arrestDate} kl. #{arrestTime}.
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Ósk um fyrirtökudag og tíma
-    p(style={marginBottom: '16px'}) #{requestedCourtDate} kl. #{requestedCourtTime}.
+    h3 Ósk um fyrirtökudag og tíma
+    p(class="mb-16") #{requestedCourtDate} kl. #{requestedCourtTime}.
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Dómkröfur
-    p(style={marginBottom: '16px'}) Gæsluvarðhald til #{requestedCustodyEndDate} kl. #{requestedCustodyEndTime}.
+    h3 Dómkröfur
+    p(class="mb-16") Gæsluvarðhald til #{requestedCustodyEndDate} kl. #{requestedCustodyEndTime}.
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Lagaákvæði
-    div(style={marginBottom: "16px"})
+    h3 Lagaákvæði
+    div(class="mb-16")
       each par in lawsBroken.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Takmarkanir á gæslu
-    p(style={marginBottom: "32px"}) #{custodyRestrictions}
+    h3 Takmarkanir á gæslu
+    p(class="mb-32") #{custodyRestrictions}
 
-    h2(style={fontWeight: 'bold', fontSize: '18px', lineHeight: '20px', marginBottom: '16px'}) Greinargerð um málsatvik og lagarök
+    h2 Greinargerð um málsatvik og lagarök
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Málsatvik rakin
-    div(style={marginBottom: "16px"})
+    h3 Málsatvik rakin
+    div(class="mb-16")
       each par in caseFacts.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Framburðir
-    div(style={marginBottom: "16px"})
+    h3 Framburðir
+    div(class="mb-16")
       each par in witnessAccounts.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Staða rannsóknar og næstu skref
-    div(style={marginBottom: "16px"})
+    h3 Staða rannsóknar og næstu skref
+    div(class="mb-16")
       each par in investigationProgress.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Lagarök
-    div(style={marginBottom: "16px"})
+    h3 Lagarök
+    div(class="mb-16")
       each par in legalArguments.split('\n')
         p #{par}
 
-    p <strong>Fhl. #{prosecutorName}, #{prosecutorTitle}</strong>
+    p(class="strong") Fhl. #{prosecutorName}, #{prosecutorTitle}

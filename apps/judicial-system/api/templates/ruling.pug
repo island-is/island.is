@@ -1,70 +1,65 @@
 doctype html
 html
   head
-  body(style={fontFamily: 'Helvetica', fontSize: '12px', lineHeight: '20px', fontStyle: 'normal', color: '#000'})
-    h1(style={
-      textAlign: 'center', 
-      fontWeight: 'bold',
-      fontSize: '26px',
-      lineHeight: '52px',
-      marginTop: '48px',
-      marginBottom: '16px'
-      }) Krafa um gæsluvarðhald
-    p(style={testAlign: 'center', fontSize: '16px', marginBottom: '8px'}) Mál nr. #{courtCaseNumber}
-    p(style={testAlign: 'center', marginBottom: '40px'}) LÖKE málsnr. #{policeCaseNumber}
+    style
+      include styles.css
+  body
+    h1 Krafa um gæsluvarðhald
+    p(class="subtitle-one")  Mál nr. #{courtCaseNumber}
+    p(class="subtitle-two") LÖKE málsnr. #{policeCaseNumber}
 
-    h2(style={fontWeight: 'bold', fontSize: '18px', lineHeight: '20px', marginBottom: '8px'}) Þingbók
-    p(style={marginBottom: '16px'}) Þinghald frá kl. #{courtStartTime} til kl. #{courtEndTime} #{courtDate}
+    h2 Þingbók
+    p(class="mb-16") Þinghald frá kl. #{courtStartTime} til kl. #{courtEndTime} #{courtDate}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Krafa lögreglu
-    div(style={marginBottom: "16px"})
+    h3 Krafa lögreglu
+    div(class="mb-16")
       each par in policeDemands.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Viðstaddir
-    div(style={marginBottom: "16px"})
+    h3 Viðstaddir
+    div(class="mb-16")
       each par in courtAttendees.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Dómskjöl
-    p(style={marginBottom: '16px'}) Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+    h3 Dómskjöl
+    p(class="mb-16") Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Réttindi kærða
-    p(style={marginBottom: '16px'}) Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga
+    h3 Réttindi kærða
+    p(class="mb-16") Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Afstaða kærða
-    div(style={marginBottom: "16px"})
+    h3 Afstaða kærða
+    div(class="mb-16")
       each par in accusedPlea.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Málflutningur
-    div(style={marginBottom: "16px"})
+    h3 Málflutningur
+    div(class="mb-16")
       each par in litigationPresentations.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Úrskurður
-    div(style={marginBottom: "16px"})
+    h3 Úrskurður
+    div(class="mb-16")
       each par in ruling.split('\n')
         p #{par}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Úrskurðarorð
-    p(style={marginBottom: '16px'}) #{conclusion}
+    h3 Úrskurðarorð
+    p(class="mb-16") #{conclusion}
 
-    h3(style={fontWeight: 'bold', fontSize: '14px', lineHeight: '20px', marginBottom: '8px'}) Ákvörðun um kæru
-    p(style={marginBottom: '8px'}) Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+    h3 Ákvörðun um kæru
+    p(class="mb-8") Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
     case accusedAppealDecision
       when 'APPEAL'
-        li <strong>Kærði kærir úrskurðinn.</strong>
+        li(class="strong") Kærði kærir úrskurðinn.
       when 'ACCEPT'
-        li <strong>Kærði unir úrskurðinum.</strong>
+        li(class="strong") Kærði unir úrskurðinum.
       when 'POSTPONE'
-        li <strong>Kærði tekur sér lögboðinn frest.</strong>
+        li(class="strong") Kærði tekur sér lögboðinn frest.
     case prosecutorAppealDecision
       when 'APPEAL'
-        li <strong>Sækjandi kærir úrskurðinn.</strong>
+        li(class="strong") Sækjandi kærir úrskurðinn.
       when 'ACCEPT'
-        li <strong>Sækjandi unir úrskurðinum.</strong>
+        li(class="strong") Sækjandi unir úrskurðinum.
       when 'POSTPONE'
-        li <strong>Sækjandi tekur sér lögboðinn frest.</strong>
+        li(class="strong") Sækjandi tekur sér lögboðinn frest.
 
-    p <strong>#{judgeName}, #{judgeTitle}</strong>
+    p(class="mt-16 strong") #{judgeName}, #{judgeTitle}
