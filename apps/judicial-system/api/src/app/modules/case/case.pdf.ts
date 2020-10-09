@@ -14,6 +14,8 @@ import {
 import { environment } from '../../../environments'
 import { Case } from './models'
 
+const filePathPrefix = environment.production ? '' : 'apps/judicial-system/api/'
+
 export const formatConclusion = (existingCase: Case) => {
   return existingCase.rejecting
     ? 'Beiðni um gæsluvarðhald hafnað'
@@ -62,7 +64,7 @@ export function writeFile(fileName: string, documentContent: string) {
 
 export async function generateRequestPdf(existingCase: Case): Promise<string> {
   const compiledFunction = pug.compileFile(
-    './apps/judicial-system/api/templates/request.pug',
+    `./${filePathPrefix}templates/request.pug`,
     {
       basedir: './templates',
     },
@@ -126,7 +128,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
 
 export async function generateRulingPdf(existingCase: Case): Promise<string> {
   const compiledFunction = pug.compileFile(
-    './apps/judicial-system/api/templates/ruling.pug',
+    `./${filePathPrefix}templates/ruling.pug`,
     {
       basedir: './templates',
     },
