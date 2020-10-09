@@ -104,7 +104,7 @@ export const navigationMobile = style({
 })
 
 export const navigationText = style({
-  fontSize: 24,
+  fontSize: 18,
   color: theme.color.blue400,
   fontWeight: 600,
 })
