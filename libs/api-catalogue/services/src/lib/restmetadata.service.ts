@@ -62,7 +62,7 @@ export class RestMetadataService {
           // The list is sorted for the latest service version to be the last element
           // so name, owner and description will be from the latest version.
           service.name = spec.info.title
-          service.owner = spec.info.contact?.name
+          service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
           service.description = spec.info.description
           service.data = _.union(service.data, spec.info.x_category)
           service.pricing = _.union(service.pricing, spec.info.x_pricing)
