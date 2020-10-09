@@ -37,25 +37,31 @@ export const RadioController: FC<Props> = ({
         return (
           <Stack space={2}>
             {options.map((option, index) => (
-              <RadioButton
-                large={largeButtons || emphasize}
-                filled={emphasize}
-                tooltip={option.tooltip}
-                key={`${id}-${index}`}
-                onChange={({ target }) => {
-                  clearErrors(id)
-                  onChange(target.value)
-                  setValue(id, target.value)
-                }}
-                checked={option.value === value}
-                id={`${id}-${index}`}
-                name={`${id}`}
-                label={option.label}
-                value={option.value}
-                disabled={disabled}
-                errorMessage={index === options.length - 1 ? error : undefined}
-                hasError={error !== undefined}
-              />
+              <Box display="flex" alignItems="center" key={option.value}>
+                <RadioButton
+                  key={`${id}-${index}`}
+                  onChange={({ target }) => {
+                    clearErrors(id)
+                    onChange(target.value)
+                    setValue(id, target.value)
+                  }}
+                  checked={option.value === value}
+                  id={`${id}-${index}`}
+                  name={`${id}`}
+                  label={option.label}
+                  value={option.value}
+                  disabled={disabled}
+                  errorMessage={
+                    index === options.length - 1 ? error : undefined
+                  }
+                  hasError={error !== undefined}
+                />
+                {option.tooltip && (
+                  <Box marginLeft={1}>
+                    <Tooltip placement="top" text={option.tooltip} />
+                  </Box>
+                )}
+              </Box>
             ))}
           </Stack>
         )
