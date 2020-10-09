@@ -38,7 +38,7 @@ export function formatDate(
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
 export const capitalize = (text: string): string => {
   if (!text) {
-    return text
+    return ''
   }
 
   return text.charAt(0).toUpperCase() + text.slice(1)

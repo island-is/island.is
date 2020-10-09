@@ -69,6 +69,6 @@ describe('capitalize', () => {
     const r = capitalize(text)
 
     // Assert
-    expect(r).toBeUndefined()
+    expect(r).toBe('')
   })
 })
