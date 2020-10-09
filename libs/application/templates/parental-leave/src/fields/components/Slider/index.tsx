@@ -2,7 +2,7 @@ import React, { CSSProperties, FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 
 import * as styles from './Slider.treat'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface TooltipProps {
   style?: CSSProperties
@@ -233,18 +233,18 @@ const Slider = ({
     <Box>
       {showMinMaxLabels && (
         <Box display="flex" justifyContent="spaceBetween" width="full">
-          <Typography color="blue400" variant="eyebrow">
+          <Text color="blue400" variant="eyebrow">
             {min}
-          </Typography>
-          <Typography color="blue400" variant="eyebrow">
+          </Text>
+          <Text color="blue400" variant="eyebrow">
             {max}
-          </Typography>
+          </Text>
         </Box>
       )}
       {showLabel && (
-        <Typography variant="h4" as="p">
+        <Text variant="h4" as="p">
           {formatTooltip(currentIndex)}
-        </Typography>
+        </Text>
       )}
       <Box
         className={styles.TrackGrid}
