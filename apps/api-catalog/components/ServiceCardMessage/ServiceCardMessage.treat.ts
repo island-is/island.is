@@ -38,7 +38,7 @@ export const cardTexts = style({
 })
 
 const titleOrg = {
-  fontSize: 24,
+  fontSize: 18,
   color: theme.color.blue400,
   fontWeight: 600,
 }
@@ -51,7 +51,7 @@ export const titleError = style({
 })
 
 const textOrg = {
-  fontSize: 18,
+  fontSize: 14,
   color: theme.color.dark400,
   fontWeight: 300,
 }
