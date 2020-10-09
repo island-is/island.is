@@ -19,6 +19,7 @@ export const owner = style({
   fontSize: 14,
   color: theme.color.dark400,
   fontWeight: 300,
+  paddingTop: 2
 })
 
 export const serviceStatus = style({
@@ -65,7 +66,7 @@ export const categoryItem = style({
   paddingBottom: 6,
   paddingLeft: 8,
   paddingRight: 8,
-  fontSize: 14,
+  fontSize: 12,
   minWidth: 40,
   marginLeft: 4,
   marginRight: 4,
