@@ -128,16 +128,16 @@ const RelatedArticles: FC<{
         </Text>
         <Divider weight="alternate" />
         {articles.map((article) => (
-          <Text key={article.slug} as="span">
-            <Link
-              key={article.slug}
-              href={makePath('article', '[slug]')}
-              as={makePath('article', article.slug)}
-              underline="normal"
-            >
+          <Link
+            key={article.slug}
+            href={makePath('article', '[slug]')}
+            as={makePath('article', article.slug)}
+            underline="normal"
+          >
+            <Text key={article.slug} as="span">
               {article.title}
-            </Link>
-          </Text>
+            </Text>
+          </Link>
         ))}
       </Stack>
     </SidebarBox>
