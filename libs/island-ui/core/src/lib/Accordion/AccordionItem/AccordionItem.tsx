@@ -17,8 +17,8 @@ import { AllOrNone } from '../../private/AllOrNone'
 import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
-import { Typography } from '../../Typography/Typography'
-import { VariantTypes } from '../../Typography/Typography.treat'
+import { Text } from '../../Text/Text'
+import { TextVariants } from '../../Text/Text.treat'
 import { AccordionContext } from '../../Accordion/Accordion'
 import * as styles from './AccordionItem.treat'
 
@@ -29,7 +29,7 @@ export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
 export type AccordionItemBaseProps = {
   id: string
   label: string
-  labelVariant?: VariantTypes
+  labelVariant?: TextVariants
   labelUse?: AccordionItemLabelTags
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
@@ -147,16 +147,12 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Typography
-                  variant={labelVariant}
-                  as={labelUse}
-                  paddingBottom={1}
-                >
+                <Text variant={labelVariant} as={labelUse} paddingBottom={1}>
                   {label}
-                </Typography>
+                </Text>
                 {visibleContent && (
                   <div className={styles.visibleContent}>
-                    <Typography variant="p">{visibleContent}</Typography>
+                    <Text>{visibleContent}</Text>
                   </div>
                 )}
               </Column>

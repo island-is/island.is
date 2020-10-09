@@ -137,14 +137,23 @@ export interface IArticleFields {
   /** Contains application form? */
   containsApplicationForm?: boolean | undefined
 
-  /** Category */
+  /** Category (Main) */
   category?: IArticleCategory | undefined
 
-  /** Group */
+  /** Group (Main) */
   group?: IArticleGroup | undefined
 
-  /** Subgroup */
+  /** Subgroup (Main) */
   subgroup?: IArticleSubgroup | undefined
+
+  /** Other categories */
+  otherCategories?: IArticleCategory[] | undefined
+
+  /** Other groups */
+  otherGroups?: IArticleGroup[] | undefined
+
+  /** Other subgroups */
+  otherSubgroups?: IArticleSubgroup[] | undefined
 
   /** Organization */
   organization?: IOrganization[] | undefined
@@ -216,6 +225,9 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -479,7 +491,7 @@ export interface IFaqList extends Entry<IFaqListFields> {
 
 export interface IFeaturedFields {
   /** Title */
-  title: string
+  title?: string | undefined
 
   /** Special attention */
   attention?: boolean | undefined
