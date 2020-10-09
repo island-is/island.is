@@ -233,7 +233,7 @@ export const SidebarAccordion: FC<Omit<
   'labelVariant'
 >> = (props) => {
   return (
-    <AccordionItem {...props} labelVariant="p" iconVariant="sidebar">
+    <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
       {props.children}
     </AccordionItem>
   )
