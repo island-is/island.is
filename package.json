@@ -28,7 +28,6 @@
     "generate": "nx generate",
     "env-secrets": "./scripts/secrets.sh",
     "format": "nx format:write",
-    "format:write": "nx format:write",
     "format:check": "nx format:check",
     "update": "nx migrate latest",
     "workspace-schematic": "nx workspace-schematic",
