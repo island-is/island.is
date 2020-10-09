@@ -24,7 +24,6 @@ import { validate } from '../../../utils/validate'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { Case } from '@island.is/judicial-system-web/src/types'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 
 export const JudgeOverview: React.FC = () => {
@@ -218,13 +217,15 @@ export const JudgeOverview: React.FC = () => {
                         Lagaákvæði sem krafan er byggð á
                       </Text>
                     </Box>
-                    <Text>
-                      {workingCase?.custodyProvisions.map(
-                        (custodyProvision: CaseCustodyProvisions, index) => {
-                          return <div key={index}>{laws[custodyProvision]}</div>
-                        },
-                      )}
-                    </Text>
+                    {workingCase?.custodyProvisions.map(
+                      (custodyProvision: CaseCustodyProvisions, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{laws[custodyProvision]}</Text>
+                          </div>
+                        )
+                      },
+                    )}
                   </Box>
                 </AccordionItem>
                 <AccordionItem

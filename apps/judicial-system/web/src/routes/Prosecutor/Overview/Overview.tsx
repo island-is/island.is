@@ -21,7 +21,6 @@ import {
   formatDate,
   capitalize,
   formatNationalId,
-  formatLawsBroken,
   laws,
 } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
@@ -206,15 +205,15 @@ export const Overview: React.FC = () => {
                           Lagaákvæði sem krafan er byggð á
                         </Text>
                       </Box>
-                      <Text>
-                        {workingCase?.custodyProvisions.map(
-                          (custodyProvision: CaseCustodyProvisions, index) => {
-                            return (
-                              <div key={index}>{laws[custodyProvision]}</div>
-                            )
-                          },
-                        )}
-                      </Text>
+                      {workingCase?.custodyProvisions.map(
+                        (custodyProvision: CaseCustodyProvisions, index) => {
+                          return (
+                            <div key={index}>
+                              <Text>{laws[custodyProvision]}</Text>
+                            </div>
+                          )
+                        },
+                      )}
                     </Box>
                   </AccordionItem>
                   <AccordionItem
