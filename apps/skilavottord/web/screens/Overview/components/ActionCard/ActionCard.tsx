@@ -83,7 +83,7 @@ export const ActionCard: FC<ActionCardProps> = ({
               >
                 <Inline space={'smallGutter'}>
                   <Typography variant="pSmall">{t.actions.invalid}</Typography>
-                  <Tooltip text={t.tooltip} colored />
+                  <Tooltip text={t.tooltip} />
                 </Inline>
               </ColumnBox>
             )}
