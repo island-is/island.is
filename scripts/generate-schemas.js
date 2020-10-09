@@ -15,7 +15,7 @@ const main = async () => {
   if (!(await promisify(fs.exists)(SCHEMA_PATH))) {
     await promisify(fs.writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
-  for (cmd of YARN_COMMANDS) {
+  for (const cmd of YARN_COMMANDS) {
     console.log(`Running ${cmd}`)
     try {
       const { stdout, stderr } = await promisify(exec)(cmd)
