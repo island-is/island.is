@@ -2,15 +2,15 @@ const fs = require('fs')
 const { exec } = require('child_process')
 const { promisify } = require('util')
 
-console.log('HEAD', process.env.HEAD)
-console.log('BASE', process.env.BASE)
+const HEAD = process.env.HEAD
+const BASE = process.env.BASE
 
-SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
-YARN_COMMANDS = [
+const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
+const YARN_COMMANDS = [
   'yarn nx run application-system-api:build-schema',
   'yarn nx run api-domains-application:codegen',
   'yarn nx run api:build-schema',
-  'yarn affected:schemas',
+  `yarn affected:schemas --head=${HEAD} --base=${BASE}`,
 ]
 
 const main = async () => {

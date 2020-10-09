@@ -35,7 +35,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
-    "schemas": "cross-env HEAD=$HEAD BASE=$BASE node ./scripts/generate-schemas.js",
+    "schemas": "node ./scripts/generate-schemas.js",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "dependencies": {
