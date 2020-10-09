@@ -136,7 +136,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             </GridColumn>
           </GridRow>
           <Box paddingTop={8}>
-            <RichText body={content} config={{ defaultPadding: 8 }} />
+            <RichText body={content} config={{ defaultPadding: 4 }} />
           </Box>
         </>
       </ArticleLayout>
