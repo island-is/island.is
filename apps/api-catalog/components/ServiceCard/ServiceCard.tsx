@@ -1,20 +1,19 @@
-import React from 'react'
-import { Box, Link } from '@island.is/island-ui/core'
-import * as styles from './ServiceCard.treat'
-import cn from 'classnames'
-import { ServiceStatus, useHorizontalDragScroll } from '..'
-import { ApiService } from '@island.is/api/schema'
+import React from 'react';
+import { Box, Link } from '@island.is/island-ui/core';
+import * as styles from './ServiceCard.treat';
+import cn from 'classnames';
+import { ServiceStatus, useHorizontalDragScroll } from '..';
+import { ApiService } from '@island.is/api/schema';
 import {
   AccessCategory,
   PricingCategory,
   DataCategory,
   TypeCategory,
-} from '@island.is/api-catalogue/consts'
-import { ContentfulString } from 'apps/api-catalog/services/contentful.types'
+} from '@island.is/api-catalogue/consts';
+import { ContentfulString } from '../../services/contentful.types';
 
 export interface ServiceCardProps {
   service: ApiService
-  cardWidth: number
   strings: Array<ContentfulString>
 }
 
@@ -25,10 +24,7 @@ export const ServiceCard = (props: ServiceCardProps) => {
     e.preventDefault()
   }
   return (
-    <div
-      style={{ width: props.cardWidth, marginRight: 20 }}
-      onDragStart={preventDragHandler}
-    >
+    <div onDragStart={preventDragHandler}>
       <Box borderRadius="large" className={cn(styles.card, 'service-card')}>
         <Link href={`./services/${props.service.id}`}>
           <div className={cn(styles.cardTexts)}>

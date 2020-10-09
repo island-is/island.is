@@ -67,7 +67,6 @@ DesignGuide.getInitialProps = async (ctx) => {
   }
 
   const pageContent = await client.fetchPageBySlug('design-guide', locale);
-  console.log(pageContent);
 
   return {
     pageContent: pageContent

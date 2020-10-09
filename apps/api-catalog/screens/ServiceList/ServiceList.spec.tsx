@@ -8,26 +8,14 @@ import {  getAllPriceCategories,
 import ContentfulApi from '../../services/contentful';
 
 describe(' ServiceList ', () => {
-  
 
-  const params:GetServicesParameters = { 
-    cursor:null, 
-    limit:null, 
-    owner:null, 
-    name:null, 
-    pricing:getAllPriceCategories(), 
-    data:[],
-    access:[],
-    type:[],
-    text:null
-  };
-
-    
   it('should render successfully', async () => {
     const client = new ContentfulApi();
 
     const pageContent = await client.fetchPageBySlug('services', 'is-IS');
-    const { baseElement } = render(<ServiceList parameters={params} prevCursor={null} nextCursor={null} pageContent={pageContent} />);
+    const filterStrings = await client.fetchPageBySlug('services-filter', 'is-IS');
+
+    const { baseElement } = render(<ServiceList pageContent={pageContent} filterStrings={filterStrings} />);
     expect(baseElement).toBeTruthy();
   })
   

@@ -54,12 +54,9 @@ export const inputSearch = style({
   marginBottom: 20,
 })
 
-export const cardWidth = 310
-export const cardHeightMin = 144
-
 const navigationOrg = {
-  width: cardWidth,
-  height: cardHeightMin,
+  width: 310,
+  height: 144,
   borderWidth: 1,
   fontFamily: theme.typography.fontFamily,
   borderColor: theme.color.blue200,
@@ -79,6 +76,11 @@ export const navigation = style({
   textAlign: 'center',
   flexDirection: 'column',
   marginBottom: 80,
+  ':hover': {
+    borderColor: theme.color.blue400,
+    textDecoration: 'none',
+    cursor: 'pointer'
+  }
 })
 
 export const navigationMobile = style({
@@ -94,6 +96,17 @@ export const navigationMobile = style({
   flexDirection: 'column',
   marginBottom: 20,
   marginRight: 20,
+  ':hover': {
+    borderColor: theme.color.blue400,
+    textDecoration: 'none',
+    cursor: 'pointer'
+  }
+})
+
+export const navigationText = style({
+  fontSize: 24,
+  color: theme.color.blue400,
+  fontWeight: 600,
 })
 
 export const displayInline = style({

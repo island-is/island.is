@@ -2,7 +2,6 @@ import React, { useState, ReactNode } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
-  Button,
   ContentBlock,
   GridRow,
   GridColumn,
@@ -29,6 +28,7 @@ import {
   Query,
   QueryGetApiCatalogueArgs,
 } from '@island.is/api/schema'
+import { intersection } from 'lodash'
 
 interface PropTypes {
   top?: ReactNode
@@ -78,12 +78,12 @@ export interface ServiceListProps {
   filterStrings: Page
 }
 
-//Todo: add to contentful
-const TEXT_SEARCHING = 'Leita ...'
-const TEXT_NOT_FOUND = 'Engin þjónusta fannst'
-const TEXT_ERROR = 'Upp kom villa, reynið aftur'
-
 export default function ServiceList(props: ServiceListProps) {
+
+  const TEXT_SEARCHING = props.pageContent.strings.find(s => s.id === 'catalog-searching').text;
+  const TEXT_NOT_FOUND = props.pageContent.strings.find(s => s.id === 'catalog-not-found').text;
+  const TEXT_ERROR = props.pageContent.strings.find(s => s.id === 'catalog-error').text;
+
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
     limit: 2,
@@ -93,7 +93,8 @@ export default function ServiceList(props: ServiceListProps) {
     type: [],
     access: [],
   })
-  const [isMobile, setIsMobile] = useState<boolean>(false)
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
   const { width } = useWindowSize()
   // prettier-ignore
   const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY, 
@@ -138,7 +139,7 @@ export default function ServiceList(props: ServiceListProps) {
     const name: string = target.name
     const categoryValue: string = target.value
     const checked: boolean = target.checked
-    let temp = parameters
+    const temp = parameters
 
     if (checked) {
       if (!temp[name].includes(categoryValue)) {
@@ -161,7 +162,7 @@ export default function ServiceList(props: ServiceListProps) {
     }
     setIsMobile(false)
   }, [width])
-
+  
   return (
     <ServiceLayout
       className={cn(isMobile ? styles.LayoutMobile : {})}
@@ -199,7 +200,6 @@ export default function ServiceList(props: ServiceListProps) {
             data.getApiCatalogue.services.map((item) => {
               return (
                 <ServiceCard
-                  cardWidth={styles.cardWidth}
                   key={item.id}
                   service={item}
                   strings={props.filterStrings.strings}
@@ -227,8 +227,10 @@ export default function ServiceList(props: ServiceListProps) {
             className={cn(
               isMobile ? styles.navigationMobile : styles.navigation,
               error ? styles.displayHidden : {},
+              data?.getApiCatalogue?.pageInfo?.nextCursor === null ? styles.displayHidden : {}
             )}
             borderRadius="large"
+            onClick={() => onLoadMore()}
           >
             <div
               className={cn(
@@ -243,19 +245,12 @@ export default function ServiceList(props: ServiceListProps) {
                 color="blue600"
               />
             </div>
-            <div className={cn(loading ? styles.displayHidden : {})}>
-              <Button
-                width="normal"
-                variant="text"
-                disabled={data?.getApiCatalogue?.pageInfo?.nextCursor == null}
-                onClick={() => onLoadMore()}
-              >
-                {
-                  props.pageContent.strings.find(
-                    (s) => s.id === 'catalog-fetch-more-button',
-                  ).text
-                }
-              </Button>
+            <div className={cn(loading ? styles.displayHidden : styles.navigationText)}>
+              {
+                props.pageContent.strings.find(
+                  (s) => s.id === 'catalog-fetch-more-button',
+                ).text
+              }
             </div>
           </Box>
         </Box>

@@ -3575,7 +3575,8 @@
             "tsConfig": "apps/api-catalog/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-next": {}
       }
     },
     "api-catalog-e2e": {

@@ -1,12 +1,21 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
+export const defaultWidth = 400;
+
 export const card = style({
+  width: 310,
+  minHeight: 144,
   marginBottom: 20,
+  marginRight: 20,
   fontFamily: theme.typography.fontFamily,
   borderColor: theme.color.blue200,
   borderWidth: 1,
   borderStyle: 'solid',
+  ':hover': {
+    borderColor: theme.color.blue400,
+    textDecoration: 'none'
+  }
 })
 
 export const name = style({
@@ -49,8 +58,8 @@ export const category = style({
   width: '100%',
   display: 'inline-flex',
   background: theme.color.white,
-  paddingLeft: globalItems.paddingLeft - 5,
-  paddingRight: globalItems.paddingRight - 5,
+  // paddingLeft: globalItems.paddingLeft - 5,
+  // paddingRight: globalItems.paddingRight - 5,
   borderBottomLeftRadius: 7,
   borderBottomRightRadius: 7,
   paddingTop: 5,
