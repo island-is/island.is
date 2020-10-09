@@ -2,6 +2,9 @@ const fs = require('fs')
 const { exec } = require('child_process')
 const { promisify } = require('util')
 
+console.log('HEAD', process.env.HEAD)
+console.log('BASE', process.env.BASE)
+
 SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 YARN_COMMANDS = [
   'yarn nx run application-system-api:build-schema',
