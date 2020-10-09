@@ -1,64 +1,49 @@
 # CMS Api
 
-This is mostly a wrapper around the
-[contentful rest api](https://www.contentful.com/developers/docs/references/content-delivery-api/)
+This is mostly a wrapper around the [contentful rest api](https://www.contentful.com/developers/docs/references/content-delivery-api/).
 
-## Prerequisites
+## Update content type into Contentful
 
-- You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN`. You can ask someone that may have it or [generate in contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/api/cma_tokens)
+When you are updating a field inside a content type in Contentful you will need to re-generate the `contentfulTypes.d.ts` file and commit it with your changes with the following command:
 
-- Don't run the api at the same time, it might creates a wrong `api.graphql`, when until the script is done to restart the api.
+```bash
+yarn nx run api:contentful-types
+```
 
-## Workflow
+> We keep this file in the repository because in case contentful is down, the whole pipeline would fail and we won’t be able to build island.is. By keeping it in the repo, we ensure we can still build and we don't have to rely on an external service.
 
-When adding new types/endpoints to the api:
+## Generate models for a new content type
 
-- Create the contentType in the [contentful content model](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types)
+When creating a new content type in [contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types), you can run a script that will generate models based on the content type's JSON from contentful.
 
-- Run the following script
+```bash
+yarn nx run api:content type --id=contentTypeId
+```
 
-  ```bash
-  yarn nx run api:contentType --id=contentTypeId --sys=id --overwrite=false
-  ```
+The script take 3 arguments:
 
-  The script take 3 arguments:
+- #### `--id`
 
-  - #### `--id`
+  _required, string_
 
-    _required, string_
+  The "contentTypeId" that you want to create types/models of
 
-    The "contentTypeId" that you want to create types/models of
+- #### `--sys`
 
-  - #### `--sys`
+  _optional, string_
 
-    _optional, string_
+  **values: id, createdAt, updatedAt**
 
-    **values: id, createdAt, updatedAt**
+  A string of fields that you want to be added to the root model (separated by a comma)
 
-    A string of fields that you want to be added to each models (separated by a comma)
+- #### `--overwrite`
 
-  - #### `--overwrite`
+  _optional, boolean_
 
-    _optional, boolean_
+  **default: false**
 
-    **default: false**
+  If you want to overwrite the existing models while generating content type types/models
 
-    If you want to overwrite the existing models while generating contentType types/models
+<br />
 
-  The script will do the following steps:
-
-  - Generate new contentful types using `contentful-typescript-codegen`
-  - Create the models from the contentTypes and its linkContentTypes `contentType.ts`
-  - Re-generate the types for the graphql api `yarn nx run api:codegen`
-
-## Definition types
-
-If you add a new field inside a contentType in Contentful you will need to run theses different steps to generate up-to-date definitions files
-
-- `apps/api/src/api.graphql` is generated automatically when running the [local api server](https://github.com/island-is/island.is/blob/71c15cbc2c8276f8d635d4c2337d14fa845bfbe1/apps/api/src/app/app.module.ts#L18)
-
-- `libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts` is generated within `yarn nx run api:contentType` script. It can also be run by itself with `yarn nx run api:contentful-types`
-
-- `libs/api/schema/src/lib/schema.d.ts` is generated when running `yarn api:codegen`
-
-- `apps/web/graphql/schema.ts` is generated when running `yarn web:codegen`
+> You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` to run the script locally. Don't run the api at the same time, wait until the script is done to restart the api `yarn start api`.
