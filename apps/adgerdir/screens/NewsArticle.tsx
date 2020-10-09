@@ -11,7 +11,7 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import {
   Query,

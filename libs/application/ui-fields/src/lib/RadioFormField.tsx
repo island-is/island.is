@@ -7,6 +7,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Typography, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
+import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -17,7 +18,15 @@ const RadioFormField: FC<Props> = ({
   error,
   formValue,
 }) => {
-  const { disabled, id, name, options } = field
+  const {
+    disabled,
+    id,
+    name,
+    description,
+    options,
+    emphasize,
+    largeButtons,
+  } = field
   const { formatMessage } = useLocale()
 
   return (
@@ -25,8 +34,17 @@ const RadioFormField: FC<Props> = ({
       {showFieldName && (
         <Typography variant="p">{formatMessage(name)}</Typography>
       )}
-      <Box paddingTop={2}>
+
+      {description && <Description description={formatMessage(description)} />}
+
+      <Box
+        background={emphasize ? 'blue100' : undefined}
+        padding={emphasize ? 3 : undefined}
+        marginTop={3}
+      >
         <RadioController
+          largeButtons={largeButtons}
+          emphasize={emphasize}
           id={id}
           disabled={disabled}
           error={error}

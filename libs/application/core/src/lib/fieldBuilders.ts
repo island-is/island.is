@@ -22,6 +22,7 @@ export function buildCheckboxField(data: {
   condition?: Condition
   id: string
   name: MessageDescriptor | string
+  description?: MessageDescriptor | string
   options: Option[]
   required?: boolean
   disabled?: boolean
@@ -31,6 +32,7 @@ export function buildCheckboxField(data: {
     condition,
     id,
     name,
+    description,
     options,
     required = false,
     disabled = false,
@@ -44,6 +46,7 @@ export function buildCheckboxField(data: {
     condition,
     id,
     name,
+    description,
     options,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
@@ -55,6 +58,7 @@ export function buildDateField(data: {
   id: string
   name: MessageDescriptor | string
   placeholder?: MessageDescriptor | string
+  description?: MessageDescriptor | string
   maxDate?: Date
   minDate?: Date
   required?: boolean
@@ -65,6 +69,7 @@ export function buildDateField(data: {
     condition,
     id,
     name,
+    description,
     maxDate,
     minDate,
     required = false,
@@ -81,6 +86,7 @@ export function buildDateField(data: {
     disabled,
     width,
     name,
+    description,
     maxDate,
     minDate,
     type: FieldTypes.DATE,
@@ -110,8 +116,11 @@ export function buildRadioField(data: {
   condition?: Condition
   id: string
   name: MessageDescriptor | string
+  description?: MessageDescriptor | string
   options: Option[]
   required?: boolean
+  emphasize?: boolean
+  largeButtons?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): RadioField {
@@ -119,19 +128,25 @@ export function buildRadioField(data: {
     condition,
     id,
     name,
+    description,
     options,
     required = false,
+    emphasize = false,
+    largeButtons = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
     required,
+    emphasize,
+    largeButtons,
     disabled,
     width,
     condition,
     id,
     name,
+    description,
     options,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
@@ -142,6 +157,7 @@ export function buildSelectField(data: {
   condition?: Condition
   id: string
   name: MessageDescriptor | string
+  description?: MessageDescriptor | string
   placeholder?: string
   options: Option[]
   required?: boolean
@@ -152,6 +168,7 @@ export function buildSelectField(data: {
     condition,
     id,
     name,
+    description,
     options,
     placeholder,
     required = false,
@@ -167,6 +184,7 @@ export function buildSelectField(data: {
     condition,
     id,
     name,
+    description,
     options,
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
@@ -177,6 +195,7 @@ export function buildTextField(data: {
   condition?: Condition
   id: string
   name: MessageDescriptor | string
+  description?: MessageDescriptor | string
   required?: boolean
   disabled?: boolean
   width?: FieldWidth
@@ -185,6 +204,7 @@ export function buildTextField(data: {
     condition,
     id,
     name,
+    description,
     required = false,
     disabled = false,
     width = 'full',
@@ -197,6 +217,7 @@ export function buildTextField(data: {
     condition,
     id,
     name,
+    description,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

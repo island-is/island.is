@@ -41,9 +41,9 @@ export function buildMultiField(data: {
 export function buildRepeater(data: {
   id: string
   condition?: Condition
+  component: string
   name: MessageDescriptor | string
   children: FormLeaf[]
-  labelKey: string
 }): Repeater {
   return { ...data, type: FormItemTypes.REPEATER, repetitions: 0 }
 }
@@ -69,6 +69,7 @@ export function buildSubSection(data: {
 export function buildExternalDataProvider(data: {
   name: MessageDescriptor | string
   id: string
+  condition?: Condition
   dataProviders: DataProviderItem[]
 }): ExternalDataProvider {
   return {

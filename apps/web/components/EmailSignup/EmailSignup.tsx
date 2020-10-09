@@ -5,7 +5,7 @@ import {
   Text,
   Stack,
   Input,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 
 export interface EmailSignupProps {

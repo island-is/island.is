@@ -7,6 +7,7 @@ import {
 import { Typography, Box } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -17,7 +18,7 @@ const CheckboxFormField: FC<Props> = ({
   field,
   formValue,
 }) => {
-  const { id, name, options, disabled } = field
+  const { id, name, description, options, disabled } = field
   const { formatMessage } = useLocale()
 
   return (
@@ -25,6 +26,9 @@ const CheckboxFormField: FC<Props> = ({
       {showFieldName && (
         <Typography variant="p">{formatMessage(name)}</Typography>
       )}
+
+      {description && <Description description={formatMessage(description)} />}
+
       <Box paddingTop={2}>
         <CheckboxController
           id={id}

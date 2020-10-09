@@ -17,7 +17,7 @@ import ReactDOM from 'react-dom'
 import {
   Box,
   Icon,
-  Button,
+  ButtonDeprecated as Button,
   Stack,
   Tag,
   Text,

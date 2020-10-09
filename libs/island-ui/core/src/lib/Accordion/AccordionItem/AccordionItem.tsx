@@ -10,17 +10,17 @@ import React, {
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 
-import { Box } from '../Box/Box'
-import { Column } from '../Column/Column'
-import { Columns } from '../Columns/Columns'
-import { AllOrNone } from '../private/AllOrNone'
-import { useVirtualTouchable } from '../private/touchable/useVirtualTouchable'
-import { hideFocusRingsClassName } from '../private/hideFocusRings/hideFocusRings'
-import { Overlay } from '../private/Overlay/Overlay'
+import { Box } from '../../Box/Box'
+import { Column } from '../../Column/Column'
+import { Columns } from '../../Columns/Columns'
+import { AllOrNone } from '../../private/AllOrNone'
+import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable'
+import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
+import { Overlay } from '../../private/Overlay/Overlay'
+import { Typography } from '../../Typography/Typography'
+import { VariantTypes } from '../../Typography/Typography.treat'
+import { AccordionContext } from '../../Accordion/Accordion'
 import * as styles from './AccordionItem.treat'
-import { Typography } from '../Typography/Typography'
-import { VariantTypes } from '../Typography/Typography.treat'
-import { AccordionContext } from '../Accordion/Accordion'
 
 type IconVariantTypes = 'default' | 'sidebar'
 
@@ -141,7 +141,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            paddingX={[2, 2, 4]}
+            paddingX={[2, 2, 0]}
             paddingY={2}
             onClick={onClick ? onClick : handleOpen}
           >
@@ -197,7 +197,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingX={[2, 2, 4]} paddingBottom={2} id={id}>
+          <Box paddingX={[2, 2, 0]} paddingBottom={2} id={id}>
             {children}
           </Box>
         </AnimateHeight>

@@ -9,7 +9,7 @@ import {
   Column,
   Icon,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
 } from '@island.is/island-ui/core'
 

@@ -5,7 +5,8 @@ import {
   errorMessage as inputErrorMessage,
 } from '../Input/Input.mixins'
 
-const checkboxSize = 24
+export const checkMarkWidth = theme.spacing[2]
+const checkboxSize = theme.spacing[3]
 
 export const container = style({
   position: 'relative',
@@ -14,15 +15,13 @@ export const large = style({
   borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
 })
-export const checkMarkColorUnchecked = 'transparent'
-export const checkMarkColor = 'white'
-export const checkMarkWidth = 17
+
 export const input = style({
-  position: 'absolute',
-  opacity: 0,
-  left: 0,
-  top: 0,
   height: checkboxSize,
+  left: 0,
+  opacity: 0,
+  position: 'absolute',
+  top: 0,
   width: checkboxSize,
 })
 export const label = style({
@@ -34,22 +33,23 @@ export const labelChecked = style({
   fontWeight: theme.typography.medium,
 })
 export const checkboxDisabled = style({
-  borderColor: theme.color.blue200,
   background: 'transparent',
+  borderColor: theme.color.blue200,
 })
 export const largeLabel = style({
   padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
 })
 export const checkbox = style({
-  height: checkboxSize,
-  width: checkboxSize,
+  alignItems: 'center',
+  backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
   display: 'flex',
-  alignItems: 'center',
+  flexShrink: 0,
+  height: checkboxSize,
   justifyContent: 'center',
   marginRight: theme.spacing[2],
-  backgroundColor: theme.color.white,
   transition: 'border-color .1s, shadow .1s, background-color .1s',
+  width: checkboxSize,
   selectors: {
     [`${container}:hover &:not(${checkboxDisabled})`]: {
       borderColor: theme.color.blue400,

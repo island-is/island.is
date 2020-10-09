@@ -1,5 +1,10 @@
 import React from 'react'
-import { Typography, Box, Stack, Button } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Box,
+  Stack,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,

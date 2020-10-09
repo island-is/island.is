@@ -388,18 +388,17 @@ const Results: FC<{
               </Text>
               {(search.results.items as Article[] & LifeEventPage[])
                 .slice(0, 5)
-                .map(({ id, title, slug }) => (
-                  <Text
-                    as="div"
-                    variant="h5"
-                    color="blue400"
-                    key={id}
-                    {...getItemProps({ item: '' })}
-                  >
-                    <Link href={makePath('article', slug)}>
-                      <a>{title}</a>
+                .map(({ id, title, slug, __typename }) => (
+                  <div key={id} {...getItemProps({ item: '' })}>
+                    <Link
+                      href={makePath(__typename, '[slug]')}
+                      as={makePath(__typename, slug)}
+                    >
+                      <Text variant="h5" color="blue400">
+                        {title}
+                      </Text>
                     </Link>
-                  </Text>
+                  </div>
                 ))}
             </Stack>
           </div>

@@ -5,7 +5,7 @@ import {
   Columns,
   Column,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Hidden,
   ResponsiveSpace,
   GridContainer,
@@ -35,6 +35,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const locale = activeLocale
   const english = activeLocale === 'en'
   const isWhite = colorScheme === 'white'
+  const ariaExpanded = sideMenuOpen ? { 'aria-expanded': 'true' } : {}
 
   const betaTag = (
     <div style={{ marginLeft: '8px', marginTop: 'auto' }}>
@@ -143,6 +144,10 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                       variant="menu"
                       onClick={() => setSideMenuOpen(true)}
                       leftIcon="burger"
+                      aria-haspopup="true"
+                      aria-controls="sideMenu"
+                      id="sideMenuToggle"
+                      {...ariaExpanded}
                     >
                       {t.menuCaption}
                     </Button>

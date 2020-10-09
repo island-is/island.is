@@ -9,7 +9,7 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
-  Button,
+  ButtonDeprecated as Button,
   Inline,
   Tag,
 } from '@island.is/island-ui/core'
