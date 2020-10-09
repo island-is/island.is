@@ -40,6 +40,30 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
     setModal(true)
   }
 
+  const uploadPicForm = () => {
+    return (
+      <Box className={styles.uploadPictureContainer}>
+        <Box
+          alignItems="center"
+          flexDirection="column"
+          justifyContent="center"
+          display="flex"
+          padding={[2, 2, 2, 4]}
+        >
+          <Typography variant="h4">
+            Dragðu mynd hingað til að hlaða upp
+          </Typography>
+          <Typography variant="p">
+            Tekið er við skjölum með endingu: .jpeg, .gif, .png
+          </Typography>
+          <Box paddingTop={[1, 1, 1, 4]}>
+            <Button variant="ghost">Veljið mynd til að hlaða upp</Button>
+          </Box>
+        </Box>
+      </Box>
+    )
+  }
+
   return (
     <>
       <Box marginBottom={6}>
@@ -52,19 +76,18 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Box display="flex" alignItems="center" marginBottom={4}>
         <Hidden below="sm">
-          <button onClick={onClickEvent}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              marginRight={5}
-              borderRadius="circle"
-              background="purple200"
-              className={styles.avatar}
-            >
-              <Icon type="user" color="purple400" width={40} height={40} />
-            </Box>
-          </button>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            marginRight={5}
+            borderRadius="circle"
+            background="purple200"
+            className={styles.avatar}
+            onClick={onClickEvent}
+          >
+            <Icon type="user" color="purple400" width={40} height={40} />
+          </Box>
         </Hidden>
         <Typography variant="h2">{userInfo.profile.name}</Typography>
       </Box>
@@ -97,35 +120,23 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
-        <Modal
-          show={showModal}
-          onCancel={() => setModal(false)}
-          onContinue={() => {
-            setModal(false)
-          }}
-          onClickOutside={() => {
-            setModal(false)
-          }}
-          title="Skipta út mynd"
-        >
-          <Box
-            alignItems="center"
-            flexDirection="column"
-            justifyContent="center"
-            display="flex"
-            paddingY={[0, 0, 0, 4]}
+        <Hidden below="sm">
+          <Modal
+            show={showModal}
+            onCancel={() => setModal(false)}
+            onContinue={() => {
+              setModal(false)
+            }}
+            onClickOutside={() => {
+              setModal(false)
+            }}
+            title="Skipta út mynd"
           >
-            <Typography variant="h4">
-              Dragðu mynd hingað til að hlaða upp
-            </Typography>
-            <Typography variant="p">
-              Tekið er við skjölum með endingu: .jpeg, .gif, .png
-            </Typography>
-            <Box paddingTop={[0, 0, 0, 4]}>
-              <Button variant="ghost">Veljið mynd til að hlaða upp</Button>
-            </Box>
-          </Box>
-        </Modal>
+            {uploadPicForm()}
+          </Modal>
+        </Hidden>
+        <Hidden above="xs">{uploadPicForm()}</Hidden>
+
         {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine
           label="Kyn N/A"

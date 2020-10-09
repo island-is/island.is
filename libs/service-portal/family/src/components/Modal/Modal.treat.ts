@@ -17,15 +17,6 @@ export const container = style({
   zIndex: zIndex.modal,
 })
 
-export const innerContainer = style({
-  border: '1px dashed #99C0FF', //TODO FIX COLOR
-  borderRadius: '5px',
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-})
-
 export const modal = style({
   position: 'relative',
   borderRadius: '16px',

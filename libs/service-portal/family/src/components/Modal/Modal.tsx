@@ -49,8 +49,7 @@ const Modal: FC<ModalProps> = ({
               >
                 <Box
                   display="flex"
-                  paddingX={[0, 0, 4, 4]}
-                  paddingY={[0, 0, 4, 4]}
+                  padding={[1, 1, 4, 4]}
                   className={styles.modal}
                   ref={ref}
                 >
@@ -62,14 +61,14 @@ const Modal: FC<ModalProps> = ({
                       width="full"
                       display="inlineFlex"
                       justifyContent="spaceBetween"
-                      paddingBottom={[1, 1, 6, 6]}
+                      paddingBottom={[1, 1, 2, 6]}
                     >
                       <Typography variant="h2">{title}</Typography>
                       <button onClick={onCancel} className={styles.modalClose}>
                         <Icon type="close" color="blue400" />
                       </button>
                     </Box>
-                    <Box className={styles.innerContainer}>{children}</Box>
+                    {children}
                   </GridColumn>
                 </Box>
               </GridColumn>
