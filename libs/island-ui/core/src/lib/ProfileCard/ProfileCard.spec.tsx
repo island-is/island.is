@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import ProfileCard from './ProfileCard'
+import { ProfileCard } from './ProfileCard'
 
 describe(' ProfileCard', () => {
   it('should render successfully without props', () => {

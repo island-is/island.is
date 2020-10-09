@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const useDeprecatedComponent = (
+export const useDeprecatedComponent = (
   componentName: string,
   customMsg = `${componentName} is deprecated`,
 ) =>
@@ -9,5 +9,3 @@ const useDeprecatedComponent = (
       console.warn(customMsg)
     }
   }, [customMsg])
-
-export default useDeprecatedComponent

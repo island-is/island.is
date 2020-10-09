@@ -2,7 +2,7 @@ import React from 'react'
 import { Formik, Field } from 'formik'
 import { render } from '@testing-library/react'
 
-import FieldCheckbox from './FieldCheckbox'
+import { FieldCheckbox } from './FieldCheckbox'
 
 describe(' FieldCheckbox', () => {
   it('should render successfully', () => {

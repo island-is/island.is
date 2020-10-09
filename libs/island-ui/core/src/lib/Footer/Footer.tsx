@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import chunk from 'lodash/chunk'
+
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'
@@ -8,10 +9,12 @@ import { Typography } from '../Typography/Typography'
 import { Inline } from '../Inline/Inline'
 import { Tag } from '../Tag/Tag'
 import { Icon } from '../Icon/Icon'
-import { GridContainer, GridRow, GridColumn } from '../Grid'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
+import { Link } from '../Link/Link'
 
 import * as styles from './Footer.treat'
-import { Link } from '../Link'
 
 export interface FooterLinkProps {
   title: string
@@ -279,5 +282,3 @@ const defaultBottomLinks = [
     title: 'Tekjusagan',
   },
 ]
-
-export default Footer

@@ -12,5 +12,3 @@ export const Label: React.FC<React.DetailedHTMLProps<
     </label>
   )
 }
-
-export default Label

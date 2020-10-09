@@ -1,6 +1,6 @@
 import React from 'react'
 import { BulletList, Bullet } from './BulletList'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { boolean } from '@storybook/addon-knobs'
 
 export default {

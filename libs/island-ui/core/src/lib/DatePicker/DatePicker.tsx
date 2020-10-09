@@ -10,8 +10,8 @@ import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
-import Icon from '../Icon/Icon'
-import Typography from '../Typography/Typography'
+import { Icon } from '../Icon/Icon'
+import { Typography } from '../Typography/Typography'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
@@ -185,5 +185,3 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     </div>
   )
 }
-
-export default DatePicker

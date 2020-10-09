@@ -1,5 +1,6 @@
 import React from 'react'
-import NewsletterSignup from './NewsletterSignup'
+
+import { NewsletterSignup } from './NewsletterSignup'
 
 export default {
   title: 'Components/NewsletterSignup',

@@ -11,7 +11,10 @@ import React, {
 import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
-import { Input, InputProps, Label, Menu, MenuProps, Item } from './shared'
+import { Input, InputProps } from './shared/Input/Input'
+import { Label } from './shared/Label/Label'
+import { Menu, MenuProps } from './shared/Menu/Menu'
+import { Item } from './shared/Item/Item'
 import { Icon } from '../Icon/Icon'
 import { ColorSchemeContext } from '../context'
 
@@ -319,5 +322,3 @@ export const AsyncSearchInput = forwardRef<
     )
   },
 )
-
-export default AsyncSearch

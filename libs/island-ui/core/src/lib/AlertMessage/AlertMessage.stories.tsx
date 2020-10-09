@@ -1,8 +1,9 @@
 import React from 'react'
 import { ContentBlock } from '../ContentBlock'
 import { AlertMessage } from './AlertMessage'
-import { GridContainer } from '../Grid/GridContainer'
-import { GridRow, GridColumn } from '../Grid'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
 
 export default {
   title: 'Alerts/AlertMessage',

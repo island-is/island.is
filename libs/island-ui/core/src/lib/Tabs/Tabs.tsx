@@ -7,7 +7,7 @@ import { Select, Option } from '../Select/Select'
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
 import { Colors } from '@island.is/island-ui/theme'
-import FocusableBox from '../FocusableBox/FocusableBox'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
 
 type TabType = {
   label: string
@@ -93,5 +93,3 @@ export const Tabs: FC<TabInterface> = ({
     </Box>
   )
 }
-
-export default Tabs

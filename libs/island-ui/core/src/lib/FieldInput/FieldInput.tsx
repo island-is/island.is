@@ -2,7 +2,7 @@ import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
 import { Input } from '../Input/Input'
-import useDeprecatedComponent from '../private/useDeprecatedComponent'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 interface FieldNumberInputProps {
   form: FormikState<string | number>
@@ -25,5 +25,3 @@ export const FieldInput = ({
     />
   )
 }
-
-export default FieldInput

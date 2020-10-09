@@ -1,6 +1,6 @@
 import React from 'react'
 import { Input } from './Input'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {

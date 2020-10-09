@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import VideoIframe from './VideoIframe'
+import { VideoIframe } from './VideoIframe'
 
 describe(' VideoIframe', () => {
   it('should render successfully', () => {

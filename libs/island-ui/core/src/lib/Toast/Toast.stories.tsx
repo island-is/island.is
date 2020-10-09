@@ -1,7 +1,8 @@
 import React from 'react'
-import { ToastContainer, toast } from './Toast'
+
 import { Button } from '../Button/Button'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
+import { ToastContainer, toast } from './Toast'
 
 export default {
   title: 'Alerts/Toast',

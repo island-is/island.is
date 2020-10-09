@@ -1,6 +1,6 @@
 import React from 'react'
 import { Select } from './Select'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {

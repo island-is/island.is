@@ -2,7 +2,7 @@ import React from 'react'
 import { Formik, Field } from 'formik'
 import { render } from '@testing-library/react'
 
-import FieldSelect from './FieldSelect'
+import { FieldSelect } from './FieldSelect'
 
 describe('FieldSelect', () => {
   it('should render successfully', () => {

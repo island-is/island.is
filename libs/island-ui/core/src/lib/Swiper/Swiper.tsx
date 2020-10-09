@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Swiper.treat'
 
-const Swiper: FC = ({ children }) => {
+export const Swiper: FC = ({ children }) => {
   const [width, setWidth] = useState<number>(0)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -43,5 +43,3 @@ const Swiper: FC = ({ children }) => {
     </div>
   )
 }
-
-export default Swiper

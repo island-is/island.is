@@ -153,7 +153,7 @@ export const variants: Variants = {
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
-const variantStyles = (Object.keys(variants) as TextVariants[]).reduce(
+export const variantStyles = (Object.keys(variants) as TextVariants[]).reduce(
   (acc, variantKey) => {
     acc[variantKey] = responsiveStyleMap(variants[variantKey])
     return acc
@@ -176,5 +176,3 @@ globalStyle(`${base} mark`, {
   color: theme.color.dark400,
   fontWeight: theme.typography.regular,
 })
-
-export default variantStyles
