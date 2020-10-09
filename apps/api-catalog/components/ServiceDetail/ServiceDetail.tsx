@@ -18,8 +18,8 @@ import {
 } from '@island.is/api/schema'
 import { RedocStandalone } from 'redoc'
 import { useLazyQuery } from 'react-apollo'
-import { GET_OPEN_API_QUERY } from 'apps/api-catalog/screens/Queries'
-import { ContentfulString } from 'apps/api-catalog/services/contentful.types'
+import { GET_OPEN_API_QUERY } from '../../screens/Queries'
+import { ContentfulString } from '../../services/contentful.types'
 import {
   AccessCategory,
   PricingCategory,
