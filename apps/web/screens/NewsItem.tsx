@@ -74,7 +74,10 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <GridContainer>
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '8/12', '8/12', '9/12']}
+              paddingBottom={[4, 4, 0]}
+            >
               <GridRow>
                 <GridColumn
                   offset={['0', '0', '0', '0', '1/9']}
