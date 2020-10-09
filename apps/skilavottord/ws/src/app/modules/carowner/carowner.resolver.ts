@@ -5,7 +5,7 @@ import { CarownerService } from './models/carowner.service'
 import { DeregisterCarInput } from './models/dto'
 import { Authorize } from '../auth'
 
-console.log("---Starting Resolver for Carowner  - before Authorize---")
+console.log('---Starting Resolver for Carowner  - before Authorize---')
 @Resolver(() => Carowner)
 export class CarownerResolver {
   carownerService: CarownerService

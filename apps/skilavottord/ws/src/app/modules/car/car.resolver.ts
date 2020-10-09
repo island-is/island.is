@@ -12,7 +12,7 @@ export class CarResolver {
   }
 
   @Authorize()
- 
+
   //Test
   //query b {getCarById(id: "2"){id, ownerId, name, model}}
   //@Query(() => Car)
