@@ -395,7 +395,7 @@ const Results: FC<{
                       as={makePath(__typename, slug)}
                     >
                       <Text variant="h5" color="blue400">
-                      {title}
+                        {title}
                       </Text>
                     </Link>
                   </div>
