@@ -5,7 +5,7 @@ import {
   Columns,
   Column,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Hidden,
   ResponsiveSpace,
   GridContainer,

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Typography } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 
 const Description: FC<{ description: string }> = ({ description }) => {
   const getMarkup = () => {
@@ -8,9 +8,9 @@ const Description: FC<{ description: string }> = ({ description }) => {
     }
   }
   return (
-    <Typography marginTop={2} marginBottom={1} variant="p">
+    <Text marginTop={2} marginBottom={1}>
       <span dangerouslySetInnerHTML={getMarkup()} />
-    </Typography>
+    </Text>
   )
 }
 

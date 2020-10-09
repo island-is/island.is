@@ -5,7 +5,7 @@ import {
   Hidden,
   ResponsiveSpace,
   ContentBlock,
-  Button,
+  ButtonDeprecated as Button,
   Inline,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'

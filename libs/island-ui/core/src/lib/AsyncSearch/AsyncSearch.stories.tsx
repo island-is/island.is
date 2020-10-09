@@ -1,12 +1,22 @@
 import React, { FC, useState, useEffect } from 'react'
-import { AsyncSearch } from './AsyncSearch'
-import { Stack, Box } from '../..'
 import { boolean } from '@storybook/addon-knobs'
-import Typography from '../Typography/Typography'
+
+import { Stack } from '../Stack/Stack'
+import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
+import { AsyncSearch } from './AsyncSearch'
 
 export default {
   title: 'Components/AsyncSearch',
   component: AsyncSearch,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=51%3A153)',
+      },
+    },
+  },
 }
 
 const items = [
@@ -128,16 +138,16 @@ export const CustomItem: FC = () => {
       value: 'skraning-nafns',
       component: (props: ContainerProps) => (
         <Container {...props}>
-          <Typography
+          <Text
             variant="eyebrow"
             as="span"
             color={props.active ? 'blue400' : 'dark400'}
           >
             Fjölskyldumál og velferð - Nafn og kyn
-          </Typography>
-          <Typography variant="intro" as="span">
+          </Text>
+          <Text variant="intro" as="span">
             Skráning nafns
-          </Typography>
+          </Text>
         </Container>
       ),
     },
@@ -146,16 +156,16 @@ export const CustomItem: FC = () => {
       value: 'nafnbreyting',
       component: (props: ContainerProps) => (
         <Container {...props}>
-          <Typography
+          <Text
             variant="eyebrow"
             as="span"
             color={props.active ? 'blue400' : 'dark400'}
           >
             Fjölskyldumál og velferð - Nafn og kyn
-          </Typography>
-          <Typography variant="intro" as="span">
+          </Text>
+          <Text variant="intro" as="span">
             Nafnbreyting
-          </Typography>
+          </Text>
         </Container>
       ),
     },
@@ -164,16 +174,16 @@ export const CustomItem: FC = () => {
       value: 'breytt-ritun-nafns',
       component: (props: ContainerProps) => (
         <Container {...props}>
-          <Typography
+          <Text
             variant="eyebrow"
             as="span"
             color={props.active ? 'blue400' : 'dark400'}
           >
             Fjölskyldumál og velferð - Nafn og kyn
-          </Typography>
-          <Typography variant="intro" as="span">
+          </Text>
+          <Text variant="intro" as="span">
             Breytt ritun nafns
-          </Typography>
+          </Text>
         </Container>
       ),
     },

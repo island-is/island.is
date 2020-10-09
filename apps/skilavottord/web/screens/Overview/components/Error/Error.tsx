@@ -1,4 +1,9 @@
-import { Box, Button, Stack, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  Stack,
+  Typography,
+} from '@island.is/island-ui/core'
 import { InlineError } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useRouter } from 'next/router'

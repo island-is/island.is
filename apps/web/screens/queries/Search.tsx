@@ -66,14 +66,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           intro
           title
           slug
-          image {
-            id
-            url
-            title
-            width
-            height
-            contentType
-          }
         }
 
         ... on AboutPage {
@@ -160,14 +152,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           intro
           title
           slug
-          image {
-            id
-            url
-            title
-            width
-            height
-            contentType
-          }
         }
 
         ... on AboutPage {

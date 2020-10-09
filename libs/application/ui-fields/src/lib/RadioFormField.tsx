@@ -5,7 +5,7 @@ import {
   RadioField,
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { Typography, Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import Description from './components/Description'
 
@@ -18,19 +18,31 @@ const RadioFormField: FC<Props> = ({
   error,
   formValue,
 }) => {
-  const { disabled, id, name, description, options } = field
+  const {
+    disabled,
+    id,
+    name,
+    description,
+    options,
+    emphasize,
+    largeButtons,
+  } = field
   const { formatMessage } = useLocale()
 
   return (
     <div>
-      {showFieldName && (
-        <Typography variant="p">{formatMessage(name)}</Typography>
-      )}
+      {showFieldName && <Text>{formatMessage(name)}</Text>}
 
       {description && <Description description={formatMessage(description)} />}
 
-      <Box paddingTop={2}>
+      <Box
+        background={emphasize ? 'blue100' : undefined}
+        padding={emphasize ? 3 : undefined}
+        marginTop={3}
+      >
         <RadioController
+          largeButtons={largeButtons}
+          emphasize={emphasize}
           id={id}
           disabled={disabled}
           error={error}

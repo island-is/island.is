@@ -1,10 +1,10 @@
 import React from 'react'
-import Typography from '../Typography/Typography'
-import Input from '../Input/Input'
+import { Typography } from '../Typography/Typography'
+import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
 
 import * as styles from './NewsletterSignup.treat'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 
 type ColorVariant = 'white' | 'blue'
 type State = 'default' | 'error' | 'success'
@@ -23,7 +23,7 @@ interface Props {
   value: string
 }
 
-const NewsletterSignup: React.FC<Props> = ({
+export const NewsletterSignup: React.FC<Props> = ({
   heading,
   text,
   id = 'newsletter',
@@ -71,5 +71,3 @@ const NewsletterSignup: React.FC<Props> = ({
     </Box>
   )
 }
-
-export default NewsletterSignup

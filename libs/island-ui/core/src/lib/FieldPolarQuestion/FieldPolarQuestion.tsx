@@ -3,10 +3,10 @@ import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
 import { RadioButton } from '../RadioButton/RadioButton'
 import { Typography } from '../Typography/Typography'
-import InputError from '../InputError/InputError'
+import { InputError } from '../InputError/InputError'
 import { Box } from '../Box/Box'
-import Tooltip from '../Tooltip/Tooltip'
-import useDeprecatedComponent from '../private/useDeprecatedComponent'
+import { Tooltip } from '../Tooltip/Tooltip'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export interface FieldPolarQuestionProps {
   label?: string
@@ -134,5 +134,3 @@ export const FieldPolarQuestion = ({
     </Box>
   )
 }
-
-export default FieldPolarQuestion

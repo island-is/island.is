@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import {
-  Typography,
-  Button,
+  Text,
+  ButtonDeprecated as Button,
   Box,
   GridRow,
   GridColumn,
@@ -51,13 +51,13 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
             <Box flexGrow={1}>
               <Stack space={1}>
                 {Boolean(label) && (
-                  <Typography variant="eyebrow" as="p" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
                     {label}
-                  </Typography>
+                  </Text>
                 )}
-                <Typography variant="h3" as="h3">
+                <Text variant="h3" as="h3">
                   {processTitle}
-                </Typography>
+                </Text>
               </Stack>
             </Box>
             <Box

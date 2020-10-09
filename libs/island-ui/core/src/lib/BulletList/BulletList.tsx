@@ -1,6 +1,6 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react'
 import cn from 'classnames'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { Stack, StackProps } from '../Stack/Stack'
 import { Icon } from '../Icon/Icon'
@@ -64,5 +64,3 @@ export const BulletList: FC<BulletListProps> = ({
     </div>
   )
 }
-
-export default BulletList

@@ -4,7 +4,7 @@ import {
   GridRow,
   Box,
   GridColumn,
-  Typography,
+  Text,
   Accordion,
   AccordionItem,
   Input,
@@ -14,6 +14,7 @@ import {
   formatDate,
   capitalize,
   formatCustodyRestrictions,
+  laws,
 } from '@island.is/judicial-system/formatters'
 import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -23,6 +24,7 @@ import { validate } from '../../../utils/validate'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -69,9 +71,9 @@ export const JudgeOverview: React.FC = () => {
               <JudgeLogo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
-              <Typography as="h1" variant="h1">
+              <Text as="h1" variant="h1">
                 Krafa um gæsluvarðhald
-              </Typography>
+              </Text>
             </GridColumn>
           </GridRow>
         </Box>
@@ -82,9 +84,9 @@ export const JudgeOverview: React.FC = () => {
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
+                <Text as="h3" variant="h3">
                   Málsnúmer héraðsdóms
-                </Typography>
+                </Text>
               </Box>
               <Box marginBottom={1}>
                 <Input
@@ -113,70 +115,75 @@ export const JudgeOverview: React.FC = () => {
                 />
               </Box>
               <Box>
-                <Typography
-                  variant="pSmall"
+                <Text
+                  variant="small"
                   fontWeight="semiBold"
-                >{`LÖKE málsnr. ${workingCase?.policeCaseNumber}`}</Typography>
+                >{`LÖKE málsnr. ${workingCase?.policeCaseNumber}`}</Text>
               </Box>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
-                <Typography variant="eyebrow" color="blue400">
+                <Text variant="eyebrow" color="blue400">
                   Fullt nafn
-                </Typography>
+                </Text>
               </Box>
-              <Typography>{workingCase?.accusedName}</Typography>
+              <Text>{workingCase?.accusedName}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
-                <Typography variant="eyebrow" color="blue400">
+                <Text variant="eyebrow" color="blue400">
                   Lögheimili/dvalarstaður
-                </Typography>
+                </Text>
               </Box>
-              <Typography>{workingCase?.accusedAddress}</Typography>
+              <Text>{workingCase?.accusedAddress}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
-                <Typography variant="eyebrow" color="blue400">
+                <Text variant="eyebrow" color="blue400">
                   Dómstóll
-                </Typography>
+                </Text>
               </Box>
-              <Typography>{workingCase?.court}</Typography>
+              <Text>{workingCase?.court}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
-                <Typography variant="eyebrow" color="blue400">
+                <Text variant="eyebrow" color="blue400">
                   Tími handtöku
-                </Typography>
+                </Text>
               </Box>
-              <Typography>
+              <Text>
                 {workingCase?.arrestDate &&
                   `${capitalize(
                     formatDate(workingCase?.arrestDate, 'PPPP'),
                   )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
-              </Typography>
+              </Text>
             </Box>
             {workingCase?.requestedCourtDate && (
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
-                  <Typography variant="eyebrow" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
                     Ósk um fyrirtökudag og tíma
-                  </Typography>
+                  </Text>
                 </Box>
-                <Typography>
+                <Text>
                   {`${capitalize(
                     formatDate(workingCase?.requestedCourtDate, 'PPPP'),
                   )} kl. ${formatDate(
                     workingCase?.requestedCourtDate,
                     TIME_FORMAT,
                   )}`}
-                </Typography>
+                </Text>
               </Box>
             )}
             <Box component="section" marginBottom={5}>
               <Accordion singleExpand={false}>
-                <AccordionItem id="id_1" label="Dómkröfur" startExpanded>
-                  <Typography variant="p" as="p">
+                <AccordionItem
+                  id="id_1"
+                  label="Dómkröfur"
+                  startExpanded
+                  labelVariant="h3"
+                >
+                  <Text>
                     Gæsluvarðhald til
                     <strong>
                       {workingCase?.requestedCustodyEndDate &&
@@ -188,63 +195,89 @@ export const JudgeOverview: React.FC = () => {
                           TIME_FORMAT,
                         )}`}
                     </strong>
-                  </Typography>
+                  </Text>
                 </AccordionItem>
-                <AccordionItem id="id_2" label="Lagaákvæði" startExpanded>
-                  <Typography variant="p" as="p">
-                    {workingCase?.lawsBroken}
-                  </Typography>
+                <AccordionItem
+                  id="id_2"
+                  label="Lagaákvæði"
+                  startExpanded
+                  labelVariant="h3"
+                >
+                  <Box marginBottom={2}>
+                    <Box marginBottom={2}>
+                      <Text as="h4" variant="h4">
+                        Lagaákvæði sem brot varða við
+                      </Text>
+                    </Box>
+                    <Text>{workingCase?.lawsBroken}</Text>
+                  </Box>
+                  <Box marginBottom={2}>
+                    <Box marginBottom={2}>
+                      <Text as="h4" variant="h4">
+                        Lagaákvæði sem krafan er byggð á
+                      </Text>
+                    </Box>
+                    {workingCase?.custodyProvisions.map(
+                      (custodyProvision: CaseCustodyProvisions, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{laws[custodyProvision]}</Text>
+                          </div>
+                        )
+                      },
+                    )}
+                  </Box>
                 </AccordionItem>
                 <AccordionItem
                   id="id_3"
                   label="Takmarkanir á gæslu"
                   startExpanded
+                  labelVariant="h3"
                 >
-                  <Typography variant="p" as="p">
+                  <Text>
                     {formatCustodyRestrictions(
                       workingCase.requestedCustodyRestrictions,
                     )}
-                  </Typography>
+                  </Text>
                 </AccordionItem>
                 <AccordionItem
                   id="id_4"
                   label="Greinagerð um málsatvik og lagarök"
                   startExpanded
+                  labelVariant="h3"
                 >
                   {workingCase?.caseFacts && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
-                        <Typography variant="h5">Málsatvik rakin</Typography>
+                        <Text variant="h5">Málsatvik rakin</Text>
                       </Box>
-                      <Typography>{workingCase?.caseFacts}</Typography>
+                      <Text>{workingCase?.caseFacts}</Text>
                     </Box>
                   )}
                   {workingCase?.witnessAccounts && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
-                        <Typography variant="h5">Framburður</Typography>
+                        <Text variant="h5">Framburður</Text>
                       </Box>
-                      <Typography>{workingCase?.witnessAccounts}</Typography>
+                      <Text>{workingCase?.witnessAccounts}</Text>
                     </Box>
                   )}
                   {workingCase?.investigationProgress && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
-                        <Typography variant="h5">
+                        <Text variant="h5">
                           Staða rannsóknar og næstu skref
-                        </Typography>
+                        </Text>
                       </Box>
-                      <Typography>
-                        {workingCase?.investigationProgress}
-                      </Typography>
+                      <Text>{workingCase?.investigationProgress}</Text>
                     </Box>
                   )}
                   {workingCase?.legalArguments && (
                     <Box marginBottom={2}>
                       <Box marginBottom={2}>
-                        <Typography variant="h5">Lagarök</Typography>
+                        <Text variant="h5">Lagarök</Text>
                       </Box>
-                      <Typography>{workingCase?.legalArguments}</Typography>
+                      <Text>{workingCase?.legalArguments}</Text>
                     </Box>
                   )}
                 </AccordionItem>

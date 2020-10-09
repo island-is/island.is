@@ -1,6 +1,7 @@
 import React from 'react'
-import Swiper from './Swiper'
-import AlertMessage from '../AlertMessage/AlertMessage'
+
+import { Swiper } from './Swiper'
+import { AlertMessage } from '../AlertMessage/AlertMessage'
 
 export default {
   title: 'Components/Swiper',

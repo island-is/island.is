@@ -11,6 +11,7 @@ export BASE=${BASE:-master}
 APP=nx-runner
 
 AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
+BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]
 then
   AFFECTED_FLAGS=" --all "

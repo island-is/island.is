@@ -2,7 +2,7 @@ import React from 'react'
 import { Formik, Field } from 'formik'
 import { render } from '@testing-library/react'
 
-import FieldRadioButton from './FieldRadioButton'
+import { FieldRadioButton } from './FieldRadioButton'
 
 describe('FieldRadioButton', () => {
   it('should render successfully', () => {

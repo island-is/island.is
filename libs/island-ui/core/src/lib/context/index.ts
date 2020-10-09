@@ -1,2 +1,3 @@
 export * from './ColorSchemeContext/ColorSchemeContext'
-export { LinkContext } from './LinkContext'
+export * from './LinkContext/LinkContext'
+export * from './BackgroundContext/BackgroundContext'

@@ -15,7 +15,7 @@ import {
   Text,
   Stack,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -78,9 +78,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const [initialClientX, setInitialClientX] = useState<number>(0)
-  const [finalClientX, setFinalClientX] = useState<number>(0)
-  const [finalClientY, setFinalClientY] = useState<number>(0)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
@@ -207,10 +204,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       const contentId = linkData.sys?.contentType?.sys?.id
 
       const slug = linkData.fields?.slug
-
       if (slug && ['article', 'category', 'news', 'page'].includes(contentId)) {
         return {
-          href: makePath(contentId, '/[slug]'),
+          href: contentId === 'page' ? slug : makePath(contentId, '[slug]'),
           as: makePath(contentId, slug),
         }
       }
@@ -256,7 +252,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                   const visible = currentIndex === index
                   const isTabletOrMobile = width < theme.breakpoints.lg
-
                   return (
                     <TabPanel
                       key={index}

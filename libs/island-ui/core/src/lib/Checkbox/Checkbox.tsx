@@ -1,9 +1,8 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import cn from 'classnames'
 
-import Icon from '../Icon/Icon'
-import Tooltip from '../Tooltip/Tooltip'
+import { Icon } from '../Icon/Icon'
+import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './Checkbox.treat'
 
 export interface CheckboxProps {
@@ -95,5 +94,3 @@ export const Checkbox = ({
     </div>
   )
 }
-
-export default Checkbox

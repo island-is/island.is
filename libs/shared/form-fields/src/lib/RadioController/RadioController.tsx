@@ -15,6 +15,8 @@ interface Props {
   id: string
   name?: string
   options?: Option[]
+  largeButtons?: boolean
+  emphasize?: boolean
 }
 export const RadioController: FC<Props> = ({
   defaultValue,
@@ -23,6 +25,8 @@ export const RadioController: FC<Props> = ({
   id,
   name = id,
   options = [],
+  largeButtons = false,
+  emphasize = false,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -54,11 +58,7 @@ export const RadioController: FC<Props> = ({
                 />
                 {option.tooltip && (
                   <Box marginLeft={1}>
-                    <Tooltip
-                      colored={true}
-                      placement="top"
-                      text={option.tooltip}
-                    />
+                    <Tooltip placement="top" text={option.tooltip} />
                   </Box>
                 )}
               </Box>

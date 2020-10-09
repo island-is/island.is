@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 
 import {
   Typography,
-  Button,
+  ButtonDeprecated as Button,
   Box,
   AlertMessage,
 } from '@island.is/island-ui/core'

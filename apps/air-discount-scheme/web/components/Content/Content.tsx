@@ -6,7 +6,7 @@ import {
   Stack,
   Accordion,
   AccordionItem,
-  Button,
+  ButtonDeprecated as Button,
   Divider,
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'

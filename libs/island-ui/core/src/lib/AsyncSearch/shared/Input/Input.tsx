@@ -29,5 +29,3 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     )
   },
 )
-
-export default Input

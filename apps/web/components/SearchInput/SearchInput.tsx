@@ -396,14 +396,14 @@ const Results: FC<{
                 .slice(0, 5)
                 .map(({ id, title, slug, __typename }) => (
                   <div key={id} {...getItemProps({ item: '' })}>
-                    <Text variant="h5" color="blue400">
-                      <Link
-                        href={makePath(__typename, '[slug]')}
-                        as={makePath(__typename, slug)}
-                      >
-                        <a>{title}</a>
-                      </Link>
-                    </Text>
+                    <Link
+                      href={makePath(__typename, '[slug]')}
+                      as={makePath(__typename, slug)}
+                    >
+                      <Text variant="h5" color="blue400">
+                        {title}
+                      </Text>
+                    </Link>
                   </div>
                 ))}
             </Stack>

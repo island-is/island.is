@@ -1,6 +1,12 @@
 import React, { FC } from 'react'
 import { NotificationCard as Card } from '../mockNotifications'
-import { Box, Typography, Icon, Stack, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  Icon,
+  Stack,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './Notificationcard.treat'
 import cn from 'classnames'
