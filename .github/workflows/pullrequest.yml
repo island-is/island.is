@@ -255,23 +255,3 @@ jobs:
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
-
-  failure-notification:
-    runs-on: ubuntu-20.04
-    if: failure()
-    needs:
-      - prepare
-      - linting
-      - tests
-      - formatting
-      - build
-    steps:
-      - name: Send Slack notification
-        uses: 8398a7/action-slack@v3
-        with:
-          status: failure
-          icon_emoji: ':broken_heart:'
-          fields: repo,message,commit,author,action,eventName,ref,workflow,took # selectable (default: repo,message)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
