@@ -13,5 +13,7 @@ export class Homepage {
 
 export const mapHomepage = ({ sys, fields }: IHomepage): Homepage => ({
   id: sys.id,
-  featuredThings: (fields.featured ?? []).map(mapFeatured),
+  featuredThings: (fields.featured ?? [])
+    .map(mapFeatured)
+    .filter(({ title }) => Boolean(title)),
 })
