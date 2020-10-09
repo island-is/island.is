@@ -1,6 +1,6 @@
 import React, { FC, Children } from 'react'
 import { Typography } from '../Typography/Typography'
-import Icon from '../Icon/Icon'
+import { Icon } from '../Icon/Icon'
 import { Colors } from '@island.is/island-ui/theme'
 import * as styles from './Breadcrumbs.treat'
 
@@ -35,5 +35,3 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
     </div>
   )
 }
-
-export default Breadcrumbs

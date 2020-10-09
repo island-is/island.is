@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import Tooltip from '../Tooltip/Tooltip'
+import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
 
 export interface RadioButtonProps {
@@ -16,6 +16,7 @@ export interface RadioButtonProps {
   hasError?: boolean
   errorMessage?: string
   large?: boolean
+  filled?: boolean
 }
 
 export const RadioButton = ({
@@ -30,6 +31,7 @@ export const RadioButton = ({
   hasError,
   errorMessage,
   large,
+  filled = false,
 }: RadioButtonProps) => {
   const ariaError = hasError
     ? {
@@ -38,7 +40,12 @@ export const RadioButton = ({
       }
     : {}
   return (
-    <div className={cn(styles.container, { [styles.large]: large })}>
+    <div
+      className={cn(styles.container, {
+        [styles.large]: large,
+        [styles.filled]: filled,
+      })}
+    >
       <input
         className={styles.input}
         type="radio"
@@ -85,5 +92,3 @@ export const RadioButton = ({
     </div>
   )
 }
-
-export default RadioButton

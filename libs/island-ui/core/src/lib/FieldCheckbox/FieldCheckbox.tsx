@@ -2,7 +2,7 @@ import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
 import { Checkbox, CheckboxProps } from '../Checkbox/Checkbox'
-import useDeprecatedComponent from '../private/useDeprecatedComponent'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export interface FieldCheckboxProps extends CheckboxProps {
   field: FieldInputProps<boolean>
@@ -42,5 +42,3 @@ export const FieldCheckbox = ({
     />
   )
 }
-
-export default FieldCheckbox

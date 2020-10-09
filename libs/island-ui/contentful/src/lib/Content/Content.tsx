@@ -5,7 +5,7 @@ import {
   Typography,
   BulletList,
   Bullet,
-  Button,
+  ButtonDeprecated as Button,
   Box,
   Accordion,
   AccordionItem,

@@ -22,5 +22,3 @@ export const VideoIframe = ({ src, title = 'video' }: VideoIframeProps) => {
     </div>
   )
 }
-
-export default VideoIframe

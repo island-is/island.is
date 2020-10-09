@@ -15,7 +15,7 @@ import {
   Text,
   Stack,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -188,25 +188,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }, [selectedIndex, animations])
 
-  useEffect(() => {
-    document.addEventListener('keydown', onKeyDown, false)
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown, false)
-    }
-  }, [])
-
-  const onKeyDown = useCallback((event) => {
-    switch (event.key.toLowerCase()) {
-      case 'arrowleft':
-        goTo('prev')
-        break
-      case 'arrowright':
-        goTo('prev')
-        break
-    }
-  }, [])
-
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
@@ -239,25 +220,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   return (
     <GridContainer>
-      <GridRow>
-        <GridColumn hiddenBelow="lg" span="1/12">
-          <Box display="flex" height="full" width="full" alignItems="center">
-            <button
-              onClick={() => goTo('prev')}
-              className={cn(styles.arrowButton, {
-                [styles.arrowButtonDisabled]: false,
-              })}
-            >
-              <Icon color="red400" width="18" height="18" type="arrowLeft" />
-            </button>
-          </Box>
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+      <GridRow className={styles.tabPanelRow}>
+        <GridColumn hiddenBelow="lg" span="1/12" />
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '6/12']}
+          position="static"
+        >
           <Box ref={contentRef}>
             <Box>
               <TabList
                 {...tab}
-                aria-label="My tabs"
+                aria-label="Flettiborði"
                 className={styles.tabWrapper}
               >
                 {tabs.map(({ subtitle = '' }, index) => {
@@ -333,6 +306,52 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 })}
               </Box>
             </Box>
+            <GridColumn hiddenBelow="lg" position="static">
+              <Box
+                display="flex"
+                height="full"
+                alignItems="center"
+                className={styles.tabListArrowLeft}
+              >
+                <button
+                  onClick={() => goTo('prev')}
+                  type="button"
+                  className={cn(styles.arrowButton, {
+                    [styles.arrowButtonDisabled]: false,
+                  })}
+                >
+                  <Icon
+                    color="red400"
+                    width="18"
+                    height="18"
+                    type="arrowLeft"
+                  />
+                </button>
+              </Box>
+              <Box
+                display="flex"
+                height="full"
+                justifyContent="flexEnd"
+                alignItems="center"
+                className={styles.tabListArrowRight}
+              >
+                <button
+                  onClick={() => goTo('next')}
+                  type="button"
+                  className={cn(styles.arrowButton, {
+                    [styles.arrowButtonDisabled]: false,
+                  })}
+                >
+                  <Icon
+                    color="red400"
+                    width="18"
+                    height="18"
+                    type="arrowRight"
+                  />
+                </button>
+              </Box>
+            </GridColumn>
+
             <Box
               display="inlineFlex"
               alignItems="center"
@@ -358,28 +377,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 className={cn(styles.animationContainer, {
                   [styles.animationContainerHidden]: !visible,
                 })}
+                aria-hidden="true"
               />
             )
           })}
         </GridColumn>
-        <GridColumn hiddenBelow="lg" span="1/12">
-          <Box
-            display="flex"
-            height="full"
-            width="full"
-            justifyContent="flexEnd"
-            alignItems="center"
-          >
-            <button
-              onClick={() => goTo('next')}
-              className={cn(styles.arrowButton, {
-                [styles.arrowButtonDisabled]: false,
-              })}
-            >
-              <Icon color="red400" width="18" height="18" type="arrowRight" />
-            </button>
-          </Box>
-        </GridColumn>
+        <GridColumn hiddenBelow="lg" span="1/12" />
       </GridRow>
     </GridContainer>
   )

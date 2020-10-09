@@ -6,7 +6,7 @@ import {
   Box,
   Column,
   Columns,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
   Option,
 } from '@island.is/island-ui/core'

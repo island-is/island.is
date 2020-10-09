@@ -39,5 +39,3 @@ export const AlertMessage: React.FC<AlertMessageProps> = (
     </div>
   )
 }
-
-export default AlertMessage
