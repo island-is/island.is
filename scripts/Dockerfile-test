@@ -1,0 +1,12 @@
+FROM node:12.19.0-alpine3.9
+
+WORKDIR "/code"
+VOLUME ["/code"]
+
+ARG DB_NAME
+ARG APP
+
+ENV DB_NAME=$DB_NAME
+ENV APP=$APP
+
+ENTRYPOINT /code/scripts/_wait-for.sh $DB_NAME:5432 -t 5 -- yarn test $APP
