@@ -82,7 +82,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
 
@@ -311,6 +311,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 <button
                   onClick={() => goTo('prev')}
                   type="button"
+                  aria-label={t.frontpageTabsPrevious}
                   className={cn(styles.arrowButton, {
                     [styles.arrowButtonDisabled]: false,
                   })}
@@ -333,6 +334,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 <button
                   onClick={() => goTo('next')}
                   type="button"
+                  aria-label={t.frontpageTabsNext}
                   className={cn(styles.arrowButton, {
                     [styles.arrowButtonDisabled]: false,
                   })}
