@@ -4,7 +4,7 @@ import {
   FieldBaseProps,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Typography, Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import Description from './components/Description'
@@ -23,9 +23,7 @@ const CheckboxFormField: FC<Props> = ({
 
   return (
     <div>
-      {showFieldName && (
-        <Typography variant="p">{formatMessage(name)}</Typography>
-      )}
+      {showFieldName && <Text>{formatMessage(name)}</Text>}
 
       {description && <Description description={formatMessage(description)} />}
 

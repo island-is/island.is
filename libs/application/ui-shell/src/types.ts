@@ -1,6 +1,5 @@
 import {
   Field,
-  FormValue,
   MultiField,
   ExternalDataProvider,
   Repeater,
