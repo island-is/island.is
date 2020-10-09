@@ -9,7 +9,7 @@ import {
   InputFileUpload,
   UploadFile,
   fileToObject,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
@@ -226,7 +226,7 @@ const FileUploadFormField: FC<Props> = ({
 
   return (
     <Box>
-      <Typography variant="p">{formatMessage(introduction)}</Typography>
+      <Text>{formatMessage(introduction)}</Text>
       <Controller
         name={`${id}`}
         defaultValue={initialUploadFiles}
