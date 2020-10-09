@@ -86,7 +86,7 @@ export default function ServiceList(props: ServiceListProps) {
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
-    limit: 2,
+    limit: 6,
     query: '',
     pricing: [],
     data: [],
