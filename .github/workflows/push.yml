@@ -1,4 +1,4 @@
-name: Monorepo pipeline
+name: Monorepo pipeline - push
 
 on:
   push:
@@ -8,9 +8,8 @@ on:
       - 'hotfix/**'
     paths-ignore:
       - '**/*.md'
-  pull_request:
-    branches:
-      - master
+    tags:
+      - docker-build-*
   workflow_dispatch: {}
 
 env:
@@ -19,21 +18,16 @@ env:
 jobs:
   prepare:
     runs-on: ubuntu-20.04
-    timeout-minutes: 40 #pulling dependencies potentially twice - host OS and docker layer
+    timeout-minutes: 30
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      CHUNK_SIZE: '2'
 
     outputs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
-      PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
@@ -83,17 +77,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set publish flag
-        id: publish_flag
-        run: |
-          if [[ $GITHUB_BASE_REF ]]
-          then
-            export PUBLISH=false
-          else
-            export PUBLISH=true
-          fi
-          echo "::set-output name=PUBLISH::${PUBLISH}"
-
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
         run: |
@@ -111,6 +94,13 @@ jobs:
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
 
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         uses: actions/cache@v2
@@ -119,10 +109,15 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps
 
       - name: Cache for NodeJS dependencies - Docker layer
+        id: cache-deps-base
         uses: actions/cache@v2
         with:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base
+
+      - name: Building NodeJS dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
+        run: ./scripts/10_prepare-docker-deps.sh
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -131,16 +126,9 @@ jobs:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
-
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-deps.sh
+        run: ./scripts/10_prepare-host-deps.sh
 
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
@@ -156,30 +144,6 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
 
-      - name: Security audit Node modules
-        run: ./scripts/20_security-audit.sh
-
-      - name: License audit Node modules
-        run: ./scripts/20_license-audit.sh
-
-      - name: Prepare lint targets
-        id: lint_projects
-        run: |
-          CHUNKS=$(CHUNK_SIZE=7 ./scripts/generate-chunks.sh lint)
-          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
-
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          CHUNKS=$(CHUNK_SIZE=7 ./scripts/generate-chunks.sh test)
-          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
-
-      - name: Prepare native build targets
-        id: build_projects
-        run: |
-          CHUNKS=$(CHUNK_SIZE=7 ./scripts/generate-chunks.sh build)
-          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
-
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -193,157 +157,9 @@ jobs:
           UNAFFECTED=$(./scripts/list-unaffected.sh docker-next docker-express docker-static)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
-  tests:
-    needs:
-      - prepare
-    runs-on: ubuntu-20.04
-    timeout-minutes: 30
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      MAX_JOBS: 4
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
-
-      - name: Cache for dependencies Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
-        id: cache-deps
-        uses: actions/cache@v2
-        with:
-          path: cache
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
-      - name: Cache for NodeJS dependencies - host OS
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Cache for generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Untar generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
-
-      - name: Running tests
-        if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh 30_test
-      # - name: Running E2E tests
-      #   run: yarn run affected:e2e --base origin/master
-
-  formatting:
-    needs:
-      - prepare
-    runs-on: ubuntu-20.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v2
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-      - name: Check formatting
-        run: ./scripts/20_check-formatting.sh
-
-  linting:
-    needs:
-      - prepare
-    runs-on: ubuntu-20.04
-    timeout-minutes: 25 # linting has proven to be quite resource intensive
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 4
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
-
-      - name: Cache for NodeJS dependencies - host OS
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Cache for generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Untar generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Linting
-        if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel-native.sh lint
-
-  native-build:
-    if: needs.prepare.outputs.PUBLISH != 'true'
-    needs:
-      - prepare
-    runs-on: ubuntu-20.04
-    timeout-minutes: 25
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 4
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
-
-      - name: Cache for NodeJS dependencies - host OS
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Cache for generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: actions/cache@v2
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Untar generated files
-        if: ${{ matrix.projects != 'dummy' }}
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Building
-        if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel-native.sh build
-
   docker-build:
-    if: needs.prepare.outputs.PUBLISH == 'true'
     needs:
       - prepare
-      - tests
     runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
@@ -371,20 +187,20 @@ jobs:
           echo "::set-env name=AFFECTED_PROJECTS::$AFFECTED_PROJECTS"
         continue-on-error: true
       - uses: actions/checkout@v2
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
       - name: Cache for generated files
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         uses: actions/cache@v2
         with:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Untar generated files
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         run: tar zxvf generated_files.tar.gz
 
       - name: Cache for dependencies Docker layer
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         id: cache-deps
         uses: actions/cache@v2
         with:
@@ -392,28 +208,28 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - Docker layer
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         uses: actions/cache@v2
         with:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
 
       - name: Docker login to ECR repo
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         run: ./scripts/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Set up Docker Buildx
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
 
       - name: Building Docker images
-        if: steps.gather.conclusion == 'success'
+        if: steps.gather.outcome == 'success'
         run: ./scripts/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
 
   retag-unaffected:
@@ -422,7 +238,6 @@ jobs:
     needs:
       - docker-build
       - prepare
-    if: needs.prepare.outputs.PUBLISH == 'true'
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
@@ -439,7 +254,6 @@ jobs:
 
   deploy:
     runs-on: ubuntu-20.04
-    if: needs.prepare.outputs.PUBLISH == 'true'
     needs:
       - retag-unaffected
       - prepare
@@ -452,8 +266,6 @@ jobs:
           - islandis
           - gjafakort
           - air-discount-scheme
-    outputs:
-      DEPLOY_FINISHED: ${{ steps.finished.outputs.DEPLOY_FINISHED }}
     steps:
       - uses: actions/checkout@v2
       - name: Trigger Deployment for service
@@ -471,31 +283,9 @@ jobs:
 
   success:
     runs-on: ubuntu-20.04
-    if: always()
     needs:
-      - prepare
       - deploy
-      - tests
-      - linting
-      - formatting
-      - native-build
     steps:
-      # This is easier to clean up when we break up build.yml
-      - name: Check deploy success
-        if: needs.prepare.outputs.PUBLISH == 'true'
-        run: '[[ ${{ needs.deploy.result }} == "success" ]] || exit 1'
-      - name: Check tests success
-        if: needs.prepare.outputs.PUBLISH != 'true'
-        run: '[[ ${{ needs.tests.result }} == "success" ]] || exit 1'
-      - name: Check linting success
-        if: needs.prepare.outputs.PUBLISH != 'true'
-        run: '[[ ${{ needs.linting.result }} == "success" ]] || exit 1'
-      - name: Check formatting success
-        if: needs.prepare.outputs.PUBLISH != 'true'
-        run: '[[ ${{ needs.formatting.result }} == "success" ]] || exit 1'
-      - name: Check native-build success
-        if: needs.prepare.outputs.PUBLISH != 'true'
-        run: '[[ ${{ needs.native-build.result }} == "success" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
 
@@ -503,10 +293,9 @@ jobs:
     runs-on: ubuntu-20.04
     if: failure()
     needs:
-      - docker-build
       - prepare
-      - linting
-      - formatting
+      - docker-build
+      - retag-unaffected
       - deploy
     steps:
       - name: Send Slack notification
@@ -518,4 +307,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: needs.prepare.outputs.PUBLISH == 'true'
