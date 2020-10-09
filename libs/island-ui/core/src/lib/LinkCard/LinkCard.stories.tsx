@@ -1,7 +1,9 @@
 import React from 'react'
-import { Box } from '../Box'
-import { FocusableBox } from '../FocusableBox'
-import { GridContainer, GridRow, GridColumn } from '../Grid'
+import { Box } from '../Box/Box'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { LinkCard } from './LinkCard'
 
 export default {

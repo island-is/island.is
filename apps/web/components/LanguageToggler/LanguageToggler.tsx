@@ -2,7 +2,11 @@ import React, { FC, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { findKey } from 'lodash'
 import { useApolloClient } from 'react-apollo'
-import { Button, Hidden, Typography } from '@island.is/island-ui/core'
+import {
+  ButtonDeprecated as Button,
+  Hidden,
+  Text,
+} from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames, { PathTypes, routes } from '@island.is/web/i18n/routeNames'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
@@ -74,6 +78,7 @@ export const LanguageToggler: FC<{
       variant="menu"
       onClick={otherLanguage === 'en' ? null : onClick}
       width="fluid"
+      aria-label={t.otherLanguageAria}
     >
       {t.otherLanguageName}
     </Button>
@@ -89,9 +94,9 @@ export const LanguageToggler: FC<{
           disclosure={Disclosure}
           onConfirm={onClick}
         >
-          <Typography variant="intro" as="p">
+          <Text variant="intro" as="p">
             {gn('switchToEnglishModalText')}
-          </Typography>
+          </Text>
         </Modal>
       ) : (
         Disclosure

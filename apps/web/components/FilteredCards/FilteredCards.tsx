@@ -5,9 +5,9 @@ import cn from 'classnames'
 import {
   Box,
   Tiles,
-  Button,
+  ButtonDeprecated as Button,
   Stack,
-  Typography,
+  Text,
   Tag,
   Inline,
   Icon,
@@ -168,9 +168,9 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     <Box padding={[3, 3, 6]}>
       <Tiles space={0} columns={2}>
         <div>
-          <Typography variant="h3" as="h3" color="blue400">
+          <Text variant="h3" as="h3" color="blue400">
             {title || n('organizations', 'Stofnanir')}
-          </Typography>
+          </Text>
         </div>
         <Box display="flex" justifyContent="flexEnd">
           <button onClick={toggleFilters} className={styles.filtersToggler}>
@@ -196,9 +196,9 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
           <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={2}>
               <Inline space={2} alignY="center" collapseBelow="sm">
-                <Typography variant="tag" color="blue400">
+                <Text variant="tag" color="blue400">
                   {n('tag', 'Sía')}:
-                </Typography>
+                </Text>
                 <Inline space={2} alignY="center">
                   {tags.map(({ title, id }, index) => {
                     return (
@@ -242,7 +242,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
       {batches.length === 0 ? (
         <Box>
           <Stack space={2}>
-            <Typography variant="intro">
+            <Text variant="intro">
               <span>Ekkert fannst með{` `}</span>
               {filterString
                 ? `leitarorðinu „${filterString}“${
@@ -252,7 +252,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                   }`
                 : null}
               {!filterString ? 'völdum tögum hér fyrir ofan' : null}.
-            </Typography>
+            </Text>
           </Stack>
         </Box>
       ) : null}

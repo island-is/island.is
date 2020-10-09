@@ -13,16 +13,7 @@ import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-
-interface MockCar {
-  permno: string
-  type: string
-  newregdate: number
-  color: number
-  recyclable: boolean
-  status?: string
-  isCoOwned?: boolean
-}
+import { MockCar } from '@island.is/skilavottord-web/types'
 
 interface ActionCardProps {
   onContinue: () => void
@@ -92,7 +83,7 @@ export const ActionCard: FC<ActionCardProps> = ({
               >
                 <Inline space={'smallGutter'}>
                   <Typography variant="pSmall">{t.actions.invalid}</Typography>
-                  <Tooltip text={t.tooltip} colored />
+                  <Tooltip text={t.tooltip} />
                 </Inline>
               </ColumnBox>
             )}

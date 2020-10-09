@@ -64,5 +64,3 @@ export const Item: React.FC<Props> = ({
     </li>
   )
 }
-
-export default Item

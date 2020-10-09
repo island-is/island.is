@@ -13,8 +13,7 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  cancelModal: CancelModal
-  processSteps: string[]
+  processSections: string[]
 }
 
 export interface Home {
@@ -29,6 +28,7 @@ export interface MyCars {
   status: CarStatus
   buttons: CarsButtons
   tooltip: string
+  error: Errors
 }
 
 export interface Confirm {
@@ -43,7 +43,9 @@ export interface Handover {
   title: string
   subTitles: HandoverSubTitles
   info: string
+  subInfo: string
   buttons: HandoverButtons
+  cancelModal: CancelModal
 }
 
 export interface Completed {
@@ -84,6 +86,7 @@ export interface CarStatus {
 export interface CarsButtons {
   openProcess: string
   seeDetails: string
+  reload: string
 }
 
 export interface ConfirmSubTitles {
@@ -101,12 +104,12 @@ export interface CheckBox {
 }
 
 export interface HandoverSubTitles {
-  recycle: string
+  nextStep: string
   companies: string
 }
 
 export interface HandoverButtons extends ProcessButtons {
-  website: string
+  close: string
 }
 
 export interface CompletedSubTitles {
@@ -128,6 +131,13 @@ export interface CompletedConfirmation {
 
 export interface CompletedButtons extends ProcessButtons {
   close: string
+}
+
+export interface Errors {
+  title: string
+  message: string
+  primaryButton: string
+  secondaryButton: string
 }
 
 // Converts JSON strings to/from your types

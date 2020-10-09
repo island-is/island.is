@@ -15,29 +15,18 @@ if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
   if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.base.yml ]; then
     COMPOSE_FILES="-f $PROJECT_ROOT/$APP_HOME/docker-compose.base.yml $COMPOSE_FILES"
   fi
-
   # Cleanup after the test
   clean_up () {
     if [ "$1" != "0" ]; then
-      SUT=${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} docker-compose -p test-$APP $COMPOSE_FILES rm -s -f
+      docker-compose -p test-$APP $COMPOSE_FILES rm -s -f
       echo "Cleanup result for $APP is $? and exit code is $1"
       exit $1
     fi
   }
   trap 'clean_up $? $LINENO' EXIT
 
-  docker image inspect ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} -f ' ' > /dev/null  2>&1 || \
-    docker buildx build \
-    --platform=linux/amd64 \
-    --cache-from=type=local,src=$PROJECT_ROOT/cache \
-    -f ${DIR}/Dockerfile \
-    --target=test \
-    --load \
-    -t ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} \
-    $PROJECT_ROOT
-
   # Running the tests using docker-compose
-  SUT=${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} docker-compose -p test-$APP $COMPOSE_FILES run --rm sut
+  docker-compose -p test-$APP $COMPOSE_FILES run --rm sut
 else
   # Standalone execution of tests when no external dependencies are needed (DBs, queues, etc.)
   exec yarn run \

@@ -3,6 +3,11 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const buttonWrap = style({
   flex: '1 0 auto',
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      marginLeft: 'auto',
+    },
+  },
 })
 
 export const inputWrap = style({

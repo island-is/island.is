@@ -1,26 +1,21 @@
 import {
   ServicePortalModule,
   ServicePortalRoute,
-  UserWithMeta,
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
-import { mockSubjects } from './mockData'
-import {
-  Action,
-  ActionType,
-  AsyncActionState,
-  NotificationMenuState,
-} from './actions'
+import { Action, ActionType, AsyncActionState, MenuState } from './actions'
+import { User } from 'oidc-client'
 
 export interface StoreState {
-  userInfo: UserWithMeta | null
+  userInfo: User | null
   userInfoState: AsyncActionState | 'logging-out'
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
-  notificationMenuState: NotificationMenuState
+  notificationMenuState: MenuState
+  mobileMenuState: MenuState
   routes: ServicePortalRoute[]
 }
 
@@ -32,6 +27,7 @@ export const initialState: StoreState = {
   subjectList: [],
   subjectListState: 'passive',
   notificationMenuState: 'closed',
+  mobileMenuState: 'closed',
   routes: [],
 }
 
@@ -45,7 +41,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case ActionType.SetUserFulfilled:
       return {
         ...state,
-        userInfo: { user: action.payload, mockSubjects },
+        userInfo: action.payload,
         userInfoState: 'fulfilled',
       }
     case ActionType.FetchSubjectListPending:
@@ -68,6 +64,12 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         notificationMenuState: action.payload,
+      }
+
+    case ActionType.SetMobileMenuState:
+      return {
+        ...state,
+        mobileMenuState: action.payload,
       }
     case ActionType.SetUserLoggedOut:
       return {

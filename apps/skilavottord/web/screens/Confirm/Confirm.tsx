@@ -3,7 +3,7 @@ import {
   Box,
   Stack,
   Typography,
-  Button,
+  ButtonDeprecated as Button,
   Checkbox,
   Inline,
   Link,
@@ -15,20 +15,26 @@ import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const Confirm = (props) => {
   const [checkbox, setCheckbox] = useState(false)
 
   const {
+    activeLocale,
     t: { confirm: t },
   } = useI18n()
-  const { makePath } = useRouteNames()
+  const { makePath, routePrefix } = useRouteNames(activeLocale)
 
   const router = useRouter()
   const { id } = router.query
 
   const { apolloState } = props
   const car = apolloState[`Car:${id}`]
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   useEffect(() => {
     if (!car) {
@@ -49,7 +55,7 @@ const Confirm = (props) => {
     // with car info
     // Mutate data on DB
     router.replace(
-      '/recycle-vehicle/[id]/handover',
+      `${routePrefix}/recycle-vehicle/[id]/handover`,
       makePath('recycleVehicle', id, 'handover'),
     )
   }
@@ -75,7 +81,7 @@ const Confirm = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout step={1}>
+        <ProcessPageLayout activeSection={0} activeCar={id.toString()}>
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>
@@ -103,9 +109,18 @@ const Confirm = (props) => {
               display="inlineFlex"
               justifyContent="spaceBetween"
             >
-              <Button variant="ghost" onClick={onCancel}>
-                {t.buttons.cancel}
-              </Button>
+              {isMobile ? (
+                <Button
+                  variant="ghost"
+                  onClick={onCancel}
+                  rounded
+                  icon="arrowLeft"
+                ></Button>
+              ) : (
+                <Button variant="ghost" onClick={onCancel}>
+                  {t.buttons.cancel}
+                </Button>
+              )}
               <Button
                 variant="normal"
                 disabled={!checkbox}

@@ -10,7 +10,7 @@ import {
   ContentBlock,
   Typography,
   Icon,
-  Button,
+  ButtonDeprecated as Button,
   Select,
   Column,
   Columns,

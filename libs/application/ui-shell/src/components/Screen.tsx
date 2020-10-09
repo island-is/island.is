@@ -2,13 +2,17 @@ import React, { FC, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   ExternalData,
-  FieldBaseProps,
   FormItemTypes,
   FormMode,
   FormValue,
   Schema,
 } from '@island.is/application/core'
-import { Box, Button, GridColumn, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  GridColumn,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
@@ -137,13 +141,15 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Typography variant="h2">{formatMessage(screen.name)}</Typography>
+          <Text variant="h2">{formatMessage(screen.name)}</Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
+                errors={errors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
                 formValue={formValue}
+                externalData={externalData}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField

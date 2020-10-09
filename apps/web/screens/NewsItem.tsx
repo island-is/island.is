@@ -2,12 +2,14 @@
 import React from 'react'
 import Head from 'next/head'
 import {
-  Typography,
+  Text,
   Breadcrumbs,
   Box,
   Link,
   GridRow,
   GridColumn,
+  Stack,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { Image } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
@@ -25,6 +27,7 @@ import {
   QueryGetSingleNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { RichText } from '../components/RichText/RichText'
+import { SidebarBox, Sticky } from '../components'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -37,20 +40,30 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { format } = useDateUtils()
 
   const sidebar = (
-    <Box>
-      <Typography variant="eyebrow" as="p" color="blue400" paddingBottom={1}>
-        Höfundur
-      </Typography>
-      <Typography variant="h5" as="p" paddingBottom={2}>
-        Jón Jónsson
-      </Typography>
-      <Typography variant="eyebrow" as="p" color="blue400" paddingBottom={1}>
-        Birt
-      </Typography>
-      <Typography variant="h5" as="p" paddingBottom={2}>
-        {format(new Date(newsItem.date), 'do MMMM yyyy')}
-      </Typography>
-    </Box>
+    <SidebarBox>
+      <Stack space={3}>
+        {Boolean(newsItem.author) && (
+          <Stack space={1}>
+            <Text variant="eyebrow" as="p" color="blue400">
+              {t.author ?? 'Höfundur'}
+            </Text>
+            <Text variant="h5" as="p">
+              {newsItem.author.name}
+            </Text>
+          </Stack>
+        )}
+        {Boolean(newsItem.date) && (
+          <Stack space={1}>
+            <Text variant="eyebrow" as="p" color="blue400">
+              {t.publishDate ?? 'Birt'}
+            </Text>
+            <Text variant="h5" as="p">
+              {format(new Date(newsItem.date), 'do MMMM yyyy')}
+            </Text>
+          </Stack>
+        )}
+      </Stack>
+    </SidebarBox>
   )
 
   return (
@@ -58,35 +71,74 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <Head>
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
-      <StandardLayout sidebar={{ position: 'right', node: null }}>
-        <GridRow>
-          <GridColumn
-            span={['9/9', '9/9', '7/8', '7/8', '7/9']}
-            offset={['0', '0', '0', '0', '1/9']}
-          >
-            <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
-              <Link href={makePath('news')}>{t.newsAndAnnouncements}</Link>
-            </Breadcrumbs>
-            <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
-              {newsItem.title}
-            </Typography>
-            <Typography variant="intro" as="p" paddingBottom={2}>
-              {newsItem.intro}
-            </Typography>
-            {Boolean(newsItem.image) && (
-              <Box paddingY={2}>
-                <Image
-                  {...newsItem.image}
-                  url={newsItem.image.url + '?w=774'}
-                  thumbnail={newsItem.image.url + '?w=50'}
-                />
-              </Box>
-            )}
-          </GridColumn>
-        </GridRow>
-        <RichText body={newsItem.content} />
-      </StandardLayout>
+      <GridContainer>
+        <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '0', '1/9']}
+                  span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+                >
+                  <Breadcrumbs>
+                    <Link href={makePath()}>Ísland.is</Link>
+                    <Link href={makePath('news')}>
+                      {t.newsAndAnnouncements}
+                    </Link>
+                  </Breadcrumbs>
+                  <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
+                    {newsItem.title}
+                  </Text>
+                  <Text variant="intro" as="p" paddingBottom={2}>
+                    {newsItem.intro}
+                  </Text>
+                  {Boolean(newsItem.image) && (
+                    <Box paddingY={2}>
+                      <Image
+                        {...newsItem.image}
+                        url={newsItem.image.url + '?w=774&fm=webp&q=80'}
+                        thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+                      />
+                    </Box>
+                  )}
+                </GridColumn>
+              </GridRow>
+              <RichText
+                body={newsItem.content}
+                config={{ defaultPadding: 4 }}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
+              <Sticky>
+                <SidebarBox>
+                  <Stack space={3}>
+                    {Boolean(newsItem.author) && (
+                      <Stack space={1}>
+                        <Text variant="eyebrow" as="p" color="blue400">
+                          {t.author ?? 'Höfundur'}
+                        </Text>
+                        <Text variant="h5" as="p">
+                          {newsItem.author.name}
+                        </Text>
+                      </Stack>
+                    )}
+                    {Boolean(newsItem.date) && (
+                      <Stack space={1}>
+                        <Text variant="eyebrow" as="p" color="blue400">
+                          {t.publishDate ?? 'Birt'}
+                        </Text>
+                        <Text variant="h5" as="p">
+                          {format(new Date(newsItem.date), 'do MMMM yyyy')}
+                        </Text>
+                      </Stack>
+                    )}
+                  </Stack>
+                </SidebarBox>
+              </Sticky>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      </GridContainer>
     </>
   )
 }

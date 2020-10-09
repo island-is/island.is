@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Typography,
+  Text,
   GridContainer,
   GridRow,
   GridColumn,
@@ -37,7 +37,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     />
   )
 
-  const renderDesktopView = (lifeEvents, keyPrefix?: string) =>
+  const renderDesktopView = (lifeEvents) =>
     lifeEvents
       .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
       .map((lifeEvent, i) => (
@@ -47,7 +47,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
           span={['12/12', '6/12', '6/12', '6/12', '4/12']}
           paddingBottom={3}
         >
-          {renderLifeEventCard(lifeEvent, `${keyPrefix}-${i}`)}
+          {renderLifeEventCard(lifeEvent, i)}
         </GridColumn>
       ))
 
@@ -55,27 +55,21 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span="12/12">
-          <Typography variant="h3" as="h2" paddingBottom={4}>
+          <Text variant="h3" as="h2" paddingBottom={4}>
             {title}
-          </Typography>
+          </Text>
         </GridColumn>
       </GridRow>
       <GridRow>
         {showSleeve ? (
-          <Sleeve sleeveShadow="purple">
-            {renderDesktopView(lifeEvents, 'desktop')}
-          </Sleeve>
+          <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
         ) : (
-          renderDesktopView(lifeEvents, 'desktop')
+          renderDesktopView(lifeEvents)
         )}
       </GridRow>
       <GridRow>
         <GridColumn span="12/12" hiddenAbove="sm">
-          <Swiper>
-            {lifeEvents.map((lifeEvent, i) =>
-              renderLifeEventCard(lifeEvent, i),
-            )}
-          </Swiper>
+          <Swiper>{lifeEvents.map(renderLifeEventCard)}</Swiper>
         </GridColumn>
       </GridRow>
     </GridContainer>

@@ -71,6 +71,7 @@ export const slices = gql`
     id
     title
     news {
+      typename
       id
       title
       subtitle
@@ -243,6 +244,22 @@ export const slices = gql`
     errorMessage
   }
 
+  fragment LocationFields on Location {
+    __typename
+    typename
+    id
+    title
+    subTitle
+    address
+    link {
+      text
+      url
+    }
+    background {
+      ...ImageFields
+    }
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -263,5 +280,6 @@ export const slices = gql`
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
+    ...LocationFields
   }
 `

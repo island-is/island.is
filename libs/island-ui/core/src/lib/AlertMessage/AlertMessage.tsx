@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 
 import * as styles from './AlertMessage.treat'
 import { Icon } from '../Icon/Icon'
@@ -29,15 +29,13 @@ export const AlertMessage: React.FC<AlertMessageProps> = (
             height={32}
           />
         </div>
-        <Typography as="h5" variant="h5">
+        <Text as="h5" variant="h5">
           {props.title}
-        </Typography>
+        </Text>
       </div>
       <div className={styles.messageContainer}>
-        <Typography variant="pSmall">{props.message}</Typography>
+        <Text variant="small">{props.message}</Text>
       </div>
     </div>
   )
 }
-
-export default AlertMessage

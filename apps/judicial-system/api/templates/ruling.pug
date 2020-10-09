@@ -1,5 +1,65 @@
 doctype html
 html
   head
+    style
+      include styles.css
   body
     h1 Krafa um gæsluvarðhald
+    p(class="subtitle-one")  Mál nr. #{courtCaseNumber}
+    p(class="subtitle-two") LÖKE málsnr. #{policeCaseNumber}
+
+    h2 Þingbók
+    p(class="mb-16") Þinghald frá kl. #{courtStartTime} til kl. #{courtEndTime} #{courtDate}
+
+    h3 Krafa lögreglu
+    div(class="mb-16")
+      each par in policeDemands.split('\n')
+        p #{par}
+
+    h3 Viðstaddir
+    div(class="mb-16")
+      each par in courtAttendees.split('\n')
+        p #{par}
+
+    h3 Dómskjöl
+    p(class="mb-16") Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+
+    h3 Réttindi kærða
+    p(class="mb-16") Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga
+
+    h3 Afstaða kærða
+    div(class="mb-16")
+      each par in accusedPlea.split('\n')
+        p #{par}
+
+    h3 Málflutningur
+    div(class="mb-16")
+      each par in litigationPresentations.split('\n')
+        p #{par}
+
+    h3 Úrskurður
+    div(class="mb-16")
+      each par in ruling.split('\n')
+        p #{par}
+
+    h3 Úrskurðarorð
+    p(class="mb-16") #{conclusion}
+
+    h3 Ákvörðun um kæru
+    p(class="mb-8") Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+    case accusedAppealDecision
+      when 'APPEAL'
+        li(class="strong") Kærði kærir úrskurðinn.
+      when 'ACCEPT'
+        li(class="strong") Kærði unir úrskurðinum.
+      when 'POSTPONE'
+        li(class="strong") Kærði tekur sér lögboðinn frest.
+    case prosecutorAppealDecision
+      when 'APPEAL'
+        li(class="strong") Sækjandi kærir úrskurðinn.
+      when 'ACCEPT'
+        li(class="strong") Sækjandi unir úrskurðinum.
+      when 'POSTPONE'
+        li(class="strong") Sækjandi tekur sér lögboðinn frest.
+
+    p(class="mt-16 strong") #{judgeName}, #{judgeTitle}

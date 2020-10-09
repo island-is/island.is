@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
 import { FieldBaseProps, SelectField } from '@island.is/application/core'
-import { SelectController, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
+import { SelectController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: SelectField
@@ -11,11 +13,13 @@ const SelectFormField: FC<Props> = ({
   showFieldName = false,
   field,
 }) => {
-  const { id, name, options, placeholder, disabled } = field
+  const { id, name, description, options, placeholder, disabled } = field
   const { formatMessage } = useLocale()
 
   return (
     <div>
+      {description && <Description description={formatMessage(description)} />}
+
       <Box paddingTop={2}>
         <SelectController
           label={formatMessage(name) as string}

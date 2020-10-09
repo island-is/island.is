@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client'
-import { Query, QueryListDocumentsArgs } from '@island.is/api/schema'
+import { Document, Query, QueryListDocumentsArgs } from '@island.is/api/schema'
 import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
-import { useState } from 'react'
 
 export const useListDocuments = (
   natReg: string,
@@ -27,8 +26,19 @@ export const useListDocuments = (
     },
   )
 
+  const mockData: Document[] = [
+    {
+      date: new Date(),
+      id: '111',
+      opened: false,
+      senderName: 'Stafrænt Ísland',
+      senderNatReg: '',
+      subject: 'Rafræn skjöl frá Ísland.is',
+    },
+  ]
+
   return {
-    data: data?.listDocuments || null,
+    data: mockData,
     loading,
     error,
   }

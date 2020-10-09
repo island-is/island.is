@@ -1,0 +1,62 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
+import { FormStepper } from './FormStepper'
+import { FormStepperThemes } from './types'
+
+<Meta title="Navigation/FormStepper" component={FormStepper} />
+
+# FormStepper
+
+[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=324%3A211)
+
+<br />
+
+### Very basic `<FormStepper />` example with only sections:
+
+<Canvas>
+  <Story name="Default">
+    <FormStepper
+      theme={FormStepperThemes.PURPLE}
+      formName="Form name"
+      sections={[
+        { name: 'Section name #1' },
+        { name: 'Section name #2' },
+        { name: 'Section name #3' },
+        { name: 'Section name #4' },
+        { name: 'Section name #5' },
+      ]}
+    />
+  </Story>
+</Canvas>
+
+### With sub sections
+
+We define a children array that will be used to render the sub sections. By default, we only pick the sub sections with a `SUB_SECTION` type.
+
+<Canvas>
+  <Story name="SubSections">
+    <FormStepper
+      theme={FormStepperThemes.PURPLE}
+      sections={[
+        { name: 'Section #1' },
+        {
+          name: 'Section #2',
+          children: [
+            { type: 'SUB_SECTION', name: 'Sub section #1' },
+            { type: 'SUB_SECTION', name: 'Sub section #2' },
+            { type: 'SUB_SECTION', name: 'Sub section #3' },
+            { type: 'SOME_TYPE', name: 'Sub section #4' },
+            { type: 'SOME_TYPE', name: 'Sub section #5' },
+          ],
+        },
+        { name: 'Section #3' },
+        { name: 'Section #4' },
+        { name: 'Section #5' },
+      ]}
+      activeSection={1}
+    />
+  </Story>
+</Canvas>
+
+# Props
+
+<ArgsTable of={FormStepper} />

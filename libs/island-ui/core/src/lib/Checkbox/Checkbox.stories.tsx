@@ -1,99 +1,27 @@
-import React, { useState } from 'react'
+import React from 'react'
+
 import { Checkbox } from './Checkbox'
-import { Box } from '../Box'
-import { ContentBlock } from '../ContentBlock'
 
 export default {
   title: 'Form/Checkbox',
   component: Checkbox,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=49%3A186)',
+      },
+    },
+  },
 }
 
-export const Default = () => {
-  const [checkbox, setCheckbox] = useState(false)
-  return (
-    <ContentBlock>
-      <Box padding={[1, 2, 3]}>
-        <Checkbox
-          name="checkbox1"
-          label="Checkbox label"
-          onChange={({ target }) => {
-            setCheckbox(target.checked)
-          }}
-          checked={checkbox}
-        />
-      </Box>
-    </ContentBlock>
-  )
-}
+const Template = (args) => <Checkbox {...args} />
 
-export const Checked = () => {
-  return (
-    <ContentBlock>
-      <Box padding={[1, 2, 3]}>
-        <Checkbox
-          name="checkbox2"
-          label="This one is checked"
-          onChange={() => {
-            console.log('nope')
-          }}
-          checked
-        />
-      </Box>
-    </ContentBlock>
-  )
-}
+export const Primary = Template.bind({})
+Primary.args = { label: 'My label', large: false }
 
-export const Tooltip = () => {
-  const [checkbox, setCheckbox] = useState(false)
-  return (
-    <>
-      <ContentBlock>
-        <Box padding={[1, 2, 3]}>
-          <Checkbox
-            name="checkbox1"
-            label="Checkbox label"
-            onChange={({ target }) => {
-              setCheckbox(target.checked)
-            }}
-            checked={checkbox}
-            tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non dolere, inquam, istud quam vim habeat postea videro; At ille pellit, qui permulcet sensum voluptate. Nam de isto magna dissensio est. Qua ex cognitione facilior facta est investigatio rerum occultissimarum."
-          />
-        </Box>
-      </ContentBlock>
-      <ContentBlock>
-        <Box padding={[1, 2, 3]}>
-          <Checkbox
-            name="checkbox1"
-            label="Checkbox label"
-            onChange={({ target }) => {
-              setCheckbox(target.checked)
-            }}
-            checked={checkbox}
-            tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non dolere, inquam, istud quam vim habeat postea videro; At ille pellit, qui permulcet sensum voluptate. Nam de isto magna dissensio est. Qua ex cognitione facilior facta est investigatio rerum occultissimarum."
-            large
-          />
-        </Box>
-      </ContentBlock>
-    </>
-  )
-}
+export const Large = Template.bind({})
+Large.args = { label: 'Large version', large: true }
 
-export const Large = () => {
-  const [checkbox, setCheckbox] = useState(false)
-
-  return (
-    <ContentBlock>
-      <Box padding={[1, 2, 3]}>
-        <Checkbox
-          name="checkbox2"
-          label="This one is checked"
-          onChange={({ target }) => {
-            setCheckbox(target.checked)
-          }}
-          checked={checkbox}
-          large
-        />
-      </Box>
-    </ContentBlock>
-  )
-}
+export const WithTooltip = Template.bind({})
+WithTooltip.args = { label: 'With a tooltip', tooltip: 'This is the tooltip' }

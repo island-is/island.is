@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Stack, Typography, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Typography,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import CompanyList from './components/CompanyList'
 import { useRouter } from 'next/router'
@@ -47,11 +52,15 @@ const Handover = (props) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout step={2}>
+        <ProcessPageLayout activeSection={1} activeCar={id.toString()}>
           <Stack space={6}>
             <Stack space={2}>
               <Typography variant="h1">{t.title}</Typography>
               <Typography variant="p">{t.info}</Typography>
+            </Stack>
+            <Stack space={2}>
+              <Typography variant="h3">{t.subTitles.nextStep}</Typography>
+              <Typography variant="p">{t.subInfo}</Typography>
             </Stack>
             <Stack space={[3, 3, 4, 4]}>
               <Typography variant="h3">{t.subTitles.companies}</Typography>
@@ -76,7 +85,7 @@ const Handover = (props) => {
                 onClick={onContinue}
                 width={isMobile ? 'fluid' : 'normal'}
               >
-                {t.buttons.continue}
+                {t.buttons.close}
               </Button>
             </Box>
           </Stack>
@@ -87,6 +96,10 @@ const Handover = (props) => {
               router.replace(makePath('myCars'))
               setModal(false)
             }}
+            title={t.cancelModal.title}
+            text={t.cancelModal.info}
+            continueButtonText={t.cancelModal.buttons.continue}
+            cancelButtonText={t.cancelModal.buttons.cancel}
           />
         </ProcessPageLayout>
       )}

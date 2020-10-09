@@ -9,5 +9,3 @@ export interface ColorSchemeProps {
 export const ColorSchemeContext = createContext<ColorSchemeProps>({
   colorScheme: null,
 })
-
-export default ColorSchemeContext

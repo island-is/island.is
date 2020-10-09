@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  applicationName: {
+    id: 'pl.application:application.name',
+    defaultMessage: 'Umsókn um fæðingarorlof',
+    description: 'Some description',
+  },
   introductionSection: {
     id: 'pl.application:introduction.section',
     defaultMessage: 'Intro',
@@ -46,6 +51,16 @@ export const m = defineMessages({
     defaultMessage: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
     description: 'Some description',
   },
+  durationSubsection: {
+    id: 'pl.application:duration.subsection',
+    defaultMessage: 'Duration',
+    description: 'Some description',
+  },
+  duration: {
+    id: 'pl.application:duration',
+    defaultMessage: 'Please confirm your leave duration',
+    description: 'Some description',
+  },
   calculationsSubsection: {
     id: 'pl.application:calculations.subsection',
     defaultMessage: 'Útreikningur',
@@ -59,6 +74,27 @@ export const m = defineMessages({
   periods: {
     id: 'pl.application:periods',
     defaultMessage: 'Viltu breyta eða skipta upp tímabilinu?',
+    description: 'Some description',
+  },
+  startDateTitle: {
+    id: 'pl.application:periods.startdate',
+    defaultMessage: 'When do you want to start?',
+    description: 'Some description',
+  },
+  startDateDescription: {
+    id: 'pl.application:periods.startdate.description',
+    defaultMessage:
+      'You can choose to start from one month before the date of birth, on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
+    description: 'Some description',
+  },
+  startDateOption1: {
+    id: 'pl.application:periods.startdate.description',
+    defaultMessage: 'On the date of birth',
+    description: 'Some description',
+  },
+  startDateOption2: {
+    id: 'pl.application:periods.startdate.description',
+    defaultMessage: 'On a specific date',
     description: 'Some description',
   },
   summarySection: {

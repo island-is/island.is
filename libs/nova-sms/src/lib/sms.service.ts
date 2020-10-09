@@ -47,9 +47,9 @@ export interface SmsServiceOptions {
 export class SmsService extends RESTDataSource {
   constructor(
     @Inject(SMS_OPTIONS)
-    private options: SmsServiceOptions,
+    private readonly options: SmsServiceOptions,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {
     super()
 

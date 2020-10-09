@@ -8,8 +8,8 @@ import {
   buildIntroductionField,
   Form,
   ApplicationTypes,
-  CustomFieldComponents,
   DataProviderTypes,
+  buildRadioField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -64,30 +64,39 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'usage',
                 name: m.usage,
                 required: true,
-                component: CustomFieldComponents.PARENTAL_LEAVE_USAGE,
+                component: 'ParentalLeaveUsage',
               },
               {},
             ),
+            buildRadioField({
+              id: 'start',
+              name: m.startDateTitle,
+              description: m.startDateDescription,
+              required: true,
+              emphasize: true,
+              options: [
+                {
+                  value: 'dob',
+                  label: m.startDateOption1,
+                },
+                {
+                  value: 'customDate',
+                  label: m.startDateOption2,
+                },
+              ],
+            }),
           ],
         }),
         buildSubSection({
-          id: 'calculations',
-          name: m.calculationsSubsection,
+          id: 'duration',
+          name: m.durationSubsection,
           children: [
             buildCustomField(
               {
-                id: 'spread',
-                name: m.spread,
+                id: 'duration',
+                name: m.duration,
                 required: true,
-                component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
-              },
-              {},
-            ),
-            buildCustomField(
-              {
-                id: 'periods',
-                name: m.periods,
-                component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
+                component: 'ParentalLeaveDuration',
               },
               {},
             ),

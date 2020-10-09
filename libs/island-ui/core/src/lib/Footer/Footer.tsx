@@ -1,17 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import chunk from 'lodash/chunk'
+
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Inline } from '../Inline/Inline'
 import { Tag } from '../Tag/Tag'
 import { Icon } from '../Icon/Icon'
-import { GridContainer, GridRow, GridColumn } from '../Grid'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
+import { Link } from '../Link/Link'
 
 import * as styles from './Footer.treat'
-import { Link } from '../Link'
 
 export interface FooterLinkProps {
   title: string
@@ -69,15 +72,15 @@ export const Footer = ({
                 {topLinks.map(({ title, href }, index) => {
                   const isLast = index + 1 === topLinks.length
                   return (
-                    <Typography
+                    <Text
                       key={index}
                       variant="intro"
                       paddingBottom={isLast ? 5 : 2}
                     >
-                      <Link href={href} color="blue600" withUnderline>
+                      <Link href={href} color="blue600" underline="normal">
                         {title}
                       </Link>
-                    </Typography>
+                    </Text>
                   )
                 })}
                 {!hideLanguageSwith && (
@@ -89,7 +92,7 @@ export const Footer = ({
                         type="globe"
                         color="blue400"
                       />
-                      <Typography variant="h5" fontWeight="light">
+                      <Text variant="h5" fontWeight="light">
                         <Link
                           color="blue400"
                           href={languageSwitchLink.href}
@@ -97,7 +100,7 @@ export const Footer = ({
                         >
                           {languageSwitchLink.title}
                         </Link>
-                      </Typography>
+                      </Text>
                     </Inline>
                   </Box>
                 )}
@@ -109,14 +112,14 @@ export const Footer = ({
                       type="facebook"
                       color="blue400"
                     />
-                    <Typography variant="h5" fontWeight="light">
+                    <Text variant="h5" fontWeight="light">
                       <Link
                         color="blue400"
                         href="https://www.facebook.com/islandid"
                       >
                         Facebook
                       </Link>
-                    </Typography>
+                    </Text>
                   </Inline>
                 </Box>
               </Box>
@@ -130,22 +133,18 @@ export const Footer = ({
               >
                 <Box paddingX={[0, 0, 1]}>
                   {middleLinksTitle ? (
-                    <Typography
-                      variant="eyebrow"
-                      color="blue400"
-                      paddingBottom={3}
-                    >
+                    <Text variant="eyebrow" color="blue400" paddingBottom={3}>
                       {middleLinksTitle}
-                    </Typography>
+                    </Text>
                   ) : null}
                   <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
                     {middleLinks.map(({ title, href }, index) => {
                       return (
-                        <Typography key={index} variant="h5" fontWeight="light">
-                          <Link href={href} color="blue400" withUnderline>
+                        <Text key={index} variant="h5" fontWeight="light">
+                          <Link href={href} color="blue400" underline="normal">
                             {title}
                           </Link>
-                        </Typography>
+                        </Text>
                       )
                     })}
                   </Tiles>
@@ -159,13 +158,9 @@ export const Footer = ({
               >
                 <Box paddingX={[0, 0, 1]}>
                   {tagLinksTitle ? (
-                    <Typography
-                      variant="eyebrow"
-                      color="blue400"
-                      paddingBottom={3}
-                    >
+                    <Text variant="eyebrow" color="blue400" paddingBottom={3}>
                       {tagLinksTitle}
-                    </Typography>
+                    </Text>
                   ) : null}
                   <Inline space={2}>
                     {tagLinks.map(({ title, href }, index) => {
@@ -187,9 +182,9 @@ export const Footer = ({
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
-              <Typography variant="eyebrow" color="blue400" paddingBottom={3}>
+              <Text variant="eyebrow" color="blue400" paddingBottom={3}>
                 {bottomLinksTitle}
-              </Typography>
+              </Text>
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -201,15 +196,11 @@ export const Footer = ({
                       key={href}
                       span={['12/12', '6/12', '4/12', '3/12']}
                     >
-                      <Typography
-                        variant="h5"
-                        fontWeight="light"
-                        paddingBottom={2}
-                      >
-                        <Link href={href} color="blue600" withUnderline>
+                      <Text variant="h5" fontWeight="light" paddingBottom={2}>
+                        <Link href={href} color="blue600" underline="normal">
                           {title}
                         </Link>
-                      </Typography>
+                      </Text>
                     </GridColumn>
                   )
                 }),
@@ -279,5 +270,3 @@ const defaultBottomLinks = [
     title: 'Tekjusagan',
   },
 ]
-
-export default Footer

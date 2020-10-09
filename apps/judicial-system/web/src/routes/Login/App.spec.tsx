@@ -17,4 +17,14 @@ describe('App', () => {
 
     expect(baseElement).toBeTruthy()
   })
+
+  it('should have a title set', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>,
+    )
+
+    expect(document.title).toEqual('Réttarvörslugátt')
+  })
 })

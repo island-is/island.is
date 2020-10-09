@@ -1,5 +1,10 @@
 import React from 'react'
-import { Typography, Box, Stack, Button } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Box,
+  Stack,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
@@ -15,7 +20,7 @@ const dateTo = new Date()
 
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data, loading, error } = useListDocuments(
-    userInfo.user.profile.natreg,
+    userInfo.profile.natreg,
     dateFrom,
     dateTo,
     1,

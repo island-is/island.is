@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import { ReviewField, FieldBaseProps } from '@island.is/application/core'
-import { Typography, Box, RadioController } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
+import { RadioController } from '@island.is/shared/form-fields'
 
 interface Props extends FieldBaseProps {
   field: ReviewField
@@ -20,7 +21,7 @@ const ReviewFormField: FC<Props> = ({ field, error }) => {
       padding={4}
       marginTop={4}
     >
-      <Typography variant="h4">{name}</Typography>
+      <Text variant="h4">{name}</Text>
       <Box paddingTop={1}>
         <RadioController id={id} options={actionsAsOptions} error={error} />
       </Box>

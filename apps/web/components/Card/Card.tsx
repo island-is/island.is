@@ -6,7 +6,7 @@ import Link, { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
-  Typography,
+  Text,
   Tag,
   Inline,
   TagProps,
@@ -80,12 +80,13 @@ export const Card: FC<CardProps> = ({
 
   const items = [
     <Box
+      key={1}
       className={cn(styles.cardContent, {
         [styles.cardContentNarrower]: image && !stackImage,
       })}
     >
       <Stack space={1}>
-        <Typography variant="cardCategoryTitle" as="h3" color="blue400">
+        <Text as="h3" variant="h3" color="blue400">
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
               {title}
@@ -96,8 +97,8 @@ export const Card: FC<CardProps> = ({
               </Box>
             )}
           </Box>
-        </Typography>
-        {description && <Typography variant="p">{description}</Typography>}
+        </Text>
+        {description && <Text>{description}</Text>}
         {tags.length > 0 && (
           <Box paddingTop={3} flexGrow={0} position="relative">
             <Inline space={1}>
@@ -125,25 +126,24 @@ export const Card: FC<CardProps> = ({
         )}
       </Stack>
     </Box>,
-    <>
-      {!!image && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          className={cn(styles.imageContainer, {
-            [styles.imageContainerStacked]: stackImage,
-          })}
-        >
-          <BackgroundImage
-            positionX={!stackImage ? 'right' : null}
-            background="transparent"
-            backgroundSize="contain"
-            image={image}
-          />
-        </Box>
-      )}
-    </>,
+    !!image && (
+      <Box
+        key={2}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        className={cn(styles.imageContainer, {
+          [styles.imageContainerStacked]: stackImage,
+        })}
+      >
+        <BackgroundImage
+          positionX={!stackImage ? 'right' : null}
+          background="transparent"
+          backgroundSize="contain"
+          image={image}
+        />
+      </Box>
+    ),
   ]
 
   if (stackImage) {

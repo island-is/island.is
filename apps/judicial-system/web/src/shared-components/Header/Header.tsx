@@ -1,5 +1,10 @@
 import React, { useContext } from 'react'
-import { Logo, Typography, Box, Button } from '@island.is/island-ui/core'
+import {
+  Logo,
+  Typography,
+  Box,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
 import { userContext } from '../../utils/userContext'
@@ -26,7 +31,7 @@ const Header: React.FC = () => {
           </Box>
         </Box>
       </Link>
-      {uContext.user && (
+      {uContext?.user && (
         <Button variant="text" size="small" onClick={() => api.logOut()}>
           Útskráning
         </Button>

@@ -10,10 +10,10 @@ import React, {
   useState,
 } from 'react'
 import {
-  Button,
+  ButtonDeprecated as Button,
   Box,
   Stack,
-  Typography,
+  Text,
   Icon,
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
@@ -113,9 +113,9 @@ export const Modal: FC<ModalProps> = ({
               </button>
               <Stack space={3}>
                 {!!title && (
-                  <Typography variant="h2" as="h3">
+                  <Text variant="h2" as="h3">
                     {title}
-                  </Typography>
+                  </Text>
                 )}
                 {children ?? null}
                 <Box marginTop={6} className={styles.buttons}>

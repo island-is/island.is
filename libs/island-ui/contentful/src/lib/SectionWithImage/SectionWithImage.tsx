@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Typography, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
+import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
 import StaticHtml from '../StaticHtml/StaticHtml'
 import { renderHtml } from '../richTextRendering'
@@ -22,7 +22,7 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
     return (
       <>
         {title && (
-          <Typography
+          <Text
             id={slugify(title)}
             variant="h2"
             as="h2"
@@ -30,7 +30,7 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
             paddingBottom={2}
           >
             {title}
-          </Typography>
+          </Text>
         )}
         <StaticHtml>{renderHtml(html.document)}</StaticHtml>
       </>
@@ -46,14 +46,9 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
       </GridColumn>
       <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
         {title && (
-          <Typography
-            id={slugify(title)}
-            variant="h2"
-            as="h2"
-            paddingBottom={3}
-          >
+          <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={3}>
             {title}
-          </Typography>
+          </Text>
         )}
         <StaticHtml>{renderHtml(html.document)}</StaticHtml>
       </GridColumn>

@@ -5,7 +5,7 @@ import {
   ContentBlock,
   Box,
   Icon,
-  Button,
+  ButtonDeprecated as Button,
   FocusableBox,
 } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
@@ -68,7 +68,8 @@ export const FixedNav: FC = () => {
                 size="medium"
                 activeLocale={activeLocale}
                 placeholder={t.searchPlaceholder}
-                autocomplete={false}
+                autocomplete={true}
+                autosuggest={false}
               />
             </Box>
             <Box marginLeft={2}>
@@ -79,6 +80,7 @@ export const FixedNav: FC = () => {
                 onClick={() => {
                   window.scrollTo(0, 0)
                 }}
+                aria-label={t.gotoTop}
               />
             </Box>
           </Box>

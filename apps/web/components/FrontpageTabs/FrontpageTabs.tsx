@@ -12,10 +12,10 @@ import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import {
-  Typography,
+  Text,
   Stack,
   Box,
-  Button,
+  ButtonDeprecated as Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -78,14 +78,11 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const [initialClientX, setInitialClientX] = useState<number>(0)
-  const [finalClientX, setFinalClientX] = useState<number>(0)
-  const [finalClientY, setFinalClientY] = useState<number>(0)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
 
@@ -188,25 +185,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }, [selectedIndex, animations])
 
-  useEffect(() => {
-    document.addEventListener('keydown', onKeyDown, false)
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown, false)
-    }
-  }, [])
-
-  const onKeyDown = useCallback((event) => {
-    switch (event.key.toLowerCase()) {
-      case 'arrowleft':
-        goTo('prev')
-        break
-      case 'arrowright':
-        goTo('prev')
-        break
-    }
-  }, [])
-
   const goTo = (direction: string) => {
     switch (direction) {
       case 'prev':
@@ -226,10 +204,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       const contentId = linkData.sys?.contentType?.sys?.id
 
       const slug = linkData.fields?.slug
-
       if (slug && ['article', 'category', 'news', 'page'].includes(contentId)) {
         return {
-          href: makePath(contentId, '/[slug]'),
+          href: contentId === 'page' ? slug : makePath(contentId, '[slug]'),
           as: makePath(contentId, slug),
         }
       }
@@ -239,25 +216,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   return (
     <GridContainer>
-      <GridRow>
-        <GridColumn hiddenBelow="lg" span="1/12">
-          <Box display="flex" height="full" width="full" alignItems="center">
-            <button
-              onClick={() => goTo('prev')}
-              className={cn(styles.arrowButton, {
-                [styles.arrowButtonDisabled]: false,
-              })}
-            >
-              <Icon color="red400" width="18" height="18" type="arrowLeft" />
-            </button>
-          </Box>
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+      <GridRow className={styles.tabPanelRow}>
+        <GridColumn hiddenBelow="lg" span="1/12" />
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '6/12']}
+          position="static"
+        >
           <Box ref={contentRef}>
             <Box>
               <TabList
                 {...tab}
-                aria-label="My tabs"
+                aria-label="Flettiborði"
                 className={styles.tabWrapper}
               >
                 {tabs.map(({ subtitle = '' }, index) => {
@@ -283,7 +252,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                   const visible = currentIndex === index
                   const isTabletOrMobile = width < theme.breakpoints.lg
-
                   return (
                     <TabPanel
                       key={index}
@@ -302,19 +270,15 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         style={{ minHeight: `${minHeight}px` }}
                       >
                         <Stack space={3}>
-                          <Typography
-                            variant="eyebrow"
-                            as="p"
-                            color="purple400"
-                          >
+                          <Text variant="eyebrow" as="p" color="purple400">
                             <span className={styles.textItem}>{subtitle}</span>
-                          </Typography>
-                          <Typography variant="h1" as="h1">
+                          </Text>
+                          <Text variant="h1" as="h1">
                             <span className={styles.textItem}>{title}</span>
-                          </Typography>
-                          <Typography variant="p" as="p">
+                          </Text>
+                          <Text>
                             <span className={styles.textItem}>{content}</span>
-                          </Typography>
+                          </Text>
                           {linkUrls?.href ? (
                             <Link
                               as={linkUrls.as}
@@ -337,6 +301,54 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 })}
               </Box>
             </Box>
+            <GridColumn hiddenBelow="lg" position="static">
+              <Box
+                display="flex"
+                height="full"
+                alignItems="center"
+                className={styles.tabListArrowLeft}
+              >
+                <button
+                  onClick={() => goTo('prev')}
+                  type="button"
+                  aria-label={t.frontpageTabsPrevious}
+                  className={cn(styles.arrowButton, {
+                    [styles.arrowButtonDisabled]: false,
+                  })}
+                >
+                  <Icon
+                    color="red400"
+                    width="18"
+                    height="18"
+                    type="arrowLeft"
+                  />
+                </button>
+              </Box>
+              <Box
+                display="flex"
+                height="full"
+                justifyContent="flexEnd"
+                alignItems="center"
+                className={styles.tabListArrowRight}
+              >
+                <button
+                  onClick={() => goTo('next')}
+                  type="button"
+                  aria-label={t.frontpageTabsNext}
+                  className={cn(styles.arrowButton, {
+                    [styles.arrowButtonDisabled]: false,
+                  })}
+                >
+                  <Icon
+                    color="red400"
+                    width="18"
+                    height="18"
+                    type="arrowRight"
+                  />
+                </button>
+              </Box>
+            </GridColumn>
+
             <Box
               display="inlineFlex"
               alignItems="center"
@@ -362,28 +374,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 className={cn(styles.animationContainer, {
                   [styles.animationContainerHidden]: !visible,
                 })}
+                aria-hidden="true"
               />
             )
           })}
         </GridColumn>
-        <GridColumn hiddenBelow="lg" span="1/12">
-          <Box
-            display="flex"
-            height="full"
-            width="full"
-            justifyContent="flexEnd"
-            alignItems="center"
-          >
-            <button
-              onClick={() => goTo('next')}
-              className={cn(styles.arrowButton, {
-                [styles.arrowButtonDisabled]: false,
-              })}
-            >
-              <Icon color="red400" width="18" height="18" type="arrowRight" />
-            </button>
-          </Box>
-        </GridColumn>
+        <GridColumn hiddenBelow="lg" span="1/12" />
       </GridRow>
     </GridContainer>
   )

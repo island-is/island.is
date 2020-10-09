@@ -29,7 +29,7 @@ export const overlay = style({
       opacity: 0,
     },
     to: {
-      opacity: 0.3,
+      opacity: '30%',
     },
   },
   animationTimingFunction: 'ease-out',

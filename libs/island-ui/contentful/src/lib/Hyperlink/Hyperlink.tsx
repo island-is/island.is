@@ -1,15 +1,20 @@
 import React, { FC } from 'react'
-import { TypographyProps, Link } from '@island.is/island-ui/core'
+import { TextProps, Link } from '@island.is/island-ui/core'
 
 interface HyperlinkProps {
   href?: string
   slug?: string
-  variant?: TypographyProps['variant']
-  as?: TypographyProps['as']
+  variant?: TextProps['variant']
+  as?: TextProps['as']
 }
 
 export const Hyperlink: FC<HyperlinkProps> = ({ href, children }) => (
-  <Link withUnderline href={href} color="blue400">
+  <Link
+    href={href}
+    color="blue400"
+    underline="small"
+    underlineVisibility="always"
+  >
     {children}
   </Link>
 )

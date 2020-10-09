@@ -1,6 +1,5 @@
 import {
   Field,
-  FormValue,
   MultiField,
   ExternalDataProvider,
   Repeater,
@@ -26,7 +25,7 @@ export type RepeaterScreen = {
   }
 
 export type ExternalDataProviderScreen = {
-  isNavigable: true
+  isNavigable?: boolean
 } & ExternalDataProvider
 
 export type FormScreen =
@@ -43,10 +42,4 @@ export enum FormModes {
   REJECTED = 'rejected',
 }
 
-export enum ProgressThemes {
-  GREEN = 'green',
-  BLUE = 'blue',
-  PURPLE = 'purple',
-  RED = 'red',
-}
 export type ResolverContext = { formNode: FormNode; dataSchema: Schema }

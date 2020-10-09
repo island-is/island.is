@@ -1,7 +1,7 @@
 import React from 'react'
-import { Box } from '../Box'
-import Typography from '../Typography/Typography'
-import FocusableBox from './FocusableBox'
+import { Box } from '../Box/Box'
+import { Typography } from '../Typography/Typography'
+import { FocusableBox } from './FocusableBox'
 
 export default {
   title: 'Core/FocusableBox',

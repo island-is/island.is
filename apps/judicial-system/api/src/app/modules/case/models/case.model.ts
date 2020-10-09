@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
   Table,
@@ -10,14 +12,15 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
-import { Notification } from './notification.model'
 import {
-  CaseAppealDecision,
+  CaseState,
   CaseCustodyProvisions,
+  CaseAppealDecision,
   CaseCustodyRestrictions,
-} from './case.types'
+} from '@island.is/judicial-system/types'
+
+import { User } from '../../user'
+import { Notification } from './notification.model'
 
 @Table({
   tableName: 'case',
@@ -172,6 +175,18 @@ export class Case extends Model<Case> {
   // Athugasemdir til dómara
   comments: string
 
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  prosecutorId: string
+
+  @BelongsTo(() => User, 'prosecutorId')
+  @ApiProperty({ type: User })
+  prosecutor: User
+
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -275,6 +290,18 @@ export class Case extends Model<Case> {
   @ApiProperty({ enum: CaseAppealDecision })
   // Ákvörðun um kæru sækjanda
   prosecutorAppealDecision: CaseAppealDecision
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  judgeId: string
+
+  @BelongsTo(() => User, 'judgeId')
+  @ApiProperty({ type: User })
+  judge: User
 
   @HasMany(() => Notification)
   @ApiProperty({ type: Notification, isArray: true })

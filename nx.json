@@ -276,6 +276,15 @@
     },
     "application-ui-fields": {
       "tags": []
+    },
+    "shared-form-fields": {
+      "tags": []
+    },
+    "judicial-system-formatters": {
+      "tags": []
+    },
+    "email-service": {
+      "tags": []
     }
   },
   "affected": {

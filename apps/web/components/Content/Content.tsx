@@ -1,12 +1,12 @@
 import React, { useMemo, ReactNode } from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import {
-  Typography,
+  Text,
   Box,
   Stack,
   Accordion,
   AccordionItem,
-  Button,
+  ButtonDeprecated as Button,
   Link,
   Divider,
 } from '@island.is/island-ui/core'
@@ -31,9 +31,9 @@ const embeddedNodes = () => ({
       return (
         <Box paddingBottom={5} paddingTop={5}>
           <Stack space={3}>
-            <Typography variant="h2" as="h2">
+            <Text variant="h2" as="h2">
               <span>{title}</span>
-            </Typography>
+            </Text>
             <Accordion dividerOnTop={false}>
               {items.map((item, index) => {
                 const { answer, question } = item
@@ -72,7 +72,7 @@ const embeddedNodes = () => ({
           borderRadius="large"
         >
           <Box marginBottom={2}>
-            <Typography variant="h4">{title}</Typography>
+            <Text variant="h4">{title}</Text>
           </Box>
           <Link href={link}>
             <Button width="fluid">{linkText}</Button>
@@ -94,12 +94,12 @@ const embeddedNodes = () => ({
           borderRadius="large"
         >
           <Stack space={2}>
-            <Typography variant="h4">{title}</Typography>
+            <Text variant="h4">{title}</Text>
             <Divider weight="alternate" />
             {links.map(({ fields: { text, url } }, index) => (
-              <Typography variant="p" color="blue400" key={index}>
+              <Text color="blue400" key={index}>
                 <Link href={url}>{text}</Link>
-              </Typography>
+              </Text>
             ))}
           </Stack>
         </Box>
@@ -126,11 +126,7 @@ const options = (type) => ({
     text.split('\n').map((text, i) => [i > 0 && <br key={i} />, text]),
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
-      return (
-        <Typography variant="p" links>
-          {children}
-        </Typography>
-      )
+      return <Text>{children}</Text>
     },
     [BLOCKS.EMBEDDED_ASSET]: (node) => {
       const {

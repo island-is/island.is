@@ -13,10 +13,11 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
-import { autoSave } from '../../../utils/stepHelper'
+import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
-import { formatDate } from '../../../utils/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -30,6 +31,10 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
 
   useEffect(() => {
+    document.title = 'Þingbók - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
     const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
 
     if (wc && !workingCase) {
@@ -40,21 +45,23 @@ export const CourtRecord: React.FC = () => {
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <JudgeLogo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Box marginBottom={10}>
-              <Typography as="h1" variant="h1">
-                Krafa um gæsluvarðhald
-              </Typography>
-            </Box>
-          </GridColumn>
-        </GridRow>
+        <Box marginBottom={7}>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Box marginBottom={10}>
+                <Typography as="h1" variant="h1">
+                  Krafa um gæsluvarðhald
+                </Typography>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </Box>
         <GridRow>
           <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
+            {renderFormStepper(1, 1)}
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>
@@ -75,7 +82,7 @@ export const CourtRecord: React.FC = () => {
                     placeholder="Veldu tíma"
                     defaultValue={formatDate(
                       workingCase.courtStartTime,
-                      Constants.TIME_FORMAT,
+                      TIME_FORMAT,
                     )}
                     onBlur={(evt) => {
                       const validateTimeEmpty = validate(
@@ -131,7 +138,7 @@ export const CourtRecord: React.FC = () => {
                   placeholder="Veldu tíma"
                   defaultValue={formatDate(
                     workingCase.courtEndTime,
-                    Constants.TIME_FORMAT,
+                    TIME_FORMAT,
                   )}
                   onBlur={(evt) => {
                     const validateTimeEmpty = validate(
@@ -286,7 +293,6 @@ export const CourtRecord: React.FC = () => {
               />
             </Box>
             <FormFooter
-              previousUrl="/"
               nextUrl={Constants.RULING_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime

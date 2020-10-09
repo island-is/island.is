@@ -1,4 +1,9 @@
-import { Box, Button, Icon, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  Icon,
+  Typography,
+} from '@island.is/island-ui/core'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -24,18 +29,23 @@ const Modal: React.FC<ModalProps> = ({
   isPrimaryButtonLoading,
 }: ModalProps) => {
   return (
-    <div className={styles.container}>
+    <div className={styles.container} test-id="modal">
       <div className={styles.modalContainer}>
-        <Box position="absolute" top={0} right={0}>
-          <button className={styles.closeButton} onClick={handleClose}>
-            <Icon type="close" />
-          </button>
-        </Box>
+        {handleClose && (
+          <Box position="absolute" top={0} right={0}>
+            <button className={styles.closeButton} onClick={handleClose}>
+              <Icon type="close" />
+            </button>
+          </Box>
+        )}
         <Box marginBottom={4}>
           <Typography variant="h1">{title}</Typography>
         </Box>
         <Box marginBottom={6}>
-          <Typography>{text}</Typography>
+          {
+            // Check if text is a string or Element
+            React.isValidElement(text) ? text : <Typography>{text}</Typography>
+          }
         </Box>
         <Box display="flex">
           {handleSecondaryButtonClick && (
@@ -45,13 +55,15 @@ const Modal: React.FC<ModalProps> = ({
               </Button>
             </Box>
           )}
-          <Button
-            onClick={handlePrimaryButtonClick}
-            icon={isPrimaryButtonLoading ? 'loading' : null}
-            loading={isPrimaryButtonLoading}
-          >
-            {primaryButtonText}
-          </Button>
+          {primaryButtonText && (
+            <Button
+              onClick={handlePrimaryButtonClick}
+              icon={isPrimaryButtonLoading ? 'loading' : null}
+              loading={isPrimaryButtonLoading}
+            >
+              {primaryButtonText}
+            </Button>
+          )}
         </Box>
       </div>
     </div>
@@ -67,6 +79,9 @@ const ModalPortal = ({
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
 }: ModalProps) => {
+  const modalRoot =
+    document.getElementById('modal') ?? document.createElement('div')
+
   return ReactDOM.createPortal(
     <Modal
       title={title}
@@ -77,7 +92,7 @@ const ModalPortal = ({
       handlePrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
     />,
-    document.getElementById('modal'),
+    modalRoot,
   )
 }
 

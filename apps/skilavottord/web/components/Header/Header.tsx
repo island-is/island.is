@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
@@ -17,8 +17,19 @@ export const Header: FC = () => {
   const router = useRouter()
   // const { setUser, isAuthenticated } = useContext(UserContext)
   const isAuthenticated = true
-  const { activeLocale } = useI18n()
+  const { activeLocale, locale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
+
+  const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
+
+  const switchLanguage = () => {
+    locale(nextLanguage)
+  }
+
+  useEffect(() => {
+    // Because every other route should not be accessible on refresh, re-route to my-cars page
+    router.push(makePath('myCars'))
+  }, [activeLocale])
 
   return (
     <IslandUIHeader
@@ -29,8 +40,8 @@ export const Header: FC = () => {
       )}
       logoutText={'Log out'}
       userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
-      language={activeLocale.toUpperCase()}
-      switchLanguage={() => console.log(activeLocale)}
+      language={nextLanguage.toUpperCase()}
+      switchLanguage={switchLanguage}
       userName={mockUser?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {

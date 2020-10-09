@@ -10,13 +10,14 @@ import { CarownerModule } from './modules/carowner'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
+const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       debug,
       playground,
-      autoSchemaFile: 'apps/skilavottord/ws/src/app/api.graphql',
+      autoSchemaFile,
       path: '/api/graphql',
     }),
     AuthModule,
