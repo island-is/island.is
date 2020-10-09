@@ -57,7 +57,7 @@ const remainingCaseData = {
   accusedPlea: 'Accused Plea',
   litigationPresentations: 'Litigation Presentations',
   ruling: 'Ruling',
-  rejecting: 'false',
+  rejecting: false,
   custodyEndDate: '2020-09-28T12:00:00.000Z',
   custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   accusedAppealDecision: CaseAppealDecision.APPEAL,
