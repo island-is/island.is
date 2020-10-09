@@ -115,12 +115,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache for dependencies Docker layer
-        id: cache-deps
-        uses: actions/cache@v2
-        with:
-          path: cache
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps
       - name: Cache for NodeJS dependencies - host OS
         uses: actions/cache@v2
         with:
@@ -135,12 +129,6 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-
-      - name: Set up Docker Buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
 
       - name: Running tests
         run: ./scripts/run-in-parallel.sh 30_test

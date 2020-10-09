@@ -16,33 +16,11 @@ FROM deps as src
 # image with the source code
 ADD . .
 
-FROM src as formatting
-
-RUN yarn run format:check --all
-
-FROM src as security-audit
-
-RUN yarn run security-audit
-
 FROM src as builder
 ARG APP
 ENV APP=${APP}
 
 RUN yarn run build ${APP} --prod
-
-FROM src as linter
-ARG APP
-ENV APP=${APP}
-
-RUN yarn run lint ${APP}
-
-FROM src as test
-
-CMD yarn run test ${APP}
-
-FROM src as nx-runner
-# image use to run NX-related operations (print-affected, etc.)
-ENV PATH=./node_modules/.bin:$PATH
 
 FROM node:12.16.2-alpine3.11 as output-base
 # this is base image for containers that are to be deployed
