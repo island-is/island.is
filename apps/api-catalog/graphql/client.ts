@@ -23,7 +23,6 @@ function create(initialState?: any) {
       publicRuntimeConfig.graphqlEndpoint,
   })
 
-  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     name: 'apiCatalogue-web-client',
     version: '0.1',

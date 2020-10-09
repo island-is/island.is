@@ -1,205 +1,176 @@
-import React, { useState } from 'react'
-import { Box, GridContainer, Link, Select } from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Select,
+  Typography,
+} from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
-import { ApiService } from '@island.is/api/schema'
-
-import { RedocStandalone } from 'redoc';
+import {
+  ApiService,
+  GetOpenApiInput,
+  OpenApi,
+  Query,
+  QueryGetOpenApiArgs,
+} from '@island.is/api/schema'
+import { RedocStandalone } from 'redoc'
+import { useLazyQuery } from 'react-apollo'
+import { GET_OPEN_API_QUERY } from 'apps/api-catalog/screens/Queries'
+import { ContentfulString } from 'apps/api-catalog/services/contentful.types'
+import {
+  AccessCategory,
+  PricingCategory,
+  TypeCategory,
+  DataCategory,
+} from '@island.is/api-catalogue/consts'
 import YamlParser from 'js-yaml'
 
-import gql from 'graphql-tag'
-
-import {
-    GetOpenApiInput,
-    Query,
-    QueryGetOpenApiArgs
-} from '@island.is/api/schema';
-import { useLazyQuery, useQuery } from 'react-apollo'
-
-
+type SelectOption = {
+  label: string
+  value: any
+}
 
 export interface ServiceDetailProps {
-    service: ApiService
-
+  service: ApiService
+  strings: Array<ContentfulString>
 }
 
-export const GET_OPEN_API_QUERY = gql`
-query GetOpenApi($input: GetOpenApiInput!) {
-  getOpenApi(input: $input) {
-    spec
+export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
+  const options: Array<SelectOption> = service.xroadIdentifier.map((x) => ({
+    label: x.serviceCode.split('-').pop(),
+    value: {
+      instance: x.instance,
+      memberClass: x.memberClass,
+      memberCode: x.memberCode,
+      serviceCode: x.serviceCode,
+      subsystemCode: x.subsystemCode,
+    },
+  }))
+
+  const [openApi, setOpenApi] = useState<GetOpenApiInput>(options[0].value)
+  // prettier-ignore
+  const [getOpenApi, { data, loading, error }] = useLazyQuery<Query,QueryGetOpenApiArgs>(GET_OPEN_API_QUERY, 
+  {
+    variables: {
+      input: openApi,
+    },
+  })
+
+  useEffect(() => {
+    getOpenApi()
+  }, [openApi])
+
+  const onSelectChange = (option: SelectOption) => {
+    setOpenApi(option.value)
   }
-}
-`
 
-export const ServiceDetail = (props: ServiceDetailProps) => {
-
-    if (props.service === null) {
-        return (
-            <GridContainer>
-                <Box>
-                    <h3>Þjónusta finnst ekki</h3>
-                </Box>
-            </GridContainer>
-        )
-    }
-
-
-
-    type SelectOption = {
-        label: string,
-        value: any
-    }
-
-    enum CATEGORY {
-        DATA,
-        PRICING,
-        ACCESS
-    }
-
-    let versionOptions: Array<SelectOption> = props.service.xroadIdentifier.map((e) => ({
-        label: e.serviceCode.split('-').pop(),
-        value: e
-    }))
-    if (versionOptions.length > 0) {
-        versionOptions = versionOptions.sort((a, b) => b.label.localeCompare(a.label))
-    }
-
-    const inputValuesFromOption = (option: SelectOption):GetOpenApiInput => {
-        const inputValues: GetOpenApiInput = {
-            instance: option.value.instance,
-            memberClass: option.value.memberClass,
-            memberCode: option.value.memberCode,
-            serviceCode: option.value.serviceCode,
-            subsystemCode: option.value.subsystemCode
-        }
-        return inputValues;
-
-    }
-    
-
-    
-    const [openApiObject, setOpenApiObject] = useState<GetOpenApiInput>(inputValuesFromOption(versionOptions[0]))
-    const [getOpenApi, { data, loading, error }] = useLazyQuery<Query, QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
-        {
-            
-            variables: {
-                input: openApiObject,
-            },
-        })
-        
-        const onSelectChange = (option: SelectOption) => {
-            const inputValues = inputValuesFromOption(option);
-            setOpenApiObject(inputValues);
-            console.log(inputValues);
-            getOpenApi()
-        }   
-
-    const showCategory = (category: CATEGORY) => {
-        let title = ""
-        let cat = null;
-        switch (category) {
-            case CATEGORY.DATA:
-                title = "Gögn";
-                cat = props.service.data;
-                break;
-            case CATEGORY.PRICING: title = "Verð";
-                cat = props.service.pricing;
-                break;
-            case CATEGORY.ACCESS: title = "Aðgengi";
-                cat = props.service.access;
-                break;
-        }
-        return (
-            <div>
-                <h2> {title}</h2>
-                <div className={cn([styles.category])}>
-                    {cat?.map((item, index) => {
-                        return (
-                            <div className={cn(styles.categoryItem)} key={index}>
-                                {item}
-                            </div>
-                        )
-
-                    })}
+  // Main page
+  return (
+    <Box className={cn(styles.root)}>
+      <div className={cn(styles.section)}>
+        <Box>
+          <h1>{service.owner}</h1>
+        </Box>
+      </div>
+      <div className={cn(styles.section)}>
+        <h2 className="name" data-id={service.id}>
+          {service.name}
+        </h2>
+        <p className={cn(styles.description)}>{service.description}</p>
+        <Box>
+          <Select
+            label="Version"
+            name="version"
+            defaultValue={options[0]}
+            options={options}
+            onChange={onSelectChange}
+            noOptionsMessage="Engar útgáfuupplýsingar"
+          />
+        </Box>
+      </div>
+      <div className={cn(styles.section)}>
+        <Box className={cn(styles.categoryContainer)}>
+          <Box style={{ width: '100%' }}>
+            <h3>
+              {strings.find((s) => s.id === 'catalog-filter-pricing').text}
+            </h3>
+            <div className={cn([styles.category])}>
+              {service.pricing?.map((item, index) => (
+                <div className={cn(styles.categoryItem)} key={index}>
+                  {
+                    strings.find(
+                      (s) =>
+                        s.id ===
+                        `catalog-filter-pricing-${PricingCategory[
+                          item
+                        ].toLowerCase()}`,
+                    ).text
+                  }
                 </div>
+              ))}
             </div>
-        )
-    }
-
-    const showError = () => {
-        return (
-            <div>
-                Villa átti sér stað
+          </Box>
+          <Box style={{ width: '100%' }}>
+            <h3>{strings.find((s) => s.id === 'catalog-filter-data').text}</h3>
+            <div className={cn([styles.category])}>
+              {service.data?.map((item, index) => (
+                <div className={cn(styles.categoryItem)} key={index}>
+                  {
+                    strings.find(
+                      (s) =>
+                        s.id ===
+                        `catalog-filter-data-${DataCategory[
+                          item
+                        ].toLowerCase()}`,
+                    ).text
+                  }
+                </div>
+              ))}
             </div>
-        )
-    }
-/*
-    const showOpenApiSpec = (result:any) => {
-        console.log(result.spec);
-        let parsed = YamlParser.safeLoad(result.spec);
-        let obj:object = {};
-        if (typeof parsed !== "string") {
-            obj = parsed;
-        }
-
-        <RedocStandalone spec={
-            pets
-            //JSON.parse(result.spec)
-        } />
-        
-    }
-
-    }
-  */  
-    
-
-    // Main page
-    return (
-        <GridContainer>
-            <Box className={cn(styles.root)}>
-                <div>
-                    <h1 className="name" data-id={props.service.id} >{props.service.name}</h1>
-                    <Box className={cn(styles.selectContainer)} >
-                        <div>
-                            <Select
-                                label="Version"
-                                name="version"
-                                defaultValue={versionOptions[0]}
-                                options={versionOptions}
-                                onChange={onSelectChange}
-                                noOptionsMessage="Engar útgáfuupplýsingar"
-                            />
-                        </div>
-                    </Box>
-
+          </Box>
+          <Box style={{ width: '100%' }}>
+            <h3>{strings.find((s) => s.id === 'catalog-filter-type').text}</h3>
+            <div className={cn([styles.category])}>
+              {service.type?.map((item, index) => (
+                <div className={cn(styles.categoryItem)} key={index}>
+                  {TypeCategory[item]}
                 </div>
-                <div className={cn(styles.section)}>
-                    <h2 className={cn(styles.sectionTitle)}>{props.service.name}</h2>
-                    <p>{props.service.description}</p>
+              ))}
+            </div>
+          </Box>
+          <Box style={{ width: '100%' }}>
+            <h3>
+              {strings.find((s) => s.id === 'catalog-filter-access').text}
+            </h3>
+            <div className={cn([styles.category])}>
+              {service.access?.map((item, index) => (
+                <div className={cn(styles.categoryItem)} key={index}>
+                  {AccessCategory[item]}
                 </div>
-                <div className={cn(styles.section)}>
-                    <h2>{props.service.owner}</h2>
-                    <p>todo: Hér vantar lýsingu á owner</p>
-                </div>
-
-                <div className={cn(styles.section)}>
-                    {showCategory(CATEGORY.ACCESS)}
-                    {showCategory(CATEGORY.DATA)}
-                    {showCategory(CATEGORY.PRICING)}
-                </div>
-
-                <div className={cn(styles.section)}>
-                    <h2>OpenAPI skjölun</h2>
-                    
-                    { data?.getOpenApi == null ? 
-                        showError() 
-                        : 
-                        <RedocStandalone spec={JSON.parse(data.getOpenApi.spec)} />
-                    }
-                    
-                </div>
-
-            </Box>
-        </GridContainer>
-    )
+              ))}
+            </div>
+          </Box>
+        </Box>
+      </div>
+      <div className={cn(styles.section)}>
+        <Accordion singleExpand={true}>
+          <AccordionItem id="id_1" label="OpenAPI skjölun">
+            <Typography variant="p" as="p">
+              {loading ? (
+                'Leita...'
+              ) : data?.getOpenApi.spec == '' || data?.getOpenApi == null ? (
+                'Ekki tókst að sækja skjölun'
+              ) : (
+                <RedocStandalone
+                  spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi}
+                />
+              )}
+            </Typography>
+          </AccordionItem>
+        </Accordion>
+      </div>
+    </Box>
+  )
 }

@@ -29,6 +29,7 @@ export const GET_API_SERVICE_QUERY = gql`
       data
       pricing
       access
+      type
       xroadIdentifier {
         instance
         memberCode
@@ -36,6 +37,14 @@ export const GET_API_SERVICE_QUERY = gql`
         subsystemCode
         serviceCode
       }
+    }
+  }
+`
+
+export const GET_OPEN_API_QUERY = gql`
+  query GetOpenApi($input: GetOpenApiInput!) {
+    getOpenApi(input: $input) {
+      spec
     }
   }
 `

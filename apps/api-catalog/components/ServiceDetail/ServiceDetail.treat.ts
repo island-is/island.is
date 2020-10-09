@@ -2,31 +2,39 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const root = style({
-    fontFamily: theme.typography.fontFamily,
-    marginTop:40,
-    marginBottom:40,
+  fontFamily: theme.typography.fontFamily,
+  marginTop: 40,
+  marginBottom: 40,
 })
 
+export const description = style({
+  paddingTop: 3,
+  marginBottom: 30,
+})
 
 export const selectContainer = style({
-  width:'200'
+  width: '200',
 })
 
 export const section = style({
-  paddingBottom:50
+  paddingBottom: 50,
 })
 
 export const sectionTitle = style({
-  paddingTop:40
+  paddingTop: 40,
 })
 
-
-
-export const category= style({
+export const categoryContainer = style({
   display: 'flex',
-  flexWrap:'wrap',
-  flexDirection:'row',
+  flexDirection: 'row',
 })
+
+export const category = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  flexDirection: 'row',
+})
+
 export const categoryItem = style({
   color: theme.color.blue400,
   background: theme.color.blue100,
