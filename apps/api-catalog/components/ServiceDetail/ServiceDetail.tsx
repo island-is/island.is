@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Breadcrumbs,
   Select,
   Typography,
 } from '@island.is/island-ui/core'
@@ -69,6 +70,15 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
   // Main page
   return (
     <Box className={cn(styles.root)}>
+      <Breadcrumbs>
+        <a href="/">
+          Ísland.is
+        </a>
+        <a href="/services">
+          API Vörulisti
+        </a>
+        <span>{service.owner}</span>
+      </Breadcrumbs>
       <div className={cn(styles.section)}>
         <Box>
           <h1>{service.owner}</h1>

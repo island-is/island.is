@@ -2,6 +2,7 @@ import React, { useState, ReactNode } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
+  Breadcrumbs,
   ContentBlock,
   GridRow,
   GridColumn,
@@ -168,24 +169,33 @@ export default function ServiceList(props: ServiceListProps) {
       className={cn(isMobile ? styles.LayoutMobile : {})}
       listClassNames={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
-        <div
-          className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}
-        >
-          <Typography variant="h1">
-            {
-              props.pageContent.strings.find((s) => s.id === 'catalog-title')
-                .text
-            }
-          </Typography>
-          <div className={cn(styles.topSectionText)}>
-            <Typography variant="intro">
+        <div>
+          <Breadcrumbs>
+          <a href="/">
+                Ísland.is
+              </a>
+              <span>{props.pageContent.strings.find(s => s.id ==='catalog-title').text}</span>
+          </Breadcrumbs>
+          <div
+            className={cn(isMobile ? styles.topSectionMobile : styles.topSection)}
+          >
+            <Typography variant="h1">
               {
-                props.pageContent.strings.find((s) => s.id === 'catalog-intro')
+                props.pageContent.strings.find((s) => s.id === 'catalog-title')
                   .text
               }
             </Typography>
+            <div className={cn(styles.topSectionText)}>
+              <Typography variant="intro">
+                {
+                  props.pageContent.strings.find((s) => s.id === 'catalog-intro')
+                    .text
+                }
+              </Typography>
+            </div>
           </div>
         </div>
+        
       }
       left={
         <Box
