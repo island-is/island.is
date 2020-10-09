@@ -8,7 +8,12 @@ import {
   FormValue,
   Schema,
 } from '@island.is/application/core'
-import { Box, Button, GridColumn, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  GridColumn,
+  Typography,
+} from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
@@ -141,9 +146,11 @@ const Screen: FC<ScreenProps> = ({
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
+                errors={errors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
                 formValue={formValue}
+                externalData={externalData}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField

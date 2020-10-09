@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import {
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
   BulletList,
   Bullet,

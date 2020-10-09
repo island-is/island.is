@@ -4,7 +4,7 @@ import {
   Stack,
   Typography,
   Tag,
-  Button,
+  ButtonDeprecated as Button,
   GridContainer,
   GridRow,
   GridColumn,

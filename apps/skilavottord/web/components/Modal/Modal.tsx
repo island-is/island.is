@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import {
-  Button,
+  ButtonDeprecated as Button,
   Box,
   Typography,
   Stack,

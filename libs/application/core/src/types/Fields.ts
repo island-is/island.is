@@ -79,6 +79,8 @@ export interface RadioField extends Question {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: Option[]
+  emphasize?: boolean
+  largeButtons?: boolean
 }
 
 export interface SelectField extends Question {

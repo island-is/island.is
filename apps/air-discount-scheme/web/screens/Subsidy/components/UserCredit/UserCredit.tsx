@@ -3,7 +3,11 @@ import React, { useContext } from 'react'
 import { UserContext } from '@island.is/air-discount-scheme-web/context'
 import { copyToClipboard } from '@island.is/air-discount-scheme-web/utils'
 import { Discount } from '@island.is/air-discount-scheme-web/graphql/schema'
-import { Box, Typography, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
 type StatusOptions = {

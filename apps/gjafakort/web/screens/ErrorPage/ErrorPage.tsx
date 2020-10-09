@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
-  Button,
+  ButtonDeprecated as Button,
   ContentBlock,
   Typography,
 } from '@island.is/island-ui/core'

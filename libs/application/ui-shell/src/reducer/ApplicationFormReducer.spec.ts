@@ -53,7 +53,7 @@ const form: Form = buildForm({
         buildRepeater({
           id: 'person',
           name: 'Family Member',
-          labelKey: 'name',
+          component: 'SomeComponent',
           children: [
             buildTextField({
               id: 'name',

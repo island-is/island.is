@@ -10,7 +10,7 @@ import {
   Box,
   Stack,
   Typography,
-  Button,
+  ButtonDeprecated as Button,
   Icon,
   Columns,
   Column,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 
 import * as styles from './FormFooter.treat'
