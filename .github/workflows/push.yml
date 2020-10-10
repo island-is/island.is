@@ -161,7 +161,7 @@ jobs:
     needs:
       - prepare
     runs-on: ubuntu-20.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
