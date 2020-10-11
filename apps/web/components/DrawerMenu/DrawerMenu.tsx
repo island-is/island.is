@@ -90,9 +90,11 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
 
         return (
           <Box key={id} component="li">
-            <Text as="p" paddingBottom={2}>
-              <Link {...linkProps}>{item.title}</Link>
-            </Text>
+            <Link {...linkProps}>
+              <Text as="p" paddingBottom={2}>
+                {item.title}
+              </Text>
+            </Link>
           </Box>
         )
       })}

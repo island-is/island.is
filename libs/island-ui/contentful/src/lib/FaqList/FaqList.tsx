@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
 import {
   Stack,
-  Typography,
+  Text,
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
@@ -20,9 +20,9 @@ export interface FaqListProps {
 export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
   return (
     <Stack space={6}>
-      <Typography variant="h2" as="h2">
+      <Text variant="h2" as="h2">
         <span data-sidebar-link={slugify(title)}>{title}</span>
-      </Typography>
+      </Text>
       <Accordion>
         {questions.map(({ id, question, answer }) => (
           <AccordionItem key={id} id={`faq_${id}`} label={question}>

@@ -2,7 +2,12 @@ version: '3.3'
 
 services:
   sut:
-    image: ${SUT}
+    build:
+      context: .
+      dockerfile: ../../../scripts/Dockerfile-test
+      args:
+        DB_NAME: db_gjafakort_application
+        APP: gjafakort-application
     networks:
       - local
     depends_on:
@@ -12,17 +17,8 @@ services:
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
       - DB_HOST=db_gjafakort_application
-    entrypoint:
-      [
-        'scripts/_wait-for.sh',
-        'db_gjafakort_application:5432',
-        '-t',
-        '5',
-        '--',
-        'yarn',
-        'test',
-        'gjafakort-application',
-      ]
+    volumes:
+      - ../../..:/code
 
   db_gjafakort_application:
     ports: []
