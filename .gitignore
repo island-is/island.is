@@ -61,3 +61,6 @@ schema.ts
 possibleTypes.json
 fragmentTypes.json
 **/gen/fetch/**
+
+# Jest test results
+**/test-results

@@ -26,7 +26,7 @@ describe('AuthService', () => {
       const role = authService.getRole(user)
 
       // Assert
-      expect(role).toBe('developer')
+      expect(role).toBe('tester')
     })
   })
 
