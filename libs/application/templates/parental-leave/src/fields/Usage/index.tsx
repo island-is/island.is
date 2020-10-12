@@ -52,6 +52,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
                 }
               }}
               showLabel
+              showProgressOverlay={false}
               label={{ singular: 'mánuður', plural: 'mánuðir' }}
               currentIndex={value || defaultUsage}
               onChange={(selectedMonths: number) => {
