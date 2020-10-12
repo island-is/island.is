@@ -16,7 +16,11 @@ import {
 import { MappedData, SearchIndexes, SearchResponse } from '../types'
 import { environment } from '../environments/environment'
 import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
-import { DateAggregationInput, dateAggregationQuery, DateAggregationResponse } from '../queries/dateAggregation'
+import {
+  DateAggregationInput,
+  dateAggregationQuery,
+  DateAggregationResponse,
+} from '../queries/dateAggregation'
 
 const { elastic } = environment
 interface SyncRequest {

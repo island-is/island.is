@@ -4,8 +4,8 @@ export interface DateAggregationInput {
 }
 
 type aggregationResult = {
-  key_as_string: string,
-  key: number,
+  key_as_string: string
+  key: number
   doc_count: number
 }
 
@@ -17,25 +17,23 @@ export interface DateAggregationResponse {
 
 export const dateAggregationQuery = ({
   types = [],
-  field = 'dateCreated'
+  field = 'dateCreated',
 }: DateAggregationInput) => {
-
-
   const query = {
     query: {
       terms: {
         type: types,
-      }
+      },
     },
     aggs: {
       years: {
         date_histogram: {
           calendar_interval: '1M',
           format: 'yyyy-MM',
-          field
-        }
-      }
-    }
+          field,
+        },
+      },
+    },
   }
 
   return query
