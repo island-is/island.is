@@ -268,39 +268,6 @@ export const Confirmation: React.FC = () => {
                     <AccordionListItem title="Málflutningur">
                       {workingCase.litigationPresentations}
                     </AccordionListItem>
-                    <Box marginBottom={2}>
-                      <Text variant="h4" as="h4">
-                        Úrskurður
-                      </Text>
-                    </Box>
-                    <Box marginBottom={1}>
-                      <Text>{workingCase.ruling}</Text>
-                    </Box>
-                    <AccordionListItem title="Úrskurðarorð">
-                      {constructConclusion(workingCase)}
-                    </AccordionListItem>
-                    <AccordionListItem title="Ákvörðun um kæru">
-                      Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
-                      úrskurð þennan til Landsréttar innan þriggja sólarhringa.
-                      Dómari bendir kærða á að honum sé heimilt að bera atriði
-                      er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-                    </AccordionListItem>
-                    <Box marginBottom={5}>
-                      <BulletList>
-                        <Bullet>
-                          {getAppealDecitionText(
-                            AppealDecitionRole.ACCUSED,
-                            workingCase.accusedAppealDecision,
-                          )}
-                        </Bullet>
-                        <Bullet>
-                          {getAppealDecitionText(
-                            AppealDecitionRole.PROSECUTOR,
-                            workingCase.prosecutorAppealDecision,
-                          )}
-                        </Bullet>
-                      </BulletList>
-                    </Box>
                   </AccordionItem>
                 </Accordion>
               </Box>

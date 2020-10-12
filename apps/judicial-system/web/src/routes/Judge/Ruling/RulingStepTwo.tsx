@@ -233,6 +233,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
                 <Input
                   name="accusedAppealAnnouncement"
+                  data-testid="accusedAppealAnnouncement"
                   label="Yfirlýsing um kæru"
                   disabled={
                     workingCase.accusedAppealDecision !==
@@ -361,6 +362,7 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
               <Input
                 name="prosecutorAppealAnnouncement"
+                data-testid="prosecutorAppealAnnouncement"
                 label="Yfirlýsing um kæru"
                 disabled={
                   workingCase.prosecutorAppealDecision !==
