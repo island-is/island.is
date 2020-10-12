@@ -136,11 +136,8 @@ const NewsList: Screen<NewsListProps> = ({
         </div>
       )}
       {months.map((date: Date) => (
-        <div>
-          <Link
-            key={date.toISOString()}
-            href={makeHref(date.getFullYear(), date.getMonth())}
-          >
+        <div key={date.toISOString()}>
+          <Link href={makeHref(date.getFullYear(), date.getMonth())}>
             <Text as="span">{capitalize(format(date, 'MMMM'))}</Text>
           </Link>
           <Text as="span">
@@ -203,7 +200,14 @@ const NewsList: Screen<NewsListProps> = ({
               />
             </GridColumn>
           )}
-
+          {!newsList.length && (
+            <Text variant="h4">
+              {n(
+                'newsListEmptyMonth',
+                'Engar fréttir fundust í þessum mánuði.',
+              )}
+            </Text>
+          )}
           {newsList.map((newsItem, index) => (
             <NewsCard
               key={index}
@@ -217,21 +221,23 @@ const NewsList: Screen<NewsListProps> = ({
               readMoreText={n('readMore', 'Lesa nánar')}
             />
           ))}
-          <Box paddingTop={[4, 4, 8]}>
-            <Pagination
-              {...page}
-              renderLink={(page, className, children) => (
-                <Link
-                  href={{
-                    pathname: makePath('news'),
-                    query: { ...Router.query, page },
-                  }}
-                >
-                  <span className={className}>{children}</span>
-                </Link>
-              )}
-            />
-          </Box>
+          {newsList.length > 0 && (
+            <Box paddingTop={[4, 4, 8]}>
+              <Pagination
+                {...page}
+                renderLink={(page, className, children) => (
+                  <Link
+                    href={{
+                      pathname: makePath('news'),
+                      query: { ...Router.query, page },
+                    }}
+                  >
+                    <span className={className}>{children}</span>
+                  </Link>
+                )}
+              />
+            </Box>
+          )}
         </Stack>
       </NewsListLayout>
     </>
@@ -265,6 +271,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
+          lang: locale as ContentLanguage,
           perPage: 1,
           ascending: true,
         },
@@ -274,6 +281,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
+          lang: locale as ContentLanguage,
           perPage: 1,
         },
       },
@@ -295,8 +303,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
+            lang: locale as ContentLanguage,
             namespace: 'NewsList',
-            lang: locale,
           },
         },
       })
@@ -305,10 +313,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
-
-  if ((year || page.page > 1) && newsList.length === 0) {
-    throw new CustomNextError(404)
-  }
 
   return {
     newsList,
