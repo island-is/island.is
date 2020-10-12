@@ -22,7 +22,7 @@ import ContentfulApi from '../../services/contentful';
 
 
 
-describe(' ServiceCard ', async () => {
+describe(' ServiceCard ', () => {
   
   const service: ApiService = {
     id: '0',

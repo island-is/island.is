@@ -15,7 +15,7 @@ import {
 
 import ContentfulApi from '../../services/contentful';
 
-describe(' ServiceDetail ', async () => {
+describe(' ServiceDetail ', () => {
 
   const service: ApiService = {
     id: '0',
