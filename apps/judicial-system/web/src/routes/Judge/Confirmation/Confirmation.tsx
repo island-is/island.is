@@ -348,18 +348,6 @@ export const Confirmation: React.FC = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Box component="section" marginBottom={8}>
-                <Box marginBottom={10}>
-                  <Box marginBottom={2}>
-                    <Typography as="h4" variant="h4">
-                      Úrskurðarorð
-                    </Typography>
-                  </Box>
-                  <Box marginBottom={1}>
-                    <Typography>{constructConclusion(workingCase)}</Typography>
-                  </Box>
-                </Box>
-              </Box>
               {uContext?.user && (
                 <Box marginBottom={15}>
                   <Typography variant="h3">

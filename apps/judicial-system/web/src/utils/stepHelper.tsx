@@ -167,6 +167,7 @@ export const renderFormStepper = (
             { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
             { type: 'SUB_SECTION', name: 'Þingbók' },
             { type: 'SUB_SECTION', name: 'Úrskurður' },
+            { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
             { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
           ],
         },
