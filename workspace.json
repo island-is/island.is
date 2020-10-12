@@ -969,7 +969,7 @@
               "apps/application-system/form/src/favicon.ico",
               "apps/application-system/form/src/assets"
             ],
-            "styles": ["apps/application-system/form/src/styles.scss"],
+            "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js"
           },
