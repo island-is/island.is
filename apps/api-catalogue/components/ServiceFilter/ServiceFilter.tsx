@@ -36,12 +36,12 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
         </span>
         <InputSearch
           name="text-search"
-          value={props.parameters.query}
+          value={props.parameters?.query}
           loading={props.isLoading}
           placeholder={
             props.strings.find((s) => s.id === 'catalog-filter-search').text
           }
-          colored={props.parameters.query.length < 1}
+          colored={props.parameters.query?.length < 1}
           onChange={props.onInputChange}
         />
       </Box>
