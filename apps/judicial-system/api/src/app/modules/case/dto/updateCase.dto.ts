@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator'
+import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
@@ -129,7 +129,7 @@ export class UpdateCaseDto {
   readonly ruling: string
 
   @IsOptional()
-  @IsString()
+  @IsBoolean()
   @ApiPropertyOptional({ type: String })
   readonly rejecting: boolean
 

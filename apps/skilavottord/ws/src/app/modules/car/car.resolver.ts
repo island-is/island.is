@@ -1,4 +1,5 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Authorize } from '../auth'
 import { Car } from './models'
 import { CarService } from './models/car.service'
 
@@ -9,6 +10,8 @@ export class CarResolver {
   constructor() {
     this.carService = new CarService()
   }
+
+  @Authorize()
 
   //Test
   //query b {getCarById(id: "2"){id, ownerId, name, model}}

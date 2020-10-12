@@ -14,11 +14,12 @@ export const root = style({
   position: 'absolute',
   right: theme.spacing[3],
   top: theme.spacing[3],
-  height: 'auto',
+  height: '100vh',
   zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       left: 'auto',
+      height: 'auto',
       top: theme.spacing[3],
       right: theme.spacing[3],
       paddingBottom: theme.spacing[3],
