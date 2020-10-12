@@ -4,7 +4,6 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-
 import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
@@ -263,4 +262,4 @@ export class ElasticService {
   }
 }
 
-// TODO: This service needs to include only generic functions anything specific to cms search should belong there
+// TODO: This service needs to include only generic functions anything specific to cms search should be in cms domain libary

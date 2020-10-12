@@ -7,6 +7,8 @@ import {
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
 import { News } from './models/news.model'
+import { GetNewsInput } from './dto/getNews.input'
+import { GetArticlesInput } from './dto/getArticles.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -33,7 +35,7 @@ export class CmsElasticsearchService {
 
   async getArticles(
     index: SearchIndexes,
-    { category, size }: { category: string; size?: number },
+    { category, size }: GetArticlesInput,
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
@@ -53,11 +55,25 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: SearchIndexes,
-    { size }: { size?: number },
+    { size, page, order, month, year }: GetNewsInput,
   ): Promise<News[]> {
+    let dateQuery
+    if (year) {
+      dateQuery = {
+        date: {
+          from: `${year}-${month.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD
+          to: `${year}-${month.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD
+        },
+      }
+    } else {
+      dateQuery = {}
+    }
+
     const query = {
       types: ['webNews'],
-      sort: { dateCreated: 'asc' as sortDirection },
+      sort: { dateCreated: order as sortDirection },
+      ...dateQuery,
+      page,
       size,
     }
 

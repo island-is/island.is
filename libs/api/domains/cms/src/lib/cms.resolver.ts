@@ -66,10 +66,9 @@ import { AboutSubPage } from './models/aboutSubPage.model'
 import { GetHomepageInput } from './dto/getHomepage.input'
 import { ContactUsInput } from './dto/contactUs.input'
 import { ContactUsPayload } from './models/contactUsPayload.model'
-import { GetNewsInput } from './dto/getNews.input'
-import { logger } from '@island.is/logging'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Homepage } from './models/homepage.model'
+import { GetNewsInput } from './dto/getNews.input'
 
 const { cacheTime } = environment
 
@@ -305,10 +304,11 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [Article])
-  getArticles(
-    @Args('input') { lang, ...input }: GetArticlesInput,
-  ): Promise<Article[]> {
-    return this.cmsElasticsearchService.getArticles(SearchIndexes[lang], input)
+  getArticles(@Args('input') input: GetArticlesInput): Promise<Article[]> {
+    return this.cmsElasticsearchService.getArticles(
+      SearchIndexes[input.lang],
+      input,
+    )
   }
 
   @Directive(cacheControlDirective())
@@ -324,9 +324,11 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [News])
-  getNews(@Args('input') { lang, size }: GetNewsInput): Promise<News[]> {
-    logger.info('inside')
-    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
+  getNews(@Args('input') input: GetNewsInput): Promise<News[]> {
+    return this.cmsElasticsearchService.getNews(
+      SearchIndexes[input.lang],
+      input,
+    )
   }
 
   @Mutation(() => ContactUsPayload)
