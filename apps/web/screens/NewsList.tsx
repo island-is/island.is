@@ -126,18 +126,27 @@ const NewsList: Screen<NewsListProps> = ({
         }}
       />
       {selectedYear && (
-        <Text>
-          <Link href={makeHref(selectedYear)}>{allMonthsString}</Link>
-          {selectedMonth === undefined && <Bullet align="right" />}
-        </Text>
+        <div>
+          <Link href={makeHref(selectedYear)}>
+            <Text as="span">{allMonthsString}</Text>
+          </Link>
+          <Text as="span">
+            {selectedMonth === undefined && <Bullet align="right" />}
+          </Text>
+        </div>
       )}
       {months.map((date: Date) => (
-        <Text key={date.toISOString()}>
-          <Link href={makeHref(date.getFullYear(), date.getMonth())}>
-            {capitalize(format(date, 'MMMM'))}
+        <div>
+          <Link
+            key={date.toISOString()}
+            href={makeHref(date.getFullYear(), date.getMonth())}
+          >
+            <Text as="span">{capitalize(format(date, 'MMMM'))}</Text>
           </Link>
-          {selectedMonth === date.getMonth() && <Bullet align="right" />}
-        </Text>
+          <Text as="span">
+            {selectedMonth === date.getMonth() && <Bullet align="right" />}
+          </Text>
+        </div>
       ))}
     </Stack>
   )
