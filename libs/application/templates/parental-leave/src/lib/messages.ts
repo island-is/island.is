@@ -63,7 +63,8 @@ export const m = defineMessages({
   },
   durationDescription: {
     id: 'pl.application:duration.description',
-    defaultMessage: 'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjsting their income percentage.',
+    defaultMessage:
+      'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjsting their income percentage.',
     description: 'Some description',
   },
   calculationsSubsection: {
