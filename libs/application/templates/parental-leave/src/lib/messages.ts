@@ -61,6 +61,11 @@ export const m = defineMessages({
     defaultMessage: 'Please confirm your leave duration',
     description: 'Some description',
   },
+  durationDescription: {
+    id: 'pl.application:duration.description',
+    defaultMessage: 'Some people choose to take the full leave all at once, but also extend it by months or to a certain date by adjsting their income percentage.',
+    description: 'Some description',
+  },
   calculationsSubsection: {
     id: 'pl.application:calculations.subsection',
     defaultMessage: 'Útreikningur',
