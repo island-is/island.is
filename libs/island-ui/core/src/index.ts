@@ -55,7 +55,7 @@ export * from './lib/Box/useBoxStyles'
 export * from './lib/Inline/Inline'
 export * from './lib/Stack/Stack'
 export * from './lib/Hidden/Hidden'
-export * from './lib/Tiles/Tiles' // TODO: missing stories
+export { Tiles } from './lib/Tiles/Tiles'
 export * from './lib/Grid/GridColumn/GridColumn'
 export * from './lib/Grid/GridContainer/GridContainer'
 export * from './lib/Grid/GridRow/GridRow'
