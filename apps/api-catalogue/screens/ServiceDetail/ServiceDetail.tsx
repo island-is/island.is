@@ -3,16 +3,15 @@ import { Layout, ServiceDetail as ServiceDetails } from '../../components'
 import { GET_API_SERVICE_QUERY } from '../Queries'
 import {
   ApiService,
-  GetOpenApiInput,
-  OpenApi,
   Query,
   QueryGetApiServiceByIdArgs,
-  QueryGetOpenApiArgs,
 } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import { GridContainer } from '@island.is/island-ui/core'
 import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
+import * as styles from './ServiceDetail.treat'
+import cn from 'classnames'
 
 export interface ServiceDetailPageProps {
   service: ApiService
@@ -26,7 +25,7 @@ export function ServiceDetail({
   return (
     <GridContainer>
       {service?.name == null ? (
-        <div>Þjónusta fannst ekki</div>
+        <div className={cn(styles.errorContainer)}>Þjónusta fannst ekki</div>
       ) : (
         <ServiceDetails service={service} strings={filterStrings.strings} />
       )}

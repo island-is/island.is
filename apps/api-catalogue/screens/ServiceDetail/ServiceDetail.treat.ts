@@ -1,9 +1,11 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const serviceList = style({
+export const errorContainer = style({
+  height: '50vh',
   display: 'flex',
-  flexWrap: 'wrap',
-  minHeight: 350,
-  flexDirection: 'row',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontFamily: theme.typography.fontFamily
 })
