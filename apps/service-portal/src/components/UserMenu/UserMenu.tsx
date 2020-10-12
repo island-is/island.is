@@ -2,7 +2,7 @@ import React, { FC, useState, useRef } from 'react'
 import { useStore } from '../../store/stateProvider'
 import {
   Box,
-  Button,
+  ButtonDeprecated as Button,
   Hidden,
   Icon,
   Stack,

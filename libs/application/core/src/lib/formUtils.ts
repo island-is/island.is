@@ -3,7 +3,7 @@
 // @ts-ignore
 const merge = require('deepmerge')
 
-import { Answer, FormValue } from '../types/Application'
+import { FormValue } from '../types/Application'
 import {
   Form,
   FormNode,
@@ -55,7 +55,7 @@ export function findNode(
   }
   return undefined
 }
-const isValidScreen = (node: FormNode): boolean => {
+export const isValidScreen = (node: FormNode): boolean => {
   switch (node.type) {
     case FormItemTypes.FORM: {
       return false
@@ -90,10 +90,6 @@ export const getFormNodeLeaves = (node: FormNode): FormLeaf[] => {
     }
   }
   return leaves
-}
-
-export const getFormLeaves = (form: Form): FormLeaf[] => {
-  return getFormNodeLeaves(form)
 }
 
 export function getSectionsInForm(form: Form): Section[] {

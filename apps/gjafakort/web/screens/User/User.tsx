@@ -4,7 +4,12 @@ import { useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import get from 'lodash/get'
 
-import { Box, Stack, Typography, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Typography,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { CONFIRM_CODE_ERROR } from '@island.is/gjafakort/consts'
 
 import { UserContext } from '@island.is/gjafakort-web/context'

@@ -23,7 +23,7 @@ import {
   Divider,
   Link,
   Icon,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
@@ -128,16 +128,16 @@ const RelatedArticles: FC<{
         </Text>
         <Divider weight="alternate" />
         {articles.map((article) => (
-          <Text key={article.slug} as="span">
-            <Link
-              key={article.slug}
-              href={makePath('article', '[slug]')}
-              as={makePath('article', article.slug)}
-              underline="normal"
-            >
+          <Link
+            key={article.slug}
+            href={makePath('article', '[slug]')}
+            as={makePath('article', article.slug)}
+            underline="normal"
+          >
+            <Text key={article.slug} as="span">
               {article.title}
-            </Link>
-          </Text>
+            </Text>
+          </Link>
         ))}
       </Stack>
     </SidebarBox>
@@ -198,18 +198,18 @@ const SubArticleNavigation: FC<{
         </Text>
         <Divider weight="alternate" />
         <div ref={!selectedSubArticle ? setBullet : null}>
-          <Text>
-            <Link
-              shallow
-              href={makePath('article', '[slug]')}
-              as={makePath('article', article.slug)}
-            >
+          <Link
+            shallow
+            href={makePath('article', '[slug]')}
+            as={makePath('article', article.slug)}
+          >
+            <Text>
               {maybeBold(
                 article.shortTitle || article.title,
                 !selectedSubArticle,
               )}
-            </Link>
-          </Text>
+            </Text>
+          </Link>
         </div>
         {article.subArticles.map((subArticle, id) => (
           <Fragment key={id}>
@@ -220,18 +220,18 @@ const SubArticleNavigation: FC<{
                   : null
               }
             >
-              <Text as="span">
-                <Link
-                  shallow
-                  href={makePath('article', '[slug]/[subSlug]')}
-                  as={makePath('article', `${article.slug}/${subArticle.slug}`)}
-                >
+              <Link
+                shallow
+                href={makePath('article', '[slug]/[subSlug]')}
+                as={makePath('article', `${article.slug}/${subArticle.slug}`)}
+              >
+                <Text as="span">
                   {maybeBold(
                     subArticle.title,
                     subArticle === selectedSubArticle,
                   )}
-                </Link>
-              </Text>
+                </Text>
+              </Link>
             </div>
             {subArticle === selectedSubArticle && navigation.length > 0 && (
               <SidebarSubNav>
@@ -462,20 +462,20 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   marginY={3}
                   borderRadius="large"
                 >
-                  <Text variant="h4" as="span" color="blue400">
-                    <Link
-                      passHref
-                      href={processEntry.processLink}
-                      underline="normal"
-                    >
+                  <Link
+                    passHref
+                    href={processEntry.processLink}
+                    underline="normal"
+                  >
+                    <Text variant="h4" as="span" color="blue400">
                       <span>
                         {processEntry.buttonText || n('processLinkButtonText')}
                       </span>
                       <Box component="span" marginLeft={2}>
                         <Icon type="external" width="15" />
                       </Box>
-                    </Link>
-                  </Text>
+                    </Text>
+                  </Link>
                 </Box>
               </Hidden>
             )}

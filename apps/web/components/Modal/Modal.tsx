@@ -10,7 +10,7 @@ import React, {
   useState,
 } from 'react'
 import {
-  Button,
+  ButtonDeprecated as Button,
   Box,
   Stack,
   Text,

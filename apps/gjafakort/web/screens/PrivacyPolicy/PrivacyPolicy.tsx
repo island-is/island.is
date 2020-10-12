@@ -1,7 +1,12 @@
 import React from 'react'
 import HtmlParser from 'react-html-parser'
 
-import { Stack, Typography, Box, Button } from '@island.is/island-ui/core'
+import {
+  Stack,
+  Typography,
+  Box,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { Layout, AppsSidebar } from '@island.is/gjafakort-web/components'
 import Link from 'next/link'

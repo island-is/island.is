@@ -6,7 +6,7 @@ import {
   Icon,
   Typography,
   Tag,
-  Button,
+  ButtonDeprecated as Button,
   Columns,
   Column,
 } from '@island.is/island-ui/core'

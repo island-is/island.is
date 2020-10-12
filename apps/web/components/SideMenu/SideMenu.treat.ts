@@ -11,14 +11,15 @@ export const root = style({
   paddingTop: theme.spacing[3],
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[3],
-  position: 'fixed',
+  position: 'absolute',
   right: theme.spacing[3],
   top: theme.spacing[3],
+  height: '100vh',
   zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      height: 'auto',
       left: 'auto',
+      height: 'auto',
       top: theme.spacing[3],
       right: theme.spacing[3],
       paddingBottom: theme.spacing[3],
@@ -92,4 +93,10 @@ export const linksContent = style({
   paddingBottom: theme.spacing[4],
   paddingLeft: theme.spacing[3],
   width: '100%',
+})
+
+export const closeButton = style({
+  position: 'absolute',
+  right: theme.spacing[3],
+  top: theme.spacing[3],
 })

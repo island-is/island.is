@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
-import { Button, Text, Stack } from '@island.is/island-ui/core'
+import {
+  ButtonDeprecated as Button,
+  Text,
+  Stack,
+} from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
 

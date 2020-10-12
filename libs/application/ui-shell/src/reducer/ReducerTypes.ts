@@ -1,10 +1,4 @@
-import {
-  Application,
-  Form,
-  FormLeaf,
-  Schema,
-  Section,
-} from '@island.is/application/core'
+import { Application, Form, Schema, Section } from '@island.is/application/core'
 import { FormScreen } from '../types'
 
 export interface ApplicationUIState {
@@ -14,7 +8,6 @@ export interface ApplicationUIState {
   activeScreen: number
   dataSchema: Schema
   form: Form
-  formLeaves: FormLeaf[]
   nationalRegistryId: string
   progress: number
   screens: FormScreen[]

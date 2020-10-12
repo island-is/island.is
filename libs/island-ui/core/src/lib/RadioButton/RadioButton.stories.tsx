@@ -1,79 +1,35 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { RadioButton } from './RadioButton'
-import { Box } from '../Box'
-import { ContentBlock } from '../ContentBlock'
-import { Stack } from '../Stack/Stack'
+import { Box } from '../Box/Box'
 
 export default {
   title: 'Form/RadioButton',
   component: RadioButton,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=49%3A135)',
+      },
+    },
+  },
 }
 
-export const Default = () => {
-  const [radioButton, setRadioButton] = useState('')
-  return (
-    <ContentBlock>
-      <Box padding={[1, 2, 3]}>
-        <Stack space={4}>
-          <RadioButton
-            name="RadioButton1"
-            id="1"
-            label="RadioButton label"
-            value="1"
-            onChange={({ target }) => {
-              setRadioButton(target.value)
-            }}
-            checked={radioButton === '1'}
-          />
-          <RadioButton
-            name="RadioButton1"
-            id="2"
-            label="RadioButton label"
-            value="2"
-            onChange={({ target }) => {
-              setRadioButton(target.value)
-            }}
-            checked={radioButton === '2'}
-          />
-        </Stack>
-      </Box>
-    </ContentBlock>
-  )
-}
+const Template = (args) => <RadioButton {...args} />
 
-export const Checked = () => {
-  return (
-    <ContentBlock>
-      <Box padding={[1, 2, 3]}>
-        <RadioButton
-          name="RadioButton2"
-          label="This one is checked"
-          onChange={() => {
-            console.log('nope')
-          }}
-          checked
-        />
-      </Box>
-    </ContentBlock>
-  )
-}
+export const Primary = Template.bind({})
+Primary.args = { label: 'My label', large: false }
 
-export const Large = () => {
-  const [radioButton, setRadioButton] = useState('')
-  return (
-    <ContentBlock>
-      <Box padding={[1, 2, 3]}>
-        <RadioButton
-          name="RadioButton2"
-          label="Checkbox"
-          value="1"
-          onChange={({ target }) => {
-            setRadioButton(target.value)
-          }}
-          checked={radioButton === '1'}
-          large
-        />
-      </Box>
-    </ContentBlock>
-  )
-}
+export const Large = Template.bind({})
+Large.args = { label: 'Large version', large: true }
+
+export const WithTooltip = Template.bind({})
+WithTooltip.args = { label: 'With a tooltip', tooltip: 'This is the tooltip' }
+
+export const Filled = () => (
+  <>
+    <Box background={'blue100'} padding={3}>
+      <RadioButton label="Filled white background" filled large />
+    </Box>
+  </>
+)

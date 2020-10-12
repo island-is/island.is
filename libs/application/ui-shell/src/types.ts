@@ -1,6 +1,5 @@
 import {
   Field,
-  FormValue,
   MultiField,
   ExternalDataProvider,
   Repeater,
@@ -26,7 +25,7 @@ export type RepeaterScreen = {
   }
 
 export type ExternalDataProviderScreen = {
-  isNavigable: true
+  isNavigable?: boolean
 } & ExternalDataProvider
 
 export type FormScreen =

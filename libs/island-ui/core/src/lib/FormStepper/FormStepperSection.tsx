@@ -1,9 +1,10 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 
-import { Box } from '../Box'
-import { Typography } from '../Typography/Typography'
-import { SectionNumber, SubSections } from './shared'
+import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
+import { SectionNumber } from './SectionNumber/SectionNumber'
+import { SubSections } from './SubSections/SubSections'
 import * as types from './types'
 
 function getSubSectionsInSection(
@@ -67,13 +68,9 @@ export const FormStepperSection: FC<{
           </Box>
 
           <Box paddingTop={2} width="full">
-            <Typography
-              variant={
-                isActive ? 'formStepperSectionActive' : 'formStepperSection'
-              }
-            >
+            <Text lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
               {section.name}
-            </Typography>
+            </Text>
           </Box>
         </Box>
 

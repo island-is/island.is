@@ -21,41 +21,48 @@ export const user = {
   name: 'Ívar Oddsson',
   title: 'héraðsdómari',
   mobileNumber: '6904031',
+  email: 'ivaro@kolibri.is',
   role: 'JUDGE',
 }
 
-jest.mock('pug', function () {
+jest.mock('pdfkit', function () {
+  class MockPDFDocument {
+    pipe(stream) {
+      return stream
+    }
+    font() {
+      return this
+    }
+    fontSize() {
+      return this
+    }
+    lineGap() {
+      return this
+    }
+    text() {
+      return this
+    }
+    end() {
+      return this
+    }
+  }
   return {
-    default: {
-      compileFile: function () {
-        return function () {
-          return 'html'
-        }
-      },
-    },
+    default: MockPDFDocument,
   }
 })
 
-jest.mock('puppeteer', function () {
+jest.mock('stream-buffers', function () {
+  class MockWritableStreamBuffer {
+    on(_, fn) {
+      fn()
+    }
+    getContentsAsString() {
+      // eslint-disable-line @typescript-eslint/no-empty-function
+    }
+  }
   return {
     default: {
-      launch: function () {
-        return {
-          newPage: function () {
-            return {
-              setContent: function () {
-                return
-              },
-              pdf: function () {
-                return 'pdf'
-              },
-            }
-          },
-          close: function () {
-            return
-          },
-        }
-      },
+      WritableStreamBuffer: MockWritableStreamBuffer,
     },
   }
 })

@@ -197,7 +197,7 @@ const Search: Screen<CategoryProps> = ({
                       right: 40,
                       position: 'absolute',
                       left: '0',
-                      top: '-4px',
+                      top: '12px',
                       zIndex: 10, // to accommodate for being absolute
                     }}
                   >

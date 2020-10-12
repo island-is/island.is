@@ -45,5 +45,3 @@ export const SkeletonLoader = ({
     </Stack>
   )
 }
-
-export default SkeletonLoader

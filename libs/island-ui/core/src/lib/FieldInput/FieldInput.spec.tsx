@@ -2,7 +2,7 @@ import React from 'react'
 import { Formik, Field } from 'formik'
 import { render } from '@testing-library/react'
 
-import FieldInput from './FieldInput'
+import { FieldInput } from './FieldInput'
 
 describe(' FieldInput', () => {
   it('should render successfully', () => {

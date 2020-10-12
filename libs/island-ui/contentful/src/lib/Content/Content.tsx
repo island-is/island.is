@@ -2,10 +2,10 @@ import React from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
-  Typography,
+  Text,
   BulletList,
   Bullet,
-  Button,
+  ButtonDeprecated as Button,
   Box,
   Accordion,
   AccordionItem,
@@ -65,7 +65,7 @@ const embeddedNodes = () => ({
 
       return (
         <ContentWrap>
-          <Typography
+          <Text
             id={slugify(title)}
             variant="h2"
             as="h2"
@@ -73,7 +73,7 @@ const embeddedNodes = () => ({
             paddingBottom={4}
           >
             <span data-sidebar-link={slugify(title)}>{title}</span>
-          </Typography>
+          </Text>
           <Accordion>
             {items.map((item, index) => {
               const { answer, question } = item
@@ -147,20 +147,11 @@ const embeddedNodes = () => ({
         topContent: (
           <ProcessEntryWrap>
             {title && (
-              <Typography
-                id={slugify(title)}
-                variant="h2"
-                as="h3"
-                paddingBottom={2}
-              >
+              <Text id={slugify(title)} variant="h2" as="h3" paddingBottom={2}>
                 <span data-sidebar-link={slugify(title)}>{title}</span>
-              </Typography>
+              </Text>
             )}
-            {subtitle && (
-              <Typography variant="intro" as="p">
-                {subtitle}
-              </Typography>
-            )}
+            {subtitle && <Text variant="intro">{subtitle}</Text>}
             <RichText
               document={details}
               renderNode={customProcessEntryRenderNode()}
@@ -170,20 +161,15 @@ const embeddedNodes = () => ({
         bottomContent: (
           <ProcessEntryWrap>
             {type !== 'No type' && (
-              <Typography
-                variant="eyebrow"
-                as="h4"
-                color="blue400"
-                paddingBottom={1}
-              >
+              <Text variant="eyebrow" as="h4" color="blue400" paddingBottom={1}>
                 {processTypes[type].title}
-              </Typography>
+              </Text>
             )}
 
             {processTitle && (
-              <Typography variant="h3" as="h3" paddingBottom={1}>
+              <Text variant="h3" as="h3" paddingBottom={1}>
                 {processTitle}
-              </Typography>
+              </Text>
             )}
             {processInfo && (
               <RichText
@@ -220,7 +206,7 @@ const embeddedNodes = () => ({
       if (!fields.image) {
         return (
           <>
-            <Typography
+            <Text
               id={slugify(fields.title)}
               variant="h2"
               as="h2"
@@ -230,7 +216,7 @@ const embeddedNodes = () => ({
               <span data-sidebar-link={slugify(fields.title)}>
                 {fields.title}
               </span>
-            </Typography>
+            </Text>
             <Content document={fields.body} />
           </>
         )
@@ -244,7 +230,7 @@ const embeddedNodes = () => ({
                 <img src={fields.image.fields.file.url + '?w=320'} alt="" />
               </GridColumn>
               <GridColumn span="8/12">
-                <Typography
+                <Text
                   id={slugify(fields.title)}
                   variant="h2"
                   as="h2"
@@ -253,7 +239,7 @@ const embeddedNodes = () => ({
                   <span data-sidebar-link={slugify(fields.title)}>
                     {fields.title}
                   </span>
-                </Typography>
+                </Text>
                 <Content document={fields.body} />
               </GridColumn>
             </GridRow>
@@ -305,7 +291,7 @@ const defaultRenderNode = (overrides = {}) => {
     },
     [BLOCKS.HEADING_2]: (node, children) => (
       <ContentWrap>
-        <Typography
+        <Text
           id={slugify(children.join(''))}
           variant="h2"
           as="h2"
@@ -313,14 +299,14 @@ const defaultRenderNode = (overrides = {}) => {
           paddingTop={2}
         >
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
-        </Typography>
+        </Text>
       </ContentWrap>
     ),
     [BLOCKS.HEADING_3]: (node, children) => (
       <ContentWrap>
-        <Typography id={slugify(children.join(''))} variant="h3" as="h3">
+        <Text id={slugify(children.join(''))} variant="h3" as="h3">
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
-        </Typography>
+        </Text>
       </ContentWrap>
     ),
     [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
@@ -384,14 +370,14 @@ const customProcessEntryRenderNode = () => ({
     return <Paragraph>{children}</Paragraph>
   },
   [BLOCKS.HEADING_2]: (node, children) => (
-    <Typography variant="h2" as="h2">
+    <Text variant="h2" as="h2">
       <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
-    </Typography>
+    </Text>
   ),
   [BLOCKS.HEADING_3]: (node, children) => (
-    <Typography variant="h3" as="h3">
+    <Text variant="h3" as="h3">
       {children}
-    </Typography>
+    </Text>
   ),
   [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
   [BLOCKS.LIST_ITEM]: (node, children) => {

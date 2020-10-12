@@ -15,6 +15,7 @@ export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
   readonly name: MessageDescriptor | string
+  readonly description?: MessageDescriptor | string
   readonly children: undefined
   width?: FieldWidth
   condition?: Condition
@@ -78,6 +79,8 @@ export interface RadioField extends Question {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: Option[]
+  emphasize?: boolean
+  largeButtons?: boolean
 }
 
 export interface SelectField extends Question {

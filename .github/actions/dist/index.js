@@ -10630,7 +10630,7 @@ const findLastGoodBuild = (shas, branch, base, workflowQueries) => Object(tslib.
 const octokit = new dist_node.Octokit();
 // const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-const workflow_file_name = 'build.yml';
+const workflow_file_name = 'push.yml';
 class main_GitHubWorkflowQueries {
     getData(branch) {
         return Object(tslib.__awaiter)(this, void 0, void 0, function* () {

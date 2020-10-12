@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
-  Button,
+  ButtonDeprecated as Button,
   Box,
   Typography,
   Stack,
