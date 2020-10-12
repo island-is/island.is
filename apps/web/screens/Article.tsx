@@ -360,6 +360,22 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
+  const relatedLinks = (article.relatedArticles ?? []).map((x) => ({
+    title: x.title,
+    url: x.slug,
+  }))
+
+  const combinedMobileNavigation = [
+    {
+      title: n('categoryOverview', 'Efnisyfirlit'),
+      items: contentOverviewOptions,
+    },
+    {
+      title: n('relatedMaterial'),
+      items: relatedLinks,
+    },
+  ]
+
   const metaTitle = `${article.title} | Ísland.is`
   const metaDescription =
     article.intro ||
@@ -429,14 +445,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <GridRow>
             <GridColumn span="9/9" paddingBottom={4}>
               <Hidden above="sm">
-                <DrawerMenu
-                  categories={[
-                    {
-                      title: n('categoryOverview', 'Efnisyfirlit'),
-                      items: contentOverviewOptions,
-                    },
-                  ]}
-                />
+                <DrawerMenu categories={combinedMobileNavigation} />
               </Hidden>
             </GridColumn>
           </GridRow>
