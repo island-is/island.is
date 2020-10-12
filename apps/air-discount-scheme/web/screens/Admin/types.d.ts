@@ -7,5 +7,7 @@ export type TItem = {
 export type TSummary = {
   awaitingDebit: TItem
   awaitingCredit: TItem
+  sentDebit: TItem
+  sentCredit: TItem
   cancelled: TItem
 }
