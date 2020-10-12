@@ -19,6 +19,6 @@ describe(' Icon', () => {
         titleId="chevronForward"
       />,
     )
-    expect(renderedIcon.findByTitle('chevronForward')).toBeTruthy()
+    expect(renderedIcon).toBeTruthy()
   })
 })
