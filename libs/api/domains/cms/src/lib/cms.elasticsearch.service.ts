@@ -12,7 +12,7 @@ import { GetArticlesInput } from './dto/getArticles.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) { }
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -84,6 +84,21 @@ export class CmsElasticsearchService {
     return articlesResponse.hits.hits.map<News>((response) =>
       JSON.parse(response._source.response),
     )
+  }
+
+  async getNewsDates(
+    index: SearchIndexes
+  ): Promise<string[]> {
+    const query = {
+      types: ['webNews'],
+      field: 'createdDate'
+    }
+
+    const newsDatesResponse = await this.elasticService.getDateAggregation(
+      index,
+      query,
+    )
+    return newsDatesResponse.aggregations.dates.buckets.map((aggregationResult) => aggregationResult.key_as_string)
   }
 
   async getSingleDocumentTypeBySlug<RequestedType>(

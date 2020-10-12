@@ -16,6 +16,7 @@ import {
 import { MappedData, SearchIndexes, SearchResponse } from '../types'
 import { environment } from '../environments/environment'
 import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
+import { DateAggregationInput, dateAggregationQuery, DateAggregationResponse } from '../queries/dateAggregation'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -129,6 +130,15 @@ export class ElasticService {
     const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
+  }
+
+  async getDateAggregation(index: string, query: DateAggregationInput) {
+    const requestBody = dateAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, DateAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
