@@ -47,6 +47,7 @@ export const variants = styleMap({
   primary: buttonBase,
   ghost: buttonBase,
   text: textBase,
+  utility: buttonBase,
 })
 
 export const size = styleMap({
@@ -80,6 +81,16 @@ export const size = styleMap({
       },
     }),
   },
+  utility: {
+    fontSize: 12,
+    lineHeight: 1.333333,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 14,
+        lineHeight: 1.142857,
+      },
+    }),
+  },
 })
 
 export const padding = styleMap({
@@ -103,6 +114,14 @@ export const padding = styleMap({
     ...themeUtils.responsiveStyle({
       md: {
         padding: '23px 32px',
+      },
+    }),
+  },
+  utility: {
+    padding: '12px 16px',
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '16px',
       },
     }),
   },
@@ -142,7 +161,15 @@ type PrimaryColors = (
   disabled: string,
 ) => Style
 
-type GhostColors = (main: string, hover: string, disabled: string) => Style
+type BorderedColors = (main: string, hover: string, disabled: string) => Style
+type UtilityColors = (
+  text: string,
+  border: string,
+  textHover: string,
+  borderHover: string,
+  textDisabled: string,
+  borderDisabled: string,
+) => Style
 
 const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
   backgroundColor: main,
@@ -165,7 +192,7 @@ const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
     },
   },
 })
-const ghostColors: GhostColors = (main, hover, disabled) => ({
+const ghostColors: BorderedColors = (main, hover, disabled) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${main}`,
   color: main,
@@ -188,7 +215,7 @@ const ghostColors: GhostColors = (main, hover, disabled) => ({
     },
   },
 })
-const textColors: GhostColors = (main, hover, disabled) => ({
+const textColors: BorderedColors = (main, hover, disabled) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 -1px 0 0 ${main}`,
   color: main,
@@ -208,6 +235,36 @@ const textColors: GhostColors = (main, hover, disabled) => ({
     '&:focus:active': {
       backgroundColor: theme.color.transparent,
       boxShadow: `inset 0 -3px 0 0 ${theme.color.mint400}`,
+    },
+  },
+})
+const utilityColors: UtilityColors = (
+  text,
+  border,
+  textHover,
+  borderHover,
+  textDisabled,
+  borderDisabled,
+) => ({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${border}`,
+  color: text,
+  ':disabled': {
+    boxShadow: `inset 0 0 0 1px ${borderDisabled}`,
+    color: textDisabled,
+  },
+  ':focus': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+  ':hover': {
+    backgroundColor: theme.color.transparent,
+    boxShadow: `inset 0 0 0 2px ${borderHover}`,
+    color: textHover,
+  },
+  selectors: {
+    '&:focus:active': {
+      backgroundColor: theme.color.transparent,
+      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },
 })
@@ -267,6 +324,24 @@ export const colors = {
       theme.color.dark200,
     ),
   }),
+  utility: styleMap({
+    default: utilityColors(
+      theme.color.dark400,
+      theme.color.blue200,
+      theme.color.dark400,
+      theme.color.blue400,
+      theme.color.dark200,
+      theme.color.blue100,
+    ),
+    negative: utilityColors(
+      theme.color.white,
+      theme.color.white,
+      theme.color.white,
+      theme.color.white,
+      theme.color.dark200,
+      theme.color.blue100,
+    ),
+  }),
 }
 
 export const circle = style({
@@ -295,6 +370,20 @@ export const icon = style({
       width: 15,
       height: 15,
       marginLeft: 8,
+    },
+    [`${variants.utility} &`]: {
+      width: 16,
+      height: 16,
+      marginLeft: 8,
+    },
+    [`${variants.utility}${colors.utility.default}:not(:focus) &`]: {
+      color: theme.color.blue400,
+    },
+    [`${variants.utility}${colors.utility.default}:active &`]: {
+      color: theme.color.blue400,
+    },
+    [`${variants.utility}${colors.utility.default}:hover &`]: {
+      color: theme.color.blue400,
     },
   },
 })
