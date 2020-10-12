@@ -1,0 +1,34 @@
+import * as React from 'react'
+interface SVGRProps {
+  title?: string;
+  titleId?: string;
+}
+
+function SvgFlashOutline({
+  title,
+  titleId,
+  ...props
+}: React.SVGProps<SVGSVGElement> & SVGRProps) {
+  return (
+    <svg
+      className="flash-outline_svg__ionicon"
+      viewBox="0 0 512 512"
+      width="1em"
+      height="1em"
+      aria-labelledby={titleId}
+      {...props}
+    >
+      {title ? <title id={titleId}>{title}</title> : null}
+      <path
+        d="M315.27 33L96 304h128l-31.51 173.23a2.36 2.36 0 002.33 2.77h0a2.36 2.36 0 001.89-.95L416 208H288l31.66-173.25a2.45 2.45 0 00-2.44-2.75h0a2.42 2.42 0 00-1.95 1z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={32}
+      />
+    </svg>
+  )
+}
+
+export default SvgFlashOutline
