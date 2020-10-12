@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { CreateUserProfileInput } from './dto/createUserProfileInput';
 import { GetUserProfileInput } from './dto/getUserProfileInput';
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput';
 import { UserProfile } from './userProfile.model';
 import { UserProfileService } from './userProfile.service';
 
@@ -13,5 +15,19 @@ export class UserProfileResolver {
     @Args('input') input: GetUserProfileInput,
   ): Promise<UserProfile | null> {
     return this.userUserProfileService.getUser(input.nationalId)
+  }
+
+  @Mutation(() => UserProfile, { nullable: true })
+  createProfile(
+    @Args('input') input: CreateUserProfileInput,
+  ): Promise<UserProfile | null> {
+    return this.userUserProfileService.createUser(input)
+  }
+
+  @Mutation(() => UserProfile, { nullable: true })
+  updateProfile(
+    @Args('input') input: UpdateUserProfileInput,
+  ): Promise<UserProfile | null> {
+    return this.userUserProfileService.updateUser(input)
   }
 }
