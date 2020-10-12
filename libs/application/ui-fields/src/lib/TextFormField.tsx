@@ -5,10 +5,9 @@ import {
   TextField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import { InputController, Description } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: TextField

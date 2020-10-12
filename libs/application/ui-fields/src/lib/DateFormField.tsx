@@ -5,9 +5,8 @@ import {
   formatText,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { DatePickerController } from '@island.is/shared/form-fields'
+import { DatePickerController, Description } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: DateField

@@ -8,7 +8,8 @@ import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import { theme } from '@island.is/island-ui/theme'
 
-import { Description } from '@island.is/application/ui-fields'
+
+import {  Description } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {

@@ -7,8 +7,7 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
-import { RadioController } from '@island.is/shared/form-fields'
-import Description from './components/Description'
+import { RadioController, Description } from '@island.is/shared/form-fields'
 
 interface Props extends FieldBaseProps {
   field: RadioField

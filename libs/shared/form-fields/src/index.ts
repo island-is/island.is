@@ -3,3 +3,4 @@ export { DatePickerController } from './lib/DatePickerController/DatePickerContr
 export { InputController } from './lib/InputController/InputController'
 export { RadioController } from './lib/RadioController/RadioController'
 export { SelectController } from './lib/SelectController/SelectController'
+export { default as Description } from './lib/Description'
