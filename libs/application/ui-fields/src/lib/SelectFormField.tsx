@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, SelectField } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  SelectField,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -8,31 +12,37 @@ import Description from './components/Description'
 interface Props extends FieldBaseProps {
   field: SelectField
 }
-const SelectFormField: FC<Props> = ({
-  error,
-  showFieldName = false,
-  field,
-}) => {
+const SelectFormField: FC<Props> = ({ application, error, field }) => {
   const { id, name, description, options, placeholder, disabled } = field
   const { formatMessage } = useLocale()
 
   return (
     <div>
-      {description && <Description description={formatMessage(description)} />}
+      {description && (
+        <Description
+          description={formatText(description, application, formatMessage)}
+        />
+      )}
 
       <Box paddingTop={2}>
         <SelectController
-          label={formatMessage(name) as string}
+          label={formatText(name, application, formatMessage)}
           name={id}
           disabled={disabled}
           error={error}
           id={id}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
-            label: formatMessage(label) as string,
-            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
+            label: formatText(label, application, formatMessage),
+            ...(tooltip && {
+              tooltip: formatText(tooltip, application, formatMessage),
+            }),
           }))}
-          placeholder={placeholder}
+          placeholder={
+            placeholder !== undefined
+              ? formatText(placeholder as string, application, formatMessage)
+              : undefined
+          }
         />
       </Box>
     </div>

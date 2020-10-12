@@ -7,13 +7,13 @@ import Slider from '../components/Slider'
 
 import { theme } from '@island.is/island-ui/theme'
 
-const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, formValue }) => {
+const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  const monthsToUse = (formValue.usage as number) || 1
+  const monthsToUse = (application.answers.usage as number) || 1
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const minMonths = 1
   const maxMonths = 24

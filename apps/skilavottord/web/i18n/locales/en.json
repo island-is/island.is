@@ -87,5 +87,15 @@
       "close": "Close"
     }
   },
-  "processSections": ["Confirm car for recycling", "Handover car to recycle"]
+  "processSections": ["Confirm car for recycling", "Handover car to recycle"],
+  "routes": {
+    "home": "/en",
+    "myCars": "/en/my-cars",
+    "recycleVehicle": {
+      "baseRoute": "/en/recycle-vehicle",
+      "confirm": "/en/recycle-vehicle/[id]/confirm",
+      "handover": "/en/recycle-vehicle/[id]/handover",
+      "completed": "/en/recycle-vehicle/[id]/completed"
+    }
+  }
 }
