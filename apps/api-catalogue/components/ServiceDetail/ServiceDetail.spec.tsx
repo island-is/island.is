@@ -5,12 +5,14 @@ import { render } from '@testing-library/react';
 import { ServiceDetail } from './ServiceDetail';
 
 import { 
-  ApiService,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-  AccessCategory
+  ApiService
  } from '@island.is/api/schema';
+
+ import { PricingCategory,
+          DataCategory,
+          TypeCategory,
+          AccessCategory} from '../../const/TestConst'
+
 import ContentfulApi from '../../services/contentful';
 
 describe(' ServiceDetail ', async () => {
@@ -34,10 +36,9 @@ describe(' ServiceDetail ', async () => {
   };
 
   const client = new ContentfulApi();
-  const filterStrings = await client.fetchPageBySlug('service-filter', 'is-IS');
 
-  it('should render successfully', () => {
-
+  it('should render successfully', async () => {
+    const filterStrings = await client.fetchPageBySlug('service-filter', 'is-IS');
     const { baseElement } = render(<ServiceDetail service={service} strings={filterStrings.strings}/>)
     expect(baseElement).toBeTruthy();
   })

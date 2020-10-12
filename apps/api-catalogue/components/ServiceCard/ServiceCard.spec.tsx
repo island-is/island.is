@@ -3,13 +3,24 @@ import { render } from '@testing-library/react';
 
 import {ServiceCard} from '.';
 import { 
-  ApiService,
-  PricingCategory,
+  ApiService
+ } from '@island.is/api/schema';
+
+ import { PricingCategory,
   DataCategory,
   TypeCategory,
-  AccessCategory
- } from '@island.is/api/schema';
+  AccessCategory} from '../../const/TestConst'
+
+  import {
+    AccessCategory as AccessCategoryDisplay,
+    PricingCategory as PricingCategoryDisplay,
+    TypeCategory as TypeCategoryDisplay, 
+    DataCategory as DataCategoryDisplay,
+  } from '@island.is/api-catalogue/consts'
+
 import ContentfulApi from '../../services/contentful';
+
+
 
 describe(' ServiceCard ', async () => {
   
@@ -32,14 +43,19 @@ describe(' ServiceCard ', async () => {
   };
 
   const client = new ContentfulApi();
-  const filterStrings = await client.fetchPageBySlug('service-filter', 'is-IS');
+  
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
+    const filterStrings = await client.fetchPageBySlug('service-filter', 'is-IS');
     const { baseElement } = render(<ServiceCard service={service} strings={filterStrings.strings} />)
     expect(baseElement).toBeTruthy()
   })
-  describe('Card values should contain', () => {
 
+  describe('Card values should contain', () => {
+    let filterStrings;
+    beforeEach(async ()=> {
+      filterStrings = await client.fetchPageBySlug('service-filter', 'en-GB');
+    })
     it('should contain service name', () => {
       const { getByText } = render(<ServiceCard service={service} strings={filterStrings.strings} />)
       expect(getByText(service.name)).toBeTruthy()
@@ -52,20 +68,20 @@ describe(' ServiceCard ', async () => {
 
     it('should contain all pricing values', () => {
       const { getByText } = render(<ServiceCard service={service} strings={filterStrings.strings} />)
-      expect(getByText(service.pricing[0])).toBeTruthy()
-      expect(getByText(service.pricing[1])).toBeTruthy()
+      expect(getByText(PricingCategoryDisplay.FREE)).toBeTruthy()
+      expect(getByText(PricingCategoryDisplay.PAID)).toBeTruthy()
     })
     it('should contain all categories values', () => {
       const { getByText } = render(<ServiceCard service={service} strings={filterStrings.strings} />)
-      expect(getByText(service.data[0])).toBeTruthy()
+      expect(getByText(DataCategoryDisplay.PUBLIC)).toBeTruthy()
     })
     it('should contain all types values', () => {
       const { getByText } = render(<ServiceCard service={service} strings={filterStrings.strings} />)
-      expect(getByText(service.type[0])).toBeTruthy()
+      expect(getByText(TypeCategoryDisplay.REST)).toBeTruthy()
     })
     it('should contain all Access values', () => {
       const { getByText } = render(<ServiceCard service={service} strings={filterStrings.strings} />)
-      expect(getByText(service.access[0])).toBeTruthy()
+      expect(getByText(AccessCategoryDisplay.XROAD)).toBeTruthy()
     })
   })
 })
