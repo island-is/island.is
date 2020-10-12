@@ -2,8 +2,6 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Bullet,
-  BulletList,
   GridColumn,
   GridContainer,
   GridRow,

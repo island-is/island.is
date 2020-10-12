@@ -7,15 +7,13 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { parseArray, parseString } from '../../../utils/formatters'
+import { parseString } from '../../../utils/formatters'
 import {
   autoSave,
   constructConclusion,

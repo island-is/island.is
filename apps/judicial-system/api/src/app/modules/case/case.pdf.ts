@@ -377,10 +377,6 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
         : 16,
     )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
-<<<<<<< HEAD
-    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`)
-    .end()
-=======
 
   if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
     doc.text(existingCase.prosecutorAppealAnnouncement, {
@@ -390,7 +386,6 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
   }
 
   doc.text(`${existingCase.judge.name}, ${existingCase.judge.title}`).end()
->>>>>>> Adds appeal announcemants to pdf
 
   // wait for the writing to finish
 

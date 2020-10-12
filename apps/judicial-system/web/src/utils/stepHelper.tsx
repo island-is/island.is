@@ -154,7 +154,7 @@ export const renderFormStepper = (
     <FormStepper
       sections={[
         {
-          name: 'Krafa um gæsluvarðahald',
+          name: 'Krafa um gæsluvarðhald',
           children: [
             { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
             { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },

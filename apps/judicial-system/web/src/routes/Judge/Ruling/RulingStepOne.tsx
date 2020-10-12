@@ -6,21 +6,17 @@ import {
   GridContainer,
   GridRow,
   Input,
-  RadioButton,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
-import {
-  CaseAppealDecision,
-  CaseCustodyRestrictions,
-} from '@island.is/judicial-system/types'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { parseArray, parseString } from '../../../utils/formatters'
+import { parseArray } from '../../../utils/formatters'
 import {
   autoSave,
   renderFormStepper,
@@ -70,12 +66,6 @@ export const RulingStepOne: React.FC = () => {
     prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
   })
 
-  const [accusedAppealDecition, setAccusedAppealDecition] = useState<
-    CaseAppealDecision
-  >(caseDraftJSON.accusedAppealDecision)
-  const [prosecutorAppealDecition, setProsecutorAppealDecition] = useState(
-    caseDraftJSON.prosecutorAppealDecision,
-  )
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
     caseDraftJSON.custodyRestrictions?.indexOf(
       CaseCustodyRestrictions.ISOLATION,
@@ -143,9 +133,9 @@ export const RulingStepOne: React.FC = () => {
               <JudgeLogo />
             </GridColumn>
             <GridColumn span={'8/12'} offset={'1/12'}>
-              <Typography as="h1" variant="h1">
+              <Text as="h1" variant="h1">
                 Krafa um gæsluvarðhald
-              </Typography>
+              </Text>
             </GridColumn>
           </GridRow>
         </Box>
@@ -155,14 +145,14 @@ export const RulingStepOne: React.FC = () => {
           </GridColumn>
           <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
             <Box component="section" marginBottom={7}>
-              <Typography variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Typography>
-              <Typography fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Typography>
+              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+              <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
+                <Text as="h3" variant="h3">
                   Úrskurður
-                </Typography>
+                </Text>
               </Box>
               <Box marginBottom={2}>
                 <Input
@@ -203,9 +193,9 @@ export const RulingStepOne: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
+                <Text as="h3" variant="h3">
                   Dómkröfur
-                </Typography>
+                </Text>
               </Box>
               <GridRow>
                 <GridColumn span="5/8">
@@ -244,9 +234,9 @@ export const RulingStepOne: React.FC = () => {
             </Box>
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
+                <Text as="h3" variant="h3">
                   Takmarkanir á gæslu
-                </Typography>
+                </Text>
               </Box>
               <Box marginBottom={1}>
                 <GridRow>
