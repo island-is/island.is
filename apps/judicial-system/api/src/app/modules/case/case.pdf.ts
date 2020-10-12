@@ -30,8 +30,7 @@ function formatConclusion(existingCase: Case): string {
         existingCase.custodyEndDate,
         'PPPp',
       )}. ${
-        existingCase.custodyRestrictions &&
-        existingCase.custodyRestrictions.length > 0
+        existingCase.custodyRestrictions?.length > 0
           ? `Kærði skal sæta ${existingCase.custodyRestrictions.map(
               (custodyRestriction, index) => {
                 const isNextLast =
