@@ -65,7 +65,7 @@ export const formatLawsBroken = (
   lawsBroken: string,
   custodyProvisions: CaseCustodyProvisions[],
 ) => {
-  const provisions = custodyProvisions.reduce((s, l) => `${s} ${laws[l]},`, '')
+  const provisions = custodyProvisions?.reduce((s, l) => `${s} ${laws[l]},`, '')
 
   return `${lawsBroken} Lagaákvæði sem krafan er byggð á: ${provisions.slice(
     0,
