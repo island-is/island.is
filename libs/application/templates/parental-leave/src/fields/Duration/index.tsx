@@ -8,8 +8,7 @@ import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
 import { theme } from '@island.is/island-ui/theme'
 
-
-import {  Description } from '@island.is/shared/form-fields'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
@@ -36,7 +35,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box>
       {description && (
-        <Description
+        <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}

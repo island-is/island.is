@@ -6,7 +6,10 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Text, Box } from '@island.is/island-ui/core'
-import { CheckboxController, Description } from '@island.is/shared/form-fields'
+import {
+  CheckboxController,
+  FieldDescription,
+} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
@@ -28,7 +31,7 @@ const CheckboxFormField: FC<Props> = ({
       )}
 
       {description && (
-        <Description
+        <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}

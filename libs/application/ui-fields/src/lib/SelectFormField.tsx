@@ -5,7 +5,10 @@ import {
   SelectField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { SelectController, Description } from '@island.is/shared/form-fields'
+import {
+  SelectController,
+  FieldDescription,
+} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
@@ -18,7 +21,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
   return (
     <div>
       {description && (
-        <Description
+        <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}

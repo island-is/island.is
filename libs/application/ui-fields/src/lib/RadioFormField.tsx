@@ -7,7 +7,10 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
-import { RadioController, Description } from '@island.is/shared/form-fields'
+import {
+  RadioController,
+  FieldDescription,
+} from '@island.is/shared/form-fields'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -36,7 +39,7 @@ const RadioFormField: FC<Props> = ({
       )}
 
       {description && (
-        <Description
+        <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}
