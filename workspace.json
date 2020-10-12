@@ -2236,7 +2236,7 @@
               "apps/judicial-system/web/src/favicon.ico",
               "apps/judicial-system/web/src/assets"
             ],
-            "styles": ["apps/judicial-system/web/src/styles.scss"],
+            "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js"
           },
