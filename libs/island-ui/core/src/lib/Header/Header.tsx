@@ -75,14 +75,16 @@ export const Header = ({
             </Typography>
           </Box>
         )}
+        {/* TODO: replace with new "utility" variant */}
         {language && (
-          <Button variant="menu" onClick={switchLanguage}>
+          <Button variant="ghost" onClick={switchLanguage}>
             {language}
           </Button>
         )}
+        {/* TODO: replace with new "utility" variant */}
         {authenticated && (
           <Box marginLeft={2}>
-            <Button variant="menu" leftIcon="lock" onClick={onLogout}>
+            <Button variant="ghost" icon="lock" onClick={onLogout}>
               {logoutText}
             </Button>
           </Box>
