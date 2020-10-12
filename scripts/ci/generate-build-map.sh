@@ -7,7 +7,7 @@ source $DIR/_common.sh
 map='{}'
 for target in "$@"
 do
-    affected=$($PROJECT_ROOT/scripts/nx-affected-targets.sh $target)
+    affected=$($PROJECT_ROOT/scripts/ci/_nx-affected-targets.sh $target)
     if [[ "$affected" != "" ]]; then
         map=$(echo $map | jq -cM --arg target "$affected" '. + {"'$target'": $target}')
     fi

@@ -9,4 +9,4 @@ ARG APP
 ENV DB_NAME=$DB_NAME
 ENV APP=$APP
 
-ENTRYPOINT /code/scripts/_wait-for.sh $DB_NAME:5432 -t 5 -- yarn test $APP
+ENTRYPOINT /code/scripts/ci/_wait-for.sh $DB_NAME:5432 -t 5 -- yarn test $APP
