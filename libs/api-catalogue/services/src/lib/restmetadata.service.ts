@@ -77,6 +77,10 @@ export class RestMetadataService {
       if (service.name) services.push(service)
     }
 
+    logger.info(
+      `Found ${services.length} services for ${provider.memberCode}/${provider.subsystemCode}`,
+    )
+
     return services
   }
 
@@ -130,7 +134,9 @@ export class RestMetadataService {
         subsystemCode: provider.subsystemCode,
       })
 
-      logger.debug(`Found ${xrdServices?.service?.length} service codes`)
+      logger.debug(
+        `Found ${xrdServices?.service?.length} service codes for ${provider.memberCode}/${provider.subsystemCode}`,
+      )
 
       xrdServices.service.forEach((item) => {
         const serviceCode = item.serviceCode.split('-')[0]
