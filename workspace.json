@@ -3486,128 +3486,7 @@
         }
       }
     },
-    "api-catalog-graphql": {
-      "root": "libs/api-catalog/graphql",
-      "sourceRoot": "libs/api-catalog/graphql/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/api-catalog/graphql/.eslintrc",
-            "tsConfig": [
-              "libs/api-catalog/graphql/tsconfig.lib.json",
-              "libs/api-catalog/graphql/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api-catalog/graphql/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api-catalog/graphql/jest.config.js",
-            "tsConfig": "libs/api-catalog/graphql/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "api-catalog": {
-      "root": "apps/api-catalog",
-      "sourceRoot": "apps/api-catalog",
-      "projectType": "application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/next:build",
-          "options": {
-            "root": "apps/api-catalog",
-            "outputPath": "dist/apps/api-catalog"
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/api-catalog/environments/environment.ts",
-                  "with": "apps/api-catalog/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/next:dev-server",
-          "options": {
-            "buildTarget": "api-catalog:build",
-            "dev": true
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "api-catalog:build:production",
-              "dev": false
-            }
-          }
-        },
-        "export": {
-          "builder": "@nrwl/next:export",
-          "options": {
-            "buildTarget": "api-catalog:build:production"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "apps/api-catalog/.eslintrc",
-            "tsConfig": [
-              "apps/api-catalog/tsconfig.json",
-              "apps/api-catalog/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/api-catalog/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/api-catalog/jest.config.js",
-            "tsConfig": "apps/api-catalog/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        },
-        "docker-next": {}
-      }
-    },
-    "api-catalog-e2e": {
-      "root": "apps/api-catalog-e2e",
-      "sourceRoot": "apps/api-catalog-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/api-catalog-e2e/cypress.json",
-            "tsConfig": "apps/api-catalog-e2e/tsconfig.e2e.json",
-            "devServerTarget": "api-catalog:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "api-catalog:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "apps/api-catalog-e2e/.eslintrc",
-            "tsConfig": ["apps/api-catalog-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/api-catalog-e2e/**"]
-          }
-        }
-      }
-    },
+
     "api-domains-api-catalogue": {
       "root": "libs/api/domains/api-catalogue",
       "sourceRoot": "libs/api/domains/api-catalogue/src",
@@ -3654,7 +3533,10 @@
               "libs/api-catalogue/types/tsconfig.lib.json",
               "libs/api-catalogue/types/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api-catalogue/types/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api-catalogue/types/**"
+            ]
           }
         },
         "test": {
@@ -3682,7 +3564,10 @@
               "libs/api-catalogue/consts/tsconfig.lib.json",
               "libs/api-catalogue/consts/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api-catalogue/consts/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api-catalogue/consts/**"
+            ]
           }
         },
         "test": {
@@ -3710,7 +3595,10 @@
               "libs/api-catalogue/elastic/tsconfig.lib.json",
               "libs/api-catalogue/elastic/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api-catalogue/elastic/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api-catalogue/elastic/**"
+            ]
           }
         },
         "test": {
@@ -3736,7 +3624,9 @@
             "outputPath": "dist/apps/services/xroad-collector",
             "main": "apps/services/xroad-collector/src/main.ts",
             "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-            "assets": ["apps/services/xroad-collector/src/assets"]
+            "assets": [
+              "apps/services/xroad-collector/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -3796,7 +3686,10 @@
               "libs/api-catalogue/services/tsconfig.lib.json",
               "libs/api-catalogue/services/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api-catalogue/services/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api-catalogue/services/**"
+            ]
           }
         },
         "test": {
@@ -3824,6 +3717,108 @@
               {
                 "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch-xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
               }
+            ]
+          }
+        }
+      }
+    },
+    "api-catalogue": {
+      "root": "apps/api-catalogue",
+      "sourceRoot": "apps/api-catalogue",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/api-catalogue",
+            "outputPath": "dist/apps/api-catalogue"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/api-catalogue/environments/environment.ts",
+                  "with": "apps/api-catalogue/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "api-catalogue:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "api-catalogue:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "api-catalogue:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/api-catalogue/.eslintrc",
+            "tsConfig": [
+              "apps/api-catalogue/tsconfig.json",
+              "apps/api-catalogue/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/api-catalogue/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/api-catalogue/jest.config.js",
+            "tsConfig": "apps/api-catalogue/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-next": {}
+      }
+    },
+    "api-catalogue-e2e": {
+      "root": "apps/api-catalogue-e2e",
+      "sourceRoot": "apps/api-catalogue-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/api-catalogue-e2e/cypress.json",
+            "tsConfig": "apps/api-catalogue-e2e/tsconfig.e2e.json",
+            "devServerTarget": "api-catalogue:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "api-catalogue:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/api-catalogue-e2e/.eslintrc",
+            "tsConfig": [
+              "apps/api-catalogue-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/api-catalogue-e2e/**"
             ]
           }
         }

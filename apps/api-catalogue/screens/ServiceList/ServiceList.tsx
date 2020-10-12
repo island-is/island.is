@@ -74,6 +74,8 @@ function ServiceLayout({
   )
 }
 
+const LIMIT = 6
+
 export interface ServiceListProps {
   pageContent: Page
   filterStrings: Page
@@ -89,7 +91,7 @@ export default function ServiceList(props: ServiceListProps) {
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
-    limit: 6,
+    limit: LIMIT,
     query: '',
     pricing: [],
     data: [],
@@ -109,7 +111,7 @@ export default function ServiceList(props: ServiceListProps) {
   const onClear = () => {
     setParameters({
       cursor: null,
-      limit: 2,
+      limit: LIMIT,
       query: '',
       pricing: [],
       data: [],

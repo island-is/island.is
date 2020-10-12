@@ -9,10 +9,10 @@ import {
   QueryGetApiServiceByIdArgs,
   QueryGetOpenApiArgs,
 } from '@island.is/api/schema'
-import initApollo from 'apps/api-catalog/graphql/client'
+import initApollo from '../../graphql/client'
 import { GridContainer } from '@island.is/island-ui/core'
-import ContentfulApi from 'apps/api-catalog/services/contentful'
-import { Page } from 'apps/api-catalog/services/contentful.types'
+import ContentfulApi from '../../services/contentful'
+import { Page } from '../../services/contentful.types'
 
 export interface ServiceDetailPageProps {
   service: ApiService

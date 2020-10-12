@@ -289,16 +289,6 @@
       "tags": [],
       "implicitDependencies": ["web"]
     },
-    "api-catalog-graphql": {
-      "tags": []
-    },
-    "api-catalog": {
-      "tags": []
-    },
-    "api-catalog-e2e": {
-      "tags": [],
-      "implicitDependencies": ["api-catalog"]
-    },
     "api-domains-api-catalogue": {
       "tags": []
     },
@@ -316,6 +306,15 @@
     },
     "api-catalogue-services": {
       "tags": []
+    },
+    "api-catalogue": {
+      "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": [
+        "api-catalogue"
+      ]
     }
   },
   "affected": {
