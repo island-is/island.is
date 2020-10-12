@@ -60,20 +60,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
-        className={cn(
-          styles.variants[variant],
-          styles.colors[variant][colorScheme],
-          {
-            [styles.size[size]]: variant !== 'utility' && !circle,
-            [styles.size.utility]: variant === 'utility',
-            [styles.circleSizes[size]]: circle,
-            [styles.circle]: circle,
-            [styles.padding[size]]:
-              variant !== 'utility' && variant !== 'text' && !circle,
-            [styles.padding.text]: variant === 'text',
-            [styles.padding.utility]: variant === 'utility',
-          },
-        )}
+        className={cn(styles.variants[variant], {
+          [styles.colors[variant][colorScheme]]:
+            styles.colors[variant][colorScheme],
+          [styles.size[size]]: variant !== 'utility' && !circle,
+          [styles.size.utility]: variant === 'utility',
+          [styles.circleSizes[size]]: circle,
+          [styles.circle]: circle,
+          [styles.padding[size]]:
+            variant !== 'utility' && variant !== 'text' && !circle,
+          [styles.padding.text]: variant === 'text',
+          [styles.padding.utility]: variant === 'utility',
+        })}
         {...buttonProps}
       >
         {children}
