@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserProfileApi } from '../../gen/fetch';
+import { CreateUserProfileDto, UserProfileApi } from '../../gen/fetch';
 import { UserProfile } from './userProfile.model';
 
 
@@ -9,5 +9,9 @@ export class UserProfileService {
 
   async getUser(nationalId: string): Promise<UserProfile | null> {
     return await this.userProfileApi.userProfileControllerFindOneByNationalId({ nationalId })
+  }
+
+  async createUser(createUserProfileDto: CreateUserProfileDto): Promise<UserProfile | null> {
+    return await this.userProfileApi.userProfileControllerCreate({ createUserProfileDto })
   }
 }
