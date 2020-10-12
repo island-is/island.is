@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, TextField } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  formatText,
+  TextField,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
@@ -11,6 +15,7 @@ interface Props extends FieldBaseProps {
 }
 const TextFormField: FC<Props> = ({
   autoFocus,
+  application,
   error,
   field,
   showFieldName,
@@ -21,13 +26,21 @@ const TextFormField: FC<Props> = ({
 
   return (
     <div>
-      {description && <Description description={formatMessage(description)} />}
+      {description && (
+        <Description
+          description={formatText(description, application, formatMessage)}
+        />
+      )}
 
       <Box paddingTop={2}>
         <InputController
           disabled={disabled}
           id={id}
-          label={showFieldName ? (formatMessage(name) as string) : undefined}
+          label={
+            showFieldName
+              ? formatText(name, application, formatMessage)
+              : undefined
+          }
           autoFocus={autoFocus}
           error={error}
           onChange={() => {
