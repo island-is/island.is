@@ -11,33 +11,29 @@ import {
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { CarDetailsBox } from '../Confirm/components'
 import { Button } from '@island.is/skilavottord-web/components'
 
-const Completed = (props) => {
+const Completed = ({ apolloState }) => {
   const {
-    activeLocale,
-    t: { completed: t },
+    t: { completed: t, routes },
   } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
 
   const router = useRouter()
   const { id } = router.query
 
-  const { apolloState } = props
   const car = apolloState[`Car:${id}`]
 
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: makePath('myCars'),
+        pathname: routes.myCars,
       })
     }
   }, [car])
 
   const onClose = () => {
-    router.replace(makePath('myCars'))
+    router.replace(routes.myCars)
   }
 
   return (

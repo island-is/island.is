@@ -2,16 +2,13 @@ import React, { Component } from 'react'
 import Router from 'next/router'
 import { NextComponentType } from 'next'
 
-import { isAuthenticated } from './utils'
+import { AUTH_URL, isAuthenticated } from './utils'
 
-const AUTH_URL = '/api/auth/login'
-
-export default (WrappedComponent: NextComponentType) =>
+const withAuth = (WrappedComponent: NextComponentType) =>
   class extends Component {
     static async getInitialProps(ctx) {
       if (!isAuthenticated(ctx)) {
-        console.log(ctx.asPath)
-        const authUrl = `${AUTH_URL}?returnUrl=${ctx.asPath}`
+        const authUrl = `${AUTH_URL}/login?returnUrl=${ctx.asPath}`
         const { res } = ctx
         if (res) {
           res.writeHead(302, {
@@ -35,3 +32,5 @@ export default (WrappedComponent: NextComponentType) =>
       return <WrappedComponent {...this.props} />
     }
   }
+
+export default withAuth
