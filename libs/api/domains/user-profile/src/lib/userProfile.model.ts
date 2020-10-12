@@ -14,12 +14,3 @@ export class UserProfile {
   @Field(() => String)
   email!: string
 }
-
-import { Field, ObjectType } from '@nestjs/graphql';
-
-@ObjectType()
-export class Hall {
-
-  @Field(() => String)
-  name!: string
-}
