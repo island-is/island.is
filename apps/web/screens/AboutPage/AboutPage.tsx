@@ -48,6 +48,7 @@ import { renderSlices } from '@island.is/island-ui/contentful'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { RenderForm } from './RenderForm'
+import { slices } from '../queries/fragments'
 
 const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
@@ -158,6 +159,16 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
     url: '#' + x.id,
   }))
 
+  const sliceMobileNavigation = (slice?.links ?? []).map((x) => ({
+    title: x.text,
+    url: x.url,
+  }))
+
+  const combinedMobileNavigation = [
+    ...mobileNavigation,
+    ...sliceMobileNavigation,
+  ]
+
   return (
     <Background id={slice.id} theme={page.theme}>
       {!!mobileNavigation.length && (
@@ -166,7 +177,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
             categories={[
               {
                 title: 'Efnisyfirlit',
-                items: mobileNavigation,
+                items: combinedMobileNavigation,
               },
             ]}
           />
