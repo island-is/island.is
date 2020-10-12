@@ -8,7 +8,7 @@ describe(' CategoryCheckBox ', () => {
 
   it('should render successfully', () => {
 
-    const { baseElement } = render(<CategoryCheckBox checked={false} label='Test' name='Test' value='test' />)
+    const { baseElement } = render(<CategoryCheckBox checked={false} onChange={null} label='Test' name='Test' value='test' />)
     expect(baseElement).toBeTruthy();
   })
 })
