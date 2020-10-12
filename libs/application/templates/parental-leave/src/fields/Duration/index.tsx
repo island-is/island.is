@@ -81,14 +81,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
               min={minMonths}
               max={maxMonths}
               trackStyle={{ gridTemplateRows: 8 }}
-              calculateCellStyle={(index: number) => {
-                const isActive = index < value
-
-                // return {
-                //   background: isActive
-                //     ? theme.color.mint400
-                //     : theme.color.dark200,
-                // }
+              calculateCellStyle={() => {
                 return {
                   background: theme.color.dark200,
                 }
