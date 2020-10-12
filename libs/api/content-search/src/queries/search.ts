@@ -67,7 +67,6 @@ export const searchQuery = ({
         'title.stemmed^15',
         'title.compound',
         'content.stemmed^5',
-        'termPool^10',
       ],
       // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
