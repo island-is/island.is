@@ -7,7 +7,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -101,14 +101,14 @@ export const Confirmation: React.FC = () => {
     return (
       <>
         <Box marginBottom={2}>
-          <Typography variant="h2" color="blue400">
+          <Text variant="h2" color="blue400">
             {`Öryggistala: ${signatureResponse.response.controlCode}`}
-          </Typography>
+          </Text>
         </Box>
-        <Typography>
+        <Text>
           Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
           öryggistala birtist í símanum þínum.
-        </Typography>
+        </Text>
       </>
     )
   }
@@ -117,43 +117,41 @@ export const Confirmation: React.FC = () => {
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
-          <Box marginBottom={7}>
-            <GridRow>
-              <GridColumn span={'3/12'}>
-                <JudgeLogo />
-              </GridColumn>
-              <GridColumn span={'8/12'} offset={'1/12'}>
-                <Box marginBottom={10}>
-                  <Typography as="h1" variant="h1">
-                    Krafa um gæsluvarðhald
-                  </Typography>
-                  <Box display="flex" marginTop={1}>
-                    <Box marginRight={2}>
-                      <Typography variant="pSmall">{`Krafa stofnuð: ${formatDate(
-                        workingCase.created,
-                        'P',
-                      )}`}</Typography>
-                    </Box>
-                    <Typography variant="pSmall">{`Þinghald: ${formatDate(
-                      workingCase.courtStartTime,
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <JudgeLogo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Box marginBottom={10}>
+                <Text as="h1" variant="h1">
+                  Krafa um gæsluvarðhald
+                </Text>
+                <Box display="flex" marginTop={1}>
+                  <Box marginRight={2}>
+                    <Text variant="small">{`Krafa stofnuð: ${formatDate(
+                      workingCase.created,
                       'P',
-                    )}`}</Typography>
+                    )}`}</Text>
                   </Box>
+                  <Text variant="small">{`Þinghald: ${formatDate(
+                    workingCase.courtStartTime,
+                    'P',
+                  )}`}</Text>
                 </Box>
-              </GridColumn>
-            </GridRow>
-          </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
               {renderFormStepper(1, 3)}
             </GridColumn>
             <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
               <Box component="section" marginBottom={7}>
-                <Typography
+                <Text
                   variant="h2"
                   as="h2"
-                >{`Mál nr. ${workingCase.courtCaseNumber}`}</Typography>
-                <Typography fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Typography>
+                >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+                <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
               </Box>
               <Box marginBottom={9}>
                 <Accordion>
@@ -162,24 +160,18 @@ export const Confirmation: React.FC = () => {
                     label="Krafan um gæsluvarðhald frá Lögreglu"
                   >
                     <Box marginBottom={2}>
-                      <Typography variant="h4" as="h4">
+                      <Text variant="h4" as="h4">
                         Grunnupplýsingar
-                      </Typography>
+                      </Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Typography>
-                        Kennitala: {workingCase.accusedNationalId}
-                      </Typography>
+                      <Text>Kennitala: {workingCase.accusedNationalId}</Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Typography>
-                        Fullt nafn: {workingCase.accusedName}
-                      </Typography>
+                      <Text>Fullt nafn: {workingCase.accusedName}</Text>
                     </Box>
                     <Box marginBottom={3}>
-                      <Typography>
-                        Lögheimili: {workingCase.accusedAddress}
-                      </Typography>
+                      <Text>Lögheimili: {workingCase.accusedAddress}</Text>
                     </Box>
                     <AccordionListItem title="Tími handtöku">
                       {`${capitalize(
@@ -209,19 +201,19 @@ export const Confirmation: React.FC = () => {
                       {workingCase.lawsBroken}
                     </AccordionListItem>
                     <Box marginBottom={1}>
-                      <Typography variant="h5">Takmarkanir á gæslu</Typography>
+                      <Text variant="h5">Takmarkanir á gæslu</Text>
                     </Box>
                     <Box marginBottom={4}>
-                      <Typography>
+                      <Text>
                         {formatCustodyRestrictions(
                           workingCase.custodyRestrictions,
                         )}
-                      </Typography>
+                      </Text>
                     </Box>
                     <Box marginBottom={2}>
-                      <Typography variant="h4" as="h4">
+                      <Text variant="h4" as="h4">
                         Greinargerð um málsatvik og lagarök
-                      </Typography>
+                      </Text>
                     </Box>
                     <AccordionListItem title="Málsatvik rakin">
                       {workingCase.caseFacts}
@@ -238,12 +230,12 @@ export const Confirmation: React.FC = () => {
                   </AccordionItem>
                   <AccordionItem id="id_2" label="Þingbók">
                     <Box marginBottom={2}>
-                      <Typography variant="h4" as="h4">
+                      <Text variant="h4" as="h4">
                         Upplýsingar
-                      </Typography>
+                      </Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Typography>
+                      <Text>
                         {`Þinghald frá kl. ${formatDate(
                           workingCase.courtStartTime,
                           TIME_FORMAT,
@@ -251,7 +243,7 @@ export const Confirmation: React.FC = () => {
                           workingCase.courtEndTime,
                           TIME_FORMAT,
                         )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-                      </Typography>
+                      </Text>
                     </Box>
                     <AccordionListItem title="Krafa lögreglu">
                       {workingCase.policeDemands}
@@ -277,12 +269,12 @@ export const Confirmation: React.FC = () => {
                       {workingCase.litigationPresentations}
                     </AccordionListItem>
                     <Box marginBottom={2}>
-                      <Typography variant="h4" as="h4">
+                      <Text variant="h4" as="h4">
                         Úrskurður
-                      </Typography>
+                      </Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Typography>{workingCase.ruling}</Typography>
+                      <Text>{workingCase.ruling}</Text>
                     </Box>
                     <AccordionListItem title="Úrskurðarorð">
                       {constructConclusion(workingCase)}
@@ -314,45 +306,61 @@ export const Confirmation: React.FC = () => {
               </Box>
               <Box component="section" marginBottom={8}>
                 <Box marginBottom={2}>
-                  <Typography as="h4" variant="h4">
+                  <Text as="h4" variant="h4">
                     Úrskurður Héraðsdóms
-                  </Typography>
+                  </Text>
                 </Box>
                 <Box marginBottom={7}>
-                  <Typography variant="tag" color="blue400">
+                  <Text variant="tag" color="blue400">
                     Niðurstaða úrskurðar
-                  </Typography>
-                  <Typography>{workingCase.ruling}</Typography>
+                  </Text>
+                  <Text>{workingCase.ruling}</Text>
+                </Box>
+              </Box>
+              <Box component="section" marginBottom={8}>
+                <Box marginBottom={7}>
+                  <Box marginBottom={2}>
+                    <Text as="h4" variant="h4">
+                      Úrskurðarorð
+                    </Text>
+                  </Box>
+                  <Box marginBottom={3}>
+                    <Text>{constructConclusion(workingCase)}</Text>
+                  </Box>
+                  <Text>
+                    Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum
+                    kærða, verjanda hans, túlki og aðstoðarsaksóknara.
+                  </Text>
                 </Box>
               </Box>
               <Box component="section" marginBottom={8}>
                 <Box marginBottom={10}>
                   <Box marginBottom={2}>
-                    <Typography as="h4" variant="h4">
+                    <Text as="h4" variant="h4">
                       Ákvörðun um kæru
-                    </Typography>
+                    </Text>
                   </Box>
                   <Box marginBottom={1}>
-                    <Typography>
+                    <Text>
                       {getAppealDecitionText(
                         AppealDecitionRole.ACCUSED,
                         workingCase.accusedAppealDecision,
                       )}
-                    </Typography>
+                    </Text>
                   </Box>
-                  <Typography>
+                  <Text>
                     {getAppealDecitionText(
                       AppealDecitionRole.PROSECUTOR,
                       workingCase.prosecutorAppealDecision,
                     )}
-                  </Typography>
+                  </Text>
                 </Box>
               </Box>
               {uContext?.user && (
                 <Box marginBottom={15}>
-                  <Typography variant="h3">
+                  <Text variant="h3">
                     {`${uContext.user.name}, ${uContext.user.title}`}
-                  </Typography>
+                  </Text>
                 </Box>
               )}
               <FormFooter
