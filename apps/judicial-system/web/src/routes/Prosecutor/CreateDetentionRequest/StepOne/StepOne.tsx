@@ -29,6 +29,7 @@ import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -206,7 +207,6 @@ export const StepOne: React.FC = () => {
         JSON.stringify(currentCase.case),
       )
     }
-
     if (id) {
       getCurrentCase()
     }
@@ -494,21 +494,9 @@ export const StepOne: React.FC = () => {
                             validateTimeEmpty.isValid &&
                             validateTimeFormat.isValid
                           ) {
-                            const timeWithoutColon = evt.target.value.replace(
-                              ':',
-                              '',
-                            )
-
-                            const arrestDateHours = setHours(
-                              new Date(workingCase.arrestDate),
-                              parseInt(timeWithoutColon.substr(0, 2)),
-                            )
-
-                            const arrestDateMinutes = formatISO(
-                              setMinutes(
-                                arrestDateHours,
-                                parseInt(timeWithoutColon.substr(2, 4)),
-                              ),
+                            const arrestDateMinutes = parseTime(
+                              workingCase.arrestDate,
+                              evt.target.value,
                             )
 
                             autoSave(
@@ -562,8 +550,8 @@ export const StepOne: React.FC = () => {
                     </GridColumn>
                     <GridColumn span="3/8">
                       <Input
-                        data-testid="courtDate"
-                        name="courtDate"
+                        data-testid="requestedCourtDate"
+                        name="requestedCourtDate"
                         label="Tímasetning"
                         placeholder="Settu inn tíma"
                         defaultValue={formatDate(
@@ -572,21 +560,9 @@ export const StepOne: React.FC = () => {
                         )}
                         disabled={!workingCase.requestedCourtDate}
                         onBlur={(evt) => {
-                          const timeWithoutColon = evt.target.value.replace(
-                            ':',
-                            '',
-                          )
-
-                          const requestedCourtDateHours = setHours(
-                            new Date(workingCase.requestedCourtDate),
-                            parseInt(timeWithoutColon.substr(0, 2)),
-                          )
-
-                          const requestedCourtDateMinutes = formatISO(
-                            setMinutes(
-                              requestedCourtDateHours,
-                              parseInt(timeWithoutColon.substr(2, 4)),
-                            ),
+                          const requestedCourtDateMinutes = parseTime(
+                            workingCase.requestedCourtDate,
+                            evt.target.value,
                           )
 
                           autoSave(
@@ -599,7 +575,7 @@ export const StepOne: React.FC = () => {
                           updateState(
                             workingCase,
                             'requestedCourtTime',
-                            evt.target.value,
+                            requestedCourtDateMinutes,
                             setWorkingCase,
                           )
                         }}
