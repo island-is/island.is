@@ -28,7 +28,6 @@ import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
-import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
@@ -70,6 +69,7 @@ import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Homepage } from './models/homepage.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
+import { NewsList } from './models/newsList.model'
 
 const { cacheTime } = environment
 
@@ -82,7 +82,7 @@ export class CmsResolver {
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   @Directive(cacheControlDirective())
   @Query(() => PaginatedAdgerdirNews)
@@ -330,8 +330,8 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [News])
-  getNews(@Args('input') input: GetNewsInput): Promise<News[]> {
+  @Query(() => NewsList)
+  getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
     return this.cmsElasticsearchService.getNews(
       SearchIndexes[input.lang],
       input,
@@ -348,12 +348,6 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => PaginatedNews)
-  getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
-    return this.cmsContentfulService.getNewsList(input)
-  }
-
-  @Directive(cacheControlDirective())
   @Query(() => Homepage)
   getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
     return this.cmsContentfulService.getHomepage(input)
@@ -362,19 +356,20 @@ export class CmsResolver {
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) { }
 
   @ResolveField(() => [News])
   async news(
     @Parent() { news: { lang, size } }: LatestNewsSlice,
   ): Promise<News[]> {
-    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
+    const newsList = await this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
+    return newsList.items
   }
 }
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor(private cmsContentfulService: CmsContentfulService) { }
 
   @ResolveField(() => [Article])
   async relatedArticles(@Parent() article: Article) {

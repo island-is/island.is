@@ -10,10 +10,11 @@ import { Article } from './models/article.model'
 import { News } from './models/news.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
+import { NewsList } from './models/newsList.model'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) { }
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -56,14 +57,14 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: SearchIndexes,
-    { size, page, order, month, year }: GetNewsInput,
-  ): Promise<News[]> {
+    { size = 10, page = 1, order = 'desc', month, year }: GetNewsInput,
+  ): Promise<NewsList> {
     let dateQuery
     if (year) {
       dateQuery = {
         date: {
-          from: `${year}-${month.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD
-          to: `${year}-${month.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD
+          from: `${year}-${(month + 1)?.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD +1 cause js counts months from 0
+          to: `${year}-${(month + 1)?.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD +1 cause js counts months from 0
         },
       }
     } else {
@@ -82,9 +83,13 @@ export class CmsElasticsearchService {
       index,
       query,
     )
-    return articlesResponse.hits.hits.map<News>((response) =>
-      JSON.parse(response._source.response),
-    )
+
+    return {
+      total: articlesResponse.hits.total.value,
+      items: articlesResponse.hits.hits.map<News>((response) =>
+        JSON.parse(response._source.response),
+      )
+    }
   }
 
   async getNewsDates(index: SearchIndexes): Promise<string[]> {
@@ -98,7 +103,7 @@ export class CmsElasticsearchService {
       index,
       query,
     )
-    console.log(newsDatesResponse)
+
     return newsDatesResponse.aggregations.dates.buckets.map(
       (aggregationResult) => aggregationResult.key_as_string,
     )
