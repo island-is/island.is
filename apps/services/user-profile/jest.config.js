@@ -1,14 +1,13 @@
 module.exports = {
-  name: 'services-user-profile',
+  name: 'application-system-api',
   preset: '../../../jest.config.js',
+  coverageDirectory: '../../../coverage/apps/application-system/api',
+  setupFiles: ['./test/environment.jest.ts'],
+  setupFilesAfterEnv: ['./test/setup.ts'],
+  moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
     },
   },
-  transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
-  },
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/apps/services/user-profile',
 }

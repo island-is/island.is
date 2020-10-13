@@ -2,6 +2,7 @@ import {
   IsNotEmpty,
   IsString,
   IsOptional,
+  IsEmail
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -27,7 +28,7 @@ export class CreateUserProfileDto {
   readonly profileImageUrl?: string
 
   @IsOptional()
-  @IsString()
+  @IsEmail()
   @ApiPropertyOptional()
   readonly email?: string
 }

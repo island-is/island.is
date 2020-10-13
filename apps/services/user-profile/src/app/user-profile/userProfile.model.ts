@@ -1,4 +1,3 @@
-//umport { Model } from 'sequelize/types';
 import {
   Column,
   DataType,
@@ -39,6 +38,7 @@ export class UserProfile extends Model<UserProfile> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true
   })
   @ApiProperty()
   nationalId!: string

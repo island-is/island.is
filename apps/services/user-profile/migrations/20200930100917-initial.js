@@ -13,6 +13,7 @@ module.exports = {
         national_id: {
           type: Sequelize.STRING,
           allowNull: false,
+          unique: true,
         },
         mobile_phone_number: {
           type: Sequelize.STRING,

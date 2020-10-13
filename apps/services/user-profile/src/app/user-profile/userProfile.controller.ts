@@ -6,7 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
-  NotImplementedException,
+  NotImplementedException, ConflictException
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -31,16 +31,8 @@ export class UserProfileController {
   @Get('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   async findOneByNationalId(
-    @Param('nationalId') nationalId: string,
+    @Param('nationalId', UserProfileByNationalIdPipe) profile: UserProfile,
   ): Promise<UserProfile> {
-    const profile = await this.userProfileService.findByNationalId(nationalId)
-
-    if (!profile) {
-      throw new NotFoundException(
-        `A User profile with the nationalId ${nationalId} does not exist`,
-      )
-    }
-
     return profile
   }
 
@@ -48,9 +40,12 @@ export class UserProfileController {
   @ApiCreatedResponse({ type: UserProfile })
   async create(
     @Body()
-    application: CreateUserProfileDto,
+    userProfileDto: CreateUserProfileDto,
   ): Promise<UserProfile> {
-    return await this.userProfileService.create(application)
+    if (await this.userProfileService.findByNationalId(userProfileDto.nationalId)) {
+      throw new ConflictException(`A profile with nationalId - "${userProfileDto.nationalId}" already exists`)
+    }
+    return await this.userProfileService.create(userProfileDto)
   }
 
   @Put('userProfile/:nationalId')
@@ -72,7 +67,7 @@ export class UserProfileController {
     } = await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
-        `A user profile with national id ${nationalId} does not exist`,
+        `A user profile with nationalId ${nationalId} does not exist`,
       )
     }
     return updatedUserProfile

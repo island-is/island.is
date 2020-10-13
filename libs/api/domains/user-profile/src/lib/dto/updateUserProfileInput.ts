@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString, IsOptional } from 'class-validator'
+import { IsString, IsOptional, IsEmail } from 'class-validator'
 
 @InputType()
 export class UpdateUserProfileInput {
@@ -19,7 +19,7 @@ export class UpdateUserProfileInput {
   locale?: string
 
   @Field(() => String)
-  @IsString()
+  @IsEmail()
   @IsOptional()
   email?: string
 
