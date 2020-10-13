@@ -274,7 +274,7 @@ export class CaseController {
     }
 
     try {
-      const response = await this.caseService.confirrmSignature(
+      const response = await this.caseService.confirmSignature(
         existingCase,
         documentToken,
       )

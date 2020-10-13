@@ -242,7 +242,7 @@ export class CaseService {
     }
   }
 
-  async confirrmSignature(
+  async confirmSignature(
     existingCase: Case,
     documentToken: string,
   ): Promise<Case> {

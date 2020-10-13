@@ -407,7 +407,7 @@ export const Confirmation: React.FC = () => {
         <Modal
           title={
             confirmSignatureResponse?.httpStatusCode >= 400
-              ? confirmSignatureResponse?.code === 7023
+              ? confirmSignatureResponse?.code === 7023 // User cancelled
                 ? 'Notandi hætti við undirritun'
                 : 'Undirritun tókst ekki'
               : confirmSignatureResponse?.httpStatusCode >= 200 &&
