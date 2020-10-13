@@ -145,71 +145,68 @@ export const SideMenu: FC<Props> = ({
           >
             <Logo {...logoProps} iconOnly id="sideMenuLogo" />
           </Box>
-          <Hidden above="sm">
-            <GridContainer>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <SearchInput
-                    ref={searchInputRef}
-                    id="search_input_side_menu"
-                    activeLocale={activeLocale}
-                    placeholder={t.searchPlaceholder}
-                    size="medium"
-                  />
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn
-                  span="8/12"
-                  paddingTop={[2, 2, 3]}
-                  paddingBottom={[2, 2, 3]}
-                >
-                  <Button
-                    href="https://minarsidur.island.is/"
-                    variant="menu"
-                    leftIcon="user"
-                    width="fluid"
+          <Box className={styles.contentScrollWrapper}>
+            <Hidden above="sm">
+              <GridContainer>
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <SearchInput
+                      ref={searchInputRef}
+                      id="search_input_side_menu"
+                      activeLocale={activeLocale}
+                      placeholder={t.searchPlaceholder}
+                      size="medium"
+                    />
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn
+                    span="8/12"
+                    paddingTop={[2, 2, 3]}
+                    paddingBottom={[2, 2, 3]}
                   >
-                    {t.login}
-                  </Button>
-                </GridColumn>
-                <GridColumn
-                  span="4/12"
-                  paddingTop={[2, 2, 3]}
-                  paddingBottom={[2, 2, 3]}
-                >
-                  <LanguageToggler />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </Hidden>
-
-          <ul className={styles.tabBar} role="tablist">
-            {tabList.map((tab, index) => (
-              <li
-                key={index}
-                className={styles.tabContainer}
-                role="presentation"
-              >
-                <FocusableBox
-                  ref={(el) => (tabRefs.current[index] = el)}
-                  component="button"
-                  role="tab"
-                  aria-controls={`tab-content-${index}`}
-                  aria-selected={activeTab === index}
-                  tabIndex={activeTab === index ? 0 : -1}
-                  id={`tab-${index}`}
-                  onClick={() => setActiveTab(index)}
-                  onKeyDown={(e) => onKeyDown(e, index)}
-                  className={styles.tabButton}
-                >
-                  {({ isFocused }) => (
-                    <div
-                      className={cn(styles.tab, {
-                        [styles.tabActive]: activeTab === index,
-                        [styles.tabFocused]: isFocused,
-                      })}
+                    <Button
+                      href="https://minarsidur.island.is/"
+                      variant="menu"
+                      leftIcon="user"
+                      width="fluid"
                     >
+                      {t.login}
+                    </Button>
+                  </GridColumn>
+                  <GridColumn
+                    span="4/12"
+                    paddingTop={[2, 2, 3]}
+                    paddingBottom={[2, 2, 3]}
+                  >
+                    <LanguageToggler />
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
+            </Hidden>
+
+            <ul className={styles.tabBar} role="tablist">
+              {tabList.map((tab, index) => (
+                <li
+                  key={index}
+                  className={cn(styles.tabContainer, {
+                    [styles.tabBorder]: activeTab === index,
+                  })}
+                  role="presentation"
+                >
+                  <FocusableBox
+                    ref={(el) => (tabRefs.current[index] = el)}
+                    component="button"
+                    className={styles.tabButton}
+                    role="tab"
+                    aria-controls={`tab-content-${index}`}
+                    aria-selected={activeTab === index}
+                    tabIndex={activeTab === index ? 0 : -1}
+                    id={`tab-${index}`}
+                    onClick={() => setActiveTab(index)}
+                    onKeyDown={(e) => onKeyDown(e, index)}
+                  >
+                    <div className={styles.tab}>
                       <Text
                         variant="small"
                         fontWeight={activeTab === index ? 'medium' : 'light'}
@@ -218,84 +215,84 @@ export const SideMenu: FC<Props> = ({
                         {tab.title}
                       </Text>
                     </div>
-                  )}
-                </FocusableBox>
-              </li>
-            ))}
-          </ul>
-          {tabList.map((tab, index) => {
-            const hasExternalLinks =
-              tab.externalLinks && tab.externalLinks.length
-            return (
-              <div
-                id={`tab-content-${index}`}
-                key={index}
-                aria-labelledby={`tab-${index}`}
-                role="tabpanel"
-                className={styles.content}
-                aria-hidden={activeTab !== index}
-                hidden={activeTab !== index}
-              >
-                <div className={styles.linksContent}>
-                  {tab.links.map((link, index) => {
-                    const props = {
-                      ...(link.href && { href: link.href }),
-                      ...(link.as && { as: link.as }),
-                    }
+                  </FocusableBox>
+                </li>
+              ))}
+            </ul>
+            {tabList.map((tab, index) => {
+              const hasExternalLinks =
+                tab.externalLinks && tab.externalLinks.length
+              return (
+                <div
+                  id={`tab-content-${index}`}
+                  key={index}
+                  aria-labelledby={`tab-${index}`}
+                  role="tabpanel"
+                  className={styles.content}
+                  aria-hidden={activeTab !== index}
+                  hidden={activeTab !== index}
+                >
+                  <div className={styles.linksContent}>
+                    {tab.links.map((link, index) => {
+                      const props = {
+                        ...(link.href && { href: link.href }),
+                        ...(link.as && { as: link.as }),
+                      }
 
-                    return (
-                      <Text
-                        key={index}
-                        color="blue400"
-                        fontWeight="medium"
-                        paddingBottom={index + 1 === tab.links.length ? 0 : 2}
-                      >
-                        <Box
-                          component="span"
-                          display="inlineBlock"
-                          width="full"
-                          onClick={handleClose}
-                        >
-                          <FocusableBox {...props}>{link.title}</FocusableBox>
-                        </Box>
-                      </Text>
-                    )
-                  })}
-                </div>
-                {hasExternalLinks && (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    flexDirection="column"
-                  >
-                    <Text
-                      variant="small"
-                      fontWeight="medium"
-                      color="blue400"
-                      paddingTop={3}
-                      paddingBottom={3}
-                    >
-                      {tab.externalLinksHeading}
-                    </Text>
-                    <div className={styles.linksContent}>
-                      {tab.externalLinks.map((link, index) => (
+                      return (
                         <Text
                           key={index}
-                          fontWeight="medium"
                           color="blue400"
-                          paddingBottom={2}
+                          fontWeight="medium"
+                          paddingBottom={index + 1 === tab.links.length ? 0 : 2}
                         >
-                          <FocusableBox href={link.href}>
-                            {link.title}
-                          </FocusableBox>
+                          <Box
+                            component="span"
+                            display="inlineBlock"
+                            width="full"
+                            onClick={handleClose}
+                          >
+                            <FocusableBox {...props}>{link.title}</FocusableBox>
+                          </Box>
                         </Text>
-                      ))}
-                    </div>
-                  </Box>
-                )}
-              </div>
-            )
-          })}
+                      )
+                    })}
+                  </div>
+                  {hasExternalLinks && (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      flexDirection="column"
+                    >
+                      <Text
+                        variant="small"
+                        fontWeight="medium"
+                        color="blue400"
+                        paddingTop={3}
+                        paddingBottom={3}
+                      >
+                        {tab.externalLinksHeading}
+                      </Text>
+                      <div className={styles.linksContent}>
+                        {tab.externalLinks.map((link, index) => (
+                          <Text
+                            key={index}
+                            fontWeight="medium"
+                            color="blue400"
+                            paddingBottom={2}
+                          >
+                            <FocusableBox href={link.href}>
+                              {link.title}
+                            </FocusableBox>
+                          </Text>
+                        ))}
+                      </div>
+                    </Box>
+                  )}
+                </div>
+              )
+            })}
+          </Box>
           <Box
             display="flex"
             alignItems="center"
