@@ -1,6 +1,10 @@
 name: Monorepo pipeline - push
 
 on:
+  create:
+    branches:
+      - 'release/**'
+      - 'hotfix/**'
   push:
     branches:
       - 'master'

@@ -1,10 +1,15 @@
 import React from 'react'
-import { Box } from '../..'
+import { withDesign } from 'storybook-addon-designs'
+import { Box } from '../Box/Box'
 import { Button } from './Button'
+
+const figmaLink =
+  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=2%3A170'
 
 export default {
   title: 'Core/ButtonRC',
   component: Button,
+  decorators: [withDesign],
   argTypes: {
     onClick: { action: 'onClick' },
     onBlur: { action: 'onBlur' },
@@ -13,9 +18,12 @@ export default {
   parameters: {
     docs: {
       description: {
-        component:
-          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=2%3A170)',
+        component: `[View in Figma](${figmaLink})`,
       },
+    },
+    design: {
+      type: 'figma',
+      url: figmaLink,
     },
   },
 }
