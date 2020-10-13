@@ -1,4 +1,4 @@
-import * as React from 'react'  // [1]
+import * as React from 'react' // [1]
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 
