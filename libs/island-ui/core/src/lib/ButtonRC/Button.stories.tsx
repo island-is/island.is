@@ -209,3 +209,26 @@ export const CircleGhostNegative = () => (
     <Button variant="ghost" colorScheme="negative" circle icon="arrowRight" />
   </Box>
 )
+
+export const Utility = Template.bind({})
+Utility.args = {
+  children: 'Utility Button',
+  variant: 'utility',
+  icon: 'arrowRight',
+}
+
+export const UtilityDestructive = Template.bind({})
+UtilityDestructive.args = {
+  children: 'Utility Button',
+  variant: 'utility',
+  colorScheme: 'destructive',
+  icon: 'globe',
+}
+
+export const UtilityNegative = () => (
+  <Box background="blue400" padding={4}>
+    <Button variant="utility" colorScheme="negative" icon="arrowRight">
+      Utility Button
+    </Button>
+  </Box>
+)

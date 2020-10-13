@@ -25,13 +25,18 @@ type Variants =
       colorScheme?: keyof typeof styles.colors.text
       circle?: never
     }
+  | {
+      variant?: 'utility'
+      colorScheme?: keyof typeof styles.colors.utility
+      circle?: never
+    }
 export interface ButtonProps {
   id?: NativeButtonProps['id']
   onClick?: NativeButtonProps['onClick']
   onFocus?: NativeButtonProps['onFocus']
   onBlur?: NativeButtonProps['onBlur']
   children?: ReactNode
-  size?: keyof typeof styles.size
+  size?: Exclude<keyof typeof styles.size, 'utility'>
   disabled?: boolean
   focusable?: boolean
   icon?: IconTypes
@@ -59,11 +64,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
           {
-            [styles.size[size]]: !circle,
+            [styles.size[size]]: variant !== 'utility' && !circle,
+            [styles.size.utility]: variant === 'utility',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
-            [styles.padding[size]]: variant !== 'text' && !circle,
+            [styles.padding[size]]:
+              variant !== 'utility' && variant !== 'text' && !circle,
             [styles.padding.text]: variant === 'text',
+            [styles.padding.utility]: variant === 'utility',
           },
         )}
         {...buttonProps}
