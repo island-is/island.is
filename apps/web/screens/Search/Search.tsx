@@ -309,7 +309,6 @@ const Search: Screen<CategoryProps> = ({
                 onChange={onChangeSelectCategoryOptions}
                 name="content-overview"
                 isSearchable={false}
-                
               />
             )}
           </Hidden>
