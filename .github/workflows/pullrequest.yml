@@ -80,6 +80,7 @@ jobs:
         id: lint_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
+          CHUNKS='[]'
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
@@ -88,6 +89,7 @@ jobs:
         id: test_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
+          CHUNKS='["air-discount-scheme-api"]'
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
@@ -96,6 +98,7 @@ jobs:
         id: build_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
+          CHUNKS='[]'
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
