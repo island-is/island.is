@@ -17,12 +17,13 @@ import {
   TextField,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
+import { FormText } from '..'
 
 export function buildCheckboxField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   options: Option[]
   required?: boolean
   disabled?: boolean
@@ -56,9 +57,9 @@ export function buildCheckboxField(data: {
 export function buildDateField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  placeholder?: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  placeholder?: FormText
+  description?: FormText
   maxDate?: Date
   minDate?: Date
   required?: boolean
@@ -97,8 +98,8 @@ export function buildDateField(data: {
 export function buildIntroductionField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  introduction: MessageDescriptor | string
+  name: FormText
+  introduction: FormText
 }): IntroductionField {
   const { condition, id, name, introduction } = data
   return {
@@ -115,8 +116,8 @@ export function buildIntroductionField(data: {
 export function buildRadioField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   options: Option[]
   required?: boolean
   emphasize?: boolean
@@ -156,8 +157,8 @@ export function buildRadioField(data: {
 export function buildSelectField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   placeholder?: string
   options: Option[]
   required?: boolean
@@ -194,8 +195,8 @@ export function buildSelectField(data: {
 export function buildTextField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   required?: boolean
   disabled?: boolean
   width?: FieldWidth
@@ -227,7 +228,7 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
-    name: MessageDescriptor | string
+    name: FormText
     required?: boolean
     component: string
   },
@@ -249,8 +250,8 @@ export function buildCustomField(
 export function buildFileUploadField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  introduction: MessageDescriptor | string
+  name: FormText
+  introduction: FormText
   uploadHeader?: string
   uploadDescription?: string
   uploadButtonLabel?: string

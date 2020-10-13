@@ -1,28 +1,20 @@
 import React, { FC } from 'react'
 import { FieldDef } from '../types'
 import {
+  Application,
   Field,
   FieldBaseProps,
-  FormValue,
   getValueViaPath,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
 const FormField: FC<{
-  applicationId: string
+  application: Application
   autoFocus?: boolean
   field: FieldDef
-  formValue: FormValue
   showFieldName?: boolean
   errors: object
-}> = ({
-  applicationId,
-  autoFocus,
-  errors,
-  field,
-  formValue,
-  showFieldName,
-}) => {
+}> = ({ application, autoFocus, errors, field, showFieldName }) => {
   const [allFields] = useFields()
   if (!field.isNavigable) {
     return null
@@ -32,11 +24,10 @@ const FormField: FC<{
     | string
     | undefined
   const fieldProps: FieldBaseProps = {
-    applicationId,
+    application,
     autoFocus,
     error,
     field: field as Field,
-    formValue,
     showFieldName,
   }
   const Component = allFields[field.component]

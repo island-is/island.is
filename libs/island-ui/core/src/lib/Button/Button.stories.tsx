@@ -1,14 +1,44 @@
 import React from 'react'
-import { Button, ButtonSize, ButtonVariant, ButtonProps } from './Button'
-import { Box, Inline } from '../..'
-import { IconTypes } from '../Icon/Icon'
+import {
+  Title,
+  Subtitle,
+  Description,
+  Primary,
+  ArgsTable,
+  Stories,
+  PRIMARY_STORY,
+} from '@storybook/addon-docs/blocks'
 import { boolean, select } from '@storybook/addon-knobs'
 
 import avatarImage from '../../assets/avatar.jpg'
+import { Box } from '../Box/Box'
+import { Inline } from '../Inline/Inline'
+import { IconTypes } from '../Icon/Icon'
+import { AlertMessage } from '../AlertMessage/AlertMessage'
+import { Button, ButtonSize, ButtonVariant, ButtonProps } from './Button'
 
 export default {
   title: 'Core/Button',
   component: Button,
+  parameters: {
+    docs: {
+      page: () => (
+        <>
+          <Title />
+          <Subtitle />
+          <Description />
+          <AlertMessage
+            type="error"
+            title="Deprecated component"
+            message="ButtonDeprecated has been deprecated. Please now use Button."
+          />
+          <Primary />
+          <ArgsTable story={PRIMARY_STORY} />
+          <Stories />
+        </>
+      ),
+    },
+  },
 }
 
 const makeButton = (variant: ButtonVariant = 'normal', text = '') => {
