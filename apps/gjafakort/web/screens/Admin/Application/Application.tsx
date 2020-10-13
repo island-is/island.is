@@ -5,7 +5,7 @@ import { useQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import {
-  Icon,
+  IconDeprecated as Icon,
   Box,
   ButtonDeprecated as Button,
   Typography,
