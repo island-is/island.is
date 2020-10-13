@@ -14,11 +14,11 @@ const Handover = () => {
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-  
+
   const {
     t: { handover: t, routes },
   } = useI18n()
-  
+
   const router = useRouter()
   const { id } = router.query
 
