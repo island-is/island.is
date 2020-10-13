@@ -6,8 +6,12 @@ export function useLocale() {
   const intl = useIntl()
   const contextValue = useContext(LocaleContext)
   const lang = contextValue === null ? null : contextValue.lang
-  function formatMessage(descriptor: MessageDescriptor | string, values?: any) {
-    if (!descriptor || typeof descriptor === 'string') return descriptor
+  function formatMessage(
+    descriptor: MessageDescriptor | string,
+    values?: any,
+  ): string {
+    if (!descriptor || typeof descriptor === 'string')
+      return descriptor as string
 
     return intl.formatMessage(descriptor, values)
   }

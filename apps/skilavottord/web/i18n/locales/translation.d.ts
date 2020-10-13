@@ -14,6 +14,7 @@ export interface Translation {
   handover: Handover
   completed: Completed
   processSections: string[]
+  routes: Routes
 }
 
 export interface Home {
@@ -138,6 +139,19 @@ export interface Errors {
   message: string
   primaryButton: string
   secondaryButton: string
+}
+
+export interface Routes {
+  home: string
+  myCars: string
+  recycleVehicle: RecycleVehicleRoutes
+}
+
+export interface RecycleVehicleRoutes {
+  baseRoute: string
+  confirm: string
+  handover: string
+  completed: string
 }
 
 // Converts JSON strings to/from your types

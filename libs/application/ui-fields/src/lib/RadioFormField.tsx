@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import {
   FieldBaseProps,
+  formatText,
   getValueViaPath,
   RadioField,
 } from '@island.is/application/core'
@@ -16,7 +17,7 @@ const RadioFormField: FC<Props> = ({
   showFieldName = false,
   field,
   error,
-  formValue,
+  application,
 }) => {
   const {
     disabled,
@@ -31,9 +32,15 @@ const RadioFormField: FC<Props> = ({
 
   return (
     <div>
-      {showFieldName && <Text>{formatMessage(name)}</Text>}
+      {showFieldName && (
+        <Text>{formatText(name, application, formatMessage)}</Text>
+      )}
 
-      {description && <Description description={formatMessage(description)} />}
+      {description && (
+        <Description
+          description={formatText(description, application, formatMessage)}
+        />
+      )}
 
       <Box
         background={emphasize ? 'blue100' : undefined}
@@ -47,11 +54,17 @@ const RadioFormField: FC<Props> = ({
           disabled={disabled}
           error={error}
           name={`${id}`}
-          defaultValue={getValueViaPath(formValue, id) as string[]}
+          defaultValue={getValueViaPath(application.answers, id) as string[]}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
-            label: formatMessage(label) as string,
-            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
+            label: formatText(label, application, formatMessage) as string,
+            ...(tooltip && {
+              tooltip: formatText(
+                tooltip,
+                application,
+                formatMessage,
+              ) as string,
+            }),
           }))}
         />
       </Box>

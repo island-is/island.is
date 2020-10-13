@@ -2,19 +2,17 @@ import React, { FC } from 'react'
 import { RepeaterScreen } from '../types'
 import {
   RepeaterProps,
-  FormValue,
   getValueViaPath,
-  ExternalData,
+  Application,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
 const FormRepeater: FC<{
+  application: Application
   repeater: RepeaterScreen
-  formValue: FormValue
   errors: object
   expandRepeater: () => void
-  externalData: ExternalData
-}> = ({ errors, expandRepeater, externalData, repeater, formValue }) => {
+}> = ({ application, errors, expandRepeater, repeater }) => {
   const [allFields] = useFields()
   if (!repeater.isNavigable) {
     return null
@@ -27,8 +25,7 @@ const FormRepeater: FC<{
     expandRepeater,
     error,
     repeater,
-    formValue,
-    externalData,
+    application,
   }
   const Component = allFields[repeater.component] as
     | FC<RepeaterProps>
