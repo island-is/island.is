@@ -83,7 +83,7 @@ function Home(props: HomeProps) {
               .text
           }
         />
-        <Card
+        {/*<Card
           title={
             props.pageContent.strings.find((s) => s.id === 'home-dm-button')
               .text
@@ -93,7 +93,7 @@ function Home(props: HomeProps) {
             props.pageContent.strings.find((s) => s.id === 'home-dm-btn-txt')
               .text
           }
-        />
+        />*/}
         <Card
           title={
             props.pageContent.strings.find((s) => s.id === 'home-dg-button')
