@@ -161,6 +161,36 @@ jobs:
           report_individual_runs: true
           deduplicate_classes_by_file_name: false
 
+  collect-tests2:
+    needs: tests
+    runs-on: ubuntu-20.04
+    if: always()
+    steps:
+      - name: Download all workflow run test results
+        uses: actions/download-artifact@v2
+        with:
+          path: test-results/
+      - name: Publish Unit Test Results
+        uses: ashley-taylor/junit-report-annotations-action@1.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: '**/test-results/*.xml'
+
+  collect-tests3:
+    needs: tests
+    runs-on: ubuntu-20.04
+    if: always()
+    steps:
+      - name: Download all workflow run test results
+        uses: actions/download-artifact@v2
+        with:
+          path: test-results/
+      - name: Publish Test Report
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: '**/test-results/*.xml'
+
   formatting:
     needs:
       - prepare
