@@ -11,15 +11,15 @@ export const root = style({
   paddingTop: theme.spacing[3],
   paddingLeft: theme.spacing[3],
   paddingRight: theme.spacing[3],
-  position: 'absolute',
+  position: 'fixed',
   right: theme.spacing[3],
   top: theme.spacing[3],
-  height: '100vh',
   zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       left: 'auto',
       height: 'auto',
+      position: 'absolute',
       top: theme.spacing[3],
       right: theme.spacing[3],
       paddingBottom: theme.spacing[3],
@@ -32,6 +32,19 @@ export const root = style({
   transition: `visibility 0s linear 300ms, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
+export const contentScrollWrapper = style({
+  flex: 1,
+  // for Firefox
+  minHeight: 0,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      overflowY: 'scroll',
+
+      overflowX: 'hidden', // prevent horizontal scrolling in mobile
+    },
+  },
+})
+
 export const isVisible = style({
   visibility: 'visible',
   opacity: 1,
@@ -40,17 +53,30 @@ export const isVisible = style({
   transition: `visibility 0s linear 0s, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
-export const tabButton = style({
-  width: '100%',
+export const tabContainer = style({
+  width: '50%',
+  display: 'flex',
+  justifyContent: 'center',
+  borderBottom: '2px solid transparent',
 })
 
-export const tabContainer = style({
-  width: '100%',
+export const tabBorder = style({
+  position: 'relative',
+  '::before': {
+    content: "''",
+    position: 'absolute',
+    bottom: '-2px',
+    left: 0,
+    right: 0,
+    background: theme.color.blue400,
+    height: 2,
+  },
 })
 
 export const tabBar = style({
   display: 'flex',
   width: '100%',
+  justifyContent: 'space-between',
 })
 
 export const tab = style({
@@ -66,19 +92,13 @@ export const tabActive = style({
 })
 
 export const tabFocused = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       borderBottomColor: 'transparent',
-    },
-  },
+    
+
 })
 
 export const content = style({
-  flex: 1,
-  overflow: 'auto',
   paddingBottom: theme.spacing[2],
-  // for Firefox
-  minHeight: 0,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       paddingBottom: 0,
