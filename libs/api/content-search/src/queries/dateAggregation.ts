@@ -1,6 +1,9 @@
+import { dateResolution } from '../types'
+
 export interface DateAggregationInput {
   types: string[]
   field?: string
+  resolution?: dateResolution
 }
 
 type aggregationResult = {
@@ -18,7 +21,26 @@ export interface DateAggregationResponse {
 export const dateAggregationQuery = ({
   types = [],
   field = 'dateCreated',
+  resolution = 'month',
 }: DateAggregationInput) => {
+  const intervalMap = {
+    year: {
+      interval: '1y',
+      format: 'y',
+    },
+    month: {
+      interval: '1M',
+      format: 'y-M',
+    },
+    week: {
+      interval: '1w',
+      format: 'y-w',
+    },
+    day: {
+      interval: '1d',
+      format: 'y-M-d',
+    },
+  }
   const query = {
     query: {
       terms: {
@@ -26,10 +48,11 @@ export const dateAggregationQuery = ({
       },
     },
     aggs: {
-      years: {
+      dates: {
         date_histogram: {
-          calendar_interval: '1M',
-          format: 'yyyy-MM',
+          calendar_interval: intervalMap[resolution].interval,
+          format: intervalMap[resolution].format,
+          min_doc_count: 1,
           field,
         },
       },

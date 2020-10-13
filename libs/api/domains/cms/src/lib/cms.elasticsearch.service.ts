@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  dateResolution,
   ElasticService,
   SearchIndexes,
   sortDirection,
@@ -89,13 +90,15 @@ export class CmsElasticsearchService {
   async getNewsDates(index: SearchIndexes): Promise<string[]> {
     const query = {
       types: ['webNews'],
-      field: 'createdDate',
+      field: 'dateCreated',
+      resolution: 'month' as dateResolution,
     }
 
     const newsDatesResponse = await this.elasticService.getDateAggregation(
       index,
       query,
     )
+    console.log(newsDatesResponse)
     return newsDatesResponse.aggregations.dates.buckets.map(
       (aggregationResult) => aggregationResult.key_as_string,
     )

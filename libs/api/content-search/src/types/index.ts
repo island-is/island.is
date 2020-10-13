@@ -90,3 +90,5 @@ export interface MappedData {
   dateCreated: string
   nextSyncToken?: string
 }
+
+export type dateResolution = 'year' | 'month' | 'week' | 'day'
