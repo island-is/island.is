@@ -13,8 +13,7 @@ export const FieldDescription: FC<Props> = ({ description }) => {
   }
   return (
     <Text marginTop={2} marginBottom={1}>
-      {/* <span dangerouslySetInnerHTML={getMarkup()} /> */}
-      {description}
+      <span dangerouslySetInnerHTML={getMarkup()} />
     </Text>
   )
 }
