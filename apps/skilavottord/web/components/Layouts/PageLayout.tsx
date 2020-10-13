@@ -1,4 +1,4 @@
-import React, { ReactNode, FC } from 'react'
+import React, { ReactNode, FC, useState, useEffect } from 'react'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -26,13 +26,13 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
     <Box paddingY={10}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '7/12', '7/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '7/12', '7/12']}
+            offset={['0', '0', '1/12', '1/12']}
+          >
             <Box>{children}</Box>
           </GridColumn>
-          <GridColumn
-            span={['0', '0', '3/12', '3/12']}
-            offset={['0', '0', '1/12', '1/12']}
-          ></GridColumn>
+          <GridColumn span={['0', '0', '3/12', '3/12']}></GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
@@ -46,7 +46,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
   activeCar,
 }) => {
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+
   const {
     t: { processSections: t },
   } = useI18n()
@@ -54,6 +54,14 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
   const sections = t.map((section) => {
     return { name: section }
   })
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   return (
     <Box

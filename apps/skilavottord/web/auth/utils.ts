@@ -12,4 +12,4 @@ export const isAuthenticated = (ctx: CookieContext) => {
   return Boolean(getCsrfToken(ctx))
 }
 
-export const AUTH_URL = '/api/auth/citizen/'
+export const AUTH_URL = '/api/auth/citizen'

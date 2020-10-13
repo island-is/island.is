@@ -10,6 +10,8 @@ import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
+import { LinkContext, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props extends AppProps {
   isAuthenticated: boolean
@@ -38,9 +40,24 @@ class SupportApplication extends App<Props> {
     const { Component, pageProps, isAuthenticated } = this.props
     return (
       <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <AppLayout isAuthenticated={isAuthenticated}>
-          <Component {...pageProps} />
-        </AppLayout>
+        <LinkContext.Provider
+          value={{
+            linkRenderer: (href, children) => (
+              <a
+                style={{
+                  color: theme.color.blue400,
+                }}
+                href={href}
+              >
+                {children}
+              </a>
+            ),
+          }}
+        >
+          <AppLayout isAuthenticated={isAuthenticated}>
+            <Component {...pageProps} />
+          </AppLayout>
+        </LinkContext.Provider>
       </ApolloProvider>
     )
   }

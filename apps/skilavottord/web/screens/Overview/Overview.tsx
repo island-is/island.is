@@ -60,7 +60,7 @@ const Overview: FC = () => {
           {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
-              car={car}
+              car={{ ...car, status: 'pendingRecycle' }}
               onClick={() => onOpenProcess(car.permno)}
             />
           ))}
@@ -88,7 +88,7 @@ const Overview: FC = () => {
           {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
-              car={{ ...car, status: 'done' }}
+              car={{ ...car, status: 'handedOver' }}
               onClick={() => onSeeDetails(car.permno)}
             />
           ))}
