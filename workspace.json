@@ -969,7 +969,7 @@
               "apps/application-system/form/src/favicon.ico",
               "apps/application-system/form/src/assets"
             ],
-            "styles": ["apps/application-system/form/src/styles.scss"],
+            "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js"
           },
@@ -2236,7 +2236,7 @@
               "apps/judicial-system/web/src/favicon.ico",
               "apps/judicial-system/web/src/assets"
             ],
-            "styles": ["apps/judicial-system/web/src/styles.scss"],
+            "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js"
           },
