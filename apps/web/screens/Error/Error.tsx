@@ -1,4 +1,4 @@
-import React, { ReactNode, Fragment, useContext } from 'react'
+import React, { ReactNode, Fragment, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Screen } from '@island.is/web/types'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -33,6 +33,14 @@ export const ErrorPage: Screen<ErrorPageProps> = ({ statusCode }) => {
   const t = useContext(I18nContext)?.t ?? defaultTranslations
   const title = statusCode === 404 ? t.error404Title : t.error500Title
   const body = statusCode === 404 ? t.error404Body : t.error500Body
+
+  // Temporary "fix", see https://github.com/vercel/next.js/issues/16931 for details
+  useEffect(() => {
+    const els = document.querySelectorAll('link[href*=".css"]')
+    Array.prototype.forEach.call(els, (el) => {
+      el.setAttribute('rel', 'stylesheet')
+    })
+  }, [])
 
   return (
     <Box
