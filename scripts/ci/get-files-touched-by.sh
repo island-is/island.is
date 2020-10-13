@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
+DIR="$(git rev-parse --show-toplevel)"
 marker=$(mktemp)
 touch $marker -r ${BASH_SOURCE[0]}
 
