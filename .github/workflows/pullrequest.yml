@@ -142,6 +142,7 @@ jobs:
 
   collect-tests:
     needs: tests
+    name: Unit Test Results
     runs-on: ubuntu-20.04
     if: always()
     steps:
