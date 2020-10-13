@@ -14,11 +14,11 @@ describe('User profile API', () => {
     const response = await request(app.getHttpServer())
       .post('/userProfile')
       .send({
-        nationalId: "1234567890",
-        mobilePhoneNumber: "123456799",
-        locale: "english",
-        profileImageUrl: "image",
-        email: "email@email.is"
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456799',
+        locale: 'english',
+        profileImageUrl: 'image',
+        email: 'email@email.is',
       })
       .expect(201)
 
@@ -41,11 +41,11 @@ describe('User profile API', () => {
   it(`GET /userProfile should return profile`, async () => {
     //Arrange
     const profile = {
-      nationalId: "1234567890",
-      mobilePhoneNumber: "123456799",
-      locale: "english",
-      profileImageUrl: "image",
-      email: "email@email.is"
+      nationalId: '1234567890',
+      mobilePhoneNumber: '123456799',
+      locale: 'english',
+      profileImageUrl: 'image',
+      email: 'email@email.is',
     }
 
     // Act
@@ -72,12 +72,11 @@ describe('User profile API', () => {
     )
   })
   it(`PUT /userProfile/ should return 404 not found error msg`, async () => {
-
     const updatedProfile = {
-      mobilePhoneNumber: "987654331",
-      locale: "icelandic",
-      profileImageUrl: "image",
-      email: "email@email.is"
+      mobilePhoneNumber: '987654331',
+      locale: 'icelandic',
+      profileImageUrl: 'image',
+      email: 'email@email.is',
     }
 
     // Act
@@ -85,7 +84,6 @@ describe('User profile API', () => {
       .put(`/userProfile/12312312313`)
       .send(updatedProfile)
       .expect(404)
-
 
     // Assert
     expect(updateResponse.body.error).toBe('Not Found')
@@ -96,17 +94,17 @@ describe('User profile API', () => {
   it(`PUT /userProfile should update profile`, async () => {
     //Arrange
     const profile = {
-      nationalId: "1234567890",
-      mobilePhoneNumber: "123456799",
-      locale: "english",
-      profileImageUrl: "image",
-      email: "email@email.is"
+      nationalId: '1234567890',
+      mobilePhoneNumber: '123456799',
+      locale: 'english',
+      profileImageUrl: 'image',
+      email: 'email@email.is',
     }
     const updatedProfile = {
-      mobilePhoneNumber: "987654331",
-      locale: "icelandic",
-      profileImageUrl: "image",
-      email: "email@email.is"
+      mobilePhoneNumber: '987654331',
+      locale: 'icelandic',
+      profileImageUrl: 'image',
+      email: 'email@email.is',
     }
 
     // Act
@@ -127,41 +125,43 @@ describe('User profile API', () => {
       expect.objectContaining({ locale: updatedProfile.locale }),
     )
     expect(updateResponse.body).toEqual(
-      expect.objectContaining({ mobilePhoneNumber: updatedProfile.mobilePhoneNumber }),
+      expect.objectContaining({
+        mobilePhoneNumber: updatedProfile.mobilePhoneNumber,
+      }),
     )
     expect(updateResponse.body).toEqual(
       expect.objectContaining({ email: updatedProfile.email }),
     )
   })
 
-  it(`POST /userProfile should return conflict on existing nationalId`,
-    async () => {
-      // Act
-      const response = await request(app.getHttpServer())
-        .post('/userProfile')
-        .send({
-          nationalId: "1234567890",
-          mobilePhoneNumber: "123456799",
-          locale: "english",
-          profileImageUrl: "image",
-          email: "email@email.is"
-        })
-        .expect(201)
+  it(`POST /userProfile should return conflict on existing nationalId`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456799',
+        locale: 'english',
+        profileImageUrl: 'image',
+        email: 'email@email.is',
+      })
+      .expect(201)
 
-      const conflictResponse = await request(app.getHttpServer())
-        .post('/userProfile')
-        .send({
-          nationalId: "1234567890",
-          mobilePhoneNumber: "123456799",
-          locale: "english",
-          profileImageUrl: "image",
-          email: "email@email.is"
-        })
-        .expect(409)
+    const conflictResponse = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456799',
+        locale: 'english',
+        profileImageUrl: 'image',
+        email: 'email@email.is',
+      })
+      .expect(409)
 
-      // Assert
-      expect(conflictResponse.body.error).toBe('Conflict')
-      expect(conflictResponse.body.message)
-        .toBe('A profile with nationalId - \"1234567890\" already exists')
-    })
+    // Assert
+    expect(conflictResponse.body.error).toBe('Conflict')
+    expect(conflictResponse.body.message).toBe(
+      'A profile with nationalId - "1234567890" already exists',
+    )
+  })
 })

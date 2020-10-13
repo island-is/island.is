@@ -28,4 +28,4 @@ if (process.env.INIT_SCHEMA === 'true') {
   controllers: [UserProfileController],
   providers: [UserProfileService, UploadProcessor, FileStorageService],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}

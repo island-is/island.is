@@ -6,7 +6,8 @@ import {
   NotFoundException,
   Param,
   Post,
-  NotImplementedException, ConflictException
+  NotImplementedException,
+  ConflictException,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -24,9 +25,7 @@ import { UserProfileService } from './userProfile.service'
 @ApiTags('User Profile')
 @Controller()
 export class UserProfileController {
-  constructor(
-    private userProfileService: UserProfileService
-  ) { }
+  constructor(private userProfileService: UserProfileService) {}
 
   @Get('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
@@ -42,8 +41,12 @@ export class UserProfileController {
     @Body()
     userProfileDto: CreateUserProfileDto,
   ): Promise<UserProfile> {
-    if (await this.userProfileService.findByNationalId(userProfileDto.nationalId)) {
-      throw new ConflictException(`A profile with nationalId - "${userProfileDto.nationalId}" already exists`)
+    if (
+      await this.userProfileService.findByNationalId(userProfileDto.nationalId)
+    ) {
+      throw new ConflictException(
+        `A profile with nationalId - "${userProfileDto.nationalId}" already exists`,
+      )
     }
     return await this.userProfileService.create(userProfileDto)
   }

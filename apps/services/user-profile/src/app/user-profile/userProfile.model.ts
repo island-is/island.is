@@ -38,7 +38,7 @@ export class UserProfile extends Model<UserProfile> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   })
   @ApiProperty()
   nationalId!: string

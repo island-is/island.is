@@ -21,4 +21,4 @@ import { UserProfileService } from './userProfile.service'
   ],
   exports: [],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}

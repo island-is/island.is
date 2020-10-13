@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import {
-  UserProfileApi,
-} from '../../gen/fetch'
+import { UserProfileApi } from '../../gen/fetch'
 import { UserProfile } from './userProfile.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
@@ -15,7 +13,7 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(private userProfileApi: UserProfileApi) { }
+  constructor(private userProfileApi: UserProfileApi) {}
 
   async getUser(nationalId: string): Promise<UserProfile> {
     return await this.userProfileApi
