@@ -28,6 +28,13 @@ export class UserProfileController {
   constructor(private userProfileService: UserProfileService) {}
 
   @Get('userProfile/:nationalId')
+  @ApiParam({
+    name: 'nationalId',
+    type: String,
+    required: true,
+    description: 'The nationalId of the application to update.',
+    allowEmptyValue: false,
+  })
   @ApiOkResponse({ type: UserProfile })
   async findOneByNationalId(
     @Param('nationalId', UserProfileByNationalIdPipe) profile: UserProfile,
