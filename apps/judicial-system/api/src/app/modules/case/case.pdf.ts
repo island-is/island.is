@@ -112,16 +112,22 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .fontSize(size(12))
     .lineGap(16)
     .text(`${capitalize(formatDate(existingCase.arrestDate, 'PPPPp'))}.`)
-    .font('Helvetica-Bold')
-    .fontSize(size(14))
-    .lineGap(8)
-    .text('Ósk um fyrirtökudag og tíma')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .lineGap(16)
-    .text(
-      `${capitalize(formatDate(existingCase.requestedCourtDate, 'PPPPp'))}.`,
-    )
+
+  if (existingCase.requestedCourtDate) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(size(14))
+      .lineGap(8)
+      .text('Ósk um fyrirtökudag og tíma')
+      .font('Helvetica')
+      .fontSize(size(12))
+      .lineGap(16)
+      .text(
+        `${capitalize(formatDate(existingCase.requestedCourtDate, 'PPPPp'))}.`,
+      )
+  }
+
+  doc
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
@@ -356,10 +362,30 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .lineGap(6)
     .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
-    .lineGap(16)
+
+  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
+    doc.text(existingCase.accusedAppealAnnouncement, {
+      lineGap: 6,
+      paragraphGap: 10,
+    })
+  }
+
+  doc
+    .lineGap(
+      existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
+        ? 6
+        : 16,
+    )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
-    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`)
-    .end()
+
+  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+    doc.text(existingCase.prosecutorAppealAnnouncement, {
+      lineGap: 6,
+      paragraphGap: 10,
+    })
+  }
+
+  doc.text(`${existingCase.judge.name}, ${existingCase.judge.title}`).end()
 
   // wait for the writing to finish
 
