@@ -33,7 +33,6 @@ import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { useNamespace } from '../hooks'
-import '@taktikal/fillandsign/styles.css'
 
 export interface LayoutProps {
   showSearchInHeader?: boolean

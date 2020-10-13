@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { openDocument } from '@taktikal/fillandsign'
 import {
   Text,
   ButtonDeprecated as Button,
@@ -9,6 +8,8 @@ import {
   Stack,
   IconProps,
 } from '@island.is/island-ui/core'
+import { OpenDocument } from '../Taktikal/Taktikal'
+
 import * as styles from './ProcessEntry.treat'
 
 export const Titles: { [k: string]: string } = {
@@ -42,7 +43,9 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
       href: processLink,
       icon: 'external' as IconProps['type'],
     }),
-    ...(dropSignFileKey && { onClick: () => openDocument(dropSignFileKey) }),
+    ...(dropSignFileKey && {
+      onClick: () => OpenDocument(dropSignFileKey),
+    }),
   }
 
   return (
