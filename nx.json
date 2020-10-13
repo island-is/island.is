@@ -177,6 +177,9 @@
       "tags": [],
       "implicitDependencies": ["island-ui-theme"]
     },
+    "island-ui-fonts": {
+      "tags": []
+    },
     "island-ui-storybook": {
       "tags": []
     },

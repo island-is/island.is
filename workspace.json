@@ -1971,6 +1971,9 @@
         }
       }
     },
+    "island-ui-fonts": {
+      "root": "libs/island-ui/fonts"
+    },
     "island-ui-storybook": {
       "root": "libs/island-ui/storybook",
       "sourceRoot": "libs/island-ui/storybook/src",
