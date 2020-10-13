@@ -1,6 +1,10 @@
 name: Monorepo pipeline - push
 
 on:
+  create:
+    branches:
+      - 'release/**'
+      - 'hotfix/**'
   push:
     branches:
       - 'master'
@@ -69,7 +73,7 @@ jobs:
         name: Preparing HEAD tag
 
       - run: |
-          source ./scripts/00_prepare-base-tags.sh
+          source ./scripts/ci/00_prepare-base-tags.sh
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
         id: git_nx_base
@@ -117,7 +121,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-docker-deps.sh
+        run: ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -128,7 +132,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-host-deps.sh
+        run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -142,19 +146,19 @@ jobs:
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
+        run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
 
       - name: Prepare docker build targets
         id: build_map
         run: |
-          MAP=$(./scripts/generate-build-map.sh docker-express docker-next docker-static)
+          MAP=$(./scripts/ci/generate-build-map.sh docker-express docker-next docker-static)
           echo "MAP: '$MAP'"
           echo "::set-output name=BUILD_MAP::$MAP"
 
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/list-unaffected.sh docker-next docker-express docker-static)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   docker-build:
@@ -216,7 +220,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
-        run: ./scripts/docker-login-ecr.sh
+        run: ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -230,7 +234,7 @@ jobs:
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
-        run: ./scripts/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
+        run: ./scripts/ci/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
 
   retag-unaffected:
     runs-on: ubuntu-20.04
@@ -247,7 +251,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Retag unaffected Docker images
-        run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
+        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

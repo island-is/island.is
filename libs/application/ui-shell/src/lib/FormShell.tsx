@@ -79,6 +79,7 @@ export const FormShell: FC<{
                 background="white"
               >
                 <Screen
+                  application={storedApplication}
                   addExternalData={(payload) =>
                     dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
                   }
@@ -86,8 +87,6 @@ export const FormShell: FC<{
                     dispatch({ type: ActionTypes.ANSWER, payload })
                   }
                   dataSchema={dataSchema}
-                  externalData={storedApplication.externalData}
-                  formValue={storedApplication.answers}
                   expandRepeater={() =>
                     dispatch({ type: ActionTypes.EXPAND_REPEATER })
                   }
@@ -102,7 +101,6 @@ export const FormShell: FC<{
                   isLastScreen={activeScreen === screens.length - 1} // TODO do this better
                   screen={screens[activeScreen]}
                   mode={mode}
-                  applicationId={storedApplication.id}
                 />
               </Box>
             </GridColumn>
@@ -112,6 +110,7 @@ export const FormShell: FC<{
             >
               <Sidebar>
                 <FormStepper
+                  application={storedApplication}
                   mode={mode}
                   showTag={showProgressTag}
                   form={form}

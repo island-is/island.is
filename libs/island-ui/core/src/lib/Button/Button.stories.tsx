@@ -1,10 +1,15 @@
 import React from 'react'
-import { Box } from '../..'
+import { withDesign } from 'storybook-addon-designs'
+import { Box } from '../Box/Box'
 import { Button } from './Button'
+
+const figmaLink =
+  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=2%3A170'
 
 export default {
   title: 'Core/Button',
   component: Button,
+  decorators: [withDesign],
   argTypes: {
     onClick: { action: 'onClick' },
     onBlur: { action: 'onBlur' },
@@ -13,9 +18,12 @@ export default {
   parameters: {
     docs: {
       description: {
-        component:
-          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=2%3A170)',
+        component: `[View in Figma](${figmaLink})`,
       },
+    },
+    design: {
+      type: 'figma',
+      url: figmaLink,
     },
   },
 }
@@ -199,5 +207,28 @@ CircleGhostDestructive.args = {
 export const CircleGhostNegative = () => (
   <Box background="blue400" padding={4}>
     <Button variant="ghost" colorScheme="negative" circle icon="arrowRight" />
+  </Box>
+)
+
+export const Utility = Template.bind({})
+Utility.args = {
+  children: 'Utility Button',
+  variant: 'utility',
+  icon: 'arrowRight',
+}
+
+export const UtilityDestructive = Template.bind({})
+UtilityDestructive.args = {
+  children: 'Utility Button',
+  variant: 'utility',
+  colorScheme: 'destructive',
+  icon: 'globe',
+}
+
+export const UtilityNegative = () => (
+  <Box background="blue400" padding={4}>
+    <Button variant="utility" colorScheme="negative" icon="arrowRight">
+      Utility Button
+    </Button>
   </Box>
 )

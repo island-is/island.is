@@ -4,12 +4,14 @@ import { useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import { CompanyApplication } from '@island.is/gjafakort-web/graphql/schema'
-import { KeyValue } from '@island.is/gjafakort-web/components'
+import {
+  FieldInput,
+  FieldNumberInput,
+  KeyValue,
+} from '@island.is/gjafakort-web/components'
 
 import {
   Accordion,
-  FieldNumberInput,
-  FieldInput,
   AccordionItem,
   BulletList,
   Bullet,

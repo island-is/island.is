@@ -3,7 +3,7 @@
 // @ts-ignore
 const merge = require('deepmerge')
 
-import { FormValue } from '../types/Application'
+import { Application, FormValue } from '../types/Application'
 import {
   Form,
   FormNode,
@@ -11,6 +11,8 @@ import {
   FormItemTypes,
   Section,
   SubSection,
+  FormText,
+  StaticText,
 } from '../types/Form'
 
 export function getValueViaPath(
@@ -174,4 +176,16 @@ export function mergeAnswers(
   return merge(currentAnswers, newAnswers, {
     arrayMerge: overwriteMerge,
   })
+}
+type MessageFormatter = (descriptor: StaticText, values?: any) => string
+
+export function formatText(
+  text: FormText,
+  application: Application,
+  formatMessage: MessageFormatter,
+): string {
+  if (typeof text === 'function') {
+    return formatMessage(text(application))
+  }
+  return formatMessage(text)
 }

@@ -30,9 +30,8 @@ function formatConclusion(existingCase: Case): string {
         existingCase.custodyEndDate,
         'PPPp',
       )}. ${
-        existingCase.custodyRestrictions?.length === 0
-          ? 'Engar takmarkanir skulu vera á gæslunni.'
-          : `Kærði skal sæta ${existingCase.custodyRestrictions?.map(
+        existingCase.custodyRestrictions?.length > 0
+          ? `Kærði skal sæta ${existingCase.custodyRestrictions.map(
               (custodyRestriction, index) => {
                 const isNextLast =
                   index === existingCase.custodyRestrictions.length - 2
@@ -59,6 +58,7 @@ function formatConclusion(existingCase: Case): string {
                   : ''
               },
             )}á meðan á gæsluvarðhaldinu stendur.`
+          : 'Engar takmarkanir skulu vera á gæslunni.'
       }`
 }
 
@@ -206,7 +206,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     })
     .font('Helvetica-Bold')
     .text(
-      `Fhl. ${existingCase.prosecutor.name}, ${existingCase.prosecutor.title}`,
+      `Fhl. ${existingCase.prosecutor?.name}, ${existingCase.prosecutor?.title}`,
     )
     .end()
 
@@ -358,7 +358,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
     .lineGap(16)
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
-    .text(`${existingCase.judge.name}, ${existingCase.judge.title}`)
+    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`)
     .end()
 
   // wait for the writing to finish

@@ -10,27 +10,24 @@ import {
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import * as styles from './Confirm.treat'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 
-const Confirm = (props) => {
+const Confirm = ({ apolloState }) => {
   const [checkbox, setCheckbox] = useState(false)
 
   const {
-    activeLocale,
-    t: { confirm: t },
+    t: { confirm: t, routes },
   } = useI18n()
-  const { makePath, routePrefix } = useRouteNames(activeLocale)
 
   const router = useRouter()
   const { id } = router.query
 
-  const { apolloState } = props
   const car = apolloState[`Car:${id}`]
 
   const { width } = useWindowSize()
@@ -39,24 +36,20 @@ const Confirm = (props) => {
   useEffect(() => {
     if (!car) {
       router.push({
-        pathname: makePath('myCars'),
+        pathname: routes.myCars,
       })
     }
   }, [car])
 
   const onCancel = () => {
     router.push({
-      pathname: makePath('myCars'),
+      pathname: routes.myCars,
     })
   }
 
-  const onConfirm = (id) => {
-    // Login with return URL
-    // with car info
-    // Mutate data on DB
+  const onConfirm = (id: string) => {
     router.replace(
-      `${routePrefix}/recycle-vehicle/[id]/handover`,
-      makePath('recycleVehicle', id, 'handover'),
+      `${AUTH_URL}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
   }
 
@@ -125,7 +118,7 @@ const Confirm = (props) => {
                 variant="normal"
                 disabled={!checkbox}
                 icon="arrowRight"
-                onClick={() => onConfirm(id)}
+                onClick={() => onConfirm(id.toString())}
               >
                 {t.buttons.continue}
               </Button>
