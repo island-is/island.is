@@ -13,6 +13,13 @@ export interface MockCar {
   isCoOwned?: boolean
 }
 
+export interface MockUser {
+  name: string
+  nationalId: string
+  mobile: number
+  role: string
+}
+
 export type GetInitialPropsContext<Context> = Context & {
   apolloClient: ApolloClient<NormalizedCacheObject>
   locale: string

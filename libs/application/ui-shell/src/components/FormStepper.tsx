@@ -4,13 +4,20 @@ import {
   FormStepperThemes,
   Tag,
 } from '@island.is/island-ui/core'
-import { FormMode, Section, SectionChildren } from '@island.is/application/core'
+import {
+  Application,
+  FormMode,
+  Section,
+  SectionChildren,
+  formatText,
+} from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
 import { FormModes } from '../types'
 
 interface FormStepperProps {
+  application: Application
   form: {
     name: MessageDescriptor | string
     icon?: string
@@ -23,6 +30,7 @@ interface FormStepperProps {
 }
 
 const FormStepper: FC<FormStepperProps> = ({
+  application,
   form,
   mode,
   showTag,
@@ -43,13 +51,13 @@ const FormStepper: FC<FormStepperProps> = ({
   // Cannot infers type because of circular loop
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formattedChildren = (child: SectionChildren): any => ({
-    name: formatMessage(child.name),
+    name: formatText(child.name, application, formatMessage),
     type: child.type,
     children: (child.children ?? []).map((c) => formattedChildren(c)),
   })
 
   const formattedSections = sections.map((section: Section) => ({
-    name: formatMessage(section.name),
+    name: formatText(section.name, application, formatMessage),
     type: section.type,
     children: section.children.map((child) => formattedChildren(child)),
   }))
