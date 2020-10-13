@@ -59,7 +59,7 @@ const Overview: FC = () => {
 
   return (
     <PageLayout>
-      <Box paddingBottom={6}>
+      <Box paddingBottom={[3, 3, 6, 6]}>
         <Breadcrumbs>
           <Link href={homeRoute}>Ísland.is</Link>
           <span>{t.title}</span>
