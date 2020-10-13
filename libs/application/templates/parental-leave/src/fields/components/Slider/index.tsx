@@ -2,7 +2,7 @@ import React, { CSSProperties, FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 
 import * as styles from './Slider.treat'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface TooltipProps {
   style?: CSSProperties
@@ -111,6 +111,7 @@ interface TrackProps {
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
+  showProgressOverlay?: boolean
   showToolTip?: boolean
   label: {
     singular: string
@@ -130,6 +131,7 @@ const Slider = ({
   showLabel = false,
   showMinMaxLabels = false,
   showRemainderOverlay = true,
+  showProgressOverlay = true,
   showToolTip = false,
   label,
   currentIndex,
@@ -151,6 +153,10 @@ const Slider = ({
     if (remainderRef.current != null) {
       remainderRef.current.style.left = `${x}px`
     }
+
+    if (progressRef.current != null) {
+      progressRef.current.style.width = `${x}px`
+    }
   }, [isDragging, x])
 
   const tooltipStyle = { transform: `translateX(${x}px)` }
@@ -162,9 +168,14 @@ const Slider = ({
     left: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
   }
+  const progressStyle = {
+    right: `${dragX.current == null ? x : dragX.current}px`,
+    transition: isDragging ? 'none' : '',
+  }
 
   const thumbRef = React.useRef<HTMLDivElement>(null)
   const remainderRef = React.useRef<HTMLDivElement>(null)
+  const progressRef = React.useRef<HTMLDivElement>(null)
 
   const dragBind = useDrag({
     onDragMove(deltaX) {
@@ -185,6 +196,10 @@ const Slider = ({
 
       if (remainderRef.current && dragX.current != null) {
         if (!snap) remainderRef.current.style.left = `${dragX.current}px`
+      }
+
+      if (progressRef.current && dragX.current != null) {
+        if (!snap) progressRef.current.style.width = `${dragX.current}px`
       }
     },
     onDragStart() {
@@ -233,18 +248,18 @@ const Slider = ({
     <Box>
       {showMinMaxLabels && (
         <Box display="flex" justifyContent="spaceBetween" width="full">
-          <Typography color="blue400" variant="eyebrow">
+          <Text color="blue400" variant="eyebrow">
             {min}
-          </Typography>
-          <Typography color="blue400" variant="eyebrow">
+          </Text>
+          <Text color="blue400" variant="eyebrow">
             {max}
-          </Typography>
+          </Text>
         </Box>
       )}
       {showLabel && (
-        <Typography variant="h4" as="p">
+        <Text variant="h4" as="p">
           {formatTooltip(currentIndex)}
-        </Typography>
+        </Text>
       )}
       <Box
         className={styles.TrackGrid}
@@ -281,6 +296,13 @@ const Slider = ({
             className={styles.remainderBar}
             style={remainderStyle}
             ref={remainderRef}
+          />
+        )}
+        {showProgressOverlay && (
+          <Box
+            className={styles.progressBar}
+            style={progressStyle}
+            ref={progressRef}
           />
         )}
       </Box>

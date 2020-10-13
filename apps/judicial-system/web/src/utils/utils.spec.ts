@@ -1,4 +1,9 @@
-import { parseArray, parseString, parseTransition } from './formatters'
+import {
+  parseArray,
+  parseString,
+  parseTime,
+  parseTransition,
+} from './formatters'
 import { constructConclusion } from './stepHelper'
 import { Case } from '../types'
 import {
@@ -67,6 +72,20 @@ ipsum`
         modified: 'timestamp',
         transition: CaseTransition.SUBMIT,
       })
+    })
+  })
+
+  describe('Parse time', () => {
+    test('should return a valid date with time given a valid date and time', () => {
+      // Arrange
+      const date = '2020-10-24T12:25:00Z'
+      const time = '13:37'
+
+      // Act
+      const d = parseTime(date, time)
+
+      // Assert
+      expect(d).toEqual('2020-10-24T13:37:00Z')
     })
   })
 })

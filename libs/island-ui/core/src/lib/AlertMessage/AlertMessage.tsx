@@ -1,6 +1,6 @@
-import React from 'react'
+import * as React from 'react' // [1]
 import cn from 'classnames'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 
 import * as styles from './AlertMessage.treat'
 import { Icon } from '../Icon/Icon'
@@ -29,13 +29,16 @@ export const AlertMessage: React.FC<AlertMessageProps> = (
             height={32}
           />
         </div>
-        <Typography as="h5" variant="h5">
+        <Text as="h5" variant="h5">
           {props.title}
-        </Typography>
+        </Text>
       </div>
       <div className={styles.messageContainer}>
-        <Typography variant="pSmall">{props.message}</Typography>
+        <Text variant="small">{props.message}</Text>
       </div>
     </div>
   )
 }
+
+// [1] Used like that because of an Storybook bug. Using `import React from 'react'` results in
+// Storybook not being able to read and display available props.

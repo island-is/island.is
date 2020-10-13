@@ -12,15 +12,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - run: |
-          MERGE_BASE=$(git merge-base origin/master HEAD)
-          CODEOWNERS_FILE=".github/CODEOWNERS"
-          if git diff --quiet $MERGE_BASE $CODEOWNERS_FILE; then
-            # We only want to run this when changes are made to CODEOWNERS
-            echo "::set-env name=SUCCESS::true"
+      - name: Check indentation
+        run: |
+          no_different_indentations=$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)
+          if [[ "$no_different_indentations" != "1" ]]; then
+            echo "CODEOWNERS has $no_different_indentations different indentations."
+            echo "Make sure that all teams start in the same column."
+            cat .github/CODEOWNERS | grep -v '^#' | awk NF
+            exit 1
           fi
       - uses: mszostok/codeowners-validator@v0.4.0
-        if: env.SUCCESS != 'true'
         with:
           checks: 'files,owners,duppatterns'
           experimental_checks: 'notowned'

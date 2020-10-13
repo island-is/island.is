@@ -5,7 +5,12 @@ import {
   defaultRenderComponent,
   RenderConfig,
 } from '@island.is/island-ui/contentful'
-import { GridRow, GridColumn } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  LinkContext,
+  Link,
+} from '@island.is/island-ui/core'
 import ContactUs from '../ContactUs/ContactUs'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
@@ -53,7 +58,24 @@ export const RichText: FC<{
   body: Slice[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
-  return <>{renderSlices(body, { renderComponent, ...config })}</>
+  return (
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <Link
+            href={href}
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
+            {children}
+          </Link>
+        ),
+      }}
+    >
+      {renderSlices(body, { renderComponent, ...config })}
+    </LinkContext.Provider>
+  )
 })
 
 export default RichText

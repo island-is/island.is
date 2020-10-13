@@ -5,24 +5,24 @@ import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { ActionCard, ProgressCard, Error } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
-import { GET_CARS } from '@island.is/skilavottord-web/graphql/queries'
+import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
-import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { MockCar } from '@island.is/skilavottord-web/types'
 
 const nationalId = '2222222222'
 
 const Overview: FC = () => {
-  const { data, loading, error } = useQuery(GET_CARS, {
+  const { data, loading, error } = useQuery(GET_VEHICLES, {
     variables: { nationalId },
   })
 
   const {
-    activeLocale,
-    t: { myCars: t },
+    t: {
+      myCars: t,
+      routes: { recycleVehicle: routes },
+    },
   } = useI18n()
   const router = useRouter()
-  const { makePath, routePrefix } = useRouteNames(activeLocale)
 
   if (error || (loading && !data)) {
     return (
@@ -36,28 +36,19 @@ const Overview: FC = () => {
 
   const onRecycleCar = (id: string) => {
     router
-      .push(
-        '/recycle-vehicle/[id]/confirm',
-        makePath('recycleVehicle', id, 'confirm'),
-      )
+      .push(routes.confirm, `${routes.baseRoute}/${id}/confirm`)
       .then(() => window.scrollTo(0, 0))
   }
 
   const onOpenProcess = (id: string) => {
     router
-      .push(
-        '/recycle-vehicle/[id]/handover',
-        makePath('recycleVehicle', id, 'handover'),
-      )
+      .push(routes.handover, `${routes.baseRoute}/${id}/handover`)
       .then(() => window.scrollTo(0, 0))
   }
 
   const onSeeDetails = (id: string) => {
     router
-      .push(
-        '/recycle-vehicle/[id]/completed',
-        makePath('recycleVehicle', id, 'completed'),
-      )
+      .push(routes.completed, `${routes.baseRoute}/${id}/completed`)
       .then(() => window.scrollTo(0, 0))
   }
 
@@ -69,7 +60,7 @@ const Overview: FC = () => {
           {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
-              car={car}
+              car={{ ...car, status: 'pendingRecycle' }}
               onClick={() => onOpenProcess(car.permno)}
             />
           ))}
@@ -97,7 +88,7 @@ const Overview: FC = () => {
           {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
-              car={{ ...car, status: 'done' }}
+              car={{ ...car, status: 'handedOver' }}
               onClick={() => onSeeDetails(car.permno)}
             />
           ))}

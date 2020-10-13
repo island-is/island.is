@@ -4,7 +4,11 @@ import { Field } from './Fields'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderTypes } from './DataProvider'
 import { MessageDescriptor } from 'react-intl'
-import { ExternalData, FormValue } from './Application'
+import { Application } from './Application'
+
+export type StaticText = MessageDescriptor | string
+
+export type FormText = StaticText | ((application: Application) => StaticText)
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -27,7 +31,7 @@ export type FormMode =
 
 export interface Form {
   id: ApplicationTypes
-  name: MessageDescriptor | string
+  name: StaticText
   type: FormItemTypes.FORM
   mode?: FormMode
   icon?: string
@@ -44,7 +48,7 @@ export interface FormItem {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly name: MessageDescriptor | string
+  readonly name: FormText
 }
 
 export interface Section extends FormItem {
@@ -84,24 +88,22 @@ export interface ExternalDataProvider extends FormItem {
 export interface DataProviderItem {
   readonly id: string
   readonly type: DataProviderTypes
-  readonly title: MessageDescriptor | string
-  readonly subTitle?: MessageDescriptor | string
+  readonly title: StaticText
+  readonly subTitle?: StaticText
   readonly source?: string
 }
 
 export interface FieldBaseProps {
-  applicationId?: string
   autoFocus?: boolean
   error?: string
   field: Field
-  formValue: FormValue
+  application: Application
   showFieldName?: boolean
 }
 
 export type RepeaterProps = {
+  application: Application
   expandRepeater: () => void
   error?: string
   repeater: Repeater
-  formValue: FormValue
-  externalData: ExternalData
 }

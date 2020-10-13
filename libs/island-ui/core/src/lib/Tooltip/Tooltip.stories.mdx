@@ -1,14 +1,9 @@
-import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
 
 import { Inline } from '../Inline/Inline'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Tooltip } from './Tooltip'
-
-export default {
-  title: 'Components/Tooltip',
-  component: Tooltip,
-}
 
 <Meta title="Components/Tooltip" component={Tooltip} />
 
@@ -17,20 +12,14 @@ export default {
 export const tooltipText =
   'Check out this cool tooltip. It has some text in it that you can read for more details.'
 
-### WithDefaultIcon
+### With default icon
 
 <Canvas>
   <Story name="Default">
     <Box padding="gutter">
       <Text variant="p" as="span">
         Here is some text that has a tooltip with the default icon at the end of
-        it.{' '}
-        <Tooltip
-          colored={false}
-          placement="right"
-          as="button"
-          text={tooltipText}
-        />
+        it. <Tooltip placement="right" as="button" text={tooltipText} />
       </Text>
     </Box>
   </Story>
@@ -43,7 +32,7 @@ export const tooltipText =
     <Box padding="gutter">
       <Text variant="p" as="span">
         Here is some text that has a tooltip wrapped around{' '}
-        <Tooltip colored={false} placement="top" as="span" text={tooltipText}>
+        <Tooltip placement="top" as="span" text={tooltipText}>
           <span>this text</span>
         </Tooltip>
         .
@@ -54,7 +43,7 @@ export const tooltipText =
         <Text variant="p" as="span">
           Here is some text.
         </Text>
-        <Tooltip colored={false} placement="bottom" text={tooltipText} />
+        <Tooltip placement="bottom" text={tooltipText} />
       </Inline>
     </Box>
   </Story>
@@ -62,4 +51,4 @@ export const tooltipText =
 
 # Props
 
-<Props of={Tooltip} />
+<ArgsTable of={Tooltip} />

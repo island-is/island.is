@@ -1,6 +1,10 @@
 name: Monorepo pipeline - push
 
 on:
+  create:
+    branches:
+      - 'release/**'
+      - 'hotfix/**'
   push:
     branches:
       - 'master'
@@ -48,9 +52,9 @@ jobs:
            # on master
            GIT_BASE_BRANCH=master
           fi
-          echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
-          echo "::set-env name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
+          echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
@@ -61,16 +65,16 @@ jobs:
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
-          echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
       - run: |
-          echo "::set-env name=HEAD::${GITHUB_SHA}"
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
         id: git_nx_head
         name: Preparing HEAD tag
 
       - run: |
-          source ./scripts/00_prepare-base-tags.sh
-          echo "::set-env name=BASE::${BASE}"
+          source ./scripts/ci/00_prepare-base-tags.sh
+          echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
         id: git_nx_base
         name: Preparing BASE tags
@@ -89,7 +93,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}
+          export HASH=${{ hashFiles('scripts/generate-schemas.js', 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/**/codegen.yml', 'apps/**/modules/**.ts?', 'libs/**/modules/**.ts?', 'apps/**/models/**.ts?', 'libs/**/models/**.ts?', 'apps/**/dto/**.ts?', 'libs/**/dto/**.ts?', 'apps/**/enums/**.ts?', 'libs/**/enums/**.ts?', 'apps/**/queries/**.ts?', 'libs/**/queries/**.ts?', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/air-discount-scheme/web/screens/**/*.tsx', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/gjafakort/api/src/**/typeDefs.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
@@ -117,7 +121,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-docker-deps.sh
+        run: ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -128,10 +132,10 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-host-deps.sh
+        run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: set BRANCH env var
-        run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
+        run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
 
       - name: Cache for generated files
         id: generated-files-cache
@@ -142,26 +146,26 @@ jobs:
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
+        run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
 
       - name: Prepare docker build targets
         id: build_map
         run: |
-          MAP=$(./scripts/generate-build-map.sh docker-express docker-next docker-static)
+          MAP=$(./scripts/ci/generate-build-map.sh docker-express docker-next docker-static)
           echo "MAP: '$MAP'"
           echo "::set-output name=BUILD_MAP::$MAP"
 
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/list-unaffected.sh docker-next docker-express docker-static)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   docker-build:
     needs:
       - prepare
     runs-on: ubuntu-20.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -184,7 +188,7 @@ jobs:
             # Early exit
             exit 1
           fi
-          echo "::set-env name=AFFECTED_PROJECTS::$AFFECTED_PROJECTS"
+          echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
         continue-on-error: true
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
@@ -216,7 +220,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
-        run: ./scripts/docker-login-ecr.sh
+        run: ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -230,7 +234,7 @@ jobs:
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
-        run: ./scripts/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
+        run: ./scripts/ci/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
 
   retag-unaffected:
     runs-on: ubuntu-20.04
@@ -247,7 +251,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Retag unaffected Docker images
-        run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
+        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -1,18 +1,19 @@
 import React, { FC, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import {
+  Application,
   ExternalData,
-  FieldBaseProps,
   FormItemTypes,
   FormMode,
   FormValue,
   Schema,
+  formatText,
 } from '@island.is/application/core'
 import {
   Box,
   ButtonDeprecated as Button,
   GridColumn,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
@@ -32,36 +33,33 @@ import * as styles from './Screen.treat'
 import { useLocale } from '@island.is/localization'
 
 type ScreenProps = {
+  application: Application
   answerAndGoToNextScreen(answers: FormValue): void
-  formValue: FormValue
   addExternalData(data: ExternalData): void
   answerQuestions(answers: FormValue): void
   dataSchema: Schema
-  externalData: ExternalData
   shouldSubmit?: boolean
   isLastScreen?: boolean
   expandRepeater(): void
   prevScreen(): void
   screen: FormScreen
   mode?: FormMode
-  applicationId: string
 }
 
 const Screen: FC<ScreenProps> = ({
-  formValue,
+  application,
   addExternalData,
   answerQuestions,
   dataSchema,
   expandRepeater,
-  externalData,
   answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
   isLastScreen = false,
   screen,
   mode,
-  applicationId,
 }) => {
+  const { answers: formValue, externalData, id: applicationId } = application
   const { formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
     mode: 'onBlur',
@@ -142,23 +140,23 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Typography variant="h2">{formatMessage(screen.name)}</Typography>
+          <Text variant="h2">
+            {formatText(screen.name, application, formatMessage)}
+          </Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
+                application={application}
                 errors={errors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
-                formValue={formValue}
-                externalData={externalData}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
                 answerQuestions={answerQuestions}
                 errors={errors}
                 multiField={screen}
-                formValue={formValue}
-                applicationId={applicationId}
+                application={application}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -173,8 +171,7 @@ const Screen: FC<ScreenProps> = ({
                 autoFocus
                 errors={errors}
                 field={screen}
-                formValue={formValue}
-                applicationId={applicationId}
+                application={application}
               />
             )}
           </Box>

@@ -3,13 +3,14 @@ import {
   FieldBaseProps,
   getValueViaPath,
   FileUploadField,
+  formatText,
 } from '@island.is/application/core'
 import {
   Box,
   InputFileUpload,
   UploadFile,
   fileToObject,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
@@ -69,12 +70,7 @@ function reducer(state: UploadFile[], action: Action) {
 interface Props extends FieldBaseProps {
   field: FileUploadField
 }
-const FileUploadFormField: FC<Props> = ({
-  applicationId,
-  error,
-  field,
-  formValue,
-}) => {
+const FileUploadFormField: FC<Props> = ({ application, error, field }) => {
   const {
     id,
     introduction,
@@ -85,7 +81,7 @@ const FileUploadFormField: FC<Props> = ({
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [uploadError, setUploadError] = useState<string | undefined>(undefined)
-  const val = getValueViaPath(formValue, id, []) as UploadFile[]
+  const val = getValueViaPath(application.answers, id, []) as UploadFile[]
 
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
 
@@ -130,7 +126,7 @@ const FileUploadFormField: FC<Props> = ({
       await addAttachment({
         variables: {
           input: {
-            id: applicationId,
+            id: application.id,
             key: fields.key,
             url: `${response.url}/${fields.key}`,
           },
@@ -200,7 +196,7 @@ const FileUploadFormField: FC<Props> = ({
         await deleteAttachment({
           variables: {
             input: {
-              id: applicationId,
+              id: application.id,
               key: fileToRemove.key,
             },
           },
@@ -226,7 +222,7 @@ const FileUploadFormField: FC<Props> = ({
 
   return (
     <Box>
-      <Typography variant="p">{formatMessage(introduction)}</Typography>
+      <Text>{formatText(introduction, application, formatMessage)}</Text>
       <Controller
         name={`${id}`}
         defaultValue={initialUploadFiles}

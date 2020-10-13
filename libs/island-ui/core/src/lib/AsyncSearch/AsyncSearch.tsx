@@ -315,6 +315,11 @@ export const AsyncSearchInput = forwardRef<
           </span>
         )}
         {showLabel && <Label {...labelProps}>{label}</Label>}
+        {!showLabel && (
+          <label className={styles.srOnly} id={inputProps['aria-labelledby']}>
+            {inputProps.placeholder}
+          </label>
+        )}
         <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
           {children}
         </Menu>
