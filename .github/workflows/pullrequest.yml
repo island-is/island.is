@@ -155,26 +155,26 @@ jobs:
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v1.3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           check_name: Unit Test Results
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           files: '**/test-results/*.xml'
-          report_individual_runs: true
-          deduplicate_classes_by_file_name: false
+          # report_individual_runs: true
+          # deduplicate_classes_by_file_name: false
 
-  collect-tests2:
-    needs: tests
-    runs-on: ubuntu-20.04
-    if: always()
-    steps:
-      - name: Download all workflow run test results
-        uses: actions/download-artifact@v2
-        with:
-          path: test-results/
-      - name: Publish Unit Test Results
-        uses: ashley-taylor/junit-report-annotations-action@1.3
-        with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: '**/test-results/*.xml'
+  # collect-tests2:
+  #   needs: tests
+  #   runs-on: ubuntu-20.04
+  #   if: always()
+  #   steps:
+  #     - name: Download all workflow run test results
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         path: test-results/
+  #     - name: Publish Unit Test Results
+  #       uses: ashley-taylor/junit-report-annotations-action@1.3
+  #       with:
+  #         access-token: ${{ secrets.GITHUB_TOKEN }}
+  #         path: '**/test-results/*.xml'
 
   formatting:
     needs:
