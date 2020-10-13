@@ -1,4 +1,4 @@
-import React, { ReactNode, FC } from 'react'
+import React, { ReactNode, FC, useState, useEffect } from 'react'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -46,7 +46,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
   activeCar,
 }) => {
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+
   const {
     t: { processSections: t },
   } = useI18n()
@@ -54,6 +54,14 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
   const sections = t.map((section) => {
     return { name: section }
   })
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   return (
     <Box

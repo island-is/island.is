@@ -8,10 +8,9 @@ import {
   Typography,
   Button,
   Checkbox,
-  Inline,
-  Link,
+  Text,
+  Icon,
 } from '@island.is/island-ui/core'
-
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { CarDetailsBox } from './components'
 import { theme } from '@island.is/island-ui/theme'
@@ -19,6 +18,8 @@ import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 
 const Confirm = ({ apolloState }) => {
   const [checkbox, setCheckbox] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
 
   const {
     t: { confirm: t, routes },
@@ -29,9 +30,6 @@ const Confirm = ({ apolloState }) => {
 
   const car = apolloState[`Car:${id}`]
 
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-
   useEffect(() => {
     if (!car) {
       router.push({
@@ -39,6 +37,13 @@ const Confirm = ({ apolloState }) => {
       })
     }
   }, [car])
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   const onCancel = () => {
     router.push({
@@ -90,13 +95,9 @@ const Confirm = ({ apolloState }) => {
               justifyContent="spaceBetween"
             >
               {isMobile ? (
-                <Button
-                  variant="ghost"
-                  onClick={onCancel}
-                  circle
-                  size="large"
-                  icon="arrowLeft"
-                ></Button>
+                <Button variant="ghost" onClick={onCancel} circle size="large">
+                  <Icon type="arrowLeft" />
+                </Button>
               ) : (
                 <Button variant="ghost" onClick={onCancel}>
                   {t.buttons.cancel}

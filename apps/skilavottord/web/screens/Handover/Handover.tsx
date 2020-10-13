@@ -12,15 +12,22 @@ import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 
 const Handover = () => {
   const [showModal, setModal] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-
+  
   const {
     t: { handover: t, routes },
   } = useI18n()
-
+  
   const router = useRouter()
   const { id } = router.query
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   const onContinue = () => {
     router.replace(routes.myCars)
