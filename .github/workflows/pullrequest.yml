@@ -159,6 +159,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           files: '**/test-results/*.xml'
           report_individual_runs: true
+          LOG_LEVEL: 'DEBUG'
           # deduplicate_classes_by_file_name: false
 
   # collect-tests2:
