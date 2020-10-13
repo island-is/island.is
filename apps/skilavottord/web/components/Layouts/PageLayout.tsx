@@ -7,6 +7,7 @@ import {
   GridRow,
   GridColumn,
   Footer,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
@@ -14,11 +15,6 @@ import FormStepper from '../FormStepper/FormStepper'
 
 interface PageProps {
   children: ReactNode
-}
-
-interface ProcessPageProps extends PageProps {
-  activeSection: number
-  activeCar: string
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
@@ -39,6 +35,11 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
     <Footer />
   </Box>
 )
+
+interface ProcessPageProps extends PageProps {
+  activeSection: number
+  activeCar: string
+}
 
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
@@ -102,3 +103,36 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     </Box>
   )
 }
+
+interface PartnerPageProps {
+  top: ReactNode
+  bottom: ReactNode
+  left: ReactNode
+}
+
+export const PartnerPageLayout: FC<PartnerPageProps> = ({
+  top,
+  bottom,
+  left,
+}) => (
+  <Box>
+    <Box paddingY={10}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['0', '0', '3/12', '3/12']}>{left}</GridColumn>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+            <Stack space={6}>
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '7/8', '7/8']}>
+                  <Box>{top}</Box>
+                </GridColumn>
+              </GridRow>
+              <Box>{bottom}</Box>
+            </Stack>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
+    <Footer />
+  </Box>
+)

@@ -4,8 +4,8 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Box,
   Text,
+  Divider,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
@@ -66,7 +66,7 @@ const Completed = ({ apolloState }) => {
                       </GridColumn>
                     </GridRow>
                   </Stack>
-                  <Box borderTopWidth="standard" borderColor="blue200"></Box>
+                  <Divider />
                   <Stack space={1}>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
