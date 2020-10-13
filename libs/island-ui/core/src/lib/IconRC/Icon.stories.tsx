@@ -6,6 +6,12 @@ import { Tabs } from '../Tabs/Tabs'
 import iconMap from './iconMap'
 import { Icon, IconPropsType } from './Icon'
 
+const description = `
+Icons are generated from [Ionicons Designer Pack](https://ionicons.com/).
+
+When adding icons in development navigate to the \`Icon\` directory and run \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js -d icons [src-dir]\` for more options check out [SVGR options](https://react-svgr.com/docs/options/)
+`
+
 export default {
   title: 'Core/Icon',
   component: Icon,
@@ -14,6 +20,13 @@ export default {
       control: {
         type: 'select',
         options: Object.keys(theme.color),
+      },
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: description,
       },
     },
   },

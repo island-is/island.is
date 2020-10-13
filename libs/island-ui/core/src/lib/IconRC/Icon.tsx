@@ -25,12 +25,14 @@ interface IconProps {
   className?: string
 }
 
-interface OptionalProps {
+export interface SvgProps {
   title?: string
   titleId?: string
   className?: string
   width?: string
   height?: string
+  fill?: string
+  color?: string
 }
 
 const sizes = {
@@ -50,10 +52,16 @@ export const Icon = ({
 }: IconProps & IconPropsType) => {
   const path = iconMap[type][icon]
   const IconSvg = React.lazy(() => import('./icons/' + path))
-  const optionalProps: OptionalProps = {}
-  if (className) optionalProps.className = className
-  if (title) optionalProps.title = title
-  if (titleId) optionalProps.titleId = titleId
+  const optionalProps: SvgProps = {}
+  if (className) {
+    optionalProps.className = className
+  }
+  if (title) {
+    optionalProps.title = title
+  }
+  if (titleId) {
+    optionalProps.titleId = titleId
+  }
   if (size) {
     optionalProps.width = sizes[size]
     optionalProps.height = sizes[size]

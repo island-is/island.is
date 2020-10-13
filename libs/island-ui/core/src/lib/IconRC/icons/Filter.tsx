@@ -1,20 +1,15 @@
 import * as React from 'react'
-interface SVGRProps {
-  title?: string
-  titleId?: string
-}
+import { SvgProps as SVGRProps } from '../Icon'
 
-function SvgFilter({
+const SvgFilter = ({
   title,
   titleId,
   ...props
-}: React.SVGProps<SVGSVGElement> & SVGRProps) {
+}: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
       className="filter_svg__ionicon"
       viewBox="0 0 512 512"
-      width="1em"
-      height="1em"
       aria-labelledby={titleId}
       {...props}
     >
