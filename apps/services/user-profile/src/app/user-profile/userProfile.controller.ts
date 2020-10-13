@@ -33,7 +33,7 @@ export class UserProfileController {
 
     if (!profile) {
       throw new NotFoundException(
-        `A User profile with the id ${nationalId} does not exist`,
+        `A User profile with the nationalId ${nationalId} does not exist`,
       )
     }
 
@@ -67,7 +67,7 @@ export class UserProfileController {
       updatedUserProfile,
     } = await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`A user profile with national Id ${nationalId} does not exist`)
+      throw new NotFoundException(`A user profile with national id ${nationalId} does not exist`)
     }
     return updatedUserProfile
   }
@@ -77,7 +77,7 @@ export class UserProfileController {
     name: 'nationalId',
     type: String,
     required: true,
-    description: 'The national id of the user profile to update the profile image for.',
+    description: 'The national id of the user profile to upload.',
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: UserProfile })
@@ -86,10 +86,6 @@ export class UserProfileController {
     profile: UserProfile,
     @Body() input: UpdateImageDto,
   ) {
-
-    return await this.uploadQueue.add('upload', {
-      profile: profile,
-      attachmentUrl: input.url,
-    })
+    throw new NotImplementedException()
   }
 }

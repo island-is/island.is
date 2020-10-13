@@ -17,7 +17,7 @@ export class CreateUserProfileDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly mobilePhoneNumber!: string
+  readonly mobilePhoneNumber?: string
 
   @IsOptional()
   @IsString()

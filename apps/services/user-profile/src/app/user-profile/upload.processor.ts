@@ -14,35 +14,33 @@ interface JobData {
 @Processor('upload')
 export class UploadProcessor {
   constructor(
-    private readonly userProfileService: UserProfileService
+    private readonly userProfileService: UserProfileService,
+    private readonly fileStorageService: FileStorageService
   ) { }
 
   @Process('upload')
   async handleUpload(job: Job): Promise<string> {
     const { attachmentUrl }: JobData = job.data
-    console.log(job)
-    console.log('Start uploading...' + attachmentUrl)
-    return 'https://url.com/jpeg.jpg'
 
-    /*
     const { bucket, key } = AmazonS3URI(attachmentUrl)
-     const destinationBucket = 'testing-islandis-copy'
-     const region = 'eu-west-1'
+    const destinationBucket = 'test'
+    const region = 'eu-west-1'
 
-     return await this.fileStorageService.copyObjectFromUploadBucket(
-       key,
-       destinationBucket,
-       region,
-       bucket,
-     )*/
+    return await this.fileStorageService.copyObjectFromUploadBucket(
+      key,
+      destinationBucket,
+      region,
+      bucket,
+    )
   }
 
   @OnQueueCompleted()
   async onCompleted(job: Job, url: string) {
-    console.log('On completed: job ', job.id, ' -> result: ', url)
-    //const { applicationId }: JobData = job.data
-    //const { key } = AmazonS3URI(url)
+
+    const { nationalId }: JobData = job.data
+
+    const { key } = AmazonS3URI(url)
     return await this.userProfileService
-      .update(job.data.profile.id, { profileImageUrl: url })
+      .update(nationalId, { profileImageUrl: url })
   }
 }
