@@ -110,4 +110,6 @@ export interface RequestSignatureResponse {
 export interface ConfirmSignatureResponse {
   httpStatusCode: number
   response?: Case
+  code?: number
+  message?: string
 }

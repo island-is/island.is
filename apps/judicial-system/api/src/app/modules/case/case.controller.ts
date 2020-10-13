@@ -13,11 +13,15 @@ import {
   Query,
   ConflictException,
   UnauthorizedException,
+  Res,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { SigningServiceResponse } from '@island.is/dokobit-signing'
+import {
+  DokobitError,
+  SigningServiceResponse,
+} from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
@@ -207,6 +211,7 @@ export class CaseController {
   })
   async requestSignature(
     @Param('id') id: string,
+    @Res() res,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 
@@ -225,7 +230,19 @@ export class CaseController {
       )
     }
 
-    return this.caseService.requestSignature(existingCase)
+    try {
+      const response = await this.caseService.requestSignature(existingCase)
+      return res.status(201).send(response)
+    } catch (error) {
+      if (error instanceof DokobitError) {
+        return res.status(error.status).json({
+          code: error.code,
+          message: error.message,
+        })
+      }
+
+      throw error
+    }
   }
 
   @Get('case/:id/signature')
@@ -237,6 +254,7 @@ export class CaseController {
   async confirmSignature(
     @Param('id') id: string,
     @Query('documentToken') documentToken: string,
+    @Res() res,
   ): Promise<Case> {
     const existingCase = await this.findCaseById(id)
 
@@ -255,7 +273,22 @@ export class CaseController {
       )
     }
 
-    return this.caseService.confirrmSignature(existingCase, documentToken)
+    try {
+      const response = await this.caseService.confirrmSignature(
+        existingCase,
+        documentToken,
+      )
+      return res.status(200).send(response)
+    } catch (error) {
+      if (error instanceof DokobitError) {
+        return res.status(error.status).json({
+          code: error.code,
+          message: error.message,
+        })
+      }
+
+      throw error
+    }
   }
 
   private async findCaseById(id: string) {
