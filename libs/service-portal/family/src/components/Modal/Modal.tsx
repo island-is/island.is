@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.treat'
 import { useClickAway } from 'react-use'
+import FileUploadshi from './FileUpload'
 
 interface ModalProps {
   show?: boolean
@@ -38,7 +39,7 @@ const Modal: FC<ModalProps> = ({
   })
   return (
     <>
-      {true && (
+      {show && (
         <Box className={styles.container}>
           <Box className={styles.overlay} background="blue100" />
           <GridContainer>
@@ -67,6 +68,7 @@ const Modal: FC<ModalProps> = ({
                       <button onClick={onCancel} className={styles.modalClose}>
                         <Icon type="close" color="blue400" />
                       </button>
+                      <FileUploadshi />
                     </Box>
                     {children}
                   </GridColumn>

@@ -15,6 +15,7 @@ import * as styles from './UserInfo.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { Modal } from '../../components/Modal'
+import FileUploadshi from '../../components/Modal/FileUpload'
 
 export type UserInfoSidebarType =
   | null
@@ -40,7 +41,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
     setModal(true)
   }
 
-  const uploadPicForm = () => {
+  const uploadPicForm = (mobile = false) => {
     return (
       <Box className={styles.uploadPictureContainer}>
         <Box
@@ -51,7 +52,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           padding={[2, 2, 2, 4]}
         >
           <Typography variant="h4">
-            Dragðu mynd hingað til að hlaða upp
+            {mobile ? 'Veldu mynd' : 'Dragðu mynd hingað til að hlaða upp'}
           </Typography>
           <Typography variant="p">
             Tekið er við skjölum með endingu: .jpeg, .gif, .png
@@ -66,6 +67,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
+      <FileUploadshi />
       <Box marginBottom={6}>
         <Typography variant="h1" as="h1">
           {formatMessage({
@@ -87,6 +89,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             onClick={onClickEvent}
           >
             <Icon type="user" color="purple400" width={40} height={40} />
+            <Icon type="calendar" color="purple400" width={20} height={20} />
           </Box>
         </Hidden>
         <Typography variant="h2">{userInfo.profile.name}</Typography>
@@ -135,7 +138,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             {uploadPicForm()}
           </Modal>
         </Hidden>
-        <Hidden above="xs">{uploadPicForm()}</Hidden>
+        <Hidden above="xs">{uploadPicForm(true)}</Hidden>
 
         {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine
