@@ -71,10 +71,7 @@ export const Button = forwardRef<
     },
     ref,
   ) => {
-    useDeprecatedComponent(
-      'Button',
-      'ButtonDeprecated has been deprecated in favor of Button.',
-    )
+    useDeprecatedComponent('ButtonDeprecated', 'Button')
     const { colorScheme } = useContext(ColorSchemeContext)
 
     const className = cn(

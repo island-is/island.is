@@ -104,7 +104,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
       <GridRow>
         <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>
-            <Box background="purple100" padding={4}>
+            <Box background="purple100" borderRadius="large" padding={4}>
               {sidebar}
             </Box>
           </Sticky>
