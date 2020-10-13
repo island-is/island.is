@@ -1,6 +1,7 @@
 import React from 'react'
 import { Logo } from './Logo'
 import { color } from '@storybook/addon-knobs'
+import { Box } from '../Box/Box'
 
 export default {
   title: 'Navigation/Logo',
@@ -16,7 +17,9 @@ export const Solid = () => (
 export const IconOnly = () => <Logo width={30} iconOnly />
 
 export const SolidIconOnly = () => (
-  <Logo width={200} iconOnly solid solidColor={color('Logo color', '#fff')} />
+  <Box background="dark400">
+    <Logo width={200} iconOnly solid solidColor={color('Logo color', '#fff')} />
+  </Box>
 )
 
 Solid.decorators = [

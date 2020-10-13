@@ -95,6 +95,7 @@ export const ParentalLeaveForm: Form = buildForm({
               {
                 id: 'duration',
                 name: m.duration,
+                description: m.durationDescription,
                 required: true,
                 component: 'ParentalLeaveDuration',
               },
