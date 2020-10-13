@@ -1,4 +1,4 @@
-@import '../../../shared/fonts.css';
+@import '../../../../libs/island-ui/fonts/fonts.css';
 
 a:hover {
   text-decoration: none;
