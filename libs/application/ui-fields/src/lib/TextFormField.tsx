@@ -5,10 +5,12 @@ import {
   TextField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  FieldDescription,
+} from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: TextField
@@ -27,7 +29,7 @@ const TextFormField: FC<Props> = ({
   return (
     <div>
       {description && (
-        <Description
+        <FieldDescription
           description={formatText(description, application, formatMessage)}
         />
       )}

@@ -1,7 +1,11 @@
 import React, { FC } from 'react'
 import { Text } from '@island.is/island-ui/core'
 
-const Description: FC<{ description: string }> = ({ description }) => {
+interface Props {
+  description: string
+}
+
+export const FieldDescription: FC<Props> = ({ description }) => {
   const getMarkup = () => {
     return {
       __html: description,
@@ -14,4 +18,4 @@ const Description: FC<{ description: string }> = ({ description }) => {
   )
 }
 
-export default Description
+export default FieldDescription
