@@ -1,16 +1,10 @@
-import React, {
-  FC,
-  useState,
-  useMemo,
-  ReactNode,
-  Fragment,
-  useEffect,
-} from 'react'
+import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import { openDocument } from '@taktikal/fillandsign'
 import {
   Box,
   Text,
@@ -24,6 +18,7 @@ import {
   Link,
   Icon,
   ButtonDeprecated as Button,
+  IconProps,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
@@ -155,11 +150,19 @@ const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   // we'll only show the button if there is exactly one process entry on the page
   if (processEntries.length !== 1) return null
 
-  const { buttonText, processLink } = processEntries[0]
+  const { buttonText, processLink, dropSignFileKey } = processEntries[0]
+
+  const buttonProps = {
+    ...(!dropSignFileKey && {
+      href: processLink,
+      icon: 'external' as IconProps['type'],
+    }),
+    ...(dropSignFileKey && { onClick: () => openDocument(dropSignFileKey) }),
+  }
 
   return (
     <SidebarBox>
-      <Button href={processLink} width="fluid">
+      <Button {...buttonProps} width="fluid">
         {buttonText || defaultText}
       </Button>
     </SidebarBox>

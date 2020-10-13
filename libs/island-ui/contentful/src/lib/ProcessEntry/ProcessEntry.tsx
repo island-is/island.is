@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import { openDocument } from '@taktikal/fillandsign'
 import {
   Text,
   ButtonDeprecated as Button,
@@ -6,6 +7,7 @@ import {
   GridRow,
   GridColumn,
   Stack,
+  IconProps,
 } from '@island.is/island-ui/core'
 import * as styles from './ProcessEntry.treat'
 
@@ -21,6 +23,7 @@ export const Titles: { [k: string]: string } = {
 export interface ProcessEntryProps {
   processTitle: string
   processLink: string
+  dropSignFileKey?: string
   type: string
   buttonText: string
 }
@@ -28,10 +31,19 @@ export interface ProcessEntryProps {
 export const ProcessEntry: FC<ProcessEntryProps> = ({
   processTitle,
   processLink,
+  dropSignFileKey,
   type,
   buttonText,
 }) => {
   const label = Titles[type]
+
+  const buttonProps = {
+    ...(!dropSignFileKey && {
+      href: processLink,
+      icon: 'external' as IconProps['type'],
+    }),
+    ...(dropSignFileKey && { onClick: () => openDocument(dropSignFileKey) }),
+  }
 
   return (
     <Box width="full" background="blue100" borderRadius="large">
@@ -67,7 +79,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
               alignItems="flexStart"
               justifyContent="flexStart"
             >
-              <Button noWrap href={processLink} icon="external">
+              <Button noWrap {...buttonProps}>
                 {buttonText}
               </Button>
             </Box>

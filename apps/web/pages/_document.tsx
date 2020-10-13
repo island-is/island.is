@@ -7,7 +7,6 @@ import Document, {
   DocumentContext,
 } from 'next/document'
 import { getLocaleFromPath } from '../i18n/withLocale'
-import '@taktikal/fillandsign/styles.css'
 
 interface Props {
   lang: Locale
