@@ -167,7 +167,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
       <div className={cn(styles.section)}>
         <Accordion singleExpand={true}>
           <AccordionItem id="id_1" label="OpenAPI skjölun">
-            <Typography variant="p" as="p">
+            <Typography variant="p" as="div">
               {loading ? (
                 'Leita...'
               ) : data?.getOpenApi.spec == '' || data?.getOpenApi == null ? (
