@@ -8,14 +8,14 @@ import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
 
 describe('Create detention request, step two', () => {
-  test("should display the correct arrestTime and requestedCourtDate if it's in localstorage", () => {
+  test("should display the correct requestedCustodyEndTime if it's in localstorage", () => {
     // Arrange
     const history = createMemoryHistory()
 
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         id: 'test_id',
-        requestedCustodyEndTime: '2020-11-02T12:03:00Z',
+        requestedCustodyEndDate: '2020-11-02T12:03:00Z',
         custodyProvisions: [],
         requestedCustodyRestrictions: [],
       })
@@ -31,6 +31,6 @@ describe('Create detention request, step two', () => {
     // Assert
     expect(
       (getByTestId('requestedCustodyEndTime') as HTMLInputElement).value,
-    ).toEqual('13:37')
+    ).toEqual('12:03')
   })
 })
