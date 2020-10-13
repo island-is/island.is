@@ -1,36 +1,32 @@
 import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
-import { RadioButton, RadioButtonProps } from '../RadioButton/RadioButton'
-import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import { Checkbox, CheckboxProps } from '@island.is/island-ui/core'
 
-export interface FieldRadioButtonProps extends RadioButtonProps {
-  field: FieldInputProps<string>
+export interface FieldCheckboxProps extends CheckboxProps {
+  field: FieldInputProps<boolean>
   form: FormikState<string | number>
 }
 
-export const FieldRadioButton = ({
-  field: { onChange, value: fieldValue, ...field },
+export const FieldCheckbox = ({
+  field: { onChange, value, ...field },
   form: { touched, errors },
   onChange: customOnChange,
-  value,
   ...props
-}: FieldRadioButtonProps) => {
-  useDeprecatedComponent('FieldRadioButton')
+}: FieldCheckboxProps) => {
   const nameArray = (field.name && field.name.split('.')) || []
-
   return (
-    <RadioButton
+    <Checkbox
       {...props}
       {...field}
-      checked={value === fieldValue}
+      checked={value}
       onChange={(e) => {
         const event = {
           ...e,
           target: {
             ...e.target,
             name: field.name,
-            value: value,
+            value: e.target.checked,
           },
         }
         onChange(event)

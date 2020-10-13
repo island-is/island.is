@@ -1,12 +1,13 @@
 import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
-import { RadioButton } from '../RadioButton/RadioButton'
-import { Typography } from '../Typography/Typography'
-import { InputError } from '../InputError/InputError'
-import { Box } from '../Box/Box'
-import { Tooltip } from '../Tooltip/Tooltip'
-import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import {
+  RadioButton,
+  Typography,
+  InputError,
+  Box,
+  Tooltip,
+} from '@island.is/island-ui/core'
 
 export interface FieldPolarQuestionProps {
   label?: string
@@ -72,7 +73,6 @@ export const FieldPolarQuestion = ({
   field: { onChange, value, ...field },
   form: { touched, errors },
 }: FieldPolarQuestionProps) => {
-  useDeprecatedComponent('FieldPolarQuestion')
   const nameArray = (field.name && field.name.split('.')) || []
   const hasError = !!(get(touched, nameArray) && get(errors, nameArray))
   const errorMessage = get(errors, nameArray)
