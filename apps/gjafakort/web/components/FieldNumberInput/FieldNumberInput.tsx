@@ -1,10 +1,8 @@
 import React from 'react'
 import get from 'lodash/get'
-
 import { FormikState, FieldInputProps } from 'formik'
 import NumberFormat, { NumberFormatProps } from 'react-number-format'
-import { Input } from '../Input/Input'
-import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import { Input } from '@island.is/island-ui/core'
 
 type valueType = 'floatValue' | 'formattedValue' | 'value'
 
@@ -21,7 +19,6 @@ export const FieldNumberInput = ({
   valueType = 'value',
   ...props
 }: FieldNumberInputProps & NumberFormatProps) => {
-  useDeprecatedComponent('FieldNumberInput')
   const nameArray = (field.name && field.name.split('.')) || []
   return (
     <NumberFormat
