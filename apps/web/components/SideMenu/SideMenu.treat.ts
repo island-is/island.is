@@ -34,12 +34,10 @@ export const root = style({
 
 export const contentScrollWrapper = style({
   flex: 1,
-  // for Firefox
-  minHeight: 0,
+  minHeight: 0, // for Firefox
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
       overflowY: 'scroll',
-
       overflowX: 'hidden', // prevent horizontal scrolling in mobile
     },
   },
@@ -75,8 +73,6 @@ export const tabBorder = style({
 
 export const tabBar = style({
   display: 'flex',
-  width: '100%',
-  justifyContent: 'space-between',
 })
 
 export const tab = style({
@@ -89,6 +85,7 @@ export const tab = style({
 
 export const tabButton = style({
   width: '100%',
+  // accommodate for button border that otherwise overflows
   marginTop: 3,
   marginLeft: 3,
   marginRight: 3,

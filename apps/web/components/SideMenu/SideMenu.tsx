@@ -192,12 +192,13 @@ export const SideMenu: FC<Props> = ({
                   className={cn(styles.tabContainer, {
                     [styles.tabBorder]: activeTab === index,
                   })}
-                  role="tab"
+                  role="presentation"
                 >
                   <FocusableBox
                     ref={(el) => (tabRefs.current[index] = el)}
                     component="button"
                     className={styles.tabButton}
+                    role="tab"
                     aria-controls={`tab-content-${index}`}
                     aria-selected={activeTab === index}
                     tabIndex={activeTab === index ? 0 : -1}
