@@ -73,6 +73,7 @@
     "@sentry/react": "^5.22.3",
     "@sentry/tracing": "^5.22.3",
     "@sindresorhus/slugify": "1.0.0",
+    "@taktikal/fillandsign": "^3.1.0",
     "@types/form-data": "^2.5.0",
     "@types/nodemailer": "^6.4.0",
     "@types/pdfkit": "^0.10.6",

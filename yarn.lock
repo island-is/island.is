@@ -4781,6 +4781,11 @@
     "@svgr/plugin-svgo" "^5.4.0"
     loader-utils "^2.0.0"
 
+"@taktikal/fillandsign@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@taktikal/fillandsign/-/fillandsign-3.1.0.tgz#496ecb25d8663199da0ebbe71e8b13e172b02f7e"
+  integrity sha512-IqBUFGV2ZB57ppA+XrXztX0Uf+nZ1GFPqlXiUEjTjYoF0AVuzQs4NtRax/a7qHPzhIHcINgbCGzDwT4b70aBhg==
+
 "@testing-library/dom@^7.17.1":
   version "7.24.3"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.24.3.tgz#dae3071463cf28dc7755b43d9cf2202e34cbb85d"
