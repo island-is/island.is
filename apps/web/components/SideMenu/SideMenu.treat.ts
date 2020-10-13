@@ -87,14 +87,11 @@ export const tab = style({
   padding: theme.spacing[2],
 })
 
-export const tabActive = style({
-  borderBottomColor: theme.color.blue400,
-})
-
-export const tabFocused = style({
-      borderBottomColor: 'transparent',
-    
-
+export const tabButton = style({
+  width: '100%',
+  marginTop: 3,
+  marginLeft: 3,
+  marginRight: 3,
 })
 
 export const content = style({

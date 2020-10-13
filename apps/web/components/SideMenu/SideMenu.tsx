@@ -55,7 +55,6 @@ export const SideMenu: FC<Props> = ({
   handleClose,
 }) => {
   const [mounted, setMounted] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
   const searchInputRef = useRef(null)
@@ -190,17 +189,15 @@ export const SideMenu: FC<Props> = ({
               {tabList.map((tab, index) => (
                 <li
                   key={index}
-                 // className={styles.tabContainer}
                   className={cn(styles.tabContainer, {
                     [styles.tabBorder]: activeTab === index,
-                  //  [styles.tabFocused]: isFocused,
                   })}
                   role="tab"
                 >
                   <FocusableBox
                     ref={(el) => (tabRefs.current[index] = el)}
                     component="button"
-                    
+                    className={styles.tabButton}
                     aria-controls={`tab-content-${index}`}
                     aria-selected={activeTab === index}
                     tabIndex={activeTab === index ? 0 : -1}
@@ -208,24 +205,15 @@ export const SideMenu: FC<Props> = ({
                     onClick={() => setActiveTab(index)}
                     onKeyDown={(e) => onKeyDown(e, index)}
                   >
-                
-                        <div
-                          className={cn(styles.tab, {
-                        //   [styles.tabActive]: activeTab === index,
-                           // [styles.tabFocused]: isFocused,
-                          })}
-                        >
-                          <Text
-                            variant="small"
-                            fontWeight={
-                              activeTab === index ? 'medium' : 'light'
-                            }
-                            color="blue400"
-                          >
-                            {tab.title}
-                          </Text>
-                        </div>
-                  
+                    <div className={styles.tab}>
+                      <Text
+                        variant="small"
+                        fontWeight={activeTab === index ? 'medium' : 'light'}
+                        color="blue400"
+                      >
+                        {tab.title}
+                      </Text>
+                    </div>
                   </FocusableBox>
                 </li>
               ))}
