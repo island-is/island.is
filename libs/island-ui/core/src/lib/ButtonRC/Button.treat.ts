@@ -333,6 +333,14 @@ export const colors = {
       theme.color.dark200,
       theme.color.blue100,
     ),
+    destructive: utilityColors(
+      theme.color.dark400,
+      theme.color.red200,
+      theme.color.dark400,
+      theme.color.roseTinted400,
+      theme.color.dark200,
+      theme.color.red100,
+    ),
     negative: utilityColors(
       theme.color.white,
       theme.color.white,
@@ -350,6 +358,22 @@ export const circle = style({
   justifyContent: 'center',
   borderRadius: '50%',
   padding: 0,
+})
+
+const utilityIconColor = (
+  scheme: keyof typeof colors.utility,
+  color: string,
+  hovercolor: string,
+) => ({
+  [`${variants.utility}${colors.utility[scheme]}:not(:focus) &`]: {
+    color: color,
+  },
+  [`${variants.utility}${colors.utility[scheme]}:active &`]: {
+    color: color,
+  },
+  [`${variants.utility}${colors.utility[scheme]}:hover &`]: {
+    color: hovercolor,
+  },
 })
 
 export const icon = style({
@@ -376,14 +400,15 @@ export const icon = style({
       height: 16,
       marginLeft: 8,
     },
-    [`${variants.utility}${colors.utility.default}:not(:focus) &`]: {
-      color: theme.color.blue400,
-    },
-    [`${variants.utility}${colors.utility.default}:active &`]: {
-      color: theme.color.blue400,
-    },
-    [`${variants.utility}${colors.utility.default}:hover &`]: {
-      color: theme.color.blue400,
-    },
+    ...utilityIconColor(
+      'default',
+      theme.color.blue400,
+      theme.color.blueberry400,
+    ),
+    ...utilityIconColor(
+      'destructive',
+      theme.color.red600,
+      theme.color.roseTinted400,
+    ),
   },
 })
