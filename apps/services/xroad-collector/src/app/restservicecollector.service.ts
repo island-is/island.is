@@ -33,6 +33,8 @@ export class RestServiceCollector implements ServiceCollector {
   }
 
   private async indexProviders(providers: Array<Provider>): Promise<void> {
+    await this.elasticService.deleteIndex()
+
     for (const provider of providers) {
       // For each provider get list af all REST services
       // currently supporting those who were registered using OpenAPI
