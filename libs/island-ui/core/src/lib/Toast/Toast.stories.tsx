@@ -1,18 +1,25 @@
 import React from 'react'
-
+import { withDesign } from 'storybook-addon-designs'
 import { Button } from '../Button/Button'
 import { Box } from '../Box/Box'
 import { ToastContainer, toast } from './Toast'
 
+const figmaLink =
+  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=205%3A62'
+
 export default {
   title: 'Alerts/Toast',
   component: ToastContainer,
+  decorators: [withDesign],
   parameters: {
     docs: {
       description: {
-        component:
-          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=205%3A62)',
+        component: `[View in Figma](${figmaLink})`,
       },
+    },
+    design: {
+      type: 'figma',
+      url: figmaLink,
     },
   },
 }

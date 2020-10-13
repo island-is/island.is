@@ -1,4 +1,5 @@
 import React from 'react'
+import { Box } from '@island.is/island-ui/core'
 import CompanyListItem from './CompanyListItem'
 
 const CompanyList = () => {
@@ -24,11 +25,11 @@ const CompanyList = () => {
   ]
 
   return (
-    <>
+    <Box>
       {companies.map((company, index) => (
         <CompanyListItem key={index} {...company} />
       ))}
-    </>
+    </Box>
   )
 }
 

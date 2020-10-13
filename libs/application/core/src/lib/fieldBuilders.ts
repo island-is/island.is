@@ -229,18 +229,20 @@ export function buildCustomField(
     condition?: Condition
     id: string
     name: FormText
+    description?: FormText
     required?: boolean
     component: string
   },
   props: object,
 ): CustomField {
-  const { condition, id, name, required = false, component } = data
+  const { condition, id, name, description, required = false, component } = data
   return {
     children: undefined,
     required,
     condition,
     id,
     name,
+    description,
     type: FieldTypes.CUSTOM,
     component,
     props,

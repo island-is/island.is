@@ -3,7 +3,6 @@ import { Formik, Form, Field, FormikValues, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 
 import {
-  FieldNumberInput,
   Box,
   Stack,
   ButtonDeprecated as Button,
@@ -11,7 +10,10 @@ import {
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
-import { FormLayout } from '@island.is/gjafakort-web/components'
+import {
+  FieldNumberInput,
+  FormLayout,
+} from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
   onSubmit: (

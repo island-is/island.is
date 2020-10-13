@@ -4,7 +4,7 @@ services:
   sut:
     build:
       context: .
-      dockerfile: ../../../scripts/Dockerfile-test
+      dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
         DB_NAME: db_judicial_system
         APP: judicial-system-api

@@ -15,6 +15,8 @@ import { Stack } from '../Stack/Stack'
 
 # Accordion
 
+[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=208%3A446)
+
 The **Accordion** component has three different type of items that can be rendered.
 
 - `<AccordionItem />` rendered inside the **Accordion** component
@@ -27,7 +29,16 @@ The **Accordion** component has three different type of items that can be render
 We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
 
 <Canvas>
-  <Story name="Default">
+  <Story
+    name="Default"
+    parameters={{
+      design: {
+        type: 'figma',
+        url:
+          'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=208%3A446',
+      },
+    }}
+  >
     <Accordion singleExpand>
       <AccordionItem id="id_1" label="Hvenær þarf að skila umsókn?">
         <Text>
