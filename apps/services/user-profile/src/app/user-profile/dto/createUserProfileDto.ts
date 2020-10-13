@@ -1,22 +1,19 @@
 import {
-  IsEnum,
   IsNotEmpty,
-  IsObject,
   IsString,
   IsOptional,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateUserProfileDto {
-
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly nationalId!: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly mobilePhoneNumber?: string
 
   @IsOptional()

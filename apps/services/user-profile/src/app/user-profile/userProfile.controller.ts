@@ -1,4 +1,3 @@
-import { InjectQueue } from '@nestjs/bull'
 import {
   Body,
   Controller,
@@ -6,10 +5,15 @@ import {
   Put,
   NotFoundException,
   Param,
-  Post, NotImplementedException, Optional
+  Post,
+  NotImplementedException,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger'
-import { Queue } from 'bull'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateImageDto } from './dto/updateImageDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
@@ -20,9 +24,9 @@ import { UserProfileService } from './userProfile.service'
 @ApiTags('User Profile')
 @Controller()
 export class UserProfileController {
-
-  constructor(private userProfileService: UserProfileService,
-    @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue) { }
+  constructor(
+    private userProfileService: UserProfileService
+  ) { }
 
   @Get('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
@@ -67,7 +71,9 @@ export class UserProfileController {
       updatedUserProfile,
     } = await this.userProfileService.update(nationalId, userProfileToUpdate)
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`A user profile with national id ${nationalId} does not exist`)
+      throw new NotFoundException(
+        `A user profile with national id ${nationalId} does not exist`,
+      )
     }
     return updatedUserProfile
   }

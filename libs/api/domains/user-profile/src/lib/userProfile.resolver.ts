@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { CreateUserProfileInput } from './dto/createUserProfileInput';
-import { GetUserProfileInput } from './dto/getUserProfileInput';
-import { UpdateUserProfileInput } from './dto/updateUserProfileInput';
-import { UserProfile } from './userProfile.model';
-import { UserProfileService } from './userProfile.service';
+import { CreateUserProfileInput } from './dto/createUserProfileInput'
+import { GetUserProfileInput } from './dto/getUserProfileInput'
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { UserProfile } from './userProfile.model'
+import { UserProfileService } from './userProfile.service'
 
 @Resolver()
 export class UserProfileResolver {

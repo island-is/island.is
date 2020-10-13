@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsOptional } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql'
+import { IsString, IsOptional } from 'class-validator'
 
 @InputType()
 export class UpdateUserProfileInput {
@@ -26,5 +26,5 @@ export class UpdateUserProfileInput {
   @Field(() => String)
   @IsString()
   @IsOptional()
-  profileImageUrl?: string;
+  profileImageUrl?: string
 }

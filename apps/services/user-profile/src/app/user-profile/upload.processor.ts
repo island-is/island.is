@@ -15,8 +15,8 @@ interface JobData {
 export class UploadProcessor {
   constructor(
     private readonly userProfileService: UserProfileService,
-    private readonly fileStorageService: FileStorageService
-  ) { }
+    private readonly fileStorageService: FileStorageService,
+  ) {}
 
   @Process('upload')
   async handleUpload(job: Job): Promise<string> {
@@ -36,11 +36,11 @@ export class UploadProcessor {
 
   @OnQueueCompleted()
   async onCompleted(job: Job, url: string) {
-
     const { nationalId }: JobData = job.data
 
     const { key } = AmazonS3URI(url)
-    return await this.userProfileService
-      .update(nationalId, { profileImageUrl: url })
+    return await this.userProfileService.update(nationalId, {
+      profileImageUrl: url,
+    })
   }
 }

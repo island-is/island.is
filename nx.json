@@ -74,6 +74,9 @@
     "api-domains-translations": {
       "tags": []
     },
+    "api-domains-user-profile": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },
@@ -100,6 +103,9 @@
       "tags": []
     },
     "application-templates-driving-lessons": {
+      "tags": []
+    },
+    "application-templates-parental-leave": {
       "tags": []
     },
     "application-templates-reference-template": {
@@ -248,16 +254,6 @@
     "service-portal-graphql": {
       "tags": []
     },
-    "skilavottord/web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["skilavottord-web"]
-    },
-    "services-user-profile": {
-      "tags": []
-    },
-    "application-templates-parental-leave": {
-      "tags": []
-    },
     "service-portal-health": {
       "tags": []
     },
@@ -265,6 +261,9 @@
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-profile": {
       "tags": []
     },
     "shared-form-fields": {
@@ -282,10 +281,11 @@
     "skilavottord-ws": {
       "tags": []
     },
-    "web": {
-      "tags": []
+    "skilavottord/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["skilavottord-web"]
     },
-    "api-domains-user-profile": {
+    "web": {
       "tags": []
     },
     "web-e2e": {

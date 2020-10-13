@@ -48,6 +48,9 @@
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
       ],
+      "@island.is/api/domains/user-profile": [
+        "libs/api/domains/user-profile/src/index.ts"
+      ],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
@@ -152,10 +155,7 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
-      "@island.is/web/*": ["apps/web/*"],
-      "@island.is/api/domains/user-profile": [
-        "libs/api/domains/user-profile/src/index.ts"
-      ]
+      "@island.is/web/*": ["apps/web/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

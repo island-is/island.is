@@ -5,10 +5,12 @@ import { UserProfileService } from '../userProfile.service'
 @Injectable()
 export class UserProfileByNationalIdPipe
   implements PipeTransform<string, Promise<UserProfile>> {
-  constructor(private readonly userProfileService: UserProfileService) { }
+  constructor(private readonly userProfileService: UserProfileService) {}
 
   async transform(nationalId: string): Promise<UserProfile> {
-    const userProfile = await this.userProfileService.findByNationalId(nationalId)
+    const userProfile = await this.userProfileService.findByNationalId(
+      nationalId,
+    )
     if (!userProfile) {
       throw new NotFoundException(
         `A user with the nationaliId ${nationalId} does not exist`,

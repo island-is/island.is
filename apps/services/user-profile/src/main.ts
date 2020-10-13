@@ -6,5 +6,5 @@ import { bootstrap } from '@island.is/infra-nest-server'
 bootstrap({
   appModule: AppModule,
   name: 'services-user-profile',
-  openApi
+  openApi,
 })

@@ -5,7 +5,7 @@ import {
   Model,
   Table,
   CreatedAt,
-  UpdatedAt
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 

@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsOptional, IsString } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class CreateUserProfileInput {
@@ -11,9 +11,9 @@ export class CreateUserProfileInput {
   @Field(() => String)
   @IsString()
   @IsOptional()
-  mobilePhoneNumber!: string
+  mobilePhoneNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @IsString()
   @IsOptional()
   locale?: string
@@ -26,5 +26,5 @@ export class CreateUserProfileInput {
   @Field(() => String)
   @IsString()
   @IsOptional()
-  profileImageUrl?: string;
+  profileImageUrl?: string
 }

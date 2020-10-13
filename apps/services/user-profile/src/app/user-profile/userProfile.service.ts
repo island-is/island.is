@@ -12,7 +12,7 @@ export class UserProfileService {
     private userProfileModel: typeof UserProfile,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) { }
+  ) {}
 
   async findById(id: string): Promise<UserProfile | null> {
     this.logger.debug(`Finding user profile by id - "${id}"`)
