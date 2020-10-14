@@ -326,6 +326,12 @@ export const StepTwo: React.FC = () => {
                             custodyEndDate: requestedCustodyEndDateMinutes,
                           }),
                         )
+
+                        setWorkingCase({
+                          ...workingCase,
+                          requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                          custodyEndDate: requestedCustodyEndDateMinutes,
+                        })
                       } else {
                         setRequestedCustodyEndTimeErrorMessage(
                           validateTimeEmpty.errorMessage ||
