@@ -29,6 +29,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       </Button>
       <div className={styles.nextButtonContainer}>
         <Button
+          data-testid="continueButton"
           icon="arrowRight"
           disabled={props.nextIsDisabled}
           loading={props.nextIsLoading}
