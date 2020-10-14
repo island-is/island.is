@@ -14,7 +14,7 @@ import { NewsList } from './models/newsList.model'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -88,7 +88,7 @@ export class CmsElasticsearchService {
       total: articlesResponse.hits.total.value,
       items: articlesResponse.hits.hits.map<News>((response) =>
         JSON.parse(response._source.response),
-      )
+      ),
     }
   }
 
