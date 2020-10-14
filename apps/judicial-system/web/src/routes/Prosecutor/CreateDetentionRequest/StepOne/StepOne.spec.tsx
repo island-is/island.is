@@ -144,4 +144,57 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
       (getByTestId('requestedCourtDate') as HTMLInputElement).value,
     ).toEqual('12:03')
   })
+
+  test("should display nothing if arrestTime and requestedCourtDate don't have a time set in localstorage", () => {
+    // Arrange
+    const history = createMemoryHistory()
+
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({
+        id: 'test_id',
+        arrestDate: '2020-10-24',
+        requestedCourtDate: '2020-11-02',
+      })
+    })
+
+    // Act
+    const { getByTestId } = render(
+      <Router history={history}>
+        <StepOne />
+      </Router>,
+    )
+
+    // Assert
+    expect((getByTestId('arrestTime') as HTMLInputElement).value).toEqual('')
+    expect(
+      (getByTestId('requestedCourtDate') as HTMLInputElement).value,
+    ).toEqual('')
+  })
+
+  test('should now allow users to continue unless every required field has been filled out', () => {
+    // Arrange
+    const history = createMemoryHistory()
+
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({})
+    })
+
+    // Act
+    const { getByTestId } = render(
+      <Router history={history}>
+        <StepOne />
+      </Router>,
+    )
+
+    userEvent.type(
+      getByTestId('policeCaseNumber') as HTMLInputElement,
+      '000-0000-000',
+    )
+    userEvent.tab()
+    expect((getByTestId('continueButton') as HTMLButtonElement).disabled).toBe(
+      true,
+    )
+
+    // Assert
+  })
 })
