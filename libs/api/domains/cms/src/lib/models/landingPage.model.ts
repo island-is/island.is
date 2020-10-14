@@ -31,10 +31,14 @@ export class LandingPage {
   content: Array<typeof Slice>
 }
 
-export const mapLandingPage = ({ fields }: ILandingPage): LandingPage => ({
-  ...fields,
-  image: fields.image && mapImage(fields.image),
-  actionButton: fields.actionButton && mapLink(fields.actionButton),
-  links: fields.links && mapLinkList(fields.links),
-  content: fields.content && mapDocument(fields.content),
+export const mapLandingPage = ({ sys, fields }: ILandingPage): LandingPage => ({
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
+  introduction: fields.introduction ?? '',
+  image: mapImage(fields.image),
+  actionButton: fields.actionButton ? mapLink(fields.actionButton) : null,
+  links: fields.links ? mapLinkList(fields.links) : null,
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
+    : [],
 })

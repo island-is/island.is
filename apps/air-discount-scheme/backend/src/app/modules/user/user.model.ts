@@ -11,13 +11,13 @@ class Fund implements TFund {
   @ApiProperty({
     description: 'Determines if the user has any discount credits left',
   })
-  credit: number
+  credit!: number
 
   @ApiProperty()
-  used: number
+  used!: number
 
   @ApiProperty()
-  total: number
+  total!: number
 }
 
 class BaseUser implements TBaseUser {

@@ -1,6 +1,12 @@
 import React from 'react'
 
-import { Box, Typography, Stack, Button, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  Stack,
+  ButtonDeprecated as Button,
+  IconDeprecated as Icon,
+} from '@island.is/island-ui/core'
 
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 import Layout from '@island.is/gjafakort-web/components/Layout/Layout'

@@ -2,7 +2,7 @@ import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import AsyncSearch from './AsyncSearch'
+import { AsyncSearch } from './AsyncSearch'
 
 const items = [
   { label: 'Apple', value: 'apple' },

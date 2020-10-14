@@ -7,8 +7,8 @@ import React, {
 } from 'react'
 import cn from 'classnames'
 import { useToggle } from 'react-use'
-import { Link } from '../Link'
-import { Box } from '../Box'
+import { Link } from '../Link/Link'
+import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import {
   ColorSchemeContext,
@@ -17,19 +17,27 @@ import {
 
 import * as styles from './FocusableBox.treat'
 
+// TODO fix strict typing
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
 interface Props
   extends Omit<UseBoxStylesProps, 'component'>,
-    Omit<AllHTMLAttributes<HTMLElement>, 'width' | 'height' | 'className'> {
+    Omit<
+      AllHTMLAttributes<HTMLElement>,
+      'width' | 'height' | 'className' | 'color'
+    > {
   component?: ElementType
   ref?: Ref<HTMLElement>
   color?: ColorSchemes
 }
 
+type NoNullColorScheme = Exclude<ColorSchemes, null>
+
 // FocusableBox is a wrapper component that handles focus styles.
 // Most props are forwarded to Box.
 // By default it renders as a Link component.
 
-const FocusableBox = forwardRef<HTMLElement, Props>(
+export const FocusableBox = forwardRef<HTMLElement, Props>(
   (
     {
       component = Link,
@@ -46,13 +54,16 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
     const { colorScheme } = useContext(ColorSchemeContext)
     const [isFocused, toggle] = useToggle(false)
 
+    const colorKey: NoNullColorScheme =
+      colorScheme ?? (color as NoNullColorScheme)
+
     return (
       <Box
         component={component}
         display={display}
         className={cn(
           styles.focusable,
-          styles.colorSchemes[colorScheme || color],
+          styles.colorSchemes[colorKey],
           className,
         )}
         onFocus={toggle}
@@ -65,5 +76,3 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
     )
   },
 )
-
-export default FocusableBox

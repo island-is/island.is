@@ -26,11 +26,7 @@ export const NavigationScreen: FC<Props> = ({ items }) => {
       <Tiles space="gutter" columns={[1, 2]}>
         {items.map((item, index) => (
           <Link to={item.url} key={index} className={styles.link}>
-            <Card
-              title={item.name}
-              description={item.text}
-              tags={item.tags.map((x) => ({ title: x }))}
-            />
+            <Card title={item.name} description={item.text} tags={item.tags} />
           </Link>
         ))}
       </Tiles>

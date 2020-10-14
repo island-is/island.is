@@ -5,12 +5,61 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
     searchResults(query: $query) {
       total
       items {
-        id
-        title
-        content
-        slug
-        category
-        group
+        ... on Article {
+          id
+          title
+          slug
+          intro
+          containsApplicationForm
+          group {
+            title
+          }
+          category {
+            slug
+            title
+          }
+          organization {
+            id
+            title
+            description
+            slug
+          }
+          relatedArticles {
+            title
+            slug
+          }
+          subArticles {
+            title
+            slug
+          }
+        }
+
+        ... on LifeEventPage {
+          id
+          title
+          slug
+          intro
+          category {
+            slug
+            title
+          }
+          image {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+        }
       }
     }
   }
@@ -29,17 +78,66 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     searchResults(query: $query) {
       total
       items {
-        id
-        title
-        slug
-        tag
-        content
-        categoryDescription
-        categorySlug
-        category
-        group
-        groupSlug
-        contentType
+        ... on Article {
+          id
+          title
+          slug
+          intro
+          containsApplicationForm
+          group {
+            title
+          }
+          category {
+            slug
+            title
+          }
+          organization {
+            id
+            title
+            description
+            slug
+          }
+          relatedArticles {
+            title
+            slug
+          }
+          subArticles {
+            title
+            slug
+          }
+        }
+
+        ... on LifeEventPage {
+          id
+          title
+          slug
+          intro
+          category {
+            slug
+            title
+          }
+          image {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+        }
+      }
+      tagCounts {
+        key
+        value
+        count
       }
     }
   }

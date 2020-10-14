@@ -1,17 +1,40 @@
-import React from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
-import * as styles from './Swiper.treat'
-import { useMeasure } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
-const Swiper = ({ children }) => {
-  const [ref, { width }] = useMeasure()
+import * as styles from './Swiper.treat'
+
+export const Swiper: FC = ({ children }) => {
+  const [width, setWidth] = useState<number>(0)
+  const ref = useRef<HTMLDivElement>(null)
+
+  const onResize = useCallback(() => {
+    if (ref?.current) {
+      const w = ref?.current?.offsetWidth as number
+      setWidth(~~(w * 0.77))
+    }
+  }, [ref])
+
+  useEffect(() => {
+    onResize()
+    window.addEventListener('resize', onResize, { passive: true })
+    return () => window.removeEventListener('resize', onResize)
+  }, [onResize])
+
+  const arr = React.Children.map(children, (child) => child) || []
 
   return (
     <div className={styles.root}>
       <div className={cn(styles.container)} ref={ref}>
         <div className={styles.slides}>
-          {React.Children.map(children, (child) => (
-            <div className={styles.slide} style={{ width: ~~(width * 0.77) }}>
+          {arr.map((child, i) => (
+            <div
+              key={i}
+              className={styles.slide}
+              style={{
+                width: i === arr.length - 1 ? theme.spacing[3] + width : width,
+              }}
+            >
               {child}
             </div>
           ))}
@@ -20,5 +43,3 @@ const Swiper = ({ children }) => {
     </div>
   )
 }
-
-export default Swiper

@@ -1,18 +1,17 @@
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import {
-  DataProvider,
-  DataProviderResult,
-} from '@island.is/application/template'
+import { DataProvider, DataProviderResult } from '@island.is/application/core'
 import { getDataProviderByType } from '@island.is/application/data-providers'
-import { ExternalData } from '@island.is/application/template'
+import { ExternalData } from '@island.is/application/core'
 
 export function buildDataProviders(
   externalDataDTO: PopulateExternalDataDto,
 ): DataProvider[] {
   const providers: DataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
-    const provider = getDataProviderByType(type, undefined)
-    providers.push(provider)
+    const provider = getDataProviderByType(type)
+    if (provider) {
+      providers.push(provider)
+    }
   })
   return providers
 }

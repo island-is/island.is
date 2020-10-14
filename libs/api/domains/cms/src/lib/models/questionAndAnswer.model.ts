@@ -12,7 +12,7 @@ export class QuestionAndAnswer {
   @Field()
   question: string
 
-  @Field(() => Html)
+  @Field(() => Html, { nullable: true })
   answer?: Html
 }
 
@@ -21,6 +21,6 @@ export const mapQuestionAndAnswer = ({
   sys,
 }: IQuestionAndAnswer): QuestionAndAnswer => ({
   id: sys.id,
-  question: fields.question,
-  answer: fields.answer && mapHtml(fields.answer),
+  question: fields.question ?? '',
+  answer: fields.answer && mapHtml(fields.answer, sys.id + ':answer'),
 })

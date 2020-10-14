@@ -10,8 +10,20 @@ export class FlightLeg {
   @Field()
   airline: string
 
+  @Field({ nullable: true })
+  cooperation: string
+
+  @Field()
+  financialState: string
+
   @Field()
   travel: string
+
+  @Field()
+  originalPrice: number
+
+  @Field()
+  discountPrice: number
 
   @Field((_1) => Flight)
   flight: Flight

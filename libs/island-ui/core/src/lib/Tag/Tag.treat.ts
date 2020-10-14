@@ -2,7 +2,7 @@ import { styleMap, style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  borderRadius: '5px',
+  borderRadius: theme.border.radius.large,
   transition: 'color 150ms ease, background-color 150ms ease',
   outline: 0,
   display: 'inline-flex',
@@ -10,8 +10,6 @@ export const container = style({
   height: 32,
   padding: '0 8px',
   whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
@@ -64,6 +62,10 @@ export const variants = styleMap({
     color: theme.color.dark400,
     backgroundColor: theme.color.mint200,
   },
+  rose: {
+    color: theme.color.roseTinted400,
+    backgroundColor: theme.color.roseTinted100,
+  },
   label: {},
 })
 
@@ -108,4 +110,20 @@ export const active = style({
 
 export const label = style({
   pointerEvents: 'none',
+})
+
+export const attention = style({
+  position: 'relative',
+  selectors: {
+    '&::after': {
+      content: '""',
+      background: theme.color.red400,
+      borderRadius: '50%',
+      height: 8,
+      position: 'absolute',
+      right: -4,
+      top: -3,
+      width: 8,
+    },
+  },
 })

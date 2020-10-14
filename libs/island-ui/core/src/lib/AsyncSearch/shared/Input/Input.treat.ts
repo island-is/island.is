@@ -2,9 +2,10 @@ import { style, styleMap } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const input = style({
+  appearance: 'none',
   position: 'relative',
   width: '100%',
-  borderRadius: 5,
+  borderRadius: theme.border.radius.large,
   background: theme.color.white,
   fontWeight: theme.typography.light,
   borderColor: theme.color.blue200,

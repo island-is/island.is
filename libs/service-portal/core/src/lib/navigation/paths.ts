@@ -8,17 +8,16 @@ export enum ServicePortalPath {
   UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
   UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
   UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
-  JudicialCreateDetentionPoc = '/stofna-krofu',
-  JudicialDetentionRequestsPoc = '/gaesluvardhaldskrofur',
   // Stillingar
   StillingarRoot = '/stillingar',
-  StillingarUpplysingar = '/stillingar/upplysingar',
   StillingarUmbod = '/stillingar/umbod',
   // Fjolskyldan
   FjolskyldanRoot = '/fjolskyldan',
+  MinarUpplysingar = '/minar-upplysingar',
   // Fjarmal
   FjarmalRoot = '/fjarmal',
   FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
+  FjarmalGreidslur = '/greidslur',
   // Rafræn skjöl
   RafraenSkjolRoot = '/rafraen-skjol',
   // Heilsa
@@ -27,4 +26,8 @@ export enum ServicePortalPath {
   HeilsaBolusetningar = 'https://minarsidur.heilsuvera.is/bolusetningar/bolusett-gegn/',
   // Menntun
   MenntunRoot = '/menntun',
+  // Eignir
+  EignirRoot = '/eignir',
+  // Skilabod
+  SkilabodRoot = '/skilabod',
 }

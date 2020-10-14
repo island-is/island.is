@@ -3,28 +3,31 @@ import {
   Box,
   Stack,
   Inline,
-  Icon,
+  IconDeprecated as Icon,
   Typography,
   Tag,
-  Button,
+  ButtonDeprecated as Button,
   Columns,
   Column,
 } from '@island.is/island-ui/core'
 import * as styles from './ApplicationCard.treat'
 import ProgressBar from '../ProgressBar/ProgressBar'
 
-export interface MockApplication {
+interface Props {
   name: string
   date: string
-  status: boolean
+  isComplete: boolean
   url: string
+  progress: number
 }
 
-interface Props {
-  application: MockApplication
-}
-
-const ApplicationCard: FC<Props> = ({ application }) => {
+const ApplicationCard: FC<Props> = ({
+  name,
+  date,
+  isComplete,
+  url,
+  progress,
+}) => {
   return (
     <Box
       className={styles.wrapper}
@@ -40,32 +43,25 @@ const ApplicationCard: FC<Props> = ({ application }) => {
           alignItems="center"
           marginBottom={1}
         >
-          <Inline space={2} alignY="bottom">
-            <Icon type="article" width={24} height={24} />
-            <Typography variant="h3">{application.name}</Typography>
-          </Inline>
-          <Tag variant={application.status ? 'mint' : 'purple'}>
-            {application.status ? 'Lokið' : 'Í ferli'}
+          <Typography variant="h3">{name}</Typography>
+          <Tag variant={isComplete ? 'mint' : 'purple'}>
+            {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
         <Typography variant="p">
           {`Þú hefur ${
-            !application.status ? 'ekki ' : ''
-          } lokið umsóknarferli fyrir ${application.name}`}
+            !isComplete ? 'ekki ' : ''
+          } lokið umsóknarferli fyrir ${name}`}
         </Typography>
-        <Columns space={8} alignY="center">
+        <Columns space={8} alignY="center" collapseBelow="md">
           <Column width="8/12">
-            <ProgressBar progress={50} />
+            <ProgressBar progress={progress} />
           </Column>
           <Column width="4/12">
             <Box display="flex" justifyContent="flexEnd">
-              <a
-                href={application.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={url} target="_blank" rel="noopener noreferrer">
                 <Button variant="text">
-                  {application.status ? 'Skoða umsókn' : 'Halda áfram'}
+                  {isComplete ? 'Skoða umsókn' : 'Halda áfram'}
                 </Button>
               </a>
             </Box>

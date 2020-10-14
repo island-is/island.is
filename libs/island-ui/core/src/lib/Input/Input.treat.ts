@@ -29,6 +29,24 @@ export const input = style({
   ':disabled': mixins.inputDisabled,
 })
 
+// To handle styling auto-fill states
+export const inputBackground = styleMap({
+  white: {
+    selectors: {
+      '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
+        boxShadow: `0 0 0px 1000px ${theme.color.white} inset`,
+      },
+    },
+  },
+  blue: {
+    selectors: {
+      '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
+        boxShadow: `0 0 0px 1000px ${theme.color.blue100} inset`,
+      },
+    },
+  },
+})
+
 export const textarea = style({
   resize: 'vertical',
 })

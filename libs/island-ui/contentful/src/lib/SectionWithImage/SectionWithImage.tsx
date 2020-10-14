@@ -1,21 +1,16 @@
 import React, { FC } from 'react'
-import { Html } from '@island.is/api/schema'
-import {
-  Typography,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
 import StaticHtml from '../StaticHtml/StaticHtml'
-import { renderSlices } from '../richTextRendering'
+import { renderHtml } from '../richTextRendering'
+import * as styles from './SectionWithImage.treat'
 
 export interface SectionWithImageProps {
-  title?: string
+  title: string
   image?: {
     url: string
   }
-  html: Html
+  html?: { document: any }
 }
 
 export const SectionWithImage: FC<SectionWithImageProps> = ({
@@ -27,7 +22,7 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
     return (
       <>
         {title && (
-          <Typography
+          <Text
             id={slugify(title)}
             variant="h2"
             as="h2"
@@ -35,33 +30,28 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
             paddingBottom={2}
           >
             {title}
-          </Typography>
+          </Text>
         )}
-        <StaticHtml>{renderSlices(html)}</StaticHtml>
+        <StaticHtml>{renderHtml(html.document)}</StaticHtml>
       </>
     )
   }
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="3/9">
-          <img src={image.url + '?w=320'} alt="" />
-        </GridColumn>
-        <GridColumn span="6/9">
-          {title && (
-            <Typography
-              id={slugify(title)}
-              variant="h2"
-              as="h2"
-              paddingBottom={3}
-            >
-              {title}
-            </Typography>
-          )}
-          <StaticHtml>{renderSlices(html)}</StaticHtml>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+    <GridRow>
+      <GridColumn span={['12/12', '12/12', '12/12', '3/9']}>
+        <Box marginBottom={3} className={styles.imageContainer}>
+          <img className={styles.image} src={image.url + '?w=600'} alt="" />
+        </Box>
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
+        {title && (
+          <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={3}>
+            {title}
+          </Text>
+        )}
+        <StaticHtml>{renderHtml(html.document)}</StaticHtml>
+      </GridColumn>
+    </GridRow>
   )
 }

@@ -1,11 +1,27 @@
 import React, { useState } from 'react'
-import Pagination from './Pagination'
 import { number } from '@storybook/addon-knobs'
-import { Box } from '../Box'
+import { withDesign } from 'storybook-addon-designs'
+import { Pagination } from './Pagination'
+import { Box } from '../Box/Box'
+
+const figmaLink =
+  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=342%3A143'
 
 export default {
-  title: 'Components/Pagination',
+  title: 'Navigation/Pagination',
   component: Pagination,
+  decorators: [withDesign],
+  parameters: {
+    docs: {
+      description: {
+        component: `[View in Figma](${figmaLink})`,
+      },
+    },
+    design: {
+      type: 'figma',
+      url: figmaLink,
+    },
+  },
 }
 
 export const Default = () => {

@@ -1,29 +1,24 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { User, UserRole } from './user.types'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { User } from './user.model'
 
 @Injectable()
 export class UserService {
-  private readonly users: User[]
+  constructor(
+    @InjectModel(User)
+    private readonly userModel: typeof User,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
 
-  constructor() {
-    this.users = [
-      {
-        nationalId: '2510654469',
-        roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
-      },
-      {
-        nationalId: '1112902539',
-        roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
-      },
-      {
-        nationalId: '2408783999',
-        roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
-      },
-    ]
-  }
+  findByNationalId(nationalId: string): Promise<User> {
+    this.logger.debug(`Getting user with national id ${nationalId}`)
 
-  async findByNationalId(nationalId: string): Promise<User | undefined> {
-    return this.users.find((user) => user.nationalId === nationalId)
+    return this.userModel.findOne({
+      where: { nationalId },
+    })
   }
 }

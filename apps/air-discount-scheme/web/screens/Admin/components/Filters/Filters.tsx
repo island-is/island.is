@@ -1,7 +1,6 @@
 import React from 'react'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
 
-import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { Checkbox } from '@island.is/air-discount-scheme-web/components'
 import {
   Box,
@@ -9,35 +8,20 @@ import {
   Typography,
   Divider,
   DatePicker,
-  Button,
+  ButtonDeprecated as Button,
   Input,
   Select,
 } from '@island.is/island-ui/core'
-import { FilterInput } from '../../Admin'
+import {
+  airlineOptions,
+  financialStateOptions,
+  FilterInput,
+} from '../../consts'
 
 interface PropTypes {
   onSubmit: (data) => void
   defaultValues: FilterInput
 }
-
-const airlineOptions = [
-  {
-    label: 'Öll flugfélög',
-    value: null,
-  },
-  {
-    label: 'Ernir',
-    value: Airlines.ernir,
-  },
-  {
-    label: 'Icelandair',
-    value: Airlines.icelandair,
-  },
-  {
-    label: 'Norlandair',
-    value: Airlines.norlandair,
-  },
-]
 
 function Filters({ onSubmit, defaultValues }: PropTypes) {
   const hookFormData = useForm<FilterInput>({
@@ -61,27 +45,27 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
           <Stack space={4}>
             <Stack space={2}>
               <Controller
-                defaultValue=""
                 name="period.from"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Frá"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
-                    value={value.toString() || undefined}
+                    selected={value}
                     handleChange={onChange}
                   />
                 )}
               />
               <Controller
-                defaultValue=""
                 name="period.to"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <DatePicker
                     label="Til"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
-                    value={value.toString() || undefined}
+                    selected={value}
                     handleChange={onChange}
                   />
                 )}
@@ -91,8 +75,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Typography variant="h5">Flug</Typography>
               <Divider weight="alternate" />
               <Controller
-                defaultValue=""
                 name="airline"
+                defaultValue=""
                 render={({ onChange, value }) => {
                   return (
                     <Select
@@ -108,8 +92,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 }}
               />
               <Controller
-                defaultValue=""
                 name="flightLeg.from"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="flightLeg.from"
@@ -120,8 +104,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
               <Controller
-                defaultValue=""
                 name="flightLeg.to"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="flightLeg.to"
@@ -136,8 +120,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Typography variant="h5">Notandi</Typography>
               <Divider weight="alternate" />
               <Controller
-                defaultValue=""
                 name="postalCode"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="postalCode"
@@ -148,8 +132,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
               <Controller
-                defaultValue=""
                 name="age.from"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="age.from"
@@ -160,8 +144,8 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
               <Controller
-                defaultValue=""
                 name="age.to"
+                defaultValue=""
                 render={({ onChange, value }) => (
                   <Input
                     name="age.to"
@@ -182,22 +166,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
             <Stack space={2}>
               <Typography variant="h5">Fjármál</Typography>
               <Divider weight="alternate" />
-              <Checkbox
-                name="state"
-                options={[
-                  {
-                    value: States.awaitingDebit,
-                    label: 'Á eftir að gjaldfæra',
-                  },
-                  { value: States.sentDebit, label: 'Gjaldfært' },
-                  {
-                    value: States.awaitingCredit,
-                    label: 'Á eftir að endurgreiða',
-                  },
-                  { value: States.sentCredit, label: 'Endurgreitt' },
-                  { value: States.cancelled, label: 'Afturkallað' },
-                ]}
-              />
+              <Checkbox name="state" options={financialStateOptions} />
             </Stack>
             <Box paddingTop={2}>
               <Button htmlType="submit" width="fluid">

@@ -1,11 +1,28 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { ContentItem } from './contentItem.model'
+import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
+import {
+  AboutPage,
+  Article,
+  LifeEventPage,
+  News,
+} from '@island.is/api/domains/cms'
+import { TagCount } from './tagCount'
+
+const Items = createUnionType({
+  name: 'Items',
+  types: () => [Article, LifeEventPage, News, AboutPage],
+  resolveType: (document) => document.typename, // typename is appended to request on mapping
+})
 
 @ObjectType()
 export class SearchResult {
   @Field(() => Int)
   total: number
 
-  @Field(() => [ContentItem])
-  items: ContentItem[]
+  @Field(() => [Items])
+  items: Array<typeof Items>
+
+  @Field(() => [TagCount], { nullable: true })
+  tagCounts?: TagCount[]
 }
+
+// TODO: Classes form multiple classes can conflict here, look into adding namespace prefixes to classes

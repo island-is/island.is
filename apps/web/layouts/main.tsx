@@ -1,9 +1,18 @@
 import React from 'react'
 import Head from 'next/head'
-import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
+import {
+  Page,
+  Box,
+  FooterLinkProps,
+  Footer,
+  AlertBanner,
+  AlertBannerVariants,
+} from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
+import { Screen, GetInitialPropsContext } from '../types'
+import { MD5 } from 'crypto-js'
+import Cookies from 'js-cookie'
 
-import { GetInitialPropsContext } from '../types'
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
@@ -13,26 +22,32 @@ import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
   ContentLanguage,
-  GetCategoriesQuery,
-  QueryCategoriesArgs,
+  GetAlertBannerQuery,
+  QueryGetAlertBannerArgs,
+  GetArticleCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
-import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { GlobalContextProvider, GlobalContext } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
+import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import { useNamespace } from '../hooks'
 
-interface LayoutProps {
+export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  categories: GetCategoriesQuery['categories']
+  hasDrawerMenu?: boolean
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
-  namespace: Record<string, string>
+  namespace: Record<string, string | string[]>
+  alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
 }
 
 const Layout: NextComponentType<
@@ -44,6 +59,7 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
+  hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperMenu,
@@ -51,14 +67,17 @@ const Layout: NextComponentType<
   footerMiddleMenu,
   footerTagsMenu,
   namespace,
+  alertBannerContent,
   children,
 }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { activeLocale, t } = useI18n()
+  const { makePath } = routeNames(activeLocale)
+  const n = useNamespace(namespace)
 
   const menuTabs = [
     {
-      title: 'Þjónustuflokkar',
+      title: t.serviceCategories,
+      externalLinksHeading: t.serviceCategories,
       links: categories.map((x) => {
         return {
           title: x.title,
@@ -68,15 +87,16 @@ const Layout: NextComponentType<
       }),
     },
     {
-      title: 'Stafrænt Ísland',
+      title: t.siteTitle,
       links: topMenuCustomLinks,
-      externalLinksHeading: 'Aðrir opinberir vefir',
+      externalLinksHeading: t.siteExternalTitle,
       externalLinks: footerLowerMenu,
     },
   ]
 
+  const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
   return (
-    <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
+    <GlobalContextProvider namespace={namespace}>
       <Page>
         <Head>
           <link
@@ -97,15 +117,40 @@ const Layout: NextComponentType<
             href="/favicon-16x16.png"
           />
           <link rel="manifest" href="/site.webmanifest" />
-          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
+          <meta property="og:title" content={n('title')} />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://island.is/" />
+          <meta property="og:image" content="/island-fb-1200x630.png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
           <meta
             name="description"
-            content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
+            property="og:description"
+            content={n('description')}
           />
-          <title>Ísland.is</title>
+          <title>{n('title')}</title>
         </Head>
+        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
+          <AlertBanner
+            title={alertBannerContent.title}
+            description={alertBannerContent.description}
+            link={{
+              href: alertBannerContent.link.url,
+              title: alertBannerContent.link.text,
+            }}
+            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
+            dismissable={alertBannerContent.isDismissable}
+            onDismiss={() => {
+              if (alertBannerContent.dismissedForDays !== 0) {
+                Cookies.set(alertBannerId, 'hide', {
+                  expires: alertBannerContent.dismissedForDays,
+                })
+              }
+            }}
+          />
+        )}
         <SkipToMainContent />
         <PageLoader />
         <MenuTabsContext.Provider
@@ -124,11 +169,17 @@ const Layout: NextComponentType<
             topLinks={footerUpperMenu}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
+            bottomLinksTitle={t.siteExternalTitle}
             tagLinks={footerTagsMenu}
-            middleLinksTitle={namespace.footerMiddleLabel}
-            tagLinksTitle={namespace.footerRightLabel}
+            middleLinksTitle={String(namespace.footerMiddleLabel)}
+            tagLinksTitle={String(namespace.footerRightLabel)}
+            languageSwitchLink={{
+              title: activeLocale === 'en' ? 'Íslenska' : 'English',
+              href: activeLocale === 'en' ? '/' : '/en',
+            }}
             showMiddleLinks
             showTagLinks
+            hasDrawerMenu
           />
         )}
         <style jsx global>{`
@@ -179,7 +230,7 @@ const Layout: NextComponentType<
           }
         `}</style>
       </Page>
-    </GlobalNamespaceContext.Provider>
+    </GlobalContextProvider>
   )
 }
 
@@ -189,6 +240,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     categories,
     topMenuCustomLinks,
+    alertBanner,
     upperMenu,
     lowerMenu,
     middleMenu,
@@ -196,15 +248,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     namespace,
   ] = await Promise.all([
     apolloClient
-      .query<GetCategoriesQuery, QueryCategoriesArgs>({
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
         query: GET_CATEGORIES_QUERY,
         variables: {
           input: {
-            language: locale as ContentLanguage,
+            lang: locale as ContentLanguage,
           },
         },
       })
-      .then((res) => res.data.categories),
+      .then((res) => res.data.getArticleCategories),
     apolloClient
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -213,6 +265,14 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+        query: GET_ALERT_BANNER_QUERY,
+        variables: {
+          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
+        },
+      })
+      .then((res) => res.data.getAlertBanner),
     apolloClient
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -269,6 +329,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         href: url,
       }),
     ),
+    alertBannerContent: alertBanner,
     footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
@@ -287,6 +348,39 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     })),
     namespace,
   }
+}
+
+type LayoutWrapper<T> = NextComponentType<
+  GetInitialPropsContext<NextPageContext>,
+  { layoutProps: LayoutProps; componentProps: T },
+  { layoutProps: LayoutProps; componentProps: T }
+>
+
+export const withMainLayout = <T,>(
+  Component: Screen<T>,
+  layoutConfig: Partial<LayoutProps> = {},
+): LayoutWrapper<T> => {
+  const WithMainLayout: LayoutWrapper<T> = ({
+    layoutProps,
+    componentProps,
+  }) => {
+    return (
+      <Layout {...layoutProps}>
+        <Component {...componentProps} />
+      </Layout>
+    )
+  }
+
+  WithMainLayout.getInitialProps = async (ctx) => {
+    const [layoutProps, componentProps] = await Promise.all([
+      Layout.getInitialProps(ctx),
+      Component.getInitialProps(ctx),
+    ])
+
+    return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
+  }
+
+  return WithMainLayout
 }
 
 export default Layout

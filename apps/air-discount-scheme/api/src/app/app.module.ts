@@ -13,18 +13,16 @@ import { BackendAPI } from '../services'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
-
+const autoSchemaFile = debug ? 'apps/air-discount-scheme/api.graphql' : true
 @Module({
   imports: [
     GraphQLModule.forRoot({
       debug,
       playground,
-      autoSchemaFile: 'apps/air-discount-scheme/api.graphql',
+      autoSchemaFile,
       path: '/api/graphql',
       context: ({ req }) => ({ req }),
-      dataSources: () => ({
-        backendApi: new BackendAPI(),
-      }),
+      dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
     AuthModule,
     UserModule,

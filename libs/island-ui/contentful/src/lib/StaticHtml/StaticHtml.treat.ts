@@ -19,6 +19,29 @@ globalStyle(`${container} > *:last-child`, {
   marginBottom: 0,
 })
 
+globalStyle(`${container} ol`, {
+  counterReset: 'section',
+})
+
+globalStyle(`${container} ol li`, {
+  listStyle: 'none',
+  position: 'relative',
+  margin: `${theme.spacing[1]}px 0`,
+})
+
+globalStyle(`${container} ol ol li`, {
+  paddingLeft: theme.spacing[3],
+})
+
+globalStyle(`${container} ol li:before`, {
+  float: 'left',
+  margin: `2px 12px 0 0`,
+  counterIncrement: 'section',
+  content: 'counters(section, ".") " "',
+  color: theme.color.red400,
+  fontWeight: theme.typography.semiBold,
+})
+
 globalStyle(`${container} ul`, {
   listStyle: 'none',
 })
@@ -36,9 +59,4 @@ globalStyle(`${container} ul li:before`, {
   left: 0,
   borderRadius: '50%',
   border: `4px solid red`,
-})
-
-globalStyle(`${container} ol`, {
-  listStyle: 'decimal',
-  marginLeft: theme.spacing[3],
 })

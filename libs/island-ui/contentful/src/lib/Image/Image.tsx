@@ -1,39 +1,15 @@
 import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
-import { Image as ApiImage } from '@island.is/api/schema'
 import * as styles from './Image.treat'
 
-export type CustomImage = {
-  type: 'custom'
-  src: string
+export interface ImageProps {
+  url: string
+  title?: string
   thumbnail: string
-  alt: string
-  originalWidth: number
-  originalHeight: number
-}
-
-export type ApiImageSource = {
-  type: 'apiImage'
-  maxWidth?: number
-  image: Partial<ApiImage>
-}
-
-type AnyImageType = CustomImage | ApiImageSource
-
-const normalizeImage = (img: AnyImageType): CustomImage => {
-  switch (img.type) {
-    case 'custom':
-      return img
-    case 'apiImage':
-      return {
-        type: 'custom',
-        src: img.image.url + (img.maxWidth ? `?w=${img.maxWidth}` : ''),
-        thumbnail: `${img.image.url}?w=50`,
-        alt: img.image.title ?? '',
-        originalWidth: img.image.width,
-        originalHeight: img.image.height,
-      }
-  }
+  // NB: width and height is used for calculating ratio of the image - the
+  // element rendered will take up all available horizontal space
+  width: number
+  height: number
 }
 
 const useImageLoader = (url: string): boolean => {
@@ -48,29 +24,30 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const Image: FC<AnyImageType> = (image) => {
-  const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
-    image,
-  )
-
-  const thumbLoaded = useImageLoader(thumbnail)
-  const imageLoaded = useImageLoader(src)
+export const Image: FC<ImageProps> = ({
+  url,
+  title,
+  thumbnail = url + '?w=50',
+  width,
+  height,
+}) => {
+  const imageLoaded = useImageLoader(url)
 
   return (
     <div
       className={styles.container}
-      style={{ paddingTop: (originalHeight / originalWidth) * 100 + '%' }}
+      style={{ paddingTop: (height / width) * 100 + '%' }}
     >
       <img
         src={thumbnail}
         alt=""
         className={cn(styles.image, styles.thumbnail, {
-          [styles.show]: thumbLoaded && !imageLoaded,
+          [styles.hide]: imageLoaded,
         })}
       />
       <img
-        src={src}
-        alt={alt}
+        src={url}
+        alt={title}
         className={cn(styles.image, { [styles.show]: imageLoaded })}
       />
     </div>

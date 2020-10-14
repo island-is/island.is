@@ -3,8 +3,8 @@ import Router from 'next/router'
 
 import {
   Box,
-  Button,
-  Icon,
+  ButtonDeprecated as Button,
+  IconDeprecated as Icon,
   Typography,
   GridContainer,
   GridRow,

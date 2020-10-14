@@ -1,12 +1,28 @@
 import React from 'react'
+import { withDesign } from 'storybook-addon-designs'
 import { Tabs } from './Tabs'
 import { Stack } from '../Stack/Stack'
 import { Typography } from '../Typography/Typography'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
+
+const figmaLink =
+  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=208%3A697'
 
 export default {
-  title: 'Components/Tabs',
+  title: 'Navigation/Tabs',
   component: Tabs,
+  decorators: [withDesign],
+  parameters: {
+    docs: {
+      description: {
+        component: `[View in Figma](${figmaLink})`,
+      },
+    },
+    design: {
+      type: 'figma',
+      url: figmaLink,
+    },
+  },
 }
 
 const content1 = (

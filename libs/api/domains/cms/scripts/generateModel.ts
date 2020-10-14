@@ -8,7 +8,7 @@ import {
 } from './contentType'
 import { Imports } from './generateFile'
 
-const pushIfPossible = (key: string, array: string[]) => {
+export const pushOnce = (key: string, array: string[]) => {
   if (array.includes(key)) {
     return array
   }
@@ -39,7 +39,7 @@ const contentfulTypeToTsType = (
 
     case 'Integer':
     case 'Number': {
-      pushIfPossible('Int', imports.nestjs)
+      pushOnce('Int', imports.nestjs)
 
       return ['number', 'Int']
     }
@@ -49,7 +49,7 @@ const contentfulTypeToTsType = (
     case 'RichText': {
       // TODO: Is that a weak assumption?
       if (field.name === 'id') {
-        pushIfPossible('ID', imports.nestjs)
+        pushOnce('ID', imports.nestjs)
 
         return ['string', 'ID']
       }
@@ -67,7 +67,7 @@ const contentfulTypeToTsType = (
         /**
          * Looks like we never use the Asset type from contentful but always map through the mapImage function
          *
-         * pushIfPossible('Asset', imports.contentful)
+         * pushOnce('Asset', imports.contentful)
          * return ['Asset', 'Asset]
          */
 
@@ -128,7 +128,7 @@ export const getModel = (
   imports: Imports,
 ) => {
   if (args.sys.some((item) => item === 'id')) {
-    imports.nestjs.push('ID')
+    pushOnce('ID', imports.nestjs)
   }
 
   const linkTypes = getLinkContentTypes(contentType)

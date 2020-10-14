@@ -1,6 +1,7 @@
 export { ErrorBoundary } from './ErrorBoundary'
 export { Checkbox } from './Checkbox'
 export { Header } from './Header'
+export { KeyValue } from './KeyValue'
 export { Toast } from './Toast'
 export { Layout } from './Layout'
 export { IntroText } from './IntroText'

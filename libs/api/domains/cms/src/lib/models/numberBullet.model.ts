@@ -19,6 +19,6 @@ export const mapNumberBullet = ({
   sys,
 }: INumberBullet): NumberBullet => ({
   id: sys.id,
-  title: fields.title,
-  body: fields.body,
+  title: fields.title ?? '',
+  body: fields.body ?? '',
 })

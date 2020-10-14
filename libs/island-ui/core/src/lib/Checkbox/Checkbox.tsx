@@ -1,10 +1,9 @@
 import React from 'react'
 import cn from 'classnames'
 
+import { Icon } from '../Icon/Icon'
+import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './Checkbox.treat'
-import Icon from '../Icon/Icon'
-import Tooltip from '../Tooltip/Tooltip'
-import { Box } from '../Box'
 
 export interface CheckboxProps {
   name?: string
@@ -73,16 +72,18 @@ export const Checkbox = ({
           <Icon
             type="check"
             width={styles.checkMarkWidth}
-            color={
-              checked ? styles.checkMarkColor : styles.checkMarkColorUnchecked
-            }
+            color={checked ? 'white' : 'transparent'}
           />
         </div>
         {label}
         {tooltip && (
-          <Box marginLeft={2} display="inlineBlock">
+          <div
+            className={cn(styles.tooltipContainer, {
+              [styles.tooltipLargeContainer]: large,
+            })}
+          >
             <Tooltip text={tooltip} />
-          </Box>
+          </div>
         )}
         {hasError && errorMessage && (
           <div className={styles.errorMessage} id={id}>
@@ -93,5 +94,3 @@ export const Checkbox = ({
     </div>
   )
 }
-
-export default Checkbox

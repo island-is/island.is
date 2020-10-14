@@ -1,16 +1,21 @@
+/** @deprecated Typography has been deprecated in favor of Text */
+
 import React from 'react'
 import cn from 'classnames'
-import { resolveResponsiveProp } from '../../utils/responsiveProp'
 
-import styles, {
+import {
+  variantStyles,
+  base,
   VariantTypes,
   colors,
   truncate as truncateStyle,
   links as linksStyle,
-  spacing,
+  fontWeight as fontWeightStyles,
+  defaultFontWeights,
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
+import { Box } from '../Box/Box'
 
 export interface TypographyProps {
   id?: string
@@ -32,50 +37,56 @@ export interface TypographyProps {
   links?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  paddingY?: ResponsiveSpace
+  marginTop?: ResponsiveSpace
+  marginBottom?: ResponsiveSpace
+  marginY?: ResponsiveSpace
+  fontWeight?: keyof typeof fontWeightStyles
 }
 
 export const Typography = ({
   id,
   variant,
-  as: Cmp = 'p',
   children,
   color,
   truncate,
   links,
   paddingTop,
   paddingBottom,
-}: TypographyProps) => (
-  <Cmp
-    id={id}
-    className={cn(
-      variant ? styles[variant] : null,
-      color ? colors[color] : null,
-      {
-        [truncateStyle]: truncate,
-        [linksStyle]: links,
-      },
-      paddingBottom !== undefined &&
-        resolveResponsiveProp(
-          paddingBottom,
-          spacing.paddingBottomXs,
-          spacing.paddingBottomSm,
-          spacing.paddingBottomMd,
-          spacing.paddingBottomLg,
-          spacing.paddingBottomXl,
-        ),
-      paddingTop !== undefined &&
-        resolveResponsiveProp(
-          paddingTop,
-          spacing.paddingTopXs,
-          spacing.paddingTopSm,
-          spacing.paddingTopMd,
-          spacing.paddingTopLg,
-          spacing.paddingTopXl,
-        ),
-    )}
-  >
-    {children}
-  </Cmp>
-)
+  paddingY,
+  marginTop,
+  marginBottom,
+  marginY,
+  fontWeight,
+  as = 'p',
+}: TypographyProps) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('Typography has been deprecated in favor of Text.')
+  }
 
-export default Typography
+  return (
+    <Box
+      id={id}
+      component={as}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      marginY={marginY}
+      paddingTop={paddingTop}
+      paddingBottom={paddingBottom}
+      paddingY={paddingY}
+      className={cn(
+        base,
+        variant ? variantStyles[variant] : null,
+        color ? colors[color] : null,
+        fontWeight ? fontWeightStyles[fontWeight] : null,
+        {
+          [truncateStyle]: truncate,
+          [linksStyle]: links,
+          [defaultFontWeights[variant!]]: variant && !fontWeight,
+        },
+      )}
+    >
+      {children}
+    </Box>
+  )
+}

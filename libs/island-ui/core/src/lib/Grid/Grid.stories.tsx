@@ -1,12 +1,12 @@
 import React from 'react'
-import { GridRow } from './GridRow'
-import { GridColumn } from './GridColumn'
-import { GridContainer } from './GridContainer'
+import { GridRow } from './GridRow/GridRow'
+import { GridColumn } from './GridColumn/GridColumn'
+import { GridContainer } from './GridContainer/GridContainer'
 import { Box } from '../Box/Box'
 import * as styles from './demostyles.treat'
 
 export default {
-  title: 'Core/Grid',
+  title: 'Layout/Grid',
   component: GridColumn,
 }
 
@@ -115,6 +115,28 @@ export const Responsive = () => (
       </GridColumn>
       <GridColumn span={['12/12', '6/12', '3/12', '2/12']}>
         <DemoBox text="span ['12/12', '6/12', '3/12', '2/12']" />
+      </GridColumn>
+    </GridRow>
+  </GridContainer>
+)
+
+export const Order = () => (
+  <GridContainer>
+    <GridRow>
+      <GridColumn span="1/5" order={[0, 1, 2, 3, 4]}>
+        <DemoBox text="0, 1, 2, 3, 4" />
+      </GridColumn>
+      <GridColumn span="1/5" order={0}>
+        <DemoBox text="0" />
+      </GridColumn>
+      <GridColumn span="1/5" order={1}>
+        <DemoBox text="1" />
+      </GridColumn>
+      <GridColumn span="1/5" order={2}>
+        <DemoBox text="2" />
+      </GridColumn>
+      <GridColumn span="1/5" order={3}>
+        <DemoBox text="3" />
       </GridColumn>
     </GridRow>
   </GridContainer>

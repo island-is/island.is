@@ -5,7 +5,7 @@ import { environment } from '../environments/environment'
 import { Dictionary } from './dictionary'
 import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
 
-AWS.config.update({ region: environment.migrate.awsRegion })
+AWS.config.update({ region: environment.awsRegion })
 const awsEs = new AWS.ES()
 const s3 = new AWS.S3()
 
@@ -25,7 +25,7 @@ const createPackageName = (
 }
 
 // break down the name used for packages in AWS ES
-const parsePackageName = (packageName: string) => {
+export const parsePackageName = (packageName: string) => {
   const [locale, analyzerType, version] = packageName.split('-')
   return {
     locale,
@@ -54,7 +54,7 @@ const getPackageStatuses = async (
 
   const domainPackageList = await awsEs
     .listPackagesForDomain({
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
     })
     .promise()
 
@@ -71,12 +71,13 @@ const getPackageStatuses = async (
 export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
   const domainPackageList = await awsEs
     .listPackagesForDomain({
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
     })
     .promise()
   return domainPackageList.DomainPackageDetailsList.map((esPackage) => {
     const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
     return {
+      packageName: esPackage.PackageName,
       packageId: esPackage.PackageID,
       locale,
       analyzerType,
@@ -124,6 +125,11 @@ const waitForPackageStatus = async (
 
 // checks connection and validates that we have access to requested domain
 export const checkAWSAccess = async (): Promise<boolean> => {
+  if (!environment.s3Bucket) {
+    logger.info('No credentials provided for AWS')
+    return false
+  }
+
   const domains = await awsEs
     .listDomainNames()
     .promise()
@@ -135,19 +141,17 @@ export const checkAWSAccess = async (): Promise<boolean> => {
     })
 
   logger.info('Validating esDomain agains aws domain list', { domains })
-  return !!domains.find(
-    (domain) => domain.DomainName === environment.migrate.esDomain,
-  )
+  return !!domains.find((domain) => domain.DomainName === environment.esDomain)
 }
 
 const createS3Key = (type: string, prefix = ''): string => {
   const prefixString = prefix ? `${prefix}/` : ''
-  return `${environment.migrate.s3Folder}${prefixString}${type}.txt`
+  return `${environment.s3Folder}${prefixString}${type}.txt`
 }
 
 export const getDictionaryVersion = (): Promise<string> => {
   const params = {
-    Bucket: environment.migrate.s3Bucket,
+    Bucket: environment.s3Bucket,
     Key: createS3Key('dictionaryVersion'),
   }
 
@@ -165,7 +169,7 @@ export const getDictionaryVersion = (): Promise<string> => {
 
 const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
   const params = {
-    Bucket: environment.migrate.s3Bucket,
+    Bucket: environment.s3Bucket,
     ...options,
   }
   logger.info('Uploading file to s3', {
@@ -233,7 +237,16 @@ const removePackagesIfExist = async (
       }
 
       // this package should never be in use so we can delete it
-      return awsEs.deletePackage(params).promise()
+      return awsEs
+        .deletePackage(params)
+        .promise()
+        .catch((error) => {
+          logger.info('Unable to remove conflicting package', {
+            error: error,
+            existingPackage: existingPackage,
+          })
+          return false
+        })
     } else {
       // no file found, return promise
       return false
@@ -246,10 +259,11 @@ const removePackagesIfExist = async (
 }
 
 /*
-createAwsEsPackagesshould only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
+createAwsEsPackages should only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
 We run a remove packages for this version function to handle failed partial updates
 */
 export interface AwsEsPackage {
+  packageName?: string
   packageId: string
   locale: string
   analyzerType: string
@@ -269,7 +283,7 @@ export const createAwsEsPackages = async (
       PackageName: createPackageName(locale, analyzerType, version), // version is here so we dont conflict with older packages
       PackageType: 'TXT-DICTIONARY',
       PackageSource: {
-        S3BucketName: environment.migrate.s3Bucket,
+        S3BucketName: environment.s3Bucket,
         S3Key: createS3Key(analyzerType, locale),
       },
     }
@@ -297,7 +311,7 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
   // do one at a time
   for (const awsEsPackage of packages) {
     const params = {
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
       PackageID: awsEsPackage.packageId,
     }
 
@@ -316,46 +330,48 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
 }
 
 export const getUnusedEsPackages = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ): Promise<string[]> => {
   const allAwsEsPackages = await getAwsEsPackagesDetails()
-  const allAwsEsPackageIds = allAwsEsPackages.map(
-    (awsEsPackage) => awsEsPackage.PackageID,
-  )
-  const inUseEsPackageIds = inUseEsPackages.map(
-    (inUseEsPackage) => inUseEsPackage.packageId,
-  )
 
-  // we remove packages that are in use from allAwsEsPackageIds and return
-  return allAwsEsPackageIds.filter(
-    (awsEsPackageId) => !inUseEsPackageIds.includes(awsEsPackageId),
-  )
+  // remove all packages we assume are in use
+  return allAwsEsPackages.reduce((packageIds, esPackage) => {
+    const { version } = parsePackageName(esPackage.PackageName)
+
+    // we remove packages if it is below dictionary version
+    if (parseInt(version) < dictionaryVersion) {
+      packageIds.push(esPackage.PackageID)
+    }
+    return packageIds
+  }, [])
 }
 
 export const getUnusedAwsEsPackages = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ): Promise<string[]> => {
   const allAwsEsDomainPackages = await getAllDomainEsPackages()
-  const inuseEsPackageIds = inUseEsPackages.map(
-    (esPackage) => esPackage.packageId,
-  )
-  const inuseAwsEsPackageIds = allAwsEsDomainPackages.map(
-    (awsEsPackage) => awsEsPackage.packageId,
-  )
-  return inuseAwsEsPackageIds.filter(
-    (awsEsDomainPackageId) => !inuseEsPackageIds.includes(awsEsDomainPackageId),
-  )
+
+  // remove all packages we assume are in use
+  return allAwsEsDomainPackages.reduce((packageIds, esPackage) => {
+    const { version } = parsePackageName(esPackage.packageName)
+
+    // we remove packages if it is below dictionary version
+    if (parseInt(version) < dictionaryVersion) {
+      packageIds.push(esPackage.packageId)
+    }
+    return packageIds
+  }, [])
 }
 
 export const disassociateUnusedPackagesFromAwsEs = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ) => {
   logger.info('Disassociating old packages from AWS ES')
-  const packagesToRemove = await getUnusedAwsEsPackages(inUseEsPackages)
+  const packagesToRemove = await getUnusedAwsEsPackages(dictionaryVersion)
   for (const esAwsPackageId of packagesToRemove) {
     logger.info('Disassociating package', { packageId: esAwsPackageId })
     const params = {
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
       PackageID: esAwsPackageId,
     }
     await awsEs.dissociatePackage(params).promise()
@@ -368,10 +384,10 @@ export const disassociateUnusedPackagesFromAwsEs = async (
 }
 
 export const deleteUnusedPackagesFromAwsEs = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ) => {
   logger.info('Deleting old packages from AWS ES')
-  const unusedEsPackageIds = await getUnusedEsPackages(inUseEsPackages)
+  const unusedEsPackageIds = await getUnusedEsPackages(dictionaryVersion)
   unusedEsPackageIds.map((esPackageId) => {
     logger.info('Deleting package', { packageId: esPackageId })
     const params = {

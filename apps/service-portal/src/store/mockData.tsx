@@ -1,6 +1,4 @@
-import { MockSubject } from '@island.is/service-portal/core'
-
-export const mockSubjects: MockSubject[] = [
+export const mockSubjects = [
   {
     id: 1,
     name: 'Ólafur Björn Magnússon',

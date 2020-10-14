@@ -1,46 +1,37 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-  FC,
-  ReactNode,
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  Ref,
-  forwardRef,
-  useCallback,
-} from 'react'
-import { fromPairs, minBy } from 'lodash'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_ABOUT_PAGE_QUERY } from '../queries'
+import { GET_ABOUT_PAGE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
   Header,
   LinkCardList,
   Heading,
-  Timeline,
+  TimelineSection,
   StoryList,
   AboutLatestNews,
-  EmailSignup,
   LogoList,
   BulletList,
+  DrawerMenu,
 } from '@island.is/web/components'
 import {
-  Typography,
-  Divider,
-  ContentBlock,
+  Text,
   Box,
-  Column,
-  Columns,
-  ColumnProps,
   BoxProps,
   Breadcrumbs,
   Stack,
   Link,
   ColorSchemeContext,
+  GridContainer,
+  GridColumn,
+  GridRow,
+  SpanType,
+  Tabs,
+  Hidden,
+  Divider,
+  Typography,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/island-ui/contentful'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
@@ -50,56 +41,22 @@ import {
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
-} from '../../graphql/schema'
-import useViewport from '@island.is/web/hooks/useViewport'
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
+import { renderSlices } from '@island.is/island-ui/contentful'
+import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import { RenderForm } from './RenderForm'
+import { slices } from '../queries/fragments'
 
-const useScrollSpy = ({
-  margin = 0,
-  initialId = '',
-}: {
-  margin?: number
-  initialId?: string
-}): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
-  const elements = useRef<{ [key: string]: HTMLElement }>({})
-  const [currentId, setCurrentId] = useState(initialId)
-
-  // re-render on scroll or resize
-  useViewport()
-
-  // Elements are cleared on each render. After the component that calls this
-  // hook has finished rendering, the useEffect hook below runs with
-  // elements.current populated by the component using this hook.
-  elements.current = {}
-
-  const spy = useCallback(
-    (key: string) => {
-      return (e: HTMLElement) => {
-        elements.current[key] = e
-      }
-    },
-    [elements],
-  )
-
-  useEffect(() => {
-    const candidates = Array.from(
-      Object.entries(elements.current),
-    ).map(([name, elem]) => ({ name, elem }))
-
-    const best = minBy(candidates, (c) => {
-      const { top, height } = c.elem.getBoundingClientRect()
-      return Math.min(
-        Math.abs(top - margin),
-        Math.abs(top + height - margin - 1),
-      )
-    })
-
-    if (best && best.name !== currentId) {
-      setCurrentId(best.name)
-    }
-  })
-
-  return [spy, currentId]
-}
+const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
+const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
+const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
+const mainContentIndent: SpanType = [null, null, null, '1/12']
+const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
+const nestedSpanWithOffset: SpanType = ['9/9', '9/9', '9/9', '7/9']
+const nestedOffset: SpanType = [null, null, null, '1/9']
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -110,58 +67,21 @@ type AvailableSlices = Exclude<
   AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
 >
 
-const extractSliceTitle = (slice: AvailableSlices): [string, string] | null => {
-  switch (slice.__typename) {
-    case 'PageHeaderSlice':
-      return [slice.id, slice.navigationText]
-
-    case 'HeadingSlice':
-    case 'LinkCardSlice':
-    case 'MailingListSignupSlice':
-    case 'LatestNewsSlice':
-    case 'LogoListSlice':
-      return [slice.id, slice.title]
-
-    default:
-      return null
-  }
-}
-
-const connectSlices = (slices: AvailableSlices[]): { [k: string]: string } => {
-  let head = slices.find(extractSliceTitle) ?? slices[0]
-
-  const pairs = slices.map((slice) => {
-    if (extractSliceTitle(slice)) {
-      head = slice
-    }
-
-    return [slice.id, head.id]
-  })
-
-  return fromPairs(pairs)
-}
-
 export interface LayoutProps {
-  width: ColumnProps['width']
-  indent?: ColumnProps['width']
+  width: SpanType
+  indent?: SpanType
   boxProps?: BoxProps
 }
 
-const Layout: FC<LayoutProps> = ({
-  width,
-  indent,
-  boxProps = {},
-  children,
-}) => {
+const Layout: FC<LayoutProps> = ({ width, indent, children }) => {
   return (
-    <ContentBlock>
-      <Box paddingX={[0, 0, 0, 6]} {...boxProps}>
-        <Columns collapseBelow="lg">
-          {indent && <Column width={indent}>{null}</Column>}
-          <Column width={width}>{children}</Column>
-        </Columns>
-      </Box>
-    </ContentBlock>
+    <GridContainer position="none">
+      <GridRow>
+        <GridColumn span={width} offset={indent}>
+          {children}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 
@@ -197,264 +117,333 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
   },
 )
 
-const decideSidebarType = (slice?: AllSlicesFragment): SidebarProps['type'] => {
-  switch (slice && slice.__typename) {
-    case 'PageHeaderSlice':
-    case 'MailingListSignupSlice':
-    case 'LogoListSlice':
-      return 'gradient'
-
-    default:
-      return 'standard'
+const decideSidebarType = (
+  page: GetAboutPageQuery['getAboutPage'],
+  currentSliceId: string,
+): SidebarProps['type'] => {
+  if (
+    currentSliceId === page.pageHeader.id ||
+    page.slices.some(
+      (slice) =>
+        slice.id === currentSliceId &&
+        ['MailingListSignupSlice', 'LogoListSlice'].includes(slice.__typename),
+    )
+  ) {
+    return 'gradient'
   }
+
+  return 'standard'
+}
+
+interface PageHeaderProps {
+  page: GetAboutPageQuery['getAboutPage']
+  namespace?: GetNamespaceQuery['getNamespace']
+}
+
+const PageHeader: FC<PageHeaderProps> = ({ page }) => {
+  const slice = page.pageHeader
+  const { activeLocale } = useI18n()
+  const { makePath } = routeNames(activeLocale)
+  const navigation = useMemo(
+    () =>
+      [{ id: slice.id, text: slice.navigationText }].concat(
+        createNavigation(page.slices),
+      ),
+    [page.slices, slice],
+  )
+  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
+  const [currentSliceId, navigate] = useScrollSpy(ids, { marginTop: 220 })
+
+  const mobileNavigation = navigation.map((x) => ({
+    title: x.text,
+    url: '#' + x.id,
+  }))
+
+  const sliceMobileNavigation = (slice?.links ?? []).map((x) => ({
+    title: x.text,
+    url: x.url,
+  }))
+
+  const combinedMobileNavigation = [
+    ...mobileNavigation,
+    ...sliceMobileNavigation,
+  ]
+
+  return (
+    <Background id={slice.id} theme={page.theme}>
+      {!!mobileNavigation.length && (
+        <Hidden above="md">
+          <DrawerMenu
+            categories={[
+              {
+                title: 'Efnisyfirlit',
+                items: combinedMobileNavigation,
+              },
+            ]}
+          />
+        </Hidden>
+      )}
+      <GridContainer position="none">
+        <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
+          <Box marginBottom={[0, 0, 8, 15]}>
+            <Header />
+          </Box>
+        </ColorSchemeContext.Provider>
+        <GridRow>
+          <GridColumn span={mainContentSpanFull}>
+            <GridRow>
+              <GridColumn offset={nestedOffset} span={nestedSpanWithOffset}>
+                <Stack space={2}>
+                  <Breadcrumbs color="blue300" separatorColor="blue300">
+                    <Link href={makePath()}>Ísland.is</Link>
+                    <span>{page.title}</span>
+                  </Breadcrumbs>
+                  <Text variant="h1" as="h1" color="white">
+                    {slice.title}
+                  </Text>
+                  <Text color="white">{slice.introduction}</Text>
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          </GridColumn>
+          <GridColumn span={sidebarContentSpan} position="none">
+            <Sidebar
+              title={page.title}
+              type={decideSidebarType(page, currentSliceId)}
+            >
+              {({ bulletRef, colors }) => {
+                const [navigationTitle, ...navigationList] = navigation
+                return (
+                  <>
+                    <Box
+                      component="a"
+                      ref={
+                        navigationTitle.id === currentSliceId ? bulletRef : null
+                      }
+                      href={'#' + navigationTitle.id}
+                      onClick={() => navigate(navigationTitle.id)}
+                      paddingBottom={2}
+                      display="inlineBlock"
+                    >
+                      <Text color={colors.main}>
+                        {navigationTitle.id === currentSliceId ? (
+                          <b>{navigationTitle.text}</b>
+                        ) : (
+                          navigationTitle.text
+                        )}
+                      </Text>
+                    </Box>
+                    <Box
+                      borderLeftWidth="standard"
+                      borderColor={colors.subNavBorder}
+                      paddingLeft={2}
+                    >
+                      {navigationList.map(({ id, text }, index) => (
+                        <Box key={index} paddingBottom={1}>
+                          <a
+                            ref={id === currentSliceId ? bulletRef : null}
+                            href={'#' + id}
+                            onClick={() => navigate(id)}
+                          >
+                            <Text variant="small" as="p" color={colors.main}>
+                              {id === currentSliceId ? <b>{text}</b> : text}
+                            </Text>
+                          </a>
+                        </Box>
+                      ))}
+                    </Box>
+                    {slice.links.map(({ url, text }, index) => (
+                      <span key={index}>
+                        <Box paddingY={1}>
+                          <Link href={url}>
+                            <Text as="div" color={colors.secondary}>
+                              {text}
+                            </Text>
+                          </Link>
+                        </Box>
+                      </span>
+                    ))}
+                  </>
+                )
+              }}
+            </Sidebar>
+          </GridColumn>
+          <GridColumn span={mainContentSpanFull}>
+            {(slice.slices as AvailableSlices[]).map((slice) => (
+              <Section key={slice.id} slice={slice} />
+            ))}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Background>
+  )
 }
 
 interface SectionProps {
   slice: AvailableSlices
-  page: GetAboutPageQuery['getAboutPage']
-  currentSliceId: string
-  setRef: (k: string) => (e: HTMLDivElement) => void
+  namespace?: GetNamespaceQuery['getNamespace']
 }
 
-const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
-
+const Section: FC<SectionProps> = ({ slice, namespace }) => {
   switch (slice.__typename) {
-    case 'PageHeaderSlice':
-      return (
-        <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
-          <ContentBlock>
-            <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-              <Header />
-            </ColorSchemeContext.Provider>
-            <Box paddingX={[0, 0, 6]} paddingTop={8}>
-              <Columns collapseBelow="lg">
-                <Column width="9/12">
-                  <div className={styles.indent}>
-                    <Stack space={2}>
-                      <Breadcrumbs color="blue300" separatorColor="blue300">
-                        <Link href={makePath()}>Ísland.is</Link>
-                        <Link href="">{page.title}</Link>
-                      </Breadcrumbs>
-                      <Typography variant="h1" as="h1" color="white">
-                        {slice.title}
-                      </Typography>
-                      <Typography variant="p" as="p" color="white">
-                        {slice.introduction}
-                      </Typography>
-                    </Stack>
-                  </div>
-                  {(slice.slices as AvailableSlices[]).map((slice) => (
-                    <Section
-                      key={slice.id}
-                      slice={slice}
-                      page={page}
-                      currentSliceId={currentSliceId}
-                      setRef={setRef}
-                    />
-                  ))}
-                </Column>
-                <Column width="3/12">
-                  <Sidebar
-                    title={page.title}
-                    type={decideSidebarType(
-                      (page.slices as AvailableSlices[]).find(
-                        (slice) =>
-                          !currentSliceId || slice.id === currentSliceId,
-                      ),
-                    )}
-                  >
-                    {({ bulletRef, colors }) => (
-                      <>
-                        {page.slices
-                          .map(extractSliceTitle)
-                          .filter(Boolean)
-                          .map(([id, text], index) => (
-                            <Box
-                              key={index}
-                              paddingBottom={index === 0 ? 2 : 0}
-                            >
-                              <a
-                                ref={id === currentSliceId ? bulletRef : null}
-                                href={'#' + id}
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  document.getElementById(id).scrollIntoView()
-                                }}
-                              >
-                                <Typography
-                                  variant={index === 0 ? 'p' : 'pSmall'}
-                                  as="p"
-                                  color={colors.main}
-                                >
-                                  {id === currentSliceId ? <b>{text}</b> : text}
-                                </Typography>
-                              </a>
-                            </Box>
-                          ))}
-                        {slice.links.map(({ url, text }, index) => (
-                          <span key={index}>
-                            <Box paddingY={2}>
-                              <Divider weight={colors.divider} />
-                            </Box>
-                            <Link href={url}>
-                              <Typography
-                                variant="p"
-                                as="div"
-                                color={colors.secondary}
-                              >
-                                {text}
-                              </Typography>
-                            </Link>
-                          </span>
-                        ))}
-                      </>
-                    )}
-                  </Sidebar>
-                </Column>
-              </Columns>
-            </Box>
-          </ContentBlock>
-        </Background>
-      )
     case 'TimelineSlice':
       return (
-        <Timeline
-          {...slice}
-          events={slice.events.map((event, index) => ({
-            ...event,
-            body: event.body && <Content key={index} document={event.body} />,
-          }))}
-        />
+        <div id={slice.id}>
+          <TimelineSection
+            {...slice}
+            events={slice.events.map((event) => ({
+              ...event,
+              body: event.body && renderSlices(event.body),
+            }))}
+          />
+        </div>
       )
     case 'HeadingSlice':
       return (
-        <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
-          <Layout
-            indent="1/12"
-            width="7/12"
-            boxProps={{ paddingTop: 15, paddingBottom: 10 }}
-          >
-            <Heading {...slice} />
+        <div key={slice.id} id={slice.id}>
+          <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
+            <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
+              <Heading {...slice} />
+            </Box>
           </Layout>
         </div>
       )
     case 'LinkCardSlice':
       return (
-        <Box
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          background="dotted"
-        >
-          <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
-            <LinkCardList {...slice} />
+        <Box key={slice.id} id={slice.id} background="dotted">
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
+              <LinkCardList {...slice} />
+            </Box>
           </Layout>
         </Box>
       )
     case 'MailingListSignupSlice':
       return (
-        <Box
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          background="blue100"
-        >
-          <Layout
-            width="7/12"
-            indent="1/12"
-            boxProps={{ paddingTop: 10, paddingBottom: 7 }}
-          >
-            <EmailSignup {...slice} />
+        <Box key={slice.id} id={slice.id} background="blue100">
+          <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
+            <Box paddingTop={[4, 4, 10]} paddingBottom={[4, 3, 7]}>
+              <RenderForm
+                namespace={namespace}
+                heading={slice.title}
+                text={slice.description}
+                submitButtonText={slice.buttonText}
+                inputLabel={slice.inputLabel}
+              />
+            </Box>
           </Layout>
         </Box>
       )
     case 'StorySlice':
       return (
-        <div
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          className={styles.gradient}
-        >
-          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
-            <StoryList
-              {...slice}
-              stories={(slice.stories as any[]).map((story) => ({
-                ...story,
-                logoUrl: story.logo.url,
-              }))}
-            />
+        <div key={slice.id} id={slice.id} className={styles.gradient}>
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
+              <StoryList
+                {...slice}
+                stories={(slice.stories as any[]).map((story) => ({
+                  ...story,
+                  logoUrl: story.logo.url,
+                }))}
+              />
+            </Box>
           </Layout>
         </div>
       )
     case 'LatestNewsSlice':
       return (
-        <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
-          <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
-            <AboutLatestNews {...slice} />
+        <div key={slice.id} id={slice.id}>
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
+              <AboutLatestNews {...slice} namespace={namespace} />
+            </Box>
           </Layout>
         </div>
       )
     case 'LogoListSlice':
       return (
-        <div
-          key={slice.id}
-          id={slice.id}
-          ref={setRef(slice.id)}
-          className={styles.gradient}
-        >
-          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
-            <LogoList {...slice} images={slice.images.map((img) => img.url)} />
+        <div key={slice.id} id={slice.id} className={styles.gradient}>
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
+              <LogoList
+                {...slice}
+                images={slice.images.map((img) => img.url)}
+              />
+            </Box>
           </Layout>
         </div>
       )
     case 'BulletListSlice':
       return (
-        <div key={slice.id} ref={setRef(slice.id)}>
-          <Layout width="7/12" boxProps={{ paddingBottom: 10 }}>
-            <BulletList
-              bullets={slice.bullets.map((bullet) => {
-                switch (bullet.__typename) {
-                  case 'IconBullet':
-                    return {
-                      ...bullet,
-                      type: 'IconBullet',
-                      icon: bullet.icon.url,
-                    }
-                  case 'NumberBulletGroup':
-                    return { ...bullet, type: 'NumberBulletGroup' }
-                  default:
-                    return null
-                }
-              })}
-            />
+        <div id={slice.id} key={slice.id}>
+          <Layout width={mainContentSpan}>
+            <Box paddingBottom={[8, 5, 10]}>
+              <BulletList
+                bullets={slice.bullets.map((bullet) => {
+                  switch (bullet.__typename) {
+                    case 'IconBullet':
+                      return {
+                        ...bullet,
+                        type: 'IconBullet',
+                        icon: bullet.icon.url,
+                      }
+                    case 'NumberBulletGroup':
+                      return { ...bullet, type: 'NumberBulletGroup' }
+                    default:
+                      return null
+                  }
+                })}
+              />
+            </Box>
+            <Divider />
           </Layout>
         </div>
+      )
+    case 'TabSection':
+      return (
+        <Box key={slice.id} id={slice.id} background="dotted">
+          <Layout width={mainContentSpan}>
+            <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
+              <Tabs
+                label={slice?.title}
+                tabs={slice?.tabs.map((tab) => ({
+                  label: tab.tabTitle,
+                  content: (
+                    <GridRow>
+                      <GridColumn
+                        span={['9/9', '9/9', '9/9', '7/9']}
+                        offset={[null, null, null, '1/9']}
+                      >
+                        <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
+                          <img
+                            src={tab.image.url}
+                            className={styles.tabSectionImg}
+                          />
+                          <Typography variant="h2" as="h2" marginBottom={3}>
+                            {tab.contentTitle}
+                          </Typography>
+                          {tab.body && renderSlices(tab.body)}
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  ),
+                }))}
+                contentBackground="white"
+              />
+            </Box>
+            <Divider />
+          </Layout>
+        </Box>
       )
   }
 }
 
 export interface AboutPageProps {
   page?: GetAboutPageQuery['getAboutPage']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
-const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
-  const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
-  const [spy, sliceId] = useScrollSpy({ margin: 200 })
-  const sliceMap = useMemo(
-    () => connectSlices(page.slices as AvailableSlices[]),
-    [page.slices],
-  )
-
-  const setRef = (id: string) => {
-    return (e: HTMLDivElement) => {
-      refs.current[id] = e
-      spy(id)(e)
-    }
-  }
-
+const AboutPageScreen: Screen<AboutPageProps> = ({ page, namespace }) => {
   return (
     <>
       <Head>
@@ -462,14 +451,9 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
+        <PageHeader page={page} />
         {(page.slices as AvailableSlices[]).map((slice) => (
-          <Section
-            key={slice.id}
-            slice={slice}
-            page={page}
-            currentSliceId={sliceMap[sliceId]}
-            setRef={setRef}
-          />
+          <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
       </Box>
     </>
@@ -477,23 +461,40 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
 }
 
 AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
-  const {
-    data: { getAboutPage: page },
-  } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
-    query: GET_ABOUT_PAGE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-      },
+  const [
+    {
+      data: { getAboutPage: page },
     },
-  })
+    namespace,
+  ] = await Promise.all([
+    await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+      query: GET_ABOUT_PAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+        },
+      },
+    }),
+    await apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'About',
+            lang: locale,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+  ])
 
   return {
     page,
-    layoutConfig: {
-      showHeader: false,
-    },
+    namespace,
   }
 }
 
-export default AboutPageScreen
+export default withMainLayout(AboutPageScreen, {
+  showHeader: false,
+  hasDrawerMenu: true,
+})

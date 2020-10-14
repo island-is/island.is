@@ -1,30 +1,22 @@
 import {
   ServicePortalModule,
   ServicePortalRoute,
-  UserWithMeta,
-  LanguageCode,
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
-import { mockSubjects } from './mockData'
-import {
-  Action,
-  ActionType,
-  AsyncActionState,
-  NotificationMenuState,
-} from './actions'
-import { determineInitialLocale, setLangInLocalStore } from '../utils/locale'
+import { Action, ActionType, AsyncActionState, MenuState } from './actions'
+import { User } from 'oidc-client'
 
 export interface StoreState {
-  userInfo: UserWithMeta | null
+  userInfo: User | null
   userInfoState: AsyncActionState | 'logging-out'
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
-  notificationMenuState: NotificationMenuState
+  notificationMenuState: MenuState
+  mobileMenuState: MenuState
   routes: ServicePortalRoute[]
-  lang: LanguageCode
 }
 
 export const initialState: StoreState = {
@@ -35,8 +27,8 @@ export const initialState: StoreState = {
   subjectList: [],
   subjectListState: 'passive',
   notificationMenuState: 'closed',
+  mobileMenuState: 'closed',
   routes: [],
-  lang: determineInitialLocale(),
 }
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
@@ -49,7 +41,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case ActionType.SetUserFulfilled:
       return {
         ...state,
-        userInfo: { user: action.payload, mockSubjects },
+        userInfo: action.payload,
         userInfoState: 'fulfilled',
       }
     case ActionType.FetchSubjectListPending:
@@ -73,6 +65,12 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         notificationMenuState: action.payload,
       }
+
+    case ActionType.SetMobileMenuState:
+      return {
+        ...state,
+        mobileMenuState: action.payload,
+      }
     case ActionType.SetUserLoggedOut:
       return {
         ...initialState,
@@ -81,13 +79,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         routes: action.payload,
-      }
-    case ActionType.SetLanguage:
-      setLangInLocalStore(action.payload)
-
-      return {
-        ...state,
-        lang: action.payload,
       }
     case ActionType.SetUserLoggingOut:
       return {

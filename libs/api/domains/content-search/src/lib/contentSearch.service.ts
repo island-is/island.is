@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
-import { RequestBodySearch } from 'elastic-builder'
-import { ContentCategory } from './models/contentCategory.model'
+import {
+  ContentLanguage,
+  ElasticService,
+  SearcherInput,
+  SearchIndexes,
+  WebSearchAutocompleteInput,
+} from '@island.is/api/content-search'
+import { logger } from '@island.is/logging'
+
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
-import { ContentLanguage } from './enums/contentLanguage.enum'
-import { SearcherService } from '@island.is/api/schema'
+import { TagCount } from './models/tagCount'
 
 @Injectable()
-export class ContentSearchService implements SearcherService {
-  constructor(private repository: ElasticService) {}
+export class ContentSearchService {
+  constructor(private elasticService: ElasticService) {}
 
-  getIndex(lang: ContentLanguage) {
-    return SearchIndexes[lang] ?? SearchIndexes.is
+  private getIndex(lang: ContentLanguage) {
+    const languageCode = ContentLanguage[lang]
+    return SearchIndexes[languageCode] ?? SearchIndexes.is
   }
 
   private fixCase(doc) {
@@ -29,47 +35,35 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
-  async find(query): Promise<SearchResult> {
-    const { body } = await this.repository.query(
+  mapFindAggregations(aggregations): TagCount[] {
+    if (!aggregations) {
+      return null
+    }
+    return aggregations.groupBy.filtered.groupByCount.buckets.map(
+      (tagObject) => ({
+        key: tagObject.key,
+        count: tagObject.doc_count,
+        value: tagObject.groupByValue.buckets?.[0]?.key ?? '', // value of tag is allways the first value here we provide default value since value is optional
+      }),
+    )
+  }
+
+  async find(query: SearcherInput): Promise<SearchResult> {
+    const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
     )
 
-    const items = body.hits.hits.map(this.fixCase)
-
     return {
       total: body.hits.total.value,
-      items: items,
+      // we map data when it goes into the index we can return it without mapping it here
+      items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
+      tagCounts: this.mapFindAggregations(body.aggregations),
     }
   }
 
-  // TODO: use aggregation here
-  async fetchCategories(query): Promise<ContentCategory[]> {
-    // todo do properly not this awesome hack
-    const queryTmp = new RequestBodySearch().size(1000)
-    const { body } = await this.repository.deprecatedFindByQuery(
-      this.getIndex(query.language),
-      queryTmp,
-    )
-    const categories = {}
-    body?.hits?.hits.forEach(({ _source }) => {
-      if (!_source.category_slug) {
-        return
-      }
-      categories[_source.category_slug] = {
-        title: _source.category,
-        slug: _source.category_slug,
-        description: _source.category_description,
-      }
-    })
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    return Object.values(categories)
-  }
-
   async fetchSingle(input): Promise<ContentItem> {
-    const { body } = await this.repository.query(
+    const { body } = await this.elasticService.search(
       this.getIndex(input.language),
       input,
     )
@@ -81,20 +75,17 @@ export class ContentSearchService implements SearcherService {
     return this.fixCase(hit)
   }
 
-  async fetchItems(input): Promise<ContentItem[]> {
-    const { body } = await this.repository.fetchItems(
-      this.getIndex(input.language),
-      input,
-    )
-
-    return body?.hits?.hits.map(this.fixCase)
-  }
-
-  async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
+  async fetchAutocompleteTerm(
+    input: WebSearchAutocompleteInput,
+  ): Promise<WebSearchAutocomplete> {
+    logger.info('search index', {
+      lang: input.language,
+      index: this.getIndex(ContentLanguage[input.language]),
+    })
     const {
       suggest: { searchSuggester },
-    } = await this.repository.fetchAutocompleteTerm(
-      this.getIndex(input.language),
+    } = await this.elasticService.fetchAutocompleteTerm(
+      this.getIndex(ContentLanguage[input.language]),
       {
         ...input,
         singleTerm: input.singleTerm.trim(),

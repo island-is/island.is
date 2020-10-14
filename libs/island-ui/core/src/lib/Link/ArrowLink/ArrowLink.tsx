@@ -1,11 +1,12 @@
 import React from 'react'
-import Link, { LinkColor } from '../Link'
+import { Link, LinkColor } from '../Link'
 import * as styles from './ArrowLink.treat'
-import Icon from '../../Icon/Icon'
-import { Box } from '../../Box'
+import { Icon } from '../../Icon/Icon'
+import { Box } from '../../Box/Box'
 
 interface Props {
   href?: string
+  as?: string
   color?: LinkColor
   arrowHeight?: number
 }
@@ -13,8 +14,9 @@ interface Props {
 // ArrowLink has the "arrow" icon and a permanent custom underline.
 // If there's not 'href' provided it will render a Box. Useful for when the ArrowLink is inside a clickable card.
 
-const ArrowLink: React.FC<Props> = ({
+export const ArrowLink: React.FC<Props> = ({
   href,
+  as,
   children,
   color = 'blue400',
   arrowHeight = 12,
@@ -22,6 +24,7 @@ const ArrowLink: React.FC<Props> = ({
   <Box
     component={href ? Link : 'div'}
     href={href}
+    as={as}
     color={color}
     className={styles.root}
   >
@@ -31,5 +34,3 @@ const ArrowLink: React.FC<Props> = ({
     </span>
   </Box>
 )
-
-export default ArrowLink

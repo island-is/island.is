@@ -2,50 +2,68 @@
 import React from 'react'
 import Head from 'next/head'
 import {
-  Typography,
-  Stack,
+  Text,
   Breadcrumbs,
   Box,
-  ContentBlock,
   Link,
+  GridRow,
+  GridColumn,
+  Stack,
+  GridContainer,
 } from '@island.is/island-ui/core'
-import { Content, Image } from '@island.is/island-ui/contentful'
-import { Screen } from '../types'
+import { Image } from '@island.is/island-ui/contentful'
+import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
-import { useDateUtils } from '../i18n/useDateUtils'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { NewsItemLayout } from './Layouts/Layouts'
-import { GET_NEWS_ITEM_QUERY } from './queries'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { StandardLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { GET_SINGLE_NEWS_ITEM_QUERY } from '@island.is/web/screens/queries'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
-  GetNewsItemQuery,
-  QueryGetNewsArgs,
   ContentLanguage,
-} from '../graphql/schema'
+  GetSingleNewsItemQuery,
+  QueryGetSingleNewsArgs,
+} from '@island.is/web/graphql/schema'
+import { RichText } from '../components/RichText/RichText'
+import { SidebarBox, Sticky } from '../components'
 
 interface NewsItemProps {
-  newsItem: GetNewsItemQuery['getNews']
+  newsItem: GetSingleNewsItemQuery['getSingleNews']
 }
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  useContentfulId(newsItem?.id)
+  const { activeLocale, t } = useI18n()
+  const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
 
   const sidebar = (
-    <Box>
-      <Typography variant="eyebrow" as="p" color="blue400" paddingBottom={1}>
-        Höfundur
-      </Typography>
-      <Typography variant="h5" as="p" paddingBottom={2}>
-        Jón Jónsson
-      </Typography>
-      <Typography variant="eyebrow" as="p" color="blue400" paddingBottom={1}>
-        Birt
-      </Typography>
-      <Typography variant="h5" as="p" paddingBottom={2}>
-        {format(new Date(newsItem.date), 'do MMMM yyyy')}
-      </Typography>
-    </Box>
+    <SidebarBox>
+      <Stack space={3}>
+        {Boolean(newsItem.author) && (
+          <Stack space={1}>
+            <Text variant="eyebrow" as="p" color="blue400">
+              {t.author ?? 'Höfundur'}
+            </Text>
+            <Text variant="h5" as="p">
+              {newsItem.author.name}
+            </Text>
+          </Stack>
+        )}
+        {Boolean(newsItem.date) && (
+          <Stack space={1}>
+            <Text variant="eyebrow" as="p" color="blue400">
+              {t.publishDate ?? 'Birt'}
+            </Text>
+            <Text variant="h5" as="p">
+              {format(new Date(newsItem.date), 'do MMMM yyyy')}
+            </Text>
+          </Stack>
+        )}
+      </Stack>
+    </SidebarBox>
   )
 
   return (
@@ -53,33 +71,85 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <Head>
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
-      <NewsItemLayout sidebar={sidebar}>
-        <Breadcrumbs>
-          <Link href={makePath()}>Ísland.is</Link>
-          <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
-        </Breadcrumbs>
-        <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
-          {newsItem.title}
-        </Typography>
-        <Typography variant="intro" as="p" paddingBottom={2}>
-          {newsItem.intro}
-        </Typography>
-        {Boolean(newsItem.image) && (
-          <Box paddingY={2}>
-            <Image type="apiImage" image={newsItem.image} />
-          </Box>
-        )}
-        <Content document={newsItem.content} />
-      </NewsItemLayout>
+      <GridContainer>
+        <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '0', '1/9']}
+                  span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+                >
+                  <Breadcrumbs>
+                    <Link href={makePath()}>Ísland.is</Link>
+                    <Link href={makePath('news')}>
+                      {t.newsAndAnnouncements}
+                    </Link>
+                  </Breadcrumbs>
+                  <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
+                    {newsItem.title}
+                  </Text>
+                  <Text variant="intro" as="p" paddingBottom={2}>
+                    {newsItem.intro}
+                  </Text>
+                  {Boolean(newsItem.image) && (
+                    <Box paddingY={2}>
+                      <Image
+                        {...newsItem.image}
+                        url={newsItem.image.url + '?w=774&fm=webp&q=80'}
+                        thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+                      />
+                    </Box>
+                  )}
+                </GridColumn>
+              </GridRow>
+              <Box paddingBottom={4} width="full">
+                <RichText
+                  body={newsItem.content}
+                  config={{ defaultPadding: 4 }}
+                />
+              </Box>
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
+              <Sticky>
+                <SidebarBox>
+                  <Stack space={3}>
+                    {Boolean(newsItem.author) && (
+                      <Stack space={1}>
+                        <Text variant="eyebrow" as="p" color="blue400">
+                          {t.author ?? 'Höfundur'}
+                        </Text>
+                        <Text variant="h5" as="p">
+                          {newsItem.author.name}
+                        </Text>
+                      </Stack>
+                    )}
+                    {Boolean(newsItem.date) && (
+                      <Stack space={1}>
+                        <Text variant="eyebrow" as="p" color="blue400">
+                          {t.publishDate ?? 'Birt'}
+                        </Text>
+                        <Text variant="h5" as="p">
+                          {format(new Date(newsItem.date), 'do MMMM yyyy')}
+                        </Text>
+                      </Stack>
+                    )}
+                  </Stack>
+                </SidebarBox>
+              </Sticky>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      </GridContainer>
     </>
   )
 }
 
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   const {
-    data: { getNews: newsItem },
-  } = await apolloClient.query<GetNewsItemQuery, QueryGetNewsArgs>({
-    query: GET_NEWS_ITEM_QUERY,
+    data: { getSingleNews: newsItem },
+  } = await apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
+    query: GET_SINGLE_NEWS_ITEM_QUERY,
     variables: {
       input: {
         slug: query.slug as string,
@@ -88,9 +158,13 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
   })
 
+  if (!newsItem) {
+    throw new CustomNextError(404, 'NewsItem not found')
+  }
+
   return {
     newsItem,
   }
 }
 
-export default NewsItem
+export default withMainLayout(NewsItem)

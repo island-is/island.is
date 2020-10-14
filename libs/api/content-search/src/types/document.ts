@@ -6,9 +6,13 @@ export interface Document {
   date: string
   date_updated: Date | null
   category: string
+  other_categories: [string] | null
   category_slug: string
   category_description: string
   subgroup: string
+  other_subgroups: [string] | null
+  containsApplicationForm: boolean
+  importance: number
   group: string
   group_slug: string
   group_description: string

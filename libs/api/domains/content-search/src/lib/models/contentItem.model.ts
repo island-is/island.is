@@ -17,6 +17,9 @@ export class ContentItem {
   @Field({ nullable: true })
   category: string
 
+  @Field(() => [String], { nullable: true })
+  otherCategories: string[]
+
   @Field({ nullable: true })
   categorySlug: string
 
@@ -24,10 +27,19 @@ export class ContentItem {
   categoryDescription: string
 
   @Field({ nullable: true })
+  containsApplicationForm: boolean
+
+  @Field({ nullable: true })
+  importance: number
+
+  @Field({ nullable: true })
   group: string
 
   @Field({ nullable: true })
   subgroup: string
+
+  @Field(() => [String], { nullable: true })
+  otherSubgroups: string[]
 
   @Field({ nullable: true })
   groupSlug: string

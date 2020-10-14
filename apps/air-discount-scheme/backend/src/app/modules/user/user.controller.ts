@@ -13,10 +13,7 @@ import {
   ApiExcludeEndpoint,
 } from '@nestjs/swagger'
 
-import {
-  GetUserByDiscountCodeParams,
-  GetUserRelationsParams,
-} from './user.validator'
+import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
 import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
@@ -68,11 +65,12 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
   ): Promise<User[]> {
     const relations = await this.userService.getRelations(params.nationalId)
-    return Promise.all([
+    const users = await Promise.all([
       this.userService.getUserInfoByNationalId(params.nationalId),
       ...relations.map((nationalId) =>
         this.userService.getUserInfoByNationalId(nationalId),
       ),
     ])
+    return users.filter((user) => user) as User[]
   }
 }

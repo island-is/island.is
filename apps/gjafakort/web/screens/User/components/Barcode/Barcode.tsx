@@ -10,18 +10,20 @@ import {
   Box,
   Stack,
   Typography,
-  Button,
-  Icon,
+  ButtonDeprecated as Button,
+  IconDeprecated as Icon,
   Columns,
   Column,
   SkeletonLoader as SL,
   Divider,
-  FieldNumberInput,
-  FieldInput,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
-import { ErrorPanel } from '@island.is/gjafakort-web/components'
+import {
+  ErrorPanel,
+  FieldInput,
+  FieldNumberInput,
+} from '@island.is/gjafakort-web/components'
 
 import { barcodeMachine } from './barcodeMachine'
 import { Countdown, RenderBarcode } from '..'

@@ -1,5 +1,11 @@
 import React from 'react'
-import { Box, Typography, Button, Stack, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  ButtonDeprecated as Button,
+  Stack,
+  IconDeprecated as Icon,
+} from '@island.is/island-ui/core'
 import { Link } from '@island.is/air-discount-scheme-web/components'
 
 interface PropTypes {

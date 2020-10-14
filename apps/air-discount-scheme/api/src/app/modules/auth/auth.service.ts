@@ -1,25 +1,14 @@
 import { Injectable } from '@nestjs/common'
 
+import { environment } from '../../../environments'
 import { Role, AuthUser } from './auth.types'
 
-const DEVELOPERS = [
-  /* Vice Versa */
-  '1501933119', // Darri
-  '2101932009', // David
+const {
+  accessGroups: { developers = '', admins = '' },
+} = environment
 
-  /* Kosmos & Kaos */
-  '2501893469', // Brian
-]
-
-const ADMINS = [
-  /* Stafrænt Ísland */
-  '1903795829', // Örvar
-]
-
-const TESTERS = [
-  /* Stafrænt Ísland */
-  '1903795829', // Örvar
-]
+const DEVELOPERS = developers.split(',')
+const ADMINS = admins.split(',')
 
 @Injectable()
 export class AuthService {
@@ -28,8 +17,6 @@ export class AuthService {
       return 'developer'
     } else if (ADMINS.includes(user.nationalId)) {
       return 'admin'
-    } else if (TESTERS.includes(user.nationalId)) {
-      return 'tester'
     } else {
       return 'user'
     }
@@ -41,8 +28,6 @@ export class AuthService {
         return DEVELOPERS.includes(user.nationalId)
       case 'admin':
         return [...ADMINS, ...DEVELOPERS].includes(user.nationalId)
-      case 'tester':
-        return false
       default: {
         if (role) {
           return false

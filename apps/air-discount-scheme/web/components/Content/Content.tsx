@@ -6,7 +6,7 @@ import {
   Stack,
   Accordion,
   AccordionItem,
-  Button,
+  ButtonDeprecated as Button,
   Divider,
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
@@ -85,7 +85,7 @@ const embeddedNodes = () => ({
     component: Box,
     children: (node) => {
       const title = node.data?.target?.fields?.title ?? ''
-      const links = node.data?.target?.fields?.links
+      const links = node.data?.target?.fields?.links ?? []
       return (
         <Box
           background="purple100"

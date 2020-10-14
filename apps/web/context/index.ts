@@ -1,1 +1,1 @@
-export * from './GlobalNamespaceContext/GlobalNamespaceContext'
+export * from './GlobalContext/GlobalContext'

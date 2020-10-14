@@ -2,14 +2,13 @@ import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
-  userHasAccessToScope,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
   widgets: () => [],
-  routes: ({ userInfo }) => {
+  routes: () => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Stillingar',
@@ -20,17 +19,14 @@ export const settingsModule: ServicePortalModule = {
         name: 'Umboð',
         path: ServicePortalPath.StillingarUmbod,
         render: () =>
-          lazy(() => import('./screens/delegation/DelegationGreeting')),
+          lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
+      },
+      {
+        name: 'Skilaboð',
+        path: ServicePortalPath.SkilabodRoot,
+        render: () => lazy(() => import('./screens/Messages/Messages')),
       },
     ]
-
-    if (userHasAccessToScope(userInfo, '@island.is/user/info.view?')) {
-      routes.push({
-        name: 'Notendaupplýsingar',
-        path: ServicePortalPath.StillingarUpplysingar,
-        render: () => lazy(() => import('./screens/subjectInfo/subjectInfo')),
-      })
-    }
 
     return routes
   },

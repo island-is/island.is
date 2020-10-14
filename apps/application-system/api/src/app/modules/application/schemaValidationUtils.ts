@@ -1,16 +1,18 @@
 import {
   Application,
   FormValue,
-  getApplicationTemplateByTypeId,
   validateAnswers,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { BadRequestException } from '@nestjs/common'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
-export function validateApplicationSchema(
-  application: Application,
+export async function validateApplicationSchema(
+  application: Pick<Application, 'typeId'>,
   newAnswers: FormValue,
-): void {
-  const applicationTemplate = getApplicationTemplateByTypeId(application.typeId)
+) {
+  const applicationTemplate = await getApplicationTemplateByTypeId(
+    application.typeId,
+  )
   if (applicationTemplate === null) {
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,

@@ -1,45 +1,52 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
-import { useRouter } from 'next/router'
+import React, { useContext } from 'react'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
-import { Categories, SearchInput, LatestNewsSection } from '../components'
-import { useI18n } from '../i18n'
-import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import useRouteNames from '../i18n/useRouteNames'
-import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
+import { useI18n } from '@island.is/web/i18n'
+import { Screen } from '@island.is/web/types'
+import { useNamespace } from '@island.is/web/hooks'
+import routeNames from '@island.is/web/i18n/routeNames'
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
   GetFrontpageSliderListQuery,
-  QueryCategoriesArgs,
-  GetCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
+  GetArticleCategoriesQuery,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   GetNewsListQuery,
   GetLifeEventsQuery,
+  GetHomepageQuery,
   QueryGetNewsListArgs,
   QueryGetLifeEventsArgs,
-} from '../graphql/schema'
+  QueryGetHomepageArgs,
+} from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_SLIDES_QUERY,
   GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
+  GET_HOMEPAGE_QUERY,
 } from './queries'
-import { IntroductionSection } from '../components/IntroductionSection'
-import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
-import { Section } from '../components/Section'
-import { Sleeve } from '@island.is/island-ui/core'
-import { ContentBlock } from '@island.is/island-ui/core'
+import {
+  IntroductionSection,
+  LifeEventsCardsSection,
+  Section,
+  Categories,
+  SearchInput,
+  FrontpageTabs,
+  LatestNewsSection,
+} from '@island.is/web/components'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { GlobalContext } from '@island.is/web/context'
 
 interface HomeProps {
-  categories: GetCategoriesQuery['categories']
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsListQuery['getNewsList']['news']
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
+  page: GetHomepageQuery['getHomepage']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -48,11 +55,17 @@ const Home: Screen<HomeProps> = ({
   namespace,
   news,
   lifeEvents,
+  page,
 }) => {
   const { activeLocale } = useI18n()
+  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
-  const Router = useRouter()
-  const { makePath } = useRouteNames(activeLocale)
+  const gn = useNamespace(globalNamespace)
+  const { makePath } = routeNames(activeLocale)
+
+  if (!lifeEvents || !lifeEvents.length) {
+    return null
+  }
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -61,13 +74,13 @@ const Home: Screen<HomeProps> = ({
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
-    href: `${makePath('category')}/[slug]`,
-    as: makePath('category', slug),
+    href: makePath('ArticleCategory', '/[slug]'),
+    as: makePath('ArticleCategory', slug),
   }))
 
   const searchContent = (
     <Box display="flex" flexDirection="column" width="full">
-      <Stack space={[1, 1, 3]}>
+      <Stack space={4}>
         <Box display="inlineFlex" alignItems="center" width="full">
           <SearchInput
             id="search_input_home"
@@ -78,52 +91,71 @@ const Home: Screen<HomeProps> = ({
             placeholder={n('heroSearchPlaceholder')}
           />
         </Box>
-        <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }, index) => (
-            <Tag href={url} key={url} variant="darkerBlue">
-              {title}
-            </Tag>
-          ))}
+        <Inline space={2}>
+          {page.featuredThings.map(({ title, attention, thing }, index) => {
+            return (
+              <Tag
+                key={title}
+                href={makePath('article', thing.slug)}
+                variant="darkerBlue"
+                attention={attention}
+              >
+                {title}
+              </Tag>
+            )
+          })}
         </Inline>
       </Stack>
     </Box>
   )
 
+  const LIFE_EVENTS_THRESHOLD = 6
+  const includeLifeEventSectionBleed =
+    lifeEvents.length <= LIFE_EVENTS_THRESHOLD
+  const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
+
   return (
     <>
-      <Section paddingY={[0, 0, 3, 3, 6]}>
+      <Section paddingY={[0, 0, 4, 4, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Box marginTop={0}>
-        <Sleeve minHeight={400} sleeveShadow="purple">
-          <Box>
-            <ContentBlock width="large">
-              <Section paddingTop={[8, 8, 6]}>
-                <LifeEventsCardsSection
-                  title={n('lifeEventsTitle')}
-                  lifeEvents={lifeEvents}
-                />
-              </Section>
-            </ContentBlock>
-          </Box>
-        </Sleeve>
-      </Box>
-      <Box marginTop={0} background="purple100">
-        <Section paddingTop={[8, 8, 6]}>
-          <Categories title={n('articlesTitle')} cards={cards} />
-        </Section>
-      </Box>
+      <Section
+        paddingTop={4}
+        backgroundBleed={
+          includeLifeEventSectionBleed && {
+            bleedAmount: 100,
+            mobileBleedAmount: 50,
+            bleedDirection: 'bottom',
+            fromColor: 'white',
+            toColor: 'purple100',
+            bleedInMobile: true,
+          }
+        }
+      >
+        <LifeEventsCardsSection
+          title={n('lifeEventsTitle')}
+          lifeEvents={lifeEvents}
+          showSleeve={showSleeve}
+        />
+      </Section>
+      <Section
+        paddingTop={[8, 8, 6]}
+        paddingBottom={[8, 8, 6]}
+        background="purple100"
+      >
+        <Categories title={n('articlesTitle')} cards={cards} />
+      </Section>
       <Section paddingTop={[8, 8, 6]}>
-        <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
+        <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
       </Section>
       <Section paddingY={[8, 8, 8, 10, 15]}>
         <IntroductionSection
-          subtitle="Markmiðið okkar"
-          title="Öll opinber þjónusta á einum stað"
-          introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
-          text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
-          linkText="Nánar um stafrænt Ísland"
-          linkUrl="/um-island-is"
+          subtitle={n('ourGoalsSubTitle')}
+          title={n('ourGoalsTitle')}
+          introText={n('ourGoalsIntro')}
+          text={n('ourGoalsText')}
+          linkText={n('ourGoalsButtonText')}
+          linkUrl={n('ourGoalsLink')}
         />
       </Section>
     </>
@@ -138,7 +170,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     },
     {
-      data: { categories },
+      data: { getArticleCategories },
     },
     {
       data: {
@@ -147,6 +179,9 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     },
     {
       data: { getLifeEvents },
+    },
+    {
+      data: { getHomepage },
     },
     namespace,
   ] = await Promise.all([
@@ -161,11 +196,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
+    apolloClient.query<
+      GetArticleCategoriesQuery,
+      QueryGetArticleCategoriesArgs
+    >({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
-          language: locale as ContentLanguage,
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -174,11 +212,20 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           perPage: 3,
+          lang: locale as ContentLanguage,
         },
       },
     }),
     apolloClient.query<GetLifeEventsQuery, QueryGetLifeEventsArgs>({
       query: GET_LIFE_EVENTS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetHomepageQuery, QueryGetHomepageArgs>({
+      query: GET_HOMEPAGE_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -195,31 +242,18 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => {
-        // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(res.data.getNamespace.fields)
-
-        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-        return {
-          ...namespaceObject,
-          featuredArticles: namespaceObject.featuredArticles.map(
-            (featuredArticle) => {
-              const [title = '', url = ''] = featuredArticle.split(':')
-              return { title, url }
-            },
-          ),
-        }
-      }),
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
     news,
     lifeEvents: getLifeEvents,
     frontpageSlides: items,
-    categories,
+    categories: getArticleCategories,
+    page: getHomepage,
     namespace,
     showSearchInHeader: false,
   }
 }
 
-export default Home
+export default withMainLayout(Home, { showSearchInHeader: false })

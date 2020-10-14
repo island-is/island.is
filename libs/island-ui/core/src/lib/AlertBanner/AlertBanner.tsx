@@ -1,13 +1,18 @@
 import React, { FC, useState } from 'react'
-import cn from 'classnames'
+import { Colors } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.treat'
-import { Colors } from '@island.is/island-ui/theme'
-import Icon, { IconTypes } from '../Icon/Icon'
-import Typography from '../Typography/Typography'
-import Link from '../Link/Link'
+import { Icon, IconTypes } from '../Icon/Icon'
+import { Typography } from '../Typography/Typography'
+import { Link } from '../Link/Link'
 
-type Variants = 'error' | 'info' | 'success' | 'warning' | 'default'
+export type AlertBannerVariants =
+  | 'error'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'default'
 
 type VariantStyle = {
   background: Colors
@@ -17,7 +22,7 @@ type VariantStyle = {
 }
 
 type VariantStyles = {
-  [Type in Variants]: VariantStyle
+  [Type in AlertBannerVariants]: VariantStyle
 }
 
 const variantStyles: VariantStyles = {
@@ -51,8 +56,8 @@ const variantStyles: VariantStyles = {
   },
 }
 
-interface AlertBannerProps {
-  variant?: Variants
+export interface AlertBannerProps {
+  variant?: AlertBannerVariants
   /**
    * Adds close button in corner to remove banner
    */
@@ -141,5 +146,3 @@ export const AlertBanner: FC<AlertBannerProps> = ({
     </Box>
   )
 }
-
-export default AlertBanner

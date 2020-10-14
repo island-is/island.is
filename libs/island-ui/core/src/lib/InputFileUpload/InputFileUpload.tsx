@@ -3,11 +3,11 @@ import { useDropzone } from 'react-dropzone'
 
 import * as styles from './InputFileUpload.treat'
 
-import { Box } from '../Box'
-import Typography from '../Typography/Typography'
+import { Box } from '../Box/Box'
+import { Typography } from '../Typography/Typography'
 import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import Icon, { IconTypes } from '../Icon/Icon'
+import { Icon, IconTypes } from '../Icon/Icon'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
@@ -138,9 +138,9 @@ export interface InputFileUploadProps {
 export const InputFileUpload = ({
   name,
   id,
-  header = 'Dragðu skjöl hingað til að hlaða upp',
-  description = 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
-  buttonLabel = 'Velja skjöl til að hlaða upp',
+  header,
+  description,
+  buttonLabel,
   disabled = false,
   accept,
   multiple = true,
@@ -218,5 +218,3 @@ export const InputFileUpload = ({
     </Box>
   )
 }
-
-export default InputFileUpload

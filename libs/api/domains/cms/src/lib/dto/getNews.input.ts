@@ -1,14 +1,14 @@
-import { Field, InputType } from '@nestjs/graphql'
-import { IsOptional, IsString } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class GetNewsInput {
   @Field()
   @IsString()
-  slug: string
+  lang: string
 
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => Int, { nullable: true })
+  @IsInt()
   @IsOptional()
-  lang?: string
+  size?: number = 10
 }

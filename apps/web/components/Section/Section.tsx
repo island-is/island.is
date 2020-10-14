@@ -8,6 +8,8 @@ type BackgroundBleed = {
   toColor: keyof typeof theme.color
   bleedDirection: 'top' | 'bottom'
   bleedAmount: number
+  mobileBleedAmount?: number
+  bleedInMobile?: boolean
 }
 
 interface SectionProps {
@@ -19,20 +21,23 @@ interface SectionProps {
   backgroundBleed?: BackgroundBleed
 }
 
-const Section: React.FC<SectionProps> = ({
+export const Section: React.FC<SectionProps> = ({
   as = 'section',
   children,
   paddingY,
   paddingTop,
   paddingBottom,
   background,
-  backgroundBleed,
+  backgroundBleed = {
+    bleedInMobile: false,
+    mobileBleedAmount: 50,
+  },
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
 
   useIsomorphicLayoutEffect(() => {
-    if (width < theme.breakpoints.md) {
+    if (!backgroundBleed.bleedInMobile && width < theme.breakpoints.md) {
       return setIsMobile(true)
     }
     setIsMobile(false)
@@ -44,12 +49,16 @@ const Section: React.FC<SectionProps> = ({
       return null
     }
 
+    const amount = backgroundBleed.bleedInMobile
+      ? backgroundBleed.mobileBleedAmount
+      : backgroundBleed.bleedAmount
+
     return {
       backgroundImage: `linear-gradient(to ${backgroundBleed.bleedDirection}, ${
         theme.color[backgroundBleed.fromColor]
-      } calc(100% - ${backgroundBleed.bleedAmount}px), ${
+      } calc(100% - ${amount}px), ${
         theme.color[backgroundBleed.toColor]
-      } calc(100% - ${backgroundBleed.bleedAmount}px))`,
+      } calc(100% - ${amount}px))`,
     }
   }
 

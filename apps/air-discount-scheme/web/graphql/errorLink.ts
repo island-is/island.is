@@ -15,7 +15,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
         case 'UNAUTHENTICATED':
           return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
-          return Router.push('/404')
+          return
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

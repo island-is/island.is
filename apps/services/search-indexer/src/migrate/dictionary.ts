@@ -4,10 +4,18 @@ import { logger } from '@island.is/logging'
 import _ from 'lodash'
 import { AwsEsPackage } from './aws'
 
-const analyzers = ['stemmer', 'keywords', 'synonyms', 'stopwords']
+// Analyzers name must not exceed 20 in length and must satisfy this pattern [a-z][a-z0-9\\-]+
+const analyzers = [
+  'stemmer',
+  'keywords',
+  'synonyms',
+  'stopwords',
+  'hyphenpatterns',
+  'hyphenwhitelist',
+]
 
 const getDictUrl = (type: string, lang: string): string => {
-  const url = environment.migrate.dictRepo
+  const url = environment.dictRepo
     .replace('api.github', 'github')
     .replace('/repos/', '/')
   return `${url}/blob/master/${lang}/${type}.txt?raw=true`
@@ -20,7 +28,7 @@ const getFile = (url: string) => {
 
 type dictionaryVersion = { tag_name: string }
 export const getDictionaryVersion = async (): Promise<string> => {
-  const url = environment.migrate.dictRepo + '/releases/latest'
+  const url = environment.dictRepo + '/releases/latest'
   const data: dictionaryVersion = await getFile(url).then((raw) => {
     return raw.json()
   })
@@ -33,7 +41,7 @@ export interface Dictionary {
   file: NodeJS.ReadableStream
 }
 export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
-  const locales = environment.migrate.locales
+  const locales = environment.locales
 
   const dictionaries = locales.map((locale) => {
     return analyzers.map(async (analyzerType) => {
@@ -60,7 +68,7 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
 }
 
 export const getFakeEsPackages = (): AwsEsPackage[] => {
-  const locales = environment.migrate.locales
+  const locales = environment.locales
   const fakePackages = locales.map((locale) => {
     return analyzers.map((analyzer) => ({
       packageId: `${analyzer}.txt`,

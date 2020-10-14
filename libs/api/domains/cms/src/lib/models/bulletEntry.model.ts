@@ -14,13 +14,13 @@ export const BulletEntry = createUnionType({
 })
 
 export const mapBulletEntry = (
-  e: IIconBullet | INumberBulletSection,
+  entry: IIconBullet | INumberBulletSection,
 ): typeof BulletEntry => {
-  switch (e.sys.contentType.sys.id) {
+  switch (entry.sys.contentType.sys.id) {
     case 'iconBullet':
-      return mapIconBullet(e as IIconBullet)
+      return mapIconBullet(entry as IIconBullet)
 
     case 'numberBulletSection':
-      return mapNumberBulletGroup(e as INumberBulletSection)
+      return mapNumberBulletGroup(entry as INumberBulletSection)
   }
 }

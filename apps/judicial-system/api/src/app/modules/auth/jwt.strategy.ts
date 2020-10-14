@@ -7,7 +7,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
 import { environment } from '../../../environments'
-import { Credentials } from './auth.types'
+import { Credentials, AuthUser } from './auth.types'
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {
@@ -18,7 +18,10 @@ const cookieExtractor = (req) => {
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {
     super({
       jwtFromRequest: cookieExtractor,
       secretOrKey: environment.auth.jwtSecret,
@@ -26,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  validate(req: Request, { csrfToken, user }: Credentials) {
+  validate(req: Request, { csrfToken, user }: Credentials): AuthUser {
     if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
       this.logger.error('invalid csrf token')
       return null

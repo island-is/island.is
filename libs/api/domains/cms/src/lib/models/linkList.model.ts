@@ -15,5 +15,5 @@ export class LinkList {
 
 export const mapLinkList = ({ fields }: ILinkList): LinkList => ({
   title: fields.title ?? '',
-  links: fields.links.map(mapLink),
+  links: (fields.links ?? []).map(mapLink),
 })

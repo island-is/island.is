@@ -1,9 +1,9 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+import { logger } from '@island.is/logging'
 
 import {
-  IPageHeader,
   ITimeline,
   IMailingListSignup,
   ISectionHeading,
@@ -17,14 +17,18 @@ import {
   IFaqList,
   IEmbeddedVideo,
   ISectionWithImage,
+  ITabSection,
+  ITeamList,
+  IContactUs,
+  ILocation,
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
+import { Asset, mapAsset } from './asset.model'
 import {
   MailingListSignupSlice,
   mapMailingListSignup,
 } from './mailingListSignupSlice.model'
-import { PageHeaderSlice, mapPageHeaderSlice } from './pageHeaderSlice.model'
 import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from './headingSlice.model'
 import { StorySlice, mapStorySlice } from './storySlice.model'
@@ -38,9 +42,12 @@ import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
+import { TabSection, mapTabSection } from './tabSection.model'
+import { TeamList, mapTeamList } from './teamList.model'
+import { ContactUs, mapContactUs } from './contactUs.model'
+import { Location, mapLocation } from './location.model'
 
 type SliceTypes =
-  | IPageHeader
   | ITimeline
   | IMailingListSignup
   | ISectionHeading
@@ -54,33 +61,40 @@ type SliceTypes =
   | IFaqList
   | IEmbeddedVideo
   | ISectionWithImage
+  | ITabSection
+  | ITeamList
+  | IContactUs
+  | ILocation
 
 export const Slice = createUnionType({
   name: 'Slice',
   types: () => [
-    PageHeaderSlice,
     TimelineSlice,
-    HeadingSlice,
-    StorySlice,
-    LinkCardSlice,
-    LatestNewsSlice,
     MailingListSignupSlice,
+    HeadingSlice,
+    LinkCardSlice,
+    StorySlice,
     LogoListSlice,
+    LatestNewsSlice,
     BulletListSlice,
-    Html,
-    Image,
     Statistics,
     ProcessEntry,
     FaqList,
     EmbeddedVideo,
     SectionWithImage,
+    TabSection,
+    TeamList,
+    ContactUs,
+    Location,
+    Html,
+    Image,
+    Asset,
   ],
+  resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
-  switch (slice.sys.contentType.sys.id) {
-    case 'pageHeader':
-      return mapPageHeaderSlice(slice as IPageHeader)
+  switch (slice.sys.contentType?.sys?.id) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':
@@ -107,6 +121,14 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
+    case 'tabSection':
+      return mapTabSection(slice as ITabSection)
+    case 'teamList':
+      return mapTeamList(slice as ITeamList)
+    case 'contactUs':
+      return mapContactUs(slice as IContactUs)
+    case 'location':
+      return mapLocation(slice as ILocation)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
@@ -115,21 +137,43 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
 }
 
 const isEmptyNode = (node: Block): boolean => {
-  return node.content.every((child) => {
+  return (node?.content ?? []).every((child) => {
     return child.nodeType === 'text' && child.value === ''
   })
 }
 
-export const mapDocument = (document: Document): Array<typeof Slice> => {
-  const slices: Array<typeof Slice> = []
+/*
+if we add a slice that is not in mapper mapSlices fails for that slice.
+we dont want a single slice to cause errors on a whole page so we fail them gracefully
+this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
+*/
+export const safelyMapSlices = (data) => {
+  try {
+    return mapSlice(data)
+  } catch (error) {
+    logger.error('Failed to map slice', error)
+    return null
+  }
+}
 
-  document.content.forEach((block, index) => {
+export const mapDocument = (
+  document: Document,
+  idPrefix: string,
+): Array<typeof Slice> => {
+  const slices: Array<typeof Slice> = []
+  const docs = document?.content ?? []
+
+  docs.forEach((block, index) => {
     switch (block.nodeType) {
       case BLOCKS.EMBEDDED_ENTRY:
-        slices.push(mapSlice(block.data.target))
+        slices.push(safelyMapSlices(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        slices.push(mapImage(block.data.target))
+        if (block.data.target.fields?.file) {
+          block.data.target.fields.file.details?.image
+            ? slices.push(mapImage(block.data.target))
+            : slices.push(mapAsset(block.data.target))
+        }
         break
       default: {
         // ignore last empty paragraph because of this annoying bug:
@@ -141,11 +185,11 @@ export const mapDocument = (document: Document): Array<typeof Slice> => {
         if (prev instanceof Html) {
           prev.document.content.push(block)
         } else {
-          slices.push(mapHtml(block, index))
+          slices.push(mapHtml(block, `${idPrefix}:${index}`))
         }
       }
     }
   })
 
-  return slices
+  return slices.filter(Boolean) // filter out empty slices that failed mapping
 }
