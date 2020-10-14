@@ -26,8 +26,8 @@ module.exports = {
           type: Sequelize.STRING,
         },
         locale: {
-          type: Sequelize.STRING,
-          allowNull: false,
+          type: Sequelize.ENUM('en', 'is'),
+          allowNull: true,
         },
         created: {
           type: 'TIMESTAMP WITH TIME ZONE',

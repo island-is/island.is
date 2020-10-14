@@ -7,6 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { LocaleType } from 'aws-sdk/clients/workdocs'
 
 @Table({
   tableName: 'user_profile',
@@ -50,10 +51,10 @@ export class UserProfile extends Model<UserProfile> {
   mobilePhoneNumber?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM('en', 'is'),
   })
   @ApiProperty()
-  locale?: string
+  locale?: LocaleType
 
   @Column({
     type: DataType.STRING,

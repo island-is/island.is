@@ -1,5 +1,12 @@
-import { IsNotEmpty, IsString, IsOptional, IsEmail } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsEnum,
+} from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { LocaleTypes } from '../types/localeTypes'
 
 export class CreateUserProfileDto {
   @IsNotEmpty()
@@ -14,8 +21,10 @@ export class CreateUserProfileDto {
 
   @IsOptional()
   @IsString()
+  @IsEnum(LocaleTypes)
+  @ApiProperty({ enum: LocaleTypes, enumName: 'LocalTypes' })
   @ApiPropertyOptional()
-  readonly locale?: string
+  readonly locale?: LocaleTypes
 
   @IsOptional()
   @IsString()

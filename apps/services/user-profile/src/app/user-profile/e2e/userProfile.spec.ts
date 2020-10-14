@@ -16,7 +16,7 @@ describe('User profile API', () => {
       .send({
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
-        locale: 'english',
+        locale: 'en',
         profileImageUrl: 'image',
         email: 'email@email.is',
       })
@@ -24,6 +24,27 @@ describe('User profile API', () => {
 
     // Assert
     expect(response.body.id).toBeTruthy()
+  })
+
+  it(`POST /userProfile should return 400 bad request on invalid locale`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456799',
+        locale: 'en123',
+        profileImageUrl: 'image',
+        email: 'email@email.is',
+      })
+      .expect(400)
+
+    // Assert
+    expect(response.body.error).toBe('Bad Request')
+
+    expect(response.body.message).toEqual(
+      expect.arrayContaining(['locale must be a valid enum value']),
+    )
   })
 
   it(`GET /userProfile should return 404 not found error msg`, async () => {
@@ -43,7 +64,7 @@ describe('User profile API', () => {
     const profile = {
       nationalId: '1234567890',
       mobilePhoneNumber: '123456799',
-      locale: 'english',
+      locale: 'en',
       profileImageUrl: 'image',
       email: 'email@email.is',
     }
@@ -71,10 +92,11 @@ describe('User profile API', () => {
       expect.objectContaining({ email: profile.email }),
     )
   })
+
   it(`PUT /userProfile/ should return 404 not found error msg`, async () => {
     const updatedProfile = {
       mobilePhoneNumber: '987654331',
-      locale: 'icelandic',
+      locale: 'is',
       profileImageUrl: 'image',
       email: 'email@email.is',
     }
@@ -96,13 +118,13 @@ describe('User profile API', () => {
     const profile = {
       nationalId: '1234567890',
       mobilePhoneNumber: '123456799',
-      locale: 'english',
+      locale: 'en',
       profileImageUrl: 'image',
       email: 'email@email.is',
     }
     const updatedProfile = {
       mobilePhoneNumber: '987654331',
-      locale: 'icelandic',
+      locale: 'is',
       profileImageUrl: 'image',
       email: 'email@email.is',
     }
@@ -141,7 +163,7 @@ describe('User profile API', () => {
       .send({
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
-        locale: 'english',
+        locale: 'en',
         profileImageUrl: 'image',
         email: 'email@email.is',
       })
@@ -152,7 +174,7 @@ describe('User profile API', () => {
       .send({
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
-        locale: 'english',
+        locale: 'en',
         profileImageUrl: 'image',
         email: 'email@email.is',
       })
