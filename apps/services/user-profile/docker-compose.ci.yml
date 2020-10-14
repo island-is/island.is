@@ -2,7 +2,12 @@ version: '3.3'
 
 services:
   sut:
-    image: ${SUT}
+    build:
+      context: .
+      dockerfile: ../../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: db_user_profile
+        APP: services-user-profile
     networks:
       - local
     depends_on:
@@ -12,18 +17,8 @@ services:
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
       - DB_HOST=db_user_profile
-    entrypoint:
-      [
-        'scripts/_wait-for.sh',
-        'db_user_profile:5432',
-        '-t',
-        '5',
-        '--',
-        'yarn',
-        'run',
-        'test',
-        'services-user-profile',
-      ]
+    volumes:
+      - ../../..:/code
 
   db_user_profile:
     ports: []
