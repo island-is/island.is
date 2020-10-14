@@ -6,7 +6,7 @@ import {
   IsEnum,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Locale } from '@island.is/api/domains/user-profile'
+import { Locale } from '../types/localeTypes'
 
 export class CreateUserProfileDto {
   @IsNotEmpty()
