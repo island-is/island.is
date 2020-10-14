@@ -55,10 +55,13 @@ export const dateAggregationQuery = ({
     },
     aggs: {
       dates: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         date_histogram: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           calendar_interval: intervalMap[resolution].interval,
           format: intervalMap[resolution].format,
           order: { _key: order },
+          // eslint-disable-next-line @typescript-eslint/camelcase
           min_doc_count: 1,
           field,
         },
