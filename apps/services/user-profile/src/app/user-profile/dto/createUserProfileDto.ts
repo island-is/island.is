@@ -6,7 +6,7 @@ import {
   IsEnum,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { LocaleTypes } from '../types/localeTypes'
+import { Locale } from '../../../../../../../libs/api/domains/user-profile/src/lib/types/locales.enum'
 
 export class CreateUserProfileDto {
   @IsNotEmpty()
@@ -21,10 +21,9 @@ export class CreateUserProfileDto {
 
   @IsOptional()
   @IsString()
-  @IsEnum(LocaleTypes)
-  @ApiProperty({ enum: LocaleTypes, enumName: 'LocalTypes' })
+  @IsEnum(Locale)
   @ApiPropertyOptional()
-  readonly locale?: LocaleTypes
+  readonly locale?: Locale
 
   @IsOptional()
   @IsString()

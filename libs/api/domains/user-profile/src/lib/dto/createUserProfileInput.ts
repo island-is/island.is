@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsEmail, IsOptional, IsString } from 'class-validator'
+import { Locale } from '../types/locales.enum'
 
 @InputType()
 export class CreateUserProfileInput {
@@ -16,7 +17,7 @@ export class CreateUserProfileInput {
   @Field(() => String)
   @IsString()
   @IsOptional()
-  locale?: string
+  locale?: Locale
 
   @Field(() => String)
   @IsEmail()
