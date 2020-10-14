@@ -6,7 +6,6 @@ import {
   Text,
   Breadcrumbs,
   Button,
-  AsyncSearch,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -40,19 +39,7 @@ const CompanyOverview: FC = () => {
               </Stack>
               <Button>{t.buttons.deregister}</Button>
             </Stack>
-            <Stack space={4}>
-              <Text variant="h3">{t.subtitles.history}</Text>
-              <AsyncSearch
-                options={[
-                  {
-                    label: `${t.search.label}`,
-                    value: value,
-                  },
-                ]}
-                placeholder={t.search.placeholder}
-                colored
-              ></AsyncSearch>
-            </Stack>
+            <Text variant="h3">{t.subtitles.history}</Text>
           </Stack>
         </Box>
       }
