@@ -46,7 +46,7 @@ const PERPAGE = 10
 interface NewsListProps {
   newsList: GetNewsQuery['getNews']['items']
   total: number
-  datesMap: { [year: string]: string[] }
+  datesMap: { [year: string]: number[] }
   selectedYear: number
   selectedMonth: number
   selectedPage: number
@@ -93,8 +93,8 @@ const NewsList: Screen<NewsListProps> = ({
       value: undefined,
     },
     ...months.map((month) => ({
-      label: capitalize(getMonthByIndex(parseInt(month) - 1)), // api returns months with index starting from 1 not 0 so we compensate
-      value: parseInt(month),
+      label: capitalize(getMonthByIndex(month - 1)), // api returns months with index starting from 1 not 0 so we compensate
+      value: month,
     })),
   ]
 
@@ -139,12 +139,10 @@ const NewsList: Screen<NewsListProps> = ({
       {months.map((month) => (
         <div key={month}>
           <Link href={makeHref(selectedYear, month)}>
-            <Text as="span">
-              {capitalize(getMonthByIndex(parseInt(month) - 1))}
-            </Text>
+            <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
           </Link>
           <Text as="span">
-            {selectedMonth === parseInt(month) && <Bullet align="right" />}
+            {selectedMonth === month && <Bullet align="right" />}
           </Text>
         </div>
       ))}
@@ -252,9 +250,9 @@ const createDatesMap = (datesList) => {
   return datesList.reduce((datesMap, date) => {
     const [year, month] = date.split('-')
     if (datesMap[year]) {
-      datesMap[year].push(month) // we can assume each month only appears once
+      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
     } else {
-      datesMap[year] = [month]
+      datesMap[year] = [parseInt(month)]
     }
     return datesMap
   }, {})
