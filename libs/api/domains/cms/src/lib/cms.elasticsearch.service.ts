@@ -15,7 +15,7 @@ import { GetNewsDatesInput } from './dto/getNewsDates.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) { }
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -109,6 +109,7 @@ export class CmsElasticsearchService {
       query,
     )
 
+    // we return dates as array of strings on the format y-M
     return newsDatesResponse.aggregations.dates.buckets.map(
       (aggregationResult) => aggregationResult.key_as_string,
     )
