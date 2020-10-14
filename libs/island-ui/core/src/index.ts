@@ -53,8 +53,8 @@ export { Tiles } from './lib/Tiles/Tiles'
 export * from './lib/Grid/GridColumn/GridColumn'
 export * from './lib/Grid/GridContainer/GridContainer'
 export * from './lib/Grid/GridRow/GridRow'
-export * from './lib/Columns/Columns' // TODO: missing stories
-export * from './lib/Column/Column' // TODO: missing stories
+export * from './lib/Columns/Columns'
+export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock' // TODO: missing stories
 export * from './lib/Sleeve/Sleeve' // TODO: missing stories
 
