@@ -1,4 +1,10 @@
-import { Box, Hidden, Icon, Stack, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  Hidden,
+  IconDeprecated as Icon,
+  Stack,
+  Typography,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,

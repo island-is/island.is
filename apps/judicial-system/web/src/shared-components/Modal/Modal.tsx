@@ -1,7 +1,7 @@
 import {
   Box,
   ButtonDeprecated as Button,
-  Icon,
+  IconDeprecated as Icon,
   Typography,
 } from '@island.is/island-ui/core'
 import React from 'react'

@@ -1,5 +1,5 @@
 import { LazyExoticComponent, FC } from 'react'
-import { IconTypes } from '@island.is/island-ui/core'
+import { IconTypesDeprecated as IconTypes } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
 import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'

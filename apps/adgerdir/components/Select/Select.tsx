@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { Icon } from '@island.is/island-ui/core'
+import { IconDeprecated as Icon } from '@island.is/island-ui/core'
 import * as styles from './Select.treat'
 
 export type Option = {
