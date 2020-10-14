@@ -48,6 +48,7 @@
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
       ],
+      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [

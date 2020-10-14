@@ -74,6 +74,9 @@
     "api-domains-translations": {
       "tags": []
     },
+    "api-mocks": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },

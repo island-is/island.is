@@ -329,4 +329,6 @@ const createDateRange = (min: Date, max: Date): string[] => {
   ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
+Object.assign({}, {})
+
 export default withMainLayout(NewsList)
