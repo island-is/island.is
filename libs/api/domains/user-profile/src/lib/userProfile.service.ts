@@ -6,6 +6,7 @@ import { UserProfile } from './userProfile.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 
+// eslint-disable-next-line
 const handleError = (error: any) => {
   logger.error(error)
   throw new ApolloError('Failed to resolve request', error.status)
