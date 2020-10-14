@@ -23,12 +23,11 @@ export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 
 // Core
-export { Button as ButtonDeprecated } from './lib/Button/Button'
-export * from './lib/ButtonRC/Button'
+export { Button as ButtonDeprecated } from './lib/ButtonDeprecated/Button'
+export * from './lib/Button/Button'
 export * from './lib/FocusableBox/FocusableBox'
 export * from './lib/Link/Link'
 export * from './lib/Link/ArrowLink/ArrowLink'
-export * from './lib/Divider/Divider'
 export * from './lib/Icon/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
@@ -53,10 +52,11 @@ export * from './lib/Tiles/Tiles'
 export * from './lib/Grid/GridColumn/GridColumn'
 export * from './lib/Grid/GridContainer/GridContainer'
 export * from './lib/Grid/GridRow/GridRow'
-export * from './lib/Columns/Columns' // TODO: missing stories
-export * from './lib/Column/Column' // TODO: missing stories
+export * from './lib/Columns/Columns'
+export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
 export * from './lib/Sleeve/Sleeve'
+export * from './lib/Divider/Divider'
 
 // Navigation
 export * from './lib/Breadcrumbs/Breadcrumbs'

@@ -6,26 +6,18 @@ module.exports = {
       Promise.all([
         queryInterface.addColumn(
           'case',
-          'prosecutor_id',
+          'accused_appeal_announcement',
           {
-            type: Sequelize.UUID,
-            references: {
-              model: 'user',
-              key: 'id',
-            },
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
         ),
         queryInterface.addColumn(
           'case',
-          'judge_id',
+          'prosecutor_appeal_announcement',
           {
-            type: Sequelize.UUID,
-            references: {
-              model: 'user',
-              key: 'id',
-            },
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           { transaction: t },
@@ -37,10 +29,10 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('case', 'prosecutor_id', {
+        queryInterface.removeColumn('case', 'accused_appeal_announcement', {
           transaction: t,
         }),
-        queryInterface.removeColumn('case', 'judge_id', {
+        queryInterface.removeColumn('case', 'prosecutor_appeal_announcement', {
           transaction: t,
         }),
       ]),

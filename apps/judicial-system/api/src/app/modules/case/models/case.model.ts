@@ -283,6 +283,14 @@ export class Case extends Model<Case> {
   accusedAppealDecision: CaseAppealDecision
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Yfirlýsing um kæru
+  accusedAppealAnnouncement: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),
@@ -290,6 +298,14 @@ export class Case extends Model<Case> {
   @ApiProperty({ enum: CaseAppealDecision })
   // Ákvörðun um kæru sækjanda
   prosecutorAppealDecision: CaseAppealDecision
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  // Yfirlýsing um kæru
+  prosecutorAppealAnnouncement: string
 
   @ForeignKey(() => User)
   @Column({
