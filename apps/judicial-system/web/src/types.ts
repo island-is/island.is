@@ -60,6 +60,8 @@ export interface Case {
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealAnnouncement?: string
 }
 
 export interface Notification {
