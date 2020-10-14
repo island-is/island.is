@@ -3,6 +3,10 @@ import schema from './schema'
 import { resolvers } from './resolvers'
 import { handleGraphQLRequest } from './handle'
 
+export interface Context {
+  fetch: typeof fetch
+}
+
 export const graphqlHandler = rest.post(
   '*/api/graphql',
   async (req, res, ctx) => {
@@ -20,7 +24,7 @@ export const graphqlHandler = rest.post(
       typeResolver: resolvers.typeResolver,
       contextValue: context,
     })
-    console.log('GRAPHQL', ...query.map((subQuery: any) => [subQuery.operationName, subQuery.variables]), graphqlResponse)
+
     return res(ctx.json(graphqlResponse))
   },
 )

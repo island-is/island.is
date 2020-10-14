@@ -6,10 +6,6 @@ interface GraphQLRequest {
   operationName?: string
 }
 
-interface Context {
-  fetch: typeof fetch
-}
-
 interface Options<C> {
   schema: GraphQLSchema
   fieldResolver: GraphQLFieldResolver<any, any>
