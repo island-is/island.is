@@ -6,7 +6,7 @@ import {
   GridRow,
   GridColumn,
   Stack,
-  IconProps,
+  IconTypesDeprecated,
 } from '@island.is/island-ui/core'
 import { openDocument, fillAndSignKeyframes } from '../Taktikal/FillAndSign'
 
@@ -38,7 +38,7 @@ export const getProcessEntryLinkProps = (
   return {
     ...(!dropSignFileKey && {
       href: processLink,
-      icon: 'external' as IconProps['type'],
+      icon: 'external' as IconTypesDeprecated,
     }),
     ...(dropSignFileKey && {
       onClick: () => openDocument(dropSignFileKey),
