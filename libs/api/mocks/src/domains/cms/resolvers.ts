@@ -1,4 +1,4 @@
-import { Resolvers } from '../../graphql/types'
+import { Resolvers } from '../../types'
 import {
   alertBanner,
   articleCategories,

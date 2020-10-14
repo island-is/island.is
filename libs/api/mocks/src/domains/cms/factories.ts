@@ -17,7 +17,7 @@ import {
   SectionWithImage,
   Slice,
   SubArticle,
-} from '../../graphql/types'
+} from '../../types'
 import faker from 'faker'
 import { wysiwyg } from './richtext'
 import { factory, slugify, simpleFactory } from '../../utils'

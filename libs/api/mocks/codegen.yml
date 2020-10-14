@@ -1,13 +1,14 @@
 schema:
   - apps/api/src/api.graphql
 generates:
-  ./libs/api/mocks/src/graphql/types.d.ts:
+  ./libs/api/mocks/src/types/schema.d.ts:
     plugins:
       - typescript
       - typescript-resolvers
     config:
       noSchemaStitching: true
-      contextType: ./handler#Context
+      contextType: ../graphql/mswHandler#Context
+      enumsAsTypes: true
 hooks:
   afterAllFileWrite:
     - prettier --write

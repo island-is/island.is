@@ -13,7 +13,7 @@ import {
 } from './factories'
 import * as faker from 'faker'
 import orderBy from 'lodash/orderBy'
-import { Article } from '../../graphql/types'
+import { Article } from '../../types'
 
 faker.seed(100)
 
