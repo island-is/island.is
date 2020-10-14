@@ -1,4 +1,15 @@
-const taktikalKeyframes = `
+import { OpenDocumentOptions } from '@taktikal/fillandsign/dist/types'
+
+export const openDocument = (
+  dropSignFileKey: string,
+  options?: OpenDocumentOptions,
+) => {
+  import('@taktikal/fillandsign').then(({ openDocument }) =>
+    Promise.resolve(openDocument(dropSignFileKey, options)),
+  )
+}
+
+export const fillAndSignKeyframes = `
     @keyframes fillandsign__modalFadeIn {
         from { transform: translate(0, 50px); opacity: 0; }
         to   { transform: translate(0, 0); opacity: 1; }
@@ -12,5 +23,3 @@ const taktikalKeyframes = `
         to   { opacity: 1; }
     }
 `
-
-export default taktikalKeyframes

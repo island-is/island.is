@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react'
-import { OpenDocumentOptions } from '@taktikal/fillandsign/dist/types'
 import {
   Text,
   ButtonDeprecated as Button,
@@ -9,9 +8,9 @@ import {
   Stack,
   IconProps,
 } from '@island.is/island-ui/core'
+import { openDocument, fillAndSignKeyframes } from '../Taktikal/FillAndSign'
 
-import '../Taktikal/Taktikal.treat'
-import taktikalKeyframes from '../Taktikal/taktikalKeyframes'
+import '../Taktikal/FillAndSign.treat'
 import * as styles from './ProcessEntry.treat'
 
 export const Titles: { [k: string]: string } = {
@@ -29,15 +28,6 @@ export interface ProcessEntryProps {
   dropSignFileKey?: string
   type: string
   buttonText: string
-}
-
-export const openDocument = (
-  dropSignFileKey: string,
-  options?: OpenDocumentOptions,
-) => {
-  import('@taktikal/fillandsign').then(({ openDocument }) =>
-    Promise.resolve(openDocument(dropSignFileKey, options)),
-  )
 }
 
 export const getProcessEntryLinkProps = (
@@ -68,13 +58,11 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   // Add keyframes if they don't exist. This can hopefully be moved to globalStyle
   // in the treat file if this gets fixed: https://github.com/seek-oss/treat/issues/137
   useEffect(() => {
-    if (
-      dropSignFileKey &&
-      !document.querySelector('style[data-taktikal-keyframes]')
-    ) {
+    const dataAttr = 'data-fillandsign-keyframes'
+    if (dropSignFileKey && !document.querySelector(`style[${dataAttr}]`)) {
       const el = document.createElement('style')
-      el.innerHTML = taktikalKeyframes
-      el.setAttribute('data-taktikal-keyframes', '')
+      el.innerHTML = fillAndSignKeyframes
+      el.setAttribute(dataAttr, '')
       document.getElementsByTagName('head')[0].appendChild(el)
     }
   }, [dropSignFileKey])
