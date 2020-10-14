@@ -13,6 +13,7 @@ import {
   SubSection,
   DataProviderItem,
   FormMode,
+  FormText,
 } from '../types/Form'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import { DataProviderTypes } from '../types/DataProvider'
@@ -33,6 +34,7 @@ export function buildMultiField(data: {
   id?: string
   condition?: Condition
   name: MessageDescriptor | string
+  description?: FormText
   children: Field[]
 }): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }

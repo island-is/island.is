@@ -6,9 +6,9 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um fæðingarorlof',
     description: 'Some description',
   },
-  introductionSection: {
-    id: 'pl.application:introduction.section',
-    defaultMessage: 'Intro',
+  applicantSection: {
+    id: 'pl.application:applicant.section',
+    defaultMessage: 'Applicant information',
     description: 'Some description',
   },
   introductionProvider: {
@@ -28,7 +28,7 @@ export const m = defineMessages({
   },
   salaryTitle: {
     id: 'pl.application:salary.title',
-    defaultMessage: 'Áætlaður fæðingardagur',
+    defaultMessage: 'Laungreiðendaskrá',
     description: 'Some description',
   },
   salarySubtitle: {
@@ -36,9 +36,9 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: 'Some description',
   },
-  calculatorSection: {
-    id: 'pl.application:calculator.section',
-    defaultMessage: 'Reiknivél',
+  sharedTimeSection: {
+    id: 'pl.application:sharedTime.section',
+    defaultMessage: 'Shared time',
     description: 'Some description',
   },
   usageSubsection: {
@@ -103,9 +103,9 @@ export const m = defineMessages({
     defaultMessage: 'On a specific date',
     description: 'Some description',
   },
-  summarySection: {
-    id: 'pl.application:summary.section',
-    defaultMessage: 'Yfirlit og staðfesting',
+  periodsSection: {
+    id: 'pl.application:periods.section',
+    defaultMessage: 'Leave periods',
     description: 'Some description',
   },
   summaryName: {
