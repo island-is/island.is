@@ -1,9 +1,9 @@
 import React from 'react'
-import Typography from '../Typography/Typography'
+import { Typography } from '../Typography/Typography'
 import { Hidden } from './Hidden'
 
 export default {
-  title: 'Core/Hidden',
+  title: 'Layout/Hidden',
   component: Hidden,
 }
 

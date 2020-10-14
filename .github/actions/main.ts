@@ -4,7 +4,7 @@ import { findLastGoodBuild, WorkflowQueries } from './detection'
 const octokit = new Octokit()
 // const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
-const workflow_file_name = 'build.yml'
+const workflow_file_name = 'push.yml'
 class GitHubWorkflowQueries implements WorkflowQueries {
   async getData(branch: string) {
     return (

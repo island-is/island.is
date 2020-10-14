@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import * as styles from './Location.treat'
 import {
   Box,
-  Typography,
+  Text,
   Stack,
   GridContainer,
   GridRow,
@@ -54,13 +54,11 @@ export const Location: FC<LocationProps> = ({
                   <Stack space={1}>
                     <div>
                       {title && (
-                        <Typography variant="h4" as="h4">
+                        <Text variant="h4" as="h4">
                           {title}
-                        </Typography>
+                        </Text>
                       )}
-                      {subTitle && (
-                        <Typography variant="p">{subTitle}</Typography>
-                      )}
+                      {subTitle && <Text>{subTitle}</Text>}
                     </div>
                     {address && (
                       <div>
@@ -68,17 +66,17 @@ export const Location: FC<LocationProps> = ({
                           .split(/\r\n|\r|\n/g)
                           .filter(Boolean)
                           .map((line, i) => (
-                            <Typography key={i} variant="pSmall">
+                            <Text key={i} variant="small">
                               {line}
-                            </Typography>
+                            </Text>
                           ))}
                       </div>
                     )}
                     {link && (
                       <a href={link.url}>
-                        <Typography variant="eyebrow" as="span" color="blue400">
+                        <Text variant="eyebrow" as="span" color="blue400">
                           {link.text}
-                        </Typography>
+                        </Text>
                       </a>
                     )}
                   </Stack>

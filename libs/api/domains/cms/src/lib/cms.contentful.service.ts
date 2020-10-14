@@ -273,6 +273,8 @@ export class CmsContentfulService {
   }: GetNewsListInput): Promise<PaginatedNews> {
     const params = {
       ['content_type']: 'news',
+      'fields.title[exists]': true,
+      'fields.slug[exists]': true,
       include: 10,
       order: (ascending ? '' : '-') + 'fields.date',
       skip: (page - 1) * perPage,
@@ -293,7 +295,7 @@ export class CmsContentfulService {
 
     return {
       page: makePage(page, perPage, result.total),
-      news: result.items.map(mapNews).filter((news) => news.title && news.slug), // we consider news "empty" that dont pass this check
+      news: result.items.map(mapNews),
     }
   }
 

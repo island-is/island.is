@@ -11,6 +11,6 @@ bootstrap({
   appModule: AppModule,
   name: 'skilavottord-ws',
   //  port: 4242,
-  //  port: 3333,
-  port: 4200,
+  port: 3333,
+  //port: 4200,
 })

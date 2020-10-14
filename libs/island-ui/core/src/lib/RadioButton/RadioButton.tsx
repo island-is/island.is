@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import Tooltip from '../Tooltip/Tooltip'
+import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
 
 export interface RadioButtonProps {
@@ -92,5 +92,3 @@ export const RadioButton = ({
     </div>
   )
 }
-
-export default RadioButton

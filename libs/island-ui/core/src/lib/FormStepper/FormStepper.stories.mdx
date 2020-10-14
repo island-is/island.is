@@ -1,4 +1,4 @@
-import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
 import { FormStepper } from './FormStepper'
 import { FormStepperThemes } from './types'
 
@@ -10,10 +10,19 @@ import { FormStepperThemes } from './types'
 
 <br />
 
-### Very basic `<FormStepper />` example with only sections:
+### Very basic `<FormStepper/>` example with only sections:
 
 <Canvas>
-  <Story name="Default">
+  <Story
+    name="Default"
+    parameters={{
+      design: {
+        type: 'figma',
+        url:
+          'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=324%3A211',
+      },
+    }}
+  >
     <FormStepper
       theme={FormStepperThemes.PURPLE}
       formName="Form name"
@@ -59,4 +68,4 @@ We define a children array that will be used to render the sub sections. By defa
 
 # Props
 
-<Props of={FormStepper} />
+<ArgsTable of={FormStepper} />

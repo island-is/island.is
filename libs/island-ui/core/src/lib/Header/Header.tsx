@@ -76,13 +76,13 @@ export const Header = ({
           </Box>
         )}
         {language && (
-          <Button variant="menu" onClick={switchLanguage}>
+          <Button variant="utility" onClick={switchLanguage}>
             {language}
           </Button>
         )}
         {authenticated && (
           <Box marginLeft={2}>
-            <Button variant="menu" leftIcon="lock" onClick={onLogout}>
+            <Button variant="utility" icon="lock" onClick={onLogout}>
               {logoutText}
             </Button>
           </Box>
@@ -91,5 +91,3 @@ export const Header = ({
     </Box>
   )
 }
-
-export default Header

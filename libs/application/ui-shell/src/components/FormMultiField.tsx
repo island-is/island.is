@@ -2,21 +2,20 @@ import React, { FC } from 'react'
 import FormField from './FormField'
 import { MultiFieldScreen } from '../types'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { FieldBaseProps, FormValue } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/core'
 import ConditionHandler from './ConditionHandler'
 
 const FormMultiField: FC<{
-  applicationId: string
+  application: Application
   errors: object
-  formValue: FormValue
   multiField: MultiFieldScreen
   answerQuestions(answers: FormValue): void
-}> = ({ applicationId, answerQuestions, errors, formValue, multiField }) => {
+}> = ({ application, answerQuestions, errors, multiField }) => {
   return (
     <GridRow>
       <ConditionHandler
         answerQuestions={answerQuestions}
-        formValue={formValue}
+        formValue={application.answers}
         screen={multiField}
       />
       {multiField.children.map((field, index) => {
@@ -26,13 +25,12 @@ const FormMultiField: FC<{
           <GridColumn key={field.id} span={['1/1', '1/1', span]}>
             <Box paddingTop={1}>
               <FormField
-                applicationId={applicationId}
+                application={application}
                 showFieldName
                 field={field}
                 key={field.id}
                 autoFocus={index === 0}
                 errors={errors}
-                formValue={formValue}
               />
             </Box>
           </GridColumn>

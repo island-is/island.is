@@ -78,14 +78,11 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const [initialClientX, setInitialClientX] = useState<number>(0)
-  const [finalClientX, setFinalClientX] = useState<number>(0)
-  const [finalClientY, setFinalClientY] = useState<number>(0)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
 
@@ -207,10 +204,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       const contentId = linkData.sys?.contentType?.sys?.id
 
       const slug = linkData.fields?.slug
-
       if (slug && ['article', 'category', 'news', 'page'].includes(contentId)) {
         return {
-          href: makePath(contentId, '/[slug]'),
+          href: contentId === 'page' ? slug : makePath(contentId, '[slug]'),
           as: makePath(contentId, slug),
         }
       }
@@ -256,7 +252,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                   const visible = currentIndex === index
                   const isTabletOrMobile = width < theme.breakpoints.lg
-
                   return (
                     <TabPanel
                       key={index}
@@ -316,6 +311,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 <button
                   onClick={() => goTo('prev')}
                   type="button"
+                  aria-label={t.frontpageTabsPrevious}
                   className={cn(styles.arrowButton, {
                     [styles.arrowButtonDisabled]: false,
                   })}
@@ -338,6 +334,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 <button
                   onClick={() => goTo('next')}
                   type="button"
+                  aria-label={t.frontpageTabsNext}
                   className={cn(styles.arrowButton, {
                     [styles.arrowButtonDisabled]: false,
                   })}

@@ -17,8 +17,8 @@ import { AllOrNone } from '../../private/AllOrNone'
 import { useVirtualTouchable } from '../../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../../private/Overlay/Overlay'
-import { Typography } from '../../Typography/Typography'
-import { VariantTypes } from '../../Typography/Typography.treat'
+import { Text } from '../../Text/Text'
+import { TextVariants } from '../../Text/Text.treat'
 import { AccordionContext } from '../../Accordion/Accordion'
 import * as styles from './AccordionItem.treat'
 
@@ -29,7 +29,7 @@ export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
 export type AccordionItemBaseProps = {
   id: string
   label: string
-  labelVariant?: VariantTypes
+  labelVariant?: TextVariants
   labelUse?: AccordionItemLabelTags
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
@@ -141,22 +141,18 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            paddingX={[2, 2, 4]}
+            paddingX={[2, 2, 0]}
             paddingY={2}
             onClick={onClick ? onClick : handleOpen}
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Typography
-                  variant={labelVariant}
-                  as={labelUse}
-                  paddingBottom={1}
-                >
+                <Text variant={labelVariant} as={labelUse} paddingBottom={1}>
                   {label}
-                </Typography>
+                </Text>
                 {visibleContent && (
                   <div className={styles.visibleContent}>
-                    <Typography variant="p">{visibleContent}</Typography>
+                    <Text>{visibleContent}</Text>
                   </div>
                 )}
               </Column>
@@ -197,7 +193,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingX={[2, 2, 4]} paddingBottom={2} id={id}>
+          <Box paddingX={[2, 2, 0]} paddingBottom={2} id={id}>
             {children}
           </Box>
         </AnimateHeight>
@@ -237,7 +233,7 @@ export const SidebarAccordion: FC<Omit<
   'labelVariant'
 >> = (props) => {
   return (
-    <AccordionItem {...props} labelVariant="p" iconVariant="sidebar">
+    <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
       {props.children}
     </AccordionItem>
   )

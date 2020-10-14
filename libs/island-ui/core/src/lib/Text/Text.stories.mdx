@@ -1,11 +1,12 @@
-import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
-import { Text } from './Text'
-import { Box } from '../Box'
-import { select } from '@storybook/addon-knobs'
-import { Colors } from '@island.is/island-ui/theme'
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
+
+import { Box } from '../Box/Box'
 import { VariantTypes } from './Text.treat'
-import { GridColumn, GridContainer, GridRow } from '../Grid'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
 import { LinkContext } from '../context'
+import { Text } from './Text'
 
 <Meta title="Core/Text" component={Text} />
 
@@ -154,4 +155,4 @@ Wrap your app in `<LinkContext.Provider />` and provide a custom renderer functi
 
 # Props
 
-<Props of={Text} />
+<ArgsTable of={Text} />

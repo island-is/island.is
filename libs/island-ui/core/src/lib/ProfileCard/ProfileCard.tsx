@@ -60,5 +60,3 @@ export const ProfileCard: FC<ProfileCardProps> = ({
     </Box>
   )
 }
-
-export default ProfileCard

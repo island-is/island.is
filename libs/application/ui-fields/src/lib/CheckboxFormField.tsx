@@ -2,12 +2,15 @@ import React, { FC } from 'react'
 import {
   CheckboxField,
   FieldBaseProps,
+  formatText,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Typography, Box } from '@island.is/island-ui/core'
-import { CheckboxController } from '@island.is/shared/form-fields'
+import { Text, Box } from '@island.is/island-ui/core'
+import {
+  CheckboxController,
+  FieldDescription,
+} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import Description from './components/Description'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -16,7 +19,7 @@ const CheckboxFormField: FC<Props> = ({
   error,
   showFieldName = false,
   field,
-  formValue,
+  application,
 }) => {
   const { id, name, description, options, disabled } = field
   const { formatMessage } = useLocale()
@@ -24,22 +27,34 @@ const CheckboxFormField: FC<Props> = ({
   return (
     <div>
       {showFieldName && (
-        <Typography variant="p">{formatMessage(name)}</Typography>
+        <Text>{formatText(name, application, formatMessage)}</Text>
       )}
 
-      {description && <Description description={formatMessage(description)} />}
+      {description && (
+        <FieldDescription
+          description={formatText(description, application, formatMessage)}
+        />
+      )}
 
       <Box paddingTop={2}>
         <CheckboxController
           id={id}
           disabled={disabled}
           name={`${id}`}
-          defaultValue={getValueViaPath(formValue, id, []) as string[]}
+          defaultValue={
+            getValueViaPath(application.answers, id, []) as string[]
+          }
           error={error}
           options={options.map(({ label, tooltip, ...o }) => ({
             ...o,
-            label: formatMessage(label) as string,
-            ...(tooltip && { tooltip: formatMessage(tooltip) as string }),
+            label: formatText(label, application, formatMessage),
+            ...(tooltip && {
+              tooltip: formatText(
+                tooltip,
+                application,
+                formatMessage,
+              ) as string,
+            }),
           }))}
         />
       </Box>
