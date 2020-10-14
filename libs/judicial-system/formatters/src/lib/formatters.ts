@@ -37,6 +37,10 @@ export function formatDate(
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
 export const capitalize = (text: string): string => {
+  if (!text) {
+    return ''
+  }
+
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
@@ -61,7 +65,7 @@ export const formatLawsBroken = (
   lawsBroken: string,
   custodyProvisions: CaseCustodyProvisions[],
 ) => {
-  const provisions = custodyProvisions.reduce((s, l) => `${s} ${laws[l]},`, '')
+  const provisions = custodyProvisions?.reduce((s, l) => `${s} ${laws[l]},`, '')
 
   return `${lawsBroken} Lagaákvæði sem krafan er byggð á: ${provisions.slice(
     0,

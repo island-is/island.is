@@ -1,7 +1,7 @@
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 import * as Constants from './constants'
-import { formatDate, formatCustodyRestrictions } from './formatters'
+import { formatDate, formatCustodyRestrictions, capitalize } from './formatters'
 
 describe('formatDate', () => {
   test('should return null if date parameter is not provided or is invalid', () => {
@@ -33,31 +33,42 @@ describe('formatDate', () => {
   })
 })
 
-describe('Step helper', () => {
-  describe('renderRestrictions', () => {
-    test('should return a comma separated list of restrictions', () => {
-      // Arrange
-      const restrictions: CaseCustodyRestrictions[] = [
-        CaseCustodyRestrictions.ISOLATION,
-        CaseCustodyRestrictions.COMMUNICATION,
-      ]
+describe('renderRestrictions', () => {
+  test('should return a comma separated list of restrictions', () => {
+    // Arrange
+    const restrictions: CaseCustodyRestrictions[] = [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.COMMUNICATION,
+    ]
 
-      // Act
-      const r = formatCustodyRestrictions(restrictions)
+    // Act
+    const r = formatCustodyRestrictions(restrictions)
 
-      // Assert
-      expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
-    })
+    // Assert
+    expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
+  })
 
-    test('should return "Lausgæsla" if no custody restriction is supplyed', () => {
-      // Arrange
-      const restrictions: CaseCustodyRestrictions[] = []
+  test('should return "Lausgæsla" if no custody restriction is supplyed', () => {
+    // Arrange
+    const restrictions: CaseCustodyRestrictions[] = []
 
-      // Act
-      const r = formatCustodyRestrictions(restrictions)
+    // Act
+    const r = formatCustodyRestrictions(restrictions)
 
-      // Assert
-      expect(r).toEqual('Lausagæsla')
-    })
+    // Assert
+    expect(r).toEqual('Lausagæsla')
+  })
+})
+
+describe('capitalize', () => {
+  test('should return empty string if text is empty', () => {
+    // Arrange
+    const text = (undefined as unknown) as string
+
+    // Act
+    const r = capitalize(text)
+
+    // Assert
+    expect(r).toBe('')
   })
 })

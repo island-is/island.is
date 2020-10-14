@@ -162,6 +162,8 @@ const Search: Screen<CategoryProps> = ({
 
   const filteredItems = items.filter(byCategory)
 
+  const totalSearchResults = searchResults.total
+
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
     ?.category?.title
 
@@ -198,7 +200,7 @@ const Search: Screen<CategoryProps> = ({
                 position: 'relative',
               }}
             >
-              {grandTotalSearchResultCount > 0 && (
+              {totalSearchResults > 0 && (
                 <>
                   <div
                     style={{
@@ -273,11 +275,11 @@ const Search: Screen<CategoryProps> = ({
                 )
               },
             )}
-            {grandTotalSearchResultCount > 0 && (
+            {totalSearchResults > 0 && (
               <Box paddingTop={8}>
                 <Pagination
                   page={page}
-                  totalPages={Math.ceil(grandTotalSearchResultCount / PerPage)}
+                  totalPages={Math.ceil(totalSearchResults / PerPage)}
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
@@ -306,7 +308,7 @@ const Search: Screen<CategoryProps> = ({
             initialInputValue={q}
           />
           <Hidden above="md">
-            {grandTotalSearchResultCount > 0 && (
+            {totalSearchResults > 0 && (
               <Select
                 label={n('searchResult', 'Leitarflokkar')}
                 placeholder={n('categories', 'Flokkar')}
@@ -314,6 +316,7 @@ const Search: Screen<CategoryProps> = ({
                 options={categorySelectOptions}
                 onChange={onChangeSelectCategoryOptions}
                 name="content-overview"
+                isSearchable={false}
               />
             )}
           </Hidden>
@@ -331,8 +334,8 @@ const Search: Screen<CategoryProps> = ({
             </>
           ) : (
             <Text variant="intro" as="p">
-              {grandTotalSearchResultCount}{' '}
-              {grandTotalSearchResultCount === 1
+              {totalSearchResults}{' '}
+              {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
               {filters.category && (

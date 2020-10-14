@@ -80,6 +80,7 @@ export const FixedNav: FC = () => {
                 onClick={() => {
                   window.scrollTo(0, 0)
                 }}
+                aria-label={t.gotoTop}
               />
             </Box>
           </Box>

@@ -6,21 +6,23 @@ import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 
 import {
-  FieldInput,
-  FieldNumberInput,
-  FieldCheckbox,
   Box,
   Tiles,
   Stack,
   ButtonDeprecated as Button,
   Typography,
-  FieldSelect,
-  FieldPolarQuestion,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { Company } from '@island.is/gjafakort-web/graphql/schema'
-import { FormLayout } from '@island.is/gjafakort-web/components'
+import {
+  FieldCheckbox,
+  FieldInput,
+  FieldNumberInput,
+  FieldPolarQuestion,
+  FieldSelect,
+  FormLayout,
+} from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
   company: Company

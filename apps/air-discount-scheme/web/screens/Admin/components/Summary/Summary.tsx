@@ -57,6 +57,12 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
             const awaitingDebit = legs.filter(
               (leg) => leg.financialState === States.awaitingDebit,
             )
+            const sentDebit = legs.filter(
+              (leg) => leg.financialState === States.sentDebit,
+            )
+            const sentCredit = legs.filter(
+              (leg) => leg.financialState === States.sentCredit,
+            )
             const cancelled = legs.filter(
               (leg) => leg.financialState === States.cancelled,
             )
@@ -71,6 +77,16 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
                 count: awaitingDebit.length,
                 discountPrice: sum(awaitingDebit, 'discountPrice'),
                 originalPrice: sum(awaitingDebit, 'originalPrice'),
+              },
+              sentDebit: {
+                count: sentDebit.length,
+                discountPrice: sum(sentDebit, 'discountPrice'),
+                originalPrice: sum(sentDebit, 'originalPrice'),
+              },
+              sentCredit: {
+                count: sentCredit.length,
+                discountPrice: sum(sentCredit, 'discountPrice'),
+                originalPrice: sum(sentCredit, 'originalPrice'),
               },
               cancelled: {
                 count: cancelled.length,
@@ -101,6 +117,16 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
                   </Box>
                   <Box background="red100" borderRadius="standard" padding={2}>
                     <KeyValues title="Afturkallaðir" data={data.cancelled} />
+                  </Box>
+                  <Box padding={2} background="mint100" borderRadius="standard">
+                    <KeyValues title="Gjaldfært" data={data.sentDebit} />
+                  </Box>
+                  <Box
+                    background="yellow100"
+                    borderRadius="standard"
+                    padding={2}
+                  >
+                    <KeyValues title="Endurgreitt" data={data.sentCredit} />
                   </Box>
                 </Stack>
               </Stack>

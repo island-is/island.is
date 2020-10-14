@@ -103,10 +103,12 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                   )}
                 </GridColumn>
               </GridRow>
-              <RichText
-                body={newsItem.content}
-                config={{ defaultPadding: 4 }}
-              />
+              <Box paddingBottom={4} width="full">
+                <RichText
+                  body={newsItem.content}
+                  config={{ defaultPadding: 4 }}
+                />
+              </Box>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
               <Sticky>

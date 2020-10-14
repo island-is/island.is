@@ -18,6 +18,7 @@ import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -98,19 +99,9 @@ export const CourtRecord: React.FC = () => {
                         validateTimeEmpty.isValid &&
                         validateTimeFormat.isValid
                       ) {
-                        const timeWithoutColon = evt.target.value.replace(
-                          ':',
-                          '',
-                        )
-
-                        const courtStartTimeHours = setHours(
-                          new Date(),
-                          parseInt(timeWithoutColon.substr(0, 2)),
-                        )
-
-                        const courtStartTimeMinutes = setMinutes(
-                          courtStartTimeHours,
-                          parseInt(timeWithoutColon.substr(2, 4)),
+                        const courtStartTimeMinutes = parseTime(
+                          new Date().toString(),
+                          evt.target.value,
                         )
 
                         autoSave(
@@ -154,16 +145,9 @@ export const CourtRecord: React.FC = () => {
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
                     ) {
-                      const timeWithoutColon = evt.target.value.replace(':', '')
-
-                      const courtEndTimeHours = setHours(
-                        new Date(),
-                        parseInt(timeWithoutColon.substr(0, 2)),
-                      )
-
-                      const courtEndTimeMinutes = setMinutes(
-                        courtEndTimeHours,
-                        parseInt(timeWithoutColon.substr(2, 4)),
+                      const courtEndTimeMinutes = parseTime(
+                        new Date().toString(),
+                        evt.target.value,
                       )
 
                       autoSave(
@@ -293,7 +277,7 @@ export const CourtRecord: React.FC = () => {
               />
             </Box>
             <FormFooter
-              nextUrl={Constants.RULING_ROUTE}
+              nextUrl={Constants.RULING_STEP_ONE_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime
               }

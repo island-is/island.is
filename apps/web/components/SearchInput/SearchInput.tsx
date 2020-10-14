@@ -289,6 +289,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                 },
                 onFocus,
                 onBlur,
+                'aria-label': locale === 'is' ? 'Leita' : 'Search',
               }}
               inputProps={getInputProps({
                 inputSize: size,

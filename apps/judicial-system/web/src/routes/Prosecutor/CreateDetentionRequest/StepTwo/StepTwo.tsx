@@ -27,7 +27,10 @@ import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import * as api from '../../../../api'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseArray,
+  parseTime,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
@@ -277,6 +280,7 @@ export const StepTwo: React.FC = () => {
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
+                    data-testid="requestedCustodyEndTime"
                     name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
@@ -287,7 +291,7 @@ export const StepTwo: React.FC = () => {
                     disabled={!workingCase.requestedCustodyEndDate}
                     errorMessage={requestedCustodyEndTimeErrorMessage}
                     hasError={requestedCustodyEndTimeErrorMessage !== ''}
-                    onBlur={(evt) => {
+                    onBlur={async (evt) => {
                       const validateTimeEmpty = validate(
                         evt.target.value,
                         'empty',
@@ -301,33 +305,26 @@ export const StepTwo: React.FC = () => {
                         validateTimeEmpty.isValid &&
                         validateTimeFormat.isValid
                       ) {
-                        const timeWithoutColon = evt.target.value.replace(
-                          ':',
-                          '',
+                        const requestedCustodyEndDateMinutes = parseTime(
+                          workingCase.requestedCustodyEndDate,
+                          evt.target.value,
                         )
 
-                        const requestedCustodyEndDateHours = setHours(
-                          new Date(workingCase.requestedCustodyEndDate),
-                          parseInt(timeWithoutColon.substr(0, 2)),
+                        await api.saveCase(
+                          workingCase.id,
+                          JSON.parse(`{
+                            "requestedCustodyEndDate": "${requestedCustodyEndDateMinutes}",
+                            "custodyEndDate": "${requestedCustodyEndDateMinutes}"
+                          }`),
                         )
 
-                        const requestedCustodyEndDateMinutes = setMinutes(
-                          requestedCustodyEndDateHours,
-                          parseInt(timeWithoutColon.substr(2, 4)),
-                        )
-
-                        autoSave(
-                          workingCase,
-                          'requestedCustodyEndDate',
-                          requestedCustodyEndDateMinutes,
-                          setWorkingCase,
-                        )
-
-                        autoSave(
-                          workingCase,
-                          'custodyEndDate',
-                          requestedCustodyEndDateMinutes,
-                          setWorkingCase,
+                        window.localStorage.setItem(
+                          'workingCase',
+                          JSON.stringify({
+                            ...workingCase,
+                            requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                            custodyEndDate: requestedCustodyEndDateMinutes,
+                          }),
                         )
                       } else {
                         setRequestedCustodyEndTimeErrorMessage(

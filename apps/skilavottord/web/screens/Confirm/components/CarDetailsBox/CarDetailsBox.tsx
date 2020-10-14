@@ -1,31 +1,21 @@
 import React, { FC } from 'react'
 import { Box, Typography, Stack } from '@island.is/island-ui/core'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
-
-interface Car {
-  permno: string
-  type: string
-  newregdate: number
-  color: string
-  recyclable: boolean
-  brand?: string
-  status?: string
-  hasCoOwner?: boolean
-}
+import { MockCar } from '@island.is/skilavottord-web/types'
 
 interface BoxProps {
-  car: Car
+  car: MockCar
 }
 
 export const CarDetailsBox: FC<BoxProps> = ({
-  car: { permno, type, newregdate, color, status, hasCoOwner = false },
+  car: { permno, type, newregdate, color, status },
 }: BoxProps) => {
   return (
     <OutlinedBox>
       <Box paddingX={4} paddingY={4}>
         <Box>
           <Stack space={1}>
-            <Typography variant="h5">{permno}</Typography>
+            <Typography variant="h3">{permno}</Typography>
             <Typography variant="p">{`${type}, ${newregdate}`}</Typography>
           </Stack>
         </Box>

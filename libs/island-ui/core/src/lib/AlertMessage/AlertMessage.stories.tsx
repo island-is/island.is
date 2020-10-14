@@ -1,19 +1,27 @@
 import React from 'react'
-import { ContentBlock } from '../ContentBlock'
+import { withDesign } from 'storybook-addon-designs'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { AlertMessage } from './AlertMessage'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 
+const figmaLink =
+  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=203%3A299'
+
 export default {
   title: 'Alerts/AlertMessage',
   component: AlertMessage,
+  decorators: [withDesign],
   parameters: {
     docs: {
       description: {
-        component:
-          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=203%3A299)',
+        component: `[View in Figma](${figmaLink})`,
       },
+    },
+    design: {
+      type: 'figma',
+      url: figmaLink,
     },
   },
 }
