@@ -69,26 +69,11 @@ export const resolvers: Resolvers = {
 
     getHomepage: () => homepage,
 
-    getNamespace: async (parent, args, context) => {
-      const response = await context.fetch('https://island.is/api/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: `
-            query GetNamespace($input: GetNamespaceInput!) {
-              getNamespace(input: $input) {
-                namespace
-                fields
-              }
-            }`,
-          variables: args,
-        }),
-      })
-
-      const body = await response.json()
-      return body.data.getNamespace
+    getNamespace: (parent, args) => {
+      return {
+        namespace: args.input.namespace || 'namespace',
+        fields: '{}'
+      }
     },
   },
 }
