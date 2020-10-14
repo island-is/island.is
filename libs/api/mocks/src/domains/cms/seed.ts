@@ -36,9 +36,6 @@ export const articles = articleCategories.reduce<Article[]>(
         subgroup: () =>
           subGroups.length > 0 ? faker.random.arrayElement(subGroups) : null,
       })
-      if (category.slug === 'ipsam-qui-eius') {
-        console.log(groupArticles)
-      }
       articles = articles.concat(groupArticles)
     }
     return articles
