@@ -58,6 +58,11 @@ export class ArticleSyncService {
                 value: entry.fields?.category?.fields?.title,
                 type: 'category',
               },
+              ...mapped.otherCategories.map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'category',
+              })),
               {
                 key: entry.fields?.slug,
                 type: 'slug',

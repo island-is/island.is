@@ -14,6 +14,8 @@ export interface Translation {
   handover: Handover
   completed: Completed
   processSections: string[]
+  companyOverview: CompanyOverview
+  companySide: CompanySide
   routes: Routes
 }
 
@@ -144,6 +146,33 @@ export interface Errors {
   message: string
   primaryButton: string
   secondaryButton: string
+}
+
+export interface CompanyOverview {
+  title: string
+  info: string
+  subtitles: CompanyOverviewSubTitles
+  buttons: CompanyOverviewButtons
+  search: Search
+  table: string[]
+}
+
+export interface CompanySide {
+  deregister: string
+  companyInfo: string
+}
+
+export interface CompanyOverviewSubTitles {
+  history: string
+}
+
+export interface CompanyOverviewButtons {
+  deregister: string
+}
+
+export interface Search {
+  label: string
+  placeholder: string
 }
 
 export interface Routes {

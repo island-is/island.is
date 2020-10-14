@@ -6,7 +6,6 @@ import {
   Input,
   Typography,
 } from '@island.is/island-ui/core'
-import { setHours, setMinutes } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -277,7 +276,7 @@ export const CourtRecord: React.FC = () => {
               />
             </Box>
             <FormFooter
-              nextUrl={Constants.RULING_ROUTE}
+              nextUrl={Constants.RULING_STEP_ONE_ROUTE}
               nextIsDisabled={
                 !workingCase.courtStartTime || !workingCase.courtEndTime
               }

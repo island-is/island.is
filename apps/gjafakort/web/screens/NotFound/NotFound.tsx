@@ -7,7 +7,7 @@ import {
   ContentBlock,
   Columns,
   Column,
-  Icon,
+  IconDeprecated as Icon,
   Typography,
 } from '@island.is/island-ui/core'
 

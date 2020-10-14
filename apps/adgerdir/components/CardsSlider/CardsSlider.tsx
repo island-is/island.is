@@ -8,7 +8,11 @@ import React, {
 } from 'react'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
-import { Icon, Inline, Hidden } from '@island.is/island-ui/core'
+import {
+  IconDeprecated as Icon,
+  Inline,
+  Hidden,
+} from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
 import { useI18n } from '@island.is/adgerdir/i18n'

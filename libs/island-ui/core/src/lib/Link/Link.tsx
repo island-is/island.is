@@ -1,4 +1,4 @@
-import * as React from 'react' //[1]
+import React from 'react'
 import NextLink, { LinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.treat'
@@ -87,6 +87,3 @@ export const Link: React.FC<Props> = ({
     )
   }
 }
-
-// [1] Used like that because of an Storybook bug. Using `import React from 'react'` results in
-// Storybook not being able to read and display available props.

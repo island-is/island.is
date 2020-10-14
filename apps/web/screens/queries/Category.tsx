@@ -26,9 +26,20 @@ export const GET_ARTICLES_QUERY = gql`
         slug
         title
         description
+        importance
       }
       subgroup {
         title
+        importance
+      }
+      otherSubgroups {
+        title
+        slug
+        importance
+      }
+      otherGroups {
+        title
+        slug
         importance
       }
     }

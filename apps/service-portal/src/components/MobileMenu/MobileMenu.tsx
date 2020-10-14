@@ -2,7 +2,7 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Icon,
+  IconDeprecated as Icon,
   Typography,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

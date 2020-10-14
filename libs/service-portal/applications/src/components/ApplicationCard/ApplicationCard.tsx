@@ -3,7 +3,7 @@ import {
   Box,
   Stack,
   Inline,
-  Icon,
+  IconDeprecated as Icon,
   Typography,
   Tag,
   ButtonDeprecated as Button,
