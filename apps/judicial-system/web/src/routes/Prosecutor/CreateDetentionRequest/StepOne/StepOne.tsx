@@ -16,13 +16,13 @@ import {
 } from '@island.is/island-ui/core'
 import { Case } from '../../../../types'
 import * as api from '../../../../api'
-import { validate } from '../../../../utils/validate'
+import { validate, Validation } from '../../../../utils/validate'
 import {
   updateState,
   autoSave,
   renderFormStepper,
 } from '../../../../utils/stepHelper'
-import { setHours, setMinutes, isValid, parseISO, formatISO } from 'date-fns'
+import { isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
@@ -68,17 +68,19 @@ export const StepOne: React.FC = () => {
   const accusedNationalIdRef = useRef<HTMLInputElement>()
   const arrestTimeRef = useRef<HTMLInputElement>()
 
-  const requiredFields = [
-    workingCase?.policeCaseNumber,
-    workingCase?.accusedNationalId,
-    workingCase?.accusedName,
-    workingCase?.accusedAddress,
-    workingCase?.arrestDate,
+  const requiredFields: { value: string; validations: Validation[] }[] = [
+    {
+      value: workingCase?.policeCaseNumber,
+      validations: ['empty', 'police-casenumber-format'],
+    },
+    {
+      value: workingCase?.accusedNationalId,
+      validations: ['empty', 'national-id'],
+    },
+    { value: workingCase?.accusedName, validations: ['empty'] },
+    { value: workingCase?.accusedAddress, validations: ['empty'] },
+    { value: workingCase?.arrestDate, validations: ['empty'] },
   ]
-
-  const filledRequiredFields = requiredFields.filter(
-    (requiredField) => requiredField !== '' && !isNull(requiredField),
-  )
 
   const courts = [
     {
@@ -114,6 +116,21 @@ export const StepOne: React.FC = () => {
   const defaultCourt = courts.filter(
     (court) => court.label === workingCase?.court,
   )
+
+  const isNextDisabled = () => {
+    for (let i = 0; i < requiredFields.length; i++) {
+      for (let a = 0; a < requiredFields[i].validations.length; a++) {
+        console.log(requiredFields[i].value, requiredFields[i].validations[a])
+        if (
+          !validate(requiredFields[i].value, requiredFields[i].validations[a])
+            .isValid
+        ) {
+          return true
+        }
+      }
+    }
+    return false
+  }
 
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
@@ -249,6 +266,13 @@ export const StepOne: React.FC = () => {
                     errorMessage={policeCaseNumberErrorMessage}
                     hasError={policeCaseNumberErrorMessage !== ''}
                     onBlur={(evt) => {
+                      updateState(
+                        workingCase,
+                        'policeCaseNumber',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+
                       const validateField = validate(evt.target.value, 'empty')
                       const validateFieldFormat = validate(
                         evt.target.value,
@@ -267,12 +291,6 @@ export const StepOne: React.FC = () => {
                           )
                         } else {
                           createCaseIfPossible()
-                          updateState(
-                            workingCase,
-                            'policeCaseNumber',
-                            evt.target.value,
-                            setWorkingCase,
-                          )
                         }
                       } else {
                         setPoliceCaseNumberErrorMessage(
@@ -299,9 +317,22 @@ export const StepOne: React.FC = () => {
                       label="Kennitala"
                       defaultValue={workingCase.accusedNationalId}
                       ref={accusedNationalIdRef}
-                      errorMessage={nationalIdErrorMessage}
-                      hasError={nationalIdErrorMessage !== ''}
+                      errorMessage={
+                        validate(workingCase.accusedNationalId, 'national-id')
+                          .errorMessage
+                      }
+                      hasError={
+                        !validate(workingCase.accusedNationalId, 'national-id')
+                          .isValid
+                      }
                       onBlur={(evt) => {
+                        updateState(
+                          workingCase,
+                          'accusedNationalId',
+                          evt.target.value.replace('-', ''),
+                          setWorkingCase,
+                        )
+
                         const validateField = validate(
                           evt.target.value,
                           'empty',
@@ -324,12 +355,6 @@ export const StepOne: React.FC = () => {
                             )
                           } else {
                             createCaseIfPossible()
-                            updateState(
-                              workingCase,
-                              'accusedNationalId',
-                              evt.target.value.replace('-', ''),
-                              setWorkingCase,
-                            )
                           }
                         } else {
                           setNationalIdErrorMessage(
@@ -586,18 +611,7 @@ export const StepOne: React.FC = () => {
                 <FormFooter
                   nextUrl={Constants.STEP_TWO_ROUTE}
                   onNextButtonClick={() => setModalVisible(true)}
-                  nextIsDisabled={
-                    !arrestTimeRef.current
-                      ? true
-                      : !validate(arrestTimeRef.current.value, 'empty')
-                          .isValid ||
-                        !validate(arrestTimeRef.current.value, 'time-format')
-                          .isValid
-                      ? true
-                      : filledRequiredFields.length !== requiredFields.length
-                      ? true
-                      : false
-                  }
+                  nextIsDisabled={isNextDisabled()}
                 />
               </GridColumn>
             </GridRow>

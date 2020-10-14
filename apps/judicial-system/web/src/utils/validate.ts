@@ -1,6 +1,6 @@
 // TODO: Add tests
 
-type Validation =
+export type Validation =
   | 'empty'
   | 'time-format'
   | 'police-casenumber-format'
