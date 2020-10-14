@@ -93,7 +93,7 @@ const NewsList: Screen<NewsListProps> = ({
       value: undefined,
     },
     ...months.map((month) => ({
-      label: capitalize(getMonthByIndex(parseInt(month))),
+      label: capitalize(getMonthByIndex(parseInt(month) - 1)), // api returns months with index starting from 1 not 0 so we compensate
       value: parseInt(month),
     })),
   ]
@@ -109,7 +109,6 @@ const NewsList: Screen<NewsListProps> = ({
       query,
     }
   }
-  console.log('selected year', selectedYear)
 
   const sidebar = (
     <Stack space={3}>
@@ -141,7 +140,7 @@ const NewsList: Screen<NewsListProps> = ({
         <div key={month}>
           <Link href={makeHref(selectedYear, month)}>
             <Text as="span">
-              {capitalize(getMonthByIndex(parseInt(month)))}
+              {capitalize(getMonthByIndex(parseInt(month) - 1))}
             </Text>
           </Link>
           <Text as="span">
@@ -321,7 +320,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     newsList,
     total,
-    selectedYear: year ?? null,
+    selectedYear: year,
     selectedMonth: month,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,

@@ -63,8 +63,8 @@ export class CmsElasticsearchService {
     if (year) {
       dateQuery = {
         date: {
-          from: `${year}-${(month + 1)?.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD +1 cause js counts months from 0
-          to: `${year}-${(month + 1)?.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD +1 cause js counts months from 0
+          from: `${year}-${month?.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD
+          to: `${year}-${month?.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD
         },
       }
     } else {
