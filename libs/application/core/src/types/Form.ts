@@ -76,6 +76,7 @@ export interface MultiField extends FormItem {
   type: FormItemTypes.MULTI_FIELD
   children: Field[]
   repeaterIndex?: number
+  readonly description?: FormText
 }
 
 export interface ExternalDataProvider extends FormItem {

@@ -36,7 +36,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
       </Box>
       <Box marginTop={6}>
         <Controller
-          defaultValue=""
+          defaultValue={defaultUsage}
           name={id}
           render={({ onChange, value }) => (
             <Slider

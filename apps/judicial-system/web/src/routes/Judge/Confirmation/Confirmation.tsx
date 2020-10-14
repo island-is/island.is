@@ -367,15 +367,17 @@ export const Confirmation: React.FC = () => {
       {modalVisible && (
         <Modal
           title={
-            confirmSignatureResponse?.httpStatusCode > 400
-              ? 'Auðkenning tókst ekki'
+            confirmSignatureResponse?.httpStatusCode >= 400
+              ? confirmSignatureResponse?.code === 7023 // User cancelled
+                ? 'Notandi hætti við undirritun'
+                : 'Undirritun tókst ekki'
               : confirmSignatureResponse?.httpStatusCode >= 200 &&
                 confirmSignatureResponse?.httpStatusCode < 300
               ? 'Úrskurður hefur verið staðfestur og undirritaður'
               : 'Rafræn undirritun'
           }
           text={
-            confirmSignatureResponse?.httpStatusCode > 400
+            confirmSignatureResponse?.httpStatusCode >= 400
               ? 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
               : confirmSignatureResponse?.httpStatusCode >= 200 &&
                 confirmSignatureResponse?.httpStatusCode < 300

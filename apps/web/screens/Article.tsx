@@ -15,7 +15,7 @@ import {
   Tag,
   Divider,
   Link,
-  Icon,
+  IconDeprecated as Icon,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import { getProcessEntryLinkProps } from '@island.is/island-ui/contentful'
