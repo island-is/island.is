@@ -70,9 +70,7 @@ describe('User profile API', () => {
     }
 
     // Act
-    const postResponse = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send(profile)
+    await request(app.getHttpServer()).post('/userProfile').send(profile)
 
     const getResponse = await request(app.getHttpServer())
       .get(`/userProfile/${profile.nationalId}`)
@@ -130,9 +128,7 @@ describe('User profile API', () => {
     }
 
     // Act
-    const postResponse = await request(app.getHttpServer())
-      .post('/userProfile')
-      .send(profile)
+    await request(app.getHttpServer()).post('/userProfile').send(profile)
 
     const updateResponse = await request(app.getHttpServer())
       .put(`/userProfile/${profile.nationalId}`)
@@ -158,7 +154,7 @@ describe('User profile API', () => {
 
   it(`POST /userProfile should return conflict on existing nationalId`, async () => {
     // Act
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/userProfile')
       .send({
         nationalId: '1234567890',

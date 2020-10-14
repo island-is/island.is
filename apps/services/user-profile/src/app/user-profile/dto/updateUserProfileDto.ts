@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { Locale } from '../../../../../../../libs/api/domains/user-profile/src/lib/types/locales.enum'
+import { Locale } from '@island.is/api/domains/user-profile'
 
 export class UpdateUserProfileDto {
   @IsOptional()

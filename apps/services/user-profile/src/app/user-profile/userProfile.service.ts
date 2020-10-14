@@ -45,7 +45,7 @@ export class UserProfileService {
       numberOfAffectedRows,
       [updatedUserProfile],
     ] = await this.userProfileModel.update(userProfileToUpdate, {
-      where: { national_id: nationalId },
+      where: { nationalId },
       returning: true,
     })
 

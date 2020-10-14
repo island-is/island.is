@@ -38,7 +38,6 @@ export class UploadProcessor {
   async onCompleted(job: Job, url: string) {
     const { nationalId }: JobData = job.data
 
-    const { key } = AmazonS3URI(url)
     return await this.userProfileService.update(nationalId, {
       profileImageUrl: url,
     })
