@@ -22,7 +22,7 @@ import {
   renderFormStepper,
 } from '../../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
+import { isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import * as api from '../../../../api'

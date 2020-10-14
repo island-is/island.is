@@ -6,7 +6,6 @@ import {
   Input,
   Typography,
 } from '@island.is/island-ui/core'
-import { setHours, setMinutes } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'

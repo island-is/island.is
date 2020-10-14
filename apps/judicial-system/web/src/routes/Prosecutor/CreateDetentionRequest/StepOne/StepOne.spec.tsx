@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, act, waitFor, getByText } from '@testing-library/react'
+import { render, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StepOne from './StepOne'
 import { Router } from 'react-router-dom'
@@ -41,28 +41,14 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
 
   test('should persist data if data is in localstorage', async () => {
     // Arrange
-    fetchMock.mock('/api/case', {
-      id: 'b5041539-27c0-426a-961d-0f268fe45165',
-      created: '2020-09-16T19:50:08.033Z',
-      modified: '2020-09-16T19:51:39.466Z',
-      state: 'SUBMITTED',
-      court: 'string',
-      comments: 'string',
-      policeCaseNumber: 'string',
-      accusedNationalId: 'string',
-      accusedName: 'string',
-      accusedAddress: 'string',
-      arrestDate: '2020-09-16T19:51:28.224Z',
-      requestedCourtDate: '2020-09-16T19:51:28.224Z',
-      requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
-      lawsBroken: 'string',
-      custodyProvisions: ['_95_1_A'],
-      requestedCustodyRestrictions: ['ISOLATION'],
-      caseFacts: 'string',
-      witnessAccounts: 'string',
-      investigationProgress: 'string',
-      legalArguments: 'string',
+
+    // Mock call to localstorage.getItem
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({})
     })
+
+    // Mock call to api.createCase
+    fetchMock.mock('/api/case', { id: 'test_id' }, { method: 'post' })
 
     // Mock reload function
     const reloadFn = () => {
@@ -171,30 +157,85 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
     ).toEqual('')
   })
 
-  test('should now allow users to continue unless every required field has been filled out', () => {
+  test('should now allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const history = createMemoryHistory()
 
+    // Mock call to api.updateCase
+    fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
+
+    // Have arrestDate and requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
     Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({})
+      return JSON.stringify({
+        arrestDate: '2020-10-15',
+        requestedCourtDate: '2020-10-16',
+        accusedName: 'Jon Harring',
+      })
     })
 
-    // Act
+    Storage.prototype.setItem = jest.fn()
+
+    // Act and Assert
     const { getByTestId } = render(
       <Router history={history}>
         <StepOne />
       </Router>,
     )
 
-    userEvent.type(
-      getByTestId('policeCaseNumber') as HTMLInputElement,
-      '000-0000-000',
-    )
-    userEvent.tab()
-    expect((getByTestId('continueButton') as HTMLButtonElement).disabled).toBe(
-      true,
-    )
+    await act(async () => {
+      await userEvent.type(
+        getByTestId('policeCaseNumber') as HTMLInputElement,
+        '000-0000-000',
+      )
+      userEvent.tab()
+      expect(
+        (getByTestId('continueButton') as HTMLButtonElement).disabled,
+      ).toBe(true)
 
-    // Assert
+      await userEvent.type(
+        getByTestId('nationalId') as HTMLInputElement,
+        '1112902539',
+      )
+      userEvent.tab()
+      expect(
+        (getByTestId('continueButton') as HTMLButtonElement).disabled,
+      ).toBe(true)
+
+      await userEvent.type(
+        getByTestId('accusedName') as HTMLInputElement,
+        'Jon Harring',
+      )
+      userEvent.tab()
+      expect(
+        (getByTestId('continueButton') as HTMLButtonElement).disabled,
+      ).toBe(true)
+
+      await userEvent.type(
+        getByTestId('accusedAddress') as HTMLInputElement,
+        'Harringvej 2',
+      )
+      userEvent.tab()
+      expect(
+        (getByTestId('continueButton') as HTMLButtonElement).disabled,
+      ).toBe(true)
+
+      await userEvent.type(
+        getByTestId('arrestTime') as HTMLInputElement,
+        '12:31',
+      )
+      userEvent.tab()
+      expect(
+        (getByTestId('continueButton') as HTMLButtonElement).disabled,
+      ).toBe(true)
+
+      await userEvent.type(
+        getByTestId('requestedCourtDate') as HTMLInputElement,
+        '12:31',
+      )
+      userEvent.tab()
+      expect(
+        (getByTestId('continueButton') as HTMLButtonElement).disabled,
+      ).toBe(false)
+    })
   })
 })

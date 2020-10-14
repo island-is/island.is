@@ -135,7 +135,9 @@ export const StepOne: React.FC = () => {
   )
 
   const isNextDisabled = () => {
+    // Loop through requiredFields
     for (let i = 0; i < requiredFields.length; i++) {
+      // Loop through validations for each required field
       for (let a = 0; a < requiredFields[i].validations.length; a++) {
         if (
           !validate(requiredFields[i].value, requiredFields[i].validations[a])
@@ -240,6 +242,7 @@ export const StepOne: React.FC = () => {
         JSON.stringify(currentCase.case),
       )
     }
+
     if (id) {
       getCurrentCase()
     }
