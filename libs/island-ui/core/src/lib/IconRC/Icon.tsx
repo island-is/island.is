@@ -50,7 +50,7 @@ export const Icon = ({
   title,
   titleId,
 }: IconProps & IconPropsType) => {
-  const path = iconMap[type][icon]
+  const path = iconMap[type!][icon!]
   const IconSvg = React.lazy(() => import('./icons/' + path))
   const optionalProps: SvgProps = {}
   if (className) {

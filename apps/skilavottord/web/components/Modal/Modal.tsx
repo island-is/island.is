@@ -4,7 +4,7 @@ import {
   Box,
   Typography,
   Stack,
-  Icon,
+  IconDeprecated as Icon,
   GridContainer,
   GridRow,
   GridColumn,
