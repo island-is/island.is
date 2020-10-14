@@ -45,9 +45,9 @@ export default function ServiceList({services}) {
             </Stack>
           </Box>
         </Box>
-        
+
       } />
-      <Footer 
+      <Footer
         hideLanguageSwith
       />
     </Page>

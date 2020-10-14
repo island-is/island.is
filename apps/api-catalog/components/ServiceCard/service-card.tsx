@@ -27,8 +27,8 @@ export const ServiceCard = (props: ServiceCardProps) => {
     >
     <p style={styles.owner}>{props.service.owner}</p>
     <p style={styles.name}>{props.service.name}</p>
-    
-    
+
+
         <div className="prices" style={styles.category} >
           {	props.service.pricing?.map((item, index) => (
                 <div style={styles.priceItem} className="card-item" key={index}>{item + ''} </div>

@@ -6,10 +6,10 @@ import {ServiceCard, ServiceCardInformation} from './service-card'
 describe(' ServiceCard', () => {
   it('should render successfully', () => {
     const service:ServiceCardInformation = {
-      name :"service 1", 
-      owner: "owner of service 1", 
-      pricing   :null, 
-      categories:null, 
+      name :"service 1",
+      owner: "owner of service 1",
+      pricing   :null,
+      categories:null,
       type      :null,
       access    :null
     };
