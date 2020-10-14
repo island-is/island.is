@@ -1,4 +1,4 @@
-import { graphql, GraphQLFieldResolver, GraphQLSchema } from 'graphql'
+import { graphql, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver } from 'graphql'
 
 interface GraphQLRequest {
   query: string
@@ -13,11 +13,12 @@ interface Context {
 interface Options<C> {
   schema: GraphQLSchema
   fieldResolver: GraphQLFieldResolver<any, any>
+  typeResolver?: GraphQLTypeResolver<any, any>
   contextValue?: C
 }
 
 const runGraphQLRequest = (request: GraphQLRequest, options: Options<any>) => {
-  const { schema, fieldResolver, contextValue = {} } = options
+  const { schema, fieldResolver, typeResolver, contextValue = {} } = options
   return graphql({
     schema,
     source: request.query,
@@ -25,6 +26,7 @@ const runGraphQLRequest = (request: GraphQLRequest, options: Options<any>) => {
     variableValues: request.variables,
     operationName: request.operationName,
     fieldResolver,
+    typeResolver,
   })
 }
 

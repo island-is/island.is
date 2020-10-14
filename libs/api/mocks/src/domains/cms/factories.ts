@@ -33,14 +33,12 @@ export const image = factory<Image>({
 })
 
 export const html = factory<Html>({
-  __typename: 'Html',
   typename: 'Html',
   id: () => faker.random.uuid(),
   document: () => wysiwyg(),
 })
 
 export const sectionWithImage = factory<SectionWithImage>({
-  __typename: 'SectionWithImage',
   typename: 'SectionWithImage',
   id: () => faker.random.uuid(),
   title: () => faker.lorem.words(),

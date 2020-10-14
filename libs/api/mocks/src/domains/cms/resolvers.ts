@@ -13,10 +13,10 @@ import {
 export const resolvers: Resolvers = {
   Slice: {
     __resolveType: (parent) => {
-      console.log('Resolving', parent)
       return parent.typename as any
     },
   },
+
   Query: {
     getArticleCategories: () => articleCategories,
 

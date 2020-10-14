@@ -17,6 +17,7 @@ export const graphqlHandler = rest.post(
     const graphqlResponse = await handleGraphQLRequest(query, {
       schema,
       fieldResolver: resolvers.fieldResolver,
+      typeResolver: resolvers.typeResolver,
       contextValue: context,
     })
     console.log('GRAPHQL', ...query.map((subQuery: any) => [subQuery.operationName, subQuery.variables]), graphqlResponse)
