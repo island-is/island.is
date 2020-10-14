@@ -12,34 +12,12 @@ globalStyle(`.fillandsign__modal`, {
   borderRadius: 8,
   overflow: 'hidden',
   opacity: 0,
-  '@keyframes': {
-    '0%': {
-      transform: 'translate(0, 0)',
-      opacity: 1,
-    },
-    '100%': {
-      transform: 'translate(0, 50px)',
-      opacity: 0,
-    },
-  },
-  animationTimingFunction: 'cubic-bezier(0.54, 0.03, 0.67, 0.88)',
-  animationDuration: '.3s',
+  animation: 'fillandsign__modalFadeOut .3s cubic-bezier(.54,.03,.67,.88)',
 })
 
 globalStyle(`.fillandsign__modal.fillandsign__modal--active`, {
   opacity: 1,
-  '@keyframes': {
-    '0%': {
-      transform: 'translate(0, 50px)',
-      opacity: 0,
-    },
-    '100%': {
-      transform: 'translate(0, 0)',
-      opacity: 1,
-    },
-  },
-  animationTimingFunction: 'cubic-bezier(0.22, 0.62, 0.4, 1)',
-  animationDuration: '.3s',
+  animation: 'fillandsign__modalFadeIn .3s cubic-bezier(.22,.62,.4,1)',
 })
 
 globalStyle(`.fillandsign__modalBackground`, {
@@ -58,16 +36,7 @@ globalStyle(
   `.fillandsign__modalBackground.fillandsign__modalBackground--active`,
   {
     opacity: 1,
-    '@keyframes': {
-      '0%': {
-        opacity: 0,
-      },
-      '100%': {
-        opacity: 1,
-      },
-    },
-    animationTimingFunction: 'linear',
-    animationDuration: '.3s',
+    animation: 'fillandsign__modalBackgroundFadeIn .3s',
   },
 )
 

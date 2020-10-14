@@ -1,4 +1,4 @@
-export const taktikalKeyframes = `
+const taktikalKeyframes = `
     @keyframes fillandsign__modalFadeIn {
         from { transform: translate(0, 50px); opacity: 0; }
         to   { transform: translate(0, 0); opacity: 1; }
@@ -12,3 +12,5 @@ export const taktikalKeyframes = `
         to   { opacity: 1; }
     }
 `
+
+export default taktikalKeyframes

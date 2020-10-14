@@ -17,8 +17,8 @@ import {
   Link,
   Icon,
   ButtonDeprecated as Button,
-  IconProps,
 } from '@island.is/island-ui/core'
+import { getProcessEntryLinkProps } from '@island.is/island-ui/contentful'
 import {
   DrawerMenu,
   SidebarBox,
@@ -26,7 +26,6 @@ import {
   SidebarSubNav,
   RichText,
 } from '@island.is/web/components'
-import { OpenDocument } from '@island.is/island-ui/contentful'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
@@ -152,19 +151,11 @@ const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
 
   const { buttonText, processLink, dropSignFileKey } = processEntries[0]
 
-  const buttonProps = {
-    ...(!dropSignFileKey && {
-      href: processLink,
-      icon: 'external' as IconProps['type'],
-    }),
-    ...(dropSignFileKey && {
-      onClick: () => OpenDocument(dropSignFileKey),
-    }),
-  }
+  const props = getProcessEntryLinkProps({ processLink, dropSignFileKey })
 
   return (
     <SidebarBox>
-      <Button {...buttonProps} width="fluid">
+      <Button {...props} width="fluid">
         {buttonText || defaultText}
       </Button>
     </SidebarBox>

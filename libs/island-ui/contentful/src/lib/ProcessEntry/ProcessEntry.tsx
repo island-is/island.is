@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
+import { OpenDocumentOptions } from '@taktikal/fillandsign/dist/types'
 import {
   Text,
   ButtonDeprecated as Button,
@@ -8,8 +9,9 @@ import {
   Stack,
   IconProps,
 } from '@island.is/island-ui/core'
-import { OpenDocument } from '../Taktikal/Taktikal'
 
+import '../Taktikal/Taktikal.treat'
+import taktikalKeyframes from '../Taktikal/taktikalKeyframes'
 import * as styles from './ProcessEntry.treat'
 
 export const Titles: { [k: string]: string } = {
@@ -29,6 +31,31 @@ export interface ProcessEntryProps {
   buttonText: string
 }
 
+export const openDocument = (
+  dropSignFileKey: string,
+  options?: OpenDocumentOptions,
+) => {
+  import('@taktikal/fillandsign').then(({ openDocument }) =>
+    Promise.resolve(openDocument(dropSignFileKey, options)),
+  )
+}
+
+export const getProcessEntryLinkProps = (
+  props: Pick<ProcessEntryProps, 'processLink' | 'dropSignFileKey'>,
+) => {
+  const { processLink, dropSignFileKey } = props
+
+  return {
+    ...(!dropSignFileKey && {
+      href: processLink,
+      icon: 'external' as IconProps['type'],
+    }),
+    ...(dropSignFileKey && {
+      onClick: () => openDocument(dropSignFileKey),
+    }),
+  }
+}
+
 export const ProcessEntry: FC<ProcessEntryProps> = ({
   processTitle,
   processLink,
@@ -38,15 +65,21 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
 }) => {
   const label = Titles[type]
 
-  const buttonProps = {
-    ...(!dropSignFileKey && {
-      href: processLink,
-      icon: 'external' as IconProps['type'],
-    }),
-    ...(dropSignFileKey && {
-      onClick: () => OpenDocument(dropSignFileKey),
-    }),
-  }
+  // Add keyframes if they don't exist. This can hopefully be moved to globalStyle
+  // in the treat file if this gets fixed: https://github.com/seek-oss/treat/issues/137
+  useEffect(() => {
+    if (
+      dropSignFileKey &&
+      !document.querySelector('style[data-taktikal-keyframes]')
+    ) {
+      const el = document.createElement('style')
+      el.innerHTML = taktikalKeyframes
+      el.setAttribute('data-taktikal-keyframes', '')
+      document.getElementsByTagName('head')[0].appendChild(el)
+    }
+  }, [dropSignFileKey])
+
+  const buttonProps = getProcessEntryLinkProps({ processLink, dropSignFileKey })
 
   return (
     <Box width="full" background="blue100" borderRadius="large">
