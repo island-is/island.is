@@ -2,12 +2,11 @@ import React, { FC } from 'react'
 import * as styles from './Table.treat'
 import cn from 'classnames'
 import { Text } from '@island.is/island-ui/core'
-import { TextVariants } from 'libs/island-ui/core/src/lib/Text/Text.treat'
 
 interface Data {
   span?: number
   alignRight?: boolean
-  textVariant?: TextVariants
+  textVariant?: any
 }
 
 export const Table: FC = ({ children }) => {
