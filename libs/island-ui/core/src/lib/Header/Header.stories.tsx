@@ -6,4 +6,6 @@ export default {
   component: Header,
 }
 
-export const Default = () => <Header />
+export const Default = () => (
+  <Header authenticated language="EN" logoutText="Logout" />
+)

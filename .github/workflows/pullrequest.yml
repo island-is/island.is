@@ -157,6 +157,7 @@ jobs:
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 4
     strategy:
       fail-fast: false

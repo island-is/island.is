@@ -9,6 +9,10 @@ module.exports = async ({ config }) => {
   config.module.rules.push(
     {
       test: /\.(ts|tsx)$/,
+      exclude: [
+        path.resolve(__dirname, '../node_modules/'),
+        path.resolve(__dirname, '../../core/src/lib/IconRC/icons'),
+      ],
       use: [
         {
           loader: 'babel-loader',

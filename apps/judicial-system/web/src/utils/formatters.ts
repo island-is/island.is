@@ -1,4 +1,5 @@
 import { CaseTransition } from '@island.is/judicial-system/types'
+import { formatISO, setHours, setMinutes } from 'date-fns'
 
 export const parseArray = (property: string, array: string[]) => {
   try {
@@ -35,4 +36,19 @@ export const parseTransition = (
     console.log(e)
     return null
   }
+}
+
+export const parseTime = (date: string, time: string) => {
+  const timeWithoutColon = time.replace(':', '')
+
+  const arrestDateHours = setHours(
+    new Date(date),
+    parseInt(timeWithoutColon.substr(0, 2)),
+  )
+
+  const arrestDateMinutes = formatISO(
+    setMinutes(arrestDateHours, parseInt(timeWithoutColon.substr(2, 4))),
+  )
+
+  return arrestDateMinutes
 }

@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, act, waitFor } from '@testing-library/react'
+import { render, act, waitFor, getByText } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StepOne from './StepOne'
 import { Router } from 'react-router-dom'
@@ -24,7 +24,7 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
       getByTestId(/accusedName/i),
       getByTestId(/accusedAddress/i),
       getByTestId(/arrestTime/i),
-      getByTestId(/courtDate/i),
+      getByTestId(/requestedCourtDate/i),
     ]
 
     const court = getByTestId(/select-court/i).getElementsByClassName(
@@ -115,5 +115,33 @@ describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
     expect(accusedName.value).toEqual('Mikki Refur')
     expect(accusedAddress.value).toEqual('Undraland 2')
     expect(spy).toHaveBeenCalled()
+  })
+
+  test("should display the correct arrestTime and requestedCourtDate if it's in localstorage", () => {
+    // Arrange
+    const history = createMemoryHistory()
+
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({
+        id: 'test_id',
+        arrestDate: '2020-10-24T13:37:00Z',
+        requestedCourtDate: '2020-11-02T12:03:00Z',
+      })
+    })
+
+    // Act
+    const { getByTestId } = render(
+      <Router history={history}>
+        <StepOne />
+      </Router>,
+    )
+
+    // Assert
+    expect((getByTestId('arrestTime') as HTMLInputElement).value).toEqual(
+      '13:37',
+    )
+    expect(
+      (getByTestId('requestedCourtDate') as HTMLInputElement).value,
+    ).toEqual('12:03')
   })
 })

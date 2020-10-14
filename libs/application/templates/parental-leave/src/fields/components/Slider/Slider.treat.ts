@@ -104,3 +104,15 @@ export const remainderBar = style({
   borderLeftColor: theme.color.white,
   transition: 'left 0.3s',
 })
+
+export const progressBar = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: 0,
+  marginLeft: -1,
+  height: '100%',
+  pointerEvents: 'none',
+  transition: 'width 0.3s',
+  background: theme.color.mint400,
+})
