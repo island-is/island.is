@@ -26,6 +26,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
+  GET_SEARCH_RESULTS_NEWS_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -33,6 +34,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetSearchResultsDetailedQuery,
+  GetSearchResultsNewsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
   QueryGetNamespaceArgs,
@@ -48,10 +50,16 @@ import { Image } from '@island.is/web/graphql/schema'
 
 const PerPage = 10
 
+type SearchQueryFilters = {
+  category: string | string[]
+  showNews: boolean
+}
+
 interface CategoryProps {
   q: string
   page: number
   searchResults: GetSearchResultsDetailedQuery['searchResults']
+  newsResults: GetSearchResultsNewsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -59,6 +67,7 @@ const Search: Screen<CategoryProps> = ({
   q,
   page,
   searchResults,
+  newsResults,
   namespace,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -72,16 +81,10 @@ const Search: Screen<CategoryProps> = ({
   ] = useState(10)
   const { makePath } = routeNames(activeLocale)
 
-  const filters = {
+  const filters: SearchQueryFilters = {
     category: Router.query.category,
+    showNews: Router.query.showNews ? true : false,
   }
-
-  useEffect(() => {
-    const hasMatch = Router.asPath.includes('focus=true')
-    if (hasMatch) {
-      searchRef.current.focus()
-    }
-  }, [searchRef])
 
   useEffect(() => {
     // we only update the tagCount results when we get new tag count results
@@ -127,8 +130,9 @@ const Search: Screen<CategoryProps> = ({
 
     return labels
   }
-  const items = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage & News
+
+  const searchResultsItems = (searchResults.items as Array<
+    Article & LifeEventPage & AboutPage
   >).map((item) => ({
     title: item.title,
     description: item.intro ?? item.seoDescription,
@@ -145,10 +149,25 @@ const Search: Screen<CategoryProps> = ({
     labels: getLabels(item),
   }))
 
+  const newsItems = (newsResults.items as Array<News>).map((item) => ({
+    title: item.title,
+    description: item.intro,
+    href: makePath(item.__typename, '[slug]'),
+    as: makePath(item.__typename, item.slug),
+    label: t.newsAndAnnouncements, // todo use something different than t.newsAndAnnouncements
+  }))
+
   const onSelectCategory = (key: string) => {
     Router.replace({
       pathname: makePath('search'),
       query: { q, category: key },
+    })
+  }
+
+  const onSelectNews = () => {
+    Router.replace({
+      pathname: makePath('search'),
+      query: { q, showNews: true },
     })
   }
 
@@ -160,15 +179,24 @@ const Search: Screen<CategoryProps> = ({
     return !filters.category || filters.category === item.categorySlug
   }
 
-  const filteredItems = items.filter(byCategory)
+  const filteredItems = searchResultsItems.filter(byCategory)
 
   const totalSearchResults = searchResults.total
+  const totalNews = newsResults.total
 
-  const categoryTitle = items.find((x) => x.categorySlug === filters.category)
-    ?.category?.title
+  const totalResultsOnPage = filters.showNews ? totalNews : totalSearchResults
 
-  const categorySlug = items.find((x) => x.categorySlug === filters.category)
-    ?.categorySlug
+  const totalPages = Math.ceil(totalResultsOnPage / PerPage)
+
+  const categoryTitle = filters.showNews
+    ? t.newsAndAnnouncements
+    : searchResultsItems.find((x) => x.categorySlug === filters.category)
+        ?.category?.title
+
+  const categorySlug = filters.showNews
+    ? 'showNews'
+    : searchResultsItems.find((x) => x.categorySlug === filters.category)
+        ?.categorySlug
 
   const categorySelectOptions = sidebarCategories.map(
     ({ title, total, key }) => ({
@@ -179,8 +207,14 @@ const Search: Screen<CategoryProps> = ({
 
   categorySelectOptions.unshift({ label: 'Allir flokkar', value: '' })
 
+  totalNews > 0 &&
+    categorySelectOptions.push({
+      label: `${t.newsAndAnnouncements} (${totalNews})`,
+      value: 'showNews',
+    })
+
   const onChangeSelectCategoryOptions = ({ value }: Option) => {
-    onSelectCategory(value as string)
+    value === 'showNews' ? onSelectNews() : onSelectCategory(value as string)
   }
 
   const defaultSelectedCategory = categoryTitle
@@ -194,92 +228,126 @@ const Search: Screen<CategoryProps> = ({
       </Head>
       <CategoryLayout
         sidebar={
-          <Sidebar title={n('sidebarHeader')}>
-            <div
-              style={{
-                position: 'relative',
-              }}
-            >
-              {totalSearchResults > 0 && (
-                <>
-                  <div
-                    style={{
-                      right: 40,
-                      position: 'absolute',
-                      left: '0',
-                      top: '12px',
-                      zIndex: 10, // to accommodate for being absolute
-                    }}
-                  >
-                    <Filter
-                      truncate
-                      selected={!filters.category}
-                      onClick={() => onSelectCategory(null)}
-                      text={`${n(
-                        'allCategories',
-                        'Allir flokkar',
-                      )} (${grandTotalSearchResultCount})`}
-                    />
-                  </div>
-                  <SidebarAccordion
-                    id="sidebar_accordion_categories"
-                    label={''}
-                  >
-                    <Stack space={[1, 1, 2]}>
-                      {sidebarCategories.map((c, index) => {
-                        const selected = c.key === filters.category
-                        const text = `${c.title} (${c.total})`
+          <Stack space={3}>
+            <Sidebar title={n('sidebarHeader')}>
+              <div
+                style={{
+                  position: 'relative',
+                }}
+              >
+                {totalSearchResults > 0 && (
+                  <>
+                    <div
+                      style={{
+                        right: 40,
+                        position: 'absolute',
+                        left: '0',
+                        top: '12px',
+                        zIndex: 10, // to accommodate for being absolute
+                      }}
+                    >
+                      <Filter
+                        truncate
+                        selected={!filters.category}
+                        onClick={() => onSelectCategory(null)}
+                        text={`${n(
+                          'allCategories',
+                          'Allir flokkar',
+                        )} (${grandTotalSearchResultCount})`}
+                      />
+                    </div>
+                    <SidebarAccordion
+                      id="sidebar_accordion_categories"
+                      label={''}
+                    >
+                      <Stack space={[1, 1, 2]}>
+                        {sidebarCategories.map((c, index) => {
+                          const selected = c.key === filters.category
+                          const text = `${c.title} (${c.total})`
 
-                        if (c.key === 'uncategorized') {
-                          return null
-                        }
+                          if (c.key === 'uncategorized') {
+                            return null
+                          }
 
-                        return (
-                          <Filter
-                            key={index}
-                            selected={selected}
-                            onClick={() => onSelectCategory(c.key)}
-                            text={text}
-                          />
-                        )
-                      })}
-                    </Stack>
-                  </SidebarAccordion>
-                </>
-              )}
-            </div>
-          </Sidebar>
+                          return (
+                            <Filter
+                              key={index}
+                              selected={selected}
+                              onClick={() => onSelectCategory(c.key)}
+                              text={text}
+                            />
+                          )
+                        })}
+                      </Stack>
+                    </SidebarAccordion>
+                  </>
+                )}
+              </div>
+            </Sidebar>
+            {totalNews > 0 && (
+              <Sidebar bullet="none" title={'Niðurstöður í öðru efni'}>
+                <Stack space={[1, 1, 2]}>
+                  {newsResults.items.map((newsItem, index) => {
+                    const title = t.newsAndAnnouncements
+                    const text = `${title} (${totalNews})`
+
+                    return (
+                      <Filter
+                        key={index}
+                        selected={filters.showNews}
+                        onClick={() => onSelectNews()}
+                        text={text}
+                      />
+                    )
+                  })}
+                </Stack>
+              </Sidebar>
+            )}
+          </Stack>
         }
         belowContent={
           <Stack space={2}>
-            {filteredItems.map(
-              ({ image, thumbnail, labels, ...rest }, index) => {
-                const tags: Array<CardTagsProps> = []
+            {filters.showNews
+              ? newsItems.map(({ label, ...rest }, index) => {
+                  const tags: Array<CardTagsProps> = []
 
-                labels.forEach((label) => {
                   tags.push({
                     title: label,
                     tagProps: {
                       label: true,
                     },
                   })
-                })
 
-                return (
-                  <Card
-                    key={index}
-                    tags={tags}
-                    image={thumbnail ? thumbnail : image}
-                    {...rest}
-                  />
-                )
-              },
-            )}
+                  return <Card key={index} tags={tags} {...rest} />
+                })
+              : filteredItems.map(
+                  ({ image, thumbnail, labels, ...rest }, index) => {
+                    const tags: Array<CardTagsProps> = []
+
+                    labels.forEach((label) => {
+                      tags.push({
+                        title: label,
+                        tagProps: {
+                          label: true,
+                        },
+                      })
+                    })
+
+                    return (
+                      <Card
+                        key={index}
+                        tags={tags}
+                        image={thumbnail ? thumbnail : image}
+                        {...rest}
+                      />
+                    )
+                  },
+                )}{' '}
             {totalSearchResults > 0 && (
               <Box paddingTop={8}>
                 <Pagination
                   page={page}
-                  totalPages={Math.ceil(totalSearchResults / PerPage)}
+                  totalPages={totalPages}
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
@@ -334,11 +402,11 @@ const Search: Screen<CategoryProps> = ({
             </>
           ) : (
             <Text variant="intro" as="p">
-              {totalSearchResults}{' '}
-              {totalSearchResults === 1
+              {totalResultsOnPage}{' '}
+              {totalResultsOnPage === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
-              {filters.category && (
+              {(filters.category || filters.showNews) && (
                 <>
                   {' '}
                   {n('inCategory', 'í flokki')}
@@ -378,6 +446,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { searchResults },
     },
+    {
+      data: { searchResults: news },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
@@ -390,11 +461,22 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
             'webArticle' as SearchableContentTypes,
             'webLifeEventPage' as SearchableContentTypes,
             'webAboutPage' as SearchableContentTypes,
-            'webNews' as SearchableContentTypes,
           ],
           size: PerPage,
           ...tags,
           ...countTag,
+          page,
+        },
+      },
+    }),
+    apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
+      query: GET_SEARCH_RESULTS_NEWS_QUERY,
+      variables: {
+        query: {
+          language: locale as ContentLanguage,
+          queryString,
+          types: ['webNews' as SearchableContentTypes],
+          size: PerPage,
           page,
         },
       },
@@ -422,6 +504,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     q: queryString,
     searchResults,
+    newsResults: news,
     namespace,
     showSearchInHeader: false,
     page,
