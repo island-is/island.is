@@ -33,6 +33,8 @@ export class RestServiceCollector implements ServiceCollector {
   }
 
   private async indexProviders(providers: Array<Provider>): Promise<void> {
+    // Remove the index so we can recreate it
+    // with the latest state in X-Road
     await this.elasticService.deleteIndex()
 
     for (const provider of providers) {
