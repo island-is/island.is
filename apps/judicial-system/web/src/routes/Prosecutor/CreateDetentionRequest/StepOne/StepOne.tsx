@@ -29,7 +29,10 @@ import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseString,
+  parseTime,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -59,6 +62,10 @@ export const StepOne: React.FC = () => {
   const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
     '',
   )
+  const [
+    requestedCourtTimeErrorMessage,
+    setRequestedCourtTimeErrorMessage,
+  ] = useState<string>('')
   const [modalVisible, setModalVisible] = useState(false)
   const [isSendingNotification, setIsSendingNotification] = useState(false)
 
@@ -67,6 +74,7 @@ export const StepOne: React.FC = () => {
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const accusedNationalIdRef = useRef<HTMLInputElement>()
   const arrestTimeRef = useRef<HTMLInputElement>()
+  const requestedCourtTimeRef = useRef<HTMLInputElement>()
 
   const requiredFields: { value: string; validations: Validation[] }[] = [
     {
@@ -80,6 +88,15 @@ export const StepOne: React.FC = () => {
     { value: workingCase?.accusedName, validations: ['empty'] },
     { value: workingCase?.accusedAddress, validations: ['empty'] },
     { value: workingCase?.arrestDate, validations: ['empty'] },
+    {
+      value: arrestTimeRef.current?.value,
+      validations: ['empty', 'time-format'],
+    },
+    { value: workingCase?.requestedCourtDate, validations: ['empty'] },
+    {
+      value: requestedCourtTimeRef.current?.value,
+      validations: ['empty', 'time-format'],
+    },
   ]
 
   const courts = [
@@ -120,7 +137,6 @@ export const StepOne: React.FC = () => {
   const isNextDisabled = () => {
     for (let i = 0; i < requiredFields.length; i++) {
       for (let a = 0; a < requiredFields[i].validations.length; a++) {
-        console.log(requiredFields[i].value, requiredFields[i].validations[a])
         if (
           !validate(requiredFields[i].value, requiredFields[i].validations[a])
             .isValid
@@ -317,14 +333,8 @@ export const StepOne: React.FC = () => {
                       label="Kennitala"
                       defaultValue={workingCase.accusedNationalId}
                       ref={accusedNationalIdRef}
-                      errorMessage={
-                        validate(workingCase.accusedNationalId, 'national-id')
-                          .errorMessage
-                      }
-                      hasError={
-                        !validate(workingCase.accusedNationalId, 'national-id')
-                          .isValid
-                      }
+                      errorMessage={nationalIdErrorMessage}
+                      hasError={nationalIdErrorMessage !== ''}
                       onBlur={(evt) => {
                         updateState(
                           workingCase,
@@ -376,17 +386,25 @@ export const StepOne: React.FC = () => {
                       errorMessage={accusedNameErrorMessage}
                       hasError={accusedNameErrorMessage !== ''}
                       onBlur={(evt) => {
+                        updateState(
+                          workingCase,
+                          'accusedName',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+
                         const validateField = validate(
                           evt.target.value,
                           'empty',
                         )
 
-                        if (validateField.isValid) {
-                          autoSave(
-                            workingCase,
-                            'accusedName',
-                            evt.target.value,
-                            setWorkingCase,
+                        if (
+                          validateField.isValid &&
+                          workingCase.accusedName !== evt.target.value
+                        ) {
+                          api.saveCase(
+                            workingCase.id,
+                            parseString('accusedName', evt.target.value),
                           )
                         } else {
                           setAccusedNameErrorMessage(validateField.errorMessage)
@@ -405,17 +423,25 @@ export const StepOne: React.FC = () => {
                       errorMessage={accusedAddressErrorMessage}
                       hasError={accusedAddressErrorMessage !== ''}
                       onBlur={(evt) => {
+                        updateState(
+                          workingCase,
+                          'accusedAddress',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+
                         const validateField = validate(
                           evt.target.value,
                           'empty',
                         )
 
-                        if (validateField.isValid) {
-                          autoSave(
-                            workingCase,
-                            'accusedAddress',
-                            evt.target.value,
-                            setWorkingCase,
+                        if (
+                          validateField.isValid &&
+                          workingCase.accusedAddress !== evt.target.value
+                        ) {
+                          api.saveCase(
+                            workingCase.id,
+                            parseString('accusedAddress', evt.target.value),
                           )
                         } else {
                           setAccusedAddressErrorMessage(
@@ -476,7 +502,7 @@ export const StepOne: React.FC = () => {
                           updateState(
                             workingCase,
                             'arrestDate',
-                            formatISO(date),
+                            formatISO(date, { representation: 'date' }),
                             setWorkingCase,
                           )
                         }}
@@ -500,10 +526,11 @@ export const StepOne: React.FC = () => {
                         disabled={!workingCase.arrestDate}
                         errorMessage={arrestTimeErrorMessage}
                         hasError={arrestTimeErrorMessage !== ''}
-                        defaultValue={formatDate(
-                          workingCase.arrestDate,
-                          TIME_FORMAT,
-                        )}
+                        defaultValue={
+                          workingCase?.arrestDate?.indexOf('T') > -1
+                            ? formatDate(workingCase.arrestDate, TIME_FORMAT)
+                            : null
+                        }
                         ref={arrestTimeRef}
                         onBlur={(evt) => {
                           const validateTimeEmpty = validate(
@@ -514,7 +541,6 @@ export const StepOne: React.FC = () => {
                             evt.target.value,
                             'time-format',
                           )
-
                           if (
                             validateTimeEmpty.isValid &&
                             validateTimeFormat.isValid
@@ -524,11 +550,16 @@ export const StepOne: React.FC = () => {
                               evt.target.value,
                             )
 
-                            autoSave(
+                            updateState(
                               workingCase,
                               'arrestDate',
                               arrestDateMinutes,
                               setWorkingCase,
+                            )
+
+                            api.saveCase(
+                              workingCase.id,
+                              parseString('arrestDate', arrestDateMinutes),
                             )
                           } else {
                             setArrestTimeErrorMessage(
@@ -567,10 +598,11 @@ export const StepOne: React.FC = () => {
                           updateState(
                             workingCase,
                             'requestedCourtDate',
-                            formatISO(date),
+                            formatISO(date, { representation: 'date' }),
                             setWorkingCase,
                           )
                         }}
+                        required
                       />
                     </GridColumn>
                     <GridColumn span="3/8">
@@ -579,31 +611,60 @@ export const StepOne: React.FC = () => {
                         name="requestedCourtDate"
                         label="Tímasetning"
                         placeholder="Settu inn tíma"
-                        defaultValue={formatDate(
-                          workingCase.requestedCourtDate,
-                          TIME_FORMAT,
-                        )}
+                        errorMessage={requestedCourtTimeErrorMessage}
+                        hasError={requestedCourtTimeErrorMessage !== ''}
+                        defaultValue={
+                          workingCase.requestedCourtDate?.indexOf('T') > -1
+                            ? formatDate(
+                                workingCase.requestedCourtDate,
+                                TIME_FORMAT,
+                              )
+                            : null
+                        }
                         disabled={!workingCase.requestedCourtDate}
+                        ref={requestedCourtTimeRef}
                         onBlur={(evt) => {
-                          const requestedCourtDateMinutes = parseTime(
-                            workingCase.requestedCourtDate,
+                          const validateTimeEmpty = validate(
                             evt.target.value,
+                            'empty',
+                          )
+                          const validateTimeFormat = validate(
+                            evt.target.value,
+                            'time-format',
                           )
 
-                          autoSave(
-                            workingCase,
-                            'requestedCourtDate',
-                            requestedCourtDateMinutes,
-                            setWorkingCase,
-                          )
+                          if (
+                            validateTimeEmpty.isValid &&
+                            validateTimeFormat.isValid
+                          ) {
+                            const requestedCourtDateMinutes = parseTime(
+                              workingCase.requestedCourtDate,
+                              evt.target.value,
+                            )
 
-                          updateState(
-                            workingCase,
-                            'requestedCourtTime',
-                            requestedCourtDateMinutes,
-                            setWorkingCase,
-                          )
+                            updateState(
+                              workingCase,
+                              'requestedCourtDate',
+                              requestedCourtDateMinutes,
+                              setWorkingCase,
+                            )
+
+                            api.saveCase(
+                              workingCase.id,
+                              parseString(
+                                'requestedCourtDate',
+                                requestedCourtDateMinutes,
+                              ),
+                            )
+                          } else {
+                            setRequestedCourtTimeErrorMessage(
+                              validateTimeEmpty.errorMessage ||
+                                validateTimeFormat.errorMessage,
+                            )
+                          }
                         }}
+                        onFocus={() => setRequestedCourtTimeErrorMessage('')}
+                        required
                       />
                     </GridColumn>
                   </GridRow>
