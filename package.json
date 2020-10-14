@@ -222,6 +222,7 @@
     "@nrwl/nest": "10.2.1",
     "@nrwl/next": "10.2.1",
     "@nrwl/node": "10.2.1",
+    "@nrwl/nx-cloud": "^10.1.6",
     "@nrwl/react": "10.2.1",
     "@nrwl/storybook": "10.2.1",
     "@nrwl/web": "10.2.1",
