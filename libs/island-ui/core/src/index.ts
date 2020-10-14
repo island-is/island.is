@@ -23,8 +23,8 @@ export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 
 // Core
-export { Button as ButtonDeprecated } from './lib/Button/Button'
-export * from './lib/ButtonRC/Button'
+export { Button as ButtonDeprecated } from './lib/ButtonDeprecated/Button'
+export { Button } from './lib/Button/Button'
 export * from './lib/FocusableBox/FocusableBox'
 export * from './lib/Link/Link'
 export * from './lib/Link/ArrowLink/ArrowLink'
