@@ -32,7 +32,7 @@ interface Explanation {
   details: Explanation[]
 }
 
-export interface SearchResponse<ResponseSource, AggregationResponse = any> {
+export interface SearchResponse<ResponseSource, ResponseAggregation = any> {
   took: number
   timed_out: boolean
   _scroll_id?: string
@@ -58,7 +58,7 @@ export interface SearchResponse<ResponseSource, AggregationResponse = any> {
       sort?: string[]
     }>
   }
-  aggregations?: AggregationResponse
+  aggregations?: ResponseAggregation
 }
 
 export interface SyncOptions {
