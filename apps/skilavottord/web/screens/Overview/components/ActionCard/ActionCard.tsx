@@ -1,13 +1,12 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Typography,
   GridContainer,
   GridRow,
   GridColumn,
   Stack,
   Tooltip,
-  Inline,
+  Text,
 } from '@island.is/island-ui/core'
 import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -31,32 +30,38 @@ export const ActionCard: FC<ActionCardProps> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
+  const toolTipText = (
+    <>
+      <Text variant="small">
+        {t.tooltip.text} <a href={t.tooltip.link}>{t.tooltip.link}</a>
+      </Text>
+    </>
+  )
+
   return (
     <OutlinedBox backgroundColor="white">
       <GridContainer>
         <GridRow>
-          <GridColumn span={['10/10', '10/10', '7/10', '7/10']}>
+          <GridColumn span={['10/10', '10/10', '6/10', '7/10']}>
             <GridRow>
               <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
-                    <Typography variant="h5">{permno}</Typography>
-                    <Typography variant="p">
-                      {`${type}, ${newregdate}`}
-                    </Typography>
+                    <Text variant="h3">{permno}</Text>
+                    <Text>{`${type}, ${newregdate}`}</Text>
                   </Stack>
                 </Box>
               </GridColumn>
               <GridColumn span={['4/10', '2/10', '2/10', '3/10']}>
                 {isCoOwned && (
                   <ColumnBox width="full" paddingRight={[4, 4, 4, 1]}>
-                    <Typography variant="h5">{t.status.coOwned}</Typography>
+                    <Text variant="h5">{t.status.coOwned}</Text>
                   </ColumnBox>
                 )}
               </GridColumn>
             </GridRow>
           </GridColumn>
-          <GridColumn span={['10/10', '10/10', '3/10', '3/10']}>
+          <GridColumn span={['10/10', '10/10', '4/10', '3/10']}>
             {recyclable ? (
               <ColumnBox
                 background="blue100"
@@ -81,10 +86,10 @@ export const ActionCard: FC<ActionCardProps> = ({
                 width="full"
                 textAlign="center"
               >
-                <Inline space={'smallGutter'}>
-                  <Typography variant="pSmall">{t.actions.invalid}</Typography>
-                  <Tooltip text={t.tooltip} />
-                </Inline>
+                <Text variant="small">
+                  {t.actions.invalid}{' '}
+                  <Tooltip text={toolTipText.props.children} />
+                </Text>
               </ColumnBox>
             )}
           </GridColumn>
