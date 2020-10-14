@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { Logo } from '../Logo/Logo'
 import { Typography } from '../Typography/Typography'
 import { Inline } from './Inline'

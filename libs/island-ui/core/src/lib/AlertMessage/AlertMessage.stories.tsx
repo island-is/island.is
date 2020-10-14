@@ -1,6 +1,6 @@
 import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { AlertMessage } from './AlertMessage'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
