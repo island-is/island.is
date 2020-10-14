@@ -1,7 +1,7 @@
 module.exports = {
-  name: 'application-system-api',
+  name: 'services-user-profile',
   preset: '../../../jest.config.js',
-  coverageDirectory: '../../../coverage/apps/application-system/api',
+  coverageDirectory: '../../../coverage/apps/services/user-profile/api',
   setupFiles: ['./test/environment.jest.ts'],
   setupFilesAfterEnv: ['./test/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
