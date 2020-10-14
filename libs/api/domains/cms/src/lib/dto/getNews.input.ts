@@ -14,7 +14,7 @@ export class GetNewsInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  lang?: string
+  lang?: string = 'is'
 
   @Field(() => Int, { nullable: true })
   @IsInt()
@@ -31,15 +31,15 @@ export class GetNewsInput {
   @Field({ nullable: true })
   @IsEnum(['asc', 'desc'])
   @IsOptional()
-  order?: 'asc' | 'desc'
+  order?: 'asc' | 'desc' = 'desc'
 
   @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
-  page?: number
+  page?: number = 1
 
   @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
-  size?: number
+  size?: number = 10
 }

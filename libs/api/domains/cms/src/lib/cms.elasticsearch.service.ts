@@ -15,7 +15,7 @@ import { GetNewsDatesInput } from './dto/getNewsDates.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) { }
+  constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(
     index: SearchIndexes,
@@ -58,7 +58,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: SearchIndexes,
-    { size = 10, page = 1, order = 'desc', month, year }: GetNewsInput,
+    { size, page, order, month, year }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {

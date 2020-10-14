@@ -6,10 +6,10 @@ export class GetNewsDatesInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  lang?: string
+  lang?: string = 'is'
 
   @Field({ nullable: true })
   @IsEnum(['asc', 'desc'])
   @IsOptional()
-  order?: 'asc' | 'desc'
+  order?: 'asc' | 'desc' = 'desc'
 }
