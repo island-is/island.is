@@ -1,4 +1,10 @@
-export default {
+type IconMap = {
+  [path: string]: {
+    [icon: string]: string
+  }
+}
+
+export default <IconMap>{
   filled: {
     accessibility: 'Accessibility',
     addCircle: 'AddCircle',

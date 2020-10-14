@@ -2,7 +2,7 @@ import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
 import { Select } from './Select'
 import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 
 const figmaLink =
   'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=50%3A101'

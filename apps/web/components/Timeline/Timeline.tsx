@@ -16,7 +16,7 @@ import * as eventStyles from './Event.treat'
 import ReactDOM from 'react-dom'
 import {
   Box,
-  Icon,
+  IconDeprecated as Icon,
   ButtonDeprecated as Button,
   Stack,
   Tag,

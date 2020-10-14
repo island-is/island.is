@@ -1,7 +1,7 @@
 import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
 import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { DatePicker } from './DatePicker'
 
 const figmaLink =

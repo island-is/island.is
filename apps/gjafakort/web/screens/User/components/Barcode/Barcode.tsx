@@ -11,7 +11,7 @@ import {
   Stack,
   Typography,
   ButtonDeprecated as Button,
-  Icon,
+  IconDeprecated as Icon,
   Columns,
   Column,
   SkeletonLoader as SL,

@@ -4,7 +4,7 @@ import {
   Box,
   Stack,
   ButtonDeprecated as Button,
-  Icon,
+  IconDeprecated as Icon,
   Hidden,
 } from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'

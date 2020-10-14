@@ -10,7 +10,7 @@ import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4444/api/graphql',
+  uri: '/api/graphql',
   fetch,
 })
 

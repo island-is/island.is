@@ -60,6 +60,8 @@ export interface Case {
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealAnnouncement?: string
 }
 
 export interface Notification {
@@ -110,4 +112,6 @@ export interface RequestSignatureResponse {
 export interface ConfirmSignatureResponse {
   httpStatusCode: number
   response?: Case
+  code?: number
+  message?: string
 }
