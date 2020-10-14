@@ -1,3 +1,7 @@
 export { default as ParentalLeaveDuration } from './Duration'
 export { default as ParentalLeavePeriods } from './Periods'
+export { default as PeriodsRepeater } from './PeriodsRepeater'
+export { default as PaymentSchedule } from './PaymentSchedule'
+export { default as PaymentScheduleInformation } from './PaymentSchedule/InformationScreen'
+export { default as SalaryScreen } from './PaymentSchedule/SalaryScreen'
 export { default as ParentalLeaveUsage } from './Usage'

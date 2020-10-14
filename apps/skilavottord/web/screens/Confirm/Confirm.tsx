@@ -9,7 +9,7 @@ import {
   Button,
   Checkbox,
   Text,
-  Icon,
+  IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { CarDetailsBox } from './components'

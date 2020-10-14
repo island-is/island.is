@@ -4,7 +4,7 @@ import {
   Box,
   ButtonDeprecated as Button,
   Hidden,
-  Icon,
+  IconDeprecated as Icon,
   Stack,
   Typography,
 } from '@island.is/island-ui/core'
