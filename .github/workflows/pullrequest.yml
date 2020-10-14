@@ -94,6 +94,8 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
+        env:
+          CHUNK_SIZE: 4
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
           if [[ $CHUNKS != "[]" ]]; then
