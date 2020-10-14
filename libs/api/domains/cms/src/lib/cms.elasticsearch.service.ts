@@ -11,6 +11,7 @@ import { News } from './models/news.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
+import { GetNewsDatesInput } from './dto/getNewsDates.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -92,11 +93,15 @@ export class CmsElasticsearchService {
     }
   }
 
-  async getNewsDates(index: SearchIndexes): Promise<string[]> {
+  async getNewsDates(
+    index: SearchIndexes,
+    { order }: GetNewsDatesInput,
+  ): Promise<string[]> {
     const query = {
       types: ['webNews'],
       field: 'dateCreated',
       resolution: 'month' as dateResolution,
+      order,
     }
 
     const newsDatesResponse = await this.elasticService.getDateAggregation(

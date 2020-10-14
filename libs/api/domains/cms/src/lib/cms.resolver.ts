@@ -325,8 +325,11 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [String])
-  getNewsDates(@Args('input') { lang }: GetNewsDatesInput): Promise<string[]> {
-    return this.cmsElasticsearchService.getNewsDates(SearchIndexes[lang])
+  getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
+    return this.cmsElasticsearchService.getNewsDates(
+      SearchIndexes[input.lang],
+      input,
+    )
   }
 
   @Directive(cacheControlDirective())

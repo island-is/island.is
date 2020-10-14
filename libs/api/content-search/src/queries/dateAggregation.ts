@@ -4,6 +4,7 @@ export interface DateAggregationInput {
   types: string[]
   field?: string
   resolution?: dateResolution
+  order?: 'desc' | 'asc'
 }
 
 type aggregationResult = {
@@ -22,6 +23,7 @@ export const dateAggregationQuery = ({
   types = [],
   field = 'dateCreated',
   resolution = 'month',
+  order = 'desc',
 }: DateAggregationInput) => {
   const intervalMap = {
     year: {
@@ -43,8 +45,12 @@ export const dateAggregationQuery = ({
   }
   const query = {
     query: {
-      terms: {
-        type: types,
+      bool: {
+        filter: {
+          terms: {
+            type: types,
+          },
+        },
       },
     },
     aggs: {
@@ -52,6 +58,7 @@ export const dateAggregationQuery = ({
         date_histogram: {
           calendar_interval: intervalMap[resolution].interval,
           format: intervalMap[resolution].format,
+          order: { _key: order },
           min_doc_count: 1,
           field,
         },
