@@ -19,7 +19,12 @@ import {
   SubArticle,
 } from '../../types'
 import { wysiwyg } from './richtext'
-import { factory, slugify, simpleFactory, faker } from '@island.is/shared/mocking'
+import {
+  factory,
+  slugify,
+  simpleFactory,
+  faker,
+} from '@island.is/shared/mocking'
 
 export const image = factory<Image>({
   typename: 'Image',
