@@ -1,4 +1,4 @@
-import * as faker from 'faker'
+import faker from 'faker'
 
 /**
  * Factory helper which slugs another field on the factory.

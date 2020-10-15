@@ -1,8 +1,8 @@
-import { handleGraphQLRequest } from './handle'
+import { handle } from './handle'
 import { buildSchema } from 'graphql'
-import createResolvers from './createFieldResolver'
+import { createResolvers } from './createResolvers'
 
-describe('handleGraphQLRequest', () => {
+describe('handle', () => {
   const schema = buildSchema(`
     type Query {
       getValue: String
@@ -25,7 +25,7 @@ describe('handleGraphQLRequest', () => {
   })
 
   it('resolves normal query', async () => {
-    const result = await handleGraphQLRequest(
+    const result = await handle(
       { query: '{ getValue }' },
       {
         schema: schema,
@@ -37,7 +37,7 @@ describe('handleGraphQLRequest', () => {
   })
 
   it('resolves batched query', async () => {
-    const result = await handleGraphQLRequest(
+    const result = await handle(
       [{ query: '{ getValue }' }, { query: '{ getValue }' }],
       {
         schema: schema,
@@ -52,7 +52,7 @@ describe('handleGraphQLRequest', () => {
   })
 
   it('resolves variable query', async () => {
-    const result = await handleGraphQLRequest(
+    const result = await handle(
       {
         query: `
           query GetInput($input: String) {
@@ -71,7 +71,7 @@ describe('handleGraphQLRequest', () => {
   })
 
   it('resolves correct operation', async () => {
-    const result = await handleGraphQLRequest(
+    const result = await handle(
       {
         query: `
           query GetInput1($input1: String) {
@@ -94,7 +94,7 @@ describe('handleGraphQLRequest', () => {
   })
 
   it('resolves error query', async () => {
-    const result = await handleGraphQLRequest(
+    const result = await handle(
       { query: '{ getError }' },
       {
         schema: schema,
