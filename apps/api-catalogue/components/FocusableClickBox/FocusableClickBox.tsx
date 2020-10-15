@@ -2,15 +2,17 @@ import React, {
   ElementType,
   AllHTMLAttributes,
   forwardRef,
-  useContext
+  useContext,
 } from 'react'
 import cn from 'classnames'
 import { useToggle } from 'react-use'
-import {  Link,
-          Box, 
-          UseBoxStylesProps,
-          ColorSchemeContext,
-          ColorSchemes, } from '@island.is/island-ui/core'
+import {
+  Link,
+  Box,
+  UseBoxStylesProps,
+  ColorSchemeContext,
+  ColorSchemes,
+} from '@island.is/island-ui/core'
 
 import * as styles from './FocusableClickBox.treat'
 
@@ -28,25 +30,27 @@ interface Props
 // By default it renders as a Link component.
 
 export const FocusableClickBox = forwardRef<HTMLElement, Props>(
-  ({
-    component = Link,
-    display = 'flex',
-    borderRadius = 'large',
-    color = 'purple',
-    children,
-    className,
-    onFocus,
-    onBlur,
-    onClick,
-    ...rest
-  },
-    ref
+  (
+    {
+      component = Link,
+      display = 'flex',
+      borderRadius = 'large',
+      color = 'purple',
+      children,
+      className,
+      onFocus,
+      onBlur,
+      onClick,
+      ...rest
+    },
+    ref,
   ) => {
     const { colorScheme } = useContext(ColorSchemeContext)
     const [isFocused, toggle] = useToggle(false)
 
     return (
-      <Box ref={ref}
+      <Box
+        ref={ref}
         component={component}
         display={display}
         borderRadius={borderRadius}
@@ -65,4 +69,3 @@ export const FocusableClickBox = forwardRef<HTMLElement, Props>(
     )
   },
 )
-

@@ -1,7 +1,3 @@
 import { style } from 'treat'
 
-export const content = style({
- 
-})
-
-
+export const content = style({})

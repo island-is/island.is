@@ -12,6 +12,6 @@ The `elastic.yml` sets up a docker container named `es01` and needs to be runnin
 For the initial setup the command: `docker-compose -f .\libs\api-catalogue\elastic\elastic.yml up` initiates the container which can then be managed through Docker.
 
 After the `es01` is running it can be initialized with data from `initialData.json` using curl command:
-`curl -H 'Content-Type: application/x-ndjson' -XPOST localhost:9200/_bulk --data-binary '@./libs/api-catalogue/elastic/initialData.json'`
+`curl -H 'Content-Type: application/x-ndjson' -XPOST localhost:9200/_bulk --data-binary '@./libs/api-catalogue/elastic/initialData.txt'`
 
 The curl command: `curl -XDELETE localhost:9200/apicatalogue` can be used to delete the index.

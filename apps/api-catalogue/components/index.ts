@@ -1,41 +1,43 @@
 export { Layout } from './Layout'
-export { HomeLayout} from './HomeLayout'
+export { HomeLayout } from './HomeLayout'
 export { Header } from './Header'
 export { Card } from './Card'
-export { ServiceCard} from './ServiceCard'
+export { ServiceCard } from './ServiceCard'
 export { CategoryCheckBox } from './CategoryCheckBox'
 export { ServiceStatus, SERVICE_STATUS } from './ServiceStatus'
-export type  { ServiceStatusProps } from './ServiceStatus'
+export type { ServiceStatusProps } from './ServiceStatus'
 export { ServiceSection } from './ServiceSection'
 export { ServiceFilter } from './ServiceFilter'
 export { InputSearch } from './InputSearch'
 export { ServiceCardMessage } from './ServiceCardMessage'
-export type { ServiceCardMessageTypes, ServiceBorderStyleTypes } from './ServiceCardMessage'
+export type {
+  ServiceCardMessageTypes,
+  ServiceBorderStyleTypes,
+} from './ServiceCardMessage'
 export { FocusableClickBox } from './FocusableClickBox'
 export { useHorizontalDragScroll } from './HorizontalDragScroll'
-export { ServiceDetail } from './ServiceDetail';
+export { ServiceDetail } from './ServiceDetail'
 
-export { SideMenu } from './SideMenu';
-export type { SideMenuLink, SideMenuProps } from './SideMenu';
+export { SideMenu } from './SideMenu'
+export type { SideMenuLink, SideMenuProps } from './SideMenu'
 
-export { 
-    getService, 
-    getServices, 
-    getAllPriceCategories, 
-    getAllDataCategories, 
-    getAllAccessCategories, 
-    getAllTypeCategories,
-
-    PRICING_CATEGORY, 
-    DATA_CATEGORY, 
-    TYPE_CATEGORY, 
-    ACCESS_CATEGORY
-        } from './ServiceRepository'
+export {
+  getService,
+  getServices,
+  getAllPriceCategories,
+  getAllDataCategories,
+  getAllAccessCategories,
+  getAllTypeCategories,
+  PRICING_CATEGORY,
+  DATA_CATEGORY,
+  TYPE_CATEGORY,
+  ACCESS_CATEGORY,
+} from './ServiceRepository'
 
 export type {
-    ServiceResult, 
-    ServicesResult,
-    GetServicesParameters,
-    ServiceCardInformation,
-    ServiceDetails
+  ServiceResult,
+  ServicesResult,
+  GetServicesParameters,
+  ServiceCardInformation,
+  ServiceDetails,
 } from './ServiceRepository'

@@ -1,4 +1,3 @@
-export { SideMenu } from './SideMenu';
+export { SideMenu } from './SideMenu'
 
-export type { SideMenuLink, SideMenuProps } from './SideMenu';
-
+export type { SideMenuLink, SideMenuProps } from './SideMenu'

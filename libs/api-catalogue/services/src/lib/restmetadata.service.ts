@@ -37,9 +37,7 @@ export class RestMetadataService {
       const sorted = value.sort(serviceIdSort)
 
       let service: Service = {
-        id: uuid()
-          .split('-')
-          .join(''),
+        id: uuid().split('-').join(''),
         name: '',
         owner: '',
         description: '',

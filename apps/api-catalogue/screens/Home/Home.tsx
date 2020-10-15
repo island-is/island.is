@@ -111,19 +111,19 @@ function Home(props: HomeProps) {
 }
 
 Home.getInitialProps = async (ctx) => {
-  const client = new ContentfulApi();
-  let locale = 'is-IS';
+  const client = new ContentfulApi()
+  let locale = 'is-IS'
 
-  const pathLocale = ctx.pathname.split('/')[1];
+  const pathLocale = ctx.pathname.split('/')[1]
   if (pathLocale === 'en') {
-    locale = 'en-GB';
+    locale = 'en-GB'
   }
 
-  const pageContent = await client.fetchPageBySlug('home', locale);
+  const pageContent = await client.fetchPageBySlug('home', locale)
 
   return {
     pageContent: pageContent,
   }
 }
 
-export default Home;
+export default Home

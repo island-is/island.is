@@ -1,2 +1,1 @@
-export { ServiceSection } from './ServiceSection';
-
+export { ServiceSection } from './ServiceSection'

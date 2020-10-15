@@ -79,8 +79,8 @@ export const navigation = style({
   ':hover': {
     borderColor: theme.color.blue400,
     textDecoration: 'none',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 })
 
 export const navigationMobile = style({
@@ -99,8 +99,8 @@ export const navigationMobile = style({
   ':hover': {
     borderColor: theme.color.blue400,
     textDecoration: 'none',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 })
 
 export const navigationText = style({

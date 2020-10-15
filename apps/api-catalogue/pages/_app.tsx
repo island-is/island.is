@@ -1,26 +1,20 @@
-import type { AppProps } from 'next/app';
-import Head from 'next/head';
-import React from 'react';
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
+import React from 'react'
 
-import cn from 'classnames';
+import cn from 'classnames'
 
-import {
-  Page,
-  Box,
-  ContentBlock,
-  Footer
-} from '@island.is/island-ui/core'
-import { Header } from '../components';
+import { Page, Box, ContentBlock, Footer } from '@island.is/island-ui/core'
+import { Header } from '../components'
 
-import * as  styles from '../styles/_app.treat';
+import * as styles from '../styles/_app.treat'
 
-import '../styles/global.css';
-import { ApolloProvider } from 'react-apollo';
-import initApollo from '../graphql/client';
-
+import '../styles/global.css'
+import { ApolloProvider } from 'react-apollo'
+import initApollo from '../graphql/client'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const client = initApollo(pageProps.initialApolloState);
+  const client = initApollo(pageProps.initialApolloState)
 
   return (
     <ApolloProvider client={client}>
@@ -36,7 +30,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             type="image/png"
             sizes="32x32"
             href="/favicon-32x32.png"
-          />-
+          />
+          -
           <link
             rel="icon"
             type="image/png"
@@ -70,11 +65,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <div className={cn(styles.content)}>
           <Component {...pageProps} />
         </div>
-        <Footer
-          showMiddleLinks
-          showTagLinks
-          hideLanguageSwith
-        />
+        <Footer showMiddleLinks showTagLinks hideLanguageSwith />
       </Page>
     </ApolloProvider>
   )

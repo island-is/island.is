@@ -1,9 +1,9 @@
 export type Page = {
-  id: string,
+  id: string
   strings: Array<ContentfulString>
 }
 
 export type ContentfulString = {
-  id: string,
+  id: string
   text: string
 }

@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
-import { Box, ButtonDeprecated as Button, Column, Columns, GridColumn, GridContainer, GridRow, Link } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonDeprecated as Button,
+  Column,
+  Columns,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Link,
+} from '@island.is/island-ui/core'
 
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 import { SideMenu } from '..'
 
 function Header() {
-
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
   return (
@@ -15,11 +23,7 @@ function Header() {
           <Columns alignY="center" space={2}>
             <Column width="content">
               <IslandUIHeader
-                logoRender={(logo) => (
-                  <Link href="/">
-                    {logo}
-                  </Link>
-                )}
+                logoRender={(logo) => <Link href="/">{logo}</Link>}
               />
             </Column>
             <Column>
@@ -29,17 +33,13 @@ function Header() {
                 justifyContent="flexEnd"
                 width="full"
               >
-
                 <Button
                   variant="menu"
                   onClick={() => setSideMenuOpen(true)}
                   icon="burger"
                 >
                   Valmynd
-              </Button>
-
-
-
+                </Button>
               </Box>
             </Column>
           </Columns>
@@ -50,10 +50,10 @@ function Header() {
         handleClose={() => setSideMenuOpen(false)}
         title="Viskuausan"
         links={[
-          { title: "Upphafsíða", url: "/"},
-          { title: "API Vörulisti", url: "/services"},
-          { title: "Þróunarhandbók", url: "/design-guide"},
-          { title: "Island.is", url: "https://island.is"},
+          { title: 'Upphafsíða', url: '/' },
+          { title: 'API Vörulisti', url: '/services' },
+          { title: 'Þróunarhandbók', url: '/design-guide' },
+          { title: 'Island.is', url: 'https://island.is' },
         ]}
       />
     </GridContainer>

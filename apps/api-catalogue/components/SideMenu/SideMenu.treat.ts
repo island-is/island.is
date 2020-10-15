@@ -4,18 +4,17 @@ import { theme } from '@island.is/island-ui/theme'
 const SIDE_MENU_WIDTH = 345
 
 export const hidden = style({
-  display:'none'
+  display: 'none',
 })
 
 export const titleContainer = style({
-  display:'flex',
-  alignItems:'left'
+  display: 'flex',
+  alignItems: 'left',
 })
 export const title = style({
-  marginLeft:10,
-  fontSize:18
+  marginLeft: 10,
+  fontSize: 18,
 })
-
 
 export const root = style({
   /*display: 'none',*/

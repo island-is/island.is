@@ -1,3 +1,3 @@
-import { DesignGuide } from '../screens';
+import { DesignGuide } from '../screens'
 
-export default DesignGuide;
+export default DesignGuide

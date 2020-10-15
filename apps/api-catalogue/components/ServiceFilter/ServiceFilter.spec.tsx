@@ -1,12 +1,10 @@
+import React from 'react'
+import { render } from '@testing-library/react'
 
-import React from 'react';
-import { render } from '@testing-library/react';
-
-import { ServiceFilter } from './ServiceFilter';
-import { GetApiCatalogueInput } from '@island.is/api/schema';
+import { ServiceFilter } from './ServiceFilter'
+import { GetApiCatalogueInput } from '@island.is/api/schema'
 
 describe(' ServiceFilter ', () => {
-
   it('should render successfully', () => {
     const strings = [
       { id: 'catalog-filter-access', text: 'Aðgengi' },
@@ -25,30 +23,30 @@ describe(' ServiceFilter ', () => {
       { id: 'catalog-filter-type-soap', text: 'SOAP' },
       { id: 'catalog-filter-access-xroad', text: 'X-Road' },
       { id: 'catalog-filter-access-apigw', text: 'API GW' },
-      { id: 'catalog-filter-search', text: 'Leita' }
+      { id: 'catalog-filter-search', text: 'Leita' },
     ]
 
-    const params:GetApiCatalogueInput = {
+    const params: GetApiCatalogueInput = {
       access: [],
       cursor: null,
-      data : [],
+      data: [],
       limit: null,
       pricing: [],
-      query : null,
-      type: []
+      query: null,
+      type: [],
     }
     const { baseElement } = render(
-    <ServiceFilter
-      iconVariant="default"
-      rootClasses={null}
-      isLoading={true}
-      parameters={params}
-      onInputChange={null}
-      onClear={null}
-      onCheckCategoryChanged={null}
-      strings={strings}
-    />
-       )
-    expect(baseElement).toBeTruthy();
+      <ServiceFilter
+        iconVariant="default"
+        rootClasses={null}
+        isLoading={true}
+        parameters={params}
+        onInputChange={null}
+        onClear={null}
+        onCheckCategoryChanged={null}
+        strings={strings}
+      />,
+    )
+    expect(baseElement).toBeTruthy()
   })
 })

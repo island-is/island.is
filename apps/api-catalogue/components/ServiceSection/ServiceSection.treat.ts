@@ -1,6 +1,5 @@
-import { style} from 'treat'
+import { style } from 'treat'
 
 export const root = style({
-    marginBottom:40,
+  marginBottom: 40,
 })
-

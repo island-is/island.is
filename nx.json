@@ -53,7 +53,29 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
+    "api-catalogue-consts": {
+      "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
+    },
+    "api-catalogue-elastic": {
+      "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
     "api-content-search": {
+      "tags": []
+    },
+    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
@@ -263,6 +285,9 @@
     "services-search-indexer": {
       "tags": []
     },
+    "services-xroad-collector": {
+      "tags": []
+    },
     "shared-form-fields": {
       "tags": []
     },
@@ -288,33 +313,6 @@
     "web-e2e": {
       "tags": [],
       "implicitDependencies": ["web"]
-    },
-    "api-domains-api-catalogue": {
-      "tags": []
-    },
-    "api-catalogue-types": {
-      "tags": []
-    },
-    "api-catalogue-consts": {
-      "tags": []
-    },
-    "api-catalogue-elastic": {
-      "tags": []
-    },
-    "services-xroad-collector": {
-      "tags": []
-    },
-    "api-catalogue-services": {
-      "tags": []
-    },
-    "api-catalogue": {
-      "tags": []
-    },
-    "api-catalogue-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "api-catalogue"
-      ]
     }
   },
   "affected": {

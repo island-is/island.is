@@ -1,1 +1,1 @@
-export { CategoryCheckBox } from './CategoryCheckBox';
+export { CategoryCheckBox } from './CategoryCheckBox'

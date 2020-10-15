@@ -1,3 +1,3 @@
-import { Home } from '../screens';
+import { Home } from '../screens'
 
-export default Home;
+export default Home

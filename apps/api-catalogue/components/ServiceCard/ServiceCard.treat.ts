@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const defaultWidth = 400;
+export const defaultWidth = 400
 
 export const card = style({
   width: 310,
@@ -14,8 +14,8 @@ export const card = style({
   borderStyle: 'solid',
   ':hover': {
     borderColor: theme.color.blue400,
-    textDecoration: 'none'
-  }
+    textDecoration: 'none',
+  },
 })
 
 export const name = style({
@@ -28,7 +28,7 @@ export const owner = style({
   fontSize: 14,
   color: theme.color.dark400,
   fontWeight: 300,
-  paddingTop: 2
+  paddingTop: 2,
 })
 
 export const serviceStatus = style({

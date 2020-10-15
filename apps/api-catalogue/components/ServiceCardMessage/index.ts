@@ -1,2 +1,5 @@
-export { ServiceCardMessage } from './ServiceCardMessage';
-export type { ServiceCardMessageTypes, ServiceBorderStyleTypes } from './ServiceCardMessage'
+export { ServiceCardMessage } from './ServiceCardMessage'
+export type {
+  ServiceCardMessageTypes,
+  ServiceBorderStyleTypes,
+} from './ServiceCardMessage'

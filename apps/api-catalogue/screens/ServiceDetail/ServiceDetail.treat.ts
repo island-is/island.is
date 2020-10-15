@@ -7,5 +7,5 @@ export const errorContainer = style({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  fontFamily: theme.typography.fontFamily
+  fontFamily: theme.typography.fontFamily,
 })

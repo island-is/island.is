@@ -156,7 +156,7 @@ export default function ServiceList(props: ServiceListProps) {
     refetch()
   }
 
-  const onSearchChange = function(inputValue: string) {
+  const onSearchChange = function (inputValue: string) {
     setParameters({ ...parameters, query: inputValue })
   }
 
