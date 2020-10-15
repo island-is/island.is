@@ -21,6 +21,7 @@ import {
   updateState,
   autoSave,
   renderFormStepper,
+  isNextDisabled,
 } from '../../../../utils/stepHelper'
 import { isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
@@ -133,22 +134,6 @@ export const StepOne: React.FC = () => {
   const defaultCourt = courts.filter(
     (court) => court.label === workingCase?.court,
   )
-
-  const isNextDisabled = () => {
-    // Loop through requiredFields
-    for (let i = 0; i < requiredFields.length; i++) {
-      // Loop through validations for each required field
-      for (let a = 0; a < requiredFields[i].validations.length; a++) {
-        if (
-          !validate(requiredFields[i].value, requiredFields[i].validations[a])
-            .isValid
-        ) {
-          return true
-        }
-      }
-    }
-    return false
-  }
 
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
@@ -675,7 +660,7 @@ export const StepOne: React.FC = () => {
                 <FormFooter
                   nextUrl={Constants.STEP_TWO_ROUTE}
                   onNextButtonClick={() => setModalVisible(true)}
-                  nextIsDisabled={isNextDisabled()}
+                  nextIsDisabled={isNextDisabled(requiredFields)}
                 />
               </GridColumn>
             </GridRow>
