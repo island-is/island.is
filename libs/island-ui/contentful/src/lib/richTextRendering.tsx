@@ -5,7 +5,6 @@ import {
   Inline,
   BLOCKS,
   INLINES,
-  AssetHyperlink,
 } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
@@ -35,7 +34,7 @@ import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
 import { Location, LocationProps } from './Location/Location'
 
-type HtmlSlice = { __typename: 'Html'; document: any }
+type HtmlSlice = { __typename: 'Html'; document: Document }
 type FaqListSlice = { __typename: 'FaqList' } & FaqListProps
 type StatisticsSlice = { __typename: 'Statistics' } & StatisticsProps
 type ImageSlice = { __typename: 'Image' } & Omit<ImageProps, 'thumbnail'>
@@ -160,9 +159,9 @@ const typography = (
   variant: TextProps['variant'],
   as: TextProps['as'],
   withId = false,
-) => (_: Block, children: ReactNode) => (
+) => (_: Block | Inline, children: ReactNode) => (
   <Text
-    id={withId ? slugify(String(children)) : null}
+    id={withId ? slugify(String(children)) : undefined}
     variant={variant}
     as={as}
   >
@@ -177,14 +176,15 @@ export const defaultRenderNode: Readonly<RenderNode> = {
   [BLOCKS.HEADING_4]: typography('h4', 'h4', true),
   [BLOCKS.HEADING_5]: typography('h5', 'h5'),
   [BLOCKS.PARAGRAPH]: typography('default', 'p'),
-  [BLOCKS.QUOTE]: (_node: Block, children: ReactNode): ReactNode => (
+  [BLOCKS.QUOTE]: (node: Block | Inline, children: ReactNode): ReactNode => (
     <Blockquote>{children}</Blockquote>
   ),
-  [INLINES.HYPERLINK]: (node: Inline, children: ReactNode): ReactNode => (
-    <Hyperlink href={node.data.uri}>{children}</Hyperlink>
-  ),
+  [INLINES.HYPERLINK]: (
+    node: Block | Inline,
+    children: ReactNode,
+  ): ReactNode => <Hyperlink href={node.data.uri}>{children}</Hyperlink>,
   [INLINES.ASSET_HYPERLINK]: (
-    node: AssetHyperlink,
+    node: Block | Inline,
     children: ReactNode,
   ): ReactNode => {
     const asset = (node.data.target as unknown) as Asset
@@ -263,9 +263,11 @@ export const renderSlices = (
       return null
     }
 
+    const allSlices = slices as { [key: number]: Slice }
+
     return (
       <Fragment key={index}>
-        {index > 0 && config.renderPadding(slices[index - 1], slice, config)}
+        {index > 0 && config.renderPadding(allSlices[index - 1], slice, config)}
         {comp}
       </Fragment>
     )

@@ -3,7 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './BorderedContent.treat'
 
-interface BorderedContentProps {
+export interface BorderedContentProps {
   topContent: ReactNode
   bottomContent: ReactNode
 }
