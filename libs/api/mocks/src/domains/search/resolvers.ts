@@ -1,6 +1,6 @@
 import { Items, Resolvers } from '../../types'
-import { articles, lifeEvents, newsList } from '../cms/seed'
 import { filterItem, getTagCounts } from './utils'
+import { store } from '../cms'
 
 export const resolvers: Resolvers = {
   Items: {
@@ -12,7 +12,7 @@ export const resolvers: Resolvers = {
   Query: {
     webSearchAutocomplete: (parent, args) => {
       const { singleTerm, size } = args.input
-      const matchedArticles = articles.filter((article) =>
+      const matchedArticles = store.articles.filter((article) =>
         article.title.startsWith(singleTerm),
       )
       return {
@@ -30,11 +30,11 @@ export const resolvers: Resolvers = {
         ...types.map((type) => {
           switch (type) {
             case 'webArticle':
-              return articles
+              return store.articles
             case 'webLifeEventPage':
-              return lifeEvents
+              return store.lifeEvents
             case 'webNews':
-              return newsList
+              return store.newsList
             default:
               return []
           }

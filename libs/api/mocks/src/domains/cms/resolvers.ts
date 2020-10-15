@@ -1,14 +1,5 @@
 import { Resolvers } from '../../types'
-import {
-  alertBanner,
-  articleCategories,
-  articles,
-  frontPageSliders,
-  homepage,
-  lifeEvents,
-  menu,
-  newsList,
-} from './seed'
+import { store } from './store'
 
 export const resolvers: Resolvers = {
   Slice: {
@@ -18,23 +9,23 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    getArticleCategories: () => articleCategories,
+    getArticleCategories: () => store.articleCategories,
 
     getArticles: (parent, args) => {
-      return articles.filter(
+      return store.articles.filter(
         (article) => article.category?.slug === args.input.category,
       )
     },
 
     getSingleArticle: (parent, args) =>
-      articles.find((article) => article.slug === args.input.slug) || null,
+      store.articles.find((article) => article.slug === args.input.slug) || null,
 
-    getMenu: () => menu,
+    getMenu: () => store.menu,
 
-    getAlertBanner: () => alertBanner,
+    getAlertBanner: () => store.alertBanner,
 
     getNewsList: (parent, args) => {
-      const sorted = args.input.ascending ? [...newsList].reverse() : newsList
+      const sorted = args.input.ascending ? [...store.newsList].reverse() : store.newsList
       const page = args.input.page || 1
       const perPage = args.input.perPage || 10
       return {
@@ -42,32 +33,32 @@ export const resolvers: Resolvers = {
         page: {
           page,
           perPage,
-          totalResults: newsList.length,
-          totalPages: Math.ceil(newsList.length / perPage),
+          totalResults: store.newsList.length,
+          totalPages: Math.ceil(store.newsList.length / perPage),
         },
       }
     },
 
     getSingleNews: (parent, args) =>
-      newsList.find((news) => news.slug === args.input.slug) || null,
+      store.newsList.find((news) => news.slug === args.input.slug) || null,
 
-    getLifeEvents: () => lifeEvents,
+    getLifeEvents: () => store.lifeEvents,
 
     getLifeEventPage: (parent, args) =>
-      lifeEvents.find((lifeEvent) => lifeEvent.slug === args.input.slug) ||
+      store.lifeEvents.find((lifeEvent) => lifeEvent.slug === args.input.slug) ||
       null,
 
     getLifeEventsInCategory: (parent, args) => {
-      return lifeEvents.filter(
+      return store.lifeEvents.filter(
         (lifeEvent) => lifeEvent.category?.slug === args.input.slug,
       )
     },
 
     getFrontpageSliderList: () => ({
-      items: frontPageSliders,
+      items: store.frontPageSliders,
     }),
 
-    getHomepage: () => homepage,
+    getHomepage: () => store.homepage,
 
     getNamespace: (parent, args) => {
       return {
