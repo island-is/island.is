@@ -118,6 +118,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             <GridColumn
               offset={['0', '0', '0', '0', '1/9']}
               span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+              paddingBottom={4}
             >
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
@@ -125,6 +126,13 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   {n('lifeEventTitle', 'Lífsviðburður')}
                 </Tag>
               </Breadcrumbs>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '0', '1/9']}
+              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+            >
               <Text variant="h1" as="h1">
                 <span id={slugify(title)}>{title}</span>
               </Text>
@@ -135,7 +143,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               )}
             </GridColumn>
           </GridRow>
-          <Box paddingTop={8}>
+          <Box paddingTop={4}>
             <RichText body={content} config={{ defaultPadding: 4 }} />
           </Box>
         </>

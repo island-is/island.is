@@ -442,13 +442,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           </GridColumn>
         </GridRow>
         {!!contentOverviewOptions.length && (
-          <GridRow>
-            <GridColumn span="9/9" paddingBottom={4}>
-              <Hidden above="sm">
+          <Hidden above="sm">
+            <GridRow>
+              <GridColumn span="9/9" paddingBottom={4}>
                 <DrawerMenu categories={combinedMobileNavigation} />
-              </Hidden>
-            </GridColumn>
-          </GridRow>
+              </GridColumn>
+            </GridRow>
+          </Hidden>
         )}
         <GridRow>
           <GridColumn
