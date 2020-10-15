@@ -152,7 +152,8 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
-      "@island.is/web/*": ["apps/web/*"]
+      "@island.is/web/*": ["apps/web/*"],
+      "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

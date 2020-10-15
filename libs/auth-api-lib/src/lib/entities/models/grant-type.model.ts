@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-const { v4: uuidv4 } = require('uuid')
+import { uuid as uuidv4 } from 'uuidv4';
 
 @Table({
   tableName: 'grant_type',

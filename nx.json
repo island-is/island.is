@@ -288,6 +288,15 @@
     "web-e2e": {
       "tags": [],
       "implicitDependencies": ["web"]
+    },    
+    "auth-api-lib": {
+      "tags": []
+    },
+    "services-auth-api": {
+      "tags": []
+    },
+    "services-auth-admin-api": {
+      "tags": []
     }
   },
   "affected": {
