@@ -2,7 +2,7 @@ import {
   Box,
   GridColumn,
   GridRow,
-  IconDeprecated as Icon,
+  Icon,
   Typography,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -110,9 +110,9 @@ const MobileMenu: FC<{}> = () => {
                   >
                     {navItem.icon && (
                       <Icon
-                        type={navItem.icon}
-                        width={18}
-                        height={18}
+                        type={navItem.icon.type}
+                        icon={navItem.icon.icon}
+                        size="small"
                         color="blueberry400"
                       />
                     )}

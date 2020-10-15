@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import React, { Suspense } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import iconMap from './iconMap'
 
 const colors = theme.color
@@ -51,7 +51,10 @@ export const Icon = ({
   titleId,
 }: IconProps & IconPropsType) => {
   const path = iconMap[type!][icon!]
-  const IconSvg = React.lazy(() => import('./icons/' + path))
+
+  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
+    path,
+  ])
   const optionalProps: SvgProps = {}
   if (className) {
     optionalProps.className = className
@@ -67,7 +70,17 @@ export const Icon = ({
     optionalProps.height = sizes[size]
   }
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        <span
+          style={{
+            display: 'inline-block',
+            width: sizes[size],
+            height: sizes[size],
+          }}
+        />
+      }
+    >
       <IconSvg fill={colors[color]} color={colors[color]} {...optionalProps} />
     </Suspense>
   )

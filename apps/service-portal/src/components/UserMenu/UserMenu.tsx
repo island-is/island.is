@@ -4,7 +4,7 @@ import {
   Box,
   ButtonDeprecated as Button,
   Hidden,
-  IconDeprecated as Icon,
+  Icon,
   Stack,
   Typography,
 } from '@island.is/island-ui/core'
@@ -59,7 +59,7 @@ const UserMenu: FC<{}> = () => {
                   background="blue200"
                   className={styles.avatar}
                 >
-                  <Icon type="user" width={30} height={30} />
+                  <Icon type="outline" icon="person" size="large" />
                 </Box>
                 <Typography variant="h4">{userInfo?.profile.name}</Typography>
               </Box>
@@ -68,7 +68,10 @@ const UserMenu: FC<{}> = () => {
                   <NavItem
                     path={ServicePortalPath.MinarUpplysingar}
                     onClick={setIsOpen.bind(null, false)}
-                    icon="user"
+                    icon={{
+                      type: 'outline',
+                      icon: 'person',
+                    }}
                     active={false}
                     variant="blue"
                   >
@@ -80,7 +83,10 @@ const UserMenu: FC<{}> = () => {
                   <NavItem
                     path={ServicePortalPath.StillingarRoot}
                     onClick={setIsOpen.bind(null, false)}
-                    icon="globe"
+                    icon={{
+                      type: 'outline',
+                      icon: 'cog',
+                    }}
                     active={false}
                     variant="blue"
                   >
@@ -92,7 +98,10 @@ const UserMenu: FC<{}> = () => {
                   <NavItem
                     path={ServicePortalPath.StillingarUmbod}
                     onClick={setIsOpen.bind(null, false)}
-                    icon="lock"
+                    icon={{
+                      type: 'outline',
+                      icon: 'lockClosed',
+                    }}
                     active={false}
                     variant="blue"
                   >
