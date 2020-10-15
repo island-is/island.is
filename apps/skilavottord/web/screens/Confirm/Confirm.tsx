@@ -9,7 +9,6 @@ import {
   Button,
   Checkbox,
   Text,
-  IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { CarDetailsBox } from './components'
@@ -99,9 +98,13 @@ const Confirm = ({ apolloState }) => {
               justifyContent="spaceBetween"
             >
               {isMobile ? (
-                <Button variant="ghost" onClick={onCancel} circle size="large">
-                  <Icon type="arrowLeft" />
-                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={onCancel}
+                  circle
+                  size="large"
+                  icon="arrowBack"
+                />
               ) : (
                 <Button variant="ghost" onClick={onCancel}>
                   {t.buttons.cancel}

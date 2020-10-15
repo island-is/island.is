@@ -1,6 +1,9 @@
 import { style, Style, styleMap } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+// this is used to generate uniqe classname for button so we can target empty styles for icon
+export const isEmpty = style({})
+
 const buttonBase = {
   display: 'flex',
   alignItems: 'center',
@@ -381,6 +384,9 @@ export const icon = style({
   height: 24,
   marginLeft: 15,
   selectors: {
+    [`${isEmpty} &`]: {
+      marginLeft: 0,
+    },
     [`${circle} &`]: {
       marginLeft: 0,
       width: '50%',
@@ -390,12 +396,12 @@ export const icon = style({
       width: 15,
       height: 15,
     },
-    [`${variants.text} &`]: {
+    [`${variants.text}:not(${isEmpty}) &`]: {
       width: 15,
       height: 15,
       marginLeft: 8,
     },
-    [`${variants.utility} &`]: {
+    [`${variants.utility}:not(${isEmpty}) &`]: {
       width: 16,
       height: 16,
       marginLeft: 8,

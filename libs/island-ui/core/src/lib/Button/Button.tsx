@@ -75,6 +75,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
               variant !== 'utility' && variant !== 'text' && !circle,
             [styles.padding.text]: variant === 'text',
             [styles.padding.utility]: variant === 'utility',
+            [styles.isEmpty]: !children,
           },
         )}
         {...buttonProps}
