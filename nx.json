@@ -114,6 +114,9 @@
     "application-ui-shell": {
       "tags": []
     },
+    "auth-api-lib": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -260,6 +263,12 @@
     "service-portal-settings": {
       "tags": []
     },
+    "services-auth-admin-api": {
+      "tags": []
+    },
+    "services-auth-api": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
@@ -288,15 +297,6 @@
     "web-e2e": {
       "tags": [],
       "implicitDependencies": ["web"]
-    },    
-    "auth-api-lib": {
-      "tags": []
-    },
-    "services-auth-api": {
-      "tags": []
-    },
-    "services-auth-admin-api": {
-      "tags": []
     }
   },
   "affected": {
