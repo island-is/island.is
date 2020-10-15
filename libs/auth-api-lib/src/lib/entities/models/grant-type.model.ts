@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { uuid as uuidv4 } from 'uuidv4';
+import { uuid as uuidv4 } from 'uuidv4'
 
 @Table({
   tableName: 'grant_type',
@@ -35,7 +35,7 @@ export class GrantType extends Model<GrantType> {
     allowNull: false,
   })
   @ApiProperty({
-    example: "some_name"
+    example: 'some_name',
   })
   name: string
 
@@ -44,7 +44,7 @@ export class GrantType extends Model<GrantType> {
     allowNull: false,
   })
   @ApiProperty({
-    example: "some_description"
+    example: 'some_description',
   })
   description: string
 

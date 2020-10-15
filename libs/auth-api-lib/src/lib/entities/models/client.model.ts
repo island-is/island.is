@@ -27,50 +27,49 @@ import { ClientClaim } from './client-claim.model'
   ],
 })
 export class Client extends Model<Client> {
-
-  constructor(){
-    super();
-    this.clientId = null;
-    this.clientName = null;
-    this.clientSecrets = [];
-    this.domain = null;
-    this.allowOfflineAccess = false;
-    this.identityTokenLifetime = 300;
-    this.accessTokenLifetime = 3600;
-    this.authorizationCodeLifetime = 300;
-    this.absoluteRefreshTokenLifetime = 2592000; 
-    this.slidingRefreshTokenLifetime = 1296000;  
-    this.consentLifetime = 300; // What is the right default?
-    this.refreshTokenUsage = 1;
-    this.updateAccessTokenClaimsOnRefresh = false;
-    this.refreshTokenExpiration = 1;
-    this.allowPlainTextPkce = false;
-    this.accessTokenType = 1; // JWT
-    this.enableLocalLogin = true;
-    this.includeJwtId = true;
-    this.alwaysSendClientClaims = false;
-    this.pairWiseSubjectSalt = '';
-    this.userSsoLifetime = null;
-    this.userCodeType = null;
-    this.deviceCodeLifetime = 300;
-    this.alwaysIncludeUserClaimsInIdToken = false;
-    this.backChannelLogoutSessionRequired = true;
-    this.enabled = true;
-    this.logoUri = null;
-    this.requireConsent = false;
-    this.requirePkce = false;
-    this.requireRequestObject = false;
-    this.allowPlainTextPkce = false;
-    this.allowAccessTokenViaBrowser = false;
-    this.frontChannelLogoutUri = null;
-    this.frontChannelLogoutSessionRequired = true;
-    this.backChannelLogoutUri = null;
-    this.allowRememberConsent = true;
-    this.clientClaimsPrefix = 'client_';
-    this.clientUri = null;
-    this.description = null;
-    this.protocolType = 'oidc';
-    this.requireClientSecret = true;
+  constructor() {
+    super()
+    this.clientId = null
+    this.clientName = null
+    this.clientSecrets = []
+    this.domain = null
+    this.allowOfflineAccess = false
+    this.identityTokenLifetime = 300
+    this.accessTokenLifetime = 3600
+    this.authorizationCodeLifetime = 300
+    this.absoluteRefreshTokenLifetime = 2592000
+    this.slidingRefreshTokenLifetime = 1296000
+    this.consentLifetime = 300 // What is the right default?
+    this.refreshTokenUsage = 1
+    this.updateAccessTokenClaimsOnRefresh = false
+    this.refreshTokenExpiration = 1
+    this.allowPlainTextPkce = false
+    this.accessTokenType = 1 // JWT
+    this.enableLocalLogin = true
+    this.includeJwtId = true
+    this.alwaysSendClientClaims = false
+    this.pairWiseSubjectSalt = ''
+    this.userSsoLifetime = null
+    this.userCodeType = null
+    this.deviceCodeLifetime = 300
+    this.alwaysIncludeUserClaimsInIdToken = false
+    this.backChannelLogoutSessionRequired = true
+    this.enabled = true
+    this.logoUri = null
+    this.requireConsent = false
+    this.requirePkce = false
+    this.requireRequestObject = false
+    this.allowPlainTextPkce = false
+    this.allowAccessTokenViaBrowser = false
+    this.frontChannelLogoutUri = null
+    this.frontChannelLogoutSessionRequired = true
+    this.backChannelLogoutUri = null
+    this.allowRememberConsent = true
+    this.clientClaimsPrefix = 'client_'
+    this.clientUri = null
+    this.description = null
+    this.protocolType = 'oidc'
+    this.requireClientSecret = true
   }
 
   @PrimaryKey
@@ -82,7 +81,7 @@ export class Client extends Model<Client> {
     example: 'client_id',
   })
   clientId: string
-  
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -398,7 +397,7 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'client_'
+    defaultValue: 'client_',
   })
   @ApiProperty({
     example: 'client_claims_prefix',
@@ -435,7 +434,7 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'oidc'
+    defaultValue: 'oidc',
   })
   @ApiProperty({
     example: 'protocol_type',
@@ -482,10 +481,10 @@ export class Client extends Model<Client> {
   readonly clientSecrets: ClientSecret[]
 
   @HasMany(() => ClientGrantType)
-  readonly allowedGrantTypes : ClientGrantType[]
+  readonly allowedGrantTypes: ClientGrantType[]
 
   @HasMany(() => ClientClaim)
-  readonly claims : ClientClaim[]
+  readonly claims: ClientClaim[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms

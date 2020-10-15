@@ -8,9 +8,7 @@ bootstrap({
   name: 'auth-admin-api',
   openApi: new DocumentBuilder()
     .setTitle('IdentityServer Admin api')
-    .setDescription(
-      'Api for administration.',
-    )
+    .setDescription('Api for administration.')
     .setVersion('1.0')
     .addTag('auth-admin-api')
     .build(),

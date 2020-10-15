@@ -15,7 +15,6 @@ import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model
 import { IdentityResourcesDTO } from '../entities/dto/identity-resources-dto'
 import { ApiScopesDTO } from '../entities/dto/api-scopes-dto'
 
-
 @Injectable()
 export class ResourcesService {
   applicationsRegistered = new Counter({

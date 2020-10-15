@@ -27,9 +27,18 @@ export class GrantsController {
 
   @Get()
   @ApiOkResponse({ type: Grant })
-  async getAll(@Query('subjectId') subjectId: string, @Query('sessionId') sessionId: string,
-  @Query('clientId') clientId: string, @Query('type') type: string): Promise<Grant[]> {
-    const grants = await this.grantsService.getAllAsync(subjectId, sessionId, clientId, type)
+  async getAll(
+    @Query('subjectId') subjectId: string,
+    @Query('sessionId') sessionId: string,
+    @Query('clientId') clientId: string,
+    @Query('type') type: string,
+  ): Promise<Grant[]> {
+    const grants = await this.grantsService.getAllAsync(
+      subjectId,
+      sessionId,
+      clientId,
+      type,
+    )
 
     if (!grants) {
       throw new NotFoundException('Nothing found')
@@ -52,9 +61,18 @@ export class GrantsController {
 
   @Delete()
   @ApiOkResponse()
-  async removeAllAsync(@Query('subjectId') subjectId: string, @Query('sessionId') sessionId: string,
-  @Query('clientId') clientId: string, @Query('type') type: string): Promise<number> {
-    return await this.grantsService.removeAllAsync(subjectId, sessionId, clientId, type)
+  async removeAllAsync(
+    @Query('subjectId') subjectId: string,
+    @Query('sessionId') sessionId: string,
+    @Query('clientId') clientId: string,
+    @Query('type') type: string,
+  ): Promise<number> {
+    return await this.grantsService.removeAllAsync(
+      subjectId,
+      sessionId,
+      clientId,
+      type,
+    )
   }
 
   @Delete(':key')

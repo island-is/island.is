@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UsersModule } from './modules/users/users.module'
 import { ClientsModule } from './modules/clients/clients.module'
@@ -15,11 +15,9 @@ import { AuthModule, SequelizeConfigService } from '@island.is/auth-api-lib'
     UsersModule,
     ClientsModule,
     ResourcesModule,
-    ConfigModule.forRoot(
-      {
-        envFilePath: ['.env', '.env.secret']
-      }
-    )
+    ConfigModule.forRoot({
+      envFilePath: ['.env', '.env.secret'],
+    }),
   ],
 })
 export class AppModule {}

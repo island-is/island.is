@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /* eslint-env node */
 
 module.exports = {
@@ -173,4 +173,4 @@ module.exports = {
       COMMIT;
     `)
   },
-};
+}

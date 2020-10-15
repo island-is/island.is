@@ -1,7 +1,4 @@
-import {
-  Inject,
-  Injectable,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
@@ -17,7 +14,6 @@ import { ClientGrantType } from '../entities/models/client-grant-type.model'
 import { ClientDTO } from '../entities/dto/client-dto'
 import { ClientUpdateDTO } from '../entities/dto/client-update-dto'
 import { ClientClaim } from '../entities/models/client-claim.model'
-
 
 @Injectable()
 export class ClientsService {
@@ -58,9 +54,7 @@ export class ClientsService {
   async create(client: ClientDTO): Promise<Client> {
     this.logger.debug('Creating a new client')
 
-    return await this.clientModel.create(
-      { ...client }
-    )
+    return await this.clientModel.create({ ...client })
   }
 
   async update(client: ClientUpdateDTO, id: string): Promise<Client> {
@@ -69,8 +63,8 @@ export class ClientsService {
     await this.clientModel.update(
       { ...client },
       {
-        where: { clientId: id}
-      }
+        where: { clientId: id },
+      },
     )
 
     return await this.findClientById(id)
@@ -80,7 +74,7 @@ export class ClientsService {
     this.logger.debug('Deleting client with id: ', id)
 
     return await this.clientModel.destroy({
-      where: { clientId: id }
+      where: { clientId: id },
     })
   }
 }

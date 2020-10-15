@@ -16,23 +16,28 @@ export class GrantsService {
     private logger: Logger,
   ) {}
 
-  async getAllAsync(subjectId: string, sessionId: string, clientId: string, type: string): Promise<Grant[]> {
+  async getAllAsync(
+    subjectId: string,
+    sessionId: string,
+    clientId: string,
+    type: string,
+  ): Promise<Grant[]> {
     let whereOptions: WhereOptions = {}
 
     if (subjectId) {
-      whereOptions = {...whereOptions, subjectId: subjectId}
+      whereOptions = { ...whereOptions, subjectId: subjectId }
     }
 
     if (sessionId) {
-      whereOptions = {...whereOptions, sessionId: sessionId}
+      whereOptions = { ...whereOptions, sessionId: sessionId }
     }
 
     if (clientId) {
-      whereOptions = {...whereOptions, clientId: clientId}
+      whereOptions = { ...whereOptions, clientId: clientId }
     }
 
     if (type) {
-      whereOptions = {...whereOptions, type: type}
+      whereOptions = { ...whereOptions, type: type }
     }
 
     this.logger.debug(`Finding all grants with filter `, whereOptions)
@@ -52,23 +57,28 @@ export class GrantsService {
     })
   }
 
-  async removeAllAsync(subjectId: string, sessionId: string, clientId: string, type: string): Promise<number> {
+  async removeAllAsync(
+    subjectId: string,
+    sessionId: string,
+    clientId: string,
+    type: string,
+  ): Promise<number> {
     let whereOptions: WhereOptions = {}
 
     if (subjectId) {
-      whereOptions = {...whereOptions, subjectId: subjectId}
+      whereOptions = { ...whereOptions, subjectId: subjectId }
     }
 
     if (sessionId) {
-      whereOptions = {...whereOptions, sessionId: sessionId}
+      whereOptions = { ...whereOptions, sessionId: sessionId }
     }
 
     if (clientId) {
-      whereOptions = {...whereOptions, clientId: clientId}
+      whereOptions = { ...whereOptions, clientId: clientId }
     }
 
     if (type) {
-      whereOptions = {...whereOptions, type: type}
+      whereOptions = { ...whereOptions, type: type }
     }
 
     this.logger.debug(`Removing grants with filter `, whereOptions)
@@ -91,9 +101,6 @@ export class GrantsService {
   async createAsync(grant: GrantDto): Promise<Grant> {
     this.logger.debug(`Creating a new grant`)
 
-    return await this.grantModel.create(
-      { ...grant }
-    )
+    return await this.grantModel.create({ ...grant })
   }
-
 }
