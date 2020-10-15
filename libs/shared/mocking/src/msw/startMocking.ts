@@ -1,6 +1,8 @@
 import { RequestHandler } from 'msw'
 
-export const startMocking = (requestHandlers: RequestHandler<any,any,any,any,any>[]) => {
+export const startMocking = (
+  requestHandlers: RequestHandler<any, any, any, any, any>[],
+) => {
   if (typeof window === 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { setupServer } = require('msw/node')

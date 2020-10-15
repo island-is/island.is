@@ -23,10 +23,7 @@ export function getTagCounts(filteredItems: Items[]) {
   return sortBy(Object.values(tagMap), 'value')
 }
 
-export function filterItem(
-  item: Items,
-  query: SearcherInput,
-) {
+export function filterItem(item: Items, query: SearcherInput) {
   if (!item.title.includes(query.queryString)) {
     return false
   }

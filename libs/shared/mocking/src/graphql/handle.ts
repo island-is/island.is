@@ -1,4 +1,9 @@
-import { graphql, GraphQLFieldResolver, GraphQLSchema, GraphQLTypeResolver } from 'graphql'
+import {
+  graphql,
+  GraphQLFieldResolver,
+  GraphQLSchema,
+  GraphQLTypeResolver,
+} from 'graphql'
 
 interface GraphQLRequest {
   query: string

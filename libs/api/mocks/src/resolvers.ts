@@ -4,4 +4,6 @@ import { Resolvers } from './types'
 import { resolvers as cmsResolvers } from './domains/cms'
 import { resolvers as searchResolvers } from './domains/search'
 
-export const resolvers = createResolvers<Resolvers>(merge({}, cmsResolvers, searchResolvers))
+export const resolvers = createResolvers<Resolvers>(
+  merge({}, cmsResolvers, searchResolvers),
+)

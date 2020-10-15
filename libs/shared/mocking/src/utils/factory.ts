@@ -96,7 +96,7 @@ export const factory = <T extends object>(init: Initializer<T>): Factory<T> => {
 
     for (const key of Object.keys(init)) {
       if (key === '$traits') {
-        continue;
+        continue
       }
 
       // Find the last initializer that defines this attribute.

@@ -10,7 +10,7 @@ describe('slugify', () => {
     const slugHelper = slugify<Obj, keyof Obj>('title')
 
     // Act
-    const slug = slugHelper.call({title: 'Hello world'})
+    const slug = slugHelper.call({ title: 'Hello world' })
 
     // Assert
     expect(slug).toEqual('hello-world')

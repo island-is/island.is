@@ -1,16 +1,23 @@
 import merge from 'lodash/merge'
-import { defaultFieldResolver, defaultTypeResolver, GraphQLFieldResolver, GraphQLTypeResolver } from 'graphql'
+import {
+  defaultFieldResolver,
+  defaultTypeResolver,
+  GraphQLFieldResolver,
+  GraphQLTypeResolver,
+} from 'graphql'
 
 export type ResolverMap = Record<string, Record<string, any> | undefined>
 
 export type Resolvers<T> = {
-  fieldResolver: GraphQLFieldResolver<any, any>,
-  typeResolver: GraphQLTypeResolver<any, any>,
-  add: (newResolvers: T) => void,
-  reset: () => void,
+  fieldResolver: GraphQLFieldResolver<any, any>
+  typeResolver: GraphQLTypeResolver<any, any>
+  add: (newResolvers: T) => void
+  reset: () => void
 }
 
-export const createResolvers = <T extends ResolverMap>(baseResolvers: T): Resolvers<T> => {
+export const createResolvers = <T extends ResolverMap>(
+  baseResolvers: T,
+): Resolvers<T> => {
   let resolvers = baseResolvers
 
   const fieldResolver: GraphQLFieldResolver<any, any> = (
@@ -39,9 +46,7 @@ export const createResolvers = <T extends ResolverMap>(baseResolvers: T): Resolv
   ) => {
     const { name } = abstractType
     const resolver =
-      resolvers &&
-      resolvers[name] &&
-      resolvers[name]!.__resolveType
+      resolvers && resolvers[name] && resolvers[name]!.__resolveType
 
     if (resolver) {
       return resolver(value, context, info)

@@ -18,14 +18,17 @@ export const resolvers: Resolvers = {
     },
 
     getSingleArticle: (parent, args) =>
-      store.articles.find((article) => article.slug === args.input.slug) || null,
+      store.articles.find((article) => article.slug === args.input.slug) ||
+      null,
 
     getMenu: () => store.menu,
 
     getAlertBanner: () => store.alertBanner,
 
     getNewsList: (parent, args) => {
-      const sorted = args.input.ascending ? [...store.newsList].reverse() : store.newsList
+      const sorted = args.input.ascending
+        ? [...store.newsList].reverse()
+        : store.newsList
       const page = args.input.page || 1
       const perPage = args.input.perPage || 10
       return {
@@ -45,8 +48,9 @@ export const resolvers: Resolvers = {
     getLifeEvents: () => store.lifeEvents,
 
     getLifeEventPage: (parent, args) =>
-      store.lifeEvents.find((lifeEvent) => lifeEvent.slug === args.input.slug) ||
-      null,
+      store.lifeEvents.find(
+        (lifeEvent) => lifeEvent.slug === args.input.slug,
+      ) || null,
 
     getLifeEventsInCategory: (parent, args) => {
       return store.lifeEvents.filter(
@@ -63,7 +67,7 @@ export const resolvers: Resolvers = {
     getNamespace: (parent, args) => {
       return {
         namespace: args.input.namespace || 'namespace',
-        fields: '{}'
+        fields: '{}',
       }
     },
   },

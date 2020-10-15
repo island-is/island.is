@@ -3,7 +3,9 @@
  */
 import { times } from './times'
 
-type InitializerFn<T, FactoryArgs extends Array<any>> = (...args: FactoryArgs) => T
+type InitializerFn<T, FactoryArgs extends Array<any>> = (
+  ...args: FactoryArgs
+) => T
 
 type Factory<T, FactoryArgs extends Array<any>> = {
   (...args: FactoryArgs): T
@@ -34,7 +36,7 @@ type Factory<T, FactoryArgs extends Array<any>> = {
  *
  * section('content')
  * > contentSection
- * 
+ *
  * section.list(3)
  * > [contentSection, imageSection, imageSection]
  *
@@ -42,7 +44,9 @@ type Factory<T, FactoryArgs extends Array<any>> = {
  * > [imageSection, imageSection, imageSection]
  * ```
  */
-export const simpleFactory = <T, FactoryArgs extends Array<any>>(initializer: InitializerFn<T, FactoryArgs>) => {
+export const simpleFactory = <T, FactoryArgs extends Array<any>>(
+  initializer: InitializerFn<T, FactoryArgs>,
+) => {
   const factoryFn = (...args: FactoryArgs) => initializer(...args)
   factoryFn.list = times(factoryFn)
 

@@ -14,7 +14,9 @@ type PropertyHandlerName =
   | 'defineProperty'
   | 'deleteProperty'
 
-export const createStore = <T extends {}>(initializerFn: Initializer<T>): Store<T> => {
+export const createStore = <T extends {}>(
+  initializerFn: Initializer<T>,
+): Store<T> => {
   const internal: Internal<T> = {
     $current: null,
     $reset() {
@@ -22,16 +24,21 @@ export const createStore = <T extends {}>(initializerFn: Initializer<T>): Store<
     },
   }
 
-  const propertyHandler = <Handler extends PropertyHandlerName>(handler: Handler) => (
-    target: Internal<T>, property: string, ...args: any[]
-  ) => {
+  const propertyHandler = <Handler extends PropertyHandlerName>(
+    handler: Handler,
+  ) => (target: Internal<T>, property: string, ...args: any[]) => {
     if (String(property).startsWith('$')) {
       return (Reflect[handler] as any).call(Reflect, target, property, ...args)
     } else {
       if (!internal.$current) {
         internal.$current = initializerFn()
       }
-      return (Reflect[handler] as any).call(Reflect, internal.$current, property, ...args)
+      return (Reflect[handler] as any).call(
+        Reflect,
+        internal.$current,
+        property,
+        ...args,
+      )
     }
   }
 
