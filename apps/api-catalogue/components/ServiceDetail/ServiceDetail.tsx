@@ -27,6 +27,7 @@ import {
   DataCategory,
 } from '@island.is/api-catalogue/consts'
 import YamlParser from 'js-yaml'
+import { OpenApiView } from '../OpenApiView'
 
 type SelectOption = {
   label: string
@@ -169,9 +170,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
               ) : data?.getOpenApi.spec == '' || data?.getOpenApi == null ? (
                 'Ekki tókst að sækja skjölun'
               ) : (
-                <RedocStandalone
-                  spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi}
-                />
+                <OpenApiView spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi} />
               )}
             </Typography>
           </AccordionItem>
