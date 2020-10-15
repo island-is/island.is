@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db_skilavottord_backend:
-    build: .
+    image: postgres:11.6
     container_name: db_skilavottord_backend
     networks:
       - local
