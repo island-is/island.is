@@ -21,9 +21,14 @@ import getCroppedImg from './CropImage'
 interface ImageCropProps {
   imageSrc?: ArrayBuffer
   onCrop: Function
+  onCancel: Function
 }
 
-const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null, onCrop }) => {
+const ImageCropper: FC<ImageCropProps> = ({
+  imageSrc = null,
+  onCrop,
+  onCancel,
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
@@ -104,15 +109,26 @@ const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null, onCrop }) => {
           />
           <Button
             onClick={() => {
-              setRotation(rotation - 90)
-            }}
-          />
-          <Button
-            onClick={() => {
               setRotation(rotation + 90)
             }}
-          />
+          >
+            Rotate right
+          </Button>
+          <Button
+            onClick={() => {
+              setRotation(rotation - 90)
+            }}
+          >
+            Rotate left
+          </Button>
           <Button onClick={cropImage}>Crop</Button>
+          <Button
+            onClick={() => {
+              onCancel()
+            }}
+          >
+            Cancel
+          </Button>
         </Box>
       </Box>
     )

@@ -106,7 +106,7 @@ interface FileUploadProps {
 }
 
 const blobToFile = (theBlob: Blob): File => {
-  var file = new File([theBlob], 'name')
+  var file = new File([theBlob], 'name.jpg')
   return file
 }
 
@@ -118,7 +118,6 @@ const FileUploadshi: FC<FileUploadProps> = () => {
 
   const handleCrop = (image: Blob) => {
     setError(undefined)
-
     setcroppedImage(image)
     console.log('final image', image)
     console.log('blob to file', blobToFile(image))
@@ -142,59 +141,59 @@ const FileUploadshi: FC<FileUploadProps> = () => {
       }
       reader.readAsDataURL(file)
     })
+    // setError(undefined)
+    // newUploadFiles.forEach((f: UploadFile) => {
+    //   uploadFile(f, dispatch).catch((e) => {
+    //     setError('An error occurred uploading one or more files')
+    //   })
+    // })
 
-    // invoke cropper and hide the document uploader
-
-    // close the cropper shows the file upload again
-
-    // accept the cropper picture and upload
-
-    setError(undefined)
-    // as soon as we get the first picture hide the modal and open the cropper
-    // when the scrapper finishes with the picture we need to call the uploader as usual
-    // without showing the upload file functionality
-
-    newUploadFiles.forEach((f: UploadFile) => {
-      uploadFile(f, dispatch).catch((e) => {
-        setError('An error occurred uploading one or more files')
-      })
-    })
-
-    dispatch({
-      type: ActionTypes.ADD,
-      payload: {
-        newFiles: newUploadFiles,
-      },
-    })
+    // dispatch({
+    //   type: ActionTypes.ADD,
+    //   payload: {
+    //     newFiles: newUploadFiles,
+    //   },
+    // })
   }
 
   const remove = (fileToRemove: UploadFile) => {
-    dispatch({
-      type: ActionTypes.REMOVE,
-      payload: {
-        fileToRemove,
-      },
-    })
+    // dispatch({
+    //   type: ActionTypes.REMOVE,
+    //   payload: {
+    //     fileToRemove,
+    //   },
+    // })
   }
 
   return (
     <>
-      <ContentBlock>
-        <Box padding={[2, 2, 3]} background="blue100">
-          <InputFileUpload
-            fileList={state}
-            header="Drag picture here to upload"
-            description="Documents accepted with extension: .pdf, .docx, .rtf"
-            buttonLabel="Select documents to upload"
-            onChange={onChange}
-            onRemove={remove}
-            errorMessage={state.length > 0 ? error : undefined}
-            accept={['.png', '.jpg', '.jpeg']}
+      {!imageSrc ? (
+        <ContentBlock>
+          <Box padding={[2, 2, 3]} background="blue100">
+            <InputFileUpload
+              fileList={state}
+              header="Drag picture here to upload"
+              description="Images accepted with extension: png, .jpg, .jpeg"
+              buttonLabel="Select picture to upload"
+              onChange={onChange}
+              onRemove={remove}
+              errorMessage={state.length > 0 ? error : undefined}
+              accept={['.png', '.jpg', '.jpeg']}
+            />
+          </Box>
+        </ContentBlock>
+      ) : (
+        <>
+          <ImageCropper
+            imageSrc={imageSrc}
+            onCrop={handleCrop}
+            onCancel={() => {
+              setImageSrc(undefined)
+            }}
           />
-        </Box>
-      </ContentBlock>
-      <ImageCropper imageSrc={imageSrc} onCrop={handleCrop} />
-      <img src={croppedImage} />
+          <img src={croppedImage} />
+        </>
+      )}
     </>
   )
 }

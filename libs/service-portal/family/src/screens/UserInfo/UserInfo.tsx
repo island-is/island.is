@@ -67,7 +67,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
-      <FileUploadshi />
       <Box marginBottom={6}>
         <Typography variant="h1" as="h1">
           {formatMessage({
@@ -135,10 +134,12 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             }}
             title="Skipta út mynd"
           >
-            {uploadPicForm()}
+            <FileUploadshi />
           </Modal>
         </Hidden>
-        <Hidden above="xs">{uploadPicForm(true)}</Hidden>
+        <Hidden above="xs">
+          <FileUploadshi />
+        </Hidden>
 
         {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine

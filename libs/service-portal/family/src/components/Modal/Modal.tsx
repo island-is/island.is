@@ -68,7 +68,6 @@ const Modal: FC<ModalProps> = ({
                       <button onClick={onCancel} className={styles.modalClose}>
                         <Icon type="close" color="blue400" />
                       </button>
-                      <FileUploadshi />
                     </Box>
                     {children}
                   </GridColumn>
