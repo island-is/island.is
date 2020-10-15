@@ -24,6 +24,7 @@ import {
   ApiTags,
   ApiQuery,
 } from '@nestjs/swagger'
+import { Op } from 'sequelize'
 import {
   Application as BaseApplication,
   callDataProviders,
@@ -125,7 +126,9 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
   ): Promise<Application[]> {
     const whereOptions: WhereOptions = {
-      assignee: nationalRegistryId,
+      assignees: {
+        [Op.contains]: [nationalRegistryId],
+      },
     }
 
     if (typeId) {

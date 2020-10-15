@@ -44,10 +44,10 @@ export class Application extends Model<Application> {
   applicant!: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  assignee!: string
+  assignees!: string[]
 
   @Column({
     type: DataType.STRING,

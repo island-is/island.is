@@ -6,7 +6,7 @@ export const ApplicationFragment = gql`
     created
     modified
     applicant
-    assignee
+    assignees
     externalId
     state
     attachments
