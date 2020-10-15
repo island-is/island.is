@@ -34,24 +34,37 @@ import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
 import { Location, LocationProps } from './Location/Location'
 
-type HtmlSlice = { __typename: 'Html'; document: Document }
-type FaqListSlice = { __typename: 'FaqList' } & FaqListProps
-type StatisticsSlice = { __typename: 'Statistics' } & StatisticsProps
-type ImageSlice = { __typename: 'Image' } & Omit<ImageProps, 'thumbnail'>
-type AssetSlice = { __typename: 'Asset' } & AssetLinkProps
-type ProcessEntrySlice = { __typename: 'ProcessEntry' } & ProcessEntryProps
-type EmbeddedVideoSlice = { __typename: 'EmbeddedVideo' } & EmbeddedVideoProps
-type TeamListSlice = { __typename: 'TeamList' } & TeamListProps
-type LocationSlice = { __typename: 'Location' } & LocationProps
-type ContactUsSlice = { __typename: 'ContactUs' } & Omit<
+type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
+type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
+type StatisticsSlice = {
+  __typename: 'Statistics'
+  id: string
+} & StatisticsProps
+type ImageSlice = { __typename: 'Image'; id: string } & Omit<
+  ImageProps,
+  'thumbnail'
+>
+type AssetSlice = { __typename: 'Asset'; id: string } & AssetLinkProps
+type ProcessEntrySlice = {
+  __typename: 'ProcessEntry'
+  id: string
+} & ProcessEntryProps
+type EmbeddedVideoSlice = {
+  __typename: 'EmbeddedVideo'
+  id: string
+} & EmbeddedVideoProps
+type TeamListSlice = { __typename: 'TeamList'; id: string } & TeamListProps
+type LocationSlice = { __typename: 'Location'; id: string } & LocationProps
+type ContactUsSlice = { __typename: 'ContactUs'; id: string } & Omit<
   ContactUsProps,
   'state' | 'onSubmit'
 >
 type SectionWithImageSlice = {
   __typename: 'SectionWithImage'
+  id: string
 } & SectionWithImageProps
 
-type Slice =
+export type Slice =
   | HtmlSlice
   | FaqListSlice
   | StatisticsSlice
@@ -76,6 +89,7 @@ type Slice =
         | 'LogoListSlice'
         | 'BulletListSlice'
         | 'TabSection'
+      id: string
     }
 
 type SliceType = Slice['__typename']
