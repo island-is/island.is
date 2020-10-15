@@ -38,7 +38,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { theme } from '@island.is/island-ui/theme'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -347,6 +346,7 @@ export const StepTwo: React.FC = () => {
                   </Text>
                 </Box>
                 <Input
+                  data-testid="lawsBroken"
                   name="lawsBroken"
                   label="Lagaákvæði sem ætluð brot kærða þykja varða við"
                   defaultValue={workingCase?.lawsBroken}
