@@ -4,7 +4,7 @@ import {
   ListClientsRequest,
   MetaservicesApi,
   XroadIdentifierIdObjectTypeEnum,
-} from '../../gen/fetch-xrd'
+} from '../../gen/fetch/xrd'
 
 import { ProviderService } from './provider.service'
 

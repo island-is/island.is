@@ -5,7 +5,7 @@ import {
   XroadIdentifier,
 } from '@island.is/api-catalogue/types'
 import { Injectable } from '@nestjs/common'
-import { RestMetaservicesApi } from '../../gen/fetch-xrd-rest'
+import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
 import { logger } from '@island.is/logging'
 import YamlParser from 'js-yaml'
 import * as _ from 'lodash'
