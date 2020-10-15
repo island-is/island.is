@@ -19,10 +19,11 @@ import Cropper from 'react-easy-crop'
 import getCroppedImg from './CropImage'
 
 interface ImageCropProps {
-  imageSrc?: string
+  imageSrc?: ArrayBuffer
+  onCrop: Function
 }
 
-const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null }) => {
+const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null, onCrop }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
@@ -33,19 +34,22 @@ const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null }) => {
   const dogImg =
     'https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000'
 
+  // call upload from parent
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    console.log(croppedArea, croppedAreaPixels)
+    setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
-  const showCroppedImage = useCallback(async () => {
+  const cropImage = useCallback(async () => {
     try {
       const croppedImage = await getCroppedImg(
-        dogImg,
+        imageSrc,
         croppedAreaPixels,
         rotation,
       )
       console.log('donee', { croppedImage })
       console.log('tyyyype', typeof croppedImage)
+      console.log(imageSrc)
+      onCrop(croppedImage)
       setCroppedImage(croppedImage)
     } catch (e) {
       console.error(e)
@@ -61,8 +65,6 @@ const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null }) => {
     setZoom(event.target.value)
   }
 
-  console.log('myndin', imageSrc)
-
   if (imageSrc) {
     return (
       <Box display={'flex'} flexDirection="column">
@@ -76,7 +78,7 @@ const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null }) => {
           }}
         >
           <Cropper
-            // image="https://upload.wikimedia.org/wikipedia/commons/f/fe/Michelle_Borromeo_Actor_Headshots_30.jpg"
+            style={{ containerStyle: {}, mediaStyle: {}, cropAreaStyle: {} }}
             image={imageSrc}
             crop={crop}
             zoom={zoom}
@@ -87,7 +89,6 @@ const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null }) => {
             showGrid={false}
             onCropChange={setCrop}
             onCropComplete={onCropComplete}
-            disableAutomaticStylesInjection={false}
             onZoomChange={setZoom}
           />
         </Box>
@@ -111,11 +112,7 @@ const ImageCropper: FC<ImageCropProps> = ({ imageSrc = null }) => {
               setRotation(rotation + 90)
             }}
           />
-          <Button
-            onClick={() => {
-              console.log('crop')
-            }}
-          />
+          <Button onClick={cropImage}>Crop</Button>
         </Box>
       </Box>
     )

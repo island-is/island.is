@@ -105,34 +105,43 @@ interface FileUploadProps {
   show?: boolean
 }
 
+const blobToFile = (theBlob: Blob): File => {
+  var file = new File([theBlob], 'name')
+  return file
+}
+
 const FileUploadshi: FC<FileUploadProps> = () => {
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
-  const [imageSrc, setImageSrc] = React.useState(null)
-  const reader = new FileReader()
+  const [imageSrc, setImageSrc] = React.useState(undefined)
+  const [croppedImage, setcroppedImage] = React.useState(undefined)
+
+  const handleCrop = (image: Blob) => {
+    setError(undefined)
+
+    setcroppedImage(image)
+    console.log('final image', image)
+    console.log('blob to file', blobToFile(image))
+    uploadFile(blobToFile(image), dispatch).catch((e) => {
+      setError('An error occurred uploading one or more files')
+    })
+  }
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
-    // the picture i need
-    // console.log(newFiles)
-    // console.log(newFiles[0].name)
-    // console.log(typeof newFiles[0])
-    // console.log(newUploadFiles[0].originalFileObj)
-    const reader = new FileReader()
-    newFiles.forEach((file) => {
-      const reader = new FileReader()
 
+    // Set the image that launches the cropper
+    newFiles.forEach((file) => {
+      console.log('file first', file)
+      const reader = new FileReader()
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
-        // Do whatever you want with the file contents
         const binaryStr = reader.result
         setImageSrc(binaryStr)
       }
       reader.readAsDataURL(file)
     })
-
-    // setImageSrc(newUploadFiles[0].originalFileObj.blob)
 
     // invoke cropper and hide the document uploader
 
@@ -184,7 +193,8 @@ const FileUploadshi: FC<FileUploadProps> = () => {
           />
         </Box>
       </ContentBlock>
-      <ImageCropper imageSrc={imageSrc} />
+      <ImageCropper imageSrc={imageSrc} onCrop={handleCrop} />
+      <img src={croppedImage} />
     </>
   )
 }
