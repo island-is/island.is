@@ -9,8 +9,13 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
 
+const apiUri =
+  location?.hostname === 'localhost' || location?.hostname === '127.0.0.1'
+    ? 'localhost:4444/api/graphql'
+    : '/api/graphql'
+
 const httpLink = new HttpLink({
-  uri: '/api/graphql',
+  uri: apiUri,
   fetch,
 })
 
