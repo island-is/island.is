@@ -48,7 +48,7 @@ import {
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 
-const PerPage = 10
+const PERPAGE = 10
 
 type SearchQueryFilters = {
   category: string | string[]
@@ -70,7 +70,7 @@ const Search: Screen<CategoryProps> = ({
   newsResults,
   namespace,
 }) => {
-  const { activeLocale, t } = useI18n()
+  const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -97,20 +97,26 @@ const Search: Screen<CategoryProps> = ({
         }),
       )
       setSidebarCategories(newTagCountResults)
-      setGrandTotalSearchResultCount(searchResults.total)
     }
-  }, [searchResults.tagCounts])
+    setGrandTotalSearchResultCount(searchResults.total)
+  }, [])
 
   const getLabels = (item) => {
     const labels = []
+
     switch (
-      item.__typename as LifeEventPage['__typename'] & News['__typename']
+      item.__typename as LifeEventPage['__typename'] &
+        News['__typename'] &
+        AboutPage['__typename']
     ) {
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
         break
+      case 'AboutPage':
+        labels.push(n('aboutPageTitle'))
+        break
       case 'News':
-        labels.push(t.newsAndAnnouncements)
+        labels.push(n('newsTitle'))
         break
       default:
         break
@@ -154,8 +160,15 @@ const Search: Screen<CategoryProps> = ({
     description: item.intro,
     href: makePath(item.__typename, '[slug]'),
     as: makePath(item.__typename, item.slug),
-    label: t.newsAndAnnouncements, // todo use something different than t.newsAndAnnouncements
+    label: n('newsTitle'),
   }))
+
+  const onRemoveFilters = () => {
+    Router.replace({
+      pathname: makePath('search'),
+      query: { q },
+    })
+  }
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -186,10 +199,10 @@ const Search: Screen<CategoryProps> = ({
 
   const totalResultsOnPage = filters.showNews ? totalNews : totalSearchResults
 
-  const totalPages = Math.ceil(totalResultsOnPage / PerPage)
+  const totalPages = Math.ceil(totalResultsOnPage / PERPAGE)
 
   const categoryTitle = filters.showNews
-    ? t.newsAndAnnouncements
+    ? n('newsTitle')
     : searchResultsItems.find((x) => x.categorySlug === filters.category)
         ?.category?.title
 
@@ -205,11 +218,14 @@ const Search: Screen<CategoryProps> = ({
     }),
   )
 
-  categorySelectOptions.unshift({ label: 'Allir flokkar', value: '' })
+  categorySelectOptions.unshift({
+    label: n('allCategories', 'Allir flokkar'),
+    value: '',
+  })
 
   totalNews > 0 &&
     categorySelectOptions.push({
-      label: `${t.newsAndAnnouncements} (${totalNews})`,
+      label: `${n('newsTitle')} (${totalNews})`,
       value: 'showNews',
     })
 
@@ -219,7 +235,7 @@ const Search: Screen<CategoryProps> = ({
 
   const defaultSelectedCategory = categoryTitle
     ? { label: categoryTitle, value: categorySlug }
-    : { label: 'Allir flokkar', value: '' }
+    : { label: n('allCategories', 'Allir flokkar'), value: '' }
 
   return (
     <>
@@ -248,8 +264,8 @@ const Search: Screen<CategoryProps> = ({
                     >
                       <Filter
                         truncate
-                        selected={!filters.category}
-                        onClick={() => onSelectCategory(null)}
+                        selected={!filters.category && !filters.showNews}
+                        onClick={() => onRemoveFilters()}
                         text={`${n(
                           'allCategories',
                           'Allir flokkar',
@@ -285,21 +301,13 @@ const Search: Screen<CategoryProps> = ({
               </div>
             </Sidebar>
             {totalNews > 0 && (
-              <Sidebar bullet="none" title={'Niðurstöður í öðru efni'}>
+              <Sidebar bullet="none" title={n('oterCategories')}>
                 <Stack space={[1, 1, 2]}>
-                  {newsResults.items.map((newsItem, index) => {
-                    const title = t.newsAndAnnouncements
-                    const text = `${title} (${totalNews})`
-
-                    return (
-                      <Filter
-                        key={index}
-                        selected={filters.showNews}
-                        onClick={() => onSelectNews()}
-                        text={text}
-                      />
-                    )
-                  })}
+                  <Filter
+                    selected={filters.showNews}
+                    onClick={() => onSelectNews()}
+                    text={`${n('newsTitle')} (${totalNews})`}
+                  />
                 </Stack>
               </Sidebar>
             )}
@@ -378,8 +386,8 @@ const Search: Screen<CategoryProps> = ({
           <Hidden above="md">
             {totalSearchResults > 0 && (
               <Select
-                label={n('searchResult', 'Leitarflokkar')}
-                placeholder={n('categories', 'Flokkar')}
+                label={n('sidebarHeader')}
+                placeholder={n('sidebarHeader', 'Flokkar')}
                 defaultValue={defaultSelectedCategory}
                 options={categorySelectOptions}
                 onChange={onChangeSelectCategoryOptions}
@@ -462,7 +470,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
             'webLifeEventPage' as SearchableContentTypes,
             'webAboutPage' as SearchableContentTypes,
           ],
-          size: PerPage,
+          size: PERPAGE,
           ...tags,
           ...countTag,
           page,
@@ -476,7 +484,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types: ['webNews' as SearchableContentTypes],
-          size: PerPage,
+          size: PERPAGE,
           page,
         },
       },
