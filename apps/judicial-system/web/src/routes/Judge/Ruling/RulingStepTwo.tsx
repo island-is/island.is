@@ -235,7 +235,7 @@ export const RulingStepTwo: React.FC = () => {
                 <Input
                   name="accusedAppealAnnouncement"
                   data-testid="accusedAppealAnnouncement"
-                  label="Yfirlýsing um kæru"
+                  label="Yfirlýsing um kæru kærða"
                   defaultValue={workingCase.accusedAppealAnnouncement}
                   disabled={
                     workingCase.accusedAppealDecision !==
@@ -365,7 +365,7 @@ export const RulingStepTwo: React.FC = () => {
               <Input
                 name="prosecutorAppealAnnouncement"
                 data-testid="prosecutorAppealAnnouncement"
-                label="Yfirlýsing um kæru"
+                label="Yfirlýsing um kæru sækjanda"
                 defaultValue={workingCase.prosecutorAppealAnnouncement}
                 disabled={
                   workingCase.prosecutorAppealDecision !==
