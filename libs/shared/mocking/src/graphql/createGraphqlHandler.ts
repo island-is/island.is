@@ -1,15 +1,20 @@
 import { rest } from 'msw'
-import schema from './schema'
-import { resolvers } from './resolvers'
-import { handleGraphQLRequest } from './handle'
+import { GraphQLSchema } from 'graphql'
+import { Resolvers } from './createResolvers'
+import { handle } from './handle'
 
-export interface Context {
-  fetch: typeof fetch
+type Options<T> = {
+  mask?: RegExp | string
+  resolvers: Resolvers<T>
+  schema: GraphQLSchema
 }
 
-export const graphqlHandler = rest.post(
-  '*/api/graphql',
-  async (req, res, ctx) => {
+export const createGraphqlHandler = <T>({
+  mask = '*/api/graphql',
+  resolvers,
+  schema,
+}: Options<T>) =>
+  rest.post(mask, async (req, res, ctx) => {
     const query = req.method === 'POST' ? req.body : req.params
     if (typeof query !== 'object') {
       throw new Error('Expected graphql query to be an object.')
@@ -18,7 +23,7 @@ export const graphqlHandler = rest.post(
       fetch: ctx.fetch,
     }
 
-    const graphqlResponse = await handleGraphQLRequest(query, {
+    const graphqlResponse = await handle(query, {
       schema,
       fieldResolver: resolvers.fieldResolver,
       typeResolver: resolvers.typeResolver,
@@ -26,5 +31,4 @@ export const graphqlHandler = rest.post(
     })
 
     return res(ctx.json(graphqlResponse))
-  },
-)
+  })

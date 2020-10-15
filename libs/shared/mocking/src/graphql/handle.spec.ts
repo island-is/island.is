@@ -1,6 +1,6 @@
 import { handleGraphQLRequest } from './handle'
 import { buildSchema } from 'graphql'
-import createFieldResolver from './createFieldResolver'
+import createResolvers from './createFieldResolver'
 
 describe('handleGraphQLRequest', () => {
   const schema = buildSchema(`
@@ -10,7 +10,7 @@ describe('handleGraphQLRequest', () => {
       getError: String
     }
   `)
-  const resolver = createFieldResolver({
+  const resolver = createResolvers({
     Query: {
       getValue: () => {
         return 'Hello world'

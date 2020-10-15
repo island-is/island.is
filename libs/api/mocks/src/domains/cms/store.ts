@@ -14,7 +14,7 @@ import {
 import * as faker from 'faker'
 import orderBy from 'lodash/orderBy'
 import { Article } from '../../types'
-import { createStore } from '../../utils/createStore'
+import { createStore } from '@island.is/shared/mocking'
 
 export const store = createStore(() => {
   faker.seed(100)

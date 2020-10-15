@@ -20,7 +20,7 @@ import {
 } from '../../types'
 import faker from 'faker'
 import { wysiwyg } from './richtext'
-import { factory, slugify, simpleFactory } from '../../utils'
+import { factory, slugify, simpleFactory } from '@island.is/shared/mocking'
 
 export const image = factory<Image>({
   typename: 'Image',

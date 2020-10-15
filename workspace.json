@@ -781,7 +781,7 @@
           "options": {
             "commands": [
               "graphql-codegen --config libs/api/mocks/codegen.yml",
-              "yarn ts-node -P libs/api/mocks/tsconfig.json libs/api/mocks/scripts/generate-gql.ts"
+              "yarn ts-node -P libs/shared/mocking/tsconfig.json libs/shared/mocking/scripts/generate-gql.ts apps/api/src/api.graphql libs/api/mocks/src/schema.ts"
             ]
           }
         }
@@ -3203,6 +3203,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/shared/form-fields/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-mocking": {
+      "root": "libs/shared/mocking",
+      "sourceRoot": "libs/shared/mocking/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/mocking/tsconfig.lib.json",
+              "libs/shared/mocking/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/mocking/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/mocking/jest.config.js",
             "passWithNoTests": true
           }
         }

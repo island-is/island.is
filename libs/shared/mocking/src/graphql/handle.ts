@@ -26,7 +26,7 @@ const runGraphQLRequest = (request: GraphQLRequest, options: Options<any>) => {
   })
 }
 
-export const handleGraphQLRequest = (
+export const handle = (
   query: Record<string, any> | Array<Record<string, any>>,
   options: Options<any>,
 ) => {
