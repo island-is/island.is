@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { act, getByText, render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { Router } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
