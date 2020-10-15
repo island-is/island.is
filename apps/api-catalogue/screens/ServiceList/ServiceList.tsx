@@ -6,7 +6,7 @@ import {
   ContentBlock,
   GridRow,
   GridColumn,
-  Icon,
+  IconDeprecated as Icon,
   Typography,
   AccordionItem,
   GridContainer,

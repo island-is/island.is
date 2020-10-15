@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Icon } from '@island.is/island-ui/core'
+import {   IconDeprecated as Icon, } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
 export enum SERVICE_STATUS {

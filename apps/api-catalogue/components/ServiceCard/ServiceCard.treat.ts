@@ -84,6 +84,22 @@ export const categoryItem = style({
   flexShrink: 0,
 })
 
+export const noSelect = style({
+  WebkitTouchCallout:'none',
+  WebkitUserSelect:'none',
+  KhtmlUserSelect:'none',
+  MozUserSelect:'none',
+  msUserSelect:'none',
+  userSelect:'none'
+})
+
+export const notDraggable = style({
+  userSelect:'none',
+  MozUserSelect:'none',
+  msUserSelect:'none',
+  MozWindowDragging: 'no-drag'
+})
+
 export const cardTexts = style({
   paddingLeft: globalItems.paddingLeft,
   paddingRight: globalItems.paddingRight,
