@@ -3,7 +3,7 @@ import {
   MetaservicesApi,
   XroadIdentifier,
   XroadIdentifierIdObjectTypeEnum,
-} from '../../gen/fetch-xrd'
+} from '../../gen/fetch/xrd'
 import { ProviderType } from '@island.is/api-catalogue/consts'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
