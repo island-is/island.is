@@ -109,7 +109,7 @@ const Confirm = ({ apolloState }) => {
               )}
               <Button
                 disabled={!checkbox}
-                icon="arrowRight"
+                icon="arrowForward"
                 onClick={() => onConfirm(id.toString())}
               >
                 {t.buttons.continue}
