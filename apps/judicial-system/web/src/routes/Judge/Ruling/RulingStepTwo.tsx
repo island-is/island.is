@@ -62,6 +62,9 @@ export const RulingStepTwo: React.FC = () => {
     custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
+    accusedAppealAnnouncement: caseDraftJSON.accusedAppealAnnouncement ?? '',
+    prosecutorAppealAnnouncement:
+      caseDraftJSON.prosecutorAppealAnnouncement ?? '',
   })
 
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
@@ -233,6 +236,7 @@ export const RulingStepTwo: React.FC = () => {
                   name="accusedAppealAnnouncement"
                   data-testid="accusedAppealAnnouncement"
                   label="Yfirlýsing um kæru"
+                  defaultValue={workingCase.accusedAppealAnnouncement}
                   disabled={
                     workingCase.accusedAppealDecision !==
                     CaseAppealDecision.APPEAL
@@ -362,6 +366,7 @@ export const RulingStepTwo: React.FC = () => {
                 name="prosecutorAppealAnnouncement"
                 data-testid="prosecutorAppealAnnouncement"
                 label="Yfirlýsing um kæru"
+                defaultValue={workingCase.prosecutorAppealAnnouncement}
                 disabled={
                   workingCase.prosecutorAppealDecision !==
                   CaseAppealDecision.APPEAL
