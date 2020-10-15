@@ -1,4 +1,9 @@
-import { Box, Icon, IconTypes, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  IconDeprecated as Icon,
+  IconTypesDeprecated as IconTypes,
+  Typography,
+} from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import cn from 'classnames'

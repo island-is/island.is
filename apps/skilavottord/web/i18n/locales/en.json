@@ -91,6 +91,25 @@
     }
   },
   "processSections": ["Confirm car for recycling", "Handover car to recycle"],
+  "companyOverview": {
+    "title": "Deregister car",
+    "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
+    "subtitles": {
+      "history": "History"
+    },
+    "buttons": {
+      "deregister": "Deregister car"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+  },
+  "companySide": {
+    "deregister": "Deregister car",
+    "companyInfo": "Company information"
+  },
   "routes": {
     "home": "/en",
     "myCars": "/en/my-cars",

@@ -12,7 +12,7 @@ import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
 import {
   Text,
-  Icon,
+  IconDeprecated as Icon,
   Hidden,
   ButtonDeprecated as Button,
   GridContainer,

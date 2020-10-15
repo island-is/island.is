@@ -14,7 +14,7 @@ import {
   Box,
   Stack,
   Text,
-  Icon,
+  IconDeprecated as Icon,
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import {

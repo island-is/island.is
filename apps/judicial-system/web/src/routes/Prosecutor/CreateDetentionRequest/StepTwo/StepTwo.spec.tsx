@@ -1,11 +1,8 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, act, waitFor, getByText } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { Router } from 'react-router-dom'
-import fetchMock from 'fetch-mock'
-import * as Constants from '../../../../utils/constants'
 
 describe('Create detention request, step two', () => {
   test("should display the correct requestedCustodyEndTime if it's in localstorage", () => {

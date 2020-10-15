@@ -1,4 +1,4 @@
-import * as React from 'react' // [1]
+import React from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 
@@ -39,6 +39,3 @@ export const AlertMessage: React.FC<AlertMessageProps> = (
     </div>
   )
 }
-
-// [1] Used like that because of an Storybook bug. Using `import React from 'react'` results in
-// Storybook not being able to read and display available props.

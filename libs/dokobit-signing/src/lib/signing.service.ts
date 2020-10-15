@@ -24,12 +24,16 @@ export class SigningServiceResponse {
   documentToken: string
 }
 
-export class SigningServiceError extends Error {
-  constructor(code: number, message: string) {
+export class DokobitError extends Error {
+  constructor(
+    public readonly status: number, // Suggested status to return from an API call
+    public readonly code: number, // Dokobit error code
+    message: string, // Dokobit error message
+  ) {
     super()
 
     this.name = 'DokobitError'
-    this.message = `${code}: ${message}`
+    this.message = `${message}`
   }
 }
 
@@ -106,7 +110,7 @@ export class SigningService extends DataSource {
     const resSign: DokobitSignResponse = await res.json()
 
     if (resSign.status !== 'ok') {
-      throw new SigningServiceError(resSign.error_code, resSign.message)
+      throw new DokobitError(res.status, resSign.error_code, resSign.message)
     }
 
     return {
@@ -136,14 +140,22 @@ export class SigningService extends DataSource {
       }
 
       if (resStatus.status !== 'waiting') {
-        throw new SigningServiceError(resStatus.error_code, resStatus.message)
+        throw new DokobitError(
+          res.status,
+          resStatus.error_code,
+          resStatus.message,
+        )
       }
 
       // Wait a second
       await this.delay(1000)
     }
 
-    throw new SigningServiceError(99999, 'Timeout while retrieving document')
+    throw new DokobitError(
+      408, // Timeout
+      99999,
+      'Timeout while retrieving document',
+    )
   }
 
   private getVerifiedDocument(
@@ -151,7 +163,11 @@ export class SigningService extends DataSource {
     resStatus: DokobitStatusResponse,
   ) {
     if (resStatus.file.name !== documentName) {
-      throw new SigningServiceError(99999, 'File name verification failed')
+      throw new DokobitError(
+        502, // Bad gateway
+        99999,
+        'File name verification failed',
+      )
     }
 
     const base64 = resStatus.file.content
@@ -162,7 +178,11 @@ export class SigningService extends DataSource {
       .digest('hex')
 
     if (digest !== resStatus.file.digest) {
-      throw new SigningServiceError(99999, 'Checksum verification failed')
+      throw new DokobitError(
+        502, // Bad gateway
+        99999,
+        'Checksum verification failed',
+      )
     }
 
     return documentContent
