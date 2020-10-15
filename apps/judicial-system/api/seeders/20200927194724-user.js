@@ -28,7 +28,7 @@ const userSeed = JSON.parse(
         "title": "héraðsdómari",
         "mobile_number": "6904031",
         "email": "ivaro@kolibri.is",
-        "role": "JUDGE"
+        "role": "PROSECUTOR"
       }
     ]`,
 )

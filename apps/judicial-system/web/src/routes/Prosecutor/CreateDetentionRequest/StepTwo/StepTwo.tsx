@@ -56,50 +56,21 @@ export const StepTwo: React.FC = () => {
     '',
   )
 
-  const [checkboxOne, setCheckboxOne] = useState(
-    workingCase?.custodyProvisions.indexOf(CaseCustodyProvisions._95_1_A) > -1,
-  )
-  const [checkboxTwo, setCheckboxTwo] = useState(
-    workingCase?.custodyProvisions.indexOf(CaseCustodyProvisions._95_1_B) > -1,
-  )
-  const [checkboxThree, setCheckboxThree] = useState(
-    workingCase?.custodyProvisions.indexOf(CaseCustodyProvisions._95_1_C) > -1,
-  )
-  const [checkboxFour, setCheckboxFour] = useState(
-    workingCase?.custodyProvisions.indexOf(CaseCustodyProvisions._95_1_D) > -1,
-  )
-  const [checkboxFive, setCheckboxFive] = useState(
-    workingCase?.custodyProvisions.indexOf(CaseCustodyProvisions._95_2) > -1,
-  )
-  const [checkboxSix, setCheckboxSix] = useState(
-    workingCase?.custodyProvisions.indexOf(CaseCustodyProvisions._99_1_B) > -1,
-  )
-  const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    workingCase?.requestedCustodyRestrictions.indexOf(
-      CaseCustodyRestrictions.ISOLATION,
-    ) > -1,
-  )
-  const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    workingCase?.requestedCustodyRestrictions.indexOf(
-      CaseCustodyRestrictions.VISITAION,
-    ) > -1,
-  )
-  const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    workingCase?.requestedCustodyRestrictions.indexOf(
-      CaseCustodyRestrictions.COMMUNICATION,
-    ) > -1,
-  )
-  const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    workingCase?.requestedCustodyRestrictions.indexOf(
-      CaseCustodyRestrictions.MEDIA,
-    ) > -1,
-  )
+  const [, setCheckboxOne] = useState<boolean>()
+  const [, setCheckboxTwo] = useState<boolean>()
+  const [, setCheckboxThree] = useState<boolean>()
+  const [, setCheckboxFour] = useState<boolean>()
+  const [, setCheckboxFive] = useState<boolean>()
+  const [, setCheckboxSix] = useState<boolean>()
+  const [, setRestrictionCheckboxOne] = useState<boolean>()
+  const [, setRestrictionCheckboxTwo] = useState<boolean>()
+  const [, setRestrictionCheckboxThree] = useState<boolean>()
+  const [, setRestrictionCheckboxFour] = useState<boolean>()
 
   const caseCustodyProvisions = [
     {
       brokenLaw: 'a-lið 1. mgr. 95. gr.',
       value: CaseCustodyProvisions._95_1_A,
-      getCheckbox: checkboxOne,
       setCheckbox: setCheckboxOne,
       explination:
         'Að ætla megi að sakborningur muni torvelda rannsókn málsins, svo sem með því að afmá merki eftir brot, skjóta undan munum ellegar hafa áhrif á samseka eða vitni.',
@@ -107,7 +78,6 @@ export const StepTwo: React.FC = () => {
     {
       brokenLaw: 'b-lið 1. mgr. 95. gr.',
       value: CaseCustodyProvisions._95_1_B,
-      getCheckbox: checkboxTwo,
       setCheckbox: setCheckboxTwo,
       explination:
         'Að ætla megi að hann muni reyna að komast úr landi eða leynast ellegar koma sér með öðrum hætti undan málsókn eða fullnustu refsingar.',
@@ -115,7 +85,6 @@ export const StepTwo: React.FC = () => {
     {
       brokenLaw: 'c-lið 1. mgr. 95. gr.',
       value: CaseCustodyProvisions._95_1_C,
-      getCheckbox: checkboxThree,
       setCheckbox: setCheckboxThree,
       explination:
         'Að ætla megi að hann muni halda áfram brotum meðan máli hans er ekki lokið eða rökstuddur grunur leiki á að hann hafi rofið í verulegum atriðum skilyrði sem honum hafa verið sett í skilorðsbundnum dómi.',
@@ -123,7 +92,6 @@ export const StepTwo: React.FC = () => {
     {
       brokenLaw: 'd-lið 1. mgr. 95. gr.',
       value: CaseCustodyProvisions._95_1_D,
-      getCheckbox: checkboxFour,
       setCheckbox: setCheckboxFour,
       explination:
         'Að telja megi gæsluvarðhald nauðsynlegt til að verja aðra fyrir árásum sakbornings ellegar hann sjálfan fyrir árásum eða áhrifum annarra manna.',
@@ -131,7 +99,6 @@ export const StepTwo: React.FC = () => {
     {
       brokenLaw: '2. mgr. 95. gr.',
       value: CaseCustodyProvisions._95_2,
-      getCheckbox: checkboxFive,
       setCheckbox: setCheckboxFive,
       explination:
         'Einnig má úrskurða sakborning í gæsluvarðhald þótt skilyrði a–d-liðar 1. mgr. séu ekki fyrir hendi ef sterkur grunur leikur á að hann hafi framið afbrot sem að lögum getur varðað 10 ára fangelsi, enda sé brotið þess eðlis að ætla megi varðhald nauðsynlegt með tilliti til almannahagsmuna.',
@@ -139,7 +106,6 @@ export const StepTwo: React.FC = () => {
     {
       brokenLaw: 'b-lið 1. mgr. 99. gr.',
       value: CaseCustodyProvisions._99_1_B,
-      getCheckbox: checkboxSix,
       setCheckbox: setCheckboxSix,
       explination:
         'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
@@ -150,7 +116,6 @@ export const StepTwo: React.FC = () => {
     {
       restriction: 'B - Einangrun',
       value: CaseCustodyRestrictions.ISOLATION,
-      getCheckbox: restrictionCheckboxOne,
       setCheckbox: setRestrictionCheckboxOne,
       explination:
         'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
@@ -158,7 +123,6 @@ export const StepTwo: React.FC = () => {
     {
       restriction: 'C - Heimsóknarbann',
       value: CaseCustodyRestrictions.VISITAION,
-      getCheckbox: restrictionCheckboxTwo,
       setCheckbox: setRestrictionCheckboxTwo,
       explination:
         'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
@@ -166,7 +130,6 @@ export const StepTwo: React.FC = () => {
     {
       restriction: 'D - Bréfskoðun, símabann',
       value: CaseCustodyRestrictions.COMMUNICATION,
-      getCheckbox: restrictionCheckboxThree,
       setCheckbox: setRestrictionCheckboxThree,
       explination:
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
@@ -174,7 +137,6 @@ export const StepTwo: React.FC = () => {
     {
       restriction: 'E - Fjölmiðlabann',
       value: CaseCustodyRestrictions.MEDIA,
-      getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
       explination:
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
@@ -433,7 +395,11 @@ export const StepTwo: React.FC = () => {
                               name={provision.brokenLaw}
                               label={provision.brokenLaw}
                               value={provision.value}
-                              checked={provision.getCheckbox}
+                              checked={
+                                workingCase.custodyProvisions.indexOf(
+                                  provision.value,
+                                ) > -1
+                              }
                               tooltip={provision.explination}
                               onChange={({ target }) => {
                                 // Create a copy of the state
@@ -513,7 +479,11 @@ export const StepTwo: React.FC = () => {
                             name={restriction.restriction}
                             label={restriction.restriction}
                             value={restriction.value}
-                            checked={restriction.getCheckbox}
+                            checked={
+                              workingCase.custodyRestrictions.indexOf(
+                                restriction.value,
+                              ) > -1
+                            }
                             tooltip={restriction.explination}
                             onChange={({ target }) => {
                               // Create a copy of the state
