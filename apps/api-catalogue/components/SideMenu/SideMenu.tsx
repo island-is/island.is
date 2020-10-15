@@ -5,7 +5,7 @@ import cn from 'classnames'
 import {
   Box,
   FocusableBox,
-  Icon,
+  IconDeprecated as Icon, 
   Logo,
   Typography,
 } from '@island.is/island-ui/core'
