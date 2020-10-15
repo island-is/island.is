@@ -776,7 +776,7 @@
             "passWithNoTests": true
           }
         },
-        "postinstall": {
+        "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
