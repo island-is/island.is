@@ -15,6 +15,12 @@ const errorHandler = (name: string) => {
   }
 }
 
+const stringify = (x: string | object) => {
+  if (typeof x === 'string') return x
+
+  return JSON.stringify(x)
+}
+
 @Injectable()
 export class TranslationsService {
   constructor(private contentfulRepository: ContentfulRepository) {}
@@ -33,7 +39,7 @@ export class TranslationsService {
 
     const withFallbacks = result?.items?.map(({ fields }) =>
       mergeWith({}, fields.fallback, fields.strings, (o, s) =>
-        isEmpty(s) ? o : s,
+        isEmpty(s) ? stringify(o) : stringify(s),
       ),
     )
 

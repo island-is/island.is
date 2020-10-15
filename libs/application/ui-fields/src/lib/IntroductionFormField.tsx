@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { RichText } from '@island.is/island-ui/contentful'
 
 const IntroductionFormField: FC<{
   application: Application
@@ -21,7 +22,9 @@ const IntroductionFormField: FC<{
           {formatText(field.name, application, formatMessage)}
         </Text>
       )}
-      <Text>{formatText(field.introduction, application, formatMessage)}</Text>
+      <RichText
+        document={formatText(field.introduction, application, formatMessage)}
+      />
     </div>
   )
 }

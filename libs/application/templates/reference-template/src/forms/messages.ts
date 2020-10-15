@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl'
+import { EMPTY_DOCUMENT } from '@contentful/rich-text-types'
 
 export const m = defineMessages({
   introSection: {
@@ -13,7 +14,7 @@ export const m = defineMessages({
   },
   introIntroduction: {
     id: 'example.application:intro.introduction',
-    defaultMessage: 'Þessi umsókn snýr að atvinnuleysisbótum',
+    defaultMessage: 'Halló {name}',
     description: 'Some description',
   },
   about: {
@@ -89,6 +90,10 @@ export const m = defineMessages({
   governmentOptionLabel: {
     id: 'example.application:government.option.label',
     defaultMessage: 'The government',
+    description: 'Some description',
+  },
+  overviewIntroduction: {
+    id: 'example.application:overview.introduction',
     description: 'Some description',
   },
 })

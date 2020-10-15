@@ -14,6 +14,7 @@ exports.format = function (msgs) {
         ...arr[namespace],
         [id]: {
           ...msg,
+          isRichText: !msg.defaultMessage,
         },
       },
     }

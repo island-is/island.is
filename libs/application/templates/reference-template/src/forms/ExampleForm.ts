@@ -31,10 +31,12 @@ export const ExampleForm: Form = buildForm({
         buildIntroductionField({
           id: 'field',
           name: m.introField,
-          introduction: (application) =>
+          introduction: (application) => ({
+            ...m.introIntroduction,
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
-            `Halló ${application.answers.person?.name}`,
+            values: { name: application.answers.person?.name },
+          }),
         }),
         buildMultiField({
           id: 'about',
@@ -125,8 +127,7 @@ export const ExampleForm: Form = buildForm({
         buildIntroductionField({
           id: 'overview',
           name: 'Takk fyrir að sækja um',
-          introduction:
-            'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+          introduction: m.overviewIntroduction,
         }),
         buildIntroductionField({
           id: 'final',
