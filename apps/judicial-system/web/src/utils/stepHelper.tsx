@@ -27,12 +27,21 @@ export const updateState = (
   window.localStorage.setItem('workingCase', JSON.stringify(copyOfState))
 }
 
+/**
+ * @deprecated
+ *
+ * @param state current working case
+ * @param caseField field to update
+ * @param caseFieldValue value to update
+ * @param stateSetter method to set working case
+ */
 export const autoSave = async (
   state: Case,
   caseField: string,
   caseFieldValue: string | Date | boolean,
   stateSetter: (state: Case) => void,
 ) => {
+  console.warn('Calling AutoSave() is discuraged. Will be removed shortly.')
   // Only save if the field has changes and the case exists
   if (state[caseField] !== caseFieldValue && state.id !== '') {
     // Parse the property change
