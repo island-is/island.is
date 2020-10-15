@@ -11,10 +11,9 @@ import {
   articleSubgroup,
   featured,
 } from './factories'
-import * as faker from 'faker'
 import orderBy from 'lodash/orderBy'
 import { Article } from '../../types'
-import { createStore } from '@island.is/shared/mocking'
+import { createStore, faker } from '@island.is/shared/mocking'
 
 export const store = createStore(() => {
   faker.seed(100)
