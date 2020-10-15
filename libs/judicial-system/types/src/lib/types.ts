@@ -1,3 +1,21 @@
+export enum UserRole {
+  PROSECUTOR = 'PROSECUTOR',
+  REGISTRAR = 'REGISTRAR',
+  JUDGE = 'JUDGE',
+}
+
+export interface User {
+  id: string
+  created: string
+  modified: string
+  nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
+  email: string
+  role: UserRole
+}
+
 export enum CaseState {
   DRAFT = 'DRAFT',
   SUBMITTED = 'SUBMITTED',
@@ -31,4 +49,122 @@ export enum CaseAppealDecision {
   APPEAL = 'APPEAL',
   ACCEPT = 'ACCEPT',
   POSTPONE = 'POSTPONE',
+}
+
+export interface Case {
+  id: string
+  created: string
+  modified: string
+  state: CaseState
+  policeCaseNumber: string
+  accusedNationalId: string
+  accusedName?: string
+  accusedAddress?: string
+  court?: string
+  arrestDate?: string
+  requestedCourtDate?: string
+  requestedCustodyEndDate?: string
+  lawsBroken?: string
+  custodyProvisions?: CaseCustodyProvisions[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  caseFacts?: string
+  witnessAccounts?: string
+  investigationProgress?: string
+  legalArguments?: string
+  comments?: string
+  // prosecutorId?: string
+  prosecutor?: User
+  courtCaseNumber?: string
+  courtStartTime?: string
+  courtEndTime?: string
+  courtAttendees?: string
+  policeDemands?: string
+  accusedPlea?: string
+  litigationPresentations?: string
+  ruling?: string
+  rejecting?: boolean
+  custodyEndDate?: string
+  custodyRestrictions?: CaseCustodyRestrictions[]
+  accusedAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealDecision?: CaseAppealDecision
+  prosecutorAppealAnnouncement?: string
+  // judgeId?: string
+  judge?: User
+  // notifications?: Notification[]
+}
+
+export enum NotificationType {
+  HEADS_UP = 'HEADS_UP',
+  READY_FOR_COURT = 'READY_FOR_COURT',
+}
+
+export interface Notification {
+  id: string
+  created: string
+  caseId: string
+  type: NotificationType
+  message: string
+}
+
+export interface CreateCase {
+  policeCaseNumber: string
+  accusedNationalId: string
+  accusedName: string
+  accusedAddress: string
+  court: string
+  arrestDate: string
+  requestedCourtDate: string
+}
+
+export interface UpdateCase {
+  policeCaseNumber: string
+  accusedNationalId: string
+  accusedName: string
+  accusedAddress: string
+  court: string
+  arrestDate: string
+  requestedCourtDate: string
+  requestedCustodyEndDate: string
+  lawsBroken: string
+  custodyProvisions: CaseCustodyProvisions[]
+  requestedCustodyRestrictions: CaseCustodyRestrictions[]
+  caseFacts: string
+  legalArguments: string
+  comments: string
+  courtCaseNumber: string
+  courtDate: string
+  courtRoom: string
+  defenderName: string
+  defenderEmail: string
+  courtStartTime: string
+  courtEndTime: string
+  courtAttendees: string
+  policeDemands: string
+  accusedPlea: string
+  litigationPresentations: string
+  ruling: string
+  rejecting: boolean
+  custodyEndDate: string
+  custodyRestrictions: CaseCustodyRestrictions[]
+  accusedAppealDecision: CaseAppealDecision
+  accusedAppealAnnouncement: string
+  prosecutorAppealDecision: CaseAppealDecision
+  prosecutorAppealAnnouncement: string
+}
+
+export interface TransitionCase {
+  modified: string
+  transition: CaseTransition
+}
+
+export interface PendingSignature {
+  controlCode: string
+  documentToken: string
+}
+
+export interface SignatureResponse {
+  documentSigned: boolean
+  code?: number
+  message?: string
 }
