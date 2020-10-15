@@ -17,6 +17,7 @@ FROM deps as src
 ADD . .
 
 FROM src as builder
+ENV NODE_OPTIONS='--max-old-space-size=4096'
 ARG APP
 ENV APP=${APP}
 
