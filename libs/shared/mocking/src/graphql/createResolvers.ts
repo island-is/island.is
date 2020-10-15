@@ -8,10 +8,16 @@ import {
 
 export type ResolverMap = Record<string, Record<string, any> | undefined>
 
+export type NewResolvers<Resolvers> = {
+  [R in keyof Resolvers]?: {
+    [F in keyof Resolvers[R]]?: Resolvers[R][F]
+  }
+}
+
 export type Resolvers<T> = {
   fieldResolver: GraphQLFieldResolver<any, any>
   typeResolver: GraphQLTypeResolver<any, any>
-  add: (newResolvers: T) => void
+  add: (newResolvers: NewResolvers<T>) => void
   reset: () => void
 }
 
@@ -54,7 +60,7 @@ export const createResolvers = <T extends ResolverMap>(
     return defaultTypeResolver(value, context, info, abstractType)
   }
 
-  const add = (newResolvers: T) => {
+  const add = (newResolvers: NewResolvers<T>) => {
     resolvers = merge({}, resolvers, newResolvers)
   }
 
