@@ -14,10 +14,8 @@ import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { useRouter } from 'next/router'
 
 const CompanyOverview: FC = () => {
-  const [value, setValue] = useState('')
-
   const {
-    t: { companyOverview: t, companySide: sideText },
+    t: { companyOverview: t, companySidenav: sidenavText },
   } = useI18n()
   const router = useRouter()
 
@@ -39,7 +37,13 @@ const CompanyOverview: FC = () => {
                 <Text variant="h1">{t.title}</Text>
                 <Text variant="intro">{t.info}</Text>
               </Stack>
-              <Button onClick={() => {router.push('./deregister-vehicle/[123]/select')}}>{t.buttons.deregister}</Button>
+              <Button
+                onClick={() => {
+                  router.push('./deregister-vehicle')
+                }}
+              >
+                {t.buttons.deregister}
+              </Button>
             </Stack>
             <Text variant="h3">{t.subtitles.history}</Text>
           </Stack>
@@ -52,12 +56,12 @@ const CompanyOverview: FC = () => {
           sections={[
             {
               icon: 'car',
-              title: `${sideText.deregister}`,
+              title: `${sidenavText.deregister}`,
               link: './company-overview',
             },
             {
               icon: 'business',
-              title: `${sideText.companyInfo}`,
+              title: `${sidenavText.companyInfo}`,
               link: './company-info',
             },
           ]}

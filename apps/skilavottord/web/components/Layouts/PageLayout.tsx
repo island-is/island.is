@@ -8,7 +8,6 @@ import {
   GridColumn,
   Footer,
   Stack,
-  FormStepperSection,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
@@ -83,6 +82,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
               background="white"
               borderColor="white"
               borderRadius="large"
+              style={{ minHeight: '644px' }}
             >
               <GridColumn
                 span={['9/9', '9/9', '7/9', '7/9']}

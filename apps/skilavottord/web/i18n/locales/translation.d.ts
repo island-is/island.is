@@ -15,7 +15,8 @@ export interface Translation {
   completed: Completed
   processSections: ProcessSections
   companyOverview: CompanyOverview
-  companySide: CompanySide
+  companySidenav: CompanySidenav
+  deregisterVehicle: DeregisterVehicle
   routes: Routes
 }
 
@@ -159,13 +160,31 @@ export interface CompanyOverview {
   info: string
   subtitles: CompanyOverviewSubTitles
   buttons: CompanyOverviewButtons
-  search: Search
+  search: InputField
   table: string[]
 }
 
-export interface CompanySide {
+export interface CompanySidenav {
   deregister: string
   companyInfo: string
+}
+
+export interface DeregisterVehicle {
+  select: DeregisterSelect
+  deregister: Deregister
+}
+
+export interface DeregisterSelect {
+  title: string
+  info: string
+  input: InputField
+  buttons: DeregisterSelectButtons
+}
+
+export interface Deregister {
+  title: string
+  info: string
+  buttons: DeregisterButtons
 }
 
 export interface CompanyOverviewSubTitles {
@@ -176,7 +195,17 @@ export interface CompanyOverviewButtons {
   deregister: string
 }
 
-export interface Search {
+export interface DeregisterSelectButtons {
+  cancel: string
+  continue: string
+}
+
+export interface DeregisterButtons {
+  back: string
+  confirm: string
+}
+
+export interface InputField {
   label: string
   placeholder: string
 }
@@ -185,6 +214,8 @@ export interface Routes {
   home: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
+  companyOverview: string
+  deregisterVehicle: DeregisterVehicleRoutes
 }
 
 export interface RecycleVehicleRoutes {
@@ -192,6 +223,11 @@ export interface RecycleVehicleRoutes {
   confirm: string
   handover: string
   completed: string
+}
+
+export interface DeregisterVehicleRoutes {
+  baseRoute: string
+  deregister: string
 }
 
 // Converts JSON strings to/from your types

@@ -15,7 +15,7 @@ interface ProcessProps {
 
 const FormStepper = ({ sections, activeSection, activeCar }: ProcessProps) => (
   <Box padding={4}>
-    <Stack space={6}>
+    <Stack space={4}>
       <Box>
         <Typography variant="h3">Recycle car</Typography>
         <Typography variant="intro">{activeCar}</Typography>

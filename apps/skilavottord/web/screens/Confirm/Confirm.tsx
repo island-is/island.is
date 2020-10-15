@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -15,7 +15,6 @@ import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { CarDetailsBox } from './components'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
-import { citizenSections } from '@island.is/skilavottord-web/utils/stepperUtil'
 
 const Confirm = ({ apolloState }) => {
   const [checkbox, setCheckbox] = useState(false)
@@ -47,7 +46,7 @@ const Confirm = ({ apolloState }) => {
   }, [width])
 
   const onCancel = () => {
-    router.push({
+    router.replace({
       pathname: routes.myCars,
     })
   }
@@ -69,7 +68,11 @@ const Confirm = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout sectionType={'citizen'} activeSection={0} activeCar={id.toString()}>
+        <ProcessPageLayout
+          sectionType={'citizen'}
+          activeSection={0}
+          activeCar={id.toString()}
+        >
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>
