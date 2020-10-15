@@ -8,6 +8,7 @@ import {
   GridColumn,
   Footer,
   Stack,
+  FormStepperSection,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
@@ -38,11 +39,13 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
 
 interface ProcessPageProps extends PageProps {
   activeSection: number
-  activeCar: string
+  sectionType: string
+  activeCar?: string
 }
 
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
+  sectionType = 'citizen',
   activeSection,
   activeCar,
 }) => {
@@ -52,7 +55,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     t: { processSections: t },
   } = useI18n()
 
-  const sections = t.map((section) => {
+  const sections = t[sectionType].map((section) => {
     return { name: section }
   })
   const [isMobile, setIsMobile] = useState(false)

@@ -38,7 +38,7 @@ const Completed = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout activeSection={2} activeCar={id.toString()}>
+        <ProcessPageLayout sectionType={'citizen'} activeSection={2} activeCar={id.toString()}>
           <Stack space={3}>
             <Text variant="h1">{t.title}</Text>
             <Stack space={4}>

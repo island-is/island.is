@@ -38,7 +38,7 @@ const Handover = () => {
   }
 
   return (
-    <ProcessPageLayout activeSection={1} activeCar={id.toString()}>
+    <ProcessPageLayout sectionType={'citizen'} activeSection={1} activeCar={id.toString()}>
       <Stack space={6}>
         <Stack space={2}>
           <Text variant="h1">{t.title}</Text>

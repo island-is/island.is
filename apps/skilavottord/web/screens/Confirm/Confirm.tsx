@@ -15,6 +15,7 @@ import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { CarDetailsBox } from './components'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
+import { citizenSections } from '@island.is/skilavottord-web/utils/stepperUtil'
 
 const Confirm = ({ apolloState }) => {
   const [checkbox, setCheckbox] = useState(false)
@@ -68,7 +69,7 @@ const Confirm = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout activeSection={0} activeCar={id.toString()}>
+        <ProcessPageLayout sectionType={'citizen'} activeSection={0} activeCar={id.toString()}>
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>

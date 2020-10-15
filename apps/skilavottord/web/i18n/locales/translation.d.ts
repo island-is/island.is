@@ -13,7 +13,7 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  processSections: string[]
+  processSections: ProcessSections
   companyOverview: CompanyOverview
   companySide: CompanySide
   routes: Routes
@@ -57,6 +57,12 @@ export interface Completed {
   info: CompletedInfo
   confirmedBy: CompletedConfirmation
   buttons: CompletedButtons
+}
+
+export interface ProcessSections {
+  citizen: string[]
+  company: string[]
+  fund: string[]
 }
 
 export interface CancelModal {

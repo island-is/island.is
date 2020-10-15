@@ -90,7 +90,11 @@
       "close": "Close"
     }
   },
-  "processSections": ["Confirm car for recycling", "Handover car to recycle"],
+  "processSections": {
+    "citizen": ["Confirm car for recycling", "Handover car to recycle"],
+    "company": ["Select car", "Deregister car"],
+    "fund": ["Confirm car for recycling", "Handover car to recycle"]
+  },
   "companyOverview": {
     "title": "Deregister car",
     "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",

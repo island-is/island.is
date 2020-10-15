@@ -11,6 +11,7 @@ import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import CarsTable from './components/CarsTable'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
+import { useRouter } from 'next/router'
 
 const CompanyOverview: FC = () => {
   const [value, setValue] = useState('')
@@ -18,6 +19,7 @@ const CompanyOverview: FC = () => {
   const {
     t: { companyOverview: t, companySide: sideText },
   } = useI18n()
+  const router = useRouter()
 
   return (
     <PartnerPageLayout
@@ -37,7 +39,7 @@ const CompanyOverview: FC = () => {
                 <Text variant="h1">{t.title}</Text>
                 <Text variant="intro">{t.info}</Text>
               </Stack>
-              <Button>{t.buttons.deregister}</Button>
+              <Button onClick={() => {router.push('./deregister-vehicle/[123]/select')}}>{t.buttons.deregister}</Button>
             </Stack>
             <Text variant="h3">{t.subtitles.history}</Text>
           </Stack>

@@ -10,7 +10,7 @@ import {
 interface ProcessProps {
   sections: FormStepperSection[]
   activeSection: number
-  activeCar: string
+  activeCar?: string
 }
 
 const FormStepper = ({ sections, activeSection, activeCar }: ProcessProps) => (
