@@ -36,10 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
-  if (!window.localStorage.getItem('workingCase')) {
-    window.localStorage.setItem('workingCase', JSON.stringify({}))
-  }
-
   const history = useHistory()
 
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -171,9 +167,14 @@ export const StepOne: React.FC = () => {
   }
 
   useEffect(() => {
+    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+  }, [])
+
+  // Run if id is not in url, i.e. if the user is creating a request.
+  useEffect(() => {
     const caseDraft = window.localStorage.getItem('workingCase')
 
-    if (caseDraft !== 'undefined' && !workingCase) {
+    if (caseDraft !== 'undefined' && !workingCase && !id) {
       const caseDraftJSON = JSON.parse(caseDraft || '{}')
 
       setWorkingCase({
@@ -213,25 +214,27 @@ export const StepOne: React.FC = () => {
         prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
       })
     }
-  }, [workingCase, setWorkingCase])
+  }, [workingCase, setWorkingCase, id])
 
-  useEffect(() => {
-    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
-  }, [])
-
+  // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
+
       window.localStorage.setItem(
         'workingCase',
         JSON.stringify(currentCase.case),
       )
+
+      if (!workingCase) {
+        setWorkingCase(currentCase.case)
+      }
     }
 
     if (id) {
       getCurrentCase()
     }
-  }, [id])
+  }, [id, workingCase, setWorkingCase])
 
   return (
     workingCase && (
@@ -515,7 +518,7 @@ export const StepOne: React.FC = () => {
                         errorMessage={arrestTimeErrorMessage}
                         hasError={arrestTimeErrorMessage !== ''}
                         defaultValue={
-                          workingCase?.arrestDate?.indexOf('T') > -1
+                          workingCase.arrestDate?.indexOf('T') > -1
                             ? formatDate(workingCase.arrestDate, TIME_FORMAT)
                             : null
                         }
