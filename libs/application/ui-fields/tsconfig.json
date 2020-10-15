@@ -4,8 +4,7 @@
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false
+    "allowSyntheticDefaultImports": true
   },
   "files": [],
   "include": [],
