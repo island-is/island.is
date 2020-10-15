@@ -443,7 +443,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </GridRow>
         {!!contentOverviewOptions.length && (
           <Hidden above="sm">
-                <DrawerMenu categories={combinedMobileNavigation} />
+            <DrawerMenu categories={combinedMobileNavigation} />
           </Hidden>
         )}
         <GridRow>
