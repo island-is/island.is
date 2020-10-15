@@ -8,7 +8,7 @@ import * as databaseConfig from '../../sequelize.config.js'
 
 @Injectable()
 export class SequelizeConfigService implements SequelizeOptionsFactory {
-  constructor(/*@Inject(LOGGER_PROVIDER) private logger: Logger,*/) {}
+  //constructor(/*@Inject(LOGGER_PROVIDER) private logger: Logger,*/) {}
 
   createSequelizeOptions(): SequelizeModuleOptions {
     let config
