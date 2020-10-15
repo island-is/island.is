@@ -321,7 +321,6 @@ export const Confirmation: React.FC = () => {
                   )}
                 </Text>
               </Box>
-
               {(workingCase.accusedAppealAnnouncement ||
                 workingCase.prosecutorAppealAnnouncement) && (
                 <Box component="section" marginBottom={6}>
@@ -347,13 +346,13 @@ export const Confirmation: React.FC = () => {
                     )}
                 </Box>
               )}
-              {uContext?.user && (
-                <Box marginBottom={15}>
-                  <Text variant="h3">
-                    {`${uContext.user.name}, ${uContext.user.title}`}
-                  </Text>
-                </Box>
-              )}
+              <Box marginBottom={15}>
+                <Text variant="h3">
+                  {workingCase?.judge
+                    ? `${workingCase?.judge.name}, ${workingCase?.judge.title}`
+                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}{' '}
+                </Text>
+              </Box>
               <FormFooter
                 nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
                 nextButtonText="Staðfesta úrskurð"

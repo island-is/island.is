@@ -64,6 +64,13 @@ export const RulingStepOne: React.FC = () => {
     custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
     accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
     prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
+    accusedAppealAnnouncement: caseDraftJSON.accusedAppealAnnouncement ?? '',
+    prosecutorAppealAnnouncement:
+      caseDraftJSON.prosecutorAppealAnnouncement ?? '',
+    prosecutorId: caseDraftJSON.prosecutorId ?? null,
+    prosecutor: caseDraftJSON.prosecutor ?? null,
+    judgeId: caseDraftJSON.judgeId ?? null,
+    judge: caseDraftJSON.judge || null,
   })
 
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
