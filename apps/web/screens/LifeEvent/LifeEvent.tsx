@@ -99,26 +99,22 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             </GridColumn>
           </GridRow>
           {!!mobileNavigation.length && (
-            <GridRow>
-              <GridColumn span="9/9" paddingBottom={4}>
-                <Hidden above="sm">
-                  <DrawerMenu
-                    categories={[
-                      {
-                        title: n('categoryOverview', 'Efnisyfirlit'),
-                        items: mobileNavigation,
-                      },
-                    ]}
-                  />
-                </Hidden>
-              </GridColumn>
-            </GridRow>
+            <Hidden above="sm">
+              <DrawerMenu
+                categories={[
+                  {
+                    title: n('categoryOverview', 'Efnisyfirlit'),
+                    items: mobileNavigation,
+                  },
+                ]}
+              />
+            </Hidden>
           )}
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '0', '1/9']}
               span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-              paddingBottom={4}
+              paddingBottom={[2, 2, 4]}
             >
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
@@ -143,7 +139,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               )}
             </GridColumn>
           </GridRow>
-          <Box paddingTop={4}>
+          <Box paddingTop={[3, 3, 4]}>
             <RichText body={content} config={{ defaultPadding: 4 }} />
           </Box>
         </>

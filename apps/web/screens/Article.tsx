@@ -414,7 +414,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <GridColumn
             offset={['0', '0', '0', '0', '1/9']}
             span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            paddingBottom={2}
+            paddingBottom={[2, 2, 4]}
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
@@ -443,11 +443,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </GridRow>
         {!!contentOverviewOptions.length && (
           <Hidden above="sm">
-            <GridRow>
-              <GridColumn span="9/9" paddingBottom={4}>
                 <DrawerMenu categories={combinedMobileNavigation} />
-              </GridColumn>
-            </GridRow>
           </Hidden>
         )}
         <GridRow>
