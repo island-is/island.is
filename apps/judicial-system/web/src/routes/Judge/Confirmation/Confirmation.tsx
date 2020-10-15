@@ -32,7 +32,11 @@ import {
 import { parseTransition } from '../../../utils/formatters'
 import { capitalize } from 'lodash'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseState,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
 import * as api from '../../../api'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { useHistory } from 'react-router-dom'
@@ -282,45 +286,67 @@ export const Confirmation: React.FC = () => {
                   <Text>{workingCase.ruling}</Text>
                 </Box>
               </Box>
-              <Box component="section" marginBottom={8}>
-                <Box marginBottom={7}>
-                  <Box marginBottom={2}>
-                    <Text as="h4" variant="h4">
-                      Úrskurðarorð
-                    </Text>
-                  </Box>
-                  <Box marginBottom={3}>
-                    <Text>{constructConclusion(workingCase)}</Text>
-                  </Box>
-                  <Text>
-                    Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum
-                    kærða, verjanda hans, túlki og aðstoðarsaksóknara.
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    Úrskurðarorð
                   </Text>
                 </Box>
+                <Box marginBottom={3}>
+                  <Text>{constructConclusion(workingCase)}</Text>
+                </Box>
+                <Text>
+                  Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
+                  verjanda hans, túlki og aðstoðarsaksóknara.
+                </Text>
               </Box>
-              <Box component="section" marginBottom={8}>
-                <Box marginBottom={10}>
-                  <Box marginBottom={2}>
-                    <Text as="h4" variant="h4">
-                      Ákvörðun um kæru
-                    </Text>
-                  </Box>
-                  <Box marginBottom={1}>
-                    <Text>
-                      {getAppealDecitionText(
-                        AppealDecitionRole.ACCUSED,
-                        workingCase.accusedAppealDecision,
-                      )}
-                    </Text>
-                  </Box>
+              <Box component="section" marginBottom={3}>
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    Ákvörðun um kæru
+                  </Text>
+                </Box>
+                <Box marginBottom={1}>
                   <Text>
                     {getAppealDecitionText(
-                      AppealDecitionRole.PROSECUTOR,
-                      workingCase.prosecutorAppealDecision,
+                      AppealDecitionRole.ACCUSED,
+                      workingCase.accusedAppealDecision,
                     )}
                   </Text>
                 </Box>
+                <Text>
+                  {getAppealDecitionText(
+                    AppealDecitionRole.PROSECUTOR,
+                    workingCase.prosecutorAppealDecision,
+                  )}
+                </Text>
               </Box>
+
+              {(workingCase.accusedAppealAnnouncement ||
+                workingCase.prosecutorAppealAnnouncement) && (
+                <Box component="section" marginBottom={6}>
+                  {workingCase.accusedAppealAnnouncement &&
+                    workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.APPEAL && (
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow" color="blue400">
+                          Yfirlýsing um kæru kærða
+                        </Text>
+                        <Text>{workingCase.accusedAppealAnnouncement}</Text>
+                      </Box>
+                    )}
+                  {workingCase.prosecutorAppealAnnouncement &&
+                    workingCase.prosecutorAppealDecision ===
+                      CaseAppealDecision.APPEAL && (
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow" color="blue400">
+                          Yfirlýsing um kæru sækjanda
+                        </Text>
+                        <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
+                      </Box>
+                    )}
+                </Box>
+              )}
               {uContext?.user && (
                 <Box marginBottom={15}>
                   <Text variant="h3">
