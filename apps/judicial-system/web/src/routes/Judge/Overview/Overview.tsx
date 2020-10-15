@@ -15,6 +15,7 @@ import {
   capitalize,
   formatCustodyRestrictions,
   laws,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -129,7 +130,7 @@ export const JudgeOverview: React.FC = () => {
                   Kennitala
                 </Text>
               </Box>
-              <Text>{workingCase?.accusedNationalId}</Text>
+              <Text>{formatNationalId(workingCase?.accusedNationalId)}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
