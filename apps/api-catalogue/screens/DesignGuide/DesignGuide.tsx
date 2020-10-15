@@ -45,7 +45,7 @@ function DesignGuide(props: DesignGuideProps) {
             </Stack>
             <Stack space={3}>
               <Link href={props.pageContent.strings.find(s => s.id ==='dg-view-button-href').text}>
-                <Button variant="normal" icon="external">
+                <Button variant="primary" icon="external">
                 {props.pageContent.strings.find(s => s.id ==='dg-view-button').text}
                 </Button>
               </Link>

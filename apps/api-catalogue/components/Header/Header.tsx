@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, Column, Columns, GridColumn, GridContainer, GridRow, Link } from '@island.is/island-ui/core'
+import { Box, ButtonDeprecated as Button, Column, Columns, GridColumn, GridContainer, GridRow, Link } from '@island.is/island-ui/core'
 
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 import { SideMenu } from '..'
@@ -7,7 +7,7 @@ import { SideMenu } from '..'
 function Header() {
 
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
-  
+
   return (
     <GridContainer>
       <GridRow>

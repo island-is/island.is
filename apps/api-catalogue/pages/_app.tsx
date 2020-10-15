@@ -4,7 +4,7 @@ import React from 'react';
 
 import cn from 'classnames';
 
-import { 
+import {
   Page,
   Box,
   ContentBlock,
@@ -14,7 +14,7 @@ import { Header } from '../components';
 
 import * as  styles from '../styles/_app.treat';
 
-import '../styles/global-styles.scss';
+import '../styles/global.css';
 import { ApolloProvider } from 'react-apollo';
 import initApollo from '../graphql/client';
 
@@ -70,7 +70,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <div className={cn(styles.content)}>
           <Component {...pageProps} />
         </div>
-        <Footer 
+        <Footer
           showMiddleLinks
           showTagLinks
           hideLanguageSwith

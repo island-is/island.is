@@ -101,7 +101,7 @@ export default function ServiceList(props: ServiceListProps) {
   const [isMobile, setIsMobile] = useState<boolean>(false)
   const { width } = useWindowSize()
   // prettier-ignore
-  const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY, 
+  const { data, loading, error, fetchMore, refetch } = useQuery<Query, QueryGetApiCatalogueArgs>(GET_CATALOGUE_QUERY,
   {
     variables: {
       input: parameters,
@@ -283,7 +283,7 @@ export default function ServiceList(props: ServiceListProps) {
             <AccordionItem
               id="serviceFilter"
               label="Sýna flokka"
-              labelVariant="sideMenu"
+              labelVariant="default"
               iconVariant="default"
             >
               <ServiceFilter

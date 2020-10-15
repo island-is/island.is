@@ -51,7 +51,7 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
           label={
             props.strings.find((s) => s.id === 'catalog-filter-pricing').text
           }
-          labelVariant="sideMenu"
+          labelVariant="default"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
@@ -80,7 +80,7 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
         <AccordionItem
           id="data_category"
           label={props.strings.find((s) => s.id === 'catalog-filter-data').text}
-          labelVariant="sideMenu"
+          labelVariant="default"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
@@ -140,7 +140,7 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
         <AccordionItem
           id="type_category"
           label={props.strings.find((s) => s.id === 'catalog-filter-type').text}
-          labelVariant="sideMenu"
+          labelVariant="default"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox
@@ -181,7 +181,7 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
           label={
             props.strings.find((s) => s.id === 'catalog-filter-access').text
           }
-          labelVariant="sideMenu"
+          labelVariant="default"
           iconVariant={props.iconVariant}
         >
           <CategoryCheckBox

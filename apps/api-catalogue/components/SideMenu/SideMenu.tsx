@@ -76,7 +76,7 @@ export const SideMenu = (props: SideMenuProps) => {
                       key={index}
                       paddingBottom={index + 1 === props.links.length ? 0 : 2}
                     >
-                      {<FocusableClickBox className="not-draggable" onClick={props.handleClose } href={link.url}>{link.title}</FocusableClickBox>}
+                      {<FocusableClickBox className="not-draggable no-select" onClick={props.handleClose } href={link.url}>{link.title}</FocusableClickBox>}
                     </Typography>
                   ))}
             </div>
