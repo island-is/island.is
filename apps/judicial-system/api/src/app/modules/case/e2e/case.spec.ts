@@ -61,7 +61,9 @@ const remainingCaseData = {
   custodyEndDate: '2020-09-28T12:00:00.000Z',
   custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   accusedAppealDecision: CaseAppealDecision.APPEAL,
+  accusedAppealAnnouncement: 'Accused Appeal Announcement',
   prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+  prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
 }
 
 function getCaseData(fullCreateCaseData = false, otherCaseData = false) {
@@ -163,8 +165,14 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )
+  expect(caseOne.accusedAppealAnnouncement || null).toBe(
+    caseTwo.accusedAppealAnnouncement || null,
+  )
   expect(caseOne.prosecutorAppealDecision || null).toBe(
     caseTwo.prosecutorAppealDecision || null,
+  )
+  expect(caseOne.prosecutorAppealAnnouncement || null).toBe(
+    caseTwo.prosecutorAppealAnnouncement || null,
   )
   expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
   expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
