@@ -276,7 +276,7 @@ export const Overview: React.FC = () => {
                 <Text variant="h3">
                   {workingCase?.prosecutor
                     ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}{' '}
+                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}
                 </Text>
               </Box>
               <FormFooter
