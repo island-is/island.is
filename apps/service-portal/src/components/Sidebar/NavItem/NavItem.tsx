@@ -1,4 +1,4 @@
-import { Box, IconPropsType, Typography, Icon } from '@island.is/island-ui/core'
+import { Box, IconProps, Typography, Icon } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import cn from 'classnames'
@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 
 interface Props {
   path?: ServicePortalPath
-  icon?: IconPropsType
+  icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   external?: boolean
   variant: 'blue' | 'purple'
