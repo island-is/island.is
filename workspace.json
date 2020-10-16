@@ -3225,7 +3225,7 @@
             "outputPath": "apps/services/auth-api/src/openapi.yaml",
             "commands": [
               {
-                "command": "yarn build auth-api"
+                "command": "yarn build services-auth-api"
               },
               {
                 "command": "node dist/apps/services/auth-api/main --generate-schema apps/services/auth-api/src/openapi.yaml"

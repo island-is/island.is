@@ -7,7 +7,7 @@ import {
   ValidationPipe,
   NestInterceptor,
 } from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
 import { collectDefaultMetrics } from 'prom-client'
@@ -16,13 +16,6 @@ import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
-
-// const AuthUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/authorize"
-// const TokenUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/token"
-// const AuthUrl = `${process.env.IDS_ISSUER}/connect/authorize`
-// const TokenUrl = `${process.env.IDS_ISSUER}/connect/token`
-const AuthUrl = `https://localhost:6001/connect/authorize`
-const TokenUrl = `https://localhost:6001/connect/token`
 
 type RunServerOptions = {
   /**
