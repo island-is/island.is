@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import {
   Box,
@@ -11,13 +11,21 @@ import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import CarsTable from './components/CarsTable'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
+import { useRouter } from 'next/router'
 
 const CompanyOverview: FC = () => {
-  const [value, setValue] = useState('')
-
   const {
-    t: { companyOverview: t, companySide: sideText },
+    t: {
+      companyOverview: t,
+      companySidenav: sidenavText,
+      routes: { deregisterVehicle: routes },
+    },
   } = useI18n()
+  const router = useRouter()
+
+  const handleDeregister = () => {
+    router.push(routes.select)
+  }
 
   return (
     <PartnerPageLayout
@@ -37,7 +45,7 @@ const CompanyOverview: FC = () => {
                 <Text variant="h1">{t.title}</Text>
                 <Text variant="intro">{t.info}</Text>
               </Stack>
-              <Button>{t.buttons.deregister}</Button>
+              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
             </Stack>
             <Text variant="h3">{t.subtitles.history}</Text>
           </Stack>
@@ -50,12 +58,12 @@ const CompanyOverview: FC = () => {
           sections={[
             {
               icon: 'car',
-              title: `${sideText.deregister}`,
+              title: `${sidenavText.deregister}`,
               link: './company-overview',
             },
             {
               icon: 'business',
-              title: `${sideText.companyInfo}`,
+              title: `${sidenavText.companyInfo}`,
               link: './company-info',
             },
           ]}
