@@ -17,8 +17,25 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         }),
         systemRoute: true,
         path: ServicePortalPath.MinarSidurRoot,
-        icon: 'globe',
+        icon: {
+          type: 'outline',
+          icon: 'home',
+        },
       },
+
+      // Min Sida
+      {
+        name: defineMessage({
+          id: 'service.portal:my-info',
+          defaultMessage: 'Mín síða',
+        }),
+        path: ServicePortalPath.MinarUpplysingar,
+        icon: {
+          type: 'outline',
+          icon: 'person',
+        },
+      },
+
       // Fjolskyldan
       {
         name: defineMessage({
@@ -26,17 +43,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Fjölskyldan',
         }),
         path: ServicePortalPath.FjolskyldanRoot,
-        icon: 'user',
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:my-info',
-              defaultMessage: 'Mínar upplýsingar',
-            }),
-            path: ServicePortalPath.MinarUpplysingar,
-            icon: 'user',
-          },
-        ],
+        icon: {
+          type: 'outline',
+          icon: 'people',
+        },
       },
 
       // Fjarmal
@@ -46,27 +56,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Fjármál',
         }),
         path: ServicePortalPath.FjarmalRoot,
-        icon: 'info',
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:assets',
-              defaultMessage: 'Eignir',
-            }),
-            path: ServicePortalPath.EignirRoot,
-            icon: 'calendar',
-          },
-        ],
+        icon: {
+          type: 'outline',
+          icon: 'cellular',
+        },
       },
 
-      // Heilsa
+      // Eignir
       {
         name: defineMessage({
-          id: 'service.portal:health',
-          defaultMessage: 'Heilsa',
+          id: 'service.portal:assets',
+          defaultMessage: 'Eignir',
         }),
-        path: ServicePortalPath.HeilsaRoot,
-        icon: 'plus',
+        path: ServicePortalPath.EignirRoot,
+        icon: {
+          type: 'outline',
+          icon: 'wallet',
+        },
       },
 
       // Menntun
@@ -76,7 +82,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Menntun',
         }),
         path: ServicePortalPath.MenntunRoot,
-        icon: 'calendar',
+        icon: {
+          type: 'outline',
+          icon: 'school',
+        },
       },
     ],
   },
@@ -94,7 +103,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Umsóknir',
         }),
         path: ServicePortalPath.UmsoknirRoot,
-        icon: 'file',
+        icon: {
+          type: 'outline',
+          icon: 'fileTrayFull',
+        },
       },
 
       // Rafraen skjol
@@ -104,7 +116,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Rafræn skjöl',
         }),
         path: ServicePortalPath.RafraenSkjolRoot,
-        icon: 'article',
+        icon: {
+          type: 'outline',
+          icon: 'reader',
+        },
       },
 
       // Stillingar
@@ -114,18 +129,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           defaultMessage: 'Umboð',
         }),
         path: ServicePortalPath.StillingarUmbod,
-        icon: 'lock',
-      },
-
-      // Greidslur
-
-      {
-        name: defineMessage({
-          id: 'service.portal:payments',
-          defaultMessage: 'Greiðslur',
-        }),
-        path: ServicePortalPath.FjarmalGreidslur,
-        icon: 'toasterInfo',
+        icon: {
+          type: 'outline',
+          icon: 'lockClosed',
+        },
       },
     ],
   },

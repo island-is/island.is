@@ -27,9 +27,21 @@ export const ActionMenu: FC<{}> = ({ children }) => {
   return (
     <Box position="relative" ref={ref}>
       <button className={styles.trigger} onClick={handleTriggerClick}>
-        <Icon type="bullet" width={4} height={4} color="blue400" />
-        <Icon type="bullet" width={4} height={4} color="blue400" />
-        <Icon type="bullet" width={4} height={4} color="blue400" />
+        <Box
+          className={styles.dot}
+          background="blue400"
+          borderRadius="circle"
+        />
+        <Box
+          className={styles.dot}
+          background="blue400"
+          borderRadius="circle"
+        />
+        <Box
+          className={styles.dot}
+          background="blue400"
+          borderRadius="circle"
+        />
       </button>
       {isOpen && (
         <Box
