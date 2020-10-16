@@ -1279,7 +1279,7 @@
               "libs/auth-api-lib/tsconfig.lib.json",
               "libs/auth-api-lib/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/auth-api-lib/**"]
+            "exclude": ["**/node_modules/**", "!libs/auth-api-lib/**/*"]
           }
         },
         "test": {
