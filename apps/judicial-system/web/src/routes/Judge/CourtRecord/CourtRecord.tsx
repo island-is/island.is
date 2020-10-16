@@ -12,8 +12,13 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
-import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
-import { validate } from '../../../utils/validate'
+import {
+  autoSave,
+  isNextDisabled,
+  renderFormStepper,
+  updateState,
+} from '../../../utils/stepHelper'
+import { validate, Validation } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -30,6 +35,21 @@ export const CourtRecord: React.FC = () => {
     setCourtDocumentEndErrorMessage,
   ] = useState('')
 
+  const requiredFields: { value: string; validations: Validation[] }[] = [
+    {
+      value: workingCase?.courtStartTime,
+      validations: ['empty', 'time-format'],
+    },
+    {
+      value: workingCase?.courtStartTime,
+      validations: ['empty', 'time-format'],
+    },
+    { value: workingCase?.courtAttendees, validations: ['empty'] },
+    { value: workingCase?.policeDemands, validations: ['empty'] },
+    { value: workingCase?.accusedPlea, validations: ['empty'] },
+    { value: workingCase?.litigationPresentations, validations: ['empty'] },
+  ]
+
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
@@ -41,7 +61,7 @@ export const CourtRecord: React.FC = () => {
       setWorkingCase(wc)
     }
   }, [workingCase, setWorkingCase])
-
+  console.log(workingCase)
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -102,14 +122,24 @@ export const CourtRecord: React.FC = () => {
                           new Date().toString(),
                           evt.target.value,
                         )
-
-                        autoSave(
+                        if (
+                          courtStartTimeMinutes !== workingCase.courtStartTime
+                        ) {
+                          autoSave(
+                            workingCase,
+                            'courtStartTime',
+                            courtStartTimeMinutes,
+                            setWorkingCase,
+                          )
+                        }
+                      } else {
+                        updateState(
                           workingCase,
                           'courtStartTime',
-                          courtStartTimeMinutes,
+                          evt.target.value,
                           setWorkingCase,
                         )
-                      } else {
+
                         setCourtDocumentStartErrorMessage(
                           validateTimeEmpty.errorMessage ||
                             validateTimeFormat.errorMessage,
@@ -148,14 +178,22 @@ export const CourtRecord: React.FC = () => {
                         new Date().toString(),
                         evt.target.value,
                       )
-
-                      autoSave(
+                      if (courtEndTimeMinutes !== workingCase.courtEndTime) {
+                        autoSave(
+                          workingCase,
+                          'courtEndTime',
+                          courtEndTimeMinutes,
+                          setWorkingCase,
+                        )
+                      }
+                    } else {
+                      updateState(
                         workingCase,
                         'courtEndTime',
-                        courtEndTimeMinutes,
+                        evt.target.value,
                         setWorkingCase,
                       )
-                    } else {
+
                       setCourtDocumentEndErrorMessage(
                         validateTimeEmpty.errorMessage ||
                           validateTimeFormat.errorMessage,
@@ -184,6 +222,7 @@ export const CourtRecord: React.FC = () => {
                   }}
                   textarea
                   rows={3}
+                  required
                 />
               </Box>
               <Input
@@ -201,6 +240,7 @@ export const CourtRecord: React.FC = () => {
                 }}
                 textarea
                 rows={3}
+                required
               />
             </Box>
             <Box component="section" marginBottom={8}>
@@ -250,6 +290,7 @@ export const CourtRecord: React.FC = () => {
                 }}
                 textarea
                 rows={3}
+                required
               />
             </Box>
             <Box component="section" marginBottom={8}>
@@ -273,13 +314,28 @@ export const CourtRecord: React.FC = () => {
                 }}
                 textarea
                 rows={3}
+                required
               />
             </Box>
             <FormFooter
               nextUrl={Constants.RULING_STEP_ONE_ROUTE}
-              nextIsDisabled={
-                !workingCase.courtStartTime || !workingCase.courtEndTime
-              }
+              nextIsDisabled={isNextDisabled([
+                {
+                  value: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+                  validations: ['empty', 'time-format'],
+                },
+                {
+                  value: formatDate(workingCase?.courtEndTime, TIME_FORMAT),
+                  validations: ['empty', 'time-format'],
+                },
+                { value: workingCase?.courtAttendees, validations: ['empty'] },
+                { value: workingCase?.policeDemands, validations: ['empty'] },
+                { value: workingCase?.accusedPlea, validations: ['empty'] },
+                {
+                  value: workingCase?.litigationPresentations,
+                  validations: ['empty'],
+                },
+              ])}
             />
           </GridColumn>
         </GridRow>
