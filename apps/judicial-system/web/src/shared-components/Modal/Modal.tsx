@@ -2,7 +2,7 @@ import {
   Box,
   ButtonDeprecated as Button,
   Icon,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -39,12 +39,12 @@ const Modal: React.FC<ModalProps> = ({
           </Box>
         )}
         <Box marginBottom={4}>
-          <Typography variant="h1">{title}</Typography>
+          <Text variant="h1">{title}</Text>
         </Box>
         <Box marginBottom={6}>
           {
             // Check if text is a string or Element
-            React.isValidElement(text) ? text : <Typography>{text}</Typography>
+            React.isValidElement(text) ? text : <Text>{text}</Text>
           }
         </Box>
         <Box display="flex">
