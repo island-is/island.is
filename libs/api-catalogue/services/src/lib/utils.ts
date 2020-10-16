@@ -27,8 +27,8 @@ export const serviceIdSort = (
   b: ServiceId,
   sortOrder: SortOrder = SortOrder.ASC,
 ): number => {
-  const codeA = a.serviceCode?.toLowerCase()
-  const codeB = b.serviceCode?.toLowerCase()
+  const codeA = a.serviceCode?.toLowerCase() ?? ''
+  const codeB = b.serviceCode?.toLowerCase() ?? ''
 
   if (codeA < codeB) return sortOrder === SortOrder.ASC ? -1 : 1
   else if (codeA > codeB) return sortOrder === SortOrder.ASC ? 1 : -1
@@ -36,7 +36,7 @@ export const serviceIdSort = (
   return 0
 }
 
-export const exceptionHandler = async (err) => {
+export const exceptionHandler = async (err: any) => {
   if (err instanceof Response) {
     // Error from X-Road calling getOpenApi
     logger.error(
