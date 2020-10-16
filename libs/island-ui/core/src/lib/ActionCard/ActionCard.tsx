@@ -1,38 +1,27 @@
 import * as React from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
-import { ArrowLink } from '../Link/ArrowLink/ArrowLink'
 import { Stack } from '../Stack/Stack'
 import { Tag } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
-
-type CTA = {
-  /**
-   * CTA label
-   */
-  label: string
-  /**
-   * 'primary' renders a button, 'secondary' renders a link
-   * TODO: Change both to links or buttons to simplify?
-   */
-  variant?: 'primary' | 'secondary'
-  /**
-   * 'primary' variant expects onClick
-   */
-  onClick?: () => void
-  /**
-   * 'secondary' variant expects a href
-   */
-  href?: string
-}
 
 type ActionCardProps = {
   heading: string
   text?: string
   tag?: string
   eyebrow?: string
-  cta: CTA
+  cta: {
+    /**
+     * CTA label
+     */
+    label: string
+    /**
+     * 'primary' renders a button, 'secondary' renders a text button
+     */
+    variant?: 'primary' | 'secondary'
+    onClick?: () => void
+  }
   disabled?: boolean
   disabledLabel?: string
   disabledMessage?: string
@@ -40,25 +29,8 @@ type ActionCardProps = {
 
 const defaultCta = {
   variant: 'primary',
-  onClick: () => console.log('No on click?'),
-  href: '/',
+  onClick: () => null,
 } as const
-
-const renderCta = (cta: CTA) => {
-  switch (cta.variant) {
-    case 'primary': {
-      return (
-        <Button size="small" onClick={cta.onClick}>
-          {cta.label}
-        </Button>
-      )
-    }
-
-    case 'secondary': {
-      return <ArrowLink href={cta.href}>{cta.label}</ArrowLink>
-    }
-  }
-}
 
 // DRAFT
 export const ActionCard: React.FC<ActionCardProps> = ({
@@ -80,10 +52,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     </Box>
   )
 
-  const renderBasic = () => (
+  const renderDefault = () => (
     <Stack space="gutter">
       {tag && <Tag label>{tag}</Tag>}
-      {renderCta(callToAction)}
+      <Button
+        variant={callToAction.variant === 'secondary' ? 'text' : 'primary'}
+        onClick={callToAction.onClick}
+      >
+        {callToAction.label}
+      </Button>
     </Stack>
   )
 
@@ -113,7 +90,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         flexDirection="column"
         marginLeft="auto"
       >
-        {disabled ? renderDisabled() : renderBasic()}
+        {disabled ? renderDisabled() : renderDefault()}
       </Box>
     </Box>
   )
