@@ -5,7 +5,6 @@ import cn from 'classnames'
 import {
   Box,
   FocusableBox,
-  Icon as IconNew,
   IconDeprecated as Icon, 
   Text,
 } from '@island.is/island-ui/core'
@@ -72,9 +71,8 @@ export const SideMenu = (props: SideMenuProps) => {
               onClick={props.handleClose}
               tabIndex={-1}
               padding={1}
-              style={{position:'relative', top:-8}}
             >
-              <IconNew type="filled" icon="close" color="blue400"/>
+               <Icon type="close" />
             </FocusableBox>
           </Box>
         </Box>
