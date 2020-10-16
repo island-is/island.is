@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  dateResolution,
   ElasticService,
   SearchIndexes,
   sortDirection,
@@ -7,6 +8,10 @@ import {
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
 import { News } from './models/news.model'
+import { GetNewsInput } from './dto/getNews.input'
+import { GetArticlesInput } from './dto/getArticles.input'
+import { NewsList } from './models/newsList.model'
+import { GetNewsDatesInput } from './dto/getNewsDates.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -33,7 +38,7 @@ export class CmsElasticsearchService {
 
   async getArticles(
     index: SearchIndexes,
-    { category, size }: { category: string; size?: number },
+    { category, size }: GetArticlesInput,
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
@@ -53,11 +58,25 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: SearchIndexes,
-    { size }: { size?: number },
-  ): Promise<News[]> {
+    { size, page, order, month, year }: GetNewsInput,
+  ): Promise<NewsList> {
+    let dateQuery
+    if (year) {
+      dateQuery = {
+        date: {
+          from: `${year}-${month?.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD
+          to: `${year}-${month?.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD
+        },
+      }
+    } else {
+      dateQuery = {}
+    }
+
     const query = {
       types: ['webNews'],
-      sort: { dateCreated: 'asc' as sortDirection },
+      sort: { dateCreated: order as sortDirection },
+      ...dateQuery,
+      page,
       size,
     }
 
@@ -65,8 +84,34 @@ export class CmsElasticsearchService {
       index,
       query,
     )
-    return articlesResponse.hits.hits.map<News>((response) =>
-      JSON.parse(response._source.response),
+
+    return {
+      total: articlesResponse.hits.total.value,
+      items: articlesResponse.hits.hits.map<News>((response) =>
+        JSON.parse(response._source.response),
+      ),
+    }
+  }
+
+  async getNewsDates(
+    index: SearchIndexes,
+    { order }: GetNewsDatesInput,
+  ): Promise<string[]> {
+    const query = {
+      types: ['webNews'],
+      field: 'dateCreated',
+      resolution: 'month' as dateResolution,
+      order,
+    }
+
+    const newsDatesResponse = await this.elasticService.getDateAggregation(
+      index,
+      query,
+    )
+
+    // we return dates as array of strings on the format y-M
+    return newsDatesResponse.aggregations.dates.buckets.map(
+      (aggregationResult) => aggregationResult.key_as_string,
     )
   }
 

@@ -19,14 +19,14 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
       autoSchemaFile,
       path: '/api/graphql',
     }),
-    SequelizeModule.forRootAsync({
-      useClass: SequelizeConfigService,
-    }),
+    // SequelizeModule.forRootAsync({
+    //   useClass: SequelizeConfigService,
+    // }),
     AuthModule,
     UserModule,
     CarownerModule,
     RecyclingPartnerModule,
-    GdprModule,
+    //GdprModule,
   ],
   //providers: [BackendAPI],
 })
