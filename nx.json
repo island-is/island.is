@@ -99,6 +99,9 @@
     "application-template-loader": {
       "tags": []
     },
+    "application-templates-document-provider-onboarding": {
+      "tags": []
+    },
     "application-templates-driving-lessons": {
       "tags": []
     },
