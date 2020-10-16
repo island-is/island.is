@@ -1,5 +1,5 @@
 import React from 'react'
-import { AppealDecitionRole, Case } from '../types'
+import { AppealDecitionRole, Case, RequiredField } from '../types'
 import * as api from '../api'
 import { parseString } from './formatters'
 import { FormStepper, Typography } from '@island.is/island-ui/core'
@@ -8,6 +8,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
+import { validate } from './validate'
 
 export const updateState = (
   state: Case,
@@ -185,4 +186,20 @@ export const renderFormStepper = (
       activeSubSection={activeSubsection}
     />
   )
+}
+
+export const isNextDisabled = (requiredFields: RequiredField[]) => {
+  // Loop through requiredFields
+  for (let i = 0; i < requiredFields.length; i++) {
+    // Loop through validations for each required field
+    for (let a = 0; a < requiredFields[i].validations.length; a++) {
+      if (
+        !validate(requiredFields[i].value, requiredFields[i].validations[a])
+          .isValid
+      ) {
+        return true
+      }
+    }
+  }
+  return false
 }
