@@ -5,7 +5,7 @@ import {
   Box,
   Breadcrumbs,
   Select,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
@@ -163,7 +163,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
       <div className={cn(styles.section)}>
         <Accordion singleExpand={true}>
           <AccordionItem id="id_1" label="OpenAPI skjölun">
-            <Typography variant="p" as="div">
+            <Text variant="default" as="div">
               {loading ? (
                 'Leita...'
               ) : data?.getOpenApi.spec == '' || data?.getOpenApi == null ? (
@@ -171,7 +171,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
               ) : (
                 <OpenApiView spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi} />
               )}
-            </Typography>
+            </Text>
           </AccordionItem>
         </Accordion>
       </div>
