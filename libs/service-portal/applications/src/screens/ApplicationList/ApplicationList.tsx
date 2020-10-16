@@ -7,6 +7,7 @@ import {
 import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
 import { useApplicantApplications } from '@island.is/service-portal/graphql'
+import { useAssigneeApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -18,17 +19,15 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
     data: assigneeApplications,
     loading: assigneeApplicationsLoading,
     error: assigneeApplicationsError,
-  } = useApplicantApplications(userInfo.profile.natreg)
+  } = useAssigneeApplications(userInfo.profile.natreg)
 
   return (
     <>
       <Box marginBottom={5}>
         <Typography variant="h1">Umsóknir</Typography>
       </Box>
-      {(loading || assigneeApplicationsLoading) && (
-        <ActionCardLoader repeat={3} />
-      )}
-      {(error || assigneeApplicationsError) && (
+      {loading && <ActionCardLoader repeat={3} />}
+      {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
           <Typography variant="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis

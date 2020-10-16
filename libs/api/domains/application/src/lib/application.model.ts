@@ -20,7 +20,7 @@ export class Application {
   @Field(() => String)
   applicant!: string
 
-  @Field(() => [String], { nullable: true })
+  @Field(() => [String])
   assignees!: string[]
 
   @Field(() => String, { nullable: true })
