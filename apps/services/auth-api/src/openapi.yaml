@@ -1,12 +1,12 @@
 openapi: 3.0.0
 info:
-  title: Reference backend
-  description: This is provided as a reference to implement other backends.
-  version: "1.0"
+  title: IdentityServer Api
+  description: Api for IdentityServer.
+  version: '1.0'
   contact: {}
 tags:
-  - name: reference
-    description: ""
+  - name: auth-api
+    description: ''
 servers: []
 components:
   schemas:
@@ -24,20 +24,506 @@ components:
           type: string
       required:
         - version
-    ResourceDto:
+    ClaimDto:
       type: object
       properties:
-        nationalId:
+        type:
           type: string
+          example: set_type
+        value:
+          type: string
+          example: set_value
+        valueType:
+          type: string
+          example: set_value_type
+        issuer:
+          type: string
+          example: set_issuer
+        originalIssuer:
+          type: string
+          example: set_original_issuer
       required:
-        - nationalId
-    Resource:
+        - type
+        - value
+        - valueType
+        - issuer
+        - originalIssuer
+    UserIdentityDto:
+      type: object
+      properties:
+        subjectId:
+          type: string
+          example: set_subject_id
+        name:
+          type: string
+          example: set_name
+        providerName:
+          type: string
+          example: set_provider_name
+        providerSubjectId:
+          type: string
+          example: set_provider_subject_id
+        claims:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClaimDto'
+      required:
+        - subjectId
+        - name
+        - providerName
+        - providerSubjectId
+        - claims
+    UserIdentity:
       type: object
       properties:
         id:
           type: string
-        nationalId:
+        subjectId:
           type: string
+        name:
+          type: string
+        providerName:
+          type: string
+        providerSubjectId:
+          type: string
+        profileId:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        claims:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - subjectId
+        - name
+        - providerName
+        - providerSubjectId
+        - profileId
+        - created
+        - modified
+        - claims
+    Client:
+      type: object
+      properties:
+        clientId:
+          type: string
+          example: client_id
+        domain:
+          type: string
+          example: domain
+        allowOfflineAccess:
+          type: boolean
+          example: false
+        identityTokenLifetime:
+          type: number
+          example: 300
+        accessTokenLifetime:
+          type: number
+          example: 3600
+        authorizationCodeLifetime:
+          type: number
+          example: 300
+        absoluteRefreshTokenLifetime:
+          type: number
+          example: 2592000
+        slidingRefreshTokenLifetime:
+          type: number
+          example: 1296000
+        consentLifetime:
+          type: number
+          example: null
+        refreshTokenUsage:
+          type: number
+          example: 1
+        updateAccessTokenClaimsOnRefresh:
+          type: boolean
+          example: true
+        refreshTokenExpiration:
+          type: number
+          example: 1
+        accessTokenType:
+          type: number
+          example: 0
+        enableLocalLogin:
+          type: boolean
+          example: true
+        includeJwtId:
+          type: boolean
+          example: true
+        alwaysSendClientClaims:
+          type: boolean
+          example: false
+        pairWiseSubjectSalt:
+          type: string
+          example: null
+        userSsoLifetime:
+          type: number
+          example: null
+        userCodeType:
+          type: string
+          example: null
+        deviceCodeLifetime:
+          type: number
+          example: 300
+        alwaysIncludeUserClaimsInIdToken:
+          type: boolean
+          example: false
+        backChannelLogoutSessionRequired:
+          type: boolean
+          example: true
+        enabled:
+          type: boolean
+          example: true
+        logoUri:
+          type: string
+          example: null
+        requireConsent:
+          type: boolean
+          example: false
+        requirePkce:
+          type: boolean
+          example: false
+        requireRequestObject:
+          type: boolean
+          example: false
+        allowPlainTextPkce:
+          type: boolean
+          example: false
+        allowAccessTokenViaBrowser:
+          type: boolean
+          example: false
+        frontChannelLogoutUri:
+          type: string
+          example: null
+        frontChannelLogoutSessionRequired:
+          type: boolean
+          example: true
+        backChannelLogoutUri:
+          type: string
+          example: null
+        allowRememberConsent:
+          type: boolean
+          example: true
+        clientClaimsPrefix:
+          type: string
+          example: client_claims_prefix
+        clientName:
+          type: string
+          example: null
+        clientUri:
+          type: string
+          example: null
+        description:
+          type: string
+          example: null
+        protocolType:
+          type: string
+          example: protocol_type
+        requireClientSecret:
+          type: boolean
+          example: true
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        allowedScopes:
+          type: array
+          items:
+            type: string
+        allowedCorsOrigins:
+          type: array
+          items:
+            type: string
+        postLogoutRedirectUris:
+          type: array
+          items:
+            type: string
+      required:
+        - clientId
+        - domain
+        - allowOfflineAccess
+        - identityTokenLifetime
+        - accessTokenLifetime
+        - authorizationCodeLifetime
+        - absoluteRefreshTokenLifetime
+        - slidingRefreshTokenLifetime
+        - consentLifetime
+        - refreshTokenUsage
+        - updateAccessTokenClaimsOnRefresh
+        - refreshTokenExpiration
+        - accessTokenType
+        - enableLocalLogin
+        - includeJwtId
+        - alwaysSendClientClaims
+        - pairWiseSubjectSalt
+        - userSsoLifetime
+        - userCodeType
+        - deviceCodeLifetime
+        - alwaysIncludeUserClaimsInIdToken
+        - backChannelLogoutSessionRequired
+        - enabled
+        - logoUri
+        - requireConsent
+        - requirePkce
+        - requireRequestObject
+        - allowPlainTextPkce
+        - allowAccessTokenViaBrowser
+        - frontChannelLogoutUri
+        - frontChannelLogoutSessionRequired
+        - backChannelLogoutUri
+        - allowRememberConsent
+        - clientClaimsPrefix
+        - clientName
+        - clientUri
+        - description
+        - protocolType
+        - requireClientSecret
+        - created
+        - modified
+        - allowedScopes
+        - allowedCorsOrigins
+        - postLogoutRedirectUris
+    IdentityResource:
+      type: object
+      properties:
+        name:
+          type: string
+        enabled:
+          type: boolean
+          example: true
+        displayName:
+          type: string
+        description:
+          type: string
+        showInDiscoveryDocument:
+          type: boolean
+          example: true
+        userClaims:
+          type: array
+          items:
+            type: string
+        required:
+          type: boolean
+          example: false
+        emphasize:
+          type: boolean
+          example: false
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - name
+        - enabled
+        - displayName
+        - description
+        - showInDiscoveryDocument
+        - userClaims
+        - required
+        - emphasize
+        - created
+        - modified
+    ApiScope:
+      type: object
+      properties:
+        domain:
+          type: string
+          example: domain
+        name:
+          type: string
+        enabled:
+          type: boolean
+          example: true
+        displayName:
+          type: string
+        description:
+          type: string
+        showInDiscoveryDocument:
+          type: boolean
+          example: true
+        userClaims:
+          type: array
+          items:
+            type: string
+        required:
+          type: boolean
+          example: false
+        emphasize:
+          type: boolean
+          example: false
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - domain
+        - name
+        - enabled
+        - displayName
+        - description
+        - showInDiscoveryDocument
+        - userClaims
+        - required
+        - emphasize
+        - created
+        - modified
+    ApiResource:
+      type: object
+      properties:
+        domain:
+          type: string
+          example: domain
+        name:
+          type: string
+        enabled:
+          type: boolean
+        displayName:
+          type: string
+        description:
+          type: string
+        showInDiscoveryDocument:
+          type: boolean
+        userClaims:
+          type: array
+          items:
+            type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        apiSecrets:
+          type: array
+          items:
+            type: string
+      required:
+        - domain
+        - name
+        - enabled
+        - displayName
+        - description
+        - showInDiscoveryDocument
+        - userClaims
+        - created
+        - modified
+        - scopes
+        - apiSecrets
+    Grant:
+      type: object
+      properties:
+        key:
+          type: string
+          example: key
+        type:
+          type: string
+          example: type
+        subjectId:
+          type: string
+          example: subjectId
+        sessionId:
+          type: string
+          example: sessionId
+        clientId:
+          type: string
+          example: postman
+        description:
+          type: string
+          example: description
+        creationTime:
+          type: string
+        expiration:
+          type: string
+          example: 2020-10-17T14:05:38.777Z
+        consumedTime:
+          type: string
+        data:
+          type: string
+          example: data
+      required:
+        - key
+        - type
+        - subjectId
+        - sessionId
+        - clientId
+        - description
+        - creationTime
+        - expiration
+        - consumedTime
+        - data
+    GrantDto:
+      type: object
+      properties:
+        key:
+          type: string
+          example: set_key
+        type:
+          type: string
+          example: set_type
+        subjectId:
+          type: string
+          example: set_subject_id
+        sessionId:
+          type: string
+          example: sessionId
+        clientId:
+          type: string
+          example: set_clientId
+        description:
+          type: string
+          example: description
+        creationTime:
+          format: date-time
+          type: string
+        expiration:
+          format: date-time
+          type: string
+          example: 2020-10-17T14:05:39.405Z
+        consumedTime:
+          format: date-time
+          type: string
+        data:
+          type: string
+          example: set_data
+      required:
+        - key
+        - type
+        - subjectId
+        - sessionId
+        - clientId
+        - description
+        - creationTime
+        - expiration
+        - consumedTime
+        - data
+    GrantType:
+      type: object
+      properties:
+        id:
+          type: string
+          example: e29f8dbe-3202-4b86-98fc-d7de90b1f69b
+        name:
+          type: string
+          example: some_name
+        description:
+          type: string
+          example: some_description
         created:
           format: date-time
           type: string
@@ -46,7 +532,8 @@ components:
           type: string
       required:
         - id
-        - nationalId
+        - name
+        - description
         - created
         - modified
 paths:
@@ -55,61 +542,295 @@ paths:
       operationId: InfraController_liveness
       parameters: []
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Liveness"
+                $ref: '#/components/schemas/Liveness'
       tags:
-        &a1
         - internal
   /version:
     get:
       operationId: InfraController_version
       parameters: []
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Version"
-      tags: *a1
-  /resource:
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
+  /user-identities:
     post:
-      operationId: ResourceController_create
+      operationId: UserIdentitiesController_create
       parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResourceDto"
+              $ref: '#/components/schemas/UserIdentityDto'
       responses:
-        "201":
-          description: ""
+        '201':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Resource"
+                $ref: '#/components/schemas/UserIdentity'
       tags:
-        &a2
-        - resource
-  "/resource/{nationalId}":
+        - user-identities
+  '/user-identities/{subjectId}':
     get:
-      operationId: ResourceController_findOne
+      operationId: UserIdentitiesController_findOne
       parameters:
-        - name: nationalId
+        - name: subjectId
           required: true
           in: path
           schema:
             type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Resource"
-      tags: *a2
+                $ref: '#/components/schemas/UserIdentity'
+      tags:
+        - user-identities
+  '/user-identities/{provider}/{subjectId}':
+    get:
+      operationId: UserIdentitiesController_findOneByProviderSubject
+      parameters:
+        - name: provider
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: subjectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserIdentity'
+      tags:
+        - user-identities
+  '/clients/{id}':
+    get:
+      operationId: ClientsController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+      tags:
+        - clients
+  /identity-resources:
+    get:
+      operationId: ResourcesController_FindIdentityResourcesByScopeName
+      parameters:
+        - name: scopeNames
+          required: false
+          in: query
+          schema:
+            type: array
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdentityResource'
+      tags:
+        - resources
+  /api-scopes:
+    get:
+      operationId: ResourcesController_FindApiScopesByNameAsync
+      parameters:
+        - name: scopeNames
+          required: false
+          in: query
+          schema:
+            type: array
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiScope'
+      tags:
+        - resources
+  /api-resources:
+    get:
+      operationId: ResourcesController_FindApiResourcesByNameAsync
+      parameters:
+        - name: apiResourceNames
+          required: false
+          in: query
+          schema:
+            type: array
+        - name: apiScopeNames
+          required: false
+          in: query
+          schema:
+            type: array
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiResource'
+      tags:
+        - resources
+  /grants:
+    get:
+      operationId: GrantsController_getAll
+      parameters:
+        - name: subjectId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: sessionId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: clientId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: type
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grant'
+      tags:
+        - grants
+    delete:
+      operationId: GrantsController_removeAllAsync
+      parameters:
+        - name: subjectId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: sessionId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: clientId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: type
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - grants
+    post:
+      operationId: GrantsController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grant'
+      tags:
+        - grants
+  '/grants/{key}':
+    get:
+      operationId: GrantsController_getAsync
+      parameters:
+        - name: key
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grant'
+      tags:
+        - grants
+    delete:
+      operationId: GrantsController_removeAsync
+      parameters:
+        - name: key
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - grants
+  '/grants/type/{id}':
+    get:
+      operationId: GrantTypeController_getGrantType
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantType'
+      tags:
+        - grants
