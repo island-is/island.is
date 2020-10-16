@@ -1,7 +1,5 @@
 # api-mocks
 
-This library was generated with [Nx](https://nx.dev).
+Provides mocks for the main GraphQL api.
 
-## Running unit tests
-
-Run `nx test api-mocks` to execute the unit tests via [Jest](https://jestjs.io).
+For more information, check out the documentation in `libs/shared/mocking`.
