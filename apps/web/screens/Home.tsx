@@ -13,20 +13,19 @@ import {
   GetArticleCategoriesQuery,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  GetNewsListQuery,
   GetLifeEventsQuery,
   GetHomepageQuery,
-  QueryGetNewsListArgs,
   QueryGetLifeEventsArgs,
   QueryGetHomepageArgs,
+  GetNewsQuery,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_SLIDES_QUERY,
-  GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
   GET_HOMEPAGE_QUERY,
+  GET_NEWS_QUERY,
 } from './queries'
 import {
   IntroductionSection,
@@ -39,12 +38,13 @@ import {
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
+import { QueryGetNewsArgs } from '@island.is/api/schema'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
   namespace: GetNamespaceQuery['getNamespace']
-  news: GetNewsListQuery['getNewsList']['news']
+  news: GetNewsQuery['getNews']['items']
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
   page: GetHomepageQuery['getHomepage']
 }
@@ -174,7 +174,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     },
     {
       data: {
-        getNewsList: { news },
+        getNews: { items: news },
       },
     },
     {
@@ -207,11 +207,11 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
-      query: GET_NEWS_LIST_QUERY,
+    apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
+      query: GET_NEWS_QUERY,
       variables: {
         input: {
-          perPage: 3,
+          size: 3,
           lang: locale as ContentLanguage,
         },
       },

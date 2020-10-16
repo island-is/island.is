@@ -19,7 +19,6 @@ const createMockApplication = (
   } = {},
 ): Application => ({
   id: '123',
-  externalId: '141414',
   state: data.state || 'draft',
   applicant: '111111-3000',
   typeId: data.typeId || ApplicationTypes.EXAMPLE,
@@ -67,10 +66,9 @@ const testApplicationTemplate: ApplicationTemplate<
               formLoader: () =>
                 Promise.resolve(
                   buildForm({
-                    id: ApplicationTypes.PARENTAL_LEAVE,
+                    id: 'ParentalLeave',
                     name: 'parentalLeave',
                     children: [],
-                    ownerId: 'asdf',
                   }),
                 ),
               write: {
@@ -206,7 +204,7 @@ describe('ApplicationTemplate', () => {
         applicationWithAnswersAndExternalData,
         testApplicationTemplate,
       )
-      const result = helper.getPermittedAnswersAndExternalData('applicant')
+      const result = helper.getReadableAnswersAndExternalData('applicant')
       expect(result.answers).toEqual({
         person: {
           age: 25,
@@ -237,7 +235,7 @@ describe('ApplicationTemplate', () => {
         testApplicationTemplate,
       )
       expect(
-        helper.getPermittedAnswersAndExternalData('noRoleInDraftState'),
+        helper.getReadableAnswersAndExternalData('noRoleInDraftState'),
       ).toEqual({ answers: {}, externalData: {} })
     })
     it('should return no data if the current user has a role in this state, but no read nor write access', () => {
@@ -250,7 +248,7 @@ describe('ApplicationTemplate', () => {
         applicationWithAnswersAndExternalData,
         testApplicationTemplate,
       )
-      expect(helper.getPermittedAnswersAndExternalData('applicant')).toEqual({
+      expect(helper.getReadableAnswersAndExternalData('applicant')).toEqual({
         answers: {},
         externalData: {},
       })
@@ -265,7 +263,7 @@ describe('ApplicationTemplate', () => {
         applicationWithAnswersAndExternalData,
         testApplicationTemplate,
       )
-      expect(helper.getPermittedAnswersAndExternalData('reviewer')).toEqual({
+      expect(helper.getReadableAnswersAndExternalData('reviewer')).toEqual({
         answers,
         externalData,
       })
@@ -280,7 +278,7 @@ describe('ApplicationTemplate', () => {
         applicationWithAnswersAndExternalData,
         testApplicationTemplate,
       )
-      expect(helper.getPermittedAnswersAndExternalData('applicant')).toEqual({
+      expect(helper.getReadableAnswersAndExternalData('applicant')).toEqual({
         answers,
         externalData,
       })

@@ -18,7 +18,6 @@ import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
-import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
 import { GetOrganizationTagsInput } from './dto/getOrganizationTags.input'
@@ -28,7 +27,6 @@ import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
-import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
@@ -66,10 +64,11 @@ import { AboutSubPage } from './models/aboutSubPage.model'
 import { GetHomepageInput } from './dto/getHomepage.input'
 import { ContactUsInput } from './dto/contactUs.input'
 import { ContactUsPayload } from './models/contactUsPayload.model'
-import { GetNewsInput } from './dto/getNews.input'
-import { logger } from '@island.is/logging'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Homepage } from './models/homepage.model'
+import { GetNewsInput } from './dto/getNews.input'
+import { GetNewsDatesInput } from './dto/getNewsDates.input'
+import { NewsList } from './models/newsList.model'
 
 const { cacheTime } = environment
 
@@ -305,10 +304,11 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [Article])
-  getArticles(
-    @Args('input') { lang, ...input }: GetArticlesInput,
-  ): Promise<Article[]> {
-    return this.cmsElasticsearchService.getArticles(SearchIndexes[lang], input)
+  getArticles(@Args('input') input: GetArticlesInput): Promise<Article[]> {
+    return this.cmsElasticsearchService.getArticles(
+      SearchIndexes[input.lang],
+      input,
+    )
   }
 
   @Directive(cacheControlDirective())
@@ -323,10 +323,21 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [News])
-  getNews(@Args('input') { lang, size }: GetNewsInput): Promise<News[]> {
-    logger.info('inside')
-    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
+  @Query(() => [String])
+  getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
+    return this.cmsElasticsearchService.getNewsDates(
+      SearchIndexes[input.lang],
+      input,
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => NewsList)
+  getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
+    return this.cmsElasticsearchService.getNews(
+      SearchIndexes[input.lang],
+      input,
+    )
   }
 
   @Mutation(() => ContactUsPayload)
@@ -336,12 +347,6 @@ export class CmsResolver {
     return {
       success: await this.mailService.deliverContactUs(input),
     }
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => PaginatedNews)
-  getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
-    return this.cmsContentfulService.getNewsList(input)
   }
 
   @Directive(cacheControlDirective())
@@ -359,7 +364,11 @@ export class LatestNewsSliceResolver {
   async news(
     @Parent() { news: { lang, size } }: LatestNewsSlice,
   ): Promise<News[]> {
-    return this.cmsElasticsearchService.getNews(SearchIndexes[lang], { size })
+    const newsList = await this.cmsElasticsearchService.getNews(
+      SearchIndexes[lang],
+      { size },
+    )
+    return newsList.items
   }
 }
 
