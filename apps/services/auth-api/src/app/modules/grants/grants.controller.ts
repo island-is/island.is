@@ -71,14 +71,10 @@ export class GrantsController {
   @ApiOkResponse()
   async removeAllAsync(
     @Query('subjectId') subjectId: string,
-    @Query('sessionId') sessionId: string,
-    @Query('clientId') clientId: string,
-    @Query('type') type: string,
+    @Query('sessionId') sessionId?: string,
+    @Query('clientId') clientId?: string,
+    @Query('type') type?: string,
   ): Promise<number> {
-    if (!subjectId) {
-      throw new Error('subjectId must be specified.')
-    }
-
     return await this.grantsService.removeAllAsync(
       subjectId,
       sessionId,

@@ -59,15 +59,15 @@ export class GrantsService {
 
   async removeAllAsync(
     subjectId: string,
-    sessionId: string,
-    clientId: string,
-    type: string,
+    sessionId?: string,
+    clientId?: string,
+    type?: string,
   ): Promise<number> {
-    let whereOptions: WhereOptions = {}
-
-    if (subjectId) {
-      whereOptions = { ...whereOptions, subjectId: subjectId }
+    if (!Boolean(subjectId)) {
+      throw new Error('subjectId must be specified.')
     }
+
+    let whereOptions: WhereOptions = { subjectId: subjectId }
 
     if (sessionId) {
       whereOptions = { ...whereOptions, sessionId: sessionId }
