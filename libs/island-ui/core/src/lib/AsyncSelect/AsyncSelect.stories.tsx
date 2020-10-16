@@ -1,27 +1,19 @@
 import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
+
+import { withFigma } from '../../utils/withFigma'
 import { AsyncSelect } from './AsyncSelect'
 import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
-
-const figmaLink =
-  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=50%3A101'
 
 export default {
   title: 'Form/AsyncSelect',
   component: AsyncSelect,
   decorators: [withDesign],
-  parameters: {
-    docs: {
-      description: {
-        component: `[View in Figma](${figmaLink})`,
-      },
-    },
-    design: {
-      type: 'figma',
-      url: figmaLink,
-    },
-  },
+  parameters: withFigma({
+    desktop:
+      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=50%3A101',
+  }),
 }
 
 export const Default = () => (
