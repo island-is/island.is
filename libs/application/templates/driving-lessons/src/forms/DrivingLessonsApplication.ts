@@ -11,7 +11,6 @@ import {
   buildTextField,
   Form,
   DataProviderTypes,
-  ApplicationTypes,
   buildDateField,
 } from '@island.is/application/core'
 import { m } from './messages'
@@ -20,8 +19,7 @@ const yesOption = { value: 'yes', label: m.yesOptionLabel }
 const noOption = { value: 'no', label: m.noOptionLabel }
 
 export const DrivingLessonsApplication: Form = buildForm({
-  id: ApplicationTypes.DRIVING_LESSONS,
-  ownerId: 'TODO?',
+  id: 'DrivingLessonsApplicationDraftForm',
   name: m.formName,
   children: [
     buildSection({
