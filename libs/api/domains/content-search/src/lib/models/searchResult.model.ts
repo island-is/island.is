@@ -25,4 +25,4 @@ export class SearchResult {
   tagCounts?: TagCount[]
 }
 
-// TODO: Classes form multiple classes can conflict here, look into adding namespace prefixes to classes
+// TODO: Classes form multiple domains can conflict here, look into adding namespace prefixes to classes

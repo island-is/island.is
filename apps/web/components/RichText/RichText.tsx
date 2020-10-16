@@ -4,6 +4,7 @@ import {
   renderSlices,
   defaultRenderComponent,
   RenderConfig,
+  Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import {
   GridRow,
@@ -21,7 +22,7 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'Location',
 ]
 
-const renderComponent = (slice: Slice, config: RenderConfig) => {
+const renderComponent = (slice: SliceType, config: RenderConfig) => {
   let children: ReactNode =
     slice.__typename === 'ContactUs' ? (
       <ContactUs {...slice} />
@@ -55,7 +56,7 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
 }
 
 export const RichText: FC<{
-  body: Slice[]
+  body: SliceType[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
   return (
