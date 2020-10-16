@@ -350,7 +350,7 @@ export const Confirmation: React.FC = () => {
                 <Text variant="h3">
                   {workingCase?.judge
                     ? `${workingCase?.judge.name}, ${workingCase?.judge.title}`
-                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}{' '}
+                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}
                 </Text>
               </Box>
               <FormFooter
