@@ -2004,7 +2004,7 @@
             }
           }
         },
-        "build-storybook": {
+        "build": {
           "builder": "@nrwl/storybook:build",
           "options": {
             "uiFramework": "@storybook/react",
@@ -2016,9 +2016,15 @@
           "configurations": {
             "ci": {
               "quiet": true
+            },
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "island-ui-theme": {

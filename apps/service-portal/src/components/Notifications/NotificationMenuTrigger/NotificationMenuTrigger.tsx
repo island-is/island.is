@@ -22,7 +22,10 @@ const NotificationMenuTrigger: FC<{}> = () => {
 
   const handleClick = () =>
     setMenuState(notificationMenuState === 'open' ? 'closed' : 'open')
-  useClickAway(ref, () => setMenuState('closed'))
+
+  useClickAway(ref, () =>
+    notificationMenuState === 'open' ? setMenuState('closed') : null,
+  )
 
   return (
     <Box position="relative" display="flex" ref={ref}>
