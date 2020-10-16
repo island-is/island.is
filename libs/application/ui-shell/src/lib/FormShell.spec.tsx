@@ -24,14 +24,12 @@ describe(' FormShell', () => {
     externalData: {},
     answers: {},
     applicant,
-    externalId: '123123123',
     state: 'draft',
     modified: new Date(),
     created: new Date(),
   }
   const form: Form = buildForm({
-    id: ApplicationTypes.PARENTAL_LEAVE,
-    ownerId: 'asdf',
+    id: 'ParentalLeaveForm',
     name: 'Umsókn um fæðingarorlof',
     children: [
       buildIntroductionField({
