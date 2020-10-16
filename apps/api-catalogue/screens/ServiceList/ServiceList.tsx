@@ -6,7 +6,7 @@ import {
   ContentBlock,
   GridRow,
   GridColumn,
-  IconDeprecated as Icon,
+  Icon,
   Typography,
   AccordionItem,
   GridContainer,
@@ -29,7 +29,6 @@ import {
   Query,
   QueryGetApiCatalogueArgs,
 } from '@island.is/api/schema'
-import { intersection } from 'lodash'
 
 interface PropTypes {
   top?: ReactNode
@@ -74,7 +73,7 @@ function ServiceLayout({
   )
 }
 
-const LIMIT = 6
+const LIMIT = 25
 
 export interface ServiceListProps {
   pageContent: Page
@@ -228,13 +227,8 @@ export default function ServiceList(props: ServiceListProps) {
           {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">
               <div>
-                <Icon
-                  width="32"
-                  height="32"
-                  spin={true}
-                  type="loading"
-                  color="blue600"
-                />
+                <Icon type="filled" icon="sync" className={styles.loadingIcon}/>
+
               </div>
             </Box>
           )}

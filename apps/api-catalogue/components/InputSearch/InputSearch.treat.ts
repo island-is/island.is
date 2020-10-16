@@ -120,3 +120,34 @@ export const focused = style({
     opacity: 1,
   },
 })
+
+
+const spinOrg = {
+  lineHeight: 0,
+  '@keyframes': {
+    from: {
+      transform: 'rotate(0deg)',
+    },
+    to: {
+      transform: 'rotate(359deg)',
+    },
+  },
+  animationTimingFunction: 'linear',
+  animationIterationCount: 'infinite',
+  animationDuration: '1.5s',
+}
+
+export const spin = style(spinOrg)
+
+export const search = style({
+  width:20,
+  color:theme.color.blue400
+  
+})
+
+export const loading = style({
+  width:24,
+  color:theme.color.blue400,
+  ...spinOrg
+  
+})
