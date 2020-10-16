@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -136,7 +137,10 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             </GridColumn>
           </GridRow>
           <Box paddingTop={8}>
-            <RichText body={content} config={{ defaultPadding: 4 }} />
+            <RichText
+              body={content as SliceType[]}
+              config={{ defaultPadding: 4 }}
+            />
           </Box>
         </>
       </ArticleLayout>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   GridContainer,
   GridRow,
@@ -15,6 +15,7 @@ import {
   capitalize,
   formatCustodyRestrictions,
   laws,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
@@ -25,6 +26,7 @@ import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -33,6 +35,7 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useWorkingCase()
+  const uContext = useContext(userContext)
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -124,6 +127,14 @@ export const JudgeOverview: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
                 <Text variant="eyebrow" color="blue400">
+                  Kennitala
+                </Text>
+              </Box>
+              <Text>{formatNationalId(workingCase?.accusedNationalId)}</Text>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
                   Fullt nafn
                 </Text>
               </Box>
@@ -158,23 +169,33 @@ export const JudgeOverview: React.FC = () => {
                   )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
               </Text>
             </Box>
-            {workingCase?.requestedCourtDate && (
-              <Box component="section" marginBottom={5}>
-                <Box marginBottom={1}>
-                  <Text variant="eyebrow" color="blue400">
-                    Ósk um fyrirtökudag og tíma
-                  </Text>
-                </Box>
-                <Text>
-                  {`${capitalize(
-                    formatDate(workingCase?.requestedCourtDate, 'PPPP'),
-                  )} kl. ${formatDate(
-                    workingCase?.requestedCourtDate,
-                    TIME_FORMAT,
-                  )}`}
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Ósk um fyrirtökudag og tíma
                 </Text>
               </Box>
-            )}
+              <Text>
+                {`${capitalize(
+                  formatDate(workingCase?.requestedCourtDate, 'PPPP'),
+                )} kl. ${formatDate(
+                  workingCase?.requestedCourtDate,
+                  TIME_FORMAT,
+                )}`}
+              </Text>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={1}>
+                <Text variant="eyebrow" color="blue400">
+                  Ákærandi
+                </Text>
+              </Box>
+              <Text>
+                {workingCase?.prosecutor
+                  ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
+                  : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+              </Text>
+            </Box>
             <Box component="section" marginBottom={5}>
               <Accordion singleExpand={false}>
                 <AccordionItem
