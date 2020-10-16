@@ -23,7 +23,7 @@ import { SidebarBox, Bullet, RichText } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
-import { Background } from '@island.is/island-ui/contentful'
+import { Background, Slice as SliceType } from '@island.is/island-ui/contentful'
 import * as styles from './AboutSubPage.treat'
 
 export interface AboutSubPageProps {
@@ -107,11 +107,11 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               paddingTop={10}
               paddingBottom={page.bottomSlices.length ? 20 : 10}
             >
-              <RichText body={page.slices} />
+              <RichText body={page.slices as SliceType[]} />
             </Background>
           </Box>
         </StandardLayout>
-        <RichText body={page.bottomSlices} />
+        <RichText body={page.bottomSlices as SliceType[]} />
       </Box>
     </>
   )
