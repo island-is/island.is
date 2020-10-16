@@ -32,7 +32,7 @@ jobs:
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
+      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -151,9 +151,9 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          MAP=$(./scripts/ci/generate-build-map.sh docker-express docker-next docker-static)
-          echo "MAP: '$MAP'"
-          echo "::set-output name=BUILD_MAP::$MAP"
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static)
+          echo "CHUNKS: '$CHUNKS'"
+          echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
 
       - name: Gather unaffected docker images
         id: unaffected
@@ -170,25 +170,19 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      MAX_JOBS: 4
       PUBLISH: true
     strategy:
       fail-fast: false
       matrix:
-        docker-type:
-          - express
-          - next
-          - static
+        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     steps:
       - name: Gather apps
         id: gather
         run: |
-          AFFECTED_PROJECTS=$(echo '${{ needs.prepare.outputs.BUILD_MAP }}' | jq -r '.["docker-${{ matrix.docker-type }}"]')
-          if [[ "$AFFECTED_PROJECTS" == "null" ]]; then
-            # Early exit
-            exit 1
-          fi
+          AFFECTED_PROJECTS=$(echo '${{ matrix.chunk }}' | jq -r '.projects')
+          DOCKER_TYPE=$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
+          echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
@@ -234,7 +228,7 @@ jobs:
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
+        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   retag-unaffected:
     runs-on: ubuntu-20.04
