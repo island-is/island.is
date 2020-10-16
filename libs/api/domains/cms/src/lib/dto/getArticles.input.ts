@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsOptional, IsString } from 'class-validator'
+import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
 
 @InputType()
 export class GetArticlesInput {
@@ -13,6 +13,8 @@ export class GetArticlesInput {
 
   @Field(() => Int, { nullable: true })
   @IsInt()
+  @Min(1)
+  @Max(1000)
   @IsOptional()
   size?: number = 100
 }

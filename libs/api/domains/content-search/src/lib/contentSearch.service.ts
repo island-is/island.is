@@ -7,8 +7,6 @@ import {
   WebSearchAutocompleteInput,
 } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
-
-import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { TagCount } from './models/tagCount'
@@ -20,19 +18,6 @@ export class ContentSearchService {
   private getIndex(lang: ContentLanguage) {
     const languageCode = ContentLanguage[lang]
     return SearchIndexes[languageCode] ?? SearchIndexes.is
-  }
-
-  private fixCase(doc) {
-    const obj = doc._source
-    obj.contentType = obj.content_type
-    obj.contentBlob = obj.content_blob
-    obj.contentId = obj.content_id
-    obj.categorySlug = obj.category_slug
-    obj.categoryDescription = obj.category_description
-    obj.groupSlug = obj.group_slug
-    obj.groupDescription = obj.group_description
-    obj.id = doc._id
-    return obj
   }
 
   mapFindAggregations(aggregations): TagCount[] {
@@ -60,19 +45,6 @@ export class ContentSearchService {
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
       tagCounts: this.mapFindAggregations(body.aggregations),
     }
-  }
-
-  async fetchSingle(input): Promise<ContentItem> {
-    const { body } = await this.elasticService.search(
-      this.getIndex(input.language),
-      input,
-    )
-
-    const hit = body?.hits?.hits[0]
-    if (!hit) {
-      return null
-    }
-    return this.fixCase(hit)
   }
 
   async fetchAutocompleteTerm(

@@ -12,7 +12,7 @@ import {
 import { NewsCard } from '../NewsCard'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
-import { GetNewsListQuery } from '@island.is/web/graphql/schema'
+import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
@@ -21,7 +21,7 @@ import { useNamespace } from '@island.is/web/hooks'
 
 interface LatestNewsProps {
   label: string
-  items: GetNewsListQuery['getNewsList']['news']
+  items: GetNewsQuery['getNews']['items']
 }
 
 const LatestNewsSection: React.FC<LatestNewsProps> = ({
