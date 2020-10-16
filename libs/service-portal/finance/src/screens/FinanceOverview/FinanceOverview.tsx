@@ -69,7 +69,7 @@ export const FinanceOverview: ServicePortalModuleComponent = () => {
         id: 'service.portal:timeline-link-title',
         defaultMessage: 'Sjá tímalínu',
       })}
-      figure="/assets/images/school.jpg"
+      figure="/assets/images/shopping.jpg"
     />
   )
 }
