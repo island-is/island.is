@@ -1,6 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useMemo } from 'react'
-import { Hyperlink, Image } from '@island.is/island-ui/contentful'
+import {
+  Hyperlink,
+  Image,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/errors'
@@ -96,7 +100,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
           </GridColumn>
         </GridRow>
         <Box paddingTop={6}>
-          <RichText body={page.content} />
+          <RichText body={page.content as SliceType[]} />
         </Box>
       </ArticleLayout>
     </>

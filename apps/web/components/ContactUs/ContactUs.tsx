@@ -4,9 +4,13 @@ import {
   ContactUsProps as ContactUsFormProps,
 } from '@island.is/island-ui/contentful'
 import { CONTACT_US_MUTATION } from '@island.is/web/screens/queries'
-import { useMutation } from 'react-apollo'
+import { MutationResult, useMutation } from 'react-apollo'
 
-const getState = (data, loading, error) => {
+const getState = (
+  data: MutationResult['data'],
+  loading: MutationResult['loading'],
+  error: MutationResult['error'],
+) => {
   if (data?.contactUs?.success === true) return 'success'
   if (data?.contactUs?.success === false) return 'error'
   if (loading) return 'submitting'
