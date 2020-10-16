@@ -279,7 +279,7 @@ export const StepTwo: React.FC = () => {
                       placeholder="Settu inn tíma"
                       ref={requestedCustodyEndTime}
                       defaultValue={
-                        workingCase?.requestedCustodyEndDate.indexOf('T') > -1
+                        workingCase?.requestedCustodyEndDate?.indexOf('T') > -1
                           ? formatDate(
                               workingCase?.requestedCustodyEndDate,
                               TIME_FORMAT,
