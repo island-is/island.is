@@ -1,7 +1,7 @@
 import {
   Box,
   ButtonDeprecated as Button,
-  IconDeprecated as Icon,
+  Icon,
   Typography,
 } from '@island.is/island-ui/core'
 import React from 'react'
@@ -34,7 +34,7 @@ const Modal: React.FC<ModalProps> = ({
         {handleClose && (
           <Box position="absolute" top={0} right={0}>
             <button className={styles.closeButton} onClick={handleClose}>
-              <Icon type="close" />
+              <Icon icon="close" type="outline" color="blue400" />
             </button>
           </Box>
         )}

@@ -17,11 +17,6 @@ export class CreateApplicationInput {
   @IsString()
   assignee: string
 
-  @Field((type) => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  externalId?: string
-
   @Field((type) => String)
   @IsString()
   state: string

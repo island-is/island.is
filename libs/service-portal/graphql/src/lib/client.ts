@@ -11,7 +11,7 @@ import { setContext } from '@apollo/client/link/context'
 
 const uri =
   process.env.NODE_ENV === 'development'
-    ? 'localhost:4444/api/graphql'
+    ? 'http://localhost:4444/api/graphql'
     : '/api/graphql'
 
 const httpLink = new HttpLink({

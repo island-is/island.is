@@ -13,11 +13,6 @@ export class UpdateApplicationDto {
   readonly assignee?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly externalId?: string
-
-  @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
   readonly answers?: object

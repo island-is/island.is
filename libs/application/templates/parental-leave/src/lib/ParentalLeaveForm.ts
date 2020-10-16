@@ -18,8 +18,7 @@ import {
 import { m } from './messages'
 
 export const ParentalLeaveForm: Form = buildForm({
-  id: ApplicationTypes.PARENTAL_LEAVE,
-  ownerId: 'DOL',
+  id: 'ParentalLeaveDraft',
   name: 'Fæðingarorlof',
   children: [
     buildSection({
@@ -81,7 +80,6 @@ export const ParentalLeaveForm: Form = buildForm({
           {
             id: 'usage',
             name: m.usage,
-            required: true,
             component: 'ParentalLeaveUsage',
           },
           {},
@@ -150,7 +148,6 @@ export const ParentalLeaveForm: Form = buildForm({
           {
             id: 'periods[0].endDate',
             name: m.duration,
-            required: true,
             component: 'ParentalLeaveDuration',
           },
           {},
@@ -192,7 +189,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 id: 'endDate',
                 name: m.duration,
                 description: m.durationDescription,
-                required: true,
                 component: 'ParentalLeaveDuration',
               },
               {

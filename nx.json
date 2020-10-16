@@ -13,13 +13,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "build-storybook"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
@@ -94,6 +88,9 @@
       "tags": []
     },
     "api-domains-translations": {
+      "tags": []
+    },
+    "api-domains-user-profile": {
       "tags": []
     },
     "api-schema": {
@@ -283,6 +280,9 @@
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-profile": {
       "tags": []
     },
     "services-xroad-collector": {

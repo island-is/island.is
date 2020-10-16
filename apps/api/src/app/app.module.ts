@@ -8,6 +8,7 @@ import { ApplicationModule } from '@island.is/api/domains/application'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { TranslationsModule } from '@island.is/api/domains/translations'
+import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { HealthController } from './health.controller'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 
@@ -43,6 +44,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     TranslationsModule,
     TerminusModule,
     ApiCatalogueModule,
+    UserProfileModule,
   ],
 })
 export class AppModule {}

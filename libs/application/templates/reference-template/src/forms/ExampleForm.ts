@@ -9,14 +9,12 @@ import {
   buildTextField,
   Form,
   Comparators,
-  ApplicationTypes,
   FormValue,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
-  id: ApplicationTypes.EXAMPLE,
-  ownerId: 'DOL',
+  id: 'ExampleFormDraft',
   name: 'Atvinnuleysisbætur',
   children: [
     buildSection({
@@ -26,7 +24,6 @@ export const ExampleForm: Form = buildForm({
         buildTextField({
           id: 'person.name',
           name: m.name,
-          required: true,
         }),
         buildIntroductionField({
           id: 'field',
@@ -43,22 +40,18 @@ export const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'person.nationalId',
               name: m.nationalId,
-              required: true,
             }),
             buildTextField({
               id: 'person.age',
               name: m.age,
-              required: true,
             }),
             buildTextField({
               id: 'person.email',
               name: m.email,
-              required: false,
             }),
             buildTextField({
               id: 'person.phoneNumber',
               name: m.phoneNumber,
-              required: false,
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -81,7 +74,6 @@ export const ExampleForm: Form = buildForm({
             buildRadioField({
               id: 'careerHistory',
               name: m.careerHistory,
-              required: true,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -96,7 +88,6 @@ export const ExampleForm: Form = buildForm({
             buildCheckboxField({
               id: 'careerHistoryCompanies',
               name: m.careerHistoryCompanies,
-              required: false,
               options: [
                 { value: 'government', label: m.governmentOptionLabel },
                 { value: 'aranja', label: 'Aranja' },
@@ -112,7 +103,6 @@ export const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'dreamJob',
               name: m.dreamJob,
-              required: false,
             }),
           ],
         }),
