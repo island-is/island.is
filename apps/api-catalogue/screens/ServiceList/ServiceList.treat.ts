@@ -144,3 +144,28 @@ export const LayoutMobile = style({
 export const serviceLayoutMobile = style({
   flexDirection: 'column-reverse',
 })
+
+const spinOrg = {
+    lineHeight: 0,
+    '@keyframes': {
+      from: {
+        transform: 'rotate(0deg)',
+      },
+      to: {
+        transform: 'rotate(359deg)',
+      },
+    },
+    animationTimingFunction: 'linear',
+    animationIterationCount: 'infinite',
+    animationDuration: '1.5s',
+}
+
+export const spin = style(spinOrg)
+export const loadingIcon = style({
+  width:32, 
+  height:32,
+  color:theme.color.blue600,
+  ...spinOrg
+})
+
+
