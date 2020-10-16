@@ -290,6 +290,17 @@ describe('Step helper', () => {
       expect(ind).toEqual(true)
     })
 
+    test('should return true if a value is undefined', () => {
+      // Arrange
+      const rf: RequiredField[] = [{ value: undefined, validations: ['empty'] }]
+
+      // Act
+      const ind = isNextDisabled(rf)
+
+      // Assert
+      expect(ind).toEqual(true)
+    })
+
     test('should return false if the all validations pass', () => {
       // Arrange
       const rf: RequiredField[] = [
