@@ -68,7 +68,7 @@ export const RulingStepTwo: React.FC = () => {
     prosecutorId: caseDraftJSON.prosecutorId ?? null,
     prosecutor: caseDraftJSON.prosecutor ?? null,
     judgeId: caseDraftJSON.judgeId ?? null,
-    judge: caseDraftJSON.judge || null,
+    judge: caseDraftJSON.judge ?? null,
   })
 
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
