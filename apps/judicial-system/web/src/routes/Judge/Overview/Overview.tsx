@@ -17,7 +17,12 @@ import {
   laws,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
+import {
+  autoSave,
+  isNextDisabled,
+  renderFormStepper,
+  updateState,
+} from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'
@@ -27,6 +32,7 @@ import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -100,14 +106,19 @@ export const JudgeOverview: React.FC = () => {
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={courtCaseNumberErrorMessage !== ''}
                   onBlur={(evt) => {
+                    updateState(
+                      workingCase,
+                      'courtCaseNumber',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+
                     const validateField = validate(evt.target.value, 'empty')
 
                     if (validateField.isValid) {
-                      autoSave(
-                        workingCase,
-                        'courtCaseNumber',
-                        evt.target.value,
-                        setWorkingCase,
+                      api.saveCase(
+                        workingCase.id,
+                        parseString('courtCaseNumber', evt.target.value),
                       )
                     } else {
                       setCourtCaseNumberErrorMessage(validateField.errorMessage)
@@ -306,7 +317,9 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <FormFooter
               nextUrl={Constants.COURT_DOCUMENT_ROUTE}
-              nextIsDisabled={workingCase?.courtCaseNumber === ''}
+              nextIsDisabled={isNextDisabled([
+                { value: workingCase.courtCaseNumber, validations: ['empty'] },
+              ])}
             />
           </GridColumn>
         </GridRow>
