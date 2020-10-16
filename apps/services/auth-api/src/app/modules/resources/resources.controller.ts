@@ -16,8 +16,8 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthGuard } from '@nestjs/passport'
 
-@ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// TODO: Uncomment when dev is done:
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {
@@ -82,6 +82,7 @@ export class ResourcesController {
     return await this.resourcesService.createIdentityResource(identityResource)
   }
 
+  // TODO: Uncomment when implemented
   // @Put('identity-resource/:id')
   // @ApiOkResponse({ type: IdentityResource })
   // async updateIdentityResource(
@@ -106,6 +107,7 @@ export class ResourcesController {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
+  // TODO: Uncomment when implemented
   // @Put('api-scope/:id')
   // @ApiOkResponse({ type: ApiScope })
   // async updateApiScope(

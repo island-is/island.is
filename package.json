@@ -75,7 +75,7 @@
     "@sindresorhus/slugify": "1.0.0",
     "@types/form-data": "^2.5.0",
     "@types/nodemailer": "^6.4.0",
-    "@types/passport-jwt": "^3.0.3",
+    "@types/passport-jwt": "3.0.3",
     "@types/pdfkit": "^0.10.6",
     "@types/stream-buffers": "^3.0.3",
     "@xstate/react": "0.8.1",
