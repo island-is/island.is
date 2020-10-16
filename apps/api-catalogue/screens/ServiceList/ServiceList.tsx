@@ -74,7 +74,7 @@ function ServiceLayout({
   )
 }
 
-const LIMIT = 6
+const LIMIT = 25
 
 export interface ServiceListProps {
   pageContent: Page
@@ -263,7 +263,6 @@ export default function ServiceList(props: ServiceListProps) {
           {data?.getApiCatalogue.services.length < 1 && !loading && (
             <ServiceCardMessage
               messageType="default"
-              borderStyle="standard"
               title={TEXT_NOT_FOUND}
             />
           )}
@@ -271,7 +270,6 @@ export default function ServiceList(props: ServiceListProps) {
           {error && (
             <ServiceCardMessage
               messageType="error"
-              borderStyle="standard"
               title={TEXT_ERROR}
             />
           )}

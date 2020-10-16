@@ -1,9 +1,15 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-const wrapperOrg = {
+export const wrapperGrowHeight = style({
+  width: 310
+})
+export const wrapperFixedSizeSmall = style({
   width: 310,
-  height: 144,
+  height: 144
+})
+
+const wrapperOrg = {
   marginBottom: 20,
   fontFamily: theme.typography.fontFamily,
   borderColor: theme.color.blue200,

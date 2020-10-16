@@ -4,45 +4,32 @@ import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core'
 
 export type ServiceCardMessageTypes = 'default' | 'error'
-export type ServiceBorderStyleTypes = 'none' | 'standard'
+export type ServiceBorderStyleTypes = 'none'    | 'default'
+export type ServiceCardMessageSize  = 'default' | 'growHeight'
 
 export interface ServiceCardMessageProps {
   title: string
   text?: string
-  borderStyle: ServiceBorderStyleTypes
+  borderStyle?: ServiceBorderStyleTypes
   messageType?: ServiceCardMessageTypes
+  size?: ServiceCardMessageSize
 }
 
 export const ServiceCardMessage = (props: ServiceCardMessageProps) => {
-  if (props.messageType === 'error') {
-    return (
-      <Box
-        borderRadius="large"
-        className={cn(
-          props.borderStyle === 'none'
-            ? styles.wrapperNoBorder
-            : styles.wrapperError,
-        )}
-      >
-        <div className={cn(styles.cardTexts)}>
-          <div className={cn(styles.titleError)}>{props.title}</div>
-          <div className={cn(styles.textError)}>{props.text}</div>
-        </div>
-      </Box>
-    )
-  }
 
-  // default
   return (
     <Box
       borderRadius="large"
-      className={cn(
-        props.borderStyle === 'none' ? styles.wrapperNoBorder : styles.wrapper,
-      )}
+      className={cn( {[styles.wrapperNoBorder]: props.borderStyle === 'none'},
+                     {[styles.wrapperError]   : props.borderStyle !== 'none' && props.messageType === 'error'},
+                     {[styles.wrapper]        : props.borderStyle !== 'none' && props.messageType !== 'error'},
+                     {[styles.wrapperFixedSizeSmall] : props.size === undefined || props.size === 'default'},
+                     {[styles.wrapperGrowHeight]     : props.size !== undefined && props.size === 'growHeight'},
+                )}
     >
       <div className={cn(styles.cardTexts)}>
-        <div className={cn(styles.title)}>{props.title}</div>
-        <div className={cn(styles.text)}>{props.text}</div>
+        <div className={cn(props.messageType !== 'error'? styles.title: styles.titleError)}>{props.title}</div>
+        <div className={cn(props.messageType !== 'error'? styles.text: styles.textError)}>{props.text}</div>
       </div>
     </Box>
   )
@@ -50,5 +37,6 @@ export const ServiceCardMessage = (props: ServiceCardMessageProps) => {
 
 ServiceCardMessage.defaultProps = {
   messageType: 'default',
-  borderStyle: 'standard',
+  borderStyle: 'default',
+  size:'default'
 }
