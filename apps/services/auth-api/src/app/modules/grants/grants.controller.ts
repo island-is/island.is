@@ -75,6 +75,10 @@ export class GrantsController {
     @Query('clientId') clientId: string,
     @Query('type') type: string,
   ): Promise<number> {
+    if (!subjectId) {
+      throw new Error('subjectId must be specified.')
+    }
+
     return await this.grantsService.removeAllAsync(
       subjectId,
       sessionId,
