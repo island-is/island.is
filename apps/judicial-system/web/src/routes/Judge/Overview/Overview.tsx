@@ -193,7 +193,7 @@ export const JudgeOverview: React.FC = () => {
               <Text>
                 {workingCase?.prosecutor
                   ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-                  : `${uContext?.user?.name}, ${uContext?.user?.title}`}{' '}
+                  : `${uContext?.user?.name}, ${uContext?.user?.title}`}
               </Text>
             </Box>
             <Box component="section" marginBottom={5}>
