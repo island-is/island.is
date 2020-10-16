@@ -59,27 +59,25 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-@Controller('/api/auth/citizen')
+@Controller('/api/auth')
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  @Post('/callback')
+  @Post('/citizen/callback')
   async callback(@Body('token') token, @Res() res, @Req() req) {
-    //console.log("Duddi ralli rai")
+    this.logger.info('--- /citizen/callback starting ---')
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-      //console.log("Duddi ralli rai - error")
-      return res.redirect('/error')
+         return res.redirect('/error')
     }
 
     const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user) {
       this.logger.error('Could not verify user authenticity')
-      //console.log("Duddi ralli rai - error 2")
       return res.redirect('/error')
     }
 
@@ -108,6 +106,9 @@ export class AuthController {
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+    
+      this.logger.info(`    user.kennitala = ${user.kennitala}   user.ip = ${user}`)
+ //   this.logger.info(' ',{ samlEntryPoint })
     /*    this.logger.error('---user---')
     this.logger.error(user)
     this.logger.error('---csrfToken---')
@@ -146,22 +147,20 @@ export class AuthController {
       .redirect(returnUrl ?? '/_')
   }
 
-  @Get('/login')
+  @Get('/citizen/login')
   login(@Res() res, @Query() query) {
-    console.log('---/login starting---')
+    this.logger.info('--- /citizen/login starting ---')
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
-    console.log('---returnUrl---')
-    console.log(returnUrl)
-    console.log('---samlEntryPoint---')
-    console.log(samlEntryPoint)
+    this.logger.info(' ',{ returnUrl })
+    this.logger.info(' ',{ samlEntryPoint })
     return res
       .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(samlEntryPoint)
   }
 
-  @Get('/logout')
+  @Get('/citizen/logout')
   logout(@Res() res) {
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
