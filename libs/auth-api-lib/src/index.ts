@@ -12,7 +12,6 @@ export * from './lib/entities/models/client.model'
 export * from './lib/entities/models/grant-type.model'
 export * from './lib/entities/models/grants.model'
 export * from './lib/entities/models/user-identity.model'
-export * from './lib/entities/models/user-profile.model'
 export * from './lib/entities/models/api-resource-scope.model'
 export * from './lib/entities/models/api-resource-secret.model'
 export * from './lib/entities/models/api-resource.model'
@@ -38,13 +37,14 @@ export * from './lib/services/grant-types.service'
 export * from './lib/services/grants.service'
 export * from './lib/services/resources.service'
 export * from './lib/services/user-identities.service'
-export * from './lib/services/user-profiles.service'
 export * from './lib/services/sequelizeConfig.service'
 
 // Auth
 export * from './lib/auth/auth-config'
 export * from './lib/auth/auth.module'
 export * from './lib/auth/jwt.strategy'
+export * from './lib/auth/scopes.decorator'
+export * from './lib/auth/scopes.guard'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'

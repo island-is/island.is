@@ -15,16 +15,22 @@ import {
   ApiOAuth2,
   ApiCreatedResponse,
 } from '@nestjs/swagger'
-import { Grant, GrantDto, GrantsService } from '@island.is/auth-api-lib'
+import {
+  Grant,
+  GrantDto,
+  GrantsService,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-api-lib'
 import { AuthGuard } from '@nestjs/passport'
 
-@ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), ScopesGuard)
 @ApiTags('grants')
 @Controller('grants')
 export class GrantsController {
   constructor(private readonly grantsService: GrantsService) {}
 
+  @Scopes('@identityserver.api/authentication')
   @Get()
   @ApiOkResponse({ type: Grant })
   async getAll(
@@ -47,6 +53,7 @@ export class GrantsController {
     return grants
   }
 
+  @Scopes('@identityserver.api/authentication')
   @Get(':key')
   @ApiOkResponse({ type: Grant })
   async getAsync(@Param('key') key: string): Promise<Grant> {
@@ -59,6 +66,7 @@ export class GrantsController {
     return grant
   }
 
+  @Scopes('@identityserver.api/authentication')
   @Delete()
   @ApiOkResponse()
   async removeAllAsync(
@@ -75,12 +83,14 @@ export class GrantsController {
     )
   }
 
+  @Scopes('@identityserver.api/authentication')
   @Delete(':key')
   @ApiOkResponse()
   async removeAsync(@Param('key') key: string): Promise<number> {
     return await this.grantsService.removeAsync(key)
   }
 
+  @Scopes('@identityserver.api/authentication')
   @Post()
   @ApiCreatedResponse({ type: Grant })
   async create(@Body() grant: GrantDto): Promise<Grant> {

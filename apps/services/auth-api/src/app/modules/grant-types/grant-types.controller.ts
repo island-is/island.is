@@ -7,15 +7,20 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
-import { GrantType, GrantTypeService } from '@island.is/auth-api-lib'
+import {
+  GrantType,
+  GrantTypeService,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-api-lib'
 
-@ApiOAuth2(['openid:profile'])
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), ScopesGuard)
 @ApiTags('grants')
 @Controller('grants')
 export class GrantTypeController {
   constructor(private readonly grantTypeService: GrantTypeService) {}
 
+  @Scopes('@identityserver.api/authentication')
   @Get('type/:id')
   @ApiOkResponse({ type: GrantType })
   async getGrantType(@Param('id') id: string): Promise<GrantType> {
