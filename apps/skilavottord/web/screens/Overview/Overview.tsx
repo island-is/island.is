@@ -25,11 +25,7 @@ const Overview: FC = () => {
   const router = useRouter()
 
   if (error || (loading && !data)) {
-    return (
-      <PageWrapper t={t}>
-        <Error />
-      </PageWrapper>
-    )
+    return <PageWrapper t={t}>{error && <Error />}</PageWrapper>
   }
 
   const { cars } = data.getVehiclesForNationalId || {}
