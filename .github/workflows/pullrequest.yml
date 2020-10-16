@@ -190,7 +190,7 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 4
+      MAX_JOBS: 2
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
