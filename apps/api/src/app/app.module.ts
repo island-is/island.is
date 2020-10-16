@@ -7,6 +7,7 @@ import { CmsModule } from '@island.is/api/domains/cms'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
+import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -54,6 +55,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
     }),
+    CommunicationsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

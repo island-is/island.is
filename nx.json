@@ -56,6 +56,9 @@
     "api-domains-cms": {
       "tags": []
     },
+    "api-domains-communications": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },

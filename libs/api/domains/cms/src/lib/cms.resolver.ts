@@ -5,7 +5,6 @@ import {
   ResolveField,
   Parent,
   Directive,
-  Mutation,
 } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
@@ -49,7 +48,6 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
-import { MailService } from './cms.mail.service'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { SearchIndexes } from '@island.is/api/content-search'
@@ -62,8 +60,6 @@ import { GetSingleArticleInput } from './dto/getSingleArticle.input'
 import { GetAboutSubPageInput } from './dto/getAboutSubPage.input'
 import { AboutSubPage } from './models/aboutSubPage.model'
 import { GetHomepageInput } from './dto/getHomepage.input'
-import { ContactUsInput } from './dto/contactUs.input'
-import { ContactUsPayload } from './models/contactUsPayload.model'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Homepage } from './models/homepage.model'
 import { GetNewsInput } from './dto/getNews.input'
@@ -80,7 +76,6 @@ export class CmsResolver {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
-    private readonly mailService: MailService,
   ) {}
 
   @Directive(cacheControlDirective())
@@ -338,15 +333,6 @@ export class CmsResolver {
       SearchIndexes[input.lang],
       input,
     )
-  }
-
-  @Mutation(() => ContactUsPayload)
-  async contactUs(
-    @Args('input') input: ContactUsInput,
-  ): Promise<ContactUsPayload> {
-    return {
-      success: await this.mailService.deliverContactUs(input),
-    }
   }
 
   @Directive(cacheControlDirective())

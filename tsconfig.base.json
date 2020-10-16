@@ -33,6 +33,9 @@
         "libs/api/domains/application/src/index.ts"
       ],
       "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
+      "@island.is/api/domains/communications": [
+        "libs/api/domains/communications/src/index.ts"
+      ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],

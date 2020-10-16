@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import sgMail from '@sendgrid/mail'
+import { environment } from './environments/environment'
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+sgMail.setApiKey(environment.sendGridKey)
 
 @Injectable()
 export class MailService {
