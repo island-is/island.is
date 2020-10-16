@@ -3,11 +3,45 @@ import React from 'react'
 import { render, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StepOne from './StepOne'
-import { Router } from 'react-router-dom'
+import { Route, Router, MemoryRouter } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
 
-describe(`${Constants.DETENTION_REQUESTS_ROUTE}`, () => {
+describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
+  test('should prefill the inputs with the correct data if id is in the url', async () => {
+    // Arrange
+
+    fetchMock.mock(
+      '/api/case/test_id',
+      { accusedName: 'Jon Harring', accusedAddress: 'Harringvej 2' },
+      { method: 'get' },
+    )
+
+    // Act
+    await act(async () => {
+      const { getByTestId } = render(
+        <MemoryRouter initialEntries={['/krafa/test_id']}>
+          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <StepOne />
+          </Route>
+        </MemoryRouter>,
+      )
+
+      // Assert
+      expect(
+        await waitFor(
+          () => (getByTestId('accusedName') as HTMLInputElement).value,
+        ),
+      ).toEqual('Jon Harring')
+
+      expect(
+        await waitFor(
+          () => (getByTestId('accusedAddress') as HTMLInputElement).value,
+        ),
+      ).toEqual('Harringvej 2')
+    })
+  })
+
   test('should display an empty form if there is nothing in local storage', async () => {
     // Arrange
     const history = createMemoryHistory()
