@@ -63,6 +63,10 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealAnnouncement?: string
+  prosecutorId?: string
+  prosecutor?: User
+  judgeId?: string
+  judge?: User
 }
 
 export interface Notification {

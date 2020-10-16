@@ -199,6 +199,10 @@ export const StepTwo: React.FC = () => {
         custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
         accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
         prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
+        prosecutorId: caseDraftJSON.prosecutorId ?? null,
+        prosecutor: caseDraftJSON.prosecutor ?? null,
+        judgeId: caseDraftJSON.judgeId ?? null,
+        judge: caseDraftJSON.judge ?? null,
       })
     }
   }, [workingCase, setWorkingCase])
