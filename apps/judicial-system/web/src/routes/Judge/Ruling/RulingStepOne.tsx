@@ -70,7 +70,7 @@ export const RulingStepOne: React.FC = () => {
     prosecutorId: caseDraftJSON.prosecutorId ?? null,
     prosecutor: caseDraftJSON.prosecutor ?? null,
     judgeId: caseDraftJSON.judgeId ?? null,
-    judge: caseDraftJSON.judge || null,
+    judge: caseDraftJSON.judge ?? null,
   })
 
   const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
