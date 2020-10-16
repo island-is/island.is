@@ -72,6 +72,9 @@
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application/templates/document-provider-onboarding": [
+        "libs/application/templates/document-provider-onboarding/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
