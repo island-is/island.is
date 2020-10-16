@@ -4,9 +4,5 @@
     "allowJs": true,
     "types": ["node", "jest"]
   },
-  "include": [
-    "**/*.ts",
-    "../../../libs/infra-express-server/src/lib/express-app.ts",
-    "../../../libs/infra-express-server/src/lib/metrics-publisher.ts"
-  ]
+  "include": []
 }
