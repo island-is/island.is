@@ -15,6 +15,7 @@ export const inputContainer = style({
   padding: `${theme.spacing[1]}px ${theme.spacing[3]}px ${theme.spacing[1]}px ${theme.spacing[1]}px`,
   width: '100%',
   outline: 'none',
+  backgroundColor: theme.color.white,
   border: `1px solid transparent`,
 
   ':active': {

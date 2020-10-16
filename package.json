@@ -270,7 +270,6 @@
     "@typescript-eslint/parser": "2.19.2",
     "@zeit/next-source-maps": "^0.0.3",
     "babel-loader": "8.0.6",
-    "babel-plugin-react-docgen": "4.2.1",
     "cross-env": "7.0.2",
     "cross-spawn": "^7.0.3",
     "csstype": "^2.6.10",

@@ -21,6 +21,7 @@ import {
   updateState,
   autoSave,
   renderFormStepper,
+  isNextDisabled,
 } from '../../../../utils/stepHelper'
 import { isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
@@ -35,12 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepOne: React.FC = () => {
-  if (!window.localStorage.getItem('workingCase')) {
-    window.localStorage.setItem('workingCase', JSON.stringify({}))
-  }
-
   const history = useHistory()
-
   const [workingCase, setWorkingCase] = useState<Case>(null)
 
   const [
@@ -134,22 +130,6 @@ export const StepOne: React.FC = () => {
     (court) => court.label === workingCase?.court,
   )
 
-  const isNextDisabled = () => {
-    // Loop through requiredFields
-    for (let i = 0; i < requiredFields.length; i++) {
-      // Loop through validations for each required field
-      for (let a = 0; a < requiredFields[i].validations.length; a++) {
-        if (
-          !validate(requiredFields[i].value, requiredFields[i].validations[a])
-            .isValid
-        ) {
-          return true
-        }
-      }
-    }
-    return false
-  }
-
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
       workingCase.id === '' &&
@@ -186,9 +166,14 @@ export const StepOne: React.FC = () => {
   }
 
   useEffect(() => {
+    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+  }, [])
+
+  // Run if id is not in url, i.e. if the user is creating a request.
+  useEffect(() => {
     const caseDraft = window.localStorage.getItem('workingCase')
 
-    if (caseDraft !== 'undefined' && !workingCase) {
+    if (caseDraft !== 'undefined' && !workingCase && !id) {
       const caseDraftJSON = JSON.parse(caseDraft || '{}')
 
       setWorkingCase({
@@ -226,27 +211,33 @@ export const StepOne: React.FC = () => {
         custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
         accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
         prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
+        prosecutorId: caseDraftJSON.prosecutorId ?? null,
+        prosecutor: caseDraftJSON.prosecutor ?? null,
+        judgeId: caseDraftJSON.judgeId ?? null,
+        judge: caseDraftJSON.judge ?? null,
       })
     }
-  }, [workingCase, setWorkingCase])
+  }, [workingCase, setWorkingCase, id])
 
-  useEffect(() => {
-    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
-  }, [])
-
+  // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
+
       window.localStorage.setItem(
         'workingCase',
         JSON.stringify(currentCase.case),
       )
+
+      if (!workingCase) {
+        setWorkingCase(currentCase.case)
+      }
     }
 
     if (id) {
       getCurrentCase()
     }
-  }, [id])
+  }, [id, workingCase, setWorkingCase])
 
   return (
     workingCase && (
@@ -530,7 +521,7 @@ export const StepOne: React.FC = () => {
                         errorMessage={arrestTimeErrorMessage}
                         hasError={arrestTimeErrorMessage !== ''}
                         defaultValue={
-                          workingCase?.arrestDate?.indexOf('T') > -1
+                          workingCase.arrestDate?.indexOf('T') > -1
                             ? formatDate(workingCase.arrestDate, TIME_FORMAT)
                             : null
                         }
@@ -675,7 +666,7 @@ export const StepOne: React.FC = () => {
                 <FormFooter
                   nextUrl={Constants.STEP_TWO_ROUTE}
                   onNextButtonClick={() => setModalVisible(true)}
-                  nextIsDisabled={isNextDisabled()}
+                  nextIsDisabled={isNextDisabled(requiredFields)}
                 />
               </GridColumn>
             </GridRow>

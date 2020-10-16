@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
+import { Document } from '@contentful/rich-text-types'
 import {
   Stack,
   Text,
@@ -13,7 +14,7 @@ export interface FaqListProps {
   questions: {
     id: string
     question: string
-    answer?: { document: any }
+    answer?: { document: Document }
   }[]
 }
 
@@ -24,11 +25,15 @@ export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
         <span data-sidebar-link={slugify(title)}>{title}</span>
       </Text>
       <Accordion>
-        {questions.map(({ id, question, answer }) => (
-          <AccordionItem key={id} id={`faq_${id}`} label={question}>
-            {renderHtml(answer?.document)}
-          </AccordionItem>
-        ))}
+        {questions.map(({ id, question, answer }) => {
+          if (!answer?.document) return null
+
+          return (
+            <AccordionItem key={id} id={`faq_${id}`} label={question}>
+              {renderHtml(answer.document)}
+            </AccordionItem>
+          )
+        })}
       </Accordion>
     </Stack>
   )
