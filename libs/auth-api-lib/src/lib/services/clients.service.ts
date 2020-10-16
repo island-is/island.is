@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
 import { Client } from '../entities/models/client.model'
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
@@ -19,12 +18,6 @@ import { ClientClaim } from '../entities/models/client-claim.model'
 export class ClientsService {
   private clients: Client[]
 
-  applicationsRegistered = new Counter({
-    name: 'apps_registered6',
-    labelNames: ['res1'],
-    help: 'Number of applications',
-  })
-
   constructor(
     private sequelize: Sequelize,
     @InjectModel(Client)
@@ -35,6 +28,7 @@ export class ClientsService {
 
   async findClientById(id: string): Promise<Client> {
     this.logger.debug(`Finding client for id - "${id}"`)
+
     return this.clientModel.findOne({
       where: { clientId: id },
       include: [

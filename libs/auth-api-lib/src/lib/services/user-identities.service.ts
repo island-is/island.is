@@ -10,12 +10,6 @@ import { UserIdentityDto } from '../entities/dto/user-identity.dto'
 
 @Injectable()
 export class UserIdentitiesService {
-  applicationsRegistered = new Counter({
-    name: 'apps_registered2',
-    labelNames: ['res1'],
-    help: 'Number of applications',
-  }) // TODO: How does this work?
-
   constructor(
     private sequelize: Sequelize,
     @InjectModel(UserIdentity)
@@ -28,7 +22,6 @@ export class UserIdentitiesService {
     this.logger.debug(
       `Creating user identity with subjectIdId - ${userIdentity.subjectId}`,
     )
-    this.applicationsRegistered.inc()
 
     userIdentity.profileId = await this.findLinkableProfileId(userIdentity)
 

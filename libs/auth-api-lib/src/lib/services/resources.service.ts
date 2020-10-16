@@ -16,11 +16,6 @@ import { ApiScopesDTO } from '../entities/dto/api-scopes-dto'
 
 @Injectable()
 export class ResourcesService {
-  applicationsRegistered = new Counter({
-    name: 'apps_registered21',
-    help: 'Number of applications',
-  })
-
   constructor(
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
