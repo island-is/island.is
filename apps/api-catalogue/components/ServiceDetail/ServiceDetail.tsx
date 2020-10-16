@@ -12,11 +12,9 @@ import cn from 'classnames'
 import {
   ApiService,
   GetOpenApiInput,
-  OpenApi,
   Query,
   QueryGetOpenApiArgs,
 } from '@island.is/api/schema'
-import { RedocStandalone } from 'redoc'
 import { useLazyQuery } from 'react-apollo'
 import { GET_OPEN_API_QUERY } from '../../screens/Queries'
 import { ContentfulString } from '../../services/contentful.types'
@@ -26,6 +24,7 @@ import {
   TypeCategory,
   DataCategory,
 } from '@island.is/api-catalogue/consts'
+import { OpenApi } from '@island.is/api-catalogue/types'
 import YamlParser from 'js-yaml'
 import { OpenApiView } from '../OpenApiView'
 
@@ -53,7 +52,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
 
   const [openApi, setOpenApi] = useState<GetOpenApiInput>(options[0].value)
   // prettier-ignore
-  const [getOpenApi, { data, loading, error }] = useLazyQuery<Query,QueryGetOpenApiArgs>(GET_OPEN_API_QUERY, 
+  const [getOpenApi, { data, loading, error }] = useLazyQuery<Query,QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
   {
     variables: {
       input: openApi,

@@ -73,7 +73,7 @@ function ServiceLayout({
   )
 }
 
-const LIMIT = 6
+const LIMIT = 25
 
 export interface ServiceListProps {
   pageContent: Page
