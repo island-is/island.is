@@ -7,7 +7,7 @@ services:
       dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
         DB_NAME: db_skilavottord_backend
-        APP: skilavottord-backend
+        APP: skilavottord-ws
     networks:
       - local
     depends_on:
@@ -18,7 +18,7 @@ services:
       - TEST_DB_NAME=test_db
       - DB_HOST=db_skilavottord_backend
     volumes:
-      - ../..:/code
+      - ../../..:/code
 
   db_skilavottord_backend:
     ports: []
