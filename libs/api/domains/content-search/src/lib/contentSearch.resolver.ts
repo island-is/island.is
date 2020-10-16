@@ -6,8 +6,6 @@ import {
 
 import { ContentSearchService } from './contentSearch.service'
 import { SearchResult } from './models/searchResult.model'
-import { ContentItem } from './models/contentItem.model'
-import { ItemInput } from './dto/item.input'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 
 @Resolver()
@@ -17,11 +15,6 @@ export class ContentSearchResolver {
   @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
     return this.contentSearchService.find(query)
-  }
-
-  @Query(() => ContentItem, { nullable: true })
-  singleItem(@Args('input') input: ItemInput): Promise<ContentItem> {
-    return this.contentSearchService.fetchSingle(input)
   }
 
   @Query(() => WebSearchAutocomplete)
