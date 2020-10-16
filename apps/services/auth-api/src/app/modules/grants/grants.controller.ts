@@ -71,9 +71,9 @@ export class GrantsController {
   @ApiOkResponse()
   async removeAllAsync(
     @Query('subjectId') subjectId: string,
-    @Query('sessionId') sessionId: string,
-    @Query('clientId') clientId: string,
-    @Query('type') type: string,
+    @Query('sessionId') sessionId?: string,
+    @Query('clientId') clientId?: string,
+    @Query('type') type?: string,
   ): Promise<number> {
     return await this.grantsService.removeAllAsync(
       subjectId,
