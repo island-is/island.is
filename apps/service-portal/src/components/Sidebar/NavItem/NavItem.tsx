@@ -28,9 +28,10 @@ const NavItemContent: FC<Props> = ({
       cursor="pointer"
       position="relative"
       onClick={onClick}
+      className={styles.navItem}
     >
       {icon ? (
-        <Box marginRight={2}>
+        <Box display="flex" height="full" alignItems="center" marginRight={2}>
           <Icon
             type={icon.type}
             icon={icon.icon}
@@ -48,9 +49,10 @@ const NavItemContent: FC<Props> = ({
         </Box>
       ) : null}
       <Box
-        className={cn(styles.dot, {
-          [styles.dotActive]: active,
-        })}
+        className={cn(
+          styles.dot,
+          styles.dotState[active ? 'active' : 'inactive'],
+        )}
         position="absolute"
         background={variant === 'blue' ? 'blue600' : 'blueberry600'}
         borderRadius="circle"

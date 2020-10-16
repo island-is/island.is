@@ -85,7 +85,7 @@ const UserMenu: FC<{}> = () => {
                     onClick={setIsOpen.bind(null, false)}
                     icon={{
                       type: 'outline',
-                      icon: 'cog',
+                      icon: 'settings',
                     }}
                     active={false}
                     variant="blue"

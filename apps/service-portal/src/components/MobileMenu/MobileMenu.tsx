@@ -112,7 +112,7 @@ const MobileMenu: FC<{}> = () => {
                       <Icon
                         type={navItem.icon.type}
                         icon={navItem.icon.icon}
-                        size="small"
+                        size="medium"
                         color="blueberry400"
                       />
                     )}

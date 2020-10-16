@@ -36,7 +36,7 @@ const MenuItem: FC<MenuItemProps> = ({ active, title, icon, onClick }) => (
       <Icon
         type={icon.type}
         icon={icon.icon}
-        size="small"
+        size="medium"
         color={active ? 'blueberry400' : 'blueberry300'}
       />
     </Box>
@@ -99,7 +99,7 @@ const MobileToolbar: FC<{}> = () => {
           active={pathname === ServicePortalPath.StillingarRoot}
           icon={{
             type: 'outline',
-            icon: 'cog',
+            icon: 'settings',
           }}
           title="Stillingar"
         />
