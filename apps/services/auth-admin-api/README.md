@@ -8,4 +8,4 @@ With Docker installed, run
 
 and then
 
-`nx serve services-auth-api`
+`nx serve services-auth-admin-api`
