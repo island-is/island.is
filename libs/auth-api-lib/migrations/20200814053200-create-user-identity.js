@@ -6,20 +6,6 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-      CREATE TABLE user_profile (
-        id UUID NOT NULL,
-        email VARCHAR,
-        email_verified BOOLEAN NOT NULL DEFAULT false,
-        zone_info VARCHAR,
-        locale VARCHAR,
-        phone_number VARCHAR,
-        phone_number_verified BOOLEAN NOT NULL DEFAULT false,
-        bank_account VARCHAR,
-        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
-        modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (id)
-      );
-
         CREATE TABLE user_identity (
           id UUID NOT NULL,
           subject_id VARCHAR NOT NULL,
@@ -30,8 +16,7 @@ module.exports = {
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
           UNIQUE (subject_id),
-          PRIMARY KEY (id),
-          CONSTRAINT FK_user_identity_user_profile FOREIGN KEY (profile_id) REFERENCES user_profile (id)
+          PRIMARY KEY (id)
         );
 
         CREATE TABLE claim (
@@ -55,7 +40,6 @@ module.exports = {
     return queryInterface.sequelize.query(`
       DROP TABLE user_identity;
       DROP TABLE claim;
-      DROP TABLE user_profile;
     `)
   },
 }

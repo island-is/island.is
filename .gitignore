@@ -63,3 +63,7 @@ schema.ts
 possibleTypes.json
 fragmentTypes.json
 **/gen/fetch/**
+
+# IDE - Visual Studio
+*.suo
+/.vs

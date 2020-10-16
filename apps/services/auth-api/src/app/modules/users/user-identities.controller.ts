@@ -6,35 +6,31 @@ import {
   Param,
   Post,
   UseGuards,
-  Put,
-  Delete,
 } from '@nestjs/common'
 import {
   UserIdentity,
   UserIdentitiesService,
   UserIdentityDto,
+  ScopesGuard,
+  Scopes,
 } from '@island.is/auth-api-lib'
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiOAuth2,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 
-@ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), ScopesGuard)
 @ApiTags('user-identities')
 @Controller('user-identities')
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
+  @Scopes('@identityserver.api/authentication')
   @Post()
   @ApiCreatedResponse({ type: UserIdentity })
   async create(@Body() userIdentity: UserIdentityDto): Promise<UserIdentity> {
     return await this.userIdentityService.create(userIdentity)
   }
 
+  @Scopes('@identityserver.api/authentication')
   @Get(':subjectId')
   @ApiOkResponse({ type: UserIdentity })
   async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
@@ -48,6 +44,7 @@ export class UserIdentitiesController {
     return userIdentity
   }
 
+  @Scopes('@identityserver.api/authentication')
   @Get('/:provider/:subjectId')
   @ApiOkResponse({ type: UserIdentity })
   async findOneByProviderSubject(
@@ -64,20 +61,5 @@ export class UserIdentitiesController {
     }
 
     return userIdentity
-  }
-
-  @Put(':id')
-  @ApiOkResponse({ type: UserIdentity })
-  async update(
-    @Body() userIdentity: UserIdentityDto,
-    @Param('id') id: string,
-  ): Promise<UserIdentity> {
-    return await this.userIdentityService.update(userIdentity, id)
-  }
-
-  @Delete(':id')
-  @ApiOkResponse()
-  async delete(@Param('id') id: string): Promise<number> {
-    return await this.userIdentityService.delete(id)
   }
 }
