@@ -3280,7 +3280,8 @@
             "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/services/user-profile/"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "shared-form-fields": {
