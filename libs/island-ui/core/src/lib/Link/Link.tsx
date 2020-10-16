@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import NextLink, { LinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.treat'
