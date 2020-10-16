@@ -3,7 +3,7 @@ import { User } from 'oidc-client'
 import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { MessageDescriptor } from 'react-intl'
-import { IconPropsType } from '@island.is/island-ui/core'
+import { IconTypesDeprecated as IconPropsType } from '@island.is/island-ui/core'
 
 /**
  * A navigational item used by the service portal
