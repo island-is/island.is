@@ -4,7 +4,7 @@ import * as styles from './ProgressMeter.treat'
 
 type ProgressMeterProps = {
   /**
-   * Float from 0 til 1
+   * Number from 0 to 1
    */
   progress: number
   colorScheme?: 'blue' | 'red' | 'rose'

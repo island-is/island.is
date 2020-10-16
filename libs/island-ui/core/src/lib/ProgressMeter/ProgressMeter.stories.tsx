@@ -7,6 +7,14 @@ import { Stack } from '../Stack/Stack'
 export default {
   title: 'Components/ProgressMeter',
   component: ProgressMeter,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'A progress meter that shows progress of a number from 0 to 1',
+      },
+    },
+  },
 }
 
 export const Default = () => {
