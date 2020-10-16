@@ -74,6 +74,9 @@
     "api-domains-translations": {
       "tags": []
     },
+    "api-domains-user-profile": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },
@@ -261,6 +264,9 @@
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-profile": {
       "tags": []
     },
     "shared-form-fields": {

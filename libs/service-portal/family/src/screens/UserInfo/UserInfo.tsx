@@ -1,30 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Typography, Box, Stack, Icon, Hidden } from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import UserInfoLine from '../../components/UserInfoLine/UserInfoLine'
-// import { useNatRegGeneralLookup } from '@island.is/service-portal/graphql'
-// import UserInfoSidebars from './UserInfoSidebars'
 import * as styles from './UserInfo.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
-
-export type UserInfoSidebarType =
-  | null
-  | 'name'
-  | 'religiousOrg'
-  | 'islandInfo'
-  | 'islandAuthInfo'
-  | 'legalDomicile'
-  | 'registeredGender'
-  | 'banMarking'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
-  // const [activeSidebar, setActiveSidebar] = useState<UserInfoSidebarType>(null)
-  // const { data: userNatReg } = useNatRegGeneralLookup(userInfo)
-
-  // const handleSetActiveSidebar = (value: UserInfoSidebarType) =>
-  //   setActiveSidebar(value)
+  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
 
   return (
     <>
@@ -53,10 +38,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Typography variant="h2">{userInfo.profile.name}</Typography>
       </Box>
       <Stack space={1}>
-        {/* <UserInfoLine
-          label="Fæðingarstaður N/A"
-          content={userNatReg?.city || ''}
-        /> */}
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:display-name',
@@ -81,56 +62,28 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
-        {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine
-          label="Kyn N/A"
-          content={userNatReg?.gender || ''}
-          onEdit={handleSetActiveSidebar.bind(null, 'registeredGender')}
+          label={defineMessage({
+            id: 'service.portal:email',
+            defaultMessage: 'Netfang',
+          })}
+          content={userProfile?.email || ''}
         />
         <UserInfoLine
-          label="Trúfélag / lífsskoðunarfélag N/A"
-          content="Þjóðskrá?"
-          onEdit={handleSetActiveSidebar.bind(null, 'religiousOrg')}
+          label={defineMessage({
+            id: 'service.portal:tel',
+            defaultMessage: 'Símanúmer',
+          })}
+          content={userProfile?.mobilePhoneNumber || ''}
         />
         <UserInfoLine
-          label="Bannmerking N/A"
-          content="Þjóðskrá?"
-          onEdit={handleSetActiveSidebar.bind(null, 'banMarking')}
+          label={defineMessage({
+            id: 'service.portal:language',
+            defaultMessage: 'Tungumál',
+          })}
+          content={userProfile?.locale || ''}
         />
       </Stack>
-      <Box marginTop={6} marginBottom={3}>
-        <Typography variant="h3">Lögheimili og tengiliðsupplýsingar</Typography>
-      </Box>
-      <Stack space={1}>
-        <UserInfoLine
-          label="Heimilisfang N/A"
-          content={userNatReg?.address || ''}
-          onEdit={handleSetActiveSidebar.bind(null, 'legalDomicile')}
-        />
-        <UserInfoLine
-          label="Póstnúmer N/A"
-          content={userNatReg?.postalcode.toString() || ''}
-        />
-        <UserInfoLine
-          label="Borg N/A"
-          content={userNatReg?.city || ''}
-          onEdit={handleSetActiveSidebar.bind(null, 'legalDomicile')}
-        />
-        <UserInfoLine
-          label="Símanúmer N/A"
-          content="innskraning.island?"
-          onEdit={handleSetActiveSidebar.bind(null, 'islandInfo')}
-        />
-        <UserInfoLine
-          label="Netfang N/A"
-          content="innskraning.island?"
-          onEdit={handleSetActiveSidebar.bind(null, 'islandInfo')}
-        /> */}
-      </Stack>
-      {/* <UserInfoSidebars
-        activeSidebar={activeSidebar}
-        onClose={handleSetActiveSidebar.bind(null, null)}
-      /> */}
     </>
   )
 }

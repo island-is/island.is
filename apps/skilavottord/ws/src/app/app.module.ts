@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-
-//import { UserModule, CarModule, RecyclingPartner } from './modules'
 import { RecyclingPartnerModule } from './modules/recyclingPartner'
 import { AuthModule } from './modules/auth'
-//import { UserModule } from './modules/user'
-import { UserModule } from './modules'
+import { GdprModule, UserModule } from './modules'
 import { CarownerModule } from './modules/carowner'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { SequelizeConfigService } from './sequelizeConfig.service'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -20,10 +19,14 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
       autoSchemaFile,
       path: '/api/graphql',
     }),
+    // SequelizeModule.forRootAsync({
+    //   useClass: SequelizeConfigService,
+    // }),
     AuthModule,
     UserModule,
     CarownerModule,
     RecyclingPartnerModule,
+    //GdprModule,
   ],
   //providers: [BackendAPI],
 })

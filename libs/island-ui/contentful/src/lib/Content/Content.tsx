@@ -1,5 +1,5 @@
-import React from 'react'
-import { BLOCKS, INLINES } from '@contentful/rich-text-types'
+import React, { FC, ReactNode, ReactElement } from 'react'
+import { Document, Node, BLOCKS, INLINES } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
   Text,
@@ -13,16 +13,23 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  IconTypesDeprecated,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import RichText from '../RichText/RichText'
-import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
+import EmbeddedVideo, {
+  EmbeddedVideoProps,
+} from '../EmbeddedVideo/EmbeddedVideo'
 import Statistics from '../Statistics/Statistics'
 import Paragraph from '../Paragraph/Paragraph'
 import Background from '../Background/Background'
-import BorderedContent from '../BorderedContent/BorderedContent'
+import BorderedContent, {
+  BorderedContentProps,
+} from '../BorderedContent/BorderedContent'
 import Hyperlink from '../Hyperlink/Hyperlink'
+import { RenderNode } from '@contentful/rich-text-react-renderer'
 
-const ContentWrap: React.FC = ({ children }) => (
+const ContentWrap: FC = ({ children }) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '7/8']} offset={['0', '0', '1/8']}>
       {children}
@@ -30,7 +37,7 @@ const ContentWrap: React.FC = ({ children }) => (
   </GridRow>
 )
 
-const ProcessEntryWrap: React.FC = ({ children }) => (
+const ProcessEntryWrap: FC = ({ children }) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '6/8']} offset={['0', '0', '1/8']}>
       {children}
@@ -38,30 +45,65 @@ const ProcessEntryWrap: React.FC = ({ children }) => (
   </GridRow>
 )
 
-const customBlockquoteRenderNode = () => ({
-  [BLOCKS.QUOTE]: (node, children) => {
+const customBlockquoteRenderNode = {
+  [BLOCKS.QUOTE]: (node: Node, children: ReactNode) => {
     return <Blockquote>{children}</Blockquote>
   },
-  [BLOCKS.PARAGRAPH]: (node, children) => children,
-})
+  [BLOCKS.PARAGRAPH]: (node: Node, children: ReactNode) => children,
+} as RenderNode
 
-const embeddedNodes = () => ({
+type ProcessType = {
+  icon: string
+  title: string
+}
+
+const processTypes = {
+  Digital: {
+    icon: 'external',
+    title: 'Stafræn umsókn',
+  },
+  'Digital w/login': {
+    icon: 'external',
+    title: 'Aðgangsstýrð stafræn umsókn',
+  },
+  'Not digital': {
+    icon: 'info',
+    title: 'Handvirk umsókn',
+  },
+  'Not digital w/login': {
+    icon: 'external',
+    title: 'Handvirk umsókn með innskráningu',
+  },
+  'No type': {
+    icon: 'external',
+    title: '',
+  },
+} as { [key: string]: ProcessType }
+
+interface EmbeddedNode {
+  component: FC<EmbeddedVideoProps | BoxProps | BorderedContentProps>
+  wrapper?: ({ children }: { children: ReactNode }) => ReactElement
+  children?: (node: Node) => ReactNode
+  processedProps?: (node: Node) => { [key: string]: ReactNode }
+}
+
+const embeddedNodes = {
   faqList: {
     component: Box,
-    wrapper: ({ children }) => {
+    wrapper: ({ children }: { children: ReactNode }) => {
       return <Box paddingY={10}>{children}</Box>
     },
-    children: (node) => {
+    children: (node: Node) => {
       const title = node.data?.target?.fields?.title || ''
       const questions = node.data?.target?.fields?.questions || []
 
       const items = questions
-        .map((item) => {
+        .map((item: { fields: { question: string; answer: string } }) => {
           const question = item.fields.question
           const answer = item.fields.answer
           return { question, answer }
         })
-        .filter((question) => question)
+        .filter((question: string) => question)
 
       return (
         <ContentWrap>
@@ -75,18 +117,27 @@ const embeddedNodes = () => ({
             <span data-sidebar-link={slugify(title)}>{title}</span>
           </Text>
           <Accordion>
-            {items.map((item, index) => {
-              const { answer, question } = item
+            {items.map(
+              (
+                item: { answer: string; question: string },
+                index: string | number | undefined,
+              ) => {
+                const { answer, question } = item
 
-              return (
-                <AccordionItem key={index} id={`faq_${index}`} label={question}>
-                  <RichText
-                    document={answer}
-                    renderNode={customProcessEntryRenderNode()}
-                  />
-                </AccordionItem>
-              )
-            })}
+                return (
+                  <AccordionItem
+                    key={index}
+                    id={`faq_${index}`}
+                    label={question}
+                  >
+                    <RichText
+                      document={answer}
+                      renderNode={customProcessEntryRenderNode}
+                    />
+                  </AccordionItem>
+                )
+              },
+            )}
           </Accordion>
         </ContentWrap>
       )
@@ -94,8 +145,7 @@ const embeddedNodes = () => ({
   },
   embeddedVideo: {
     component: EmbeddedVideo,
-    wrapper: ({ children }) => children,
-    processContent: (node) => {
+    processedProps: (node: Node) => {
       const { url, title } = node.data.target.fields
 
       return {
@@ -106,8 +156,10 @@ const embeddedNodes = () => ({
   },
   processEntry: {
     component: BorderedContent,
-    wrapper: ({ children }) => <Box paddingY={[2, 3, 6]}>{children}</Box>,
-    processContent: (node) => {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <Box paddingY={[2, 3, 6]}>{children}</Box>
+    ),
+    processedProps: (node: Node) => {
       const {
         processTitle,
         processInfo,
@@ -119,31 +171,7 @@ const embeddedNodes = () => ({
         details,
       } = node.data.target.fields
 
-      const processTypes = {
-        Digital: {
-          icon: 'external',
-          title: 'Stafræn umsókn',
-        },
-        'Digital w/login': {
-          icon: 'external',
-          title: 'Aðgangsstýrð stafræn umsókn',
-        },
-        'Not digital': {
-          icon: 'info',
-          title: 'Handvirk umsókn',
-        },
-        'Not digital w/login': {
-          icon: 'external',
-          title: 'Handvirk umsókn með innskráningu',
-        },
-        'No type': {
-          icon: 'external',
-          title: '',
-        },
-      }
-
       return {
-        showTopContent: details?.content?.length,
         topContent: (
           <ProcessEntryWrap>
             {title && (
@@ -154,7 +182,7 @@ const embeddedNodes = () => ({
             {subtitle && <Text variant="intro">{subtitle}</Text>}
             <RichText
               document={details}
-              renderNode={customProcessEntryRenderNode()}
+              renderNode={customProcessEntryRenderNode}
             />
           </ProcessEntryWrap>
         ),
@@ -174,11 +202,14 @@ const embeddedNodes = () => ({
             {processInfo && (
               <RichText
                 document={processInfo}
-                renderNode={customProcessEntryRenderNode()}
+                renderNode={customProcessEntryRenderNode}
               />
             )}
             <Box paddingTop={[1, 1, 2]}>
-              <Button href={processLink} icon={processTypes[type].icon}>
+              <Button
+                href={processLink}
+                icon={processTypes[type].icon as IconTypesDeprecated}
+              >
                 {buttonText}
               </Button>
             </Box>
@@ -189,11 +220,13 @@ const embeddedNodes = () => ({
   },
   statistics: {
     component: Box,
-    children: (node) => {
+    content: (node: Node) => {
       return (
         <Background background="dotted" paddingY={[6, 6, 10]} marginTop={5}>
           <Statistics
-            statistics={node.data.target.fields.statistics.map((s) => s.fields)}
+            statistics={node.data.target.fields.statistics.map(
+              (s: { fields: object }) => s.fields,
+            )}
           />
         </Background>
       )
@@ -201,7 +234,7 @@ const embeddedNodes = () => ({
   },
   sectionWithImage: {
     component: Box,
-    children: (node) => {
+    content: (node: Node) => {
       const fields = node.data.target.fields
       if (!fields.image) {
         return (
@@ -248,48 +281,43 @@ const embeddedNodes = () => ({
       )
     },
   },
-})
+} as { [key: string]: EmbeddedNode }
 
-const defaultRenderNode = (overrides = {}) => {
-  const settings = {
-    [INLINES.HYPERLINK]: (node, children) => {
-      return <Hyperlink href={node.data.uri}>{children}</Hyperlink>
-    },
-    [INLINES.ENTRY_HYPERLINK]: (node, children) => {
-      const {
-        data: {
-          target: {
-            fields: { slug },
-            sys: {
-              contentType: {
-                sys: { id },
-              },
-            },
-          },
+const defaultRenderNode = {
+  [INLINES.HYPERLINK]: (node: Node, children: ReactNode) => {
+    return <Hyperlink href={node.data.uri}>{children}</Hyperlink>
+  },
+  [INLINES.ENTRY_HYPERLINK]: (node: Node, children: ReactNode) => {
+    const {
+      data: {
+        target: {
+          fields: { slug },
         },
-      } = node
+      },
+    } = node
 
-      return <Hyperlink slug={slug}>{children}</Hyperlink>
-    },
-    [BLOCKS.PARAGRAPH]: (node, children) => {
-      if (!children.find((x: string) => x !== '')) {
-        return null
-      }
+    return <Hyperlink slug={slug}>{children}</Hyperlink>
+  },
+  [BLOCKS.PARAGRAPH]: (node: Node, children: ReactNode) => {
+    return (
+      <ContentWrap>
+        <Paragraph>{children}</Paragraph>
+      </ContentWrap>
+    )
+  },
+  [BLOCKS.QUOTE]: (node: Document | string | undefined) => {
+    return (
+      <ContentWrap>
+        <RichText document={node} renderNode={customBlockquoteRenderNode} />
+      </ContentWrap>
+    )
+  },
+  [BLOCKS.HEADING_2]: (node: Node, children: Array<ReactNode>) => {
+    if (!children) {
+      return null
+    }
 
-      return (
-        <ContentWrap>
-          <Paragraph>{children}</Paragraph>
-        </ContentWrap>
-      )
-    },
-    [BLOCKS.QUOTE]: (node, children) => {
-      return (
-        <ContentWrap>
-          <RichText document={node} renderNode={customBlockquoteRenderNode()} />
-        </ContentWrap>
-      )
-    },
-    [BLOCKS.HEADING_2]: (node, children) => (
+    return (
       <ContentWrap>
         <Text
           id={slugify(children.join(''))}
@@ -301,96 +329,103 @@ const defaultRenderNode = (overrides = {}) => {
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
         </Text>
       </ContentWrap>
-    ),
-    [BLOCKS.HEADING_3]: (node, children) => (
+    )
+  },
+  [BLOCKS.HEADING_3]: (node: Node, children: ReactNode[]) => {
+    if (!children) {
+      return null
+    }
+
+    return (
       <ContentWrap>
         <Text id={slugify(children.join(''))} variant="h3" as="h3">
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
         </Text>
       </ContentWrap>
-    ),
-    [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
-    [BLOCKS.LIST_ITEM]: (node, children) => {
-      return (
-        <ContentWrap>
-          <RichText document={node} renderNode={customListItemRenderNode()} />
-        </ContentWrap>
-      )
-    },
-    [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-      const embeddedNode = embeddedNodes()[
-        node.data.target?.sys?.contentType?.sys?.id
-      ]
-
-      if (!embeddedNode) return null
-
-      const Component = embeddedNode.component
-      const Wrapper = embeddedNode.wrapper
-      const Cmp = () => (
-        <Component
-          {...(embeddedNode.processContent && {
-            ...embeddedNode.processContent(node),
-          })}
-        >
-          {embeddedNode.children && embeddedNode.children(node)}
-        </Component>
-      )
-
-      return Wrapper ? (
-        <Wrapper>
-          <Cmp />
-        </Wrapper>
-      ) : (
-        <Cmp />
-      )
-    },
-  }
-
-  return {
-    ...settings,
-    ...overrides,
-  }
-}
-
-const customListItemRenderNode = () => ({
-  ...defaultRenderNode(),
-  [BLOCKS.LIST_ITEM]: (node, children) => {
-    return <Bullet>{children}</Bullet>
+    )
   },
-  [BLOCKS.PARAGRAPH]: (node, children) => children,
-})
+  [BLOCKS.UL_LIST]: (node: Node, children: ReactNode) => (
+    <BulletList>{children}</BulletList>
+  ),
+  [BLOCKS.LIST_ITEM]: (node: Document | string | undefined) => {
+    return (
+      <ContentWrap>
+        <RichText document={node} renderNode={customListItemRenderNode} />
+      </ContentWrap>
+    )
+  },
+  [BLOCKS.EMBEDDED_ENTRY]: (node: Node) => {
+    const nodeId = node.data.target?.sys?.contentType?.sys?.id ?? null
 
-const customProcessEntryRenderNode = () => ({
-  ...defaultRenderNode(),
-  [BLOCKS.PARAGRAPH]: (node, children) => {
-    if (!children.find((x) => x !== '')) {
-      return null
+    if (!nodeId) return null
+
+    const embeddedNode = embeddedNodes[nodeId] as EmbeddedNode
+
+    if (!embeddedNode) return null
+
+    const Component = embeddedNode.component
+    const Wrapper = embeddedNode.wrapper ?? null
+
+    const props = {
+      ...(embeddedNode.processedProps &&
+      Object.keys(embeddedNode.processedProps).length
+        ? { ...embeddedNode.processedProps(node) }
+        : {}),
     }
 
+    const Cmp = () => (
+      <Component {...props}>
+        {embeddedNode.children && embeddedNode.children(node)}
+      </Component>
+    )
+
+    return Wrapper ? (
+      <Wrapper>
+        <Cmp />
+      </Wrapper>
+    ) : (
+      <Cmp />
+    )
+  },
+} as RenderNode
+
+const customListItemRenderNode = {
+  ...defaultRenderNode,
+  [BLOCKS.LIST_ITEM]: (node: Node, children: ReactNode) => {
+    return <Bullet>{children}</Bullet>
+  },
+  [BLOCKS.PARAGRAPH]: (node: Node, children: ReactNode) => children,
+} as RenderNode
+
+const customProcessEntryRenderNode = {
+  ...defaultRenderNode,
+  [BLOCKS.PARAGRAPH]: (node: Node, children: ReactNode) => {
     return <Paragraph>{children}</Paragraph>
   },
-  [BLOCKS.HEADING_2]: (node, children) => (
+  [BLOCKS.HEADING_2]: (node: Node, children: string[]) => (
     <Text variant="h2" as="h2">
       <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
     </Text>
   ),
-  [BLOCKS.HEADING_3]: (node, children) => (
+  [BLOCKS.HEADING_3]: (node: Node, children: ReactNode) => (
     <Text variant="h3" as="h3">
       {children}
     </Text>
   ),
-  [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
-  [BLOCKS.LIST_ITEM]: (node, children) => {
-    return <RichText document={node} renderNode={customListItemRenderNode()} />
+  [BLOCKS.UL_LIST]: (node: Node, children: ReactNode) => (
+    <BulletList>{children}</BulletList>
+  ),
+  [BLOCKS.LIST_ITEM]: (node: string | Document | undefined) => {
+    return <RichText document={node} renderNode={customListItemRenderNode} />
   },
-})
+} as RenderNode
 
 type Props = {
   document: string
 }
 
-export const Content: React.FC<Props> = ({ document }) => {
-  return <RichText document={document} renderNode={defaultRenderNode()} />
+export const Content: FC<Props> = ({ document }) => {
+  return <RichText document={document} renderNode={defaultRenderNode} />
 }
 
 export default Content

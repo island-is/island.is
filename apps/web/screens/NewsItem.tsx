@@ -11,7 +11,7 @@ import {
   Stack,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Image } from '@island.is/island-ui/contentful'
+import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -105,7 +105,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
               </GridRow>
               <Box paddingBottom={4} width="full">
                 <RichText
-                  body={newsItem.content}
+                  body={newsItem.content as SliceType[]}
                   config={{ defaultPadding: 4 }}
                 />
               </Box>

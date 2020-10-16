@@ -18,7 +18,6 @@ module.exports = async ({ config }) => {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env', '@babel/preset-react'],
-            plugins: ['react-docgen'],
           },
         },
       ],
