@@ -1972,7 +1972,8 @@
       }
     },
     "island-ui-fonts": {
-      "root": "libs/island-ui/fonts"
+      "root": "libs/island-ui/fonts",
+      "projectType": "library"
     },
     "island-ui-storybook": {
       "root": "libs/island-ui/storybook",
