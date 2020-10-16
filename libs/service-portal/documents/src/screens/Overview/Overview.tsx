@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState } from 'react'
 import {
   Typography,
   Box,
@@ -7,7 +7,6 @@ import {
   Column,
   ButtonDeprecated as Button,
   Select,
-  Input,
   Pagination,
   Option,
   DatePicker,
@@ -32,7 +31,6 @@ const pageSize = 4
 const defaultStartDate = '2000-01-01T00:00:00.000'
 
 type FilterValues = {
-  search: string
   dateFrom: Date
   dateTo: Date
 }
@@ -44,7 +42,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
   const [filterValue, setFilterValue] = useState<FilterValues>({
-    search: '',
     dateFrom: new Date(defaultStartDate),
     dateTo: new Date(),
   })
@@ -71,22 +68,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     if (searchOpen) {
       setSearchOpen(false)
       setFilterValue({
-        search: '',
         dateFrom: new Date(defaultStartDate),
         dateTo: new Date(),
       })
     } else {
       setSearchOpen(true)
     }
-  }
-
-  const handleInput = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setFilterValue({
-      ...filterValue,
-      [e.target.name]: e.target.value,
-    })
   }
 
   const handleDateFromInput = (value: Date) =>
@@ -106,7 +93,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setActiveCategory(cat as Option)
 
   return (
-    <>
+    <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
         <Typography variant="h1" as="h1">
           {formatMessage({
@@ -141,7 +128,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <Column width="content">
                   <Button
                     variant="ghost"
-                    icon={searchOpen ? 'close' : 'burger'}
+                    icon={searchOpen ? 'close' : 'plus'}
                     onClick={handleExtendSearchClick}
                   >
                     {searchOpen ? 'Loka ítarleit' : 'Ítarleit'}
@@ -157,12 +144,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   marginTop={2}
                 >
                   <Stack space={2}>
-                    <Input
-                      name="search"
-                      value={filterValue.search}
-                      onChange={handleInput}
-                      placeholder="Leita í skjölum... (Óvirkt)"
-                    />
                     <Columns space={2} collapseBelow="sm">
                       <Column width="1/2">
                         <DatePicker
@@ -205,7 +186,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {data?.map((document) => (
               <DocumentCard key={document.id} document={document} />
             ))}
-            {data && data.length > 0 && (
+            {data && data.length > pageSize && (
               <Pagination
                 page={page}
                 totalPages={data?.length === pageSize ? page + 1 : page}
@@ -222,7 +203,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           </Stack>
         </Box>
       </Stack>
-    </>
+    </Box>
   )
 }
 
