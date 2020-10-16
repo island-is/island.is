@@ -16,7 +16,7 @@ const Select: FC = () => {
   const {
     t: {
       deregisterVehicle: { select: t },
-      routes,
+      routes: { deregisterVehicle: routes },
     },
   } = useI18n()
   const router = useRouter()
@@ -29,14 +29,11 @@ const Select: FC = () => {
   }
 
   const handleContinue = () => {
-    router.push(
-      routes.deregisterVehicle.deregister,
-      `${routes.deregisterVehicle.baseRoute}/${registrationNumber}`,
-    )
+    router.push(routes.deregister, `${routes.baseRoute}/${registrationNumber}`)
   }
 
   const handleCancel = () => {
-    router.push(routes.companyOverview)
+    router.push(routes.baseRoute)
   }
 
   return (

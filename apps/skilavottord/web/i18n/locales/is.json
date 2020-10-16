@@ -90,9 +90,15 @@
       "close": "Close"
     }
   },
-  "processSections": {
-    "citizen": ["Confirm car for recycling", "Handover car to recycle"],
-    "company": ["Select car", "Deregister car"]
+  "processes": {
+    "citizen": {
+      "title": "Recycle car",
+      "sections": ["Confirm car for recycling", "Handover car to recycle"]
+    },
+    "company": {
+      "title": "Deregister car",
+      "sections": ["Select car", "Deregister car"]
+    }
   },
   "companyOverview": {
     "title": "Deregister car",
@@ -144,9 +150,9 @@
       "handover": "/recycle-vehicle/[id]/handover",
       "completed": "/recycle-vehicle/[id]/completed"
     },
-    "companyOverview": "/company-overview",
     "deregisterVehicle": {
       "baseRoute": "/deregister-vehicle",
+      "select": "/deregister-vehicle/select",
       "deregister": "/deregister-vehicle/[id]"
     }
   }

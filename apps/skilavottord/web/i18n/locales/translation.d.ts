@@ -13,7 +13,7 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  processSections: ProcessSections
+  processes: Processes
   companyOverview: CompanyOverview
   companySidenav: CompanySidenav
   deregisterVehicle: DeregisterVehicle
@@ -60,10 +60,14 @@ export interface Completed {
   buttons: CompletedButtons
 }
 
+export interface Processes {
+  citizen: ProcessSections
+  company: ProcessSections
+}
+
 export interface ProcessSections {
-  citizen: string[]
-  company: string[]
-  fund: string[]
+  title: string
+  sections: string[]
 }
 
 export interface CancelModal {
@@ -214,7 +218,6 @@ export interface Routes {
   home: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
-  companyOverview: string
   deregisterVehicle: DeregisterVehicleRoutes
 }
 
@@ -227,6 +230,7 @@ export interface RecycleVehicleRoutes {
 
 export interface DeregisterVehicleRoutes {
   baseRoute: string
+  select: string
   deregister: string
 }
 

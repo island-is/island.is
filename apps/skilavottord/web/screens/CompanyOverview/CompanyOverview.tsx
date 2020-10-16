@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import {
   Box,
@@ -15,9 +15,17 @@ import { useRouter } from 'next/router'
 
 const CompanyOverview: FC = () => {
   const {
-    t: { companyOverview: t, companySidenav: sidenavText },
+    t: {
+      companyOverview: t,
+      companySidenav: sidenavText,
+      routes: { deregisterVehicle: routes },
+    },
   } = useI18n()
   const router = useRouter()
+
+  const handleDeregister = () => {
+    router.push(routes.select)
+  }
 
   return (
     <PartnerPageLayout
@@ -37,13 +45,7 @@ const CompanyOverview: FC = () => {
                 <Text variant="h1">{t.title}</Text>
                 <Text variant="intro">{t.info}</Text>
               </Stack>
-              <Button
-                onClick={() => {
-                  router.push('./deregister-vehicle')
-                }}
-              >
-                {t.buttons.deregister}
-              </Button>
+              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
             </Stack>
             <Text variant="h3">{t.subtitles.history}</Text>
           </Stack>

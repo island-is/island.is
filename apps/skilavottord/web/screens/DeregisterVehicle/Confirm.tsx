@@ -16,7 +16,7 @@ const Confirm: FC = () => {
   const {
     t: {
       deregisterVehicle: { deregister: t },
-      routes,
+      routes: { deregisterVehicle: routes },
     },
   } = useI18n()
   const router = useRouter()
@@ -33,11 +33,11 @@ const Confirm: FC = () => {
   }
 
   const handleConfirm = () => {
-    router.replace(routes.companyOverview)
+    router.replace(routes.baseRoute)
   }
 
   const handleBack = () => {
-    router.replace(routes.deregisterVehicle.baseRoute)
+    router.replace(routes.select)
   }
 
   return (
