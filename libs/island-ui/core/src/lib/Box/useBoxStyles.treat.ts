@@ -10,13 +10,14 @@ const spaceMapToCss = (
   cssPropertyName: keyof Properties,
   breakpoint: keyof typeof theme['breakpoints'],
 ) => {
-  const spaceWithNone = {
+  const spaceWithKeywords = {
     ...t.spacing,
     none: 0,
+    auto: 'auto',
   }
 
   return mapToStyleProperty(
-    spaceWithNone,
+    spaceWithKeywords,
     cssPropertyName,
     (value, propertyName) => {
       const styles = {

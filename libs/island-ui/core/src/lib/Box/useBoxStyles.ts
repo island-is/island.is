@@ -10,7 +10,8 @@ import {
 import * as resetStyleRefs from '../../reset/reset.treat'
 import * as styleRefs from './useBoxStyles.treat'
 
-export type Space = keyof typeof theme.spacing
+type Auto = 'auto'
+export type Space = keyof typeof theme.spacing | Auto
 export type ResponsiveSpace = ResponsiveProp<Space>
 
 export interface UseBoxStylesProps {
