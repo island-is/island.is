@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Icon,
-  Typography,
+  Text,
   AccordionItem,
   GridContainer,
 } from '@island.is/island-ui/core'
@@ -186,20 +186,20 @@ export default function ServiceList(props: ServiceListProps) {
               isMobile ? styles.topSectionMobile : styles.topSection,
             )}
           >
-            <Typography variant="h1">
+            <Text variant="h1">
               {
                 props.pageContent.strings.find((s) => s.id === 'catalog-title')
                   .text
               }
-            </Typography>
+            </Text>
             <div className={cn(styles.topSectionText)}>
-              <Typography variant="intro">
+              <Text variant="intro">
                 {
                   props.pageContent.strings.find(
                     (s) => s.id === 'catalog-intro',
                   ).text
                 }
-              </Typography>
+              </Text>
             </div>
           </div>
         </div>

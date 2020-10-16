@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
   Box,
-  ButtonDeprecated as Button,
+  Button,
   Column,
   Columns,
   GridColumn,
@@ -33,10 +33,11 @@ function Header() {
                 justifyContent="flexEnd"
                 width="full"
               >
-                <Button
-                  variant="menu"
-                  onClick={() => setSideMenuOpen(true)}
-                  icon="burger"
+				        <Button
+                   variant="utility"
+                   onClick={() => setSideMenuOpen(true)}
+                   icon="burger"
+                   size="small"
                 >
                   Valmynd
                 </Button>
