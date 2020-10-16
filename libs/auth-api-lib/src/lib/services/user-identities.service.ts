@@ -28,7 +28,7 @@ export class UserIdentitiesService {
     this.logger.debug(
       `Creating user identity with subjectIdId - ${userIdentity.subjectId}`,
     )
-    this.applicationsRegistered.labels('res1').inc()
+    this.applicationsRegistered.inc()
 
     userIdentity.profileId = await this.findLinkableProfileId(userIdentity)
 
