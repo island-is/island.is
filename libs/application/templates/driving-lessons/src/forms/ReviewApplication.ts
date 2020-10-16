@@ -9,15 +9,13 @@ import {
   buildSelectField,
   buildTextField,
   Form,
-  ApplicationTypes,
 } from '@island.is/application/core'
 
 const yesOption = { value: 'yes', label: 'Já' }
 const noOption = { value: 'no', label: 'Nei' }
 
 export const ReviewApplication: Form = buildForm({
-  id: ApplicationTypes.DRIVING_LESSONS,
-  ownerId: 'TODO?',
+  id: 'ReviewDrivingLessonsApplication',
   name: 'Úrvinnsla umsóknar um ökunám',
   mode: 'review',
   children: [

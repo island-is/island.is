@@ -16,7 +16,6 @@ describe('conditions', () => {
         buildTextField({
           id: 'asdf',
           name: 'asdf',
-          required: false,
         }),
         {},
       ),
@@ -29,7 +28,6 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: false,
             condition: () => true,
           }),
           { money: 100 },
@@ -40,7 +38,6 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: false,
             condition: (formValue: FormValue) => formValue.money > 0,
           }),
           { money: 100 },
@@ -51,7 +48,6 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: false,
             condition: (formValue: FormValue) =>
               formValue.money > formValue.price,
           }),
@@ -65,7 +61,6 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: false,
             condition: () => false,
           }),
           { money: 100 },
@@ -76,7 +71,6 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: false,
             condition: (formValue: FormValue) => formValue.money > 0,
           }),
           { money: 0 },
@@ -87,7 +81,6 @@ describe('conditions', () => {
           buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: false,
             condition: (formValue: FormValue) =>
               formValue.money > formValue.price,
           }),
@@ -101,7 +94,6 @@ describe('conditions', () => {
       const field = buildTextField({
         id: 'asdf',
         name: 'asdf',
-        required: true,
       })
 
       const section = buildSection({
@@ -126,7 +118,6 @@ describe('conditions', () => {
       const field = buildTextField({
         id: 'asdf',
         name: 'asdf',
-        required: true,
       })
 
       const subSection = buildSubSection({
@@ -151,7 +142,6 @@ describe('conditions', () => {
       const field = buildTextField({
         id: 'asdf',
         name: 'asdf',
-        required: true,
         condition: {
           questionId: 'anotherQuestion',
           value: 'Great Answer',
@@ -170,7 +160,6 @@ describe('conditions', () => {
       const field = buildTextField({
         id: 'asdf',
         name: 'asdf',
-        required: true,
         condition: {
           questionId: 'nested.question',
           value: 'Great Answer',
@@ -219,7 +208,6 @@ describe('conditions', () => {
         const field = buildTextField({
           id: 'asdf',
           name: 'asdf',
-          required: true,
           condition: {
             isMultiCheck: true,
             show: true,
@@ -234,7 +222,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({}),
           })
 
@@ -249,7 +236,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.NOT_EQUAL,
             }),
@@ -268,7 +254,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LT,
               on: AllOrAny.ANY,
@@ -291,7 +276,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LTE,
             }),
@@ -313,7 +297,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GT,
             }),
@@ -333,7 +316,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GTE,
               on: AllOrAny.ANY,
@@ -356,7 +338,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiCheckCondition({
               check: [
                 {
@@ -412,7 +393,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiCheckCondition({
               on: AllOrAny.ANY,
               check: [
@@ -478,7 +458,6 @@ describe('conditions', () => {
         const field = buildTextField({
           id: 'asdf',
           name: 'asdf',
-          required: true,
           condition: {
             isMultiCheck: true,
             show: true,
@@ -492,7 +471,6 @@ describe('conditions', () => {
         const field = buildTextField({
           id: 'asdf',
           name: 'asdf',
-          required: true,
           condition: buildMultiCheckCondition({
             check: [
               {
@@ -547,7 +525,6 @@ describe('conditions', () => {
         const field = buildTextField({
           id: 'asdf',
           name: 'asdf',
-          required: true,
           condition: buildMultiCheckCondition({
             on: AllOrAny.ANY,
             check: [
@@ -577,7 +554,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({ show: false }),
           })
 
@@ -592,7 +568,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.NOT_EQUAL,
               show: false,
@@ -612,7 +587,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LT,
               on: AllOrAny.ANY,
@@ -636,7 +610,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.LTE,
               show: false,
@@ -659,7 +632,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GT,
               show: false,
@@ -680,7 +652,6 @@ describe('conditions', () => {
           const field = buildTextField({
             id: 'asdf',
             name: 'asdf',
-            required: true,
             condition: buildMultiConditionWithOneStaticCheck({
               comparator: Comparators.GTE,
               on: AllOrAny.ANY,
