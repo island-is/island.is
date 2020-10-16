@@ -11,20 +11,17 @@ import { Application } from './Application'
 
 export type ApplicationRole = 'applicant' | 'reviewer' | string
 
+export type ReadWriteValues =
+  | 'all'
+  | {
+      answers?: string[]
+      externalData?: string[]
+    }
+
 export interface RoleInState<T extends EventObject = AnyEventObject> {
   id: ApplicationRole
-  read?:
-    | 'all'
-    | {
-        answers?: string[]
-        externalData?: string[]
-      }
-  write?:
-    | 'all'
-    | {
-        answers?: string[]
-        externalData?: string[]
-      }
+  read?: ReadWriteValues
+  write?: ReadWriteValues
   formLoader?: () => Promise<Form>
   actions?: CallToAction<T>[]
 }
