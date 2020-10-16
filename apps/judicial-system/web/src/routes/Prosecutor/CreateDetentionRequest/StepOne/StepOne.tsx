@@ -37,7 +37,6 @@ import {
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
-
   const [workingCase, setWorkingCase] = useState<Case>(null)
 
   const [
