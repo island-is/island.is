@@ -3,19 +3,20 @@ import { Link } from 'react-router-dom'
 import {
   Box,
   Hidden,
-  ResponsiveSpace,
   ContentBlock,
   ButtonDeprecated as Button,
   Inline,
+  Logo,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
-import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger'
+import { BetaTag } from '../Logo/BetaTag'
 
 export const Header: FC<{}> = () => {
   const { lang } = useLocale()
@@ -44,12 +45,15 @@ export const Header: FC<{}> = () => {
               paddingX={[2, 2, 4, 4, 6]}
             >
               <Link to={ServicePortalPath.MinarSidurRoot}>
-                <Hidden above="md">
-                  <Logo width={40} iconOnly />
-                </Hidden>
-                <Hidden below="lg">
-                  <Logo />
-                </Hidden>
+                <FocusableBox component="div">
+                  <Hidden above="md">
+                    <Logo width={40} iconOnly />
+                  </Hidden>
+                  <Hidden below="lg">
+                    <Logo />
+                  </Hidden>
+                  <BetaTag />
+                </FocusableBox>
               </Link>
               <Inline space={[1, 1, 1, 2]}>
                 <Button

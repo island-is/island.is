@@ -61,7 +61,9 @@ const UserMenu: FC<{}> = () => {
                 >
                   <Icon type="user" width={30} height={30} />
                 </Box>
-                <Typography variant="h4">{userInfo?.profile.name}</Typography>
+                <Box marginRight={4}>
+                  <Typography variant="h4">{userInfo?.profile.name}</Typography>
+                </Box>
               </Box>
               <Box padding={3} background="blue100">
                 <Stack space={1}>

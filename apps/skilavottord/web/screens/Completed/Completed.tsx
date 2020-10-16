@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
   Stack,
   GridContainer,
   GridRow,
   GridColumn,
-  Box,
   Text,
+  Divider,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
@@ -38,7 +38,11 @@ const Completed = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout activeSection={2} activeCar={id.toString()}>
+        <ProcessPageLayout
+          sectionType={'citizen'}
+          activeSection={2}
+          activeCar={id.toString()}
+        >
           <Stack space={3}>
             <Text variant="h1">{t.title}</Text>
             <Stack space={4}>
@@ -66,7 +70,7 @@ const Completed = ({ apolloState }) => {
                       </GridColumn>
                     </GridRow>
                   </Stack>
-                  <Box borderTopWidth="standard" borderColor="blue200"></Box>
+                  <Divider />
                   <Stack space={1}>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
