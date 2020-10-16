@@ -27,7 +27,13 @@ export class ElasticService {
 
     try {
       const client = await this.getClient()
-      return client.indices.delete({ index: this.indexName })
+      const { body } = await client.indices.exists({ index: this.indexName })
+      if (body ) {
+        await client.indices.delete({ index: this.indexName })
+      }
+      else {
+        logger.info('No index to delete', this.indexName)
+      }
     } catch (error) {
       logger.error('Error in deleting index', error)
     }

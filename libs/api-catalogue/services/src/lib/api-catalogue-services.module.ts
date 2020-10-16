@@ -8,8 +8,8 @@ import {
   Configuration as RestConfiguration,
 } from '../../gen/fetch/xrd-rest'
 
-const XROAD_BASE_PATH = process.env.XROAD_BASE_PATH
-const XROAD_CLIENT = process.env.XROAD_CLIENT_ID
+const XROAD_BASE_PATH = process.env.XROAD_BASE_PATH ?? ''
+const XROAD_CLIENT = process.env.XROAD_CLIENT_ID ?? ''
 
 @Module({
   controllers: [],

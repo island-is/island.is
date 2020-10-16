@@ -61,7 +61,7 @@ export class RestMetadataService {
           // so name, owner and description will be from the latest version.
           service.name = spec.info.title
           service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
-          service.description = spec.info.description
+          service.description = spec.info.description ?? ''
           service.data = _.union(service.data, spec.info.x_category)
           service.pricing = _.union(service.pricing, spec.info.x_pricing)
           service.xroadIdentifier.push(sorted[i])
@@ -87,7 +87,7 @@ export class RestMetadataService {
    * @param xroadIdentifier Object identifying the service in X-Road
    * @returns OpenAPI object if spec is found, otherwise null
    */
-  async getOpenApi(xroadIdentifier: XroadIdentifier): Promise<OpenApi> {
+  async getOpenApi(xroadIdentifier: XroadIdentifier): Promise<OpenApi | null> {
     try {
       return YamlParser.safeLoad(
         await this.getOpenApiString(xroadIdentifier),
@@ -136,20 +136,24 @@ export class RestMetadataService {
         `Found ${xrdServices?.service?.length} service codes for ${provider.memberCode}/${provider.subsystemCode}`,
       )
 
-      xrdServices.service.forEach((item) => {
-        const serviceCode = item.serviceCode.split('-')[0]
-        const mappedItem: XroadIdentifier = {
-          instance: item.xroadInstance,
-          memberClass: item.memberClass,
-          memberCode: item.memberCode,
-          subsystemCode: item.subsystemCode,
-          serviceCode: item.serviceCode,
-        }
+      xrdServices?.service?.forEach((item) => {
+        // Validate the properties are provided that we need
+        if (item && item.serviceCode && item.xroadInstance
+          && item.memberCode && item.memberClass && item.subsystemCode) {
+          const serviceCode = item.serviceCode.split('-')[0]
+          const mappedItem: XroadIdentifier = {
+            instance: item.xroadInstance,
+            memberClass: item.memberClass,
+            memberCode: item.memberCode,
+            subsystemCode: item.subsystemCode,
+            serviceCode: item.serviceCode,
+          }
 
-        if (serviceMap.has(serviceCode)) {
-          serviceMap.get(serviceCode).push(mappedItem)
-        } else {
-          serviceMap.set(serviceCode, [mappedItem])
+          if (serviceMap.has(serviceCode)) {
+            serviceMap.get(serviceCode)!.push(mappedItem)
+          } else {
+            serviceMap.set(serviceCode, [mappedItem])
+          }
         }
       })
     } catch (err) {

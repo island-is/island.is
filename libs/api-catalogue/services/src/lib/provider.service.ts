@@ -34,23 +34,23 @@ export class ProviderService {
       const filter = new RegExp(`.*${providerType}$`)
       const xrdClients = await this.xrdMetaService.listClients({})
 
-      if (xrdClients && xrdClients.member?.length > 0) {
+      if (xrdClients && xrdClients.member && xrdClients.member.length > 0) {
         providers = xrdClients.member
           .filter((item: XroadIdentifier): boolean => {
             return (
               item.id?.objectType ===
                 XroadIdentifierIdObjectTypeEnum.SUBSYSTEM &&
-              filter.test(item.id?.subsystemCode?.toLowerCase())
+              filter.test(item.id?.subsystemCode?.toLowerCase() ?? '')
             )
           })
           .map(
             (item: XroadIdentifier): Provider => {
               return {
                 type: providerType,
-                xroadInstance: item.id?.xroadInstance,
-                memberClass: item.id?.memberClass,
-                memberCode: item.id?.memberCode,
-                subsystemCode: item.id?.subsystemCode,
+                xroadInstance: item.id?.xroadInstance ?? '',
+                memberClass: item.id?.memberClass ?? '',
+                memberCode: item.id?.memberCode ?? '',
+                subsystemCode: item.id?.subsystemCode ?? '',
               }
             },
           )
