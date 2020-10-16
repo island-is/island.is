@@ -13,7 +13,10 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  cancelModal: CancelModal
+  processSections: string[]
+  companyOverview: CompanyOverview
+  companySide: CompanySide
+  routes: Routes
 }
 
 export interface Home {
@@ -27,7 +30,8 @@ export interface MyCars {
   actions: CarActions
   status: CarStatus
   buttons: CarsButtons
-  tooltip: string
+  tooltip: ToolTip
+  error: Errors
 }
 
 export interface Confirm {
@@ -42,7 +46,9 @@ export interface Handover {
   title: string
   subTitles: HandoverSubTitles
   info: string
+  subInfo: string
   buttons: HandoverButtons
+  cancelModal: CancelModal
 }
 
 export interface Completed {
@@ -83,6 +89,12 @@ export interface CarStatus {
 export interface CarsButtons {
   openProcess: string
   seeDetails: string
+  reload: string
+}
+
+export interface ToolTip {
+  text: string
+  link: string
 }
 
 export interface ConfirmSubTitles {
@@ -100,12 +112,12 @@ export interface CheckBox {
 }
 
 export interface HandoverSubTitles {
-  recycle: string
+  nextStep: string
   companies: string
 }
 
 export interface HandoverButtons extends ProcessButtons {
-  website: string
+  close: string
 }
 
 export interface CompletedSubTitles {
@@ -127,6 +139,53 @@ export interface CompletedConfirmation {
 
 export interface CompletedButtons extends ProcessButtons {
   close: string
+}
+
+export interface Errors {
+  title: string
+  message: string
+  primaryButton: string
+  secondaryButton: string
+}
+
+export interface CompanyOverview {
+  title: string
+  info: string
+  subtitles: CompanyOverviewSubTitles
+  buttons: CompanyOverviewButtons
+  search: Search
+  table: string[]
+}
+
+export interface CompanySide {
+  deregister: string
+  companyInfo: string
+}
+
+export interface CompanyOverviewSubTitles {
+  history: string
+}
+
+export interface CompanyOverviewButtons {
+  deregister: string
+}
+
+export interface Search {
+  label: string
+  placeholder: string
+}
+
+export interface Routes {
+  home: string
+  myCars: string
+  recycleVehicle: RecycleVehicleRoutes
+}
+
+export interface RecycleVehicleRoutes {
+  baseRoute: string
+  confirm: string
+  handover: string
+  completed: string
 }
 
 // Converts JSON strings to/from your types

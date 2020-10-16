@@ -15,7 +15,7 @@ import ReactSelect, {
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
-import Icon from '../Icon/Icon'
+import { Icon } from '../Icon/Icon'
 
 export type Option = {
   label: string
@@ -41,6 +41,7 @@ export interface SelectProps {
   placeholder?: string
   defaultValue?: Option
   icon?: string
+  isSearchable?: boolean
 }
 
 export const Select = ({
@@ -57,6 +58,7 @@ export const Select = ({
   placeholder = '',
   defaultValue,
   icon = 'cheveron',
+  isSearchable = true,
 }: SelectProps) => {
   return (
     <div className={styles.wrapper} data-testid={`select-${name}`}>
@@ -77,6 +79,7 @@ export const Select = ({
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
+        isSearchable={isSearchable}
         components={{
           Control,
           Input,
@@ -161,5 +164,3 @@ const Control = (props: ControlProps<Option>) => {
     </components.Control>
   )
 }
-
-export default Select

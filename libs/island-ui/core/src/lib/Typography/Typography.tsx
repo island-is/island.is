@@ -1,7 +1,11 @@
+/** @deprecated Typography has been deprecated in favor of Text */
+
 import React from 'react'
 import cn from 'classnames'
 
-import styles, {
+import {
+  variantStyles,
+  base,
   VariantTypes,
   colors,
   truncate as truncateStyle,
@@ -11,7 +15,7 @@ import styles, {
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 
 export interface TypographyProps {
   id?: string
@@ -56,6 +60,10 @@ export const Typography = ({
   fontWeight,
   as = 'p',
 }: TypographyProps) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('Typography has been deprecated in favor of Text.')
+  }
+
   return (
     <Box
       id={id}
@@ -67,7 +75,8 @@ export const Typography = ({
       paddingBottom={paddingBottom}
       paddingY={paddingY}
       className={cn(
-        variant ? styles[variant] : null,
+        base,
+        variant ? variantStyles[variant] : null,
         color ? colors[color] : null,
         fontWeight ? fontWeightStyles[fontWeight] : null,
         {
@@ -81,5 +90,3 @@ export const Typography = ({
     </Box>
   )
 }
-
-export default Typography

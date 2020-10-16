@@ -18,6 +18,9 @@ export interface IAboutSubPageFields {
 
   /** Content */
   content: Document
+
+  /** belowContent */
+  belowContent?: ILocation[] | undefined
 }
 
 /** sub-page of the about-page */
@@ -143,6 +146,15 @@ export interface IArticleFields {
   /** Subgroup */
   subgroup?: IArticleSubgroup | undefined
 
+  /** Other categories */
+  otherCategories?: IArticleCategory[] | undefined
+
+  /** Other groups */
+  otherGroups?: IArticleGroup[] | undefined
+
+  /** Other subgroups */
+  otherSubgroups?: IArticleSubgroup[] | undefined
+
   /** Organization */
   organization?: IOrganization[] | undefined
 
@@ -154,6 +166,9 @@ export interface IArticleFields {
 
   /** Importance */
   importance?: number | undefined
+
+  /** User stories */
+  userStories?: Document | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -210,6 +225,9 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -252,6 +270,28 @@ export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
     contentType: {
       sys: {
         id: 'articleSubgroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAuthorFields {
+  /** Name */
+  name: string
+}
+
+export interface IAuthor extends Entry<IAuthorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'author'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -449,6 +489,34 @@ export interface IFaqList extends Entry<IFaqListFields> {
   }
 }
 
+export interface IFeaturedFields {
+  /** Title */
+  title: string
+
+  /** Special attention */
+  attention?: boolean | undefined
+
+  /** Featured article */
+  thing?: IArticle | undefined
+}
+
+export interface IFeatured extends Entry<IFeaturedFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featured'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFrontpageSliderFields {
   /** Titill */
   title: string
@@ -468,6 +536,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Slide link */
+  slideLink?: ILink | undefined
 
   /** Animation (JSON) */
   animationJson?: Record<string, any> | undefined
@@ -552,6 +623,28 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
     contentType: {
       sys: {
         id: 'genericPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IHomepageFields {
+  /** Featured articles */
+  featured?: IFeatured[] | undefined
+}
+
+export interface IHomepage extends Entry<IHomepageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'homepage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -713,8 +806,17 @@ export interface ILinkFields {
   /** URL */
   url: string
 
-  /** Linked page */
+  /** Linked page (deprecated) */
   linkedPage?: ILinkedPage | undefined
+
+  /** Link reference */
+  linkReference?:
+    | IArticle
+    | IArticleCategory
+    | ILinkUrl
+    | INews
+    | IPage
+    | undefined
 }
 
 export interface ILink extends Entry<ILinkFields> {
@@ -739,7 +841,7 @@ export interface ILinkedPageFields {
   title: string
 
   /** page */
-  page: IArticle | IArticleCategory | INews
+  page: IArticle | IArticleCategory | INews | IPage
 }
 
 export interface ILinkedPage extends Entry<ILinkedPageFields> {
@@ -777,6 +879,62 @@ export interface ILinkList extends Entry<ILinkListFields> {
     contentType: {
       sys: {
         id: 'linkList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILinkUrlFields {
+  /** url */
+  url: string
+}
+
+export interface ILinkUrl extends Entry<ILinkUrlFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'linkUrl'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILocationFields {
+  /** Title */
+  title: string
+
+  /** subTitle */
+  subTitle?: string | undefined
+
+  /** Address */
+  address?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Background */
+  background: Asset
+}
+
+export interface ILocation extends Entry<ILocationFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'location'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -907,6 +1065,9 @@ export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
 
+  /** Type */
+  type?: ('News item' | 'Project story')[] | undefined
+
   /** Title */
   title: string
 
@@ -919,6 +1080,9 @@ export interface INewsFields {
   /** Date */
   date: string
 
+  /** Author */
+  author?: IAuthor | undefined
+
   /** Introduction */
   intro: string
 
@@ -930,6 +1094,9 @@ export interface INewsFields {
 
   /** Read More Text */
   readMoreText?: string | undefined
+
+  /** Tags */
+  items?: (IOrganization | IOrganizationTag)[] | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -1153,15 +1320,6 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
 }
 
 export interface IProcessEntryFields {
-  /** Title */
-  title: string
-
-  /** Subtitle */
-  subtitle?: string | undefined
-
-  /** Details */
-  details?: Document | undefined
-
   /** Type */
   type:
     | 'Digital'
@@ -1172,12 +1330,6 @@ export interface IProcessEntryFields {
 
   /** Process title */
   processTitle: string
-
-  /** Process description (OLD field) */
-  processDescription?: string | undefined
-
-  /** Process info */
-  processInfo?: Document | undefined
 
   /** Process link */
   processLink: string
@@ -1393,6 +1545,9 @@ export interface IStoryFields {
 
   /** Linked page (new) */
   page?: ILinkedPage | undefined
+
+  /** Link reference */
+  storyLink?: ILink | undefined
 }
 
 export interface IStory extends Entry<IStoryFields> {
@@ -2014,15 +2169,18 @@ export type CONTENT_TYPE =
   | 'articleCategory'
   | 'articleGroup'
   | 'articleSubgroup'
+  | 'author'
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
   | 'contactUs'
   | 'embeddedVideo'
   | 'faqList'
+  | 'featured'
   | 'frontpageSlider'
   | 'frontpageSliderList'
   | 'genericPage'
+  | 'homepage'
   | 'iconBullet'
   | 'landingPage'
   | 'latestNewsSlice'
@@ -2030,6 +2188,8 @@ export type CONTENT_TYPE =
   | 'link'
   | 'linkedPage'
   | 'linkList'
+  | 'linkUrl'
+  | 'location'
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'

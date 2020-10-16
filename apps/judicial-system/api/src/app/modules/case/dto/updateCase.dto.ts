@@ -1,20 +1,13 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator'
+import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
 import {
-  CaseCustodyRestrictions,
   CaseCustodyProvisions,
+  CaseCustodyRestrictions,
   CaseAppealDecision,
-} from '../models'
+} from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
-  @IsOptional()
-  @IsEnum(CaseState)
-  @ApiPropertyOptional({ enum: CaseState })
-  readonly state: string
-
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
@@ -136,6 +129,11 @@ export class UpdateCaseDto {
   readonly ruling: string
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: String })
+  readonly rejecting: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly custodyEndDate: Date
@@ -151,7 +149,17 @@ export class UpdateCaseDto {
   readonly accusedAppealDecision: CaseAppealDecision
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly accusedAppealAnnouncement: string
+
+  @IsOptional()
   @IsEnum(CaseAppealDecision, { each: true })
   @ApiPropertyOptional({ enum: CaseAppealDecision })
   readonly prosecutorAppealDecision: CaseAppealDecision
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorAppealAnnouncement: string
 }

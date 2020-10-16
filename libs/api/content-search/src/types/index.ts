@@ -64,6 +64,7 @@ export interface SearchResponse<T> {
 export interface SyncOptions {
   locale: keyof typeof SearchIndexes
   fullSync: boolean
+  elasticIndex?: string
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {

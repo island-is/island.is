@@ -11,7 +11,7 @@ import {
 } from '@island.is/web/components'
 import {
   Box,
-  Typography,
+  Text,
   Stack,
   Breadcrumbs,
   Hidden,
@@ -179,7 +179,6 @@ const Search: Screen<CategoryProps> = ({
     ? { label: categoryTitle, value: categorySlug }
     : { label: 'Allir flokkar', value: '' }
 
-  const resultsCountToShow = totalSearchResults
   return (
     <>
       <Head>
@@ -200,7 +199,7 @@ const Search: Screen<CategoryProps> = ({
                       right: 40,
                       position: 'absolute',
                       left: '0',
-                      top: '-4px',
+                      top: '12px',
                       zIndex: 10, // to accommodate for being absolute
                     }}
                   >
@@ -301,31 +300,34 @@ const Search: Screen<CategoryProps> = ({
             initialInputValue={q}
           />
           <Hidden above="md">
-            <Select
-              label={n('searchResult', 'Leitarflokkar')}
-              placeholder={n('categories', 'Flokkar')}
-              defaultValue={defaultSelectedCategory}
-              options={categorySelectOptions}
-              onChange={onChangeSelectCategoryOptions}
-              name="content-overview"
-            />
+            {totalSearchResults > 0 && (
+              <Select
+                label={n('searchResult', 'Leitarflokkar')}
+                placeholder={n('categories', 'Flokkar')}
+                defaultValue={defaultSelectedCategory}
+                options={categorySelectOptions}
+                onChange={onChangeSelectCategoryOptions}
+                name="content-overview"
+                isSearchable={false}
+              />
+            )}
           </Hidden>
 
           {filteredItems.length === 0 ? (
             <>
-              <Typography variant="intro" as="p">
+              <Text variant="intro" as="p">
                 {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
                 <strong>{q}</strong>
-              </Typography>
+              </Text>
 
-              <Typography variant="intro" as="p">
+              <Text variant="intro" as="p">
                 {n('nothingFoundExtendedExplanation')}
-              </Typography>
+              </Text>
             </>
           ) : (
-            <Typography variant="intro" as="p">
-              {resultsCountToShow}{' '}
-              {resultsCountToShow === 1
+            <Text variant="intro" as="p">
+              {totalSearchResults}{' '}
+              {totalSearchResults === 1
                 ? n('searchResult', 'leitarniðurstaða')
                 : n('searchResults', 'leitarniðurstöður')}
               {filters.category && (
@@ -341,7 +343,7 @@ const Search: Screen<CategoryProps> = ({
                   )}
                 </>
               )}
-            </Typography>
+            </Text>
           )}
         </Stack>
       </CategoryLayout>
@@ -428,11 +430,11 @@ const Filter = ({ selected, text, onClick, truncate = false, ...props }) => {
       onClick={onClick}
       {...props}
     >
-      <Typography variant="p" as="div" truncate={truncate}>
+      <Text as="div" truncate={truncate}>
         {selected ? <strong>{text}</strong> : text}
-      </Typography>
+      </Text>
     </Box>
   )
 }
 
-export default withMainLayout(Search)
+export default withMainLayout(Search, { showSearchInHeader: false })

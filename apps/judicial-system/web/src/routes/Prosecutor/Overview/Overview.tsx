@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import {
@@ -6,45 +6,64 @@ import {
   GridRow,
   Box,
   GridColumn,
-  Typography,
+  Text,
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
+import {
+  CaseCustodyProvisions,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
+
 import { ProsecutorLogo } from '../../../shared-components/Logos'
 import Modal from '../../../shared-components/Modal/Modal'
-import { formatDate, capitalize } from '../../../utils/formatters'
-import { renderRestrictons } from '../../../utils/stepHelper'
+import {
+  formatDate,
+  capitalize,
+  formatNationalId,
+  laws,
+} from '@island.is/judicial-system/formatters'
+import { parseTransition } from '../../../utils/formatters'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as Constants from '../../../utils/constants'
+import {
+  TIME_FORMAT,
+  formatCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
 import * as api from '../../../api'
-import * as styles from './Overview.treat'
+import { Case } from '@island.is/judicial-system-web/src/types'
+import { userContext } from '../../../utils/userContext'
+import { renderFormStepper } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [, setIsSendingNotification] = useState(false)
+  const [workingCase, setWorkingCase] = useState<Case>(null)
 
-  const caseDraft = window.localStorage.getItem('workingCase')
-  const caseDraftJSON = JSON.parse(caseDraft)
   const history = useHistory()
-
-  const renderAccusedName = () => (
-    <Typography>
-      Tilkynning hefur verið send á dómara á vakt.
-      <br />
-      Dómstóll: {caseDraftJSON.court}.
-      <br />
-      Sakborningur:
-      <span className={styles.accusedName}>
-        {` ${caseDraftJSON.accusedName}`}
-      </span>
-      .
-    </Typography>
-  )
+  const uContext = useContext(userContext)
 
   const handleNextButtonClick = async () => {
     try {
+      // Parse the transition request
+      const transitionRequest = parseTransition(
+        workingCase.modified,
+        CaseTransition.SUBMIT,
+      )
+
+      // Transition the case
+      const response = await api.transitionCase(
+        workingCase.id,
+        transitionRequest,
+      )
+
+      if (response !== 200) {
+        // Improve error handling at some point
+        return false
+      }
+
       setIsSendingNotification(true)
-      await api.sendNotification(caseDraftJSON.id)
+      await api.sendNotification(workingCase.id)
       setIsSendingNotification(false)
       return true
     } catch (e) {
@@ -52,163 +71,215 @@ export const Overview: React.FC = () => {
     }
   }
 
-  return caseDraftJSON ? (
+  useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
+
+  useEffect(() => {
+    const caseDraft = window.localStorage.getItem('workingCase')
+    const caseDraftJSON = JSON.parse(caseDraft)
+
+    if (!workingCase) {
+      setWorkingCase(caseDraftJSON)
+    }
+  }, [workingCase, setWorkingCase])
+
+  return workingCase ? (
     <>
       <Box marginTop={7} marginBottom={30}>
         <GridContainer>
-          <GridRow>
-            <GridColumn span={'3/12'}>
-              <ProsecutorLogo />
-            </GridColumn>
-            <GridColumn span={'8/12'} offset={'1/12'}>
-              <Typography as="h1" variant="h1">
-                Krafa um gæsluvarðhald
-              </Typography>
-            </GridColumn>
-          </GridRow>
+          <Box marginBottom={7}>
+            <GridRow>
+              <GridColumn span={'3/12'}>
+                <ProsecutorLogo />
+              </GridColumn>
+              <GridColumn span={'8/12'} offset={'1/12'}>
+                <Text as="h1" variant="h1">
+                  Krafa um gæsluvarðhald
+                </Text>
+              </GridColumn>
+            </GridRow>
+          </Box>
           <GridRow>
             <GridColumn span={['12/12', '3/12']}>
-              <Typography>Hliðarstika</Typography>
+              {renderFormStepper(0, 2)}
             </GridColumn>
             <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
-                  <Typography variant="eyebrow" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
                     LÖKE málsnúmer
-                  </Typography>
+                  </Text>
                 </Box>
-                <Typography>{caseDraftJSON.policeCaseNumber}</Typography>
+                <Text>{workingCase.policeCaseNumber}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
-                  <Typography variant="eyebrow" color="blue400">
-                    Fullt nafn kærða
-                  </Typography>
+                  <Text variant="eyebrow" color="blue400">
+                    Kennitala
+                  </Text>
                 </Box>
-                <Typography>{caseDraftJSON.accusedName}</Typography>
+                <Text>{formatNationalId(workingCase.accusedNationalId)}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
-                  <Typography variant="eyebrow" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
+                    Fullt nafn
+                  </Text>
+                </Box>
+                <Text>{workingCase.accusedName}</Text>
+              </Box>
+              <Box component="section" marginBottom={5}>
+                <Box marginBottom={1}>
+                  <Text variant="eyebrow" color="blue400">
                     Lögheimili/dvalarstaður
-                  </Typography>
+                  </Text>
                 </Box>
-                <Typography>{caseDraftJSON.accusedAddress}</Typography>
+                <Text>{workingCase.accusedAddress}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
-                  <Typography variant="eyebrow" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
                     Dómstóll
-                  </Typography>
+                  </Text>
                 </Box>
-                <Typography>{caseDraftJSON.court}</Typography>
+                <Text>{workingCase.court}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
-                  <Typography variant="eyebrow" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
                     Tími handtöku
-                  </Typography>
+                  </Text>
                 </Box>
-                <Typography>
+                <Text>
                   {`${capitalize(
-                    formatDate(caseDraftJSON?.arrestDate, 'PPPP'),
-                  )} kl. ${formatDate(
-                    caseDraftJSON?.arrestDate,
-                    Constants.TIME_FORMAT,
-                  )}`}
-                </Typography>
+                    formatDate(workingCase.arrestDate, 'PPPP'),
+                  )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
+                </Text>
               </Box>
-              {caseDraftJSON.requestedCourtDate &&
-                caseDraftJSON.requestedCourtTime && (
-                  <Box component="section" marginBottom={5}>
-                    <Box marginBottom={1}>
-                      <Typography variant="eyebrow" color="blue400">
-                        Ósk um fyrirtökudag og tíma
-                      </Typography>
-                    </Box>
-                    <Typography>
-                      {`${capitalize(
-                        formatDate(caseDraftJSON?.requestedCourtDate, 'PPPP'),
-                      )} kl. ${formatDate(
-                        caseDraftJSON?.requestedCourtDate,
-                        Constants.TIME_FORMAT,
-                      )}`}
-                    </Typography>
+              {workingCase.requestedCourtDate && (
+                <Box component="section" marginBottom={5}>
+                  <Box marginBottom={1}>
+                    <Text variant="eyebrow" color="blue400">
+                      Ósk um fyrirtökudag og tíma
+                    </Text>
                   </Box>
-                )}
-              <Box component="section" marginBottom={5}>
+                  <Text>
+                    {`${capitalize(
+                      formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                    )} kl. ${formatDate(
+                      workingCase?.requestedCourtDate,
+                      TIME_FORMAT,
+                    )}`}
+                  </Text>
+                </Box>
+              )}
+              <Box component="section" marginBottom={10}>
                 <Accordion>
-                  <AccordionItem id="id_1" label="Dómkröfur">
-                    <Typography variant="p" as="p">
+                  <AccordionItem labelVariant="h3" id="id_1" label="Dómkröfur">
+                    <Text>
                       Gæsluvarðhald til
-                      <strong>
+                      <Text as="span" fontWeight="semiBold">
                         {` ${formatDate(
-                          caseDraftJSON?.requestedCustodyEndDate,
+                          workingCase?.requestedCustodyEndDate,
                           'PPP',
                         )} kl. ${formatDate(
-                          caseDraftJSON?.requestedCustodyEndDate,
-                          Constants.TIME_FORMAT,
+                          workingCase?.requestedCustodyEndDate,
+                          TIME_FORMAT,
                         )}`}
-                      </strong>
-                    </Typography>
+                      </Text>
+                    </Text>
                   </AccordionItem>
-                  <AccordionItem id="id_2" label="Lagaákvæði">
-                    <Typography variant="p" as="p">
-                      {caseDraftJSON.lawsBroken}
-                    </Typography>
-                  </AccordionItem>
-                  <AccordionItem id="id_3" label="Takmarkanir á gæslu">
-                    <Typography variant="p" as="p">
-                      {renderRestrictons(
-                        caseDraftJSON.requestedCustodyRestrictions,
+                  <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
+                    <Box marginBottom={2}>
+                      <Box marginBottom={2}>
+                        <Text as="h4" variant="h4">
+                          Lagaákvæði sem brot varða við
+                        </Text>
+                      </Box>
+                      <Text>{workingCase?.lawsBroken}</Text>
+                    </Box>
+                    <Box marginBottom={2}>
+                      <Box marginBottom={2}>
+                        <Text as="h4" variant="h4">
+                          Lagaákvæði sem krafan er byggð á
+                        </Text>
+                      </Box>
+                      {workingCase?.custodyProvisions.map(
+                        (custodyProvision: CaseCustodyProvisions, index) => {
+                          return (
+                            <div key={index}>
+                              <Text>{laws[custodyProvision]}</Text>
+                            </div>
+                          )
+                        },
                       )}
-                    </Typography>
+                    </Box>
                   </AccordionItem>
                   <AccordionItem
+                    labelVariant="h3"
+                    id="id_3"
+                    label="Takmarkanir á gæslu"
+                  >
+                    <Text>
+                      {formatCustodyRestrictions(
+                        workingCase.requestedCustodyRestrictions,
+                      )}
+                    </Text>
+                  </AccordionItem>
+                  <AccordionItem
+                    labelVariant="h3"
                     id="id_4"
                     label="Greinagerð um málsatvik og lagarök"
                   >
-                    {caseDraftJSON.caseFacts && (
+                    {workingCase.caseFacts && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
-                          <Typography variant="h5">Málsatvik rakin</Typography>
+                          <Text variant="h5">Málsatvik rakin</Text>
                         </Box>
-                        <Typography>{caseDraftJSON.caseFacts}</Typography>
+                        <Text>{workingCase.caseFacts}</Text>
                       </Box>
                     )}
-                    {caseDraftJSON.witnessAccounts && (
+                    {workingCase.witnessAccounts && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
-                          <Typography variant="h5">Framburður</Typography>
+                          <Text variant="h5">Framburður</Text>
                         </Box>
-                        <Typography>{caseDraftJSON.witnessAccounts}</Typography>
+                        <Text>{workingCase.witnessAccounts}</Text>
                       </Box>
                     )}
-                    {caseDraftJSON.investigationProgress && (
+                    {workingCase.investigationProgress && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
-                          <Typography variant="h5">
+                          <Text variant="h5">
                             Staða rannsóknar og næstu skref
-                          </Typography>
+                          </Text>
                         </Box>
-                        <Typography>
-                          {caseDraftJSON.investigationProgress}
-                        </Typography>
+                        <Text>{workingCase.investigationProgress}</Text>
                       </Box>
                     )}
-                    {caseDraftJSON.legalArguments && (
+                    {workingCase.legalArguments && (
                       <Box marginBottom={2}>
                         <Box marginBottom={2}>
-                          <Typography variant="h5">Lagarök</Typography>
+                          <Text variant="h5">Lagarök</Text>
                         </Box>
-                        <Typography>{caseDraftJSON.legalArguments}</Typography>
+                        <Text>{workingCase.legalArguments}</Text>
                       </Box>
                     )}
                   </AccordionItem>
                 </Accordion>
               </Box>
+              <Box marginBottom={15}>
+                <Box marginBottom={1}>
+                  <Text>F.h.l</Text>
+                </Box>
+                <Text variant="h3">
+                  {workingCase?.prosecutor
+                    ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
+                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+                </Text>
+              </Box>
               <FormFooter
-                previousUrl={Constants.STEP_TWO_ROUTE}
                 nextUrl="/"
                 nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
                 onNextButtonClick={() => {
@@ -219,7 +290,6 @@ export const Overview: React.FC = () => {
                     // TODO: Handle error
                   }
                 }}
-                confirmationText="Með því að ýta á þennan hnapp fær dómari á vakt tilkynningu um að krafan sé tilbúin."
               />
             </GridColumn>
           </GridRow>
@@ -228,7 +298,7 @@ export const Overview: React.FC = () => {
       {modalVisible && (
         <Modal
           title="Krafa um gæsluvarðhald hefur verið staðfest"
-          text={renderAccusedName() as JSX.Element}
+          text="Tilkynning hefur verið send á dómara og dómritara á vakt."
           handleClose={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
           handlePrimaryButtonClick={async () => {
             history.push(Constants.DETENTION_REQUESTS_ROUTE)

@@ -1,6 +1,7 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+import { logger } from '@island.is/logging'
 
 import {
   ITimeline,
@@ -19,6 +20,7 @@ import {
   ITabSection,
   ITeamList,
   IContactUs,
+  ILocation,
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
@@ -40,10 +42,10 @@ import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
-import { logger } from '@island.is/logging'
 import { TabSection, mapTabSection } from './tabSection.model'
 import { TeamList, mapTeamList } from './teamList.model'
 import { ContactUs, mapContactUs } from './contactUs.model'
+import { Location, mapLocation } from './location.model'
 
 type SliceTypes =
   | ITimeline
@@ -62,6 +64,7 @@ type SliceTypes =
   | ITabSection
   | ITeamList
   | IContactUs
+  | ILocation
 
 export const Slice = createUnionType({
   name: 'Slice',
@@ -82,6 +85,7 @@ export const Slice = createUnionType({
     TabSection,
     TeamList,
     ContactUs,
+    Location,
     Html,
     Image,
     Asset,
@@ -123,6 +127,8 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapTeamList(slice as ITeamList)
     case 'contactUs':
       return mapContactUs(slice as IContactUs)
+    case 'location':
+      return mapLocation(slice as ILocation)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,

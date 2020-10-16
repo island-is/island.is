@@ -1,7 +1,17 @@
-import { formatDate, parseArray, parseString } from './formatters'
-import * as Constants from './constants'
-import { renderRestrictons } from './stepHelper'
-import { CustodyRestrictions } from '../types'
+import {
+  parseArray,
+  parseString,
+  parseTime,
+  parseTransition,
+} from './formatters'
+import { constructConclusion, isNextDisabled } from './stepHelper'
+import { Case, RequiredField } from '../types'
+import {
+  CaseTransition,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system/types'
+import { validate } from './validate'
+import { render } from '@testing-library/react'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {
@@ -31,64 +41,267 @@ describe('Formatters utils', () => {
       // Assert
       expect(parsedString).toEqual({ test: 'lorem' })
     })
+
+    test('given a value with special characters should parse correctly into JSON', () => {
+      //Arrange
+      const property = 'test'
+      const value = `lorem
+ipsum`
+
+      // Act
+      const parsedString = parseString(property, value)
+
+      // Assert
+      expect(parsedString).toEqual({
+        test: 'lorem\nipsum',
+      })
+    })
   })
 
-  describe('formatDate', () => {
-    test('should return null if date parameter is not provided or is invalid', () => {
+  describe('Parse transition', () => {
+    test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
       // Arrange
-      const date = null
-      const date2 = undefined
+      const modified = 'timestamp'
+      const transition = CaseTransition.SUBMIT
 
       // Act
-      const time = formatDate(date, Constants.TIME_FORMAT)
-      const time2 = formatDate(date2, Constants.TIME_FORMAT)
+      const parsedTransition = parseTransition(modified, transition)
 
       // Assert
-      expect(time).toBeNull()
-      expect(time2).toBeNull()
+      expect(parsedTransition).toEqual({
+        modified: 'timestamp',
+        transition: CaseTransition.SUBMIT,
+      })
     })
+  })
 
-    test('should return the time with 24h format', () => {
+  describe('Parse time', () => {
+    test('should return a valid date with time given a valid date and time', () => {
       // Arrange
-      const date = '2020-09-10T09:36:57.287Z'
-      const date2 = '2020-09-23T23:36:57.287Z'
+      const date = '2020-10-24T12:25:00Z'
+      const time = '13:37'
 
       // Act
-      const time = formatDate(date, Constants.TIME_FORMAT)
-      const time2 = formatDate(date2, Constants.TIME_FORMAT)
+      const d = parseTime(date, time)
 
       // Assert
-      expect(time).toEqual('09:36')
-      expect(time2).toEqual('23:36')
+      expect(d).toEqual('2020-10-24T13:37:00Z')
+    })
+  })
+})
+
+describe('Validation', () => {
+  describe('Validate police casenumber format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const LOKE = 'INCORRECT FORMAT'
+
+      // Act
+      const r = validate(LOKE, 'police-casenumber-format')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+  })
+
+  describe('Validate national id format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const nid = '999999-9999'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
     })
   })
 })
 
 describe('Step helper', () => {
-  describe('renderRestrictions', () => {
-    test('should return a comma separated list of restrictions', () => {
+  describe('constructConclution', () => {
+    test('should return rejected message if the case is being rejected', () => {
       // Arrange
-      const restrictions: CustodyRestrictions[] = [
-        CustodyRestrictions.ISOLATION,
-        CustodyRestrictions.COMMUNICATION,
+      const wc = { rejecting: true }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(getByText('Beiðni um gæsluvarðhald hafnað')).toBeTruthy()
+    })
+
+    test('should return the correct string if there are no restrictions and the case is not being rejected', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Engar takmarkanir skulu vera á gæslunni.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should return the correct string if there is one restriction and the case is not being rejected', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni á meðan á gæsluvarðhaldinu stendur.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should return the correct string if there are two restriction and the case is not being rejected', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            `Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni og heimsóknarbanni á meðan á gæsluvarðhaldinu stendur.`
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+
+    test('should return the correct string if there are more than two restriction and the case is not being rejected', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni, heimsóknarbanni og einangrun á meðan á gæsluvarðhaldinu stendur.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
+  })
+  describe('isNextDisabled()', () => {
+    test('should return true if the only validation does not pass', () => {
+      // Arrange
+      const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
+
+      // Act
+      const ind = isNextDisabled(rf)
+
+      // Assert
+      expect(ind).toEqual(true)
+    })
+
+    test('should return true if the one validation does not pass and another one does', () => {
+      // Arrange
+      const rf: RequiredField[] = [
+        { value: '', validations: ['empty'] },
+        { value: '13:37', validations: ['empty', 'time-format'] },
       ]
 
       // Act
-      const r = renderRestrictons(restrictions)
+      const ind = isNextDisabled(rf)
 
       // Assert
-      expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
+      expect(ind).toEqual(true)
     })
 
-    test('should return "Lausgæsla" if no custody restriction is supplyed', () => {
+    test('should return false if the all validations pass', () => {
       // Arrange
-      const restrictions: CustodyRestrictions[] = []
+      const rf: RequiredField[] = [
+        { value: 'Lorem ipsum', validations: ['empty'] },
+        { value: '13:37', validations: ['empty', 'time-format'] },
+      ]
 
       // Act
-      const r = renderRestrictons(restrictions)
+      const ind = isNextDisabled(rf)
 
       // Assert
-      expect(r).toEqual('Lausagæsla')
+      expect(ind).toEqual(false)
     })
   })
 })

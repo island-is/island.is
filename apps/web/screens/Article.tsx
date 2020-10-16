@@ -1,4 +1,11 @@
-import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
+import React, {
+  FC,
+  useState,
+  useMemo,
+  ReactNode,
+  Fragment,
+  useEffect,
+} from 'react'
 import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -6,7 +13,7 @@ import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
   Box,
-  Typography,
+  Text,
   Stack,
   Breadcrumbs,
   Hidden,
@@ -15,8 +22,8 @@ import {
   Tag,
   Divider,
   Link,
-  Icon,
-  Button,
+  IconDeprecated as Icon,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,
@@ -43,6 +50,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -69,7 +77,7 @@ const createArticleNavigation = (
   if (article.subArticles.length === 0) {
     return createNavigation(article.body).map(({ id, text }) => ({
       title: text,
-      url: '#' + id,
+      url: article.slug + '#' + id,
     }))
   }
 
@@ -94,7 +102,7 @@ const createArticleNavigation = (
       nav = nav.concat(
         createSubArticleNavigation(subArticle.body).map(({ id, text }) => ({
           title: text,
-          url: '#' + id,
+          url: article.slug + '#' + id,
         })),
       )
     }
@@ -115,21 +123,21 @@ const RelatedArticles: FC<{
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h2">
+        <Text variant="h4" as="h2">
           {title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
         {articles.map((article) => (
-          <Typography key={article.slug} variant="p" as="span">
-            <Link
-              key={article.slug}
-              href={makePath('article', '[slug]')}
-              as={makePath('article', article.slug)}
-              withUnderline
-            >
+          <Link
+            key={article.slug}
+            href={makePath('article', '[slug]')}
+            as={makePath('article', article.slug)}
+            underline="normal"
+          >
+            <Text key={article.slug} as="span">
               {article.title}
-            </Link>
-          </Typography>
+            </Text>
+          </Link>
         ))}
       </Stack>
     </SidebarBox>
@@ -185,23 +193,23 @@ const SubArticleNavigation: FC<{
       {!isFirstMount && <Bullet align="left" top={bullet?.offsetTop ?? 0} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Text variant="h4" as="h4">
           {title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
         <div ref={!selectedSubArticle ? setBullet : null}>
-          <Typography variant="p" as="p">
-            <Link
-              shallow
-              href={makePath('article', '[slug]')}
-              as={makePath('article', article.slug)}
-            >
+          <Link
+            shallow
+            href={makePath('article', '[slug]')}
+            as={makePath('article', article.slug)}
+          >
+            <Text>
               {maybeBold(
                 article.shortTitle || article.title,
                 !selectedSubArticle,
               )}
-            </Link>
-          </Typography>
+            </Text>
+          </Link>
         </div>
         {article.subArticles.map((subArticle, id) => (
           <Fragment key={id}>
@@ -212,18 +220,18 @@ const SubArticleNavigation: FC<{
                   : null
               }
             >
-              <Typography variant="p" as="span">
-                <Link
-                  shallow
-                  href={makePath('article', '[slug]/[subSlug]')}
-                  as={makePath('article', `${article.slug}/${subArticle.slug}`)}
-                >
+              <Link
+                shallow
+                href={makePath('article', '[slug]/[subSlug]')}
+                as={makePath('article', `${article.slug}/${subArticle.slug}`)}
+              >
+                <Text as="span">
                   {maybeBold(
                     subArticle.title,
                     subArticle === selectedSubArticle,
                   )}
-                </Link>
-              </Typography>
+                </Text>
+              </Link>
             </div>
             {subArticle === selectedSubArticle && navigation.length > 0 && (
               <SidebarSubNav>
@@ -236,9 +244,9 @@ const SubArticleNavigation: FC<{
                         textAlign="left"
                         onClick={() => navigate(id)}
                       >
-                        <Typography variant="pSmall">
+                        <Text variant="small">
                           {maybeBold(text, id === activeId)}
-                        </Typography>
+                        </Text>
                       </Box>
                     </div>
                   ))}
@@ -272,9 +280,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
       {bullet && <Bullet align="left" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h2">
+        <Text variant="h4" as="h2">
           {title}
-        </Typography>
+        </Text>
         <Divider weight="alternate" />
 
         {navigation.map(({ id, text }) => (
@@ -286,9 +294,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
             textAlign="left"
             onClick={() => navigate(id)}
           >
-            <Typography variant="p">
-              {id === activeId ? <strong>{text}</strong> : text}
-            </Typography>
+            <Text>{id === activeId ? <strong>{text}</strong> : text}</Text>
           </Box>
         ))}
       </Stack>
@@ -340,6 +346,7 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
@@ -353,6 +360,22 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     return createArticleNavigation(article, subArticle, makePath)
   }, [article, subArticle, makePath])
 
+  const relatedLinks = (article.relatedArticles ?? []).map((x) => ({
+    title: x.title,
+    url: x.slug,
+  }))
+
+  const combinedMobileNavigation = [
+    {
+      title: n('categoryOverview', 'Efnisyfirlit'),
+      items: contentOverviewOptions,
+    },
+    {
+      title: n('relatedMaterial'),
+      items: relatedLinks,
+    },
+  ]
+
   const metaTitle = `${article.title} | Ísland.is`
   const metaDescription =
     article.intro ||
@@ -362,6 +385,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
     : []
 
+  // tmp fix
   const processEntry =
     processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
 
@@ -421,14 +445,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <GridRow>
             <GridColumn span="9/9" paddingBottom={4}>
               <Hidden above="sm">
-                <DrawerMenu
-                  categories={[
-                    {
-                      title: n('categoryOverview', 'Efnisyfirlit'),
-                      items: contentOverviewOptions,
-                    },
-                  ]}
-                />
+                <DrawerMenu categories={combinedMobileNavigation} />
               </Hidden>
             </GridColumn>
           </GridRow>
@@ -438,13 +455,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             offset={['0', '0', '0', '0', '1/9']}
             span={['9/9', '9/9', '9/9', '9/9', '7/9']}
           >
-            <Typography variant="h1" as="h1">
+            <Text variant="h1" as="h1">
               <span id={slugify(article.title)}>{article.title}</span>
-            </Typography>
+            </Text>
             {subArticle && (
-              <Typography variant="h2" as="h2" paddingTop={7}>
+              <Text variant="h2" as="h2" paddingTop={7}>
                 <span id={slugify(subArticle.title)}>{subArticle.title}</span>
-              </Typography>
+              </Text>
             )}
             {!!processEntry && (
               <Hidden above="sm">
@@ -454,27 +471,30 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   marginY={3}
                   borderRadius="large"
                 >
-                  <Typography variant="h4" as="span" color="blue400">
-                    <Link
-                      passHref
-                      href={processEntry.processLink}
-                      withUnderline
-                    >
+                  <Link
+                    passHref
+                    href={processEntry.processLink}
+                    underline="normal"
+                  >
+                    <Text variant="h4" as="span" color="blue400">
                       <span>
                         {processEntry.buttonText || n('processLinkButtonText')}
                       </span>
                       <Box component="span" marginLeft={2}>
                         <Icon type="external" width="15" />
                       </Box>
-                    </Link>
-                  </Typography>
+                    </Text>
+                  </Link>
                 </Box>
               </Hidden>
             )}
           </GridColumn>
         </GridRow>
         <Box paddingTop={subArticle ? 2 : 4}>
-          <RichText body={(subArticle ?? article).body} />
+          <RichText
+            body={(subArticle ?? article).body}
+            config={{ defaultPadding: 4 }}
+          />
         </Box>
       </ArticleLayout>
     </>
@@ -524,4 +544,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withMainLayout(ArticleScreen)
+export default withMainLayout(ArticleScreen, { hasDrawerMenu: true })

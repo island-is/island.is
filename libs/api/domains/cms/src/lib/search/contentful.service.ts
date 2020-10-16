@@ -23,6 +23,7 @@ interface SyncerResult {
   items: Entry<any>[]
   deletedItems: string[]
   token: string | undefined
+  elasticIndex: string
 }
 
 type typeOfSync = { initial: boolean } | { nextSyncToken: string }
@@ -32,6 +33,12 @@ export class ContentfulService {
   private limiter: Bottleneck
   private defaultIncludeDepth = 10
   private contentfulClient: ContentfulClientApi
+  // TODO: Make the contentful locale reflect the api locale
+  // contentful locale does not always reflect the api locale so we need this map
+  private contentfulLocaleMap = {
+    is: 'is-IS',
+    en: 'en',
+  }
 
   constructor(private readonly elasticService: ElasticService) {
     const params: CreateClientParams = {
@@ -66,39 +73,31 @@ export class ContentfulService {
     chunkIds: string,
     locale: keyof typeof SearchIndexes,
   ) {
-    // TODO: Make the contentful locale reflect the api locale
-    // contentful locale does not always reflect the api locale so we need this map
-    const contentfulLocaleMap = {
-      is: 'is-IS',
-      en: 'en',
-    }
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,
       'sys.id[in]': chunkIds,
-      locale: contentfulLocaleMap[locale],
+      locale: this.contentfulLocaleMap[locale],
     })
     return data.items
   }
 
-  private async getLastSyncToken(
-    locale: keyof typeof SearchIndexes,
-  ): Promise<string> {
+  private async getLastSyncToken(elasticIndex: string): Promise<string> {
     const query = {
       types: ['cmsNextSyncToken'],
       sort: { dateUpdated: 'desc' as sortDirection },
       size: 1,
     }
     logger.info('Getting next sync token from index', {
-      index: SearchIndexes[locale],
+      index: elasticIndex,
     })
     const document = await this.elasticService.getDocumentsByMetaData(
-      SearchIndexes[locale],
+      elasticIndex,
       query,
     )
     return document.hits.hits?.[0]?._source.title
   }
 
-  updateNextSyncToken({ locale, token }: PostSyncOptions) {
+  updateNextSyncToken({ elasticIndex, token }: PostSyncOptions) {
     // we get this next sync token from Contentful on sync request
     const nextSyncTokenDocument = {
       title: token,
@@ -109,25 +108,25 @@ export class ContentfulService {
 
     // write sync token to elastic here as it's own type
     logger.info('Writing next sync token to elasticsearch index')
-    return this.elasticService.index(
-      SearchIndexes[locale],
-      nextSyncTokenDocument,
-    )
+    return this.elasticService.index(elasticIndex, nextSyncTokenDocument)
   }
 
   private async getTypeOfSync({
     fullSync,
-    locale,
-  }: SyncOptions): Promise<typeOfSync> {
+    elasticIndex,
+  }: {
+    fullSync: boolean
+    elasticIndex: string
+  }): Promise<typeOfSync> {
     if (fullSync) {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
       return { initial: true }
     } else {
       // this is a partial sync, try and get the last sync token else do full sync
-      const nextSyncToken = await this.getLastSyncToken(locale)
+      const nextSyncToken = await this.getLastSyncToken(elasticIndex)
       logger.info('Getting data from last sync token found in Contentful', {
-        locale,
+        elasticIndex,
         nextSyncToken,
       })
       return nextSyncToken ? { nextSyncToken } : { initial: true }
@@ -170,11 +169,34 @@ export class ContentfulService {
     return _.flatten(chunkedChanges)
   }
 
-  async getSyncEntries({
-    fullSync,
-    locale,
-  }: SyncOptions): Promise<SyncerResult> {
-    const typeOfSync = await this.getTypeOfSync({ fullSync, locale })
+  /**
+   * Search for entries which have a field linking to a specific entry.
+   * Useful to finding root/parent of an entry
+   *
+   * @param linkId
+   * @param locale
+   * @private
+   */
+  private async linksToEntry(
+    linkId: string,
+    locale: string,
+  ): Promise<Entry<any>[]> {
+    const data = await this.contentfulClient.getEntries({
+      include: this.defaultIncludeDepth,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      links_to_entry: linkId,
+      locale: this.contentfulLocaleMap[locale],
+    })
+    return data.items
+  }
+
+  async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
+    const {
+      fullSync,
+      locale,
+      elasticIndex = SearchIndexes[options.locale],
+    } = options
+    const typeOfSync = await this.getTypeOfSync({ fullSync, elasticIndex })
 
     // gets all changes in all locales
     const {
@@ -183,13 +205,42 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
+    const nestedEntries = entries
+      .filter((entry) =>
+        environment.nestedContentTypes.includes(entry.sys.contentType.sys.id),
+      )
+      .map((entry) => entry.sys.id)
+
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
+      nestedEntries: nestedEntries.length,
     })
 
     // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
     const items = await this.getAllEntriesFromContentful(entries, locale)
+
+    // In case of delta updates, we need to resolve embedded entries to their root model
+    if (!fullSync && nestedEntries) {
+      logger.info('Finding root entries from nestedEntries')
+      const alreadyProcessedIds = items.map((entry) => entry.sys.id)
+      for (const entryId of nestedEntries) {
+        // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
+        // with regular sync, triggered by a webhook, these calls 1 - 2 at most
+        const linkedEntries = await this.limiter.schedule(() => {
+          return this.linksToEntry(entryId, locale)
+        })
+        linkedEntries.forEach((entry) => {
+          // No need to import the same document twice
+          if (
+            !alreadyProcessedIds.includes(entry.sys.id) &&
+            environment.indexableTypes.includes(entry.sys.contentType.sys.id)
+          ) {
+            items.push(entry)
+          }
+        })
+      }
+    }
 
     // extract ids from deletedEntries
     const deletedItems = deletedEntries.map((entry) => entry.sys.id)
@@ -198,6 +249,7 @@ export class ContentfulService {
       token: newNextSyncToken,
       items,
       deletedItems,
+      elasticIndex,
     }
   }
 }

@@ -15,10 +15,10 @@ import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
 import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
 import {
-  Typography,
+  Text,
+  TextProps,
   Blockquote,
   Box,
-  TypographyProps,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
@@ -33,6 +33,7 @@ import {
 } from './SectionWithImage/SectionWithImage'
 import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
+import { Location, LocationProps } from './Location/Location'
 
 type HtmlSlice = { __typename: 'Html'; document: any }
 type FaqListSlice = { __typename: 'FaqList' } & FaqListProps
@@ -42,6 +43,7 @@ type AssetSlice = { __typename: 'Asset' } & AssetLinkProps
 type ProcessEntrySlice = { __typename: 'ProcessEntry' } & ProcessEntryProps
 type EmbeddedVideoSlice = { __typename: 'EmbeddedVideo' } & EmbeddedVideoProps
 type TeamListSlice = { __typename: 'TeamList' } & TeamListProps
+type LocationSlice = { __typename: 'Location' } & LocationProps
 type ContactUsSlice = { __typename: 'ContactUs' } & Omit<
   ContactUsProps,
   'state' | 'onSubmit'
@@ -60,6 +62,7 @@ type Slice =
   | EmbeddedVideoSlice
   | TeamListSlice
   | ContactUsSlice
+  | LocationSlice
   | SectionWithImageSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
@@ -132,6 +135,9 @@ export const defaultRenderComponent = (
     case 'TeamList':
       return <TeamList {...slice} />
 
+    case 'Location':
+      return <Location {...slice} />
+
     case 'ContactUs':
       // NB: ContactUs needs to be connected with submit logic higher up
       return (
@@ -151,25 +157,26 @@ export const defaultRenderComponent = (
 }
 
 const typography = (
-  variant: TypographyProps['variant'] & TypographyProps['as'],
+  variant: TextProps['variant'],
+  as: TextProps['as'],
   withId = false,
 ) => (_: Block, children: ReactNode) => (
-  <Typography
+  <Text
     id={withId ? slugify(String(children)) : null}
     variant={variant}
-    as={variant}
+    as={as}
   >
     {children}
-  </Typography>
+  </Text>
 )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
-  [BLOCKS.HEADING_1]: typography('h1', true),
-  [BLOCKS.HEADING_2]: typography('h2', true),
-  [BLOCKS.HEADING_3]: typography('h3', true),
-  [BLOCKS.HEADING_4]: typography('h4'),
-  [BLOCKS.HEADING_5]: typography('h5'),
-  [BLOCKS.PARAGRAPH]: typography('p'),
+  [BLOCKS.HEADING_1]: typography('h1', 'h1', true),
+  [BLOCKS.HEADING_2]: typography('h2', 'h2', true),
+  [BLOCKS.HEADING_3]: typography('h3', 'h3', true),
+  [BLOCKS.HEADING_4]: typography('h4', 'h4', true),
+  [BLOCKS.HEADING_5]: typography('h5', 'h5'),
+  [BLOCKS.PARAGRAPH]: typography('default', 'p'),
   [BLOCKS.QUOTE]: (_node: Block, children: ReactNode): ReactNode => (
     <Blockquote>{children}</Blockquote>
   ),

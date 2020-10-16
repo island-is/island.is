@@ -25,7 +25,14 @@
       "openProcess": "Open process",
       "seeDetails": "See details"
     },
-    "tooltip": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seiced by the police. Login to see more information at https://innskranning.island.is/?id=mitt.samgongustofa.is"
+    "tooltip": {
+      "text": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seiced by the police. Login to see more information at",
+      "link": "https://innskranning.island.is/?id=mitt.samgongustofa.is"
+    },
+    "error": {
+      "message": "We have problem with the connection to the database and cannot show your cars, please try to re-load the page.",
+      "primaryButton": "Re-load page"
+    }
   },
   "confirm": {
     "title": "Confirm car",
@@ -35,7 +42,7 @@
     "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
-      "continue": "Login again to sign"
+      "continue": "Confirm with icekey"
     },
     "checkbox": {
       "label": "I agree to the",
@@ -43,16 +50,24 @@
     }
   },
   "handover": {
-    "title": "Car is ready to be recycled!",
+    "title": "Successfully confirmed for recycling",
+    "info": "The car has been successfully confirmed for recycling and is now ready to be handed over to a recycling company.",
     "subTitles": {
-      "recycle": "Take the car to any of our connected recycling companies for recycling",
-      "companies": "Recycling companies"
+      "nextStep": "Next step: Handover the car to recycling company",
+      "companies": "Available recycling companies"
     },
-    "info": "You can take the car too any of the connected recycling companies for recycling for free. Once the car is handed over you will recive your money within 2 business days.",
+    "subInfo": "Handover the car to any of the recylcing companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will recive your payment within 2 business days.",
     "buttons": {
       "cancel": "Cancel recycling",
-      "continue": "Back to my cars",
-      "website": "Go to website"
+      "close": "Close"
+    },
+    "cancelModal": {
+      "title": "Cancel the recycling process for this car",
+      "info": "When you cancel the recycling the car cannot be recycled at the recycling companies until you mark it for recycling again. You can simply redo the process if change your mind.",
+      "buttons": {
+        "cancel": "No",
+        "continue": "Yes"
+      }
     }
   },
   "completed": {
@@ -75,12 +90,34 @@
       "close": "Close"
     }
   },
-  "cancelModal": {
-    "title": "Cancel the recycling process for this car",
-    "info": "When you cancel the recycling the car cannot be recycled at the recyclingcompanies untill you mark it for recycling again. You can simply redo the process if change your mind.",
+  "processSections": ["Confirm car for recycling", "Handover car to recycle"],
+  "companyOverview": {
+    "title": "Deregister car",
+    "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
+    "subtitles": {
+      "history": "History"
+    },
     "buttons": {
-      "cancel": "No",
-      "continue": "Yes"
+      "deregister": "Deregister car"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+  },
+  "companySide": {
+    "deregister": "Deregister car",
+    "companyInfo": "Company information"
+  },
+  "routes": {
+    "home": "/",
+    "myCars": "/my-cars",
+    "recycleVehicle": {
+      "baseRoute": "/recycle-vehicle",
+      "confirm": "/recycle-vehicle/[id]/confirm",
+      "handover": "/recycle-vehicle/[id]/handover",
+      "completed": "/recycle-vehicle/[id]/completed"
     }
   }
 }

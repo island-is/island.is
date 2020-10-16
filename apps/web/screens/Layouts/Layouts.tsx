@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import {
   Box,
+  BoxProps,
   GridContainer,
   GridRow,
   GridColumn,
@@ -12,11 +13,13 @@ export interface StandardLayoutProps {
     position: 'left' | 'right'
     node: ReactNode
   }
+  contentBoxProps?: BoxProps
 }
 
 export const StandardLayout: FC<StandardLayoutProps> = ({
   sidebar,
   children,
+  contentBoxProps = {},
 }) => {
   const columns = [
     <GridColumn
@@ -37,7 +40,7 @@ export const StandardLayout: FC<StandardLayoutProps> = ({
 
   return (
     <GridContainer>
-      <Box paddingY={[2, 2, 10]}>
+      <Box paddingY={[2, 2, 10]} {...contentBoxProps}>
         <GridRow>{columns}</GridRow>
       </Box>
     </GridContainer>
@@ -56,16 +59,16 @@ export const CategoryLayout: FC<CategoryProps> = ({
 }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
-          <Sticky>{sidebar}</Sticky>
-        </GridColumn>
+      <GridRow direction="rowReverse">
         <GridColumn
           span={['12/12', '12/12', '8/12']}
-          offset={['0', '0', '0', '1/12']}
+          offset={['0', '0', '0', '0', '1/12']}
         >
           <Box paddingBottom={[5, 5, 10]}>{children}</Box>
           {belowContent && belowContent}
+        </GridColumn>
+        <GridColumn span={['0', '0', '4/12', '4/12', '3/12']} hiddenBelow="md">
+          <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>
     </Box>
@@ -101,7 +104,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
       <GridRow>
         <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
           <Sticky>
-            <Box background="purple100" padding={4}>
+            <Box background="purple100" borderRadius="large" padding={4}>
               {sidebar}
             </Box>
           </Sticky>

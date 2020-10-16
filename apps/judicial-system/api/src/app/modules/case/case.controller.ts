@@ -12,34 +12,28 @@ import {
   ForbiddenException,
   Query,
   ConflictException,
+  UnauthorizedException,
+  Res,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { SigningServiceResponse } from '@island.is/dokobit-signing'
-import { CaseTransition, CaseState } from '@island.is/judicial-system/types'
+import {
+  DokobitError,
+  SigningServiceResponse,
+} from '@island.is/dokobit-signing'
+import { EmailService } from '@island.is/email-service'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
-import { JwtAuthGuard, AuthUser } from '../auth'
-import { UserService } from '../user'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { JwtAuthGuard } from '../auth'
+import { UserRole, UserService } from '../user'
+import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
-
-const caseStateMachine = {}
-caseStateMachine[CaseTransition.SUBMIT] = {
-  from: CaseState.DRAFT,
-  to: CaseState.SUBMITTED,
-}
-caseStateMachine[CaseTransition.ACCEPT] = {
-  from: CaseState.SUBMITTED,
-  to: CaseState.ACCEPTED,
-}
-caseStateMachine[CaseTransition.REJECT] = {
-  from: CaseState.SUBMITTED,
-  to: CaseState.REJECTED,
-}
+import { transitionCase as transitionUpdate } from './case.state'
+import { generateRequestPdf } from './case.pdf'
+import { environment } from '../../../environments'
 
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -49,24 +43,46 @@ export class CaseController {
     private readonly caseService: CaseService,
     @Inject(UserService)
     private readonly userService: UserService,
+    @Inject(EmailService)
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  @Get('cases')
-  @ApiOkResponse({ type: Case, isArray: true, description: 'Gets all cases' })
-  getAll(): Promise<Case[]> {
-    return this.caseService.getAll()
-  }
-
-  @Get('case/:id')
-  @ApiOkResponse({ type: Case })
-  async getById(@Param('id') id: string): Promise<Case> {
-    return this.findCaseById(id)
+  private async sendRequestAsPdf(
+    existingCase: Case,
+    pdf: string,
+  ): Promise<void> {
+    await this.emailService.sendEmail({
+      from: {
+        name: environment.email.fromName,
+        address: environment.email.fromEmail,
+      },
+      replyTo: {
+        name: environment.email.replyToName,
+        address: environment.email.replyToEmail,
+      },
+      to: [
+        {
+          name: existingCase.prosecutor?.name,
+          address: existingCase.prosecutor?.email,
+        },
+      ],
+      subject: `Krafa í máli ${existingCase.policeCaseNumber}`,
+      text: 'Sjá viðhengi',
+      html: 'Sjá viðhengi',
+      attachments: [
+        {
+          filename: `${existingCase.policeCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ],
+    })
   }
 
   @Post('case')
-  @ApiCreatedResponse({ type: Case })
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
     @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
@@ -75,7 +91,7 @@ export class CaseController {
   }
 
   @Put('case/:id')
-  @ApiOkResponse({ type: Case })
+  @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('id') id: string,
     @Body() caseToUpdate: UpdateCaseDto,
@@ -86,58 +102,74 @@ export class CaseController {
     )
 
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`A case with the id ${id} does not exist`)
+      throw new NotFoundException(`Case ${id} does not exist`)
     }
 
     return updatedCase
   }
 
   @Put('case/:id/state')
-  @ApiOkResponse({ type: Case })
+  @ApiOkResponse({
+    type: Case,
+    description: 'Transitions an existing case to a new state',
+  })
   async transition(
     @Param('id') id: string,
-    @Body() caseToTransition: TransitionCaseDto,
+    @Body() transition: TransitionCaseDto,
+    @Req() req,
   ): Promise<Case> {
+    // Use existingCase.modified when client is ready to send last modified timestamp with all updates
+
     const existingCase = await this.findCaseById(id)
 
-    if (
-      caseStateMachine[caseToTransition.transition].from !== existingCase.state
-    ) {
-      throw new ForbiddenException(
-        `The transition ${caseToTransition.transition} cannot be applied to a case in state ${existingCase.state}`,
-      )
-    }
+    const user = await this.userService.findByNationalId(req.user.nationalId)
 
-    const {
-      numberOfAffectedRows,
-      updatedCase,
-    } = await this.caseService.transition(
+    const update = transitionUpdate(transition, existingCase, user)
+
+    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
-      caseToTransition.modified,
-      caseStateMachine[caseToTransition.transition].to,
+      update,
     )
 
     if (numberOfAffectedRows === 0) {
       throw new ConflictException(
-        `A more recent version exists of case with id ${id}`,
+        `A more recent version exists of the case with id ${id}`,
       )
+    }
+
+    // Find a better place for this
+    if (transition.transition === CaseTransition.SUBMIT) {
+      const dbCase = await this.findCaseById(id)
+
+      const pdf = await generateRequestPdf(dbCase)
+
+      await this.sendRequestAsPdf(dbCase, pdf)
     }
 
     return updatedCase
   }
 
-  @Get('case/:id/notifications')
-  @ApiOkResponse({ type: Notification, isArray: true })
-  async getAllNotificationsById(
-    @Param('id') id: string,
-  ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id)
+  @Get('cases')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all existing cases',
+  })
+  getAll(): Promise<Case[]> {
+    return this.caseService.getAll()
+  }
 
-    return this.caseService.getAllNotificationsByCaseId(existingCase)
+  @Get('case/:id')
+  @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
+  async getById(@Param('id') id: string): Promise<Case> {
+    return this.findCaseById(id)
   }
 
   @Post('case/:id/notification')
-  @ApiCreatedResponse({ type: Notification })
+  @ApiCreatedResponse({
+    type: Notification,
+    description: 'Sends a new notification for an existing case',
+  })
   async sendNotificationByCaseId(
     @Param('id') id: string,
     @Req() req,
@@ -153,38 +185,33 @@ export class CaseController {
       )
     }
 
-    const authUser: AuthUser = req.user
-
-    const user = await this.userService.findByNationalId(authUser.nationalId)
+    const user = await this.userService.findByNationalId(req.user.nationalId)
 
     return this.caseService.sendNotificationByCaseId(existingCase, user)
   }
 
-  @Get('case/:id/signature')
-  @ApiOkResponse({ type: Case })
-  async confirmSignature(
+  @Get('case/:id/notifications')
+  @ApiOkResponse({
+    type: Notification,
+    isArray: true,
+    description: 'Gets all existing notifications for an existing case',
+  })
+  async getAllNotificationsById(
     @Param('id') id: string,
-    @Query('documentToken') documentToken: string,
-  ): Promise<Case> {
+  ): Promise<Notification[]> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.ACCEPTED &&
-      existingCase.state !== CaseState.REJECTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
-      )
-    }
-
-    return this.caseService.confirrmSignature(existingCase, documentToken)
+    return this.caseService.getAllNotificationsByCaseId(existingCase)
   }
 
   @Post('case/:id/signature')
-  @ApiCreatedResponse({ type: SigningServiceResponse })
+  @ApiCreatedResponse({
+    type: SigningServiceResponse,
+    description: 'Requests a signature for an existing case',
+  })
   async requestSignature(
     @Param('id') id: string,
-    @Req() req,
+    @Res() res,
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 
@@ -197,18 +224,78 @@ export class CaseController {
       )
     }
 
-    const authUser: AuthUser = req.user
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling cannot be signed by a user with role ${existingCase.judge?.role}`,
+      )
+    }
 
-    const user = await this.userService.findByNationalId(authUser.nationalId)
+    try {
+      const response = await this.caseService.requestSignature(existingCase)
+      return res.status(201).send(response)
+    } catch (error) {
+      if (error instanceof DokobitError) {
+        return res.status(error.status).json({
+          code: error.code,
+          message: error.message,
+        })
+      }
 
-    return this.caseService.requestSignature(existingCase, user)
+      throw error
+    }
+  }
+
+  @Get('case/:id/signature')
+  @ApiOkResponse({
+    type: Case,
+    description:
+      'Confirms a previously requested signature for an existing case',
+  })
+  async confirmSignature(
+    @Param('id') id: string,
+    @Query('documentToken') documentToken: string,
+    @Res() res,
+  ): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (
+      existingCase.state !== CaseState.ACCEPTED &&
+      existingCase.state !== CaseState.REJECTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot confirm a ruling signature for a case in state ${existingCase.state}`,
+      )
+    }
+
+    if (existingCase.judge?.role !== UserRole.JUDGE) {
+      throw new UnauthorizedException(
+        `A ruling signature cannot be verified by a user with role ${existingCase.judge?.role}`,
+      )
+    }
+
+    try {
+      const response = await this.caseService.confirmSignature(
+        existingCase,
+        documentToken,
+      )
+      return res.status(200).send(response)
+    } catch (error) {
+      if (error instanceof DokobitError) {
+        return res.status(error.status).json({
+          code: error.code,
+          message: error.message,
+        })
+      }
+
+      throw error
+    }
   }
 
   private async findCaseById(id: string) {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
-      throw new NotFoundException(`A case with the id ${id} does not exist`)
+      throw new NotFoundException(`Case ${id} does not exist`)
     }
 
     return existingCase

@@ -28,10 +28,7 @@ export const Tiles = ({
   columns = 1,
   dividers = false,
 }: TilesProps) => {
-  const styles = {
-    ...styleRefs,
-  }
-
+  const styles = { ...styleRefs }
   const responsiveSpace = normaliseResponsiveProp(space)
 
   const [

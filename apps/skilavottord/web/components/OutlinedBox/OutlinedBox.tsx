@@ -27,7 +27,7 @@ export const OutlinedBox: FC<OutlinedBoxProps> = ({
     paddingY={paddingY}
     className={cn(styles.container)}
     background={backgroundColor ? backgroundColor : null}
-    borderColor={borderColor ? backgroundColor : 'blue200'}
+    borderColor={borderColor ? borderColor : 'blue200'}
   >
     {children}
   </Box>

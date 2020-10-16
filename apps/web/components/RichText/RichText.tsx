@@ -5,7 +5,12 @@ import {
   defaultRenderComponent,
   RenderConfig,
 } from '@island.is/island-ui/contentful'
-import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  LinkContext,
+  Link,
+} from '@island.is/island-ui/core'
 import ContactUs from '../ContactUs/ContactUs'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
@@ -13,6 +18,7 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'SectionWithImage',
   'TeamList',
   'ContactUs',
+  'Location',
 ]
 
 const renderComponent = (slice: Slice, config: RenderConfig) => {
@@ -27,16 +33,14 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.
     // If that turns out not to always be the case we need to make this configurable
     children = (
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/9']}
-            span={['0', '0', '0', '0', '7/9']}
-          >
-            {children}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <GridRow>
+        <GridColumn
+          offset={['0', '0', '0', '0', '1/9']}
+          span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+        >
+          {children}
+        </GridColumn>
+      </GridRow>
     )
   }
 
@@ -54,7 +58,24 @@ export const RichText: FC<{
   body: Slice[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
-  return <>{renderSlices(body, { renderComponent, ...config })}</>
+  return (
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <Link
+            href={href}
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
+            {children}
+          </Link>
+        ),
+      }}
+    >
+      {renderSlices(body, { renderComponent, ...config })}
+    </LinkContext.Provider>
+  )
 })
 
 export default RichText

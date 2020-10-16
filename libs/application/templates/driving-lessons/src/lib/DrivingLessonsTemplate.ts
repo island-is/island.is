@@ -4,7 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import * as z from 'zod'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -22,6 +22,7 @@ const dataSchema = z.object({
   type: z.enum(['B', 'AM', 'A', 'A1', 'A2', 'T']),
   student: z.object({
     name: z.string().nonempty(),
+    birthDate: z.string().nonempty(),
     parentEmail: z.string().email().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     phoneNumber: z.string().min(7),
@@ -41,6 +42,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LESSONS,
+  name: 'Umsókn um ökunám',
   dataProviders: [],
   dataSchema,
   stateMachineConfig: {
@@ -49,6 +51,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökunám',
+          progress: 0.33,
           roles: [
             {
               id: 'applicant',
@@ -72,6 +75,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
+          progress: 0.66,
           roles: [
             {
               id: 'reviewer',
@@ -103,6 +107,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          progress: 1,
           roles: [
             {
               id: 'applicant',

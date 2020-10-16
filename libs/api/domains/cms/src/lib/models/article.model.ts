@@ -11,6 +11,9 @@ import { SubArticle, mapSubArticle } from './subArticle.model'
 
 @ObjectType()
 export class Article {
+  @Field()
+  typename: string
+
   @Field(() => ID)
   id: string
 
@@ -38,11 +41,20 @@ export class Article {
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
 
+  @Field(() => [ArticleCategory], { nullable: true })
+  otherCategories?: Array<ArticleCategory>
+
   @Field(() => ArticleGroup, { nullable: true })
   group?: ArticleGroup
 
+  @Field(() => [ArticleGroup], { nullable: true })
+  otherGroups?: Array<ArticleGroup>
+
   @Field(() => ArticleSubgroup, { nullable: true })
   subgroup?: ArticleSubgroup
+
+  @Field(() => [ArticleSubgroup], { nullable: true })
+  otherSubgroups?: Array<ArticleSubgroup>
 
   @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
@@ -55,6 +67,7 @@ export class Article {
 }
 
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
+  typename: 'Article',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',
@@ -64,8 +77,11 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   category: fields.category ? mapArticleCategory(fields.category) : null,
+  otherCategories: (fields.otherCategories ?? []).map(mapArticleCategory),
   group: fields.group ? mapArticleGroup(fields.group) : null,
+  otherGroups: (fields.otherGroups ?? []).map(mapArticleGroup),
   subgroup: fields.subgroup ? mapArticleSubgroup(fields.subgroup) : null,
+  otherSubgroups: (fields.otherSubgroups ?? []).map(mapArticleSubgroup),
   organization: (fields.organization ?? [])
     .filter(
       (organization) => organization.fields?.title && organization.fields?.slug,

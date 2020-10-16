@@ -1,10 +1,20 @@
 import { style } from 'treat'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const wrapper = style({
+export const menu = style({
+  width: '100%',
+  maxWidth: '100%',
   ...themeUtils.responsiveStyle({
     md: {
-      width: 266,
+      width: 311,
     },
   }),
+})
+
+export const avatar = style({
+  width: 56,
+  height: 56,
+  marginRight: theme.spacing['3'],
+  backgroundSize: 'cover',
+  borderRadius: '100%',
 })

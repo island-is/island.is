@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsEnum } from 'class-validator'
-import { ApplicationTypeIdEnum } from '../../../gen/fetch'
+import { ApplicationResponseDtoTypeIdEnum } from '../../../gen/fetch/models/ApplicationResponseDto'
 
 @InputType()
 export class GetApplicationsByTypeInput {
-  @Field((type) => ApplicationTypeIdEnum)
-  @IsEnum(ApplicationTypeIdEnum)
-  typeId: ApplicationTypeIdEnum
+  @Field((type) => ApplicationResponseDtoTypeIdEnum)
+  @IsEnum(ApplicationResponseDtoTypeIdEnum)
+  typeId: ApplicationResponseDtoTypeIdEnum
 }

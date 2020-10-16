@@ -11,7 +11,7 @@ import {
   Comparators,
   ApplicationTypes,
   FormValue,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
@@ -23,20 +23,23 @@ export const ExampleForm: Form = buildForm({
       id: 'intro',
       name: m.introSection,
       children: [
+        buildTextField({
+          id: 'person.name',
+          name: m.name,
+          required: true,
+        }),
         buildIntroductionField({
           id: 'field',
           name: m.introField,
-          introduction: 'Þessi umsókn snýr að atvinnuleysisbótum',
+          introduction: (application) =>
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            `Halló ${application.answers.person?.name}`,
         }),
         buildMultiField({
           id: 'about',
           name: m.about,
           children: [
-            buildTextField({
-              id: 'person.name',
-              name: m.name,
-              required: true,
-            }),
             buildTextField({
               id: 'person.nationalId',
               name: m.nationalId,

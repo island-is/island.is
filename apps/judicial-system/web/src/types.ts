@@ -1,30 +1,14 @@
-import { CaseState } from '@island.is/judicial-system/types'
-
-export enum CustodyProvisions {
-  _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
-  _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
-  _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
-  _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
-  _95_2 = '_95_2', // d-lið 1. mgr. 95. gr.
-  _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
-}
-
-export enum CustodyRestrictions {
-  ISOLATION = 'ISOLATION',
-  VISITAION = 'VISITAION',
-  COMMUNICATION = 'COMMUNICATION',
-  MEDIA = 'MEDIA',
-}
+import {
+  CaseAppealDecision,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+  CaseState,
+} from '@island.is/judicial-system/types'
+import { Validation } from './utils/validate'
 
 export enum NotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
-}
-
-export enum AppealDecision {
-  APPEAL = 'APPEAL',
-  ACCEPT = 'ACCEPT',
-  POSTPONE = 'POSTPONE',
 }
 
 export enum AppealDecitionRole {
@@ -56,8 +40,8 @@ export interface Case {
   requestedCourtDate?: string
   requestedCustodyEndDate?: string
   lawsBroken?: string
-  custodyProvisions?: CustodyProvisions[]
-  requestedCustodyRestrictions?: CustodyRestrictions[]
+  custodyProvisions?: CaseCustodyProvisions[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   caseFacts?: string
   witnessAccounts?: string
   investigationProgress?: string
@@ -72,10 +56,17 @@ export interface Case {
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
+  rejecting?: boolean
   custodyEndDate?: string
-  custodyRestrictions?: CustodyRestrictions[]
-  accusedAppealDecision?: AppealDecision
-  prosecutorAppealDecision?: AppealDecision
+  custodyRestrictions?: CaseCustodyRestrictions[]
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealAnnouncement?: string
+  prosecutorId?: string
+  prosecutor?: User
+  judgeId?: string
+  judge?: User
 }
 
 export interface Notification {
@@ -99,9 +90,38 @@ export interface SendNotificationResponse {
 export interface CreateCaseRequest {
   policeCaseNumber: string
   accusedNationalId: string
+  court: string
 }
 
 export interface User {
+  id: string
+  created: string
+  modified: string
   nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
   role: string
+}
+
+export interface RequestSignature {
+  controlCode: string
+  documentToken: string
+}
+
+export interface RequestSignatureResponse {
+  httpStatusCode: number
+  response?: RequestSignature
+}
+
+export interface ConfirmSignatureResponse {
+  httpStatusCode: number
+  response?: Case
+  code?: number
+  message?: string
+}
+
+export interface RequiredField {
+  value: string
+  validations: Validation[]
 }

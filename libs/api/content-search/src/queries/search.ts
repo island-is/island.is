@@ -1,4 +1,5 @@
-import { Tag } from '@island.is/api/schema'
+import { Tag } from '../dto/searcher.input'
+
 import { tagQuery } from './documentByMetaData'
 
 interface SearchInput {
@@ -62,12 +63,7 @@ export const searchQuery = ({
     // eslint-disable-next-line @typescript-eslint/camelcase
     simple_query_string: {
       query: queryString,
-      fields: [
-        'title.stemmed^15',
-        'title.compound',
-        'content.stemmed^5',
-        'termPool^10',
-      ],
+      fields: ['title.stemmed^15', 'title.compound', 'content.stemmed^5'],
       // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
       // eslint-disable-next-line @typescript-eslint/camelcase

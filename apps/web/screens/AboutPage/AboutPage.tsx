@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactNode, useMemo, forwardRef } from 'react'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
@@ -8,7 +7,7 @@ import {
   Header,
   LinkCardList,
   Heading,
-  Timeline,
+  TimelineSection,
   StoryList,
   AboutLatestNews,
   LogoList,
@@ -16,7 +15,7 @@ import {
   DrawerMenu,
 } from '@island.is/web/components'
 import {
-  Typography,
+  Text,
   Box,
   BoxProps,
   Breadcrumbs,
@@ -29,6 +28,8 @@ import {
   SpanType,
   Tabs,
   Hidden,
+  Divider,
+  Typography,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -47,6 +48,7 @@ import { renderSlices } from '@island.is/island-ui/contentful'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { RenderForm } from './RenderForm'
+import { slices } from '../queries/fragments'
 
 const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
@@ -157,6 +159,16 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
     url: '#' + x.id,
   }))
 
+  const sliceMobileNavigation = (slice?.links ?? []).map((x) => ({
+    title: x.text,
+    url: x.url,
+  }))
+
+  const combinedMobileNavigation = [
+    ...mobileNavigation,
+    ...sliceMobileNavigation,
+  ]
+
   return (
     <Background id={slice.id} theme={page.theme}>
       {!!mobileNavigation.length && (
@@ -165,7 +177,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
             categories={[
               {
                 title: 'Efnisyfirlit',
-                items: mobileNavigation,
+                items: combinedMobileNavigation,
               },
             ]}
           />
@@ -186,12 +198,10 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                     <Link href={makePath()}>Ísland.is</Link>
                     <span>{page.title}</span>
                   </Breadcrumbs>
-                  <Typography variant="h1" as="h1" color="white">
+                  <Text variant="h1" as="h1" color="white">
                     {slice.title}
-                  </Typography>
-                  <Typography variant="p" as="p" color="white">
-                    {slice.introduction}
-                  </Typography>
+                  </Text>
+                  <Text color="white">{slice.introduction}</Text>
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -215,13 +225,13 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       paddingBottom={2}
                       display="inlineBlock"
                     >
-                      <Typography variant="p" color={colors.main}>
+                      <Text color={colors.main}>
                         {navigationTitle.id === currentSliceId ? (
                           <b>{navigationTitle.text}</b>
                         ) : (
                           navigationTitle.text
                         )}
-                      </Typography>
+                      </Text>
                     </Box>
                     <Box
                       borderLeftWidth="standard"
@@ -235,13 +245,9 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                             href={'#' + id}
                             onClick={() => navigate(id)}
                           >
-                            <Typography
-                              variant="pSmall"
-                              as="p"
-                              color={colors.main}
-                            >
+                            <Text variant="small" as="p" color={colors.main}>
                               {id === currentSliceId ? <b>{text}</b> : text}
-                            </Typography>
+                            </Text>
                           </a>
                         </Box>
                       ))}
@@ -250,13 +256,9 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
                       <span key={index}>
                         <Box paddingY={1}>
                           <Link href={url}>
-                            <Typography
-                              variant="p"
-                              as="div"
-                              color={colors.secondary}
-                            >
+                            <Text as="div" color={colors.secondary}>
                               {text}
-                            </Typography>
+                            </Text>
                           </Link>
                         </Box>
                       </span>
@@ -287,7 +289,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'TimelineSlice':
       return (
         <div id={slice.id}>
-          <Timeline
+          <TimelineSection
             {...slice}
             events={slice.events.map((event) => ({
               ...event,
@@ -300,7 +302,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Layout indent={mainContentIndent} width={mainContentSpanWithIndent}>
-            <Box paddingTop={[6, 6, 15]} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
               <Heading {...slice} />
             </Box>
           </Layout>
@@ -310,7 +312,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={8} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
             </Box>
           </Layout>
@@ -320,7 +322,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="blue100">
           <Layout width={mainContentSpanWithIndent} indent={mainContentIndent}>
-            <Box paddingTop={[4, 4, 10]} paddingBottom={[3, 3, 7]}>
+            <Box paddingTop={[4, 4, 10]} paddingBottom={[4, 3, 7]}>
               <RenderForm
                 namespace={namespace}
                 heading={slice.title}
@@ -336,7 +338,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={[8, 8, 12]} paddingBottom={[8, 8, 10]}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
               <StoryList
                 {...slice}
                 stories={(slice.stories as any[]).map((story) => ({
@@ -352,7 +354,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={[8, 8, 15]} paddingBottom={[6, 6, 12]}>
+            <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
               <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
           </Layout>
@@ -362,7 +364,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
           <Layout width={mainContentSpan}>
-            <Box paddingTop={[8, 8, 12]} paddingBottom={5}>
+            <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
               <LogoList
                 {...slice}
                 images={slice.images.map((img) => img.url)}
@@ -375,7 +377,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <div id={slice.id} key={slice.id}>
           <Layout width={mainContentSpan}>
-            <Box paddingBottom={[5, 5, 10]}>
+            <Box paddingBottom={[8, 5, 10]}>
               <BulletList
                 bullets={slice.bullets.map((bullet) => {
                   switch (bullet.__typename) {
@@ -393,6 +395,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                 })}
               />
             </Box>
+            <Divider />
           </Layout>
         </div>
       )
@@ -400,7 +403,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
           <Layout width={mainContentSpan}>
-            <Box paddingTop={8} paddingBottom={[5, 5, 10]}>
+            <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs
                 label={slice?.title}
                 tabs={slice?.tabs.map((tab) => ({
@@ -411,14 +414,14 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                         span={['9/9', '9/9', '9/9', '7/9']}
                         offset={[null, null, null, '1/9']}
                       >
-                        <Box paddingTop={[4, 4, 9]} paddingBottom={[0, 0, 9]}>
-                          <Typography variant="h2" as="h2" marginBottom={3}>
-                            {tab.contentTitle}
-                          </Typography>
+                        <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}
                           />
+                          <Typography variant="h2" as="h2" marginBottom={3}>
+                            {tab.contentTitle}
+                          </Typography>
                           {tab.body && renderSlices(tab.body)}
                         </Box>
                       </GridColumn>
@@ -428,6 +431,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                 contentBackground="white"
               />
             </Box>
+            <Divider />
           </Layout>
         </Box>
       )
@@ -490,4 +494,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(AboutPageScreen, { showHeader: false })
+export default withMainLayout(AboutPageScreen, {
+  showHeader: false,
+  hasDrawerMenu: true,
+})

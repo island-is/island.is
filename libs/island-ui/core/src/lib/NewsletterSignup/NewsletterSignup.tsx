@@ -1,10 +1,10 @@
 import React from 'react'
-import Typography from '../Typography/Typography'
-import Input from '../Input/Input'
+import { Typography } from '../Typography/Typography'
+import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
 
 import * as styles from './NewsletterSignup.treat'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 
 type ColorVariant = 'white' | 'blue'
 type State = 'default' | 'error' | 'success'
@@ -23,7 +23,7 @@ interface Props {
   value: string
 }
 
-const NewsletterSignup: React.FC<Props> = ({
+export const NewsletterSignup: React.FC<Props> = ({
   heading,
   text,
   id = 'newsletter',
@@ -37,7 +37,7 @@ const NewsletterSignup: React.FC<Props> = ({
   errorMessage,
 }) => {
   return (
-    <Box className={styles.variants[variant]} paddingY={[4, 6, 8]}>
+    <Box className={styles.variants[variant]}>
       <Typography variant="h3" as="h3" color="blue400" paddingBottom={1}>
         {heading}
       </Typography>
@@ -60,10 +60,10 @@ const NewsletterSignup: React.FC<Props> = ({
         </Box>
         <Box
           className={styles.buttonWrap}
-          paddingTop={[2, 2, 1]}
+          paddingTop={[3, 2, 1]}
           marginLeft={[0, 0, 8]}
         >
-          <Button variant="text" htmlType="submit">
+          <Button variant="text" icon="arrowRight">
             {buttonText}
           </Button>
         </Box>
@@ -71,5 +71,3 @@ const NewsletterSignup: React.FC<Props> = ({
     </Box>
   )
 }
-
-export default NewsletterSignup

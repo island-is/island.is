@@ -1,8 +1,10 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
+
 import * as styles from './Swiper.treat'
 
-const Swiper: FC = ({ children }) => {
+export const Swiper: FC = ({ children }) => {
   const [width, setWidth] = useState<number>(0)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -19,12 +21,20 @@ const Swiper: FC = ({ children }) => {
     return () => window.removeEventListener('resize', onResize)
   }, [onResize])
 
+  const arr = React.Children.map(children, (child) => child) || []
+
   return (
     <div className={styles.root}>
       <div className={cn(styles.container)} ref={ref}>
         <div className={styles.slides}>
-          {React.Children.map(children, (child) => (
-            <div className={styles.slide} style={{ width }}>
+          {arr.map((child, i) => (
+            <div
+              key={i}
+              className={styles.slide}
+              style={{
+                width: i === arr.length - 1 ? theme.spacing[3] + width : width,
+              }}
+            >
               {child}
             </div>
           ))}
@@ -33,5 +43,3 @@ const Swiper: FC = ({ children }) => {
     </div>
   )
 }
-
-export default Swiper

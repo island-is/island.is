@@ -94,3 +94,5 @@ export class GetFlightLegsBody implements FlightLegsInput {
   @IsNumber()
   postalCode?: number
 }
+
+export class ConfirmInvoiceBody extends GetFlightLegsBody {}

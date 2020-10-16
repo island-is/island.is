@@ -9,7 +9,7 @@ import {
   Breadcrumbs,
   Link,
   Tag,
-  Typography,
+  Text,
   Box,
   Hidden,
 } from '@island.is/island-ui/core'
@@ -35,6 +35,7 @@ import {
 import { createNavigation } from '@island.is/web/utils/navigation'
 import ArticleLayout from '@island.is/web/screens/Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -42,9 +43,10 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { image, title, intro, content },
+  lifeEvent: { id, slug, image, title, intro, content },
   namespace,
 }) => {
+  useContentfulId(id)
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)
@@ -55,7 +57,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
   const mobileNavigation = navigation.map((x) => ({
     title: x.text,
-    url: '#' + x.id,
+    url: slug + '#' + x.id,
   }))
 
   const metaTitle = `${title} | Ísland.is`
@@ -123,18 +125,18 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   {n('lifeEventTitle', 'Lífsviðburður')}
                 </Tag>
               </Breadcrumbs>
-              <Typography variant="h1" as="h1">
+              <Text variant="h1" as="h1">
                 <span id={slugify(title)}>{title}</span>
-              </Typography>
+              </Text>
               {intro && (
-                <Typography variant="intro" as="p" paddingTop={2}>
+                <Text variant="intro" as="p" paddingTop={2}>
                   <span id={slugify(intro)}>{intro}</span>
-                </Typography>
+                </Text>
               )}
             </GridColumn>
           </GridRow>
-          <Box paddingTop={12}>
-            <RichText body={content} config={{ defaultPadding: 12 }} />
+          <Box paddingTop={8}>
+            <RichText body={content} config={{ defaultPadding: 4 }} />
           </Box>
         </>
       </ArticleLayout>
@@ -179,4 +181,4 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
   return { lifeEvent, namespace }
 }
 
-export default withMainLayout(LifeEvent)
+export default withMainLayout(LifeEvent, { hasDrawerMenu: true })

@@ -10,15 +10,3 @@ interface CacheManager {
   keys(...args: any[]): Promise<any>
   ttl(...args: any[]): Promise<any>
 }
-
-declare module 'kennitala' {
-  interface Info {
-    kt: string
-    valid: boolean
-    type: 'person' | 'company'
-    birthday: date
-    birthdayReadable: string
-    age: number
-  }
-  function info(kt: string): Info
-}

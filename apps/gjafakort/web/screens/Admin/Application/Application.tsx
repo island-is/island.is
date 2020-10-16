@@ -4,7 +4,12 @@ import { useRouter } from 'next/router'
 import { useQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import { Icon, Box, Button, Typography } from '@island.is/island-ui/core'
+import {
+  IconDeprecated as Icon,
+  Box,
+  ButtonDeprecated as Button,
+  Typography,
+} from '@island.is/island-ui/core'
 
 import { ContentLoader, Layout } from '@island.is/gjafakort-web/components'
 import { NotFound } from '@island.is/gjafakort-web/screens'

@@ -4,7 +4,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import * as z from 'zod'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -45,6 +45,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EXAMPLE,
+  name: 'Reference application',
   dataProviders: [],
   dataSchema: ExampleSchema,
   stateMachineConfig: {
@@ -53,6 +54,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökunám',
+          progress: 0.33,
           roles: [
             {
               id: 'applicant',
@@ -76,6 +78,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
+          progress: 0.66,
           roles: [
             {
               id: 'reviewer',
@@ -107,6 +110,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          progress: 1,
           roles: [
             {
               id: 'applicant',

@@ -4,7 +4,7 @@ import {
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
-} from '@island.is/application/template'
+} from '@island.is/application/core'
 import * as z from 'zod'
 
 type Events =
@@ -15,15 +15,37 @@ type Events =
 
 const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  applicant: z.object({
+    email: z.string().email(),
+    phoneNumber: z.string(),
+  }),
   usage: z.number().min(0).max(6),
   spread: z.number().max(24),
+  payments: z.object({
+    bank: z.string().nonempty(),
+    personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
+    pensionFund: z.string().optional(),
+    privatePensionFund: z.enum(['frjalsi']).optional(),
+    privatePensionFundPercentage: z.enum(['2', '4']).optional(),
+  }),
+  shareInformationWithSpouse: z.enum(['yes', 'no']),
+  usePrivatePensionFund: z.enum(['yes', 'no']),
   periods: z.array(
     z.object({
       start: z.date(),
       end: z.date(),
-      ratio: z.number().min(1).max(100),
+      ratio: z
+        .string()
+        .refine(
+          (val) =>
+            !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
+        ),
     }),
   ),
+  employer: z.object({
+    name: z.string().nonempty(),
+    nationalRegistryId: z.string().nonempty(),
+  }),
 })
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -32,6 +54,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
+  name: 'Umsókn um fæðingarorlof',
   dataProviders: [],
   dataSchema,
   stateMachineConfig: {
@@ -40,6 +63,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'draft',
+          progress: 0.25,
           roles: [
             {
               id: 'applicant',
@@ -48,10 +72,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.ParentalLeaveForm),
                 ),
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
-              write: {
-                answers: ['usage', 'spread', 'periods'],
-                externalData: ['expectedDateOfBirth', 'salary'],
-              },
+              write: 'all',
             },
           ],
         },
@@ -62,6 +83,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       employerApproval: {
         meta: {
           name: 'Employer Approval',
+          progress: 0.5,
           roles: [
             {
               id: 'employer',
@@ -88,6 +110,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
+          progress: 0.75,
         },
         on: {
           APPROVE: { target: 'approved' },
@@ -97,6 +120,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          progress: 1,
         },
         type: 'final' as const,
       },

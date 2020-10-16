@@ -3,7 +3,7 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
-  Typography,
+  Text,
   ArrowLink,
   Box,
   Swiper,
@@ -13,7 +13,7 @@ import { NewsCard } from '../NewsCard'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsListQuery } from '@island.is/web/graphql/schema'
-import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
@@ -30,7 +30,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
 }) => {
   const newsItems = items.slice(0, 3)
   const { activeLocale, t } = useI18n()
-  const { globalNamespace } = useContext(GlobalNamespaceContext)
+  const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
 
@@ -38,17 +38,17 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']}>
-          <Typography variant="h3" as="h2" paddingBottom={2}>
+          <Text variant="h3" as="h2" paddingBottom={2}>
             {label}
-          </Typography>
+          </Text>
         </GridColumn>
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Typography variant="h5" as="p" paddingBottom={2}>
+            <Text variant="h5" as="p" paddingBottom={2}>
               <ArrowLink href={makePath('news')} arrowHeight={16}>
                 {n('seeMore')}
               </ArrowLink>
-            </Typography>
+            </Text>
           </Box>
         </GridColumn>
       </GridRow>

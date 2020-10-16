@@ -1,12 +1,12 @@
 import React from 'react'
-import { GridRow } from './GridRow'
-import { GridColumn } from './GridColumn'
-import { GridContainer } from './GridContainer'
+import { GridRow } from './GridRow/GridRow'
+import { GridColumn } from './GridColumn/GridColumn'
+import { GridContainer } from './GridContainer/GridContainer'
 import { Box } from '../Box/Box'
 import * as styles from './demostyles.treat'
 
 export default {
-  title: 'Components/Grid',
+  title: 'Layout/Grid',
   component: GridColumn,
 }
 

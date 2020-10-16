@@ -5,7 +5,7 @@ import {
   Typography,
   Box,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   BulletList,
   Bullet,
   ArrowLink,
@@ -14,16 +14,13 @@ import { BorderedContent } from '@island.is/island-ui/contentful'
 import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import FAQ from './components/FAQ'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 
 const Home: FC = () => {
   const router = useRouter()
   const {
-    activeLocale,
-    t: { home: t },
+    t: { home: t, routes },
   } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
 
   return (
     <PageLayout>
@@ -68,7 +65,7 @@ const Home: FC = () => {
               <Button
                 onClick={() => {
                   router.push({
-                    pathname: makePath('myCars'),
+                    pathname: routes.myCars,
                   })
                 }}
               >

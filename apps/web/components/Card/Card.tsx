@@ -6,12 +6,12 @@ import Link, { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
-  Typography,
+  Text,
   Tag,
   Inline,
   TagProps,
-  IconTypes,
-  Icon,
+  IconTypesDeprecated as IconTypes,
+  IconDeprecated as Icon,
   FocusableBox,
   ColorSchemeContext,
   TagVariant,
@@ -55,7 +55,7 @@ export const Card: FC<CardProps> = ({
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
-  const stackImage = width < 300
+  const stackImage = width < 360
 
   let borderColor = null
   let tagVariant = 'purple' as TagVariant
@@ -78,6 +78,78 @@ export const Card: FC<CardProps> = ({
       break
   }
 
+  const items = [
+    <Box
+      key={1}
+      className={cn(styles.cardContent, {
+        [styles.cardContentNarrower]: image && !stackImage,
+      })}
+    >
+      <Stack space={1}>
+        <Text as="h3" variant="h3" color="blue400">
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="inlineFlex" flexGrow={1}>
+              {title}
+            </Box>
+            {icon && (
+              <Box marginLeft={1} display="inlineFlex">
+                <Icon type={icon} />
+              </Box>
+            )}
+          </Box>
+        </Text>
+        {description && <Text>{description}</Text>}
+        {tags.length > 0 && (
+          <Box paddingTop={3} flexGrow={0} position="relative">
+            <Inline space={1}>
+              {tags.map(
+                ({ title, href, as, ...props }: CardTagsProps, index) => {
+                  const tagProps = {
+                    ...tagPropsDefaults,
+                    ...props.tagProps,
+                    variant: tagVariant,
+                  }
+
+                  return href ? (
+                    <Link key={index} href={href} as={as}>
+                      <Tag {...tagProps}>{title}</Tag>
+                    </Link>
+                  ) : (
+                    <Tag key={index} {...tagProps}>
+                      {title}
+                    </Tag>
+                  )
+                },
+              )}
+            </Inline>
+          </Box>
+        )}
+      </Stack>
+    </Box>,
+    !!image && (
+      <Box
+        key={2}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        className={cn(styles.imageContainer, {
+          [styles.imageContainerStacked]: stackImage,
+        })}
+      >
+        <BackgroundImage
+          positionX={!stackImage ? 'right' : null}
+          background="transparent"
+          backgroundSize="contain"
+          image={image}
+        />
+      </Box>
+    ),
+  ]
+
+  if (stackImage) {
+    items.reverse()
+  }
+
   const Content = (
     <Box
       ref={ref}
@@ -93,69 +165,7 @@ export const Card: FC<CardProps> = ({
         display="flex"
         flexDirection={stackImage ? 'column' : 'row'}
       >
-        <Box
-          className={cn(styles.cardContent, {
-            [styles.cardContentNarrower]: image && !stackImage,
-          })}
-        >
-          <Stack space={1}>
-            <Typography variant="cardCategoryTitle" as="h3" color="blue400">
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Box display="inlineFlex" flexGrow={1}>
-                  {title}
-                </Box>
-                {icon && (
-                  <Box marginLeft={1} display="inlineFlex">
-                    <Icon type={icon} />
-                  </Box>
-                )}
-              </Box>
-            </Typography>
-            {description && <Typography variant="p">{description}</Typography>}
-            {tags.length > 0 && (
-              <Box paddingTop={3} flexGrow={0} position="relative">
-                <Inline space={1}>
-                  {tags.map(
-                    ({ title, href, as, ...props }: CardTagsProps, index) => {
-                      const tagProps = {
-                        ...tagPropsDefaults,
-                        ...props.tagProps,
-                        variant: tagVariant,
-                      }
-
-                      return href ? (
-                        <Link key={index} href={href} as={as}>
-                          <Tag {...tagProps}>{title}</Tag>
-                        </Link>
-                      ) : (
-                        <Tag key={index} {...tagProps}>
-                          {title}
-                        </Tag>
-                      )
-                    },
-                  )}
-                </Inline>
-              </Box>
-            )}
-          </Stack>
-        </Box>
-        {!!image && (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            className={cn(styles.imageContainer, {
-              [styles.imageContainerStacked]: stackImage,
-            })}
-          >
-            <BackgroundImage
-              positionX={stackImage ? 'left' : 'right'}
-              background="transparent"
-              backgroundSize="contain"
-              image={image}
-            />
-          </Box>
-        )}
+        {items}
       </Box>
     </Box>
   )
@@ -168,6 +178,7 @@ export const Card: FC<CardProps> = ({
         borderRadius="large"
         flexDirection="column"
         height="full"
+        width="full"
         borderColor={borderColor}
         borderWidth="standard"
       >

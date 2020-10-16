@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
@@ -7,8 +7,7 @@ import { Select, Option } from '../Select/Select'
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
 import { Colors } from '@island.is/island-ui/theme'
-
-const TAB_ID_PREFIX = 'tab'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
 
 type TabType = {
   label: string
@@ -18,37 +17,34 @@ type TabType = {
 
 interface TabInterface {
   label: string
-  selected?: number
+  selected?: string
   tabs: TabType[]
   contentBackground?: Colors
 }
 
 export const Tabs: FC<TabInterface> = ({
   label,
-  selected = 0,
+  selected = '0',
   tabs,
   contentBackground = 'purple100',
 }) => {
-  const [selectedIndex, setSelectedIndex] = useState(selected)
-
-  const tab = useTabState({
-    selectedId: `${TAB_ID_PREFIX}-${selectedIndex}`,
+  const { loop, wrap, ...tab } = useTabState({
+    selectedId: selected,
   })
-
-  const onChange = (value: ValueType<Option>) => {
-    const e = value as Option
-    setSelectedIndex(parseInt(e?.value?.toString() || '', 10))
-    const id = `${TAB_ID_PREFIX}-${e?.value}`
-    tab.move(id)
-  }
 
   const selectOptions = tabs.map(({ label, disabled }, index) => {
     return {
       label,
       disabled: disabled,
-      value: index,
+      value: index.toString(),
     }
   })
+
+  const onChange = (option: ValueType<Option>) => {
+    const tabOption = option as Option
+    tab.setCurrentId(tabOption?.value as string)
+    tab.move(tabOption?.value as string)
+  }
 
   return (
     <Box position="relative">
@@ -60,25 +56,32 @@ export const Tabs: FC<TabInterface> = ({
             label={label}
             onChange={onChange}
             options={selectOptions}
-            value={selectOptions[selectedIndex]}
-            defaultValue={selectOptions[selectedIndex]}
+            defaultValue={selectOptions[parseInt(selected)]}
+            isSearchable={false}
           />
         </div>
-        <TabList className={styles.tabList} {...tab} aria-label={label}>
+        <TabList
+          className={styles.tabList}
+          {...tab}
+          wrap={wrap}
+          aria-label={label}
+        >
           {tabs.map(({ label, disabled }, index) => (
-            <Tab
+            <FocusableBox
               {...tab}
+              component={Tab}
               key={index}
               disabled={disabled}
-              onClick={() => setSelectedIndex(index)}
-              id={`${TAB_ID_PREFIX}-${index}`}
+              id={`${index}`}
+              justifyContent="center"
+              aria-label={label}
               className={cn(styles.tab, {
-                [styles.tabSelected]: index === selectedIndex,
+                [styles.tabSelected]: index.toString() === tab.selectedId,
                 [styles.tabDisabled]: disabled,
               })}
             >
               {label}
-            </Tab>
+            </FocusableBox>
           ))}
         </TabList>
         {tabs.map(({ content }, index) => (
@@ -90,5 +93,3 @@ export const Tabs: FC<TabInterface> = ({
     </Box>
   )
 }
-
-export default Tabs

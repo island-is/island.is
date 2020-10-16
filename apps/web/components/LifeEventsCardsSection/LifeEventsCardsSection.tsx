@@ -1,11 +1,10 @@
 import React from 'react'
 import {
-  Typography,
+  Text,
   GridContainer,
   GridRow,
   GridColumn,
   Swiper,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -27,9 +26,9 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
-  const renderLifeEventCard = (lifeEvent) => (
+  const renderLifeEventCard = (lifeEvent, i) => (
     <Card
-      key={lifeEvent.title}
+      key={i}
       title={lifeEvent.title}
       description={lifeEvent.intro}
       href={makePath('lifeEvent', '[slug]')}
@@ -38,48 +37,42 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     />
   )
 
-  const renderDesktopView = (lifeEvents) => (
+  const renderDesktopView = (lifeEvents) =>
+    lifeEvents
+      .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
+      .map((lifeEvent, i) => (
+        <GridColumn
+          key={i}
+          hiddenBelow="md"
+          span={['12/12', '6/12', '6/12', '6/12', '4/12']}
+          paddingBottom={3}
+        >
+          {renderLifeEventCard(lifeEvent, i)}
+        </GridColumn>
+      ))
+
+  return (
     <GridContainer>
       <GridRow>
-        <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h2" paddingBottom={4}>
+        <GridColumn span="12/12">
+          <Text variant="h3" as="h2" paddingBottom={4}>
             {title}
-          </Typography>
+          </Text>
         </GridColumn>
       </GridRow>
       <GridRow>
-        {lifeEvents
-          .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
-          .map((lifeEvent) => (
-            <GridColumn
-              span={['12/12', '6/12', '6/12', '6/12', '4/12']}
-              paddingBottom={3}
-              key={lifeEvent.title}
-            >
-              {renderLifeEventCard(lifeEvent)}
-            </GridColumn>
-          ))}
-      </GridRow>
-    </GridContainer>
-  )
-
-  return (
-    <>
-      <Hidden below="lg">
         {showSleeve ? (
           <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
         ) : (
           renderDesktopView(lifeEvents)
         )}
-      </Hidden>
-      <GridContainer>
-        <Hidden above="md">
-          <Swiper>
-            {lifeEvents.map((lifeEvent) => renderLifeEventCard(lifeEvent))}
-          </Swiper>
-        </Hidden>
-      </GridContainer>
-    </>
+      </GridRow>
+      <GridRow>
+        <GridColumn span="12/12" hiddenAbove="sm">
+          <Swiper>{lifeEvents.map(renderLifeEventCard)}</Swiper>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

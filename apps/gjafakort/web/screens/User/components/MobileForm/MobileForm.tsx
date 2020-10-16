@@ -10,16 +10,18 @@ import {
 import * as Yup from 'yup'
 
 import {
-  FieldNumberInput,
   Box,
   Stack,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
 } from '@island.is/island-ui/core'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
-import { FormLayout } from '@island.is/gjafakort-web/components'
+import {
+  FieldNumberInput,
+  FormLayout,
+} from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
   onSubmit: (

@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
+import { ContentSlug, mapContentSlug } from './models/contentSlug.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { LandingPage, mapLandingPage } from './models/landingPage.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
@@ -18,6 +19,7 @@ import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirNews, mapAdgerdirNewsItem } from './models/adgerdirNews.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
+import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
@@ -43,6 +45,7 @@ import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
 import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
+import { Homepage, mapHomepage } from './models/homepage.model'
 
 const makePage = (
   page: number,
@@ -112,7 +115,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'organization',
       include: 10,
-      limit: 100,
+      limit: 1000,
     }
 
     const result = await this.contentfulRepository
@@ -270,6 +273,8 @@ export class CmsContentfulService {
   }: GetNewsListInput): Promise<PaginatedNews> {
     const params = {
       ['content_type']: 'news',
+      'fields.title[exists]': true,
+      'fields.slug[exists]': true,
       include: 10,
       order: (ascending ? '' : '-') + 'fields.date',
       skip: (page - 1) * perPage,
@@ -290,7 +295,7 @@ export class CmsContentfulService {
 
     return {
       page: makePage(page, perPage, result.total),
-      news: result.items.map(mapNews).filter((news) => news.title && news.slug), // we consider news "empty" that dont pass this check
+      news: result.items.map(mapNews),
     }
   }
 
@@ -373,6 +378,20 @@ export class CmsContentfulService {
     return result.items.map(mapLandingPage)[0] ?? null
   }
 
+  async getContentSlug({
+    id,
+    lang,
+  }: GetContentSlugInput): Promise<ContentSlug | null> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IArticleFields>(lang, {
+        'sys.id': id,
+        include: 10,
+      })
+      .catch(errorHandler('getContentSlug'))
+
+    return result.items.map(mapContentSlug)[0] ?? null
+  }
+
   async getGenericPage({
     lang,
     slug,
@@ -431,7 +450,7 @@ export class CmsContentfulService {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, {
         ['content_type']: 'lifeEventPage',
-        order: '-sys.createdAt',
+        order: 'sys.createdAt',
       })
       .catch(errorHandler('getLifeEvents'))
 
@@ -476,5 +495,17 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEventsInCategory'))
 
     return result.items.map(mapLifeEventPage)
+  }
+
+  async getHomepage({ lang }: { lang: string }): Promise<Homepage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IHomepageFields>(lang, {
+        ['content_type']: 'homepage',
+        include: 10,
+        order: '-sys.createdAt',
+      })
+      .catch(errorHandler('getHomepage'))
+
+    return result.items.map(mapHomepage)[0]
   }
 }

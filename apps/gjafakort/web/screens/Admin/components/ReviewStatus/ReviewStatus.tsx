@@ -1,7 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { Icon, Box, Button, Typography } from '@island.is/island-ui/core'
+import {
+  IconDeprecated as Icon,
+  Box,
+  ButtonDeprecated as Button,
+  Typography,
+} from '@island.is/island-ui/core'
 
 import { KeyValue } from '../../../../components'
 
