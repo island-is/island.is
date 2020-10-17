@@ -8,7 +8,7 @@ import { GdprResolver } from './gdpr.resolver'
   imports: [SequelizeModule.forFeature([GdprModel])],
   providers: [GdprResolver, GdprService],
 })
-export class GdprModule {}
+export class GdprDbModule {}
 
 // @Module({
 //   imports: [SequelizeModule.forFeature([GdprModel])],

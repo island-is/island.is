@@ -31,7 +31,7 @@ export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
   personname: string
 
   //ATH
-  @Field(type => [VehicleModel])
+  @Field((type) => [VehicleModel])
   @HasMany(() => VehicleModel)
   vehicle!: VehicleModel[]
 }
@@ -110,7 +110,6 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   vehicle!: VehicleModel
 }
 
-
 @ObjectType()
 @Table({ tableName: 'gdpr' })
 export class GdprModel extends Model<GdprModel> {
@@ -129,7 +128,6 @@ export class GdprModel extends Model<GdprModel> {
   })
   gdprStatus: boolean
 }
-
 
 @ObjectType()
 @Table({ tableName: 'recycling_partner' })
@@ -185,4 +183,10 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   active: boolean
 }
 
-export default [GdprModel, VehicleModel, VehicleOwnerModel, RecyclingRequestModel, RecyclingPartnerModel]
+export default [
+  GdprModel,
+  VehicleModel,
+  VehicleOwnerModel,
+  RecyclingRequestModel,
+  RecyclingPartnerModel,
+]

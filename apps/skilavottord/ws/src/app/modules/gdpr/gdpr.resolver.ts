@@ -8,13 +8,8 @@ import { GdprModel } from '../models'
 export class GdprResolver {
   constructor(@Inject(GdprService) private gdprService: GdprService) {}
 
-  @Query(() => Float)
-  uptime() {
-    return process.uptime()
-  }
-
   @Query(() => [GdprModel])
-  async gdprs(): Promise<GdprModel[]> {
+  async getAllgdprs(): Promise<GdprModel[]> {
     return await this.gdprService.findAll()
   }
 

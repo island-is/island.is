@@ -4,12 +4,6 @@ import { GdprModel } from '../models'
 
 @Injectable()
 export class GdprService {
-  // applicationsRegistered = new Counter({
-  //   name: 'apps_gdpr',
-  //   labelNames: ['gdpr'],
-  //   help: 'Number of applications',
-  // })
-
   constructor(
     @InjectModel(GdprModel)
     private gdprModel: typeof GdprModel,
