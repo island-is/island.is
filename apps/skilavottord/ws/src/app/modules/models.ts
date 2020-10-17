@@ -48,7 +48,7 @@ export class VehicleModel extends Model<VehicleModel> {
     allowNull: false,
   })
   @ForeignKey(() => VehicleOwnerModel)
-  carOwnerId!: string
+  vehicleOwnerId!: string
 
   @Field()
   @Column({
