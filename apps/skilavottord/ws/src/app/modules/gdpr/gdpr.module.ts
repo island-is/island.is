@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { Gdpr, GdprService } from './models'
+import { GdprService } from './gdpr.service'
+import { GdprModel } from '../models'
 import { GdprResolver } from './gdpr.resolver'
-// import { GdprService } from './models'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Gdpr])],
+  imports: [SequelizeModule.forFeature([GdprModel])],
   providers: [GdprResolver, GdprService],
 })
 export class GdprModule {}

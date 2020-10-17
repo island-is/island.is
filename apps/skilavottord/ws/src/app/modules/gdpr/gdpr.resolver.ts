@@ -1,9 +1,10 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver, Float, Args } from '@nestjs/graphql'
-import { Gdpr, GdprService } from './models'
+import { GdprService } from './gdpr.service'
+import { GdprModel } from '../models'
 // import { GdprService } from './models'
 
-@Resolver(() => Gdpr)
+@Resolver(() => GdprModel)
 export class GdprResolver {
   constructor(@Inject(GdprService) private gdprService: GdprService) {}
 
@@ -12,8 +13,8 @@ export class GdprResolver {
     return process.uptime()
   }
 
-  @Query(() => [Gdpr])
-  async gdprs(): Promise<Gdpr[]> {
+  @Query(() => [GdprModel])
+  async gdprs(): Promise<GdprModel[]> {
     return await this.gdprService.findAll()
   }
 
