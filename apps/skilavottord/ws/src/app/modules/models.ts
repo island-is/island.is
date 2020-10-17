@@ -1,15 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import {
   Column,
-  CreatedAt,
   DataType,
-  IsDate,
   Model,
   Table,
-  UpdatedAt,
   ForeignKey,
-  HasMany,
-  HasOne,
   BelongsTo,
 } from 'sequelize-typescript'
 
@@ -30,10 +25,10 @@ export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
   })
   personname: string
 
-  //ATH
-  @Field((type) => [VehicleModel])
-  @HasMany(() => VehicleModel)
-  vehicle!: VehicleModel[]
+  // //ATH
+  // @Field((type) => [VehicleModel])
+  // @HasMany(() => VehicleModel)
+  // vehicle!: VehicleModel[]
 }
 
 @ObjectType()
