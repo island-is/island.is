@@ -35,7 +35,7 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
     RecyclingPartnerDbModule,
     VehicleModule,
     RecyclingRequestModule,
-    VehicleOwnerModule
+    VehicleOwnerModule,
   ],
   //providers: [BackendAPI],
 })
