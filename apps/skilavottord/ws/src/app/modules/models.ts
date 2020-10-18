@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript'
 
 @ObjectType()
-@Table({ tableName: 'vehicleowner' })
+@Table({ tableName: 'vehicle_owner' })
 export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
   @Field()
   @Column({
@@ -100,9 +100,9 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   nameOfRequestor: string
 
-  //ATH
-  @BelongsTo(() => VehicleModel)
-  vehicle!: VehicleModel
+  // //ATH
+  // @BelongsTo(() => VehicleModel)
+  // vehicle!: VehicleModel
 }
 
 @ObjectType()
