@@ -9,6 +9,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { RecyclingPartnerDbModule } from './modules/recycling.partner/recycling.partner.module'
 import { VehicleModule } from './modules/vehicle/vehicle.module'
+import { RecyclingRequestModule } from './modules/recycling.request/recycling.request.module'
+import { VehicleOwnerModule } from './modules/vehicle.owner/vehicle.owner.module'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -32,6 +34,8 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
     GdprDbModule,
     RecyclingPartnerDbModule,
     VehicleModule,
+    RecyclingRequestModule,
+    VehicleOwnerModule,
   ],
   //providers: [BackendAPI],
 })
