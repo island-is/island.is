@@ -24,10 +24,15 @@ import {
   updateState,
 } from '../../../utils/stepHelper'
 import * as api from '../../../api'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  validate,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
+  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
 
@@ -137,6 +142,21 @@ export const RulingStepOne: React.FC = () => {
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
   }, [])
+
+  useEffect(() => {
+    const requiredFields: { value: string; validations: Validation[] }[] = [
+      { value: workingCase.ruling, validations: ['empty'] },
+      { value: workingCase.custodyEndDate, validations: ['empty'] },
+      {
+        value: custodyEndTimeRef.current?.value,
+        validations: ['empty', 'time-format'],
+      },
+    ]
+
+    if (workingCase) {
+      setIsStepIllegal(isNextDisabled(requiredFields))
+    }
+  }, [workingCase, isStepIllegal])
 
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
@@ -391,14 +411,7 @@ export const RulingStepOne: React.FC = () => {
             </Box>
             <FormFooter
               nextUrl={Constants.RULING_STEP_TWO_ROUTE}
-              nextIsDisabled={isNextDisabled([
-                { value: workingCase.ruling, validations: ['empty'] },
-                { value: workingCase.custodyEndDate, validations: ['empty'] },
-                {
-                  value: custodyEndTimeRef.current?.value,
-                  validations: ['empty', 'time-format'],
-                },
-              ])}
+              nextIsDisabled={isStepIllegal}
             />
           </GridColumn>
         </GridRow>
