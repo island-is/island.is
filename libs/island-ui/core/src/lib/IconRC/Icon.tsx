@@ -38,6 +38,17 @@ export const Icon = ({
   title,
   titleId,
 }: IconProps) => {
+  if (typeof window === 'undefined') {
+    return (
+      <span
+        style={{
+          display: 'inline-block',
+          width: sizes[size],
+          height: sizes[size],
+        }}
+      />
+    )
+  }
   const path = iconMap[type][icon]
   const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
     path,
