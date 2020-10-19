@@ -27,6 +27,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_RESULTS_NEWS_QUERY,
+  GET_SEARCH_COUNT_TAGS_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -35,6 +36,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
+  GetSearchCountTagsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
   QueryGetNamespaceArgs,
@@ -60,6 +62,7 @@ interface CategoryProps {
   page: number
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   newsResults: GetSearchResultsNewsQuery['searchResults']
+  countTags: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -68,6 +71,7 @@ const Search: Screen<CategoryProps> = ({
   page,
   searchResults,
   newsResults,
+  countTags,
   namespace,
 }) => {
   const { activeLocale } = useI18n()
@@ -88,17 +92,15 @@ const Search: Screen<CategoryProps> = ({
 
   useEffect(() => {
     // we only update the tagCount results when we get new tag count results
-    if (Array.isArray(searchResults.tagCounts)) {
-      const newTagCountResults = searchResults.tagCounts.map(
-        ({ key, count: total, value: title }) => ({
-          key,
-          total,
-          title,
-        }),
-      )
-      setSidebarCategories(newTagCountResults)
-    }
-    setGrandTotalSearchResultCount(searchResults.total)
+    const newTagCountResults = countTags.tagCounts.map(
+      ({ key, count: total, value: title }) => ({
+        key,
+        total,
+        title,
+      }),
+    )
+    setSidebarCategories(newTagCountResults)
+    setGrandTotalSearchResultCount(countTags.total)
   }, [])
 
   const getLabels = (item) => {
@@ -457,6 +459,9 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { searchResults: news },
     },
+    {
+      data: { searchResults: countTags },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
@@ -489,6 +494,16 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
+    apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
+      query: GET_SEARCH_COUNT_TAGS_QUERY,
+      variables: {
+        query: {
+          language: locale as ContentLanguage,
+          queryString,
+          countTag: 'category' as SearchableTags,
+        },
+      },
+    }),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -513,6 +528,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     q: queryString,
     searchResults,
     newsResults: news,
+    countTags: countTags,
     namespace,
     showSearchInHeader: false,
     page,

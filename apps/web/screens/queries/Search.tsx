@@ -78,6 +78,19 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
   }
 `
 
+export const GET_SEARCH_COUNT_TAGS_QUERY = gql`
+  query GetSearchCountTags($query: SearcherInput!) {
+    searchResults(query: $query) {
+      total
+      tagCounts {
+        key
+        value
+        count
+      }
+    }
+  }
+`
+
 export const GET_SEARCH_RESULTS_NEWS_QUERY = gql`
   query GetSearchResultsNews($query: SearcherInput!) {
     searchResults(query: $query) {
