@@ -42,7 +42,7 @@ const Placeholder = ({
     component="span"
     display="inlineBlock"
     className={cn(className, {
-      [styles.placeholder[size]]: !skipPlaceholderSize && size,
+      [styles.placeholder[size!]]: !skipPlaceholderSize && size,
     })}
   />
 )
