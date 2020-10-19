@@ -22,11 +22,11 @@ export const Default = () => {
 }
 
 export const RedColorScheme = () => {
-  return <ProgressMeter progress={0.4} colorScheme="red" />
+  return <ProgressMeter progress={0.4} variant="red" />
 }
 
 export const RoseColorScheme = () => {
-  return <ProgressMeter progress={0.3} colorScheme="rose" />
+  return <ProgressMeter progress={0.3} variant="rose" />
 }
 
 export const AnimatesOnChange = () => {

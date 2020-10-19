@@ -2,19 +2,23 @@ import * as React from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
-import { Tag } from '../Tag/Tag'
+import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
+import {
+  ProgressMeter,
+  ProgressMeterVariant,
+} from '../ProgressMeter/ProgressMeter'
+import * as styles from './ActionCard.treat'
 
 type ActionCardProps = {
   heading: string
   text?: string
-  tag?: string
-  eyebrow?: string
+  tag?: {
+    label: string
+    variant?: TagVariant
+  }
   cta: {
-    /**
-     * CTA label
-     */
     label: string
     /**
      * 'primary' renders a button, 'secondary' renders a text button
@@ -22,9 +26,16 @@ type ActionCardProps = {
     variant?: 'primary' | 'secondary'
     onClick?: () => void
   }
-  disabled?: boolean
-  disabledLabel?: string
-  disabledMessage?: string
+  progressMeter?: {
+    active?: boolean
+    variant?: ProgressMeterVariant
+    progress?: number
+  }
+  unavailable?: {
+    active?: boolean
+    label?: string
+    message?: string
+  }
 }
 
 const defaultCta = {
@@ -32,66 +43,116 @@ const defaultCta = {
   onClick: () => null,
 } as const
 
-// DRAFT
+const defaultTag = {
+  variant: 'blue',
+  label: '',
+} as const
+
+const defaultProgressMeter = {
+  variant: 'blue',
+  active: false,
+  progress: 0,
+} as const
+
+const defaultUnavailable = {
+  active: false,
+  label: '',
+  message: '',
+} as const
+
 export const ActionCard: React.FC<ActionCardProps> = ({
-  cta,
-  eyebrow,
   heading,
-  tag,
   text,
-  disabled,
-  disabledLabel,
-  disabledMessage,
+  cta: _cta,
+  tag: _tag,
+  unavailable: _unavailable,
+  progressMeter: _progressMeter,
 }) => {
-  const callToAction = { ...defaultCta, ...cta }
+  const cta = { ...defaultCta, ..._cta }
+  const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
+  const tag = { ...defaultTag, ..._tag }
+  const unavailable = { ...defaultUnavailable, ..._unavailable }
 
-  const renderDisabled = () => (
-    <Box display="flex">
-      <Text variant="small">{disabledLabel}&nbsp;</Text>
-      <Tooltip placement="top" as="button" text={disabledMessage} />
-    </Box>
-  )
+  const renderDisabled = () => {
+    const { label, message } = unavailable
+    return (
+      <Box display="flex">
+        <Text variant="small">{label}&nbsp;</Text>
+        <Tooltip placement="top" as="button" text={message} />
+      </Box>
+    )
+  }
 
-  const renderDefault = () => (
-    <Stack space="gutter">
-      {tag && <Tag label>{tag}</Tag>}
-      <Button
-        variant={callToAction.variant === 'secondary' ? 'text' : 'primary'}
-        onClick={callToAction.onClick}
-      >
-        {callToAction.label}
-      </Button>
-    </Stack>
-  )
+  const renderDefault = () => {
+    const hasCTA = cta.label && !progressMeter.active
+
+    return (
+      <Stack space="gutter">
+        {tag.label && (
+          <Tag label variant={tag.variant}>
+            {tag.label}
+          </Tag>
+        )}
+        {hasCTA && (
+          <Button
+            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+            onClick={cta.onClick}
+          >
+            {cta.label}
+          </Button>
+        )}
+      </Stack>
+    )
+  }
+
+  const renderProgressMeter = () => {
+    const { variant, progress } = progressMeter
+    return (
+      <Box width="full" paddingTop={2} display="flex" alignItems="center">
+        <ProgressMeter
+          variant={variant}
+          progress={progress}
+          className={styles.progressMeter}
+        />
+        <Box display="inlineFlex" marginLeft="auto">
+          <Button
+            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+            onClick={cta.onClick}
+            icon="arrowRight"
+          >
+            {cta.label}
+          </Button>
+        </Box>
+      </Box>
+    )
+  }
 
   return (
     <Box
-      alignItems="center"
+      display="flex"
+      flexDirection="column"
       borderColor="blue200"
       borderRadius="standard"
       borderWidth="standard"
-      display="flex"
       paddingX={4}
       paddingY={3}
     >
-      <Box>
-        {eyebrow && (
-          <Text color="red400" variant="eyebrow">
-            {eyebrow}
-          </Text>
-        )}
-        <Text variant="h3">{heading}</Text>
-        <Text paddingTop={1}>{text}</Text>
-      </Box>
+      <Box alignItems="center" display="flex">
+        <Box>
+          <Text variant="h3">{heading}</Text>
+          <Text paddingTop={1}>{text}</Text>
+        </Box>
 
-      <Box
-        alignItems="flexEnd"
-        display="flex"
-        flexDirection="column"
-        marginLeft="auto"
-      >
-        {disabled ? renderDisabled() : renderDefault()}
+        <Box
+          alignItems="flexEnd"
+          display="flex"
+          flexDirection="column"
+          marginLeft="auto"
+        >
+          {unavailable.active ? renderDisabled() : renderDefault()}
+        </Box>
       </Box>
+      {progressMeter.active && renderProgressMeter()}
     </Box>
   )
 }

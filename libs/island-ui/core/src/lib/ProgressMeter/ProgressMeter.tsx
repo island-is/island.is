@@ -1,13 +1,17 @@
 import * as React from 'react'
+import cn from 'classnames'
 import { Box } from '../Box/Box'
 import * as styles from './ProgressMeter.treat'
+
+export type ProgressMeterVariant = 'blue' | 'red' | 'rose'
 
 type ProgressMeterProps = {
   /**
    * Number from 0 to 1
    */
   progress: number
-  colorScheme?: 'blue' | 'red' | 'rose'
+  variant?: ProgressMeterVariant
+  className?: string
 }
 
 const colorSchemes = {
@@ -27,13 +31,14 @@ const colorSchemes = {
 
 export const ProgressMeter: React.FC<ProgressMeterProps> = ({
   progress,
-  colorScheme = 'blue',
+  variant = 'blue',
+  className,
 }) => {
   return (
     <Box
-      className={styles.outer}
+      className={cn(styles.outer, className)}
       position="relative"
-      background={colorSchemes[colorScheme].outer}
+      background={colorSchemes[variant].outer}
       borderRadius="large"
       width="full"
     >
@@ -46,7 +51,7 @@ export const ProgressMeter: React.FC<ProgressMeterProps> = ({
       >
         <Box
           className={styles.inner}
-          background={colorSchemes[colorScheme].inner}
+          background={colorSchemes[variant].inner}
           borderRadius="large"
           position="absolute"
           style={{ transform: `translateX(${(progress - 1) * 100}%)` }}
