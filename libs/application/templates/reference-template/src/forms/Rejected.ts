@@ -1,13 +1,11 @@
 import {
-  ApplicationTypes,
   buildForm,
   buildIntroductionField,
   Form,
 } from '@island.is/application/core'
 
 export const Rejected: Form = buildForm({
-  id: ApplicationTypes.EXAMPLE,
-  ownerId: 'TODO?',
+  id: 'ExampleRejected',
   name: 'Hafnað',
   mode: 'rejected',
   children: [

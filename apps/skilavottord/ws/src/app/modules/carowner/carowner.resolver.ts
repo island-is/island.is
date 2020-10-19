@@ -36,7 +36,7 @@ export class CarownerResolver {
     @Args('permno') permno: string,
     @Args('nationalid') nationalid: string,
   ): boolean {
-    this.carownerService.getRestTest()
+    //this.carownerService.getRestTest()
     if (permno === '1') {
       throw new HttpException(
         'requestPayment error! nationalId:' + nationalid,

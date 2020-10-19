@@ -267,6 +267,13 @@ export const Overview: React.FC = () => {
                       </Box>
                     )}
                   </AccordionItem>
+                  <AccordionItem
+                    id="id_5"
+                    label="Skilaboð til dómara"
+                    labelVariant="h3"
+                  >
+                    <Text>{workingCase?.comments}</Text>
+                  </AccordionItem>
                 </Accordion>
               </Box>
               <Box marginBottom={15}>

@@ -1,15 +1,6 @@
-import {
-  Box,
-  Hidden,
-  IconDeprecated as Icon,
-  Stack,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, Hidden, Icon, Typography } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import React from 'react'
 import * as styles from './FamilyOverview.treat'
 
@@ -45,7 +36,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
             background="purple200"
             className={styles.avatar}
           >
-            <Icon type="user" color="purple400" width={40} height={40} />
+            <Icon type="outline" icon="person" color="purple400" size="large" />
           </Box>
         </Hidden>
         <div>
