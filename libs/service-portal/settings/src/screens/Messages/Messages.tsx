@@ -13,7 +13,7 @@ export const Messages: ServicePortalModuleComponent = () => {
         defaultMessage: 'Skilaboð',
       })}
       intro={defineMessage({
-        id: 'sp.settings:delegation-about',
+        id: 'sp.settings:messages-about',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir umboð á næstunni`,
       })}
       list={{
@@ -23,7 +23,7 @@ export const Messages: ServicePortalModuleComponent = () => {
         }),
         items: [
           defineMessage({
-            id: 'sp.settings:delegation-inc-1',
+            id: 'sp.settings:messages-inc-1',
             defaultMessage:
               'Yfirlit og hægt verður að deila umboði á milli einstaklinga og fyrirtækja',
           }),

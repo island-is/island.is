@@ -131,7 +131,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.StillingarUmbod,
         icon: {
           type: 'outline',
-          icon: 'lockClosed',
+          icon: 'receipt',
         },
       },
 

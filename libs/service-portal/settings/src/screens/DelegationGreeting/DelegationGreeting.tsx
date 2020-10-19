@@ -10,7 +10,7 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
     <InfoScreen
       title={defineMessage({
         id: 'sp.settings:delegation',
-        defaultMessage: 'Umboð',
+        defaultMessage: 'Mín réttindi',
       })}
       intro={defineMessage({
         id: 'sp.settings:delegation-about',

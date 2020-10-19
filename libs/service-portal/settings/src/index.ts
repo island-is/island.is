@@ -17,7 +17,7 @@ export const settingsModule: ServicePortalModule = {
         render: () => lazy(() => import('./lib/service-portal-settings')),
       },
       {
-        name: 'Umboð',
+        name: 'Mín réttindi',
         path: ServicePortalPath.StillingarUmbod,
         render: () =>
           lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),

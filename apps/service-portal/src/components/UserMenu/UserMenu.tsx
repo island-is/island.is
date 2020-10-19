@@ -97,21 +97,6 @@ const UserMenu: FC<{}> = () => {
                       defaultMessage: 'Stillingar',
                     })}
                   </NavItem>
-                  <NavItem
-                    path={ServicePortalPath.StillingarUmbod}
-                    onClick={setIsOpen.bind(null, false)}
-                    icon={{
-                      type: 'outline',
-                      icon: 'lockClosed',
-                    }}
-                    active={false}
-                    variant="blue"
-                  >
-                    {formatMessage({
-                      id: 'service.portal:delegation',
-                      defaultMessage: 'Umboð',
-                    })}
-                  </NavItem>
                 </Stack>
               </Box>
               <Box marginTop={3}>
