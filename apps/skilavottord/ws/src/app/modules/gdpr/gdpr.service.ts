@@ -1,20 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Gdpr } from './gdpr.model'
-//import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Counter } from 'prom-client'
+import { GdprModel } from '../models'
 
 @Injectable()
 export class GdprService {
-  // applicationsRegistered = new Counter({
-  //   name: 'apps_gdpr',
-  //   labelNames: ['gdpr'],
-  //   help: 'Number of applications',
-  // })
-
   constructor(
-    @InjectModel(Gdpr)
-    private gdprModel: typeof Gdpr,
+    @InjectModel(GdprModel)
+    private gdprModel: typeof GdprModel,
   ) {}
 
   // async findByNationalId(nationalId: string): Promise<Gdpr> {
@@ -24,7 +16,7 @@ export class GdprService {
   //   })
   // }
 
-  async findAll(): Promise<Gdpr[]> {
+  async findAll(): Promise<GdprModel[]> {
     //this.logger.debug(`Finding gdpr for nationalId - "${nationalId}"`)
     return await this.gdprModel.findAll()
   }

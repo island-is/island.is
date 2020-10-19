@@ -32,6 +32,9 @@ module.exports.up = (queryInterface, DataTypes) => {
       newreg_date: {
         type: DataTypes.DATE,
       },
+      vin_number: {
+        type: DataTypes.STRING,
+      },
       created_at: {
         type: DataTypes.DATE,
         //defaultValue: DataTypes.fn('now'),

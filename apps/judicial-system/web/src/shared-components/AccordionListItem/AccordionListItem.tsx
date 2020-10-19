@@ -1,4 +1,4 @@
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import React, { PropsWithChildren } from 'react'
 
 interface AccordionListItemProps {
@@ -11,10 +11,10 @@ const AccordionListItem: React.FC<AccordionListItemProps> = (
   return (
     <>
       <Box marginBottom={1}>
-        <Typography variant="h5">{props.title}</Typography>
+        <Text variant="h5">{props.title}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Typography>{props.children}</Typography>
+        <Text>{props.children}</Text>
       </Box>
     </>
   )

@@ -8,7 +8,6 @@ export const LIST_APPLICATIONS = gql`
       modified
       applicant
       assignee
-      externalId
       state
       typeId
       name

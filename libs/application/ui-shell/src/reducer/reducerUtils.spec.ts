@@ -100,12 +100,10 @@ describe('reducerUtils', () => {
         buildTextField({
           id: 'name',
           name: 'Name',
-          required: true,
         }),
         buildTextField({
           id: 'age',
           name: 'Age',
-          required: true,
         }),
       ],
     })
@@ -115,8 +113,7 @@ describe('reducerUtils', () => {
     })
     it('should increment the number of repetitions for the repeater in the form', () => {
       const form = buildForm({
-        id: ApplicationTypes.EXAMPLE,
-        ownerId: 'asdf',
+        id: 'ExampleForm',
         children: [repeater, randomField],
         name: 'what a name',
       })
@@ -128,8 +125,7 @@ describe('reducerUtils', () => {
 
     it('should increment repetitions and add more screens when expanding an already expanded repeater', () => {
       const form = buildForm({
-        id: ApplicationTypes.EXAMPLE,
-        ownerId: 'asdf',
+        id: 'ExampleForm',
         children: [repeater, randomField],
         name: 'what a name',
       })
@@ -145,8 +141,7 @@ describe('reducerUtils', () => {
 
     it('should return undefined if the desired index is not representing a repeater', () => {
       const form = buildForm({
-        id: ApplicationTypes.EXAMPLE,
-        ownerId: 'asdf',
+        id: 'ExampleForm',
         children: [repeater, randomField],
         name: 'what a name',
       })
@@ -255,10 +250,9 @@ describe('reducerUtils', () => {
     it('should return all sections if no section has a condition', () => {
       const sections = [firstSection, secondSection, thirdSection]
       const form = buildForm({
-        id: ApplicationTypes.EXAMPLE,
+        id: 'ExampleForm',
         children: sections,
         name: 'asdf',
-        ownerId: 'asdf',
       })
 
       expect(getNavigableSectionsInForm(form, {})).toEqual(sections)
@@ -275,10 +269,9 @@ describe('reducerUtils', () => {
         thirdSection,
       ]
       const form = buildForm({
-        id: ApplicationTypes.EXAMPLE,
+        id: 'ExampleForm',
         children: sections,
         name: 'asdf',
-        ownerId: 'asdf',
       })
 
       expect(getNavigableSectionsInForm(form, {})).toEqual([
@@ -315,10 +308,9 @@ describe('reducerUtils', () => {
         }),
       ]
       const form = buildForm({
-        id: ApplicationTypes.EXAMPLE,
+        id: 'ExampleForm',
         children: sections,
         name: 'asdf',
-        ownerId: 'asdf',
       })
 
       expect(getNavigableSectionsInForm(form, {})).toEqual([
@@ -355,9 +347,8 @@ describe('reducerUtils', () => {
           ],
         })
         const form = buildForm({
-          id: ApplicationTypes.EXAMPLE,
+          id: 'ExampleForm',
           name: 'asdf',
-          ownerId: 'asdf',
           children: [invisibleSection, visibleSection],
         })
         const screens = convertFormToScreens(form, {})
@@ -388,9 +379,8 @@ describe('reducerUtils', () => {
           ],
         })
         const form = buildForm({
-          id: ApplicationTypes.EXAMPLE,
+          id: 'ExampleForm',
           name: 'asdf',
-          ownerId: 'asdf',
           children: [multifield],
         })
         const screens = convertFormToScreens(form, {})
@@ -413,9 +403,8 @@ describe('reducerUtils', () => {
       }
       it('should only include the repeater screen if it has not been expanded', () => {
         const form = buildForm({
-          id: ApplicationTypes.EXAMPLE,
+          id: 'ExampleForm',
           name: 'asdf',
-          ownerId: 'asdf',
           children: [repeater],
         })
         const screens = convertFormToScreens(form, {})
@@ -424,9 +413,8 @@ describe('reducerUtils', () => {
       })
       it('should expand a repeater to as many screens as children * repetitions', () => {
         const form = buildForm({
-          id: ApplicationTypes.EXAMPLE,
+          id: 'ExampleForm',
           name: 'asdf',
-          ownerId: 'asdf',
           children: [{ ...repeater, repetitions: 3 }],
         })
         const screens = convertFormToScreens(form, {})
