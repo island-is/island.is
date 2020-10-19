@@ -1,8 +1,13 @@
 version: '3.3'
-
+ 
 services:
   sut:
-    image: ${SUT}
+    build:
+      context: .
+      dockerfile: ../../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: db_auth_api_backend
+        APP: auth_api_ws
     networks:
       - local
     depends_on:
@@ -12,8 +17,8 @@ services:
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
       - DB_HOST=db
-    entrypoint: ["scripts/_wait-for.sh", "db:5432", "-t", "5", "--", "yarn", "run", "test", "reference-backend"] 
-
+    volumes:
+      - ../../..:/code
+      
   db:
     ports: []
-      

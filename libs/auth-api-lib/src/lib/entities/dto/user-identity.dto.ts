@@ -1,4 +1,4 @@
-import { IsString, IsArray } from 'class-validator'
+import { IsString, IsArray, IsBoolean } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { ClaimDto } from './claim.dto'
 
@@ -21,6 +21,10 @@ export class UserIdentityDto {
   })
   readonly providerName: string
 
+  @IsBoolean()
+  @ApiProperty({
+    example: 'set_active',
+  })
   @IsString()
   @ApiProperty({
     example: 'set_provider_subject_id',
