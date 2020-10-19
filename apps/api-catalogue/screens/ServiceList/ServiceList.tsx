@@ -221,7 +221,10 @@ export default function ServiceList(props: ServiceListProps) {
           {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">
               <div>
-                <IconDeprecated type="loading" className={styles.loadingIcon} />
+                <IconDeprecated
+                  type="loading"
+                  className={styles.loadingIcon}
+                />
                 {/* <Icons
                   type="filled"
                   icon="sync"

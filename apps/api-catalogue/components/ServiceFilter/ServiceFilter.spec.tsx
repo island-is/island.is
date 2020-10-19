@@ -53,9 +53,13 @@ describe(' ServiceFilter ', () => {
         rootClasses={null}
         isLoading={true}
         parameters={params}
+<<<<<<< HEAD
         onInputChange={({ target }) => {
           ;(target) => {}
         }}
+=======
+        onInputChange={({ target }) => {(target) => {} }}
+>>>>>>> 7169a78a10764498308c74219167d483f4729e23
         onClear={null}
         onCheckCategoryChanged={null}
         strings={strings}
