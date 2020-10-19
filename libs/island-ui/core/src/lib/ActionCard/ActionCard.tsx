@@ -128,7 +128,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Button
             variant={cta.variant === 'secondary' ? 'text' : 'primary'}
             onClick={cta.onClick}
-            icon="arrowRight"
+            icon="arrowForward"
           >
             {cta.label}
           </Button>
