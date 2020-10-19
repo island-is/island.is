@@ -12,6 +12,7 @@ import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
+import { Image } from '@island.is/api/schema'
 
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
@@ -95,6 +96,7 @@ const Layout: NextComponentType<
   ]
 
   const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+
   return (
     <GlobalContextProvider namespace={namespace}>
       <Page>

@@ -382,6 +382,18 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     article.intro ||
     'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
 
+  const metaImage = article.featuredImage
+    ? article.featuredImage.url
+    : '/island-fb-1200x630.png'
+
+  const metaImageWidth = article.featuredImage
+    ? article.featuredImage.width.toString()
+    : '1200'
+
+  const metaImageHeight = article.featuredImage
+    ? article.featuredImage.height.toString()
+    : '630'
+
   const processEntries = article?.body?.length
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
     : []
@@ -400,6 +412,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           property="og:description"
           content={metaDescription}
         />
+        <meta property="og:image" content={metaImage} />
+        <meta property="og:image:width" content={metaImageWidth} />
+        <meta property="og:image:height" content={metaImageHeight} />
       </Head>
       <ArticleLayout
         sidebar={

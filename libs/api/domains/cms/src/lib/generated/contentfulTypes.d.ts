@@ -169,6 +169,9 @@ export interface IArticleFields {
 
   /** User stories */
   userStories?: Document | undefined
+
+  /** Featured image */
+  featuredImage: Asset
 }
 
 export interface IArticle extends Entry<IArticleFields> {

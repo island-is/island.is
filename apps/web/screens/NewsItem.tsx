@@ -39,6 +39,24 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
 
+  const metaTitle = `${newsItem.title} | Ísland.is`
+
+  const metaDescription =
+    newsItem.intro ||
+    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
+
+  const metaImage = newsItem.image
+    ? newsItem.image.url
+    : '/island-fb-1200x630.png'
+
+  const metaImageWidth = newsItem.image
+    ? newsItem.image.width.toString()
+    : '1200'
+
+  const metaImageHeight = newsItem.image
+    ? newsItem.image.height.toString()
+    : '630'
+
   const sidebar = (
     <SidebarBox>
       <Stack space={3}>
@@ -69,7 +87,16 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   return (
     <>
       <Head>
-        <title>{newsItem.title} | Ísland.is</title>
+        <title>{metaTitle}</title>
+        <meta name="title" property="og:title" content={metaTitle} />
+        <meta
+          name="description"
+          property="og:description"
+          content={metaDescription}
+        />
+        <meta property="og:image" content={metaImage} />
+        <meta property="og:image:width" content={metaImageWidth} />
+        <meta property="og:image:height" content={metaImageHeight} />
       </Head>
       <GridContainer>
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
