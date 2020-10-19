@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 import { FormStep, UserProfileFormData } from './Steps/FormStep'
 import { IntroStep } from './Steps/IntroStep'
 
-type OnboardingStep = 'intro' | 'user-info' | 'submit'
+type OnboardingStep = 'intro' | 'user-info'
 
 interface Props {
   userInfo: User
@@ -24,8 +24,9 @@ export const UserOnboardingModal: FC<Props> = ({ userInfo }) => {
     setStep(step)
   }
 
-  const handleFormSubmit = (data: UserProfileFormData) => {
-    console.log('lads go', data)
+  const handleFormSubmit = () => {
+    toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
+    setIsOpen(false)
   }
 
   return (

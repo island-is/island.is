@@ -26,11 +26,6 @@ export class CreateUserProfileDto {
   readonly locale?: Locale
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly profileImageUrl?: string
-
-  @IsOptional()
   @IsEmail()
   @ApiPropertyOptional()
   readonly email?: string
