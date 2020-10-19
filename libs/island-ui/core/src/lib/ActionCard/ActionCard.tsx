@@ -108,13 +108,23 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const renderProgressMeter = () => {
     const { variant, progress } = progressMeter
     return (
-      <Box width="full" paddingTop={2} display="flex" alignItems="center">
+      <Box
+        width="full"
+        paddingTop={2}
+        display="flex"
+        alignItems={['flexStart', 'flexStart', 'center']}
+        flexDirection={['column', 'column', 'row']}
+      >
         <ProgressMeter
           variant={variant}
           progress={progress}
           className={styles.progressMeter}
         />
-        <Box display="inlineFlex" marginLeft="auto">
+        <Box
+          display="inlineFlex"
+          marginLeft={[0, 0, 'auto']}
+          paddingTop={[2, 2, 0]}
+        >
           <Button
             variant={cta.variant === 'secondary' ? 'text' : 'primary'}
             onClick={cta.onClick}
