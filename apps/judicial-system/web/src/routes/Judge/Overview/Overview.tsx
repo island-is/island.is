@@ -313,6 +313,14 @@ export const JudgeOverview: React.FC = () => {
                     </Box>
                   )}
                 </AccordionItem>
+                <AccordionItem
+                  id="id_5"
+                  label="Skilaboð til dómara"
+                  startExpanded
+                  labelVariant="h3"
+                >
+                  <Text>{workingCase?.comments}</Text>
+                </AccordionItem>
               </Accordion>
             </Box>
             <FormFooter
