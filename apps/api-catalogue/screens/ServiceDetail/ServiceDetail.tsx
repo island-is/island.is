@@ -38,7 +38,7 @@ ServiceDetail.getInitialProps = async (
 ): Promise<ServiceDetailPageProps> => {
   const { query } = ctx
   const id = query.service.toString()
-  
+
   // const client = new ContentfulApi()
   // let locale = 'is-IS'
 
@@ -64,9 +64,9 @@ ServiceDetail.getInitialProps = async (
     }),
   ])
 
-  return { 
-    service: getApiServiceById, 
-    filterStrings: null 
+  return {
+    service: getApiServiceById,
+    filterStrings: null,
     //filterStrings: filterStrings
   }
 }

@@ -9,7 +9,7 @@ describe(' CategoryCheckBox ', () => {
       <CategoryCheckBox
         checked={false}
         onChange={({ target }) => {
-          (target) => {}
+          ;(target) => {}
         }}
         label="Test"
         name="Test"

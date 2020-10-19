@@ -159,8 +159,7 @@ export class RestMetadataService {
 
           if (map) {
             map.push(mappedItem)
-          }
-          else {
+          } else {
             serviceMap.set(serviceCode, [mappedItem])
           }
         }

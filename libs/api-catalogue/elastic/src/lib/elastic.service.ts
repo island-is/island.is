@@ -25,7 +25,9 @@ export class ElasticService {
     logger.info('Deleting index', this.indexName)
 
     try {
-      const { body } = await this.client.indices.exists({ index: this.indexName })
+      const { body } = await this.client.indices.exists({
+        index: this.indexName,
+      })
       if (body) {
         await this.client.indices.delete({ index: this.indexName })
       } else {
