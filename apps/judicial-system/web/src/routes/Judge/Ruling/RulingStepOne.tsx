@@ -177,6 +177,7 @@ export const RulingStepOne: React.FC = () => {
                       setWorkingCase,
                     )
                   }}
+                  required
                 />
               </Box>
               <GridRow>
