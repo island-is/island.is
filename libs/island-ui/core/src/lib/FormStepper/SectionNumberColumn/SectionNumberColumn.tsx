@@ -1,16 +1,17 @@
 import React, { FC } from 'react'
+import cn from 'classnames'
 
 import { Box } from '../../Box/Box'
 import * as styles from './SectionNumberColumn.treat'
 
 interface SectionNumberColumnProps {
   children?: React.ReactNode
-  className?: string
+  type?: 'section' | 'subSection'
 }
 
 export const SectionNumberColumn: FC<SectionNumberColumnProps> = ({
   children,
-  className,
+  type = 'section',
 }) => (
   <Box
     position="relative"
@@ -18,7 +19,9 @@ export const SectionNumberColumn: FC<SectionNumberColumnProps> = ({
     alignItems="center"
     justifyContent="center"
     marginRight={[1, 1, 2]}
-    className={[styles.root, className]}
+    className={cn(styles.root, {
+      [styles.rootSubSection]: type === 'subSection',
+    })}
   >
     {children}
   </Box>

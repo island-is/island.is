@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import cn from 'classnames'
 
 import { Icon } from '../../Icon/Icon'
 import { Text } from '../../Text/Text'
@@ -19,7 +18,7 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
   children,
 }) => (
   <Box display="flex" alignItems="center" marginTop={[0, 0, 1]}>
-    <SectionNumberColumn className={styles.number}>
+    <SectionNumberColumn type="subSection">
       {showIcon && (
         <span className={styles.bullet}>
           <span className={styles.icon}>

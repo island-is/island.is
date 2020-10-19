@@ -1,20 +1,6 @@
 import { theme } from '@island.is/island-ui/theme'
 import { style } from 'treat'
 
-export const number = style({
-  width: 16,
-  height: 16,
-  flex: '0 0 16px',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      width: 32,
-      height: 32,
-      flex: '0 0 32px',
-    },
-  },
-})
-
 export const icon = style({
   position: 'relative',
   display: 'inline-block',
