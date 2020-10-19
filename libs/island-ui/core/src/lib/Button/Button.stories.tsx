@@ -1,10 +1,9 @@
 import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
+import { withFigma } from '../../utils/withFigma'
+
 import { Box } from '../Box/Box'
 import { Button } from './Button'
-
-const figmaLink =
-  'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=2%3A170'
 
 export default {
   title: 'Core/Button',
@@ -15,17 +14,12 @@ export default {
     onBlur: { action: 'onBlur' },
     onFocus: { action: 'onFocus' },
   },
-  parameters: {
-    docs: {
-      description: {
-        component: `[View in Figma](${figmaLink})`,
-      },
-    },
-    design: {
-      type: 'figma',
-      url: figmaLink,
-    },
-  },
+  parameters: withFigma({
+    desktop:
+      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=2%3A170',
+    mobile:
+      'https://www.figma.com/file/rU3mPM1cLfHa3u7TWuutPQ/UI-Library-%E2%80%93-%F0%9F%93%B1Mobile?node-id=1%3A7',
+  }),
 }
 
 const Template = (args) => <Button {...args} />
@@ -79,7 +73,7 @@ export const GhostWithIcon = Template.bind({})
 GhostWithIcon.args = {
   children: 'Ghost With Icon',
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const GhostNegative = () => (
@@ -114,7 +108,7 @@ export const TextWithIcon = Template.bind({})
 TextWithIcon.args = {
   children: 'Text with icon',
   variant: 'text',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const TextNegative = () => (
@@ -134,7 +128,7 @@ export const TextMultiline = () => (
 )
 
 export const TextMultilineWithIcon = () => (
-  <Button variant="text" icon="arrowRight">
+  <Button variant="text" icon="arrowForward">
     Text button with long text that
     <br />
     breaks down into multiple lines
@@ -144,33 +138,33 @@ export const TextMultilineWithIcon = () => (
 export const Circle = Template.bind({})
 Circle.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const CircleSmall = Template.bind({})
 CircleSmall.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'small',
 }
 
 export const CircleLarge = Template.bind({})
 CircleLarge.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'large',
 }
 
 export const CircleDestructive = Template.bind({})
 CircleDestructive.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   colorScheme: 'destructive',
 }
 
 export const CircleNegative = () => (
   <Box background="blue400" padding={4}>
-    <Button colorScheme="negative" circle icon="arrowRight" />
+    <Button colorScheme="negative" circle icon="arrowForward" />
   </Box>
 )
 
@@ -178,14 +172,14 @@ export const CircleGhost = Template.bind({})
 CircleGhost.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const CircleGhostSmall = Template.bind({})
 CircleGhostSmall.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'small',
 }
 
@@ -193,7 +187,7 @@ export const CircleGhostLarge = Template.bind({})
 CircleGhostLarge.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'large',
 }
 
@@ -201,12 +195,12 @@ export const CircleGhostDestructive = Template.bind({})
 CircleGhostDestructive.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   colorScheme: 'destructive',
 }
 export const CircleGhostNegative = () => (
   <Box background="blue400" padding={4}>
-    <Button variant="ghost" colorScheme="negative" circle icon="arrowRight" />
+    <Button variant="ghost" colorScheme="negative" circle icon="arrowForward" />
   </Box>
 )
 
@@ -214,7 +208,7 @@ export const Utility = Template.bind({})
 Utility.args = {
   children: 'Utility Button',
   variant: 'utility',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const UtilityDestructive = Template.bind({})
@@ -222,12 +216,12 @@ UtilityDestructive.args = {
   children: 'Utility Button',
   variant: 'utility',
   colorScheme: 'destructive',
-  icon: 'globe',
+  icon: 'arrowForward',
 }
 
 export const UtilityNegative = () => (
   <Box background="blue400" padding={4}>
-    <Button variant="utility" colorScheme="negative" icon="arrowRight">
+    <Button variant="utility" colorScheme="negative" icon="arrowForward">
       Utility Button
     </Button>
   </Box>

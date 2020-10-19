@@ -48,6 +48,9 @@
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
       ],
+      "@island.is/api/domains/user-profile": [
+        "libs/api/domains/user-profile/src/index.ts"
+      ],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [

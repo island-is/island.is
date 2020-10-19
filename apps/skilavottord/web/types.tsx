@@ -6,8 +6,8 @@ import { NextPageContext } from 'next/dist/next-server/lib/utils'
 export interface MockCar {
   permno: string
   type: string
-  newregdate: number
-  color: number
+  newregdate: string
+  color: string
   recyclable: boolean
   status?: string
   isCoOwned?: boolean

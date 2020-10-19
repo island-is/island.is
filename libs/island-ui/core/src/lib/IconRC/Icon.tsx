@@ -1,23 +1,11 @@
+import React, { Suspense, useMemo } from 'react'
 import { theme } from '@island.is/island-ui/theme'
-import React, { Suspense } from 'react'
-import iconMap from './iconMap'
+import iconMap, { Icon as IconType, Type } from './iconMap'
 
 const colors = theme.color
-
-export type IconPropsType =
-  | {
-      type: 'filled'
-      icon: keyof typeof iconMap.filled
-    }
-  | {
-      type: 'outline'
-      icon: keyof typeof iconMap.outline
-    }
-  | {
-      type: 'sharp'
-      icon: keyof typeof iconMap.sharp
-    }
-interface IconProps {
+export interface IconProps {
+  type?: Type
+  icon: IconType
   title?: string
   titleId?: string
   color?: keyof typeof colors
@@ -49,9 +37,22 @@ export const Icon = ({
   className,
   title,
   titleId,
-}: IconProps & IconPropsType) => {
-  const path = iconMap[type!][icon!]
-  const IconSvg = React.lazy(() => import('./icons/' + path))
+}: IconProps) => {
+  const path = iconMap[type][icon]
+  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
+    path,
+  ])
+  if (typeof window === 'undefined') {
+    return (
+      <span
+        style={{
+          display: 'inline-block',
+          width: sizes[size],
+          height: sizes[size],
+        }}
+      />
+    )
+  }
   const optionalProps: SvgProps = {}
   if (className) {
     optionalProps.className = className
@@ -67,7 +68,17 @@ export const Icon = ({
     optionalProps.height = sizes[size]
   }
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={
+        <span
+          style={{
+            display: 'inline-block',
+            width: sizes[size],
+            height: sizes[size],
+          }}
+        />
+      }
+    >
       <IconSvg fill={colors[color]} color={colors[color]} {...optionalProps} />
     </Suspense>
   )

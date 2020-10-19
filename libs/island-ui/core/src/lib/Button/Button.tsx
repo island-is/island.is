@@ -4,7 +4,8 @@ import cn from 'classnames'
 
 import { Box } from '../Box/Box'
 import * as styles from './Button.treat'
-import { Icon, IconTypes } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
+import { Icon as IconType, Type } from '../IconRC/iconMap'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 
@@ -39,7 +40,8 @@ export interface ButtonProps {
   size?: Exclude<keyof typeof styles.size, 'utility'>
   disabled?: boolean
   focusable?: boolean
-  icon?: IconTypes
+  icon?: IconType
+  iconType?: Type
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
@@ -49,6 +51,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
       colorScheme = 'default',
       size = 'default',
       icon,
+      iconType = 'filled',
       children,
       circle,
       ...buttonProps
@@ -72,12 +75,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
               variant !== 'utility' && variant !== 'text' && !circle,
             [styles.padding.text]: variant === 'text',
             [styles.padding.utility]: variant === 'utility',
+            [styles.isEmpty]: !children,
           },
         )}
         {...buttonProps}
       >
         {children}
-        {icon && <ButtonIcon icon={icon} />}
+        {icon && <ButtonIcon icon={icon} type={iconType} />}
       </Box>
     )
   },
@@ -85,13 +89,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
 
 type ButtonIconProps = {
   icon: ButtonProps['icon']
+  type: ButtonProps['iconType']
 }
 
-const ButtonIcon = ({ icon }: ButtonIconProps) => (
+const ButtonIcon = ({ icon, type }: ButtonIconProps) => (
   <Icon
-    type={icon!}
-    width="none"
-    height="none"
+    icon={icon!}
+    type={type!}
     color="currentColor"
     className={styles.icon}
   />

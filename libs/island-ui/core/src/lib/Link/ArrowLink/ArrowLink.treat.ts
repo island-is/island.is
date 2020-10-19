@@ -3,7 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const root = style({
   position: 'relative',
-  paddingBottom: theme.spacing[1],
+  paddingBottom: 4,
   display: 'inline-block',
   color: theme.color.blue400,
   '::before': {
@@ -18,5 +18,5 @@ export const root = style({
 })
 
 export const iconWrap = style({
-  paddingLeft: theme.spacing[1],
+  paddingLeft: 4,
 })

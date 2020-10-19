@@ -24,7 +24,7 @@ import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 export interface LatestNewsItem {
   date: string
   title: string
-  intro: string
+  intro?: string
   image?: Image
   slug: string
   content?: string
