@@ -26,7 +26,7 @@
       "seeDetails": "See details"
     },
     "tooltip": {
-      "text": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seiced by the police. Login to see more information at",
+      "text": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seized by the police. Login to see more information at",
       "link": "https://innskranning.island.is/?id=mitt.samgongustofa.is"
     },
     "error": {
@@ -39,7 +39,7 @@
     "subTitles": {
       "confirm": "Do you want select this car for recycling?"
     },
-    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
+    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
       "continue": "Confirm with icekey"
@@ -56,7 +56,7 @@
       "nextStep": "Next step: Handover the car to recycling company",
       "companies": "Available recycling companies"
     },
-    "subInfo": "Handover the car to any of the recylcing companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will recive your payment within 2 business days.",
+    "subInfo": "Handover the car to any of the recycling companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will receive your payment within 2 business days.",
     "buttons": {
       "cancel": "Cancel recycling",
       "close": "Close"
@@ -90,7 +90,57 @@
       "close": "Close"
     }
   },
-  "processSections": ["Confirm car for recycling", "Handover car to recycle"],
+  "processes": {
+    "citizen": {
+      "title": "Recycle car",
+      "sections": ["Confirm car for recycling", "Handover car to recycle"]
+    },
+    "company": {
+      "title": "Deregister car",
+      "sections": ["Select car", "Deregister car"]
+    }
+  },
+  "companyOverview": {
+    "title": "Deregister car",
+    "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
+    "subtitles": {
+      "history": "History"
+    },
+    "buttons": {
+      "deregister": "Deregister car"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+  },
+  "companySidenav": {
+    "deregister": "Deregister car",
+    "companyInfo": "Company information"
+  },
+  "deregisterVehicle": {
+    "select": {
+      "title": "Select car",
+      "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
+      "input": {
+        "label": "Car registration number",
+        "placeholder": "ex MD2341"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
+    },
+    "deregister": {
+      "title": "Deregister car",
+      "info": "Confirm car for deregistration. This process cannot be undone.",
+      "buttons": {
+        "back": "Back",
+        "confirm": "Confirm"
+      }
+    }
+  },
   "routes": {
     "home": "/en",
     "myCars": "/en/my-cars",
@@ -99,6 +149,11 @@
       "confirm": "/en/recycle-vehicle/[id]/confirm",
       "handover": "/en/recycle-vehicle/[id]/handover",
       "completed": "/en/recycle-vehicle/[id]/completed"
+    },
+    "deregisterVehicle": {
+      "baseRoute": "/en/deregister-vehicle",
+      "select": "/en/deregister-vehicle/select",
+      "deregister": "/en/deregister-vehicle/[id]"
     }
   }
 }

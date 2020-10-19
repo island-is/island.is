@@ -2,7 +2,7 @@ import {
   Box,
   ButtonDeprecated as Button,
   Icon,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -34,17 +34,17 @@ const Modal: React.FC<ModalProps> = ({
         {handleClose && (
           <Box position="absolute" top={0} right={0}>
             <button className={styles.closeButton} onClick={handleClose}>
-              <Icon type="close" />
+              <Icon icon="close" type="outline" color="blue400" />
             </button>
           </Box>
         )}
         <Box marginBottom={4}>
-          <Typography variant="h1">{title}</Typography>
+          <Text variant="h1">{title}</Text>
         </Box>
         <Box marginBottom={6}>
           {
             // Check if text is a string or Element
-            React.isValidElement(text) ? text : <Typography>{text}</Typography>
+            React.isValidElement(text) ? text : <Text>{text}</Text>
           }
         </Box>
         <Box display="flex">

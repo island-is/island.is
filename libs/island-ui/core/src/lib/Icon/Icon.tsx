@@ -3,6 +3,7 @@ import cn from 'classnames'
 import { Colors } from '@island.is/island-ui/theme'
 
 import * as styles from './Icon.treat'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export type IconTypes =
   | 'alert'
@@ -310,6 +311,7 @@ export const Icon = ({
   spin,
   className,
 }: IconProps) => {
+  useDeprecatedComponent('IconDeprecated', 'Icon')
   return (
     <SvgPathContainer
       path={iconsConf[type].path}

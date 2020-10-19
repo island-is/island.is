@@ -4,8 +4,11 @@ import {
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
+import { useNamespaces } from '@island.is/localization'
 
 export const HealthOverview: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.health')
+
   return (
     <InfoScreen
       title={defineMessage({
@@ -13,9 +16,9 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
         defaultMessage: 'Heilsa',
       })}
       intro={defineMessage({
-        id: 'sp.assets:intro',
+        id: 'sp.health:intro',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
-        fjármál á næstunni.`,
+        heilsu á næstunni.`,
       })}
       list={{
         title: defineMessage({
@@ -24,39 +27,43 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
         }),
         items: [
           defineMessage({
-            id: 'sp.assets:inc-1',
-            defaultMessage:
-              'Yfirlit og hægt verður að greiða öll opinber gjöld',
+            id: 'sp.health:inc-1',
+            defaultMessage: ' ',
           }),
           defineMessage({
-            id: 'sp.assets:inc-2',
-            defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
+            id: 'sp.health:inc-2',
+            defaultMessage: ' ',
           }),
           defineMessage({
-            id: 'sp.assets:inc-3',
-            defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
+            id: 'sp.health:inc-3',
+            defaultMessage: ' ',
           }),
         ],
       }}
       institutionTitle={defineMessage({
-        id: 'sp.assets:institution',
-        defaultMessage: 'Samgöngustofa',
+        id: 'service.portal:digital-iceland',
+        defaultMessage: 'Stafrænt Ísland',
+      })}
+      institutionSubtitle={defineMessage({
+        id: 'service.portal:incoming',
+        defaultMessage: 'Á döfinni',
       })}
       institutionDescription={defineMessage({
-        id: 'sp.assets:institution-description',
+        id: 'service.portal:vision-segment',
         defaultMessage: `
-          Vinnumálastofnun heyrir undir félagsmálráðuneytið og fer m.a. með
-          yfirstjórn vinnumiðlunar í landinu og daglega afgreiðslu
-          Atvinnuleysistryggingasjóðs, Fæðingarorlofssjóðs, Ábyrgðarsjóðs
-          launa auk fjölmargra annara vinnumarkaðstengdra verkefna.
+          Markmið ríkisstjórnarinnar er að stafræn samskipti
+          verði megin samskiptaleið fólks og fyrirtækja við hið opinbera.
+          Þannig má einfalda líf þeirra sem búa og starfa á Íslandi.
+          Stafrænt Ísland, sem heyrir undir fjármála- og efnahagsráðuneytið,
+          vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
         `,
       })}
-      institutionHref="https://www.samgongustofa.is/"
+      institutionHref="https://island.is/um-island-is"
       institutionLinkTitle={defineMessage({
-        id: 'sp.assets:institution:link-title',
-        defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
+        id: 'service.portal:timeline-link-title',
+        defaultMessage: 'Sjá tímalínu',
       })}
-      figure="/assets/images/breakfast.jpg"
+      figure="/assets/images/park.jpg"
     />
   )
 }

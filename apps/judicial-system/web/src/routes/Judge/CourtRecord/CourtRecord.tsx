@@ -4,21 +4,29 @@ import {
   GridContainer,
   GridRow,
   Input,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
-import { setHours, setMinutes } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
-import { autoSave, renderFormStepper } from '../../../utils/stepHelper'
+import {
+  autoSave,
+  isNextDisabled,
+  renderFormStepper,
+  updateState,
+} from '../../../utils/stepHelper'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseString,
+  parseTime,
+} from '@island.is/judicial-system-web/src/utils/formatters'
+import * as api from '../../../api'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -29,6 +37,13 @@ export const CourtRecord: React.FC = () => {
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
+  ] = useState('')
+  const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
+  const [policeDemandsErrorMessage, setPoliceDemandsMessage] = useState('')
+  const [accusedPleaErrorMessage, setAccusedPleaMessage] = useState('')
+  const [
+    litigationPresentationsErrorMessage,
+    setLitigationPresentationsMessage,
   ] = useState('')
 
   useEffect(() => {
@@ -44,45 +59,104 @@ export const CourtRecord: React.FC = () => {
   }, [workingCase, setWorkingCase])
 
   return workingCase ? (
-    <Box marginTop={7} marginBottom={30}>
-      <GridContainer>
-        <Box marginBottom={7}>
+    <>
+      <Box marginTop={7} marginBottom={30}>
+        <GridContainer>
+          <Box marginBottom={7}>
+            <GridRow>
+              <GridColumn span={'3/12'}>
+                <JudgeLogo />
+              </GridColumn>
+              <GridColumn span={'8/12'} offset={'1/12'}>
+                <Box marginBottom={10}>
+                  <Text as="h1" variant="h1">
+                    Krafa um gæsluvarðhald
+                  </Text>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </Box>
           <GridRow>
-            <GridColumn span={'3/12'}>
-              <JudgeLogo />
+            <GridColumn span={['12/12', '3/12']}>
+              {renderFormStepper(1, 1)}
             </GridColumn>
-            <GridColumn span={'8/12'} offset={'1/12'}>
-              <Box marginBottom={10}>
-                <Typography as="h1" variant="h1">
-                  Krafa um gæsluvarðhald
-                </Typography>
+            <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
+              <Box component="section" marginBottom={7}>
+                <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+                <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
               </Box>
-            </GridColumn>
-          </GridRow>
-        </Box>
-        <GridRow>
-          <GridColumn span={['12/12', '3/12']}>
-            {renderFormStepper(1, 1)}
-          </GridColumn>
-          <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
-            <Box component="section" marginBottom={7}>
-              <Typography variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Typography>
-              <Typography fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Typography>
-            </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Þingbók
-                </Typography>
-              </Box>
-              <Box display="flex" marginBottom={3}>
-                <Box marginRight={3}>
+              <Box component="section" marginBottom={8}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Þingbók
+                  </Text>
+                </Box>
+                <Box display="flex" marginBottom={3}>
+                  <Box marginRight={3}>
+                    <Input
+                      data-testid="courtStartTime"
+                      name="courtStartTime"
+                      label="Þinghald hefst"
+                      placeholder="Veldu tíma"
+                      defaultValue={formatDate(
+                        workingCase.courtStartTime,
+                        TIME_FORMAT,
+                      )}
+                      onBlur={(evt) => {
+                        const validateTimeEmpty = validate(
+                          evt.target.value,
+                          'empty',
+                        )
+                        const validateTimeFormat = validate(
+                          evt.target.value,
+                          'time-format',
+                        )
+
+                        if (
+                          validateTimeEmpty.isValid &&
+                          validateTimeFormat.isValid
+                        ) {
+                          const courtStartTimeMinutes = parseTime(
+                            new Date().toString(),
+                            evt.target.value,
+                          )
+                          if (
+                            courtStartTimeMinutes !== workingCase.courtStartTime
+                          ) {
+                            autoSave(
+                              workingCase,
+                              'courtStartTime',
+                              courtStartTimeMinutes,
+                              setWorkingCase,
+                            )
+                          }
+                        } else {
+                          updateState(
+                            workingCase,
+                            'courtStartTime',
+                            evt.target.value,
+                            setWorkingCase,
+                          )
+
+                          setCourtDocumentStartErrorMessage(
+                            validateTimeEmpty.errorMessage ||
+                              validateTimeFormat.errorMessage,
+                          )
+                        }
+                      }}
+                      errorMessage={courtDocumentStartErrorMessage}
+                      hasError={courtDocumentStartErrorMessage !== ''}
+                      onFocus={() => setCourtDocumentStartErrorMessage('')}
+                      required
+                    />
+                  </Box>
                   <Input
-                    name="courtStartTime"
-                    label="Þinghald hefst"
+                    data-testid="courtEndTime"
+                    name="courtEndTime"
+                    label="Þinghald lýkur"
                     placeholder="Veldu tíma"
                     defaultValue={formatDate(
-                      workingCase.courtStartTime,
+                      workingCase.courtEndTime,
                       TIME_FORMAT,
                     )}
                     onBlur={(evt) => {
@@ -99,193 +173,253 @@ export const CourtRecord: React.FC = () => {
                         validateTimeEmpty.isValid &&
                         validateTimeFormat.isValid
                       ) {
-                        const courtStartTimeMinutes = parseTime(
+                        const courtEndTimeMinutes = parseTime(
                           new Date().toString(),
                           evt.target.value,
                         )
-
-                        autoSave(
+                        if (courtEndTimeMinutes !== workingCase.courtEndTime) {
+                          autoSave(
+                            workingCase,
+                            'courtEndTime',
+                            courtEndTimeMinutes,
+                            setWorkingCase,
+                          )
+                        }
+                      } else {
+                        updateState(
                           workingCase,
-                          'courtStartTime',
-                          courtStartTimeMinutes,
+                          'courtEndTime',
+                          evt.target.value,
                           setWorkingCase,
                         )
-                      } else {
-                        setCourtDocumentStartErrorMessage(
+
+                        setCourtDocumentEndErrorMessage(
                           validateTimeEmpty.errorMessage ||
                             validateTimeFormat.errorMessage,
                         )
                       }
                     }}
-                    errorMessage={courtDocumentStartErrorMessage}
-                    hasError={courtDocumentStartErrorMessage !== ''}
-                    onFocus={() => setCourtDocumentStartErrorMessage('')}
+                    errorMessage={courtDocumentEndErrorMessage}
+                    hasError={courtDocumentEndErrorMessage !== ''}
+                    onFocus={() => setCourtDocumentEndErrorMessage('')}
+                    required
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    data-testid="courtAttendees"
+                    name="courtAttendees"
+                    label="Viðstaddir og hlutverk þeirra"
+                    defaultValue={workingCase?.courtAttendees}
+                    placeholder="Skrifa hér..."
+                    onBlur={(evt) => {
+                      updateState(
+                        workingCase,
+                        'courtAttendees',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                      const validateEmpty = validate(evt.target.value, 'empty')
+
+                      if (
+                        validateEmpty.isValid &&
+                        workingCase.courtAttendees !== evt.target.value
+                      ) {
+                        api.saveCase(
+                          workingCase.id,
+                          parseString('courtAttendees', evt.target.value),
+                        )
+                      } else {
+                        setCourtAttendeesMessage(validateEmpty.errorMessage)
+                      }
+                    }}
+                    errorMessage={courtAttendeesErrorMessage}
+                    hasError={courtAttendeesErrorMessage !== ''}
+                    onFocus={() => setCourtAttendeesMessage('')}
+                    textarea
+                    rows={3}
                     required
                   />
                 </Box>
                 <Input
-                  name="courtEndTime"
-                  label="Þinghald lýkur"
-                  placeholder="Veldu tíma"
-                  defaultValue={formatDate(
-                    workingCase.courtEndTime,
-                    TIME_FORMAT,
-                  )}
-                  onBlur={(evt) => {
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid
-                    ) {
-                      const courtEndTimeMinutes = parseTime(
-                        new Date().toString(),
-                        evt.target.value,
-                      )
-
-                      autoSave(
-                        workingCase,
-                        'courtEndTime',
-                        courtEndTimeMinutes,
-                        setWorkingCase,
-                      )
-                    } else {
-                      setCourtDocumentEndErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
-                      )
-                    }
-                  }}
-                  errorMessage={courtDocumentEndErrorMessage}
-                  hasError={courtDocumentEndErrorMessage !== ''}
-                  onFocus={() => setCourtDocumentEndErrorMessage('')}
-                  required
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  name="courtAttendees"
-                  label="Viðstaddir og hlutverk þeirra"
-                  defaultValue={workingCase.courtAttendees}
+                  data-testid="policeDemands"
+                  name="policeDemands"
+                  label="Krafa lögreglu"
+                  defaultValue={workingCase?.policeDemands}
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
-                    autoSave(
+                    updateState(
                       workingCase,
-                      'courtAttendees',
+                      'policeDemands',
                       evt.target.value,
                       setWorkingCase,
                     )
+                    const validateEmpty = validate(evt.target.value, 'empty')
+
+                    if (
+                      validateEmpty.isValid &&
+                      workingCase.policeDemands !== evt.target.value
+                    ) {
+                      api.saveCase(
+                        workingCase.id,
+                        parseString('policeDemands', evt.target.value),
+                      )
+                    } else {
+                      setPoliceDemandsMessage(validateEmpty.errorMessage)
+                    }
                   }}
+                  errorMessage={policeDemandsErrorMessage}
+                  hasError={policeDemandsErrorMessage !== ''}
+                  onFocus={() => setPoliceDemandsMessage('')}
                   textarea
                   rows={3}
+                  required
                 />
               </Box>
-              <Input
-                name="policeDemands"
-                label="Krafa lögreglu"
-                defaultValue={workingCase.policeDemands}
-                placeholder="Skrifa hér..."
-                onBlur={(evt) => {
-                  autoSave(
-                    workingCase,
-                    'policeDemands',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
-                }}
-                textarea
-                rows={3}
+              <Box component="section" marginBottom={8}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Dómskjöl
+                  </Text>
+                </Box>
+                <GridRow>
+                  <GridColumn span="6/7">
+                    <CourtDocument
+                      title="Krafa lögreglu"
+                      tagText="Þingmerkt nr. 1"
+                      tagVariant="blue"
+                      text="Rannsóknargögn málsins liggja frammi."
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+              <Box component="section" marginBottom={8}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Réttindi kærða
+                  </Text>
+                </Box>
+                <Box marginBottom={2}>
+                  <Text>
+                    Kærða er bent á að honum sé óskylt að svara spurningum er
+                    varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
+                    gr. laga nr. 88/2008. Kærði er enn fremur áminntur um
+                    sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
+                    114. gr. sömu laga
+                  </Text>
+                </Box>
+                <Input
+                  data-testid="accusedPlea"
+                  name="accusedPlea"
+                  label="Afstaða kærða"
+                  defaultValue={workingCase.accusedPlea}
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    updateState(
+                      workingCase,
+                      'accusedPlea',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                    const validateEmpty = validate(evt.target.value, 'empty')
+
+                    if (
+                      validateEmpty.isValid &&
+                      workingCase.accusedPlea !== evt.target.value
+                    ) {
+                      api.saveCase(
+                        workingCase.id,
+                        parseString('accusedPlea', evt.target.value),
+                      )
+                    } else {
+                      setAccusedPleaMessage(validateEmpty.errorMessage)
+                    }
+                  }}
+                  errorMessage={accusedPleaErrorMessage}
+                  hasError={accusedPleaErrorMessage !== ''}
+                  onFocus={() => setAccusedPleaMessage('')}
+                  textarea
+                  rows={3}
+                  required
+                />
+              </Box>
+              <Box component="section" marginBottom={8}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Málflutningur
+                  </Text>
+                </Box>
+                <Input
+                  data-testid="litigationPresentations"
+                  name="litigationPresentations"
+                  label="Málflutningsræður"
+                  defaultValue={workingCase.litigationPresentations}
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    updateState(
+                      workingCase,
+                      'litigationPresentations',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                    const validateEmpty = validate(evt.target.value, 'empty')
+
+                    if (
+                      validateEmpty.isValid &&
+                      workingCase.litigationPresentations !== evt.target.value
+                    ) {
+                      api.saveCase(
+                        workingCase.id,
+                        parseString(
+                          'litigationPresentations',
+                          evt.target.value,
+                        ),
+                      )
+                    } else {
+                      setLitigationPresentationsMessage(
+                        validateEmpty.errorMessage,
+                      )
+                    }
+                  }}
+                  errorMessage={litigationPresentationsErrorMessage}
+                  hasError={litigationPresentationsErrorMessage !== ''}
+                  onFocus={() => setLitigationPresentationsMessage('')}
+                  textarea
+                  rows={3}
+                  required
+                />
+              </Box>
+              <FormFooter
+                nextUrl={Constants.RULING_STEP_ONE_ROUTE}
+                nextIsDisabled={isNextDisabled([
+                  {
+                    value: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+                    validations: ['empty', 'time-format'],
+                  },
+                  {
+                    value: formatDate(workingCase?.courtEndTime, TIME_FORMAT),
+                    validations: ['empty', 'time-format'],
+                  },
+                  {
+                    value: workingCase?.courtAttendees,
+                    validations: ['empty'],
+                  },
+                  {
+                    value: workingCase?.policeDemands,
+                    validations: ['empty'],
+                  },
+                  { value: workingCase?.accusedPlea, validations: ['empty'] },
+                  {
+                    value: workingCase?.litigationPresentations,
+                    validations: ['empty'],
+                  },
+                ])}
               />
-            </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Dómskjöl
-                </Typography>
-              </Box>
-              <GridRow>
-                <GridColumn span="6/7">
-                  <CourtDocument
-                    title="Krafa lögreglu"
-                    tagText="Þingmerkt nr. 1"
-                    tagVariant="blue"
-                    text="Rannsóknargögn málsins liggja frammi."
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Réttindi kærða
-                </Typography>
-              </Box>
-              <Box marginBottom={2}>
-                <Typography>
-                  Kærða er bent á að honum sé óskylt að svara spurningum er
-                  varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113.
-                  gr. laga nr. 88/2008. Kærði er enn fremur áminntur um
-                  sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr.
-                  114. gr. sömu laga
-                </Typography>
-              </Box>
-              <Input
-                name="accusedPlea"
-                label="Afstaða kærða"
-                defaultValue={workingCase.accusedPlea}
-                placeholder="Skrifa hér..."
-                onBlur={(evt) => {
-                  autoSave(
-                    workingCase,
-                    'accusedPlea',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
-                }}
-                textarea
-                rows={3}
-              />
-            </Box>
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Málflutningur
-                </Typography>
-              </Box>
-              <Input
-                name="litigationPresentations"
-                label="Málflutningsræður"
-                defaultValue={workingCase.litigationPresentations}
-                placeholder="Skrifa hér..."
-                onBlur={(evt) => {
-                  autoSave(
-                    workingCase,
-                    'litigationPresentations',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
-                }}
-                textarea
-                rows={3}
-              />
-            </Box>
-            <FormFooter
-              nextUrl={Constants.RULING_STEP_ONE_ROUTE}
-              nextIsDisabled={
-                !workingCase.courtStartTime || !workingCase.courtEndTime
-              }
-            />
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+    </>
   ) : null
 }
 

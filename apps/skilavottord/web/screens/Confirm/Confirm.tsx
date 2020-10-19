@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -9,7 +9,7 @@ import {
   Button,
   Checkbox,
   Text,
-  Icon,
+  IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { CarDetailsBox } from './components'
@@ -46,7 +46,7 @@ const Confirm = ({ apolloState }) => {
   }, [width])
 
   const onCancel = () => {
-    router.push({
+    router.replace({
       pathname: routes.myCars,
     })
   }
@@ -68,7 +68,11 @@ const Confirm = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout activeSection={0} activeCar={id.toString()}>
+        <ProcessPageLayout
+          sectionType={'citizen'}
+          activeSection={0}
+          activeCar={id.toString()}
+        >
           <Stack space={4}>
             <Typography variant="h1">{t.title}</Typography>
             <Stack space={2}>

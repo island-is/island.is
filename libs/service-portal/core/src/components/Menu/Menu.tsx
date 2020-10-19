@@ -32,7 +32,7 @@ export const Menu: FC<Props> = ({ isOpen, children, onCloseMenu }) => {
         })}
       >
         <button className={styles.closeButton} onClick={onCloseMenu}>
-          <Icon type="close" color="blue400" width={10} height={10} />
+          <Icon type="outline" icon="close" color="blue400" size="medium" />
         </button>
         {children}
       </Box>

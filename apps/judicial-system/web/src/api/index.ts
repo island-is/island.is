@@ -244,8 +244,11 @@ export const confirmSignature: (
         response: rs,
       }
     } else {
+      const rs = await response.json()
       return {
         httpStatusCode: response.status,
+        code: rs?.code,
+        message: rs?.message,
       }
     }
   } catch (e) {

@@ -10,7 +10,7 @@ import {
 import {
   AlertMessage,
   ButtonDeprecated as Button,
-  Typography,
+  Text,
   Tag,
   TagVariant,
   Box,
@@ -32,6 +32,7 @@ export const DetentionRequests: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
+    window.localStorage.clear()
   }, [])
 
   useEffect(() => {
@@ -97,9 +98,9 @@ export const DetentionRequests: React.FC = () => {
           className={styles.detentionRequestsTable}
           data-testid="detention-requests-table"
         >
-          <Typography as="caption" variant="h3">
+          <Text as="caption" variant="h3">
             <Box marginBottom={3}>Gæsluvarðhaldskröfur</Box>
-          </Typography>
+          </Text>
           <thead>
             <tr>
               <th>LÖKE málsnr.</th>
