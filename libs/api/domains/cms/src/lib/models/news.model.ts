@@ -5,6 +5,7 @@ import { INews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Author, mapAuthor } from './author.model'
 import { Slice, mapDocument } from './slice.model'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 @ObjectType()
 export class News {
@@ -37,6 +38,9 @@ export class News {
 
   @Field(() => [Slice], { nullable: true })
   content: Array<typeof Slice>
+
+  @Field(() => [GenericTag], { nullable: true })
+  genericTags: GenericTag[]
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
@@ -52,4 +56,5 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  genericTags: (fields.genericTags ?? []).map(mapGenericTag),
 })

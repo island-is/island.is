@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useState } from 'react'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
@@ -21,6 +21,8 @@ import {
   Option,
   Link,
   GridColumn,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -53,6 +55,25 @@ interface NewsListProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
+const dummyTags = [
+  {
+    id: '1',
+    title: 'Services',
+  },
+  {
+    id: '2',
+    title: 'COVID-19',
+  },
+  {
+    id: '3',
+    title: 'Employment',
+  },
+  {
+    id: '4',
+    title: 'Family',
+  },
+]
+
 const NewsList: Screen<NewsListProps> = ({
   newsList,
   total,
@@ -64,6 +85,9 @@ const NewsList: Screen<NewsListProps> = ({
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
+  const [tagIds, setTagIds] = useState<Array<string>>(
+    ((Router.query?.tags as string) ?? '').split(','),
+  )
   const { makePath } = routeNames(activeLocale)
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
@@ -110,42 +134,90 @@ const NewsList: Screen<NewsListProps> = ({
     }
   }
 
+  const onTagClick = (tagId: string) => {
+    const index = tagIds.findIndex((x) => x === tagId)
+
+    let newTagIds = [...tagIds]
+
+    if (index === -1) {
+      newTagIds.push(tagId)
+    } else {
+      newTagIds.splice(index, 1)
+    }
+
+    const joinedTagIds = decodeURI(newTagIds.join(','))
+
+    setTagIds(newTagIds)
+
+    Router.replace({
+      pathname: makePath('news'),
+      ...(joinedTagIds && { query: { tags: joinedTagIds } }),
+    })
+  }
+
   const sidebar = (
     <Stack space={3}>
-      <Text variant="h4" as="h1">
-        {n('newsTitle', 'Fréttir og tilkynningar')}
-      </Text>
-      <Divider weight="alternate" />
-      <NativeSelect
-        name="year"
-        value={selectedYear ? selectedYear.toString() : allYearsString}
-        options={yearOptions}
-        onChange={(e) => {
-          const selectedValue =
-            e.target.value !== allYearsString ? e.target.value : null
-          Router.push(makeHref(selectedValue))
-        }}
-      />
-      {selectedYear && (
-        <div>
-          <Link href={makeHref(selectedYear)}>
-            <Text as="span">{allMonthsString}</Text>
-          </Link>
-          <Text as="span">
-            {selectedMonth === undefined && <Bullet align="right" />}
+      <Box background="purple100" borderRadius="large" padding={4}>
+        <Stack space={3}>
+          <Text variant="h4" as="h1">
+            {n('newsTitle', 'Fréttir og tilkynningar')}
           </Text>
-        </div>
-      )}
-      {months.map((month) => (
-        <div key={month}>
-          <Link href={makeHref(selectedYear, month)}>
-            <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
-          </Link>
-          <Text as="span">
-            {selectedMonth === month && <Bullet align="right" />}
+          <Divider weight="purple200" />
+          <NativeSelect
+            name="year"
+            value={selectedYear ? selectedYear.toString() : allYearsString}
+            options={yearOptions}
+            onChange={(e) => {
+              const selectedValue =
+                e.target.value !== allYearsString ? e.target.value : null
+              Router.push(makeHref(selectedValue))
+            }}
+            color="purple400"
+          />
+          {selectedYear && (
+            <div>
+              <Link href={makeHref(selectedYear)}>
+                <Text as="span">{allMonthsString}</Text>
+              </Link>
+              <Text as="span">
+                {selectedMonth === undefined && <Bullet align="right" />}
+              </Text>
+            </div>
+          )}
+          {months.map((month) => (
+            <div key={month}>
+              <Link href={makeHref(selectedYear, month)}>
+                <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
+              </Link>
+              <Text as="span">
+                {selectedMonth === month && <Bullet align="right" />}
+              </Text>
+            </div>
+          ))}
+        </Stack>
+      </Box>
+      <Box background="blueberry100" borderRadius="large" padding={4}>
+        <Stack space={3}>
+          <Text variant="h4" as="h4" color="blueberry600">
+            {n('categories', 'Flokkar')}
           </Text>
-        </div>
-      ))}
+          <Divider weight="blueberry200" />
+          <Inline space={2}>
+            {dummyTags.map(({ id, title }) => {
+              return (
+                <Tag
+                  onClick={onTagClick.bind(this, id)}
+                  variant="blueberry"
+                  active={tagIds.includes(id)}
+                  bordered
+                >
+                  {title}
+                </Tag>
+              )
+            })}
+          </Inline>
+        </Stack>
+      </Box>
     </Stack>
   )
 
@@ -221,6 +293,7 @@ const NewsList: Screen<NewsListProps> = ({
               url={makePath('news', '[slug]')}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
+              tags={newsItem.genericTags.map(({ title }) => ({ title }))}
             />
           ))}
           {newsList.length > 0 && (

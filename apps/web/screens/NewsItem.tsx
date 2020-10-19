@@ -9,6 +9,8 @@ import {
   GridColumn,
   Stack,
   GridContainer,
+  Tag,
+  Inline,
 } from '@island.is/island-ui/core'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
@@ -89,6 +91,16 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                     <Link href={makePath('news')}>
                       {t.newsAndAnnouncements}
                     </Link>
+                    {!!newsItem.genericTags.length &&
+                      newsItem.genericTags.map(({ id, title }, index) => {
+                        return (
+                          <Link href={makePath('news', `?tags=${id}`)}>
+                            <Tag key={index} variant="blue" label>
+                              {title}
+                            </Tag>
+                          </Link>
+                        )
+                      })}
                   </Breadcrumbs>
                   <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
                     {newsItem.title}
