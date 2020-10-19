@@ -19,7 +19,10 @@ interface Props {
     title: MessageDescriptor
     items: MessageDescriptor[]
   }
+  externalHref?: string
+  externalLinkTitle?: MessageDescriptor
   institutionTitle: MessageDescriptor
+  institutionSubtitle: MessageDescriptor
   institutionDescription: MessageDescriptor
   institutionHref: string
   institutionLinkTitle: MessageDescriptor
@@ -31,6 +34,9 @@ export const InfoScreen: FC<Props> = ({
   intro,
   list,
   institutionTitle,
+  externalHref,
+  externalLinkTitle,
+  institutionSubtitle,
   institutionDescription,
   institutionHref,
   institutionLinkTitle,
@@ -64,6 +70,13 @@ export const InfoScreen: FC<Props> = ({
                   </BulletList>
                 </>
               )}
+              {externalHref && externalLinkTitle && (
+                <Box marginTop={[3, 4]}>
+                  <ArrowLink href={externalHref}>
+                    {formatMessage(externalLinkTitle)}
+                  </ArrowLink>
+                </Box>
+              )}
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '5/12']}>
@@ -79,15 +92,12 @@ export const InfoScreen: FC<Props> = ({
       >
         <Box marginBottom={[3, 4]}>
           <Typography variant="h2">
-            {formatMessage({
-              id: 'service.portal:institution',
-              defaultMessage: 'Stofnun',
-            })}
+            {formatMessage(institutionTitle)}
           </Typography>
         </Box>
         <Box marginBottom={[2, 3]}>
           <Typography variant="h3">
-            {formatMessage(institutionTitle)}
+            {formatMessage(institutionSubtitle)}
           </Typography>
         </Box>
         <Box marginBottom={[2, 3]}>
