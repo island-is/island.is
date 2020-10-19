@@ -4,7 +4,7 @@ import * as styles from './FixedNav.treat'
 import {
   ContentBlock,
   Box,
-  Icon,
+  IconDeprecated as Icon,
   ButtonDeprecated as Button,
   FocusableBox,
 } from '@island.is/island-ui/core'

@@ -1,4 +1,4 @@
-import React, { ReactNode, FC } from 'react'
+import React, { ReactNode, FC, useState, useEffect } from 'react'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import {
@@ -7,18 +7,15 @@ import {
   GridRow,
   GridColumn,
   Footer,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
 import FormStepper from '../FormStepper/FormStepper'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
-}
-
-interface ProcessPageProps extends PageProps {
-  activeSection: number
-  activeCar: string
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
@@ -26,13 +23,13 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
     <Box paddingY={10}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '7/12', '7/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '7/12', '7/12']}
+            offset={['0', '0', '1/12', '1/12']}
+          >
             <Box>{children}</Box>
           </GridColumn>
-          <GridColumn
-            span={['0', '0', '3/12', '3/12']}
-            offset={['0', '0', '1/12', '1/12']}
-          ></GridColumn>
+          <GridColumn span={['0', '0', '3/12', '3/12']}></GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
@@ -40,25 +37,41 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
   </Box>
 )
 
+interface ProcessPageProps extends PageProps {
+  activeSection: number
+  sectionType: string
+  activeCar?: string
+}
+
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
+  sectionType = 'citizen',
   activeSection,
   activeCar,
 }) => {
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+
   const {
-    t: { processSections: t },
+    t: { processes: t },
   } = useI18n()
 
-  const sections = t.map((section) => {
+  const sections = t[sectionType].sections.map((section) => {
     return { name: section }
   })
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   return (
     <Box
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
+      className={styles.processContainer}
     >
       {isMobile && (
         <FormStepperMobile sections={sections} activeSection={activeSection} />
@@ -71,6 +84,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
               background="white"
               borderColor="white"
               borderRadius="large"
+              className={styles.processContent}
             >
               <GridColumn
                 span={['9/9', '9/9', '7/9', '7/9']}
@@ -83,6 +97,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
           <GridColumn span={['0', '0', '3/12', '3/12']}>
             {!isMobile && (
               <FormStepper
+                title={t[sectionType].title}
                 sections={sections}
                 activeSection={activeSection}
                 activeCar={activeCar}
@@ -94,3 +109,36 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     </Box>
   )
 }
+
+interface PartnerPageProps {
+  top: ReactNode
+  bottom: ReactNode
+  left: ReactNode
+}
+
+export const PartnerPageLayout: FC<PartnerPageProps> = ({
+  top,
+  bottom,
+  left,
+}) => (
+  <Box>
+    <Box paddingY={10}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['0', '0', '3/12', '3/12']}>{left}</GridColumn>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+            <Stack space={4}>
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '7/8', '7/8']}>
+                  <Box>{top}</Box>
+                </GridColumn>
+              </GridRow>
+              <Box>{bottom}</Box>
+            </Stack>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
+    <Footer />
+  </Box>
+)

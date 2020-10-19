@@ -1,5 +1,6 @@
-import { getFormNodeLeaves } from './formUtils'
+import { formatText, getFormNodeLeaves } from './formUtils'
 import {
+  Application,
   ApplicationTypes,
   buildCheckboxField,
   buildForm,
@@ -10,11 +11,11 @@ import {
   buildTextField,
   Comparators,
   Form,
+  StaticText,
 } from '@island.is/application/core'
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,
-  ownerId: 'DOL',
   name: 'Atvinnuleysisbætur',
   children: [
     buildSection({
@@ -33,17 +34,14 @@ const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'person.name',
               name: 'name',
-              required: true,
             }),
             buildTextField({
               id: 'person.nationalId',
               name: 'name',
-              required: true,
             }),
             buildTextField({
               id: 'person.phoneNumber',
               name: 'name',
-              required: false,
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -62,7 +60,6 @@ const ExampleForm: Form = buildForm({
         buildRadioField({
           id: 'careerHistory',
           name: 'name',
-          required: true,
           options: [
             { value: 'yes', label: 'name' },
             { value: 'no', label: 'name' },
@@ -71,7 +68,6 @@ const ExampleForm: Form = buildForm({
         buildCheckboxField({
           id: 'careerHistoryCompanies',
           name: 'name',
-          required: false,
           options: [
             { value: 'government', label: 'name' },
             { value: 'aranja', label: 'Aranja' },
@@ -81,7 +77,6 @@ const ExampleForm: Form = buildForm({
         buildTextField({
           id: 'dreamJob',
           name: 'name',
-          required: false,
         }),
       ],
     }),
@@ -112,5 +107,43 @@ describe('application schema utility functions', () => {
     expect(otherScreens[0].id).toBe('careerHistory')
     expect(otherScreens[1].id).toBe('careerHistoryCompanies')
     expect(otherScreens[2].id).toBe('dreamJob')
+  })
+})
+
+describe('formatText', () => {
+  const application: Application = {
+    answers: { someAnswer: 'awesome' },
+    applicant: '',
+    attachments: {},
+    created: new Date(),
+    externalData: {},
+    id: '',
+    modified: new Date(),
+    state: '',
+    typeId: ApplicationTypes.EXAMPLE,
+  }
+  const formatMessage: (descriptor: StaticText, values?: any) => string = (
+    descriptor,
+  ) => descriptor as string
+  it('should return plain text as is', () => {
+    expect(formatText('text', application, formatMessage)).toBe('text')
+    expect(formatText('blabbb', application, formatMessage)).toBe('blabbb')
+  })
+  it('should use the passed in application to format dynamic strings', () => {
+    expect(
+      formatText(
+        (a) => `Hello mr. ${a.answers.someAnswer}`,
+        application,
+        formatMessage,
+      ),
+    ).toBe('Hello mr. awesome')
+
+    expect(
+      formatText(
+        (a) => `Oh you are ${a.answers.someAnswer} too!`,
+        application,
+        formatMessage,
+      ),
+    ).toBe('Oh you are awesome too!')
   })
 })

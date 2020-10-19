@@ -8,5 +8,5 @@ export default {
     audience: 'localhost:4200',
     jwtSecret: 'securesecret',
   },
-  backendUrl: 'http://localhost:4248',
+  backendUrl: 'http://localhost:3333',
 }

@@ -28,7 +28,7 @@ jobs:
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
+      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -69,7 +69,7 @@ jobs:
         name: Preparing HEAD tag
 
       - run: |
-          source ./scripts/00_prepare-base-tags.sh
+          source ./scripts/ci/00_prepare-base-tags.sh
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
         id: git_nx_base
@@ -117,7 +117,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-docker-deps.sh
+        run: ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -128,7 +128,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-host-deps.sh
+        run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -142,49 +142,43 @@ jobs:
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
+        run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
 
       - name: Prepare docker build targets
         id: build_map
         run: |
-          MAP=$(./scripts/generate-build-map.sh docker-express docker-next docker-static)
-          echo "MAP: '$MAP'"
-          echo "::set-output name=BUILD_MAP::$MAP"
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static)
+          echo "CHUNKS: '$CHUNKS'"
+          echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
 
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/list-unaffected.sh docker-next docker-express docker-static)
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   docker-build:
     needs:
       - prepare
     runs-on: ubuntu-20.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      MAX_JOBS: 4
       PUBLISH: true
     strategy:
       fail-fast: false
       matrix:
-        docker-type:
-          - express
-          - next
-          - static
+        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     steps:
       - name: Gather apps
         id: gather
         run: |
-          AFFECTED_PROJECTS=$(echo '${{ needs.prepare.outputs.BUILD_MAP }}' | jq -r '.["docker-${{ matrix.docker-type }}"]')
-          if [[ "$AFFECTED_PROJECTS" == "null" ]]; then
-            # Early exit
-            exit 1
-          fi
+          AFFECTED_PROJECTS=$(echo '${{ matrix.chunk }}' | jq -r '.projects')
+          DOCKER_TYPE=$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
+          echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
@@ -216,7 +210,7 @@ jobs:
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
-        run: ./scripts/docker-login-ecr.sh
+        run: ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -230,7 +224,7 @@ jobs:
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
-        run: ./scripts/run-in-parallel.sh 90_docker-${{ matrix.docker-type }}
+        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   retag-unaffected:
     runs-on: ubuntu-20.04
@@ -247,7 +241,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Retag unaffected Docker images
-        run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
+        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -4,6 +4,9 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
+
 jobs:
   prepare:
     runs-on: ubuntu-20.04
@@ -57,7 +60,7 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/10_prepare-host-deps.sh
+        run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: Cache for generated files
         id: generated-files-cache
@@ -68,18 +71,18 @@ jobs:
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: tar zcvf generated_files.tar.gz $(./scripts/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
+        run: tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --all | xargs realpath --relative-to $(pwd))
 
       - name: Security audit Node modules
-        run: ./scripts/20_security-audit.sh
+        run: ./scripts/ci/20_security-audit.sh
 
       - name: License audit Node modules
-        run: ./scripts/20_license-audit.sh
+        run: ./scripts/ci/20_license-audit.sh
 
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          CHUNKS=$(./scripts/generate-chunks.sh lint)
+          CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
@@ -87,15 +90,19 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         run: |
-          CHUNKS=$(./scripts/generate-chunks.sh test)
+          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
 
       - name: Prepare build targets
         id: build_projects
+        env:
+          # Temporary - There are some builds that are taking way too much time.
+          # By running only 1 chunk at a time we might be able to figure out which one's failing
+          CHUNK_SIZE: 1
         run: |
-          CHUNKS=$(./scripts/generate-chunks.sh build)
+          CHUNKS=$(./scripts/ci/generate-chunks.sh build)
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
@@ -131,7 +138,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Running tests
-        run: ./scripts/run-in-parallel.sh 30_test
+        run: ./scripts/ci/run-in-parallel.sh 30_test
 
   formatting:
     needs:
@@ -147,7 +154,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Check formatting
-        run: ./scripts/20_check-formatting.sh
+        run: ./scripts/ci/20_check-formatting.sh
 
   linting:
     needs:
@@ -180,7 +187,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Linting
-        run: ./scripts/run-in-parallel-native.sh lint
+        run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
     needs:
@@ -189,7 +196,8 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 4
+      NODE_OPTIONS: --max-old-space-size=4096
+      MAX_JOBS: 2
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
@@ -213,7 +221,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Building
-        run: ./scripts/run-in-parallel-native.sh build
+        run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
     runs-on: ubuntu-20.04

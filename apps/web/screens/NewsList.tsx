@@ -23,12 +23,17 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_NEWS_LIST_QUERY, GET_NAMESPACE_QUERY } from './queries'
-import { NewsListLayout } from './Layouts/Layouts'
-import { CustomNextError } from '../units/errors'
 import {
-  GetNewsListQuery,
-  QueryGetNewsListArgs,
+  GET_NAMESPACE_QUERY,
+  GET_NEWS_DATES_QUERY,
+  GET_NEWS_QUERY,
+} from './queries'
+import { NewsListLayout } from './Layouts/Layouts'
+import {
+  GetNewsDatesQuery,
+  QueryGetNewsDatesArgs,
+  GetNewsQuery,
+  QueryGetNewsArgs,
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -39,37 +44,35 @@ import { useNamespace } from '@island.is/web/hooks'
 const PERPAGE = 10
 
 interface NewsListProps {
-  newsList: GetNewsListQuery['getNewsList']['news']
-  page: GetNewsListQuery['getNewsList']['page']
-  dateRange: string[]
+  newsList: GetNewsQuery['getNews']['items']
+  total: number
+  datesMap: { [year: string]: number[] }
   selectedYear: number
   selectedMonth: number
+  selectedPage: number
   namespace: GetNamespaceQuery['getNamespace']
 }
 
 const NewsList: Screen<NewsListProps> = ({
   newsList,
-  page,
-  dateRange,
+  total,
+  datesMap,
   selectedYear,
   selectedMonth,
+  selectedPage,
   namespace,
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
-  const { format } = useDateUtils()
+  const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
-  const dates = dateRange.map((s) => new Date(s))
-  const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
-
-  const years = Object.keys(datesByYear)
-  const months = datesByYear[selectedYear] ?? []
+  const years = Object.keys(datesMap)
+  const months = datesMap[selectedYear] ?? []
 
   const allYearsString = n('allYears', 'Allar fréttir')
   const allMonthsString = n('allMonths', 'Allt árið')
-
   const yearString = n('year', 'Ár')
   const monthString = n('month', 'Mánuður')
 
@@ -78,24 +81,22 @@ const NewsList: Screen<NewsListProps> = ({
       label: allYearsString,
       value: allYearsString,
     },
-  ].concat(
-    years.map((year) => ({
+    ...years.map((year) => ({
       label: year,
       value: year,
     })),
-  )
+  ]
 
   const monthOptions = [
     {
       label: allMonthsString,
       value: undefined,
     },
-  ].concat(
-    months.map((date) => ({
-      label: capitalize(format(date, 'MMMM')),
-      value: date.getMonth(),
+    ...months.map((month) => ({
+      label: capitalize(getMonthByIndex(month - 1)), // api returns months with index starting from 1 not 0 so we compensate
+      value: month,
     })),
-  )
+  ]
 
   const makeHref = (y: string | number, m?: string | number) => {
     const query: { [k: string]: number | string } = y ? { y } : null
@@ -126,18 +127,24 @@ const NewsList: Screen<NewsListProps> = ({
         }}
       />
       {selectedYear && (
-        <Text>
-          <Link href={makeHref(selectedYear)}>{allMonthsString}</Link>
-          {selectedMonth === undefined && <Bullet align="right" />}
-        </Text>
-      )}
-      {months.map((date: Date) => (
-        <Text key={date.toISOString()}>
-          <Link href={makeHref(date.getFullYear(), date.getMonth())}>
-            {capitalize(format(date, 'MMMM'))}
+        <div>
+          <Link href={makeHref(selectedYear)}>
+            <Text as="span">{allMonthsString}</Text>
           </Link>
-          {selectedMonth === date.getMonth() && <Bullet align="right" />}
-        </Text>
+          <Text as="span">
+            {selectedMonth === undefined && <Bullet align="right" />}
+          </Text>
+        </div>
+      )}
+      {months.map((month) => (
+        <div key={month}>
+          <Link href={makeHref(selectedYear, month)}>
+            <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
+          </Link>
+          <Text as="span">
+            {selectedMonth === month && <Bullet align="right" />}
+          </Text>
+        </div>
       ))}
     </Stack>
   )
@@ -194,7 +201,14 @@ const NewsList: Screen<NewsListProps> = ({
               />
             </GridColumn>
           )}
-
+          {!newsList.length && (
+            <Text variant="h4">
+              {n(
+                'newsListEmptyMonth',
+                'Engar fréttir fundust í þessum mánuði.',
+              )}
+            </Text>
+          )}
           {newsList.map((newsItem, index) => (
             <NewsCard
               key={index}
@@ -208,25 +222,45 @@ const NewsList: Screen<NewsListProps> = ({
               readMoreText={n('readMore', 'Lesa nánar')}
             />
           ))}
-          <Box paddingTop={[4, 4, 8]}>
-            <Pagination
-              {...page}
-              renderLink={(page, className, children) => (
-                <Link
-                  href={{
-                    pathname: makePath('news'),
-                    query: { ...Router.query, page },
-                  }}
-                >
-                  <span className={className}>{children}</span>
-                </Link>
-              )}
-            />
-          </Box>
+          {newsList.length > 0 && (
+            <Box paddingTop={[4, 4, 8]}>
+              <Pagination
+                totalPages={Math.ceil(total / PERPAGE)}
+                page={selectedPage}
+                renderLink={(page, className, children) => (
+                  <Link
+                    href={{
+                      pathname: makePath('news'),
+                      query: { ...Router.query, page },
+                    }}
+                  >
+                    <span className={className}>{children}</span>
+                  </Link>
+                )}
+              />
+            </Box>
+          )}
         </Stack>
       </NewsListLayout>
     </>
   )
+}
+
+const createDatesMap = (datesList) => {
+  return datesList.reduce((datesMap, date) => {
+    const [year, month] = date.split('-')
+    if (datesMap[year]) {
+      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
+    } else {
+      datesMap[year] = [parseInt(month)]
+    }
+    return datesMap
+  }, {})
+}
+
+const getIntParam = (s: string | string[]) => {
+  const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
+  if (!isNaN(i)) return i
 }
 
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
@@ -236,45 +270,29 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: {
-        getNewsList: { news: oldest },
-      },
+      data: { getNewsDates: newsDatesList },
     },
     {
       data: {
-        getNewsList: { news: latest },
-      },
-    },
-    {
-      data: {
-        getNewsList: { news: newsList, page },
+        getNews: { items: newsList, total },
       },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
-      query: GET_NEWS_LIST_QUERY,
-      variables: {
-        input: {
-          perPage: 1,
-          ascending: true,
-        },
-      },
-    }),
-    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
-      query: GET_NEWS_LIST_QUERY,
-      variables: {
-        input: {
-          perPage: 1,
-        },
-      },
-    }),
-    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
-      query: GET_NEWS_LIST_QUERY,
+    apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
+      query: GET_NEWS_DATES_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          perPage: PERPAGE,
+        },
+      },
+    }),
+    apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
+      query: GET_NEWS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          size: PERPAGE,
           page: selectedPage,
           year,
           month,
@@ -286,8 +304,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
+            lang: locale as ContentLanguage,
             namespace: 'NewsList',
-            lang: locale,
           },
         },
       })
@@ -297,38 +315,15 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  if ((year || page.page > 1) && newsList.length === 0) {
-    throw new CustomNextError(404)
-  }
-
   return {
     newsList,
-    page,
-    selectedYear: year ?? null,
+    total,
+    selectedYear: year,
     selectedMonth: month,
-    dateRange: createDateRange(
-      oldest[0] && new Date(oldest[0].date),
-      latest[0] && new Date(latest[0].date),
-    ),
+    datesMap: createDatesMap(newsDatesList),
+    selectedPage,
     namespace,
   }
 }
-
-const getIntParam = (s: string | string[]) => {
-  const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
-  if (!isNaN(i)) return i
-}
-
-const createDateRange = (min: Date, max: Date): string[] => {
-  if (!min || !max) return []
-
-  return range(
-    max.getFullYear() * 12 + max.getMonth(),
-    min.getFullYear() * 12 + min.getMonth() - 1,
-    -1,
-  ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
-}
-
-Object.assign({}, {})
 
 export default withMainLayout(NewsList)

@@ -1,7 +1,5 @@
 import React from 'react'
 
-import './service-portal-assets.scss'
-
 /* eslint-disable-next-line */
 export interface ServicePortalAssetsProps {}
 

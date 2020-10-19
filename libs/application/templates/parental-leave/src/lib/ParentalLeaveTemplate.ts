@@ -15,15 +15,44 @@ type Events =
 
 const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  applicant: z.object({
+    email: z.string().email(),
+    phoneNumber: z.string(),
+  }),
   usage: z.number().min(0).max(6),
   spread: z.number().max(24),
+  payments: z.object({
+    bank: z.string().nonempty(),
+    personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
+    pensionFund: z.string().optional(),
+    privatePensionFund: z.enum(['frjalsi']).optional(),
+    privatePensionFundPercentage: z.enum(['2', '4']).optional(),
+  }),
+  shareInformationWithOtherParent: z.enum(['yes', 'no']),
+  usePrivatePensionFund: z.enum(['yes', 'no']),
   periods: z.array(
     z.object({
       start: z.date(),
       end: z.date(),
-      ratio: z.number().min(1).max(100),
+      ratio: z
+        .string()
+        .refine(
+          (val) =>
+            !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
+        ),
     }),
   ),
+  employer: z.object({
+    name: z.string().nonempty(),
+    nationalRegistryId: z.string().nonempty(),
+  }),
+  requestExtraTime: z.enum(['yes', 'no']),
+  giveExtraTime: z.enum(['yes', 'no']),
+  singlePeriod: z.enum(['yes', 'no']),
+  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
+  confirmLeaveDuration: z.enum(['duration', 'specificDate']),
+  secondaryParentName: z.string().optional(),
+  secondaryParentId: z.string().optional(),
 })
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -50,10 +79,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.ParentalLeaveForm),
                 ),
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
-              write: {
-                answers: ['usage', 'spread', 'periods'],
-                externalData: ['expectedDateOfBirth', 'salary'],
-              },
+              write: 'all',
             },
           ],
         },

@@ -13,13 +13,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "build-storybook"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
@@ -72,6 +66,9 @@
       "tags": []
     },
     "api-domains-translations": {
+      "tags": []
+    },
+    "api-domains-user-profile": {
       "tags": []
     },
     "api-mocks": {
@@ -177,6 +174,9 @@
       "tags": [],
       "implicitDependencies": ["island-ui-theme"]
     },
+    "island-ui-fonts": {
+      "tags": []
+    },
     "island-ui-storybook": {
       "tags": []
     },
@@ -261,6 +261,9 @@
       "tags": []
     },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-profile": {
       "tags": []
     },
     "shared-form-fields": {

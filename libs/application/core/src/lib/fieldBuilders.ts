@@ -1,4 +1,3 @@
-import { MessageDescriptor } from 'react-intl'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -17,14 +16,14 @@ import {
   TextField,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
+import { FormText } from '..'
 
 export function buildCheckboxField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   options: Option[]
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): CheckboxField {
@@ -34,13 +33,11 @@ export function buildCheckboxField(data: {
     name,
     description,
     options,
-    required = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
-    required,
     disabled,
     width,
     condition,
@@ -56,12 +53,11 @@ export function buildCheckboxField(data: {
 export function buildDateField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  placeholder?: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  placeholder?: FormText
+  description?: FormText
   maxDate?: Date
   minDate?: Date
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): DateField {
@@ -72,7 +68,6 @@ export function buildDateField(data: {
     description,
     maxDate,
     minDate,
-    required = false,
     disabled = false,
     width = 'full',
     placeholder,
@@ -81,7 +76,6 @@ export function buildDateField(data: {
     children: undefined,
     condition,
     id,
-    required,
     placeholder,
     disabled,
     width,
@@ -97,8 +91,8 @@ export function buildDateField(data: {
 export function buildIntroductionField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  introduction: MessageDescriptor | string
+  name: FormText
+  introduction: FormText
 }): IntroductionField {
   const { condition, id, name, introduction } = data
   return {
@@ -115,10 +109,9 @@ export function buildIntroductionField(data: {
 export function buildRadioField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   options: Option[]
-  required?: boolean
   emphasize?: boolean
   largeButtons?: boolean
   disabled?: boolean
@@ -130,7 +123,6 @@ export function buildRadioField(data: {
     name,
     description,
     options,
-    required = false,
     emphasize = false,
     largeButtons = false,
     disabled = false,
@@ -138,7 +130,6 @@ export function buildRadioField(data: {
   } = data
   return {
     children: undefined,
-    required,
     emphasize,
     largeButtons,
     disabled,
@@ -156,11 +147,10 @@ export function buildRadioField(data: {
 export function buildSelectField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
+  name: FormText
+  description?: FormText
   placeholder?: string
   options: Option[]
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): SelectField {
@@ -171,14 +161,12 @@ export function buildSelectField(data: {
     description,
     options,
     placeholder,
-    required = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
     placeholder,
-    required,
     disabled,
     width,
     condition,
@@ -194,9 +182,8 @@ export function buildSelectField(data: {
 export function buildTextField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  description?: MessageDescriptor | string
-  required?: boolean
+  name: FormText
+  description?: FormText
   disabled?: boolean
   width?: FieldWidth
 }): TextField {
@@ -205,13 +192,11 @@ export function buildTextField(data: {
     id,
     name,
     description,
-    required = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
-    required,
     disabled,
     width,
     condition,
@@ -227,19 +212,19 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
-    name: MessageDescriptor | string
-    required?: boolean
+    name: FormText
+    description?: FormText
     component: string
   },
   props: object,
 ): CustomField {
-  const { condition, id, name, required = false, component } = data
+  const { condition, id, name, description, component } = data
   return {
     children: undefined,
-    required,
     condition,
     id,
     name,
+    description,
     type: FieldTypes.CUSTOM,
     component,
     props,
@@ -249,14 +234,13 @@ export function buildCustomField(
 export function buildFileUploadField(data: {
   condition?: Condition
   id: string
-  name: MessageDescriptor | string
-  introduction: MessageDescriptor | string
+  name: FormText
+  introduction: FormText
   uploadHeader?: string
   uploadDescription?: string
   uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
-  required?: boolean
 }): FileUploadField {
   const {
     condition,
@@ -268,11 +252,9 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
-    required = false,
   } = data
   return {
     children: undefined,
-    required,
     condition,
     id,
     name,

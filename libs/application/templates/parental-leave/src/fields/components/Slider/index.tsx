@@ -111,6 +111,7 @@ interface TrackProps {
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
+  showProgressOverlay?: boolean
   showToolTip?: boolean
   label: {
     singular: string
@@ -130,6 +131,7 @@ const Slider = ({
   showLabel = false,
   showMinMaxLabels = false,
   showRemainderOverlay = true,
+  showProgressOverlay = true,
   showToolTip = false,
   label,
   currentIndex,
@@ -151,6 +153,10 @@ const Slider = ({
     if (remainderRef.current != null) {
       remainderRef.current.style.left = `${x}px`
     }
+
+    if (progressRef.current != null) {
+      progressRef.current.style.width = `${x}px`
+    }
   }, [isDragging, x])
 
   const tooltipStyle = { transform: `translateX(${x}px)` }
@@ -162,9 +168,14 @@ const Slider = ({
     left: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
   }
+  const progressStyle = {
+    right: `${dragX.current == null ? x : dragX.current}px`,
+    transition: isDragging ? 'none' : '',
+  }
 
   const thumbRef = React.useRef<HTMLDivElement>(null)
   const remainderRef = React.useRef<HTMLDivElement>(null)
+  const progressRef = React.useRef<HTMLDivElement>(null)
 
   const dragBind = useDrag({
     onDragMove(deltaX) {
@@ -185,6 +196,10 @@ const Slider = ({
 
       if (remainderRef.current && dragX.current != null) {
         if (!snap) remainderRef.current.style.left = `${dragX.current}px`
+      }
+
+      if (progressRef.current && dragX.current != null) {
+        if (!snap) progressRef.current.style.width = `${dragX.current}px`
       }
     },
     onDragStart() {
@@ -281,6 +296,13 @@ const Slider = ({
             className={styles.remainderBar}
             style={remainderStyle}
             ref={remainderRef}
+          />
+        )}
+        {showProgressOverlay && (
+          <Box
+            className={styles.progressBar}
+            style={progressStyle}
+            ref={progressRef}
           />
         )}
       </Box>

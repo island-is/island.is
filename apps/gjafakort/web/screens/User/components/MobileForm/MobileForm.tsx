@@ -10,7 +10,6 @@ import {
 import * as Yup from 'yup'
 
 import {
-  FieldNumberInput,
   Box,
   Stack,
   ButtonDeprecated as Button,
@@ -19,7 +18,10 @@ import {
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
-import { FormLayout } from '@island.is/gjafakort-web/components'
+import {
+  FieldNumberInput,
+  FormLayout,
+} from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
   onSubmit: (

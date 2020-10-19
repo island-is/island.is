@@ -4,6 +4,7 @@ import {
   CaseCustodyRestrictions,
   CaseState,
 } from '@island.is/judicial-system/types'
+import { Validation } from './utils/validate'
 
 export enum NotificationType {
   HEADS_UP = 'HEADS_UP',
@@ -60,6 +61,12 @@ export interface Case {
   custodyRestrictions?: CaseCustodyRestrictions[]
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealAnnouncement?: string
+  prosecutorId?: string
+  prosecutor?: User
+  judgeId?: string
+  judge?: User
 }
 
 export interface Notification {
@@ -110,4 +117,11 @@ export interface RequestSignatureResponse {
 export interface ConfirmSignatureResponse {
   httpStatusCode: number
   response?: Case
+  code?: number
+  message?: string
+}
+
+export interface RequiredField {
+  value: string
+  validations: Validation[]
 }

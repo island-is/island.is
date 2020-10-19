@@ -1,19 +1,19 @@
 import React from 'react'
+import { withDesign } from 'storybook-addon-designs'
+
+import { withFigma } from '../../utils/withFigma'
 import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { DatePicker } from './DatePicker'
 
 export default {
   title: 'Form/DatePicker',
   component: DatePicker,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=50%3A155)',
-      },
-    },
-  },
+  decorators: [withDesign],
+  parameters: withFigma({
+    desktop:
+      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=50%3A155',
+  }),
 }
 
 const Wrap: React.FC = ({ children }) => (

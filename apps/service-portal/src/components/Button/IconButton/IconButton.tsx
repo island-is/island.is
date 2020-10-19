@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Icon, Typography, IconTypes } from '@island.is/island-ui/core'
+import { Box, Icon, IconProps, Typography } from '@island.is/island-ui/core'
 import * as styles from './IconButton.treat'
 import { Link } from 'react-router-dom'
-import cn from 'classnames'
 
 interface Props {
-  icon: IconTypes | undefined
+  icon: Pick<IconProps, 'icon' | 'type'> | undefined
   onClick?: () => void
   url?: string
   active?: boolean
@@ -15,7 +14,11 @@ const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
   <Box display="flex" alignItems="center" cursor="pointer" onClick={onClick}>
     <Box marginRight={2}>
       {icon ? (
-        <Icon type={icon} color={active ? 'purple400' : 'dark300'} />
+        <Icon
+          type={icon.type}
+          icon={icon.icon}
+          color={active ? 'purple400' : 'dark300'}
+        />
       ) : null}
     </Box>
     <Typography variant={active ? 'h5' : 'p'} as="span">

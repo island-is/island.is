@@ -110,9 +110,9 @@ const MobileMenu: FC<{}> = () => {
                   >
                     {navItem.icon && (
                       <Icon
-                        type={navItem.icon}
-                        width={18}
-                        height={18}
+                        type={navItem.icon.type}
+                        icon={navItem.icon.icon}
+                        size="medium"
                         color="blueberry400"
                       />
                     )}

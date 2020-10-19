@@ -267,18 +267,25 @@ export const Overview: React.FC = () => {
                       </Box>
                     )}
                   </AccordionItem>
+                  <AccordionItem
+                    id="id_5"
+                    label="Skilaboð til dómara"
+                    labelVariant="h3"
+                  >
+                    <Text>{workingCase?.comments}</Text>
+                  </AccordionItem>
                 </Accordion>
               </Box>
-              {uContext?.user && (
-                <Box marginBottom={15}>
-                  <Box marginBottom={1}>
-                    <Text>F.h.l</Text>
-                  </Box>
-                  <Text variant="h3">
-                    {`${uContext.user.name}, ${uContext.user.title}`}
-                  </Text>
+              <Box marginBottom={15}>
+                <Box marginBottom={1}>
+                  <Text>F.h.l</Text>
                 </Box>
-              )}
+                <Text variant="h3">
+                  {workingCase?.prosecutor
+                    ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
+                    : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+                </Text>
+              </Box>
               <FormFooter
                 nextUrl="/"
                 nextButtonText="Staðfesta kröfu fyrir héraðsdóm"

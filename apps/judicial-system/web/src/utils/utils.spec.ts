@@ -1,6 +1,11 @@
-import { parseArray, parseString, parseTransition } from './formatters'
-import { constructConclusion } from './stepHelper'
-import { Case } from '../types'
+import {
+  parseArray,
+  parseString,
+  parseTime,
+  parseTransition,
+} from './formatters'
+import { constructConclusion, isNextDisabled } from './stepHelper'
+import { Case, RequiredField } from '../types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,
@@ -69,6 +74,20 @@ ipsum`
       })
     })
   })
+
+  describe('Parse time', () => {
+    test('should return a valid date with time given a valid date and time', () => {
+      // Arrange
+      const date = '2020-10-24T12:25:00Z'
+      const time = '13:37'
+
+      // Act
+      const d = parseTime(date, time)
+
+      // Assert
+      expect(d).toEqual('2020-10-24T13:37:00Z')
+    })
+  })
 })
 
 describe('Validation', () => {
@@ -99,7 +118,9 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('Ekki á réttu formi')
     })
   })
+})
 
+describe('Step helper', () => {
   describe('constructConclution', () => {
     test('should return rejected message if the case is being rejected', () => {
       // Arrange
@@ -207,40 +228,91 @@ describe('Validation', () => {
         }),
       ).toBeTruthy()
     })
+
+    test('should return the correct string if there are more than two restriction and the case is not being rejected', () => {
+      // Arrange
+      const wc = {
+        rejecting: false,
+        custodyRestrictions: [
+          CaseCustodyRestrictions.MEDIA,
+          CaseCustodyRestrictions.VISITAION,
+          CaseCustodyRestrictions.ISOLATION,
+        ],
+        accusedName: 'Doe',
+        accusedNationalId: '0123456789',
+        custodyEndDate: '2020-10-22T12:31:00.000Z',
+      }
+
+      // Act
+      const { getByText } = render(constructConclusion(wc as Case))
+
+      // Assert
+      expect(
+        getByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni, heimsóknarbanni og einangrun á meðan á gæsluvarðhaldinu stendur.'
+
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
+
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeTruthy()
+    })
   })
+  describe('isNextDisabled()', () => {
+    test('should return true if the only validation does not pass', () => {
+      // Arrange
+      const rf: RequiredField[] = [{ value: '', validations: ['empty'] }]
 
-  test('should return the correct string if there are more than two restriction and the case is not being rejected', () => {
-    // Arrange
-    const wc = {
-      rejecting: false,
-      custodyRestrictions: [
-        CaseCustodyRestrictions.MEDIA,
-        CaseCustodyRestrictions.VISITAION,
-        CaseCustodyRestrictions.ISOLATION,
-      ],
-      accusedName: 'Doe',
-      accusedNationalId: '0123456789',
-      custodyEndDate: '2020-10-22T12:31:00.000Z',
-    }
+      // Act
+      const ind = isNextDisabled(rf)
 
-    // Act
-    const { getByText } = render(constructConclusion(wc as Case))
+      // Assert
+      expect(ind).toEqual(true)
+    })
 
-    // Assert
-    expect(
-      getByText((_, node) => {
-        // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-        const hasText = (node: Element) =>
-          node.textContent ===
-          'Kærði, Doe kt.0123456789 skal sæta gæsluvarðhaldi, þó ekki lengur en til 22. október 2020 kl. 12:31. Kærði skal sæta fjölmiðlabanni, heimsóknarbanni og einangrun á meðan á gæsluvarðhaldinu stendur.'
+    test('should return true if the one validation does not pass and another one does', () => {
+      // Arrange
+      const rf: RequiredField[] = [
+        { value: '', validations: ['empty'] },
+        { value: '13:37', validations: ['empty', 'time-format'] },
+      ]
 
-        const nodeHasText = hasText(node)
-        const childrenDontHaveText = Array.from(node.children).every(
-          (child) => !hasText(child),
-        )
+      // Act
+      const ind = isNextDisabled(rf)
 
-        return nodeHasText && childrenDontHaveText
-      }),
-    ).toBeTruthy()
+      // Assert
+      expect(ind).toEqual(true)
+    })
+
+    test('should return true if a value is undefined', () => {
+      // Arrange
+      const rf: RequiredField[] = [{ value: undefined, validations: ['empty'] }]
+
+      // Act
+      const ind = isNextDisabled(rf)
+
+      // Assert
+      expect(ind).toEqual(true)
+    })
+
+    test('should return false if the all validations pass', () => {
+      // Arrange
+      const rf: RequiredField[] = [
+        { value: 'Lorem ipsum', validations: ['empty'] },
+        { value: '13:37', validations: ['empty', 'time-format'] },
+      ]
+
+      // Act
+      const ind = isNextDisabled(rf)
+
+      // Assert
+      expect(ind).toEqual(false)
+    })
   })
 })

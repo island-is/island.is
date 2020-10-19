@@ -1,5 +1,7 @@
+import { AUTH_URL } from '../auth/utils'
+
 export const logout = () =>
-  fetch('/api/auth/logout', {
+  fetch(`${AUTH_URL}/logout`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',

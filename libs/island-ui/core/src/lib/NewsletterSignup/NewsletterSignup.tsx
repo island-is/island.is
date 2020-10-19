@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Typography } from '../Typography/Typography'
 import { Input } from '../Input/Input'
 import { Button } from '../Button/Button'
@@ -63,7 +63,7 @@ export const NewsletterSignup: React.FC<Props> = ({
           paddingTop={[3, 2, 1]}
           marginLeft={[0, 0, 8]}
         >
-          <Button variant="text" htmlType="submit" icon="arrowRight">
+          <Button variant="text" icon="arrowForward">
             {buttonText}
           </Button>
         </Box>

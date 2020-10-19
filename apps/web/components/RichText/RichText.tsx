@@ -4,8 +4,14 @@ import {
   renderSlices,
   defaultRenderComponent,
   RenderConfig,
+  Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import { GridRow, GridColumn } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  LinkContext,
+  Link,
+} from '@island.is/island-ui/core'
 import ContactUs from '../ContactUs/ContactUs'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
@@ -16,7 +22,7 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'Location',
 ]
 
-const renderComponent = (slice: Slice, config: RenderConfig) => {
+const renderComponent = (slice: SliceType, config: RenderConfig) => {
   let children: ReactNode =
     slice.__typename === 'ContactUs' ? (
       <ContactUs {...slice} />
@@ -50,10 +56,27 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
 }
 
 export const RichText: FC<{
-  body: Slice[]
+  body: SliceType[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
-  return <>{renderSlices(body, { renderComponent, ...config })}</>
+  return (
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <Link
+            href={href}
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
+            {children}
+          </Link>
+        ),
+      }}
+    >
+      {renderSlices(body, { renderComponent, ...config })}
+    </LinkContext.Provider>
+  )
 })
 
 export default RichText

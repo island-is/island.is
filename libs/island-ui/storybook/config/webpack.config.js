@@ -9,19 +9,16 @@ module.exports = async ({ config }) => {
   config.module.rules.push(
     {
       test: /\.(ts|tsx)$/,
+      exclude: [
+        path.resolve(__dirname, '../node_modules/'),
+        path.resolve(__dirname, '../../core/src/lib/IconRC/icons'),
+      ],
       use: [
         {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-              '@babel/preset-typescript',
-            ],
+            presets: ['@babel/preset-env', '@babel/preset-react'],
           },
-        },
-        {
-          loader: 'react-docgen-typescript-loader',
         },
       ],
     },

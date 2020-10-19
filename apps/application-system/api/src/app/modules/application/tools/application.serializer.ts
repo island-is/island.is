@@ -48,7 +48,7 @@ export class ApplicationSerializer
 
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
-      ...helper.getPermittedAnswersAndExternalData(
+      ...helper.getReadableAnswersAndExternalData(
         application.state === 'inReview' ? 'reviewer' : 'applicant',
       ),
       name: template.name,

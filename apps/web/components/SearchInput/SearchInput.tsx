@@ -36,8 +36,9 @@ import {
   Article,
   SearchableContentTypes,
   LifeEventPage,
+  AboutPage,
+  News,
 } from '@island.is/web/graphql/schema'
-import { theme } from '@island.is/island-ui/theme'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -116,6 +117,8 @@ const useSearch = (
               types: [
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebLifeEventPage'],
+                SearchableContentTypes['WebAboutPage'],
+                SearchableContentTypes['WebNews'],
               ],
             },
           },
@@ -387,7 +390,10 @@ const Results: FC<{
               <Text variant="eyebrow" color="purple400">
                 Beint að efninu
               </Text>
-              {(search.results.items as Article[] & LifeEventPage[])
+              {(search.results.items as Article[] &
+                LifeEventPage[] &
+                AboutPage[] &
+                News[])
                 .slice(0, 5)
                 .map(({ id, title, slug, __typename }) => (
                   <div key={id} {...getItemProps({ item: '' })}>

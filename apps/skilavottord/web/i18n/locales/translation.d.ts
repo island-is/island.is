@@ -13,7 +13,11 @@ export interface Translation {
   confirm: Confirm
   handover: Handover
   completed: Completed
-  processSections: string[]
+  processes: Processes
+  companyOverview: CompanyOverview
+  companySidenav: CompanySidenav
+  deregisterVehicle: DeregisterVehicle
+  routes: Routes
 }
 
 export interface Home {
@@ -27,7 +31,7 @@ export interface MyCars {
   actions: CarActions
   status: CarStatus
   buttons: CarsButtons
-  tooltip: string
+  tooltip: ToolTip
   error: Errors
 }
 
@@ -54,6 +58,16 @@ export interface Completed {
   info: CompletedInfo
   confirmedBy: CompletedConfirmation
   buttons: CompletedButtons
+}
+
+export interface Processes {
+  citizen: ProcessSections
+  company: ProcessSections
+}
+
+export interface ProcessSections {
+  title: string
+  sections: string[]
 }
 
 export interface CancelModal {
@@ -87,6 +101,11 @@ export interface CarsButtons {
   openProcess: string
   seeDetails: string
   reload: string
+}
+
+export interface ToolTip {
+  text: string
+  link: string
 }
 
 export interface ConfirmSubTitles {
@@ -138,6 +157,81 @@ export interface Errors {
   message: string
   primaryButton: string
   secondaryButton: string
+}
+
+export interface CompanyOverview {
+  title: string
+  info: string
+  subtitles: CompanyOverviewSubTitles
+  buttons: CompanyOverviewButtons
+  search: InputField
+  table: string[]
+}
+
+export interface CompanySidenav {
+  deregister: string
+  companyInfo: string
+}
+
+export interface DeregisterVehicle {
+  select: DeregisterSelect
+  deregister: Deregister
+}
+
+export interface DeregisterSelect {
+  title: string
+  info: string
+  input: InputField
+  buttons: DeregisterSelectButtons
+}
+
+export interface Deregister {
+  title: string
+  info: string
+  buttons: DeregisterButtons
+}
+
+export interface CompanyOverviewSubTitles {
+  history: string
+}
+
+export interface CompanyOverviewButtons {
+  deregister: string
+}
+
+export interface DeregisterSelectButtons {
+  cancel: string
+  continue: string
+}
+
+export interface DeregisterButtons {
+  back: string
+  confirm: string
+}
+
+export interface InputField {
+  label: string
+  placeholder: string
+}
+
+export interface Routes {
+  home: string
+  myCars: string
+  recycleVehicle: RecycleVehicleRoutes
+  deregisterVehicle: DeregisterVehicleRoutes
+}
+
+export interface RecycleVehicleRoutes {
+  baseRoute: string
+  confirm: string
+  handover: string
+  completed: string
+}
+
+export interface DeregisterVehicleRoutes {
+  baseRoute: string
+  select: string
+  deregister: string
 }
 
 // Converts JSON strings to/from your types
