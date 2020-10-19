@@ -13,7 +13,7 @@ This starts a server on `localhost:4200`
 
 Just add `API_MOCKS=true` to your .env or .env.secret file.
 
-You can tweak the mock data in `libs/api/mocks`. 
+You can tweak the mock data in `libs/api/mocks`.
 
 #### Local api
 

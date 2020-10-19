@@ -306,7 +306,7 @@ factory({
 ```
 
 > Note: Properties are assigned in the order they are defined in the root `initializer` object (even if traits or overrides have another order). Example:
-> 
+>
 > ```typescript
 > factory({
 >   a: 5,
@@ -316,7 +316,7 @@ factory({
 >   c() {
 >     return this.b
 >   },
-> 
+>
 >   $traits: {
 >     changed: {
 >       c: 7,
