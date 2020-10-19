@@ -58,7 +58,7 @@ const P = styled.p(() => ({
   color: 'rgb(51, 51, 51)',
   padding: '0.75em 1em',
   borderRadius: '6px',
-  backgroundColor: '#f8f8f8',
+  backgroundColor: '#fff',
 }))
 
 const A = styled.a(() => ({
