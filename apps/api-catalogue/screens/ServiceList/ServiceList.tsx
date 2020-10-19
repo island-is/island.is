@@ -39,35 +39,28 @@ interface PropTypes {
   listClassNames?: string
 }
 
-function ServiceLayout({
-  top,
-  bottom,
-  left,
-  right,
-  className,
-  listClassNames: listClasses,
-}: PropTypes) {
+function ServiceLayout(props : PropTypes) {
   return (
     <Box paddingX="gutter">
-      <GridContainer className={className}>
-        {<ContentBlock>{top}</ContentBlock>}
+      <GridContainer className={props.className}>
+        {<ContentBlock>{props.top}</ContentBlock>}
         <ContentBlock>
-          <GridRow className={listClasses}>
+          <GridRow className={props.listClassNames}>
             <GridColumn
               span={['12/12', '8/12', '8/12', '9/12', '9/12']}
               offset={['0', '0', '0', '0', '0']}
             >
-              {left}
+              {props.left}
             </GridColumn>
             <GridColumn
               span={['12/12', '4/12', '4/12', '3/12', '3/12']}
               offset={['0', '0', '0', '0', '0']}
             >
-              {right}
+              {props.right}
             </GridColumn>
           </GridRow>
         </ContentBlock>
-        {<ContentBlock>{bottom}</ContentBlock>}
+        {<ContentBlock>{props.bottom}</ContentBlock>}
       </GridContainer>
     </Box>
   )
@@ -310,20 +303,20 @@ export default function ServiceList(props: ServiceListProps) {
   )
 }
 
-ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
-  const client = new ContentfulApi()
-  let locale = 'is-IS'
+// ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
+//   const client = new ContentfulApi()
+//   let locale = 'is-IS'
 
-  const pathLocale = ctx.pathname.split('/')[1]
-  if (pathLocale === 'en') {
-    locale = 'en-GB'
-  }
+//   const pathLocale = ctx.pathname.split('/')[1]
+//   if (pathLocale === 'en') {
+//     locale = 'en-GB'
+//   }
 
-  const pageContent = await client.fetchPageBySlug('services', locale)
-  const filterStrings = await client.fetchPageBySlug('service-filter', locale)
+//   const pageContent = await client.fetchPageBySlug('services', locale)
+//   const filterStrings = await client.fetchPageBySlug('service-filter', locale)
 
-  return {
-    pageContent: pageContent,
-    filterStrings: filterStrings,
-  }
-}
+//   return {
+//     pageContent: pageContent,
+//     filterStrings: filterStrings,
+//   }
+// }

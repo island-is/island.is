@@ -81,20 +81,20 @@ function DesignGuide(props: DesignGuideProps) {
   )
 }
 
-DesignGuide.getInitialProps = async (ctx) => {
-  const client = new ContentfulApi()
-  let locale = 'is-IS'
+// DesignGuide.getInitialProps = async (ctx) => {
+//   const client = new ContentfulApi()
+//   let locale = 'is-IS'
 
-  const pathLocale = ctx.pathname.split('/')[1]
-  if (pathLocale === 'en') {
-    locale = 'en-GB'
-  }
+//   const pathLocale = ctx.pathname.split('/')[1]
+//   if (pathLocale === 'en') {
+//     locale = 'en-GB'
+//   }
 
-  const pageContent = await client.fetchPageBySlug('design-guide', locale)
+//   const pageContent = await client.fetchPageBySlug('design-guide', locale)
 
-  return {
-    pageContent: pageContent,
-  }
-}
+//   return {
+//     pageContent: pageContent,
+//   }
+// }
 
 export default DesignGuide
