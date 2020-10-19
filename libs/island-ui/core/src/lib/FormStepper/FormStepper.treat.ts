@@ -41,6 +41,6 @@ export const listWithHead = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       marginTop: theme.spacing[4],
-    }
-  }
+    },
+  },
 })

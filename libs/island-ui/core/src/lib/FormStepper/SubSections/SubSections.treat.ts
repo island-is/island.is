@@ -16,7 +16,7 @@ export const subSectionContainer = style({
 export const subSectionContainerHidden = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      display: 'none'
+      display: 'none',
     },
   },
 })

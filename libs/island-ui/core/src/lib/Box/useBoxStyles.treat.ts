@@ -29,10 +29,10 @@ const spaceMapToCss = (
       return minWidth === 0
         ? styles
         : {
-          '@media': {
-            [`screen and (min-width: ${minWidth}px)`]: styles,
-          },
-        }
+            '@media': {
+              [`screen and (min-width: ${minWidth}px)`]: styles,
+            },
+          }
     },
   )
 }
