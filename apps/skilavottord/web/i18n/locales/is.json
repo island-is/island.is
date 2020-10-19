@@ -129,8 +129,43 @@
     },
     "buttons": {
       "add": "Add another location",
-      "delete": "Delete",
-      "edit": "Edit"
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "companyInfoForm": {
+    "addTitle": "Add new location",
+    "editTitle": "Edit location",
+    "form": {
+      "title": "Adress and contact information",
+      "company": {
+        "label": "Company"
+      },
+      "visitingAddress": {
+        "label": "Visiting adress",
+        "placeholder": "Ex. Maplestreet 2"
+      },
+      "postNumber": {
+        "label": "Post number",
+        "placeholder": "Postnumber of visiting adress"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Ex. Reykjavik"
+      },
+      "website": {
+        "label": "Website (optional)",
+        "placeholder": "Ex. www.website.is"
+      },
+      "phoneNumber": {
+        "label": "Phone number (including country code)",
+        "placeholder": "Ex. +3545551900"
+      }
+    },
+    "buttons": {
+      "add": "Add location",
+      "save": "Save changes",
+      "cancel": "Cancel"
     }
   },
   "companySidenav": {
@@ -175,8 +210,8 @@
     },
     "companyInfo": {
       "baseRoute": "/company-info",
-      "edit": "/company-info/add",
-      "add": "/company-info/edit"
+      "add": "/company-info/add",
+      "edit": "/company-info/edit/[id]"
     }
   }
 }

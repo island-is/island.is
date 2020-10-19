@@ -29,7 +29,6 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
           >
             <Box>{children}</Box>
           </GridColumn>
-          <GridColumn span={['0', '0', '3/12', '3/12']}></GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
@@ -135,6 +134,21 @@ export const PartnerPageLayout: FC<PartnerPageProps> = ({
               </GridRow>
               <Box>{bottom}</Box>
             </Stack>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
+    <Footer />
+  </Box>
+)
+
+export const FormPageLayout: FC<PageProps> = ({ children }) => (
+  <Box>
+    <Box paddingY={10}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            {children}
           </GridColumn>
         </GridRow>
       </GridContainer>

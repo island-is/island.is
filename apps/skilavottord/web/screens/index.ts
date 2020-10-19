@@ -9,9 +9,7 @@ export * from './Completed'
 /* Company screens */
 export * from './CompanyOverview'
 export * from './CompanyInfo'
-export {
-  Select as DeregisterSelect,
-  Confirm as DeregisterConfirm,
-} from './DeregisterVehicle'
+export * from './CompanyInfoForm'
+export * from './DeregisterVehicle'
 
 /* Fund screens */

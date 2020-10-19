@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, Translation } from "./file";
+//   import { Convert, Translation } from ./file;
 //
 //   const translation = Convert.toTranslation(json);
 //
@@ -17,6 +17,7 @@ export interface Translation {
   processes: Processes
   companyOverview: CompanyOverview
   companyInfo: CompanyInfo
+  companyInfoForm: CompanyInfoFormPage
   companySidenav: CompanySidenav
   deregisterVehicle: DeregisterVehicle
   routes: Routes
@@ -179,6 +180,23 @@ export interface CompanyInfo {
   info: string
   subtitles: CompanyInfoSubTitles
   buttons: CompanyInfoButtons
+}
+
+export interface CompanyInfoFormPage {
+  addTitle: string
+  editTitle: string
+  form: CompanyInfoForm
+  buttons: CompanyInfoFormButtons
+}
+
+export interface CompanyInfoForm {
+  title: string
+  company: InputField
+  visitingAddress: InputField
+  postNumber: InputField
+  city: InputField
+  website: InputField
+  phoneNumber: InputField
 }
 
 export interface CompanySidenav {
