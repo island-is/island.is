@@ -9,10 +9,11 @@ import {
 
 const navScreenItems: NavigationScreenItem[] = [
   {
-    name: 'Mínar upplýsingar',
-    url: ServicePortalPath.MinarUpplysingar,
-    text: 'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.',
-    tags: ['Fæðingarorlof', 'Skilnaður', 'COVID-19'],
+    name: 'Breyta prófil',
+    url: ServicePortalPath.UserProfileRoot,
+    text:
+      'Hér getur þú m.a breytt upplýsingum um símanúmer netfangi og prófíl myndinni þinni.',
+    tags: ['Netfang', 'Símanúmer'],
   },
 ]
 

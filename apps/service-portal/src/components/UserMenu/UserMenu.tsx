@@ -68,7 +68,7 @@ const UserMenu: FC<{}> = () => {
               <Box padding={3} background="blue100">
                 <Stack space={1}>
                   <NavItem
-                    path={ServicePortalPath.MinarUpplysingar}
+                    path={ServicePortalPath.MinGogn}
                     onClick={setIsOpen.bind(null, false)}
                     icon={{
                       type: 'outline',
@@ -79,7 +79,7 @@ const UserMenu: FC<{}> = () => {
                   >
                     {formatMessage({
                       id: 'service.portal:my-info',
-                      defaultMessage: 'Mínar upplýsingar',
+                      defaultMessage: 'Mín gögn',
                     })}
                   </NavItem>
                   <NavItem
