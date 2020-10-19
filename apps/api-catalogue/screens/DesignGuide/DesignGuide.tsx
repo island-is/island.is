@@ -22,7 +22,7 @@ export function DesignGuide({ pageContent }: DesignGuideProps) {
         <Box>
           <Box marginBottom={2}>
             <Breadcrumbs>
-              <a href="/">Ísland.is</a>
+              <a href="/">Viskuausan</a>
               <span>
                 {pageContent.strings.find((s) => s.id === 'dg-title').text}
               </span>

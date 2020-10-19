@@ -71,7 +71,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
   return (
     <Box className={cn(styles.root)}>
       <Breadcrumbs>
-        <a href="/">Ísland.is</a>
+        <a href="/">Viskuausan</a>
         <a href="/services">API Vörulisti</a>
         <span>{service.owner}</span>
       </Breadcrumbs>

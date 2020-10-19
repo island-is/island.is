@@ -173,7 +173,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
       top={
         <div>
           <Breadcrumbs>
-            <a href="/">Ísland.is</a>
+            <a href="/">Viskuausan</a>
             <span>
               {pageContent.strings.find((s) => s.id === 'catalog-title').text}
             </span>

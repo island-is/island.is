@@ -29,7 +29,7 @@ export function Home({ pageContent }: HomeProps) {
         left={
           <Box>
             <Box marginBottom={2}>
-              <Breadcrumbs>Vefþjónustur</Breadcrumbs>
+              <Breadcrumbs>Viskuausan</Breadcrumbs>
             </Box>
             <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
               <Stack space={3}>
