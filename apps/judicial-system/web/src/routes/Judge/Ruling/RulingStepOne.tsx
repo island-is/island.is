@@ -9,22 +9,25 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { JudgeLogo } from '../../../shared-components/Logos'
 import { Case } from '../../../types'
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { parseArray } from '../../../utils/formatters'
+import { parseArray, parseString, parseTime } from '../../../utils/formatters'
 import {
   autoSave,
+  isNextDisabled,
   renderFormStepper,
   updateState,
 } from '../../../utils/stepHelper'
 import * as api from '../../../api'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const RulingStepOne: React.FC = () => {
+  const custodyEndTimeRef = useRef<HTMLInputElement>()
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
 
@@ -91,6 +94,10 @@ export const RulingStepOne: React.FC = () => {
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
     caseDraftJSON.custodyRestrictions?.indexOf(CaseCustodyRestrictions.MEDIA) >
       -1,
+  )
+  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
+  const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
+    '',
   )
   const restrictions = [
     {
@@ -167,16 +174,33 @@ export const RulingStepOne: React.FC = () => {
                   label="Niðurstaða úrskurðar"
                   placeholder="Skrifa hér..."
                   defaultValue={workingCase.ruling}
-                  textarea
                   rows={3}
+                  errorMessage={rulingErrorMessage}
+                  hasError={rulingErrorMessage !== ''}
+                  onFocus={() => setRulingErrorMessage('')}
                   onBlur={(evt) => {
-                    autoSave(
+                    const validateEmpty = validate(evt.target.value, 'empty')
+
+                    updateState(
                       workingCase,
                       'ruling',
                       evt.target.value,
                       setWorkingCase,
                     )
+
+                    if (
+                      validateEmpty.isValid &&
+                      workingCase.ruling !== evt.target.value
+                    ) {
+                      api.saveCase(
+                        workingCase.id,
+                        parseString('ruling', evt.target.value),
+                      )
+                    } else {
+                      setRulingErrorMessage(validateEmpty.errorMessage)
+                    }
                   }}
+                  textarea
                   required
                 />
               </Box>
@@ -226,16 +250,63 @@ export const RulingStepOne: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
+                    required
                   />
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
-                    name="requestedCustodyEndTime"
-                    defaultValue={formatDate(
-                      workingCase.requestedCustodyEndDate,
-                      TIME_FORMAT,
-                    )}
+                    name="custodyEndTime"
                     label="Tímasetning"
+                    ref={custodyEndTimeRef}
+                    defaultValue={
+                      workingCase.custodyEndDate?.indexOf('T') > -1
+                        ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                        : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                        ? formatDate(
+                            workingCase.requestedCustodyEndDate,
+                            TIME_FORMAT,
+                          )
+                        : null
+                    }
+                    hasError={custodyEndTimeErrorMessage !== ''}
+                    errorMessage={custodyEndTimeErrorMessage}
+                    onFocus={() => setCustodyEndTimeErrorMessage('')}
+                    onBlur={(evt) => {
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
+                      )
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
+                      )
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        const custodyEndDateMinutes = parseTime(
+                          workingCase.custodyEndDate,
+                          evt.target.value,
+                        )
+
+                        updateState(
+                          workingCase,
+                          'custodyEndDate',
+                          custodyEndDateMinutes,
+                          setWorkingCase,
+                        )
+                        api.saveCase(
+                          workingCase.id,
+                          parseString('custodyEndDate', custodyEndDateMinutes),
+                        )
+                      } else {
+                        setCustodyEndTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
+                    }}
+                    required
                   />
                 </GridColumn>
               </GridRow>
@@ -318,9 +389,14 @@ export const RulingStepOne: React.FC = () => {
             </Box>
             <FormFooter
               nextUrl={Constants.RULING_STEP_TWO_ROUTE}
-              nextIsDisabled={
-                !workingCase.courtStartTime || !workingCase.courtEndTime
-              }
+              nextIsDisabled={isNextDisabled([
+                { value: workingCase.ruling, validations: ['empty'] },
+                { value: workingCase.custodyEndDate, validations: ['empty'] },
+                {
+                  value: custodyEndTimeRef.current?.value,
+                  validations: ['empty', 'time-format'],
+                },
+              ])}
             />
           </GridColumn>
         </GridRow>
