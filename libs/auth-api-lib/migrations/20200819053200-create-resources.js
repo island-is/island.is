@@ -88,7 +88,7 @@ module.exports = {
       CREATE TABLE api_resource_scope (
         domain VARCHAR (150) NOT NULL,
         api_resource_name VARCHAR (100) NOT NULL,
-        scope_name VARCHAR (200) NOT NULL,
+        scope_name VARCHAR (100) NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (domain, api_resource_name, scope_name),
