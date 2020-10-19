@@ -40,6 +40,7 @@ export interface ButtonProps {
   size?: Exclude<keyof typeof styles.size, 'utility'>
   disabled?: boolean
   focusable?: boolean
+  fluid?: boolean
   icon?: IconType
   iconType?: Type
 }
@@ -54,6 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
       iconType = 'filled',
       children,
       circle,
+      fluid,
       ...buttonProps
     },
     ref,
@@ -68,6 +70,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
           styles.colors[variant][colorScheme],
           {
             [styles.size[size]]: variant !== 'utility' && !circle,
+            [styles.fluid]: fluid,
             [styles.size.utility]: variant === 'utility',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
@@ -98,5 +101,6 @@ const ButtonIcon = ({ icon, type }: ButtonIconProps) => (
     type={type!}
     color="currentColor"
     className={styles.icon}
+    skipPlaceholderSize
   />
 )
