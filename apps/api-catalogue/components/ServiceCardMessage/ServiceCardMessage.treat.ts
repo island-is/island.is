@@ -2,11 +2,11 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const wrapperGrowHeight = style({
-  width: 310
+  width: 310,
 })
 export const wrapperFixedSizeSmall = style({
   width: 310,
-  height: 144
+  height: 144,
 })
 
 const wrapperOrg = {

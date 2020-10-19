@@ -169,7 +169,9 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
               ) : data?.getOpenApi.spec == '' || data?.getOpenApi == null ? (
                 'Ekki tókst að sækja skjölun'
               ) : (
-                <OpenApiView spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi} />
+                <OpenApiView
+                  spec={YamlParser.safeLoad(data?.getOpenApi.spec) as OpenApi}
+                />
               )}
             </Text>
           </AccordionItem>

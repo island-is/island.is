@@ -85,19 +85,19 @@ export const categoryItem = style({
 })
 
 export const noSelect = style({
-  WebkitTouchCallout:'none',
-  WebkitUserSelect:'none',
-  KhtmlUserSelect:'none',
-  MozUserSelect:'none',
-  msUserSelect:'none',
-  userSelect:'none'
+  WebkitTouchCallout: 'none',
+  WebkitUserSelect: 'none',
+  KhtmlUserSelect: 'none',
+  MozUserSelect: 'none',
+  msUserSelect: 'none',
+  userSelect: 'none',
 })
 
 export const notDraggable = style({
-  userSelect:'none',
-  MozUserSelect:'none',
-  msUserSelect:'none',
-  MozWindowDragging: 'no-drag'
+  userSelect: 'none',
+  MozUserSelect: 'none',
+  msUserSelect: 'none',
+  MozWindowDragging: 'no-drag',
 })
 
 export const cardTexts = style({

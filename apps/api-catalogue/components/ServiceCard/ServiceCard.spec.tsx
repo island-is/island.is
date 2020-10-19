@@ -9,7 +9,6 @@ import {
   AccessCategory,
 } from '../../const/TestConst'
 
-
 import {
   AccessCategory as AccessCategoryDisplay,
   PricingCategory as PricingCategoryDisplay,
@@ -20,7 +19,7 @@ import {
 import ContentfulApi from '../../services/contentful'
 
 describe(' ServiceCard ', () => {
-  const service:any = {
+  const service: any = {
     id: '0',
     owner: 'Þjóðskrá',
     name: 'Fasteignaskrá',

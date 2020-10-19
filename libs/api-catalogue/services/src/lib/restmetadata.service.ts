@@ -138,8 +138,14 @@ export class RestMetadataService {
 
       xrdServices?.service?.forEach((item) => {
         // Validate the properties are provided that we need
-        if (item && item.serviceCode && item.xroadInstance
-          && item.memberCode && item.memberClass && item.subsystemCode) {
+        if (
+          item &&
+          item.serviceCode &&
+          item.xroadInstance &&
+          item.memberCode &&
+          item.memberClass &&
+          item.subsystemCode
+        ) {
           const serviceCode = item.serviceCode.split('-')[0]
           const mappedItem: XroadIdentifier = {
             instance: item.xroadInstance,

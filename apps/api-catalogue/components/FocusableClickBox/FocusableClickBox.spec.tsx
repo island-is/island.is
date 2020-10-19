@@ -5,7 +5,7 @@ import { FocusableClickBox } from './FocusableClickBox'
 
 describe(' FocusableClickBox ', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<FocusableClickBox href="http://bull.is"/>)
+    const { baseElement } = render(<FocusableClickBox href="http://bull.is" />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -36,7 +36,10 @@ export const ServiceCard = (props: ServiceCardProps) => {
         <div {...dragProps} className={cn(styles.scrollBoxWrapper)}>
           <div className={cn(styles.category)}>
             {props.service.pricing?.map((item, index) => (
-              <div className={cn(styles.categoryItem, styles.noSelect)} key={index}>
+              <div
+                className={cn(styles.categoryItem, styles.noSelect)}
+                key={index}
+              >
                 {
                   props.strings.find(
                     (s) =>
@@ -49,7 +52,10 @@ export const ServiceCard = (props: ServiceCardProps) => {
               </div>
             ))}
             {props.service.data?.map((item, index) => (
-              <div className={cn(styles.categoryItem, styles.noSelect)} key={index}>
+              <div
+                className={cn(styles.categoryItem, styles.noSelect)}
+                key={index}
+              >
                 {
                   props.strings.find(
                     (s) =>
@@ -60,12 +66,18 @@ export const ServiceCard = (props: ServiceCardProps) => {
               </div>
             ))}
             {props.service.type?.map((item, index) => (
-              <div className={cn(styles.categoryItem, styles.noSelect)} key={index}>
+              <div
+                className={cn(styles.categoryItem, styles.noSelect)}
+                key={index}
+              >
                 {TypeCategory[item]}
               </div>
             ))}
             {props.service.access?.map((item, index) => (
-              <div className={cn(styles.categoryItem, styles.noSelect)} key={index}>
+              <div
+                className={cn(styles.categoryItem, styles.noSelect)}
+                key={index}
+              >
                 {AccessCategory[item]}
               </div>
             ))}
