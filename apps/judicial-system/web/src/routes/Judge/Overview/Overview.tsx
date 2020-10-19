@@ -18,7 +18,6 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  autoSave,
   isNextDisabled,
   renderFormStepper,
   updateState,
@@ -312,6 +311,14 @@ export const JudgeOverview: React.FC = () => {
                       <Text>{workingCase?.legalArguments}</Text>
                     </Box>
                   )}
+                </AccordionItem>
+                <AccordionItem
+                  id="id_5"
+                  label="Skilaboð til dómara"
+                  startExpanded
+                  labelVariant="h3"
+                >
+                  <Text>{workingCase?.comments}</Text>
                 </AccordionItem>
               </Accordion>
             </Box>

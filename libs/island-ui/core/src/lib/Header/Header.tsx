@@ -82,7 +82,7 @@ export const Header = ({
         )}
         {authenticated && (
           <Box marginLeft={2}>
-            <Button variant="utility" icon="lock" onClick={onLogout}>
+            <Button variant="utility" icon="lockClosed" onClick={onLogout}>
               {logoutText}
             </Button>
           </Box>

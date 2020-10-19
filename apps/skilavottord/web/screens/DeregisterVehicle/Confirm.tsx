@@ -1,13 +1,6 @@
 import React, { FC } from 'react'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import {
-  Box,
-  Button,
-  Hidden,
-  IconDeprecated as Icon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Hidden, Stack, Text } from '@island.is/island-ui/core'
 import { CarDetailsBox } from '../Confirm/components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -48,9 +41,7 @@ const Confirm: FC = () => {
         <CarDetailsBox car={mockCar} />
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
-            <Button variant="ghost" circle size="large">
-              <Icon type="arrowLeft" />
-            </Button>
+            <Button variant="ghost" circle icon="arrowBack" size="large" />
           </Hidden>
           <Hidden below="md">
             <Button variant="ghost" onClick={handleBack}>

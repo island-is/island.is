@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
 import { Tabs } from '../Tabs/Tabs'
-import iconMap from './iconMap'
-import { Icon, IconPropsType } from './Icon'
+import iconMap, { Icon as IconType, Type } from './iconMap'
+import { Icon } from './Icon'
 
 const description = `
 Icons are generated from [Ionicons Designer Pack](https://ionicons.com/).
@@ -38,16 +38,16 @@ const Template = (args) => <Icon {...args} />
 export const Default = Template.bind({})
 Default.args = { icon: 'download' }
 
-const iconKeys = Object.keys(iconMap) as IconPropsType['type'][]
+const iconKeys = Object.keys(iconMap)
 
 const getTabs = (search) =>
-  iconKeys.map((typeKey) => {
-    const iconKeys = Object.keys(iconMap[typeKey]) as IconPropsType['icon'][]
+  iconKeys.map((typeKey: Type) => {
+    const iconKeys = Object.keys(iconMap[typeKey])
     return {
       label: typeKey,
       content: (
         <Box padding={2}>
-          {iconKeys.reduce((acc, iconKey) => {
+          {iconKeys.reduce((acc, iconKey: IconType) => {
             if (
               iconKey.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
               search === ''

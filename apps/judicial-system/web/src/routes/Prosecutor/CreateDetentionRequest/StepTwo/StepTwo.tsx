@@ -10,6 +10,7 @@ import {
   DatePicker,
   Input,
   Checkbox,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system-web/src/types'
 import {
@@ -41,7 +42,8 @@ import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
-  const requestedCustodyEndTime = useRef<HTMLInputElement>()
+  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>()
 
   const [
     requestedCustodyEndDateErrorMessage,
@@ -142,18 +144,6 @@ export const StepTwo: React.FC = () => {
     },
   ]
 
-  const requiredFields: { value: string; validations: Validation[] }[] = [
-    {
-      value: workingCase?.requestedCustodyEndDate,
-      validations: ['empty'],
-    },
-    {
-      value: requestedCustodyEndTime.current?.value,
-      validations: ['empty', 'time-format'],
-    },
-    { value: workingCase?.lawsBroken, validations: ['empty'] },
-  ]
-
   useEffect(() => {
     document.title = 'Málsatvik og lagarök - Réttarvörslugátt'
   }, [])
@@ -206,6 +196,24 @@ export const StepTwo: React.FC = () => {
       })
     }
   }, [workingCase, setWorkingCase])
+
+  useEffect(() => {
+    const requiredFields: { value: string; validations: Validation[] }[] = [
+      {
+        value: workingCase?.requestedCustodyEndDate,
+        validations: ['empty'],
+      },
+      {
+        value: requestedCustodyEndTimeRef.current?.value,
+        validations: ['empty', 'time-format'],
+      },
+      { value: workingCase?.lawsBroken, validations: ['empty'] },
+    ]
+
+    if (workingCase) {
+      setIsStepIllegal(isNextDisabled(requiredFields))
+    }
+  }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
 
   return (
     workingCase && (
@@ -277,7 +285,7 @@ export const StepTwo: React.FC = () => {
                       name="requestedCustodyEndTime"
                       label="Tímasetning"
                       placeholder="Settu inn tíma"
-                      ref={requestedCustodyEndTime}
+                      ref={requestedCustodyEndTimeRef}
                       defaultValue={
                         workingCase?.requestedCustodyEndDate?.indexOf('T') > -1
                           ? formatDate(
@@ -655,30 +663,41 @@ export const StepTwo: React.FC = () => {
                     }}
                   />
                 </Box>
-                <Box marginBottom={3}>
-                  <Input
-                    textarea
-                    rows={2}
-                    name="comments"
-                    label="Athugasemdir til dómara"
-                    placeholder="Skrifa hér..."
-                    defaultValue={workingCase?.comments}
-                    onBlur={(evt) => {
-                      autoSave(
-                        workingCase,
-                        'comments',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-                    }}
-                  />
+                <Box component="section" marginBottom={7}>
+                  <Box marginBottom={2}>
+                    <Text as="h3" variant="h3">
+                      Skilaboð til dómara{' '}
+                      <Tooltip
+                        placement="right"
+                        as="span"
+                        text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
+                      />
+                    </Text>
+                  </Box>
+                  <Box marginBottom={3}>
+                    <Input
+                      textarea
+                      rows={2}
+                      name="comments"
+                      label="Athugasemdir til dómara"
+                      placeholder="Skrifa hér..."
+                      defaultValue={workingCase?.comments}
+                      onBlur={(evt) => {
+                        autoSave(
+                          workingCase,
+                          'comments',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Box>
               <FormFooter
                 nextUrl={Constants.STEP_THREE_ROUTE}
                 nextIsDisabled={
-                  isNextDisabled(requiredFields) ||
-                  workingCase.custodyProvisions.length === 0
+                  isStepIllegal || workingCase.custodyProvisions.length === 0
                 }
               />
             </GridColumn>
