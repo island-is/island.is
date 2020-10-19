@@ -2,8 +2,6 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 
 describe('Confirmation route', () => {
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, () => {
