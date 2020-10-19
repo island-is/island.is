@@ -11,6 +11,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Text,
@@ -414,7 +415,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <GridColumn
             offset={['0', '0', '0', '0', '1/9']}
             span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            paddingBottom={2}
+            paddingBottom={[2, 2, 4]}
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
@@ -442,13 +443,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           </GridColumn>
         </GridRow>
         {!!contentOverviewOptions.length && (
-          <GridRow>
-            <GridColumn span="9/9" paddingBottom={4}>
-              <Hidden above="sm">
-                <DrawerMenu categories={combinedMobileNavigation} />
-              </Hidden>
-            </GridColumn>
-          </GridRow>
+          <Hidden above="sm">
+            <DrawerMenu categories={combinedMobileNavigation} />
+          </Hidden>
         )}
         <GridRow>
           <GridColumn
@@ -492,7 +489,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </GridRow>
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
-            body={(subArticle ?? article).body}
+            body={(subArticle ?? article).body as SliceType[]}
             config={{ defaultPadding: 4 }}
           />
         </Box>

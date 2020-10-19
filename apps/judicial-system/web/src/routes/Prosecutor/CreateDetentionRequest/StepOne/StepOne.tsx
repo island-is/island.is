@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { ProsecutorLogo } from '../../../../shared-components/Logos'
 import Modal from '../../../../shared-components/Modal/Modal'
 import {
-  Typography,
+  Text,
   GridContainer,
   GridRow,
   GridColumn,
@@ -250,9 +250,9 @@ export const StepOne: React.FC = () => {
                   <ProsecutorLogo />
                 </GridColumn>
                 <GridColumn span={'8/12'} offset={'1/12'}>
-                  <Typography as="h1" variant="h1">
+                  <Text as="h1" variant="h1">
                     Krafa um gæsluvarðhald
-                  </Typography>
+                  </Text>
                 </GridColumn>
               </GridRow>
             </Box>
@@ -263,9 +263,9 @@ export const StepOne: React.FC = () => {
               <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       LÖKE málsnúmer
-                    </Typography>
+                    </Text>
                   </Box>
                   <Input
                     data-testid="policeCaseNumber"
@@ -316,9 +316,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Sakborningur
-                    </Typography>
+                    </Text>
                   </Box>
                   <Box marginBottom={3}>
                     <Input
@@ -450,9 +450,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Dómstóll
-                    </Typography>
+                    </Text>
                   </Box>
                   <Select
                     name="court"
@@ -475,9 +475,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Tími handtöku
-                    </Typography>
+                    </Text>
                   </Box>
                   <GridRow>
                     <GridColumn span="5/8">
@@ -570,9 +570,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Ósk um fyrirtökudag og tíma
-                    </Typography>
+                    </Text>
                   </Box>
                   <GridRow>
                     <GridColumn span="5/8">

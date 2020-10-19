@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -99,25 +100,22 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             </GridColumn>
           </GridRow>
           {!!mobileNavigation.length && (
-            <GridRow>
-              <GridColumn span="9/9" paddingBottom={4}>
-                <Hidden above="sm">
-                  <DrawerMenu
-                    categories={[
-                      {
-                        title: n('categoryOverview', 'Efnisyfirlit'),
-                        items: mobileNavigation,
-                      },
-                    ]}
-                  />
-                </Hidden>
-              </GridColumn>
-            </GridRow>
+            <Hidden above="sm">
+              <DrawerMenu
+                categories={[
+                  {
+                    title: n('categoryOverview', 'Efnisyfirlit'),
+                    items: mobileNavigation,
+                  },
+                ]}
+              />
+            </Hidden>
           )}
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '0', '1/9']}
               span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+              paddingBottom={[2, 2, 4]}
             >
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
@@ -125,6 +123,13 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   {n('lifeEventTitle', 'Lífsviðburður')}
                 </Tag>
               </Breadcrumbs>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '0', '1/9']}
+              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+            >
               <Text variant="h1" as="h1">
                 <span id={slugify(title)}>{title}</span>
               </Text>
@@ -135,8 +140,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               )}
             </GridColumn>
           </GridRow>
-          <Box paddingTop={8}>
-            <RichText body={content} config={{ defaultPadding: 4 }} />
+          <Box paddingTop={[3, 3, 4]}>
+            <RichText
+              body={content as SliceType[]}
+              config={{ defaultPadding: 4 }}
+            />
           </Box>
         </>
       </ArticleLayout>
