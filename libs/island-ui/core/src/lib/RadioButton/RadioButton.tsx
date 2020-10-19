@@ -7,6 +7,7 @@ import * as styles from './RadioButton.treat'
 export interface RadioButtonProps {
   name?: string
   id?: string
+  testId?: string
   label?: string
   value?: string | number
   checked?: boolean
@@ -23,6 +24,7 @@ export const RadioButton = ({
   label,
   name,
   id = name,
+  testId,
   value,
   checked,
   disabled,
@@ -52,6 +54,7 @@ export const RadioButton = ({
         name={name}
         disabled={disabled}
         id={id}
+        data-testid={testId}
         onChange={onChange}
         value={value}
         {...ariaError}

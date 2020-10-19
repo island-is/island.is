@@ -663,7 +663,7 @@ export const StepTwo: React.FC = () => {
                       <Tooltip
                         placement="right"
                         as="span"
-                        text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar ástand sakbornings"
+                        text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar um ástand sakbornings"
                       />
                     </Text>
                   </Box>
