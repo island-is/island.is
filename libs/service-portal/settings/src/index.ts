@@ -7,7 +7,15 @@ import { lazy } from 'react'
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
-  widgets: () => [],
+  widgets: () => [
+    {
+      name: 'User profile onboarding modal',
+      render: () =>
+        lazy(() => import('./widgets/UserProfileOnboarding/UserProfile')),
+      weight: 3,
+      utility: true,
+    },
+  ],
   routes: () => {
     const routes: ServicePortalRoute[] = [
       {

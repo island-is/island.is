@@ -70,6 +70,14 @@ export type ServicePortalWidget = {
    */
   weight: number
   /**
+   * Utility widgets get rendered straight into the dashboard
+   * without a layout box and a title.
+   * These are usually widgets that provide functionality
+   * that does not get rendered on the dashboard itself.
+   * Fx: The user profile onboarding modal
+   */
+  utility?: boolean
+  /**
    * The render value of this widget
    */
   render: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
