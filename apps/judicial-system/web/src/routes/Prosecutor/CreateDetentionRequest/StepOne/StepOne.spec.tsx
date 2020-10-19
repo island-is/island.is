@@ -6,6 +6,8 @@ import StepOne from './StepOne'
 import { Route, Router, MemoryRouter } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
+import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/extend-expect'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -42,9 +44,42 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     })
   })
 
+  test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
+    // Arrange
+    const history = createMemoryHistory()
+
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({
+        id: 'b5041539-27c0-426a-961d-0f268fe45165',
+        policeCaseNumber: '010-1991-191',
+        accusedNationalId: '1111111110',
+        accusedName: 'string',
+        accusedAddress: 'string',
+        arrestDate: '2020-09-16T19:51:28.224Z',
+        requestedCourtDate: '2020-09-16T19:51:28.224Z',
+      })
+    })
+
+    // Act
+    const { getByTestId } = render(
+      <Router history={history}>
+        <StepOne />
+      </Router>,
+    )
+
+    // Assert
+    expect(
+      getByTestId('continueButton') as HTMLButtonElement,
+    ).not.toBeDisabled()
+  })
+
   test('should display an empty form if there is nothing in local storage', async () => {
     // Arrange
     const history = createMemoryHistory()
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({})
+    })
+
     const { getByTestId, queryAllByTestId } = render(
       <Router history={history}>
         <StepOne />
@@ -71,6 +106,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     expect(aa.filter((a) => a.innerHTML !== '').length).toEqual(0)
     expect(court).toEqual('Héraðsdómur Reykjavíkur')
     expect(datepickers.length).toEqual(0)
+    expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
   })
 
   test('should persist data if data is in localstorage', async () => {
