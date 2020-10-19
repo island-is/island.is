@@ -1,4 +1,4 @@
-import * as React from 'react' // [1]
+import * as React from 'react'
 import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { Tag } from '../Tag/Tag'
@@ -65,5 +65,3 @@ export const TopicCard: React.FC<TopicCardProps> = ({
     </FocusableBox>
   )
 }
-
-// [1] Used like this to get Storybook props working. Will be fixed.
