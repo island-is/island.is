@@ -7,6 +7,7 @@ export const GET_ABOUT_PAGE_QUERY = gql`
       title
       seoDescription
       theme
+      slug
       pageHeader {
         id
         title
