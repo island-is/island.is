@@ -24,7 +24,7 @@ import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const defaultCategory = { label: 'Allir flokkar', value: '' }
 const pageSize = 4
@@ -38,6 +38,7 @@ type FilterValues = {
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
+  useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -131,7 +132,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     icon={searchOpen ? 'close' : 'plus'}
                     onClick={handleExtendSearchClick}
                   >
-                    {searchOpen ? 'Loka ítarleit' : 'Ítarleit'}
+                    {searchOpen
+                      ? formatMessage({
+                          id: 'sp.documents:close-filters',
+                          defaultMessage: 'Loka ítarleit',
+                        })
+                      : formatMessage({
+                          id: 'sp.documents:filters',
+                          defaultMessage: 'Ítarleit',
+                        })}
                   </Button>
                 </Column>
               </Columns>
@@ -172,14 +181,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Typography variant="h3">
-                  Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+                  {formatMessage({
+                    id: 'sp.documents:error',
+                    defaultMessage:
+                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
+                  })}
                 </Typography>
               </Box>
             )}
             {!loading && !error && data?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Typography variant="h3">
-                  Engin skjöl fundust fyrir gefin leitarskilyrði
+                  {formatMessage({
+                    id: 'sp.documents:not-found',
+                    defaultMessage:
+                      'Engin skjöl fundust fyrir gefin leitarskilyrði',
+                  })}
                 </Typography>
               </Box>
             )}
