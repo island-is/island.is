@@ -2,7 +2,7 @@ import React from 'react'
 import { AppealDecitionRole, Case, RequiredField } from '../types'
 import * as api from '../api'
 import { parseString } from './formatters'
-import { FormStepper, Typography } from '@island.is/island-ui/core'
+import { FormStepper, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -85,28 +85,24 @@ export const getAppealDecitionText = (
 
 export const constructConclusion = (workingCase: Case) => {
   if (workingCase.rejecting) {
-    return <Typography as="span">Beiðni um gæsluvarðhald hafnað</Typography>
+    return <Text as="span">Beiðni um gæsluvarðhald hafnað</Text>
   } else {
     return (
       <>
-        <Typography as="span">{`Kærði, `}</Typography>
-        <Typography as="span" color="blue400" fontWeight="semiBold">
+        <Text as="span">{`Kærði, `}</Text>
+        <Text as="span" color="blue400" fontWeight="semiBold">
           {`${workingCase.accusedName} kt.${workingCase.accusedNationalId} `}
-        </Typography>
-        <Typography as="span">
-          skal sæta gæsluvarðhaldi, þó ekki lengur en til
-        </Typography>
-        <Typography as="span" color="blue400" fontWeight="semiBold">
+        </Text>
+        <Text as="span">skal sæta gæsluvarðhaldi, þó ekki lengur en til</Text>
+        <Text as="span" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
-        </Typography>
+        </Text>
         {workingCase.custodyRestrictions.length === 0 ? (
-          <Typography as="span">
-            Engar takmarkanir skulu vera á gæslunni.
-          </Typography>
+          <Text as="span">Engar takmarkanir skulu vera á gæslunni.</Text>
         ) : (
-          <Typography as="span">
+          <Text as="span">
             Kærði skal sæta
-            <Typography as="span" color="blue400" fontWeight="semiBold">
+            <Text as="span" color="blue400" fontWeight="semiBold">
               {workingCase.custodyRestrictions.map(
                 (custodyRestriction, index) => {
                   const isNextLast =
@@ -117,39 +113,39 @@ export const constructConclusion = (workingCase: Case) => {
 
                   return custodyRestriction ===
                     CaseCustodyRestrictions.ISOLATION ? (
-                    <Typography as="span" key={index}>
+                    <Text as="span" key={index}>
                       {` einangrun${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
                       }`}
-                    </Typography>
+                    </Text>
                   ) : custodyRestriction ===
                     CaseCustodyRestrictions.COMMUNICATION ? (
-                    <Typography as="span" key={index}>
+                    <Text as="span" key={index}>
                       {` bréfa, og símabanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
-                    </Typography>
+                    </Text>
                   ) : custodyRestriction === CaseCustodyRestrictions.MEDIA ? (
-                    <Typography as="span" key={index}>
+                    <Text as="span" key={index}>
                       {` fjölmiðlabanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
-                    </Typography>
+                    </Text>
                   ) : custodyRestriction ===
                     CaseCustodyRestrictions.VISITAION ? (
-                    <Typography as="span" key={index}>
+                    <Text as="span" key={index}>
                       {` heimsóknarbanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
-                    </Typography>
+                    </Text>
                   ) : (
                     ''
                   )
                 },
               )}
-            </Typography>
+            </Text>
             {` á meðan á gæsluvarðhaldinu stendur.`}
-          </Typography>
+          </Text>
         )}
       </>
     )
