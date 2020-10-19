@@ -21,7 +21,7 @@ import { BetaTag } from '../Logo/BetaTag'
 export const Header: FC<{}> = () => {
   const { lang } = useLocale()
   const [{ mobileMenuState }, dispatch] = useStore()
-  const { changeLanguage } = useNamespaces(['service.portal'])
+  const { changeLanguage } = useNamespaces(['service.portal', 'global'])
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
   const handleMobileMenuClose = () =>
