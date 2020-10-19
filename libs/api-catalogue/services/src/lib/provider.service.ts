@@ -5,9 +5,9 @@ import {
   XroadIdentifierIdObjectTypeEnum,
 } from '../../gen/fetch/xrd'
 import { ProviderType } from '@island.is/api-catalogue/consts'
-import { HttpStatus, Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { exceptionHandler } from './utils'
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class ProviderService {
@@ -29,6 +29,8 @@ export class ProviderService {
     providerType: ProviderType,
   ): Promise<Array<Provider>> {
     let providers: Array<Provider> = []
+
+    logger.info(`Finding ${providerType} providers`)
 
     try {
       const filter = new RegExp(`.*${providerType}$`)
@@ -58,6 +60,8 @@ export class ProviderService {
     } catch (err) {
       exceptionHandler(err)
     }
+
+    logger.info(`Found ${providers.length} protected service providers`)
 
     return providers
   }

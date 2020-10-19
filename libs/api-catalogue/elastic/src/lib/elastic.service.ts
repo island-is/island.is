@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { Client } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
+// @ts-ignore
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
 import { SearchResponse } from './types/types.model'
-import {
-  AccessCategory,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
 
@@ -22,14 +17,19 @@ export class ElasticService {
   private client: Client
   private indexName = 'apicatalogue'
 
+  constructor() {
+    this.client = this.createEsClient()
+  }
+
   async deleteIndex() {
     logger.info('Deleting index', this.indexName)
 
     try {
-      const client = await this.getClient()
-      const { body } = await client.indices.exists({ index: this.indexName })
+      const { body } = await this.client.indices.exists({
+        index: this.indexName,
+      })
       if (body) {
-        await client.indices.delete({ index: this.indexName })
+        await this.client.indices.delete({ index: this.indexName })
       } else {
         logger.info('No index to delete', this.indexName)
       }
@@ -42,8 +42,7 @@ export class ElasticService {
     logger.info('Indexing', service)
 
     try {
-      const client = await this.getClient()
-      return await client.index({
+      return await this.client.index({
         id: service.id,
         index: this.indexName,
         body: service,
@@ -57,7 +56,7 @@ export class ElasticService {
     logger.info('Bulk insert', services)
 
     if (services.length) {
-      const bulk = []
+      const bulk: Array<any> = []
       services.forEach((service) => {
         bulk.push({
           index: {
@@ -68,8 +67,7 @@ export class ElasticService {
         bulk.push(service)
       })
       try {
-        const client = await this.getClient()
-        return await client.bulk({
+        return await this.client.bulk({
           body: bulk,
           index: this.indexName,
         })
@@ -115,8 +113,7 @@ export class ElasticService {
   async search<ResponseBody, RequestBody>(query: RequestBody) {
     logger.debug('Searching for', query)
     try {
-      const client = await this.getClient()
-      return client.search<ResponseBody, RequestBody>({
+      return await this.client.search<ResponseBody, RequestBody>({
         body: query,
         index: this.indexName,
       })
@@ -131,8 +128,7 @@ export class ElasticService {
     }
 
     logger.info('Deleting based on indexes', { ids })
-    const client = await this.getClient()
-    return client.delete_by_query({
+    return await this.client.delete_by_query({
       index: this.indexName,
       body: {
         query: {
@@ -147,8 +143,7 @@ export class ElasticService {
 
   async deleteAllExcept(excludeIds: Array<string>) {
     logger.info('Deleting everything except', { excludeIds })
-    const client = await this.getClient()
-    return client.delete_by_query({
+    return await this.client.delete_by_query({
       index: this.indexName,
       body: {
         query: {
@@ -162,23 +157,14 @@ export class ElasticService {
   }
 
   async ping() {
-    const client = await this.getClient()
-    const result = await client.ping().catch((error) => {
+    const result = await this.client.ping().catch((error) => {
       logger.error('Error in ping', error)
     })
     logger.info('Got elasticsearch ping response')
     return result
   }
 
-  async getClient(): Promise<Client> {
-    if (this.client) {
-      return this.client
-    }
-    this.client = await this.createEsClient()
-    return this.client
-  }
-
-  async createEsClient(): Promise<Client> {
+  private createEsClient(): Client {
     const hasAWS =
       'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
       'AWS_SECRET_ACCESS_KEY' in process.env

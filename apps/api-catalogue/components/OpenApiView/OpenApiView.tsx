@@ -35,10 +35,10 @@ export const OpenApiView = (props: ServiceCardProps) => {
       {'x-links' in props.spec.info && (
         <div>
           <h4>Additional links</h4>
-          <div className={cn(styles.x_linksContainer)}>
-            <div className={cn(styles.x_links)}>
+          <div className={cn(styles.xLinksContainer)}>
+            <div className={cn(styles.xLinks)}>
               {Object.keys(props.spec.info['x-links']).map((key, index) => (
-                <div className={cn(styles.x_link)} key={key}>
+                <div className={cn(styles.xLink)} key={key}>
                   {showLink(key, props.spec.info['x-links'][key])}
                 </div>
               ))}

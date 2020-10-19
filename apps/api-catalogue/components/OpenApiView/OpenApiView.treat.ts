@@ -3,7 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const defaultWidth = 400
 
-export const x_links = style({
+export const xLinks = style({
   width: '100%',
   display: 'flex',
   flexDirection: 'row',
@@ -11,12 +11,12 @@ export const x_links = style({
   flexWrap: 'wrap',
 })
 
-export const x_linksContainer = style({
+export const xLinksContainer = style({
   marginTop: 10,
   marginBottom: 40,
 })
 
-export const x_link = style({
+export const xLink = style({
   padding: 8,
   borderRadius: 5,
   background: theme.color.blue100,

@@ -5,6 +5,18 @@ import { ServiceFilter } from './ServiceFilter'
 import { GetApiCatalogueInput } from '@island.is/api/schema'
 
 describe(' ServiceFilter ', () => {
+  const OLD_ENV = process.env
+
+  beforeAll(() => {
+    process.env = OLD_ENV
+    process.env.CONTENTFUL_SPACE_ID = 'jtzqkuaxipis'
+    process.env.CONTENTFUL_ACCESS_TOKEN =
+      'N6X1O7qgBQ_FqxQx0O-keh3tJDrEhV8myczR3w-ZbS0'
+  })
+  afterAll(() => {
+    process.env = OLD_ENV // restore old env
+  })
+
   it('should render successfully', () => {
     const strings = [
       { id: 'catalog-filter-access', text: 'Aðgengi' },
@@ -41,7 +53,6 @@ describe(' ServiceFilter ', () => {
         rootClasses={null}
         isLoading={true}
         parameters={params}
-        onInputChange={null}
         onClear={null}
         onCheckCategoryChanged={null}
         strings={strings}

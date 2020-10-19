@@ -7,7 +7,7 @@ class ContentfulApi {
   constructor() {
     this.client = createClient({
       space: process.env.CONTENTFUL_SPACE_ID,
-      accessToken: process.env.CONTENTFUL_ACCESS_TOKEN
+      accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
     })
   }
 
@@ -15,6 +15,7 @@ class ContentfulApi {
   public async fetchPageBySlug(slug, locale): Promise<Page> {
     return await this.client
       .getEntries({
+        /* eslint-disable @typescript-eslint/camelcase */
         content_type: 'page',
         locale: locale,
         'fields.pageId': slug,

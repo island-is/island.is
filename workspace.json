@@ -704,8 +704,10 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalogue/services/.eslintrc",
             "tsConfig": [
               "libs/api-catalogue/services/tsconfig.lib.json",
               "libs/api-catalogue/services/tsconfig.spec.json"

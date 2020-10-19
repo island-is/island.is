@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Link } from '@island.is/island-ui/core'
 import * as styles from './ServiceCard.treat'
 import cn from 'classnames'
-import { ServiceStatus, useHorizontalDragScroll } from '..'
+import { useHorizontalDragScroll } from '..'
 import { ApiService } from '@island.is/api/schema'
 import {
   AccessCategory,

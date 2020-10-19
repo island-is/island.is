@@ -5,6 +5,7 @@
     "emitDecoratorMetadata": true,
     "target": "es2015",
     "experimentalDecorators": true
+    //"strict": false
   },
   "include": ["**/*.ts"]
 }

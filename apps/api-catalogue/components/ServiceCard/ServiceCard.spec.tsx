@@ -19,6 +19,12 @@ import {
 import ContentfulApi from '../../services/contentful'
 
 describe(' ServiceCard ', () => {
+  const OLD_ENV = process.env
+
+  afterAll(() => {
+    process.env = OLD_ENV // restore old env
+  })
+
   const service: any = {
     id: '0',
     owner: 'Þjóðskrá',
@@ -39,6 +45,10 @@ describe(' ServiceCard ', () => {
     ],
   }
 
+  process.env = OLD_ENV // make a copy
+  process.env.CONTENTFUL_SPACE_ID = 'jtzqkuaxipis'
+  process.env.CONTENTFUL_ACCESS_TOKEN =
+    'N6X1O7qgBQ_FqxQx0O-keh3tJDrEhV8myczR3w-ZbS0'
   const client = new ContentfulApi()
 
   it('should render successfully', async () => {
