@@ -66,10 +66,10 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
             defaultMessage: 'Klára seinna',
           })}
         </Button>
-        <Button variant="primary" onClick={onSubmit}>
+        <Button variant="primary" onClick={onSubmit} icon="arrowRight">
           {formatMessage({
-            id: 'service.portal:continue',
-            defaultMessage: 'Halda áfram',
+            id: 'service.portal:next-step',
+            defaultMessage: 'Næsta skref',
           })}
         </Button>
       </Box>

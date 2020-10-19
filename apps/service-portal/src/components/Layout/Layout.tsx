@@ -33,10 +33,7 @@ const Layout: FC = ({ children }) => {
   return (
     <>
       <UserInfoLoadingOverlay />
-      {/*
-        Raises an error regarding styled jsx atm
-        <ToastContainer />
-      */}
+      <ToastContainer useKeyframeStyles={false} />
       <Header />
       <Hidden above="md">
         <MobileToolbar />

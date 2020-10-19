@@ -40,6 +40,7 @@ export interface ButtonProps {
   disabled?: boolean
   focusable?: boolean
   icon?: IconTypes
+  type?: NativeButtonProps['type']
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
@@ -51,6 +52,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
       icon,
       children,
       circle,
+      type = 'button',
       ...buttonProps
     },
     ref,
@@ -60,6 +62,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
+        type={type}
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],

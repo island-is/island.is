@@ -1,7 +1,8 @@
-import { Text, toast } from '@island.is/island-ui/core'
+import { toast } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { User } from 'oidc-client'
 import React, { FC, useState } from 'react'
+import { FormStep, UserProfileFormData } from './Steps/FormStep'
 import { IntroStep } from './Steps/IntroStep'
 
 type OnboardingStep = 'intro' | 'user-info' | 'submit'
@@ -19,8 +20,12 @@ export const UserOnboardingModal: FC<Props> = ({ userInfo }) => {
     setIsOpen(false)
   }
 
-  const onStepSubmit = (step: OnboardingStep) => {
-    console.log('continue')
+  const gotoStep = (step: OnboardingStep) => {
+    setStep(step)
+  }
+
+  const handleFormSubmit = (data: UserProfileFormData) => {
+    console.log('lads go', data)
   }
 
   return (
@@ -29,7 +34,15 @@ export const UserOnboardingModal: FC<Props> = ({ userInfo }) => {
         <IntroStep
           userInfo={userInfo}
           onClose={handleCloseModal}
-          onSubmit={onStepSubmit.bind(null, 'intro')}
+          onSubmit={gotoStep.bind(null, 'user-info')}
+        />
+      )}
+      {step === 'user-info' && (
+        <FormStep
+          userInfo={userInfo}
+          onBack={gotoStep.bind(null, 'intro')}
+          onClose={handleCloseModal}
+          onSubmit={handleFormSubmit}
         />
       )}
     </Modal>
