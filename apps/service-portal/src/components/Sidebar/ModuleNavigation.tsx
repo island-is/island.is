@@ -14,10 +14,9 @@ import SubNavItem from './NavItem/SubNavItem'
 
 interface Props {
   nav: ServicePortalNavigationItem
-  variant: 'blue' | 'purple'
 }
 
-const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
+const ModuleNavigation: FC<Props> = ({ nav }) => {
   const [expand, setExpand] = useState(false)
   const { pathname } = useLocation()
   const isModuleActive =
@@ -37,7 +36,6 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
-        variant={variant}
         onClick={nav.path === undefined ? handleExpand : undefined}
       >
         {formatMessage(nav.name)}
@@ -45,18 +43,10 @@ const ModuleNavigation: FC<Props> = ({ nav, variant }) => {
       {Array.isArray(nav.children) && nav.children.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <div>
-            <Box
-              className={{
-                [styles.subNavBlue]: variant === 'blue',
-                [styles.subNavPurple]: variant === 'purple',
-              }}
-              paddingLeft={2}
-              marginTop={2}
-            >
+            <Box className={styles.subnav} paddingLeft={2} marginTop={2}>
               <Stack space={1}>
                 {nav.children.map((child, index) => (
                   <SubNavItem
-                    variant={variant}
                     path={child.path}
                     key={`child-${index}`}
                     active={
