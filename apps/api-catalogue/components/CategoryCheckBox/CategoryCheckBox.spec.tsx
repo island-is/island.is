@@ -8,9 +8,6 @@ describe(' CategoryCheckBox ', () => {
     const { baseElement } = render(
       <CategoryCheckBox
         checked={false}
-        onChange={({ target }) => {
-          ;(target) => {}
-        }}
         label="Test"
         name="Test"
         value="test"

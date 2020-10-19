@@ -1,13 +1,7 @@
 import React from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import { Card } from '../../components'
-import {
-  Box,
-  Stack,
-  Typography,
-  Columns,
-  Breadcrumbs,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { HomeLayout } from '../../components'
 import * as styles from './Home.treat'
