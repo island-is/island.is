@@ -1,16 +1,16 @@
 import React from 'react'
+import { withDesign } from 'storybook-addon-designs'
+import { withFigma } from '../../utils/withFigma'
 import { ActionCard } from './ActionCard'
 
 export default {
   title: 'Cards/ActionCard',
   component: ActionCard,
-  parameters: {
-    docs: {
-      description: {
-        component: 'TODO',
-      },
-    },
-  },
+  decorators: [withDesign],
+  parameters: withFigma({
+    desktop:
+      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=502%3A0',
+  }),
 }
 
 export const Default = () => (
