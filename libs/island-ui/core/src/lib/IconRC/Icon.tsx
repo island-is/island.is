@@ -38,6 +38,10 @@ export const Icon = ({
   title,
   titleId,
 }: IconProps) => {
+  const path = iconMap[type][icon]
+  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
+    path,
+  ])
   if (typeof window === 'undefined') {
     return (
       <span
@@ -49,10 +53,6 @@ export const Icon = ({
       />
     )
   }
-  const path = iconMap[type][icon]
-  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
-    path,
-  ])
   const optionalProps: SvgProps = {}
   if (className) {
     optionalProps.className = className
