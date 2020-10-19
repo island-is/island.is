@@ -24,8 +24,4 @@ export class CreateUserProfileInput {
   @IsOptional()
   email?: string
 
-  @Field(() => String)
-  @IsString()
-  @IsOptional()
-  profileImageUrl?: string
 }

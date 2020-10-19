@@ -25,8 +25,4 @@ export class UpdateUserProfileInput {
   @IsOptional()
   email?: string
 
-  @Field(() => String)
-  @IsString()
-  @IsOptional()
-  profileImageUrl?: string
 }
