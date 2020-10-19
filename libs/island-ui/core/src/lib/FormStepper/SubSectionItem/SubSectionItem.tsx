@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import cn from 'classnames'
 
 import { Icon } from '../../Icon/Icon'
 import { Text } from '../../Text/Text'
@@ -17,8 +18,8 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
   showIcon = false,
   children,
 }) => (
-  <Box display="flex" marginTop={1}>
-    <SectionNumberColumn>
+  <Box display="flex" alignItems="center" marginTop={[0, 0, 1]}>
+    <SectionNumberColumn className={styles.number}>
       {showIcon && (
         <span className={styles.bullet}>
           <span className={styles.icon}>
@@ -27,12 +28,15 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
         </span>
       )}
     </SectionNumberColumn>
-    <Text
-      as="span"
-      lineHeight="lg"
-      fontWeight={currentState === 'active' ? 'semiBold' : 'light'}
-    >
-      {children}
-    </Text>
+
+    <Box className={styles.name}>
+      <Text
+        as="span"
+        lineHeight="lg"
+        fontWeight={currentState === 'active' ? 'semiBold' : 'light'}
+      >
+        {children}
+      </Text>
+    </Box>
   </Box>
 )

@@ -70,5 +70,5 @@ export * from './lib/Tabs/Tabs'
 // Context
 export * from './lib/context'
 
-// Global reset
-export * from './global/global.treat'
+// Util functions
+export * from './utils/global.treat'

@@ -8,7 +8,7 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 
-import Sidebar from '../components/Sidebar'
+import { Sidebar } from '../components/Sidebar'
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
 import {
@@ -71,7 +71,10 @@ export const FormShell: FC<{
       >
         <GridContainer>
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '9/12', '9/12']}
+              className={styles.shellContainer}
+            >
               <Box
                 paddingTop={[3, 6, 8]}
                 height="full"

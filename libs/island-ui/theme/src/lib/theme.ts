@@ -104,7 +104,6 @@ export const theme = {
 }
 
 export type Theme = typeof theme
-
 export type Colors = keyof typeof color
 
 type RequiredTokens = Pick<Theme, 'breakpoints'>
@@ -117,8 +116,8 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     !styles || Object.keys(styles).length === 0
       ? {}
       : {
-          [`screen and (min-width: ${tokens.breakpoints[breakpoint]}px)`]: styles,
-        }
+        [`screen and (min-width: ${tokens.breakpoints[breakpoint]}px)`]: styles,
+      }
 
   const mediaQuery = {
     sm: makeMediaQuery('sm'),
@@ -137,7 +136,6 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
 
   const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): Style => {
     const xsStyles = omit(xs, '@media')
-
     const smStyles = !sm || isEqual(sm, xsStyles) ? null : sm
     const mdStyles = !md || isEqual(md, xsStyles || smStyles) ? null : md
     const lgStyles =
@@ -153,13 +151,13 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
       ...xsStyles,
       ...(hasMediaQueries
         ? {
-            '@media': {
-              ...(smStyles ? mediaQuery.sm(smStyles) : {}),
-              ...(mdStyles ? mediaQuery.md(mdStyles) : {}),
-              ...(lgStyles ? mediaQuery.lg(lgStyles) : {}),
-              ...(xlStyles ? mediaQuery.xl(xlStyles) : {}),
-            },
-          }
+          '@media': {
+            ...(smStyles ? mediaQuery.sm(smStyles) : {}),
+            ...(mdStyles ? mediaQuery.md(mdStyles) : {}),
+            ...(lgStyles ? mediaQuery.lg(lgStyles) : {}),
+            ...(xlStyles ? mediaQuery.xl(xlStyles) : {}),
+          },
+        }
         : {}),
     }
   }
