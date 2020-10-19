@@ -1,5 +1,7 @@
+import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
 import { store } from './store'
+import { getDatePrefix } from './utils'
 
 export const resolvers: Resolvers = {
   Slice: {
@@ -25,21 +27,26 @@ export const resolvers: Resolvers = {
 
     getAlertBanner: () => store.alertBanner,
 
-    getNewsList: (parent, args) => {
-      const sorted = args.input.ascending
-        ? [...store.newsList].reverse()
-        : store.newsList
+    getNews: (parent, args) => {
+      const datePrefix = getDatePrefix(args.input.year, args.input.month)
+      const filtered = store.newsList.filter((news) =>
+        news.date.startsWith(datePrefix),
+      )
+      const sorted = args.input.order === 'asc' ? filtered.reverse() : filtered
       const page = args.input.page || 1
-      const perPage = args.input.perPage || 10
+      const perPage = args.input.size || 10
+      const start = (page - 1) * perPage
       return {
-        news: sorted.slice(page * perPage - perPage, page * perPage),
-        page: {
-          page,
-          perPage,
-          totalResults: store.newsList.length,
-          totalPages: Math.ceil(store.newsList.length / perPage),
-        },
+        items: sorted.slice(start, start + perPage),
+        total: filtered.length,
       }
+    },
+
+    getNewsDates: (parent, args) => {
+      const yearsAndMonths = store.newsList.map((news) => news.date.slice(0, 7))
+      const order = args.input.order === 'desc' ? 'desc' : 'asc'
+      const unique = Array.from(new Set(yearsAndMonths))
+      return orderBy(unique, [], order)
     },
 
     getSingleNews: (parent, args) =>
