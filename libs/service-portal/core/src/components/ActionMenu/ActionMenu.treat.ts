@@ -46,3 +46,8 @@ export const menuItem = style({
     color: theme.color.mint400,
   },
 })
+
+export const dot = style({
+  width: 4,
+  height: 4,
+})

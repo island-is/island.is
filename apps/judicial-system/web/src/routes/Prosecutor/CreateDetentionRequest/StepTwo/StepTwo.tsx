@@ -10,6 +10,7 @@ import {
   DatePicker,
   Input,
   Checkbox,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system-web/src/types'
 import {
@@ -279,7 +280,7 @@ export const StepTwo: React.FC = () => {
                       placeholder="Settu inn tíma"
                       ref={requestedCustodyEndTime}
                       defaultValue={
-                        workingCase?.requestedCustodyEndDate.indexOf('T') > -1
+                        workingCase?.requestedCustodyEndDate?.indexOf('T') > -1
                           ? formatDate(
                               workingCase?.requestedCustodyEndDate,
                               TIME_FORMAT,
@@ -655,23 +656,35 @@ export const StepTwo: React.FC = () => {
                     }}
                   />
                 </Box>
-                <Box marginBottom={3}>
-                  <Input
-                    textarea
-                    rows={2}
-                    name="comments"
-                    label="Athugasemdir til dómara"
-                    placeholder="Skrifa hér..."
-                    defaultValue={workingCase?.comments}
-                    onBlur={(evt) => {
-                      autoSave(
-                        workingCase,
-                        'comments',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-                    }}
-                  />
+                <Box component="section" marginBottom={7}>
+                  <Box marginBottom={2}>
+                    <Text as="h3" variant="h3">
+                      Skilaboð til dómara{' '}
+                      <Tooltip
+                        placement="right"
+                        as="span"
+                        text="Hér er hægt að skrá athugasemdir eða skilaboð til dómara sem verður ekki vistað sem hluti af kröfunni. Til dæmis aðrar upplýsingar en koma fram í kröfunni og/eða upplýsingar ástand sakbornings"
+                      />
+                    </Text>
+                  </Box>
+                  <Box marginBottom={3}>
+                    <Input
+                      textarea
+                      rows={2}
+                      name="comments"
+                      label="Athugasemdir til dómara"
+                      placeholder="Skrifa hér..."
+                      defaultValue={workingCase?.comments}
+                      onBlur={(evt) => {
+                        autoSave(
+                          workingCase,
+                          'comments',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Box>
               <FormFooter

@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {
   ToastContainer as ToastifyContainer,
   toast as toastify,

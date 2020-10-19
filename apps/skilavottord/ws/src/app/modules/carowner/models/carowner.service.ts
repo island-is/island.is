@@ -53,12 +53,27 @@ export class CarownerService {
     return this.carownerList
   }
 
-  async getRestTest() {
-    const response = await this.httpService
-      .get('https://api.github.com/users/paztek')
-      .toPromise()
-    return response.data
-  }
+  // TEST TODO ATH
+  // async getRestTest() {
+  //   const response = await this.httpService
+  //     .get('https://api.github.com/users/paztek')
+  //     .toPromise()
+  //   return response.data
+  // }
+
+  // async getSoapTest() {
+  //   const headersRequest = {
+  //     'Content-Type': 'application/xml', // afaik this one is not needed
+  //   }
+  //   const result = await this.httpService.post(
+  //     'https://soap/servies/url',
+  //     'xml->soap request envelope skeytið',
+  //     {
+  //       headers: headersRequest,
+  //     },
+  //   )
+  //   console.log(JSON.stringify(result, null, 2))
+  // }
 
   getVehiclesForNationalId(nId: string): Carowner {
     return this.carownerList.find((e) => e.nationalId === nId)

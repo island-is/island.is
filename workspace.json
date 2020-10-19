@@ -2004,7 +2004,7 @@
             }
           }
         },
-        "build-storybook": {
+        "build": {
           "builder": "@nrwl/storybook:build",
           "options": {
             "uiFramework": "@storybook/react",
@@ -2016,9 +2016,15 @@
           "configurations": {
             "ci": {
               "quiet": true
+            },
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "island-ui-theme": {
@@ -2885,6 +2891,17 @@
             "jestConfig": "libs/service-portal/documents/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
         }
       }
     },
@@ -2941,6 +2958,17 @@
           "options": {
             "jestConfig": "libs/service-portal/education/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
           }
         }
       }
@@ -3011,6 +3039,17 @@
             "jestConfig": "libs/service-portal/finance/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
         }
       }
     },
@@ -3068,6 +3107,17 @@
           "options": {
             "jestConfig": "libs/service-portal/health/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
           }
         }
       }

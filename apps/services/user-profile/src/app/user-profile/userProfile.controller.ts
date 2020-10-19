@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { InjectQueue } from '@nestjs/bull'
+=======
+>>>>>>> d0b8e1dc0733438593aa212862cc485c1c7c189e
 import {
   Body,
   Controller,
@@ -7,8 +10,13 @@ import {
   NotFoundException,
   Param,
   Post,
+<<<<<<< HEAD
   ConflictException,
   Optional,
+=======
+  NotImplementedException,
+  ConflictException,
+>>>>>>> d0b8e1dc0733438593aa212862cc485c1c7c189e
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -16,7 +24,10 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
+<<<<<<< HEAD
 import { Queue } from 'bull'
+=======
+>>>>>>> d0b8e1dc0733438593aa212862cc485c1c7c189e
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateImageDto } from './dto/updateImageDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
@@ -27,8 +38,12 @@ import { UserProfileService } from './userProfile.service'
 @ApiTags('User Profile')
 @Controller()
 export class UserProfileController {
+<<<<<<< HEAD
   constructor(private userProfileService: UserProfileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,) { }
+=======
+  constructor(private userProfileService: UserProfileService) {}
+>>>>>>> d0b8e1dc0733438593aa212862cc485c1c7c189e
 
   @Get('userProfile/:nationalId')
   @ApiParam({
@@ -100,6 +115,7 @@ export class UserProfileController {
     profile: UserProfile,
     @Body() input: UpdateImageDto,
   ) {
+<<<<<<< HEAD
 
     const job = await this.uploadQueue.add('upload', {
       profile: profile,
@@ -107,5 +123,8 @@ export class UserProfileController {
     })
 
     return job.data.profile.dataValues
+=======
+    throw new NotImplementedException()
+>>>>>>> d0b8e1dc0733438593aa212862cc485c1c7c189e
   }
 }

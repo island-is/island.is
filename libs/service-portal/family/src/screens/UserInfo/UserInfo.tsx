@@ -1,4 +1,5 @@
 import React from 'react'
+<<<<<<< HEAD
 import {
   Typography,
   Box,
@@ -7,6 +8,9 @@ import {
   IconDeprecated as Icon,
   Hidden,
 } from '@island.is/island-ui/core'
+=======
+import { Typography, Box, Stack, Icon, Hidden } from '@island.is/island-ui/core'
+>>>>>>> d0b8e1dc0733438593aa212862cc485c1c7c189e
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import UserInfoLine from '../../components/UserInfoLine/UserInfoLine'
 import * as styles from './UserInfo.treat'
@@ -39,7 +43,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             background="purple200"
             className={styles.avatar}
           >
-            <Icon type="user" color="purple400" width={40} height={40} />
+            <Icon type="outline" icon="person" color="purple400" size="large" />
           </Box>
         </Hidden>
         <Typography variant="h2">{userInfo.profile.name}</Typography>
