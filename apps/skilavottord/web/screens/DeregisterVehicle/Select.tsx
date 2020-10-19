@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Hidden,
-  IconDeprecated as Icon,
   Input,
   Stack,
   Text,
@@ -51,9 +50,7 @@ const Select: FC = () => {
         />
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
-            <Button variant="ghost" circle size="large">
-              <Icon type="arrowLeft" />
-            </Button>
+            <Button variant="ghost" circle size="large" icon="arrowBack" />
           </Hidden>
           <Hidden below="md">
             <Button variant="ghost" onClick={handleCancel}>
@@ -61,7 +58,7 @@ const Select: FC = () => {
             </Button>
           </Hidden>
           <Button
-            icon="arrowRight"
+            icon="arrowBack"
             disabled={!registrationNumber}
             onClick={handleContinue}
           >
