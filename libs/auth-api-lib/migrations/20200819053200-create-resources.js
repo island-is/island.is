@@ -7,7 +7,7 @@ module.exports = {
       BEGIN;
 
       CREATE TABLE domain (
-        name VARCHAR (150) NOT NULL,
+        name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (name)
@@ -15,8 +15,8 @@ module.exports = {
 
       CREATE TABLE identity_resource (
         enabled BOOLEAN NOT NULL DEFAULT true,
-        name VARCHAR (100) NOT NULL,
-        display_name VARCHAR (100) NOT NULL,
+        name VARCHAR NOT NULL,
+        display_name VARCHAR NOT NULL,
         description VARCHAR,
         show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         required BOOLEAN NOT NULL DEFAULT false,
@@ -27,8 +27,8 @@ module.exports = {
       );
 
       CREATE TABLE identity_resource_user_claim (
-        identity_resource_name VARCHAR (100) NOT NULL,
-        claim_name VARCHAR (100) NOT NULL,
+        identity_resource_name VARCHAR NOT NULL,
+        claim_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (identity_resource_name, claim_name),
@@ -36,10 +36,10 @@ module.exports = {
       );
 
       CREATE TABLE api_scope (
-        domain VARCHAR (100) NOT NULL,
+        domain VARCHAR NOT NULL,
         enabled BOOLEAN NOT NULL DEFAULT true,
-        name VARCHAR (100) NOT NULL,
-        display_name VARCHAR (100) NOT NULL,
+        name VARCHAR NOT NULL,
+        display_name VARCHAR NOT NULL,
         description VARCHAR,
         show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         required BOOLEAN NOT NULL DEFAULT false,
@@ -51,9 +51,9 @@ module.exports = {
       );
 
       CREATE TABLE api_scope_user_claim (
-        domain VARCHAR (150) NOT NULL,
-        api_scope_name VARCHAR (100) NOT NULL,
-        claim_name VARCHAR (100) NOT NULL,
+        domain VARCHAR NOT NULL,
+        api_scope_name VARCHAR NOT NULL,
+        claim_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (domain, api_scope_name, claim_name),
@@ -62,10 +62,10 @@ module.exports = {
       );
 
       CREATE TABLE api_resource (
-        domain VARCHAR (150) NOT NULL,
+        domain VARCHAR NOT NULL,
         enabled BOOLEAN NOT NULL DEFAULT true,
-        name VARCHAR (100) NOT NULL,
-        display_name VARCHAR (100) NOT NULL,
+        name VARCHAR NOT NULL,
+        display_name VARCHAR NOT NULL,
         description VARCHAR,
         show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -75,9 +75,9 @@ module.exports = {
       );
 
       CREATE TABLE api_resource_user_claim (
-        domain VARCHAR (150) NOT NULL,
-        api_resource_name VARCHAR (100) NOT NULL,
-        claim_name VARCHAR (100) NOT NULL,
+        domain VARCHAR NOT NULL,
+        api_resource_name VARCHAR NOT NULL,
+        claim_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (domain, api_resource_name, claim_name),
@@ -86,9 +86,9 @@ module.exports = {
       );
 
       CREATE TABLE api_resource_scope (
-        domain VARCHAR (150) NOT NULL,
-        api_resource_name VARCHAR (100) NOT NULL,
-        scope_name VARCHAR (100) NOT NULL,
+        domain VARCHAR NOT NULL,
+        api_resource_name VARCHAR NOT NULL,
+        scope_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (domain, api_resource_name, scope_name),
@@ -97,12 +97,12 @@ module.exports = {
       );
 
       CREATE TABLE api_resource_secret (
-        domain VARCHAR (150) NOT NULL,
-        api_resource_name VARCHAR (100) NOT NULL,
-        value VARCHAR (100) NOT NULL,
+        domain VARCHAR NOT NULL,
+        api_resource_name VARCHAR NOT NULL,
+        value VARCHAR NOT NULL,
         description VARCHAR,
         expiration TIMESTAMP WITH TIME ZONE,
-        type VARCHAR (100) NOT NULL,
+        type VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (domain, api_resource_name, value),

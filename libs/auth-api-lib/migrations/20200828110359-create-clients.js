@@ -6,8 +6,8 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
         CREATE TABLE client (
-          client_id VARCHAR (100) NOT NULL,
-          domain VARCHAR (100) NOT NULL,
+          client_id VARCHAR NOT NULL,
+          domain VARCHAR NOT NULL,
           allow_offline_access BOOLEAN NOT NULL DEFAULT false,
           identity_token_lifetime         INTEGER NOT NULL DEFAULT 300,
           access_token_lifetime           INTEGER NOT NULL DEFAULT 3600,
@@ -24,26 +24,26 @@ module.exports = {
           always_send_client_claims      BOOLEAN NOT NULL DEFAULT false,
           pair_wise_subject_salt         VARCHAR,
           user_sso_lifetime              INTEGER,
-          user_code_type                 VARCHAR (100),
+          user_code_type                 VARCHAR,
           device_code_lifetime           INTEGER NOT NULL DEFAULT 300,
           always_include_user_claims_in_id_token  BOOLEAN NOT NULL DEFAULT false,
           back_channel_logout_session_required BOOLEAN NOT NULL DEFAULT true,
           enabled                        BOOLEAN NOT NULL DEFAULT true,
-          logo_uri                       VARCHAR (150),
+          logo_uri                       VARCHAR,
           require_consent                BOOLEAN DEFAULT false,
           require_pkce                  BOOLEAN NOT NULL DEFAULT true,
           allow_plain_text_pkce           BOOLEAN NOT NULL DEFAULT false,
           require_request_object           BOOLEAN NOT NULL DEFAULT false,
           allow_access_token_via_browser   BOOLEAN NOT NULL DEFAULT false,
-          front_channel_logout_uri        VARCHAR (150),
+          front_channel_logout_uri        VARCHAR,
           front_channel_logout_session_required  BOOLEAN NOT NULL DEFAULT true,
-          back_channel_logout_uri         VARCHAR (150),
+          back_channel_logout_uri         VARCHAR,
           allow_remember_consent         BOOLEAN NOT NULL DEFAULT true,
           client_claims_prefix           VARCHAR NOT NULL DEFAULT 'client_',
-          client_name                   VARCHAR (100),
-          client_uri                    VARCHAR (150),
+          client_name                   VARCHAR,
+          client_uri                    VARCHAR,
           description                  VARCHAR,
-          protocol_type                 VARCHAR (100) NOT NULL DEFAULT 'oidc',
+          protocol_type                 VARCHAR NOT NULL DEFAULT 'oidc',
           require_client_secret          BOOLEAN NOT NULL DEFAULT true,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
@@ -52,8 +52,8 @@ module.exports = {
       );
 
       CREATE TABLE client_allowed_cors_origin (
-        origin VARCHAR (100) NOT NULL,
-        client_id VARCHAR (100) NOT NULL,
+        origin VARCHAR NOT NULL,
+        client_id VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_allowed_cors_origin_client FOREIGN KEY (client_Id) REFERENCES client (client_id),
@@ -61,8 +61,8 @@ module.exports = {
       );
 
       CREATE TABLE client_allowed_scope (
-        scope_name VARCHAR (100) NOT NULL,
-        client_id  VARCHAR (100) NOT NULL,
+        scope_name VARCHAR NOT NULL,
+        client_id  VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_allowed_scope_client FOREIGN KEY (client_id) REFERENCES client (client_id),
@@ -70,8 +70,8 @@ module.exports = {
       );
 
       CREATE TABLE client_idp_restrictions (
-        name VARCHAR (100) NOT NULL,
-        client_id VARCHAR (100) NOT NULL,
+        name VARCHAR NOT NULL,
+        client_id VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_identity_provider_restrictions_client FOREIGN KEY (client_id) REFERENCES client (client_id),
@@ -79,8 +79,8 @@ module.exports = {
       );
 
       CREATE TABLE client_post_logout_redirect_uri (
-        client_id    VARCHAR (100) NOT NULL,
-        redirect_uri VARCHAR (150) NOT NULL,
+        client_id    VARCHAR NOT NULL,
+        redirect_uri VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_post_redirect_uri_client FOREIGN KEY (client_id) REFERENCES client (client_id),
@@ -88,10 +88,10 @@ module.exports = {
       );
 
       CREATE TABLE client_secret (
-        client_id VARCHAR (100) NOT NULL,
-        value VARCHAR (100) NOT NULL,
+        client_id VARCHAR NOT NULL,
+        value VARCHAR NOT NULL,
         description VARCHAR NULL,
-        type VARCHAR (100) NOT NULL,
+        type VARCHAR NOT NULL,
         expiration TIMESTAMP WITH TIME ZONE NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
@@ -100,16 +100,16 @@ module.exports = {
       );
 
       CREATE TABLE client_redirect_uri (
-        client_id VARCHAR (100) NOT NULL,
-        redirect_uri VARCHAR (150) NOT NULL,
+        client_id VARCHAR NOT NULL,
+        redirect_uri VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (client_id, redirect_uri)
       );
 
       CREATE TABLE client_grant_type (
-        client_id  VARCHAR (100) NOT NULL,
-        grant_type VARCHAR (100) NOT NULL,
+        client_id  VARCHAR NOT NULL,
+        grant_type VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_grant_type_client FOREIGN KEY (client_id) REFERENCES client (client_id),
@@ -117,9 +117,9 @@ module.exports = {
       );
 
       CREATE TABLE client_claim (
-        client_id  VARCHAR (100) NOT NULL,
-        type VARCHAR (100) NOT NULL,
-        value VARCHAR (100) NOT NULL,
+        client_id  VARCHAR NOT NULL,
+        type VARCHAR NOT NULL,
+        value VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_claim_client FOREIGN KEY (client_id) REFERENCES client (client_id),
@@ -128,7 +128,7 @@ module.exports = {
 
       Create Table grant_type (
         id uuid NOT NULL,
-        name VARCHAR (100) NOT NULL,
+        name VARCHAR NOT NULL,
         description VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
@@ -136,11 +136,11 @@ module.exports = {
       );
 
       CREATE TABLE grants (
-        key VARCHAR (200) NOT NULL,
-        type VARCHAR (100) NOT NULL,
-        subject_id VARCHAR (200) NOT NULL,
-        session_id VARCHAR (200) NOT NULL,
-        client_id VARCHAR (100) NOT NULL,
+        key VARCHAR NOT NULL,
+        type VARCHAR NOT NULL,
+        subject_id VARCHAR NOT NULL,
+        session_id VARCHAR NOT NULL,
+        client_id VARCHAR NOT NULL,
         description VARCHAR,
         creation_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         expiration TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
