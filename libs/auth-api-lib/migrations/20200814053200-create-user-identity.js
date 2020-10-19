@@ -13,6 +13,7 @@ module.exports = {
           provider_name VARCHAR NOT NULL,
           provider_subject_id VARCHAR NOT NULL,
           profile_id UUID,
+          active BOOLEAN NOT NULL DEFAULT true,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
           UNIQUE (subject_id),

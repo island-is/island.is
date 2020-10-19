@@ -65,6 +65,13 @@ export class UserIdentity extends Model<UserIdentity> {
   @ApiProperty()
   profileId: string
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  active: boolean
+
   @CreatedAt
   @ApiProperty()
   readonly created: Date
