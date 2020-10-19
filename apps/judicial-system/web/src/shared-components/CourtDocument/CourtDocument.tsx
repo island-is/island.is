@@ -1,4 +1,4 @@
-import { Box, Tag, TagVariant, Typography } from '@island.is/island-ui/core'
+import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import React from 'react'
 
 import * as styles from './CourtDocument.treat'
@@ -20,13 +20,13 @@ const CourtDocument: React.FC<CourtDocumentProps> = ({
     <div className={styles.container}>
       <Box display="flex" justifyContent="spaceBetween">
         <Box marginBottom={1}>
-          <Typography variant="h4">{title}</Typography>
+          <Text variant="h4">{title}</Text>
         </Box>
         <Tag variant={tagVariant} label>
           {tagText}
         </Tag>
       </Box>
-      <Typography>{text}</Typography>
+      <Text>{text}</Text>
     </div>
   )
 }
