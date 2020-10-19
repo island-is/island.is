@@ -1,8 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-
 import { ServiceCard } from '.'
-import { ApiService } from '@island.is/api/schema'
 
 import {
   PricingCategory,
@@ -10,6 +8,7 @@ import {
   TypeCategory,
   AccessCategory,
 } from '../../const/TestConst'
+
 
 import {
   AccessCategory as AccessCategoryDisplay,
@@ -21,7 +20,7 @@ import {
 import ContentfulApi from '../../services/contentful'
 
 describe(' ServiceCard ', () => {
-  const service: ApiService = {
+  const service:any = {
     id: '0',
     owner: 'Þjóðskrá',
     name: 'Fasteignaskrá',
