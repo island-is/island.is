@@ -5,7 +5,7 @@ import * as styles from './UserProfile.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { useUserProfile } from '@island.is/service-portal/graphql'
-import UserInfoLine from 'libs/service-portal/core/src/components/UserInfoLine/UserInfoLine'
+import { UserInfoLine } from '@island.is/service-portal/core'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()

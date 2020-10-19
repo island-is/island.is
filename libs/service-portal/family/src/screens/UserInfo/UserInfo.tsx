@@ -1,9 +1,11 @@
 import React from 'react'
-import { Typography, Box, Stack, Icon, Hidden } from '@island.is/island-ui/core'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { Typography, Box, Stack } from '@island.is/island-ui/core'
+import {
+  ServicePortalModuleComponent,
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
-import UserInfoLine from 'libs/service-portal/core/src/components/UserInfoLine/UserInfoLine'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
