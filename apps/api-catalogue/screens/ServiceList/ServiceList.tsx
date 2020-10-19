@@ -82,8 +82,6 @@ export interface ServiceListProps {
 
 export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
   // prettier-ignore
-  const TEXT_SEARCHING = pageContent.strings.find(s => s.id === 'catalog-searching').text;
-  // prettier-ignore
   const TEXT_NOT_FOUND = pageContent.strings.find(s => s.id === 'catalog-not-found').text;
   // prettier-ignore
   const TEXT_ERROR = pageContent.strings.find(s => s.id === 'catalog-error').text;

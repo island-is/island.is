@@ -18,7 +18,7 @@ export const getStaticProps: GetStaticProps<ServiceDetailProps> = async (
   ctx,
 ) => {
   const client = new ContentfulApi()
-  let locale = 'is-IS'
+  const locale = 'is-IS'
 
   const filterStrings = await client.fetchPageBySlug('service-filter', locale)
   const id = ctx.params.service as string

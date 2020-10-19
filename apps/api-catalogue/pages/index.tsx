@@ -4,7 +4,7 @@ import ContentfulApi from '../services/contentful'
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const client = new ContentfulApi()
-  let locale = 'is-IS'
+  const locale = 'is-IS'
 
   const pageContent = await client.fetchPageBySlug('home', locale)
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, ServiceDetail as ServiceDetails } from '../../components'
+import { ServiceDetail as ServiceDetails } from '../../components'
 import { ApiService } from '@island.is/api/schema'
 import { GridContainer } from '@island.is/island-ui/core'
 import { Page } from '../../services/contentful.types'
