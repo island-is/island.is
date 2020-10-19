@@ -5,7 +5,6 @@ import {
   Box,
   Stack,
   Typography,
-  Columns,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -15,7 +14,6 @@ import { HomeLayout } from '../../components'
 import * as styles from './Home.treat'
 import cn from 'classnames'
 
-import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
 
 export interface HomeProps {

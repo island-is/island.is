@@ -20,7 +20,6 @@ import {
   ServiceFilter,
   ServiceCardMessage,
 } from '../../components'
-import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_CATALOGUE_QUERY } from '../Queries'
@@ -75,8 +74,6 @@ export interface ServiceListProps {
 }
 
 export default function ServiceList(props: ServiceListProps) {
-  // prettier-ignore
-  const TEXT_SEARCHING = props.pageContent.strings.find(s => s.id === 'catalog-searching').text;
   // prettier-ignore
   const TEXT_NOT_FOUND = props.pageContent.strings.find(s => s.id === 'catalog-not-found').text;
   // prettier-ignore

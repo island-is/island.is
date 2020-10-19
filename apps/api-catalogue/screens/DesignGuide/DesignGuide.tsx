@@ -9,7 +9,6 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 
-import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
 
 export interface DesignGuideProps {
