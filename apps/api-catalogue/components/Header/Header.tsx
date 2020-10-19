@@ -33,11 +33,11 @@ function Header() {
                 justifyContent="flexEnd"
                 width="full"
               >
-				        <Button
-                   variant="utility"
-                   onClick={() => setSideMenuOpen(true)}
-                   icon="burger"
-                   size="small"
+                <Button
+                  variant="utility"
+                  onClick={() => setSideMenuOpen(true)}
+                  icon="burger"
+                  size="small"
                 >
                   Valmynd
                 </Button>

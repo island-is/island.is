@@ -146,26 +146,24 @@ export const serviceLayoutMobile = style({
 })
 
 const spinOrg = {
-    lineHeight: 0,
-    '@keyframes': {
-      from: {
-        transform: 'rotate(0deg)',
-      },
-      to: {
-        transform: 'rotate(359deg)',
-      },
+  lineHeight: 0,
+  '@keyframes': {
+    from: {
+      transform: 'rotate(0deg)',
     },
-    animationTimingFunction: 'linear',
-    animationIterationCount: 'infinite',
-    animationDuration: '1.5s',
+    to: {
+      transform: 'rotate(359deg)',
+    },
+  },
+  animationTimingFunction: 'linear',
+  animationIterationCount: 'infinite',
+  animationDuration: '1.5s',
 }
 
 export const spin = style(spinOrg)
 export const loadingIcon = style({
-  width:32, 
-  height:32,
-  color:theme.color.blue600,
-  ...spinOrg
+  width: 32,
+  height: 32,
+  color: theme.color.blue600,
+  ...spinOrg,
 })
-
-

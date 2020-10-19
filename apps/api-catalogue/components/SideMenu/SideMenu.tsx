@@ -5,7 +5,7 @@ import cn from 'classnames'
 import {
   Box,
   FocusableBox,
-  IconDeprecated as Icon, 
+  IconDeprecated as Icon,
   Text,
 } from '@island.is/island-ui/core'
 import { useKey } from 'react-use'
@@ -72,14 +72,14 @@ export const SideMenu = (props: SideMenuProps) => {
               tabIndex={-1}
               padding={1}
             >
-               <Icon type="close" />
+              <Icon type="close" />
             </FocusableBox>
           </Box>
         </Box>
 
         <div className={styles.linksContent}>
           {props.links.map((link, index) => (
-             <Text
+            <Text
               variant="h5"
               color="blue400"
               key={index}

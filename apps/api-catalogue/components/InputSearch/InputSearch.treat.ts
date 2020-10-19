@@ -121,7 +121,6 @@ export const focused = style({
   },
 })
 
-
 const spinOrg = {
   lineHeight: 0,
   '@keyframes': {
@@ -140,14 +139,12 @@ const spinOrg = {
 export const spin = style(spinOrg)
 
 export const search = style({
-  width:20,
-  color:theme.color.blue400
-  
+  width: 20,
+  color: theme.color.blue400,
 })
 
 export const loading = style({
-  width:24,
-  color:theme.color.blue400,
-  ...spinOrg
-  
+  width: 24,
+  color: theme.color.blue400,
+  ...spinOrg,
 })

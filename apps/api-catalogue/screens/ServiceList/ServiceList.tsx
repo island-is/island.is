@@ -220,8 +220,11 @@ export default function ServiceList(props: ServiceListProps) {
           {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">
               <div>
-                <Icon type="filled" icon="sync" className={styles.loadingIcon}/>
-
+                <Icon
+                  type="filled"
+                  icon="sync"
+                  className={styles.loadingIcon}
+                />
               </div>
             </Box>
           )}
@@ -248,17 +251,11 @@ export default function ServiceList(props: ServiceListProps) {
           )}
 
           {data?.getApiCatalogue.services.length < 1 && !loading && (
-            <ServiceCardMessage
-              messageType="default"
-              title={TEXT_NOT_FOUND}
-            />
+            <ServiceCardMessage messageType="default" title={TEXT_NOT_FOUND} />
           )}
 
           {error && (
-            <ServiceCardMessage
-              messageType="error"
-              title={TEXT_ERROR}
-            />
+            <ServiceCardMessage messageType="error" title={TEXT_ERROR} />
           )}
         </Box>
       }
