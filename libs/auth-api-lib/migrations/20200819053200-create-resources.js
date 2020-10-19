@@ -16,7 +16,7 @@ module.exports = {
       CREATE TABLE identity_resource (
         enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR (100) NOT NULL,
-        display_name (100) VARCHAR NOT NULL,
+        display_name VARCHAR (100) NOT NULL,
         description VARCHAR,
         show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         required BOOLEAN NOT NULL DEFAULT false,
@@ -65,7 +65,7 @@ module.exports = {
         domain VARCHAR (150) NOT NULL,
         enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR (100) NOT NULL,
-        display_name (100) VARCHAR NOT NULL,
+        display_name VARCHAR (100) NOT NULL,
         description VARCHAR,
         show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -76,7 +76,7 @@ module.exports = {
 
       CREATE TABLE api_resource_user_claim (
         domain VARCHAR (150) NOT NULL,
-        api_resource_name (100) VARCHAR NOT NULL,
+        api_resource_name VARCHAR (100) NOT NULL,
         claim_name VARCHAR (100) NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
