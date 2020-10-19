@@ -6,7 +6,7 @@ import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 
 export default {
-  title: 'Components/ProfileCard',
+  title: 'Cards/ProfileCard',
   component: ProfileCard,
 }
 
