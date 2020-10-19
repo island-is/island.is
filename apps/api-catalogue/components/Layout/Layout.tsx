@@ -1,9 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Box, ContentBlock, Columns, Column } from '@island.is/island-ui/core'
 
-import * as styles from './Layout.treat'
-import cn from 'classnames'
-
 interface PropTypes {
   left: ReactNode
   right?: ReactNode

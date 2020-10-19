@@ -19,7 +19,7 @@ export interface ServiceFilterProps {
   isLoading: boolean
   iconVariant?: IconVariantTypes
   parameters: GetApiCatalogueInput
-  onInputChange: (
+  onInputChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   onCheckCategoryChanged: (event: React.ChangeEvent<HTMLInputElement>) => void
