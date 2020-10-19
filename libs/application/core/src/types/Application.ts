@@ -13,7 +13,6 @@ export interface FormValue {
 
 export interface Application {
   id: string
-  externalId: string
   state: string
   applicant: string
   typeId: ApplicationTypes

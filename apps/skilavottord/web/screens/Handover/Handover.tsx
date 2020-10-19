@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -10,7 +10,7 @@ import { Button } from '@island.is/skilavottord-web/components'
 import CompanyList from './components/CompanyList'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 
-const Handover = () => {
+const Handover: FC = () => {
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -38,7 +38,11 @@ const Handover = () => {
   }
 
   return (
-    <ProcessPageLayout activeSection={1} activeCar={id.toString()}>
+    <ProcessPageLayout
+      sectionType={'citizen'}
+      activeSection={1}
+      activeCar={id.toString()}
+    >
       <Stack space={6}>
         <Stack space={2}>
           <Text variant="h1">{t.title}</Text>

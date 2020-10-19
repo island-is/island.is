@@ -11,6 +11,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Text,
@@ -488,7 +489,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </GridRow>
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
-            body={(subArticle ?? article).body}
+            body={(subArticle ?? article).body as SliceType[]}
             config={{ defaultPadding: 4 }}
           />
         </Box>

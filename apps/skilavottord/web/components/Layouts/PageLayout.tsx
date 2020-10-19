@@ -12,6 +12,7 @@ import {
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
 import FormStepper from '../FormStepper/FormStepper'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
@@ -38,21 +39,23 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
 
 interface ProcessPageProps extends PageProps {
   activeSection: number
-  activeCar: string
+  sectionType: string
+  activeCar?: string
 }
 
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
+  sectionType = 'citizen',
   activeSection,
   activeCar,
 }) => {
   const { width } = useWindowSize()
 
   const {
-    t: { processSections: t },
+    t: { processes: t },
   } = useI18n()
 
-  const sections = t.map((section) => {
+  const sections = t[sectionType].sections.map((section) => {
     return { name: section }
   })
   const [isMobile, setIsMobile] = useState(false)
@@ -68,6 +71,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     <Box
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
+      className={styles.processContainer}
     >
       {isMobile && (
         <FormStepperMobile sections={sections} activeSection={activeSection} />
@@ -80,6 +84,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
               background="white"
               borderColor="white"
               borderRadius="large"
+              className={styles.processContent}
             >
               <GridColumn
                 span={['9/9', '9/9', '7/9', '7/9']}
@@ -92,6 +97,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
           <GridColumn span={['0', '0', '3/12', '3/12']}>
             {!isMobile && (
               <FormStepper
+                title={t[sectionType].title}
                 sections={sections}
                 activeSection={activeSection}
                 activeCar={activeCar}
