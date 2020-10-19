@@ -121,6 +121,18 @@
     },
     "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
   },
+  "companyInfo": {
+    "title": "Company information",
+    "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
+    "subtitles": {
+      "companyLocation": "Recycling company location"
+    },
+    "buttons": {
+      "add": "Add another location",
+      "delete": "Delete",
+      "edit": "Edit"
+    }
+  },
   "companySidenav": {
     "deregister": "Deregister car",
     "companyInfo": "Company information"
@@ -160,6 +172,11 @@
       "baseRoute": "/deregister-vehicle",
       "select": "/deregister-vehicle/select",
       "deregister": "/deregister-vehicle/[id]"
+    },
+    "companyInfo": {
+      "baseRoute": "/company-info",
+      "edit": "/company-info/add",
+      "add": "/company-info/edit"
     }
   }
 }

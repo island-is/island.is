@@ -8,6 +8,7 @@ export * from './Completed'
 
 /* Company screens */
 export * from './CompanyOverview'
+export * from './CompanyInfo'
 export {
   Select as DeregisterSelect,
   Confirm as DeregisterConfirm,

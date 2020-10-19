@@ -157,6 +157,11 @@
       "baseRoute": "/en/deregister-vehicle",
       "select": "/en/deregister-vehicle/select",
       "deregister": "/en/deregister-vehicle/[id]"
+    },
+    "companyInfo": {
+      "baseRoute": "/en/company-info",
+      "edit": "/en/company-info/add",
+      "add": "/en/company-info/edit"
     }
   }
 }

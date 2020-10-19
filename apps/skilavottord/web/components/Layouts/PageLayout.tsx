@@ -111,8 +111,8 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
 }
 
 interface PartnerPageProps {
-  top: ReactNode
-  bottom: ReactNode
+  top?: ReactNode
+  bottom?: ReactNode
   left: ReactNode
 }
 

@@ -9,13 +9,28 @@ import {
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import CarsTable from './components/CarsTable'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { useRouter } from 'next/router'
+import { CompanyListItem } from '../Handover/components'
 
-const CompanyOverview: FC = () => {
+const companyInfo = [
+  {
+    name: 'Hringrás (Reykjavik)',
+    address: 'Klettagarðar 9, 105 Reykjavík',
+    phone: '+354 555 1900',
+    website: 'www.hringras.is',
+  },
+  {
+    name: 'Hringrás (Akureyri)',
+    address: 'Ægisnesi 1, 105 Akureyri',
+    phone: '+354 555 1900',
+    website: 'www.hringras.is',
+  },
+]
+
+const CompanyInfo: FC = () => {
   const {
-    t: { companyOverview: t, companySidenav: sidenavText, routes },
+    t: { companyInfo: t, companySidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
@@ -25,7 +40,7 @@ const CompanyOverview: FC = () => {
 
   return (
     <PartnerPageLayout
-      top={
+      bottom={
         <Box>
           <Box paddingBottom={6}>
             <Breadcrumbs>
@@ -41,13 +56,32 @@ const CompanyOverview: FC = () => {
                 <Text variant="h1">{t.title}</Text>
                 <Text variant="intro">{t.info}</Text>
               </Stack>
-              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
             </Stack>
-            <Text variant="h3">{t.subtitles.history}</Text>
+            <Text variant="h3">{t.subtitles.companyLocation}</Text>
+            <Box>
+              {companyInfo.map((company, index) => (
+                <CompanyListItem
+                  key={index}
+                  {...company}
+                  buttons={
+                    <Box display="flex">
+                      <Box paddingX={2}>
+                        <Button variant="ghost" colorScheme="destructive">
+                          {t.buttons.delete}
+                        </Button>
+                      </Box>
+                      <Box paddingX={2}>
+                        <Button variant="ghost">{t.buttons.edit}</Button>
+                      </Box>
+                    </Box>
+                  }
+                />
+              ))}
+            </Box>
+            <Button onClick={handleDeregister}>{t.buttons.add}</Button>
           </Stack>
         </Box>
       }
-      bottom={<CarsTable />}
       left={
         <Sidenav
           title="Company name"
@@ -63,11 +97,11 @@ const CompanyOverview: FC = () => {
               link: `${routes.companyInfo.baseRoute}`,
             },
           ]}
-          activeSection={0}
+          activeSection={1}
         />
       }
     />
   )
 }
 
-export default CompanyOverview
+export default CompanyInfo
