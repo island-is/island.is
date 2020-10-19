@@ -377,14 +377,25 @@ const articles = article.list(3, 'withAuthor') // [Article, Article, Article]
 
 ### Other helpers
 
+- `title()`
+
+Returns a title-like string using `faker.lorem.words()`.
+
+```typescript
+import { factory, title } from '@island.is/shared/mocking'
+factory({
+  title: () => title(),
+})
+```
+
 - `slugify(field)`
 
 A helper to create slugged fields in factories:
 
 ```typescript
-import { faker, slugify } from '@island.is/shared/mocking'
+import { factory, title, slugify } from '@island.is/shared/mocking'
 factory({
-  title: () => faker.lorem.words(),
+  title: () => title(),
   slug: slugify('title'),
 })
 ```
