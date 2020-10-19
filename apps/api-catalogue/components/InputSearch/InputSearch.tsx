@@ -1,7 +1,10 @@
 import React, { useState, useCallback } from 'react'
 import * as styles from './InputSearch.treat'
 import cn from 'classnames'
-import { Icon } from '@island.is/island-ui/core'
+import { 
+  Icon, 
+  IconDeprecated 
+} from '@island.is/island-ui/core'
 
 export interface InputSearchProps {
   name: string
@@ -46,7 +49,8 @@ export const InputSearch = (givenValues: InputSearchProps, ...props) => {
             aria-hidden="false"
             aria-label="Loading"
           >
-            <Icon type="filled" icon="sync" className={cn(styles.loading)} />
+            <IconDeprecated type="loading" className={styles.loading}/>
+            {/* <Icon type="filled" icon="sync" className={cn(styles.loading)} /> */}
           </span>
         )}
       </div>

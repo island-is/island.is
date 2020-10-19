@@ -6,7 +6,8 @@ import {
   ContentBlock,
   GridRow,
   GridColumn,
-  Icon,
+  IconDeprecated,
+  //Icon,
   Text,
   AccordionItem,
   GridContainer,
@@ -220,11 +221,15 @@ export default function ServiceList(props: ServiceListProps) {
           {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">
               <div>
-                <Icon
+                <IconDeprecated 
+                  type="loading"
+                  className={styles.loadingIcon}
+                />
+                {/* <Icons
                   type="filled"
                   icon="sync"
                   className={styles.loadingIcon}
-                />
+                /> */}
               </div>
             </Box>
           )}
