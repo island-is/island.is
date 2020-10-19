@@ -6,8 +6,8 @@ class ContentfulApi {
 
   constructor() {
     this.client = createClient({
-      space: 'jtzqkuaxipis',
-      accessToken: 'N6X1O7qgBQ_FqxQx0O-keh3tJDrEhV8myczR3w-ZbS0',
+      space: process.env.CONTENTFUL_SPACE_ID,
+      accessToken: process.env.CONTENTFUL_ACCESS_TOKEN
     })
   }
 

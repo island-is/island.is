@@ -36,6 +36,7 @@ export const serviceIdSort = (
   return 0
 }
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 export const exceptionHandler = async (err: any) => {
   if (err instanceof Response) {
     // Error from X-Road calling getOpenApi

@@ -38,14 +38,15 @@ ServiceDetail.getInitialProps = async (
 ): Promise<ServiceDetailPageProps> => {
   const { query } = ctx
   const id = query.service.toString()
-  const client = new ContentfulApi()
-  let locale = 'is-IS'
+  
+  // const client = new ContentfulApi()
+  // let locale = 'is-IS'
 
-  const pathLocale = ctx.pathname.split('/')[1]
-  if (pathLocale === 'en') {
-    locale = 'en-GB'
-  }
-  const filterStrings = await client.fetchPageBySlug('service-filter', locale)
+  // const pathLocale = ctx.pathname.split('/')[1]
+  // if (pathLocale === 'en') {
+  //   locale = 'en-GB'
+  // }
+  // const filterStrings = await client.fetchPageBySlug('service-filter', locale)
 
   const apolloClient = initApollo({})
   const [
@@ -63,5 +64,9 @@ ServiceDetail.getInitialProps = async (
     }),
   ])
 
-  return { service: getApiServiceById, filterStrings: filterStrings }
+  return { 
+    service: getApiServiceById, 
+    filterStrings: null 
+    //filterStrings: filterStrings
+  }
 }

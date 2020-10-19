@@ -8,7 +8,7 @@ import { Injectable } from '@nestjs/common'
 import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
 import { logger } from '@island.is/logging'
 import YamlParser from 'js-yaml'
-import * as _ from 'lodash'
+import lodash from 'lodash'
 import {
   AccessCategory,
   ProviderType,
@@ -30,13 +30,13 @@ export class RestMetadataService {
     logger.info(
       `Getting services for ${provider.memberCode}/${provider.subsystemCode}`,
     )
-    let services: Array<Service> = []
-    let serviceMap = await this.getServiceCodes(provider)
+    const services: Array<Service> = []
+    const serviceMap = await this.getServiceCodes(provider)
 
-    for (const [key, value] of serviceMap) {
+    for (const [_, value] of serviceMap) {
       const sorted = value.sort(serviceIdSort)
 
-      let service: Service = {
+      const service: Service = {
         id: uuid().split('-').join(''),
         name: '',
         owner: '',
@@ -62,8 +62,8 @@ export class RestMetadataService {
           service.name = spec.info.title
           service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
           service.description = spec.info.description ?? ''
-          service.data = _.union(service.data, spec.info.x_category)
-          service.pricing = _.union(service.pricing, spec.info.x_pricing)
+          service.data = lodash.union(service.data, spec.info.x_category)
+          service.pricing = lodash.union(service.pricing, spec.info.x_pricing)
           service.xroadIdentifier.push(sorted[i])
         } else {
           logger.warn(
@@ -122,7 +122,7 @@ export class RestMetadataService {
   private async getServiceCodes(
     provider: Provider,
   ): Promise<Map<string, Array<XroadIdentifier>>> {
-    let serviceMap = new Map<string, Array<XroadIdentifier>>()
+    const serviceMap = new Map<string, Array<XroadIdentifier>>()
 
     try {
       const xrdServices = await this.xrdRestMetaservice.listMethods({
@@ -155,9 +155,12 @@ export class RestMetadataService {
             serviceCode: item.serviceCode,
           }
 
-          if (serviceMap.has(serviceCode)) {
-            serviceMap.get(serviceCode)!.push(mappedItem)
-          } else {
+          const map = serviceMap.get(serviceCode)
+
+          if (map) {
+            map.push(mappedItem)
+          }
+          else {
             serviceMap.set(serviceCode, [mappedItem])
           }
         }

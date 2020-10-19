@@ -70,7 +70,7 @@ export const searchQuery = ({
     })
   }
 
-  const result = {
+  const result: any = {
     query: {
       bool: {
         must: [

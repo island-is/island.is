@@ -51,7 +51,7 @@ function Header() {
         handleClose={() => setSideMenuOpen(false)}
         title="Viskuausan"
         links={[
-          { title: 'Upphafsíða', url: '/' },
+          { title: 'Upphafssíða', url: '/' },
           { title: 'API Vörulisti', url: '/services' },
           { title: 'Þróunarhandbók', url: '/design-guide' },
           { title: 'Island.is', url: 'https://island.is' },
