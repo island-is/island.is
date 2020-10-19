@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { INews } from '../generated/contentfulTypes'
 
@@ -11,7 +11,7 @@ export class News {
   @Field()
   typename: string
 
-  @Field()
+  @Field(() => ID)
   id: string
 
   @Field()
@@ -26,8 +26,8 @@ export class News {
   @Field(() => Author, { nullable: true })
   author: Author
 
-  @Field()
-  intro: string
+  @Field({ nullable: true })
+  intro?: string
 
   @Field(() => Image, { nullable: true })
   image?: Image

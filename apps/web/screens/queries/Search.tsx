@@ -60,6 +60,35 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             height
           }
         }
+
+        ... on News {
+          id
+          intro
+          title
+          slug
+        }
+
+        ... on AboutPage {
+          title
+          seoDescription
+          slug
+        }
+      }
+    }
+  }
+`
+
+export const GET_SEARCH_RESULTS_NEWS_QUERY = gql`
+  query GetSearchResultsNews($query: SearcherInput!) {
+    searchResults(query: $query) {
+      total
+      items {
+        ... on News {
+          id
+          intro
+          title
+          slug
+        }
       }
     }
   }
@@ -132,6 +161,19 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             width
             height
           }
+        }
+
+        ... on News {
+          id
+          intro
+          title
+          slug
+        }
+
+        ... on AboutPage {
+          title
+          seoDescription
+          slug
         }
       }
       tagCounts {

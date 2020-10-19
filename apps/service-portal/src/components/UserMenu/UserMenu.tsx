@@ -75,7 +75,6 @@ const UserMenu: FC<{}> = () => {
                       icon: 'person',
                     }}
                     active={false}
-                    variant="blue"
                   >
                     {formatMessage({
                       id: 'service.portal:my-info',
@@ -90,7 +89,6 @@ const UserMenu: FC<{}> = () => {
                       icon: 'settings',
                     }}
                     active={false}
-                    variant="blue"
                   >
                     {formatMessage({
                       id: 'service.portal:settings',
