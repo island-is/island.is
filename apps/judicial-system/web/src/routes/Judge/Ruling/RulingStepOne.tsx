@@ -170,7 +170,8 @@ export const RulingStepOne: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Input
-                  name="Ruling"
+                  data-testid="ruling"
+                  name="ruling"
                   label="Niðurstaða úrskurðar"
                   placeholder="Skrifa hér..."
                   defaultValue={workingCase.ruling}
@@ -255,6 +256,7 @@ export const RulingStepOne: React.FC = () => {
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
+                    data-testid="custodyEndTime"
                     name="custodyEndTime"
                     label="Tímasetning"
                     ref={custodyEndTimeRef}
