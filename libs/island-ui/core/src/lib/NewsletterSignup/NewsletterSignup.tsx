@@ -63,7 +63,7 @@ export const NewsletterSignup: React.FC<Props> = ({
           paddingTop={[3, 2, 1]}
           marginLeft={[0, 0, 8]}
         >
-          <Button variant="text" icon="arrowRight">
+          <Button variant="text" icon="arrowForward">
             {buttonText}
           </Button>
         </Box>
