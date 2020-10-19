@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import DesignGuide from './DesignGuide'
+import { DesignGuide } from './DesignGuide'
 import ContentfulApi from '../../services/contentful'
 
 describe(' DesignGuide ', () => {

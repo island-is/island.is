@@ -1,16 +1,17 @@
-import { Home } from '../screens';
-import ContentfulApi from '../services/contentful';
+import { GetStaticProps } from 'next'
+import { Home, HomeProps } from '../screens'
+import ContentfulApi from '../services/contentful'
 
-export async function getStaticProps() {
-  const client = new ContentfulApi();
-  let locale = 'is-IS';
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+  const client = new ContentfulApi()
+  let locale = 'is-IS'
 
-  const pageContent = await client.fetchPageBySlug('home', locale);
+  const pageContent = await client.fetchPageBySlug('home', locale)
 
   return {
     props: {
-      pageContent: pageContent
-    }
+      pageContent: pageContent,
+    },
   }
 }
 

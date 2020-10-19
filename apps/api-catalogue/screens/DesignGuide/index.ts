@@ -1,1 +1,1 @@
-export { default as DesignGuide } from './DesignGuide'
+export * from './DesignGuide'

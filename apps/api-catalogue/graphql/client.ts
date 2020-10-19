@@ -17,11 +17,18 @@ if (!isBrowser) {
 }
 
 function create(initialState?: any) {
-  const httpLink = new BatchHttpLink({
-    uri:
-      serverRuntimeConfig.graphqlEndpoint ||
-      publicRuntimeConfig.graphqlEndpoint,
-  })
+  // handle server vs client side calls
+  const {
+    graphqlUrl: graphqlServerUrl,
+    graphqlEndpoint: graphqlServerEndpoint,
+  } = serverRuntimeConfig
+  const {
+    graphqlUrl: graphqlClientUrl,
+    graphqlEndpoint: graphqlClientEndpoint,
+  } = publicRuntimeConfig
+  const graphqlUrl = graphqlServerUrl || graphqlClientUrl
+  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
+  const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
 
   return new ApolloClient({
     name: 'apiCatalogue-web-client',

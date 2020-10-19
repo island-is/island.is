@@ -9,25 +9,20 @@ import {
   Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-
 import { HomeLayout } from '../../components'
-
 import * as styles from './Home.treat'
 import cn from 'classnames'
-
-import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
 
 export interface HomeProps {
   pageContent: Page
 }
 
-function Home(props: HomeProps) {
+export function Home({ pageContent }: HomeProps) {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = React.useState(false)
 
   useIsomorphicLayoutEffect(() => {
-    //if (width < 771) {
     if (width < theme.breakpoints.md) {
       return setIsMobile(true)
     }
@@ -45,16 +40,10 @@ function Home(props: HomeProps) {
             <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
               <Stack space={3}>
                 <Typography variant="h1">
-                  {
-                    props.pageContent.strings.find((s) => s.id === 'home-title')
-                      .text
-                  }
+                  {pageContent.strings.find((s) => s.id === 'home-title').text}
                 </Typography>
                 <Typography variant="intro">
-                  {
-                    props.pageContent.strings.find((s) => s.id === 'home-intro')
-                      .text
-                  }
+                  {pageContent.strings.find((s) => s.id === 'home-intro').text}
                 </Typography>
               </Stack>
             </Box>
@@ -73,14 +62,11 @@ function Home(props: HomeProps) {
       >
         <Card
           title={
-            props.pageContent.strings.find(
-              (s) => s.id === 'home-catalog-button',
-            ).text
+            pageContent.strings.find((s) => s.id === 'home-catalog-button').text
           }
           slug="services"
           text={
-            props.pageContent.strings.find((s) => s.id === 'home-cata-btn-txt')
-              .text
+            pageContent.strings.find((s) => s.id === 'home-cata-btn-txt').text
           }
         />
         {/*<Card
@@ -96,34 +82,14 @@ function Home(props: HomeProps) {
         />*/}
         <Card
           title={
-            props.pageContent.strings.find((s) => s.id === 'home-dg-button')
-              .text
+            pageContent.strings.find((s) => s.id === 'home-dg-button').text
           }
           slug="design-guide"
           text={
-            props.pageContent.strings.find((s) => s.id === 'home-dg-btn-txt')
-              .text
+            pageContent.strings.find((s) => s.id === 'home-dg-btn-txt').text
           }
         />
       </Box>
     </Box>
   )
 }
-
-// Home.getInitialProps = async (ctx) => {
-//   const client = new ContentfulApi()
-//   let locale = 'is-IS'
-
-//   const pathLocale = ctx.pathname.split('/')[1]
-//   if (pathLocale === 'en') {
-//     locale = 'en-GB'
-//   }
-
-//   const pageContent = await client.fetchPageBySlug('home', locale)
-
-//   return {
-//     pageContent: pageContent,
-//   }
-// }
-
-export default Home

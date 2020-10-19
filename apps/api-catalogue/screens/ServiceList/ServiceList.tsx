@@ -6,7 +6,7 @@ import {
   ContentBlock,
   GridRow,
   GridColumn,
-  IconDeprecated,
+  IconDeprecated as Icon,
   //Icon,
   Text,
   AccordionItem,
@@ -20,7 +20,6 @@ import {
   ServiceFilter,
   ServiceCardMessage,
 } from '../../components'
-import ContentfulApi from '../../services/contentful'
 import { Page } from '../../services/contentful.types'
 import { theme } from '@island.is/island-ui/theme'
 import { GET_CATALOGUE_QUERY } from '../Queries'
@@ -40,28 +39,35 @@ interface PropTypes {
   listClassNames?: string
 }
 
-function ServiceLayout(props : PropTypes) {
+function ServiceLayout({
+  top,
+  left,
+  right,
+  bottom,
+  className,
+  listClassNames,
+}: PropTypes) {
   return (
     <Box paddingX="gutter">
-      <GridContainer className={props.className}>
-        {<ContentBlock>{props.top}</ContentBlock>}
+      <GridContainer className={className}>
+        {<ContentBlock>{top}</ContentBlock>}
         <ContentBlock>
-          <GridRow className={props.listClassNames}>
+          <GridRow className={listClassNames}>
             <GridColumn
               span={['12/12', '8/12', '8/12', '9/12', '9/12']}
               offset={['0', '0', '0', '0', '0']}
             >
-              {props.left}
+              {left}
             </GridColumn>
             <GridColumn
               span={['12/12', '4/12', '4/12', '3/12', '3/12']}
               offset={['0', '0', '0', '0', '0']}
             >
-              {props.right}
+              {right}
             </GridColumn>
           </GridRow>
         </ContentBlock>
-        {<ContentBlock>{props.bottom}</ContentBlock>}
+        {<ContentBlock>{bottom}</ContentBlock>}
       </GridContainer>
     </Box>
   )
@@ -74,13 +80,13 @@ export interface ServiceListProps {
   filterStrings: Page
 }
 
-export default function ServiceList(props: ServiceListProps) {
+export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
   // prettier-ignore
-  const TEXT_SEARCHING = props.pageContent.strings.find(s => s.id === 'catalog-searching').text;
+  const TEXT_SEARCHING = pageContent.strings.find(s => s.id === 'catalog-searching').text;
   // prettier-ignore
-  const TEXT_NOT_FOUND = props.pageContent.strings.find(s => s.id === 'catalog-not-found').text;
+  const TEXT_NOT_FOUND = pageContent.strings.find(s => s.id === 'catalog-not-found').text;
   // prettier-ignore
-  const TEXT_ERROR = props.pageContent.strings.find(s => s.id === 'catalog-error').text;
+  const TEXT_ERROR = pageContent.strings.find(s => s.id === 'catalog-error').text;
 
   const [parameters, setParameters] = useState<GetApiCatalogueInput>({
     cursor: null,
@@ -169,10 +175,7 @@ export default function ServiceList(props: ServiceListProps) {
           <Breadcrumbs>
             <a href="/">Ísland.is</a>
             <span>
-              {
-                props.pageContent.strings.find((s) => s.id === 'catalog-title')
-                  .text
-              }
+              {pageContent.strings.find((s) => s.id === 'catalog-title').text}
             </span>
           </Breadcrumbs>
           <div
@@ -181,18 +184,11 @@ export default function ServiceList(props: ServiceListProps) {
             )}
           >
             <Text variant="h1">
-              {
-                props.pageContent.strings.find((s) => s.id === 'catalog-title')
-                  .text
-              }
+              {pageContent.strings.find((s) => s.id === 'catalog-title').text}
             </Text>
             <div className={cn(styles.topSectionText)}>
               <Text variant="intro">
-                {
-                  props.pageContent.strings.find(
-                    (s) => s.id === 'catalog-intro',
-                  ).text
-                }
+                {pageContent.strings.find((s) => s.id === 'catalog-intro').text}
               </Text>
             </div>
           </div>
@@ -213,7 +209,7 @@ export default function ServiceList(props: ServiceListProps) {
                 <ServiceCard
                   key={item.id}
                   service={item}
-                  strings={props.filterStrings.strings}
+                  strings={filterStrings.strings}
                 />
               )
             })}
@@ -221,10 +217,7 @@ export default function ServiceList(props: ServiceListProps) {
           {loading && (
             <Box className={cn(styles.navigation)} borderRadius="large">
               <div>
-                <IconDeprecated 
-                  type="loading"
-                  className={styles.loadingIcon}
-                />
+                <Icon type="loading" className={styles.loadingIcon} />
                 {/* <Icons
                   type="filled"
                   icon="sync"
@@ -247,7 +240,7 @@ export default function ServiceList(props: ServiceListProps) {
             >
               <div className={cn(styles.navigationText)}>
                 {
-                  props.pageContent.strings.find(
+                  pageContent.strings.find(
                     (s) => s.id === 'catalog-fetch-more-button',
                   ).text
                 }
@@ -283,7 +276,7 @@ export default function ServiceList(props: ServiceListProps) {
                 onCheckCategoryChanged={({ target }) => {
                   updateCategoryCheckBox(target)
                 }}
-                strings={props.filterStrings.strings}
+                strings={filterStrings.strings}
               />
             </AccordionItem>
           </div>
@@ -297,28 +290,10 @@ export default function ServiceList(props: ServiceListProps) {
             onCheckCategoryChanged={({ target }) => {
               updateCategoryCheckBox(target)
             }}
-            strings={props.filterStrings.strings}
+            strings={filterStrings.strings}
           />
         )
       }
     />
   )
 }
-
-// ServiceList.getInitialProps = async (ctx): Promise<ServiceListProps> => {
-//   const client = new ContentfulApi()
-//   let locale = 'is-IS'
-
-//   const pathLocale = ctx.pathname.split('/')[1]
-//   if (pathLocale === 'en') {
-//     locale = 'en-GB'
-//   }
-
-//   const pageContent = await client.fetchPageBySlug('services', locale)
-//   const filterStrings = await client.fetchPageBySlug('service-filter', locale)
-
-//   return {
-//     pageContent: pageContent,
-//     filterStrings: filterStrings,
-//   }
-// }
