@@ -5,14 +5,7 @@ import {
 } from '../../utils/responsiveProp'
 import * as styleRefs from './useNegativeMarginLeft.treat'
 
-type NegativeMarginLeft = Extract<
-  Extract<keyof typeof styleRefs.xs, keyof typeof styleRefs.sm>,
-  Extract<keyof typeof styleRefs.xs, keyof typeof styleRefs.xl>
->
-
-export const useNegativeMarginLeft = (
-  space: ResponsiveProp<NegativeMarginLeft>,
-) => {
+export const useNegativeMarginLeft = (space: ResponsiveProp<any>) => {
   const styles = {
     ...styleRefs,
   }
