@@ -14,7 +14,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Typography variant="h1" as="h1">
           {formatMessage({
             id: 'service.portal:my-info',
-            defaultMessage: 'Mínar upplýsingar',
+            defaultMessage: 'Mín gögn',
           })}
         </Typography>
       </Box>
