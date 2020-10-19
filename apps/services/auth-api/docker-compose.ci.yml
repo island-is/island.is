@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
-        DB_NAME: db_auth_api_backend
-        APP: auth_api_ws
+        DB_NAME: db_auth_api
+        APP: services-auth-api
     networks:
       - local
     depends_on:
