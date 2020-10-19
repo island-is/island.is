@@ -211,7 +211,6 @@ export const RulingStepTwo: React.FC = () => {
                       <RadioButton
                         name="accused-appeal-decition"
                         id="accused-postpone"
-                        testId="accused-postpone"
                         label="Kærði tekur sér lögboðinn frest"
                         value={CaseAppealDecision.POSTPONE}
                         checked={
@@ -281,7 +280,6 @@ export const RulingStepTwo: React.FC = () => {
                     <RadioButton
                       name="prosecutor-appeal-decition"
                       id="prosecutor-appeal"
-                      testId="prosecutor-appeal"
                       label="Sækjandi kærir málið"
                       value={CaseAppealDecision.APPEAL}
                       checked={

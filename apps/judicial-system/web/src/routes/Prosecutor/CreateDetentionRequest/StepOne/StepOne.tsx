@@ -197,7 +197,13 @@ export const StepOne: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, id])
 
-  // Run this if id is in url, i.e. if user is opening an existing request.
+  /**
+   * Run this if id is in url, i.e. if user is opening an existing request.
+   *
+   * This can't be done in the render function because the time refs will always be null
+   * until the user clicks the time inputs and then the continue button becomes enabled.
+   *  */
+
   useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
@@ -241,7 +247,6 @@ export const StepOne: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
     ]
-
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }

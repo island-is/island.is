@@ -42,7 +42,8 @@ import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
-  const requestedCustodyEndTime = useRef<HTMLInputElement>()
+  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>()
 
   const [
     requestedCustodyEndDateErrorMessage,
@@ -143,18 +144,6 @@ export const StepTwo: React.FC = () => {
     },
   ]
 
-  const requiredFields: { value: string; validations: Validation[] }[] = [
-    {
-      value: workingCase?.requestedCustodyEndDate,
-      validations: ['empty'],
-    },
-    {
-      value: requestedCustodyEndTime.current?.value,
-      validations: ['empty', 'time-format'],
-    },
-    { value: workingCase?.lawsBroken, validations: ['empty'] },
-  ]
-
   useEffect(() => {
     document.title = 'Málsatvik og lagarök - Réttarvörslugátt'
   }, [])
@@ -207,6 +196,24 @@ export const StepTwo: React.FC = () => {
       })
     }
   }, [workingCase, setWorkingCase])
+
+  useEffect(() => {
+    const requiredFields: { value: string; validations: Validation[] }[] = [
+      {
+        value: workingCase?.requestedCustodyEndDate,
+        validations: ['empty'],
+      },
+      {
+        value: requestedCustodyEndTimeRef.current?.value,
+        validations: ['empty', 'time-format'],
+      },
+      { value: workingCase?.lawsBroken, validations: ['empty'] },
+    ]
+
+    if (workingCase) {
+      setIsStepIllegal(isNextDisabled(requiredFields))
+    }
+  }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
 
   return (
     workingCase && (
@@ -278,7 +285,7 @@ export const StepTwo: React.FC = () => {
                       name="requestedCustodyEndTime"
                       label="Tímasetning"
                       placeholder="Settu inn tíma"
-                      ref={requestedCustodyEndTime}
+                      ref={requestedCustodyEndTimeRef}
                       defaultValue={
                         workingCase?.requestedCustodyEndDate?.indexOf('T') > -1
                           ? formatDate(
@@ -690,8 +697,7 @@ export const StepTwo: React.FC = () => {
               <FormFooter
                 nextUrl={Constants.STEP_THREE_ROUTE}
                 nextIsDisabled={
-                  isNextDisabled(requiredFields) ||
-                  workingCase.custodyProvisions.length === 0
+                  isStepIllegal || workingCase.custodyProvisions.length === 0
                 }
               />
             </GridColumn>
