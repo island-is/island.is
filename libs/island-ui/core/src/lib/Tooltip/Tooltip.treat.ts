@@ -28,6 +28,14 @@ export const tooltip = style({
 export const icon = style({
   display: 'inline-block',
   lineHeight: 1,
+  position: 'relative',
+})
+
+export const iconSVG = style({
+  width: '100%',
+  position: 'absolute',
+  top: 0,
+  left: 0,
 })
 
 export const iconPath = style({
