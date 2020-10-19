@@ -15,6 +15,7 @@ class ContentfulApi {
   public async fetchPageBySlug(slug, locale): Promise<Page> {
     return await this.client
       .getEntries({
+        /* eslint-disable @typescript-eslint/camelcase */
         content_type: 'page',
         locale: locale,
         'fields.pageId': slug,
