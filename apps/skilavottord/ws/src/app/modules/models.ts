@@ -5,7 +5,11 @@ import {
   Model,
   Table,
   ForeignKey,
+  CreatedAt,
+  UpdatedAt,
+  HasMany,
   BelongsTo,
+  HasOne,
 } from 'sequelize-typescript'
 
 @ObjectType()
@@ -25,10 +29,21 @@ export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
   })
   personname: string
 
+  @Field()
+  @CreatedAt
+  createdAt: Date
+
+  @Field()
+  @UpdatedAt
+  updatedAt: Date
+
+  @HasMany(() => VehicleModel)
+  vehicles!: VehicleModel[]
+
   // //ATH
   // @Field((type) => [VehicleModel])
   // @HasMany(() => VehicleModel)
-  // vehicle!: VehicleModel[]
+  // vehicle: VehicleModel[]
 }
 
 @ObjectType()
@@ -42,13 +57,15 @@ export class VehicleModel extends Model<VehicleModel> {
   vehicleId: string
 
   //ATH
-  @Field()
+  @ForeignKey(() => VehicleOwnerModel)
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ForeignKey(() => VehicleOwnerModel)
-  vehicleOwnerId!: string
+  ownerNationalId!: string
+
+  @BelongsTo(() => VehicleOwnerModel)
+  vehicleOwner: any
 
   @Field()
   @Column({
@@ -74,6 +91,22 @@ export class VehicleModel extends Model<VehicleModel> {
     type: DataType.STRING,
   })
   vinNumber: string
+
+  @Field()
+  @CreatedAt
+  createdAt: Date
+
+  @Field()
+  @UpdatedAt
+  updatedAt: Date
+
+  //ATH
+  // @HasOne(() => RecyclingRequestModel, {
+  //   foreignKey: 'recycling_request',
+  //   as: 'recycling_request',
+  //   onDelete: 'CASCADE',
+  // })
+  // vehicle!: VehicleModel
 }
 
 @ObjectType()
@@ -81,11 +114,20 @@ export class VehicleModel extends Model<VehicleModel> {
 export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Field()
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     primaryKey: true,
+    allowNull: false,
+  })
+  id!: number
+  @Field()
+  @ForeignKey(() => VehicleModel)
+  @Column({
+    type: DataType.STRING,
   })
   vehicleId: string
-
+  //ATH
+  @BelongsTo(() => VehicleModel, 'vehicleId')
+  vehicle!: VehicleModel
   @Field()
   @Column({
     type: DataType.STRING,
@@ -100,9 +142,13 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   nameOfRequestor: string
 
-  // //ATH
-  // @BelongsTo(() => VehicleModel)
-  // vehicle!: VehicleModel
+  @Field()
+  @CreatedAt
+  createdAt: Date
+
+  @Field()
+  @UpdatedAt
+  updatedAt: Date
 }
 
 @ObjectType()
@@ -122,6 +168,14 @@ export class GdprModel extends Model<GdprModel> {
     defaultValue: true,
   })
   gdprStatus: boolean
+
+  @Field()
+  @CreatedAt
+  createdAt: Date
+
+  @Field()
+  @UpdatedAt
+  updatedAt: Date
 }
 
 @ObjectType()
@@ -176,6 +230,14 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
     type: DataType.BOOLEAN,
   })
   active: boolean
+
+  @Field()
+  @CreatedAt
+  createdAt: Date
+
+  @Field()
+  @UpdatedAt
+  updatedAt: Date
 }
 
 export default [

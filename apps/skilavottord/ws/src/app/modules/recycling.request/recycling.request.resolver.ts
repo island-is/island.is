@@ -12,7 +12,9 @@ export class RecyclingRequestResolver {
 
   @Query(() => [RecyclingRequestModel])
   async getAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
-    return await this.recyclingRequestService.findAll()
+    const res = await this.recyclingRequestService.findAll()
+    console.log('res->' + JSON.stringify(res, null, 2))
+    return res
   }
 
   // @Query(() => Gdpr)

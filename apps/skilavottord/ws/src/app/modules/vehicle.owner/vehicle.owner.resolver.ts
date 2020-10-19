@@ -12,13 +12,8 @@ export class VehicleOwnerResolver {
 
   @Query(() => [VehicleOwnerModel])
   async getAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
+    const res = await this.vehicleOwnerService.findAll()
+    console.log('res->' + JSON.stringify(res, null, 2))
     return await this.vehicleOwnerService.findAll()
   }
-
-  // @Query(() => Gdpr)
-  // async getVehiclesForNationalId(
-  //   @Args('nationalId') nid: string,
-  // ): Promise<Gdpr> {
-  //   return await this.gdprService.findByNationalId(nid)
-  // }
 }
