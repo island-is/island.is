@@ -13,7 +13,7 @@ describe('Header', () => {
     history.push(Constants.STEP_ONE_ROUTE)
     const { getByTestId } = render(
       <Router history={history}>
-        <Header />
+        <Header pathname={Constants.DETENTION_REQUESTS_ROUTE} />
       </Router>,
     )
     const logo = getByTestId('link-to-home')

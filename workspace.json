@@ -1334,6 +1334,33 @@
         }
       }
     },
+    "auth-api-lib": {
+      "root": "libs/auth-api-lib",
+      "sourceRoot": "libs/auth-api-lib/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/auth-api-lib/.eslintrc",
+            "tsConfig": [
+              "libs/auth-api-lib/tsconfig.lib.json",
+              "libs/auth-api-lib/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/auth-api-lib/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/auth-api-lib/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
@@ -3193,6 +3220,170 @@
                 "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
               }
             ]
+          }
+        }
+      }
+    },
+    "services-auth-admin-api": {
+      "root": "apps/services/auth-admin-api",
+      "sourceRoot": "apps/services/auth-admin-api/src",
+      "projectType": "application",
+      "prefix": "auth-admin-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/auth-admin-api",
+            "main": "apps/services/auth-admin-api/src/main.ts",
+            "tsConfig": "apps/services/auth-admin-api/tsconfig.app.json",
+            "assets": ["apps/services/auth-admin-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/auth-admin-api/src/environments/environment.ts",
+                  "with": "apps/services/auth-admin-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-auth-admin-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/services/auth-admin-api/.eslintrc",
+            "tsConfig": [
+              "apps/services/auth-admin-api/tsconfig.app.json",
+              "apps/services/auth-admin-api/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/services/auth-admin-api/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/auth-admin-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "services-auth-api": {
+      "root": "apps/services/auth-api",
+      "sourceRoot": "apps/services/auth-api/src",
+      "projectType": "application",
+      "prefix": "auth-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/auth-api",
+            "main": "apps/services/auth-api/src/main.ts",
+            "tsConfig": "apps/services/auth-api/tsconfig.app.json",
+            "assets": ["apps/services/auth-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/auth-api/src/environments/environment.ts",
+                  "with": "apps/services/auth-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-auth-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/services/auth-api/.eslintrc",
+            "tsConfig": [
+              "apps/services/auth-api/tsconfig.app.json",
+              "apps/services/auth-api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/services/auth-api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/auth-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {},
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/services/auth-api"
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/services/auth-api/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build services-auth-api"
+              },
+              {
+                "command": "node dist/apps/services/auth-api/main --generate-schema apps/services/auth-api/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../node_modules/.bin/sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/services/auth-api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/services/auth-api"
           }
         }
       }

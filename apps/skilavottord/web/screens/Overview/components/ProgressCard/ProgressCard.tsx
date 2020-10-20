@@ -62,8 +62,8 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                       label
                     >
                       {status === 'pendingRecycle'
-                        ? 'Take to recycling company'
-                        : 'Recycled'}
+                        ? t.status.recycle
+                        : t.status.done}
                     </Tag>
                   </Box>
                 </Box>
