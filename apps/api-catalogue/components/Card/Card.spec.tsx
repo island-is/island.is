@@ -6,7 +6,7 @@ import Card from './Card'
 describe(' Card ', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      <Card title="Test Title" slug="test-slug" text="Test test for card" />,
+      <Card title="Test Title" slug="test-slug" text="Test text for card" />,
     )
     expect(baseElement).toBeTruthy()
   })

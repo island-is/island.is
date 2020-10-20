@@ -2,25 +2,38 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import { Home } from './Home'
-import ContentfulApi from '../../services/contentful'
+import { Page } from '../../services/contentful.types'
 
 describe(' Home ', () => {
-  const OLD_ENV = process.env
-
-  beforeAll(() => {
-    process.env = OLD_ENV
-    process.env.CONTENTFUL_SPACE_ID = 'jtzqkuaxipis'
-    process.env.CONTENTFUL_ACCESS_TOKEN =
-      'N6X1O7qgBQ_FqxQx0O-keh3tJDrEhV8myczR3w-ZbS0'
-  })
-  afterAll(() => {
-    process.env = OLD_ENV // restore old env
-  })
+  
+  const pageContent : Page = {
+    id: 'home',
+    strings: [
+      { id: 'home-title', text: 'Viskuausan' },
+      {
+        id: 'home-intro',
+        text: 'Hér getur þú skoðað og leitað í fjölda vefþjónusta og gagnaskilgreininga hjá hinu opinbera'
+      },
+      { id: 'home-catalog-button', text: 'API Vörulisti' },
+      { id: 'home-dm-button', text: 'Gagnamódel' },
+      { id: 'home-dg-button', text: 'Þróunarhandbók' },
+      {
+        id: 'home-cata-btn-txt',
+        text: 'Skoða og leita í fjölda vefþjónusta hjá hinu opinbera.'
+      },
+      {
+        id: 'home-dg-btn-txt',
+        text: 'Skoða þróunarhandbók Stafræns Íslands. Bókin er leiðarvísir um bestu vinnubrögð við þróun vefþjónusta.'
+      },
+      {
+        id: 'home-dm-btn-txt',
+        text: 'Skoða og leita í fjölda gagnaskilgreininga hjá hinu opinbera.'
+      }
+    ]
+  }
 
   it('should render successfully', async () => {
-    const client = new ContentfulApi()
-
-    const pageContent = await client.fetchPageBySlug('home', 'is-IS')
+    
     const { baseElement } = render(<Home pageContent={pageContent} />)
     expect(baseElement).toBeTruthy()
   })
