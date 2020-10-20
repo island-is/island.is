@@ -1,5 +1,6 @@
 import { style, styleMap } from 'treat'
 import { themeUtils, theme } from '@island.is/island-ui/theme'
+import { escapeGrid } from '@island.is/island-ui/core'
 
 export const container = style({
   position: 'relative',
@@ -7,9 +8,7 @@ export const container = style({
 
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      // Escape grid
-      marginLeft: -theme.grid.gutter.mobile * 2,
-      marginRight: -theme.grid.gutter.mobile * 2,
+      ...escapeGrid(),
     },
   },
 })
