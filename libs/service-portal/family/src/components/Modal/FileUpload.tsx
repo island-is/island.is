@@ -1,25 +1,17 @@
 import React, { FC, useReducer, useRef, useState, useCallback } from 'react'
 
 import {
-  Button,
   Box,
   ContentBlock,
-  Typography,
-  Stack,
-  Icon,
-  GridContainer,
-  GridRow,
-  GridColumn,
   InputFileUpload,
   fileToObject,
   UploadFile,
-  Inline,
 } from '@island.is/island-ui/core'
 
-import { type } from 'os'
-import { background } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
+import { uploadFileToS3 } from './FileUploadUtils'
+import { useMutation } from '@apollo/client'
 import ImageCropper from './ImageCropper'
-
+import { CREATE_UPLOAD_URL } from '@island.is/application/graphql'
 enum ActionTypes {
   ADD = 'ADD',
   REMOVE = 'REMOVE',
@@ -29,48 +21,6 @@ enum ActionTypes {
 type Action = {
   type: ActionTypes
   payload: any
-}
-
-const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
-  return new Promise((resolve, reject) => {
-    const req = new XMLHttpRequest()
-
-    req.upload.addEventListener('progress', (event) => {
-      console.log('progress', event)
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100)
-
-        dispatch({
-          type: ActionTypes.UPDATE,
-          payload: { file, status: 'uploading', percent },
-        })
-      }
-    })
-
-    req.upload.addEventListener('load', (event) => {
-      console.log('load', event)
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'done', percent: 100 },
-      })
-      resolve(req.response)
-    })
-
-    req.upload.addEventListener('error', (event) => {
-      console.log('error', event)
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'error', percent: 0 },
-      })
-      reject(req.response)
-    })
-
-    const formData = new FormData()
-    formData.append('file', file.originalFileObj || '', file.name)
-
-    req.open('POST', 'http://localhost:5000/')
-    req.send(formData)
-  })
 }
 
 const initialUploadFiles: UploadFile[] = []
@@ -97,7 +47,7 @@ function reducer(state: UploadFile[], action: Action) {
       ]
 
     default:
-      throw new Error()
+      return state
   }
 }
 
@@ -114,22 +64,48 @@ const FileUploadshi: FC<FileUploadProps> = () => {
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
   const [imageSrc, setImageSrc] = React.useState(undefined)
-  const [croppedImage, setcroppedImage] = React.useState(undefined)
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
 
-  const handleCrop = (image: Blob) => {
+  const uploadFileFlow = async (file: UploadFile) => {
+    try {
+      const { data } = await createUploadUrl({
+        variables: {
+          filename: file.name,
+        },
+      })
+
+      const {
+        createUploadUrl: { url, fields },
+      } = data
+
+      const response = await uploadFileToS3(file, dispatch, url, fields)
+
+      return Promise.resolve({ url: response.url, key: fields.key })
+    } catch (e) {
+      error = e
+      return Promise.reject(e)
+    }
+  }
+
+  function dataURItoBlob(dataURI: string) {
+    var byteString = atob(dataURI.split(',')[1])
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+    var ab = new ArrayBuffer(byteString.length)
+    var ia = new Uint8Array(ab)
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i)
+    }
+    var blob = new Blob([ab], { type: mimeString })
+    return blob
+  }
+
+  const handleCrop = (imageDataUri: string) => {
     setError(undefined)
-    setcroppedImage(image)
-    console.log('final image', image)
-    console.log('blob to file', blobToFile(image))
-    uploadFile(blobToFile(image), dispatch).catch((e) => {
-      setError('An error occurred uploading one or more files')
-    })
+    var blobData = dataURItoBlob(imageDataUri)
+    uploadFileFlow(fileToObject(blobToFile(blobData)))
   }
 
   const onChange = (newFiles: File[]) => {
-    const newUploadFiles = newFiles.map((f) => fileToObject(f))
-
-    // Set the image that launches the cropper
     newFiles.forEach((file) => {
       console.log('file first', file)
       const reader = new FileReader()
@@ -141,28 +117,6 @@ const FileUploadshi: FC<FileUploadProps> = () => {
       }
       reader.readAsDataURL(file)
     })
-    // setError(undefined)
-    // newUploadFiles.forEach((f: UploadFile) => {
-    //   uploadFile(f, dispatch).catch((e) => {
-    //     setError('An error occurred uploading one or more files')
-    //   })
-    // })
-
-    // dispatch({
-    //   type: ActionTypes.ADD,
-    //   payload: {
-    //     newFiles: newUploadFiles,
-    //   },
-    // })
-  }
-
-  const remove = (fileToRemove: UploadFile) => {
-    // dispatch({
-    //   type: ActionTypes.REMOVE,
-    //   payload: {
-    //     fileToRemove,
-    //   },
-    // })
   }
 
   return (
@@ -176,8 +130,10 @@ const FileUploadshi: FC<FileUploadProps> = () => {
               description="Images accepted with extension: png, .jpg, .jpeg"
               buttonLabel="Select picture to upload"
               onChange={onChange}
-              onRemove={remove}
-              errorMessage={state.length > 0 ? error : undefined}
+              onRemove={() => {
+                setImageSrc(undefined)
+              }}
+              errorMessage={error}
               accept={['.png', '.jpg', '.jpeg']}
             />
           </Box>
@@ -191,7 +147,6 @@ const FileUploadshi: FC<FileUploadProps> = () => {
               setImageSrc(undefined)
             }}
           />
-          <img src={croppedImage} />
         </>
       )}
     </>

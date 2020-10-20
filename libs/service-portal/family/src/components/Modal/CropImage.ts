@@ -1,6 +1,3 @@
-import { number } from 'libs/island-ui/core/src/lib/FormStepper/shared/SectionNumber/SectionNumber.treat'
-import { width } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
-
 const createImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image()
@@ -74,11 +71,4 @@ export default async function getCroppedImg(
 
   // As Base64 string
   return canvas.toDataURL('image/jpeg')
-
-  // As a blob
-  return new Promise((resolve) => {
-    canvas.toBlob((file) => {
-      resolve(URL.createObjectURL(file))
-    }, 'image/jpeg')
-  })
 }

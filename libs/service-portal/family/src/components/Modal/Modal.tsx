@@ -1,10 +1,8 @@
 import React, { FC, useRef, ReactNode } from 'react'
 import HtmlParser from 'react-html-parser'
 import {
-  Button,
   Box,
   Typography,
-  Stack,
   Icon,
   GridContainer,
   GridRow,
@@ -12,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.treat'
 import { useClickAway } from 'react-use'
-import FileUploadshi from './FileUpload'
 
 interface ModalProps {
   show?: boolean
@@ -27,7 +24,6 @@ const Modal: FC<ModalProps> = ({
   show,
   title,
   onCancel,
-  onContinue,
   onClickOutside,
   children,
 }: ModalProps) => {
@@ -45,8 +41,8 @@ const Modal: FC<ModalProps> = ({
           <GridContainer>
             <GridRow>
               <GridColumn
-                span={['12/12', '6/12', '6/12', '6/12']}
-                offset={['0', '3/12', '3/12', '3/12']}
+                span={['12/12', '12/12', '6/12', '6/12']}
+                offset={['0', '0', '3/12', '3/12']}
               >
                 <Box
                   display="flex"
@@ -54,10 +50,7 @@ const Modal: FC<ModalProps> = ({
                   className={styles.modal}
                   ref={ref}
                 >
-                  <GridColumn
-                    span={['8/8', '8/8', '8/8', '8/8']}
-                    offset={['0', '0', '0', '0']}
-                  >
+                  <GridColumn span={'8/8'} offset={'0'}>
                     <Box
                       width="full"
                       display="inlineFlex"

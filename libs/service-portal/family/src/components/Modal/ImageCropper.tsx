@@ -1,22 +1,9 @@
 import React, { FC, useReducer, useRef, useState, useCallback } from 'react'
-import {
-  Button,
-  Box,
-  ContentBlock,
-  Typography,
-  Stack,
-  Icon,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  InputFileUpload,
-  fileToObject,
-  UploadFile,
-  Inline,
-} from '@island.is/island-ui/core'
+import { Button, Box } from '@island.is/island-ui/core'
 
 import Cropper from 'react-easy-crop'
 import getCroppedImg from './CropImage'
+import { Icon } from '@island.is/island-ui/core'
 
 interface ImageCropProps {
   imageSrc?: ArrayBuffer
@@ -33,8 +20,6 @@ const ImageCropper: FC<ImageCropProps> = ({
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-  const [croppedImage, setCroppedImage] = useState(null)
-  const cropperRef = useRef<HTMLImageElement>(null)
 
   const dogImg =
     'https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000'
@@ -51,22 +36,13 @@ const ImageCropper: FC<ImageCropProps> = ({
         croppedAreaPixels,
         rotation,
       )
-      console.log('donee', { croppedImage })
-      console.log('tyyyype', typeof croppedImage)
-      console.log(imageSrc)
       onCrop(croppedImage)
-      setCroppedImage(croppedImage)
     } catch (e) {
       console.error(e)
     }
   }, [croppedAreaPixels, rotation])
 
-  const onClose = useCallback(() => {
-    setCroppedImage(null)
-  }, [])
-
   const handleChange = (event: React.ChangeEvent<any>) => {
-    console.log(typeof event)
     setZoom(event.target.value)
   }
 
@@ -83,7 +59,11 @@ const ImageCropper: FC<ImageCropProps> = ({
           }}
         >
           <Cropper
-            style={{ containerStyle: {}, mediaStyle: {}, cropAreaStyle: {} }}
+            style={{
+              containerStyle: { background: 'white' },
+              mediaStyle: {},
+              cropAreaStyle: {},
+            }}
             image={imageSrc}
             crop={crop}
             zoom={zoom}
@@ -97,6 +77,7 @@ const ImageCropper: FC<ImageCropProps> = ({
           />
         </Box>
         <Box display={'inlineFlex'} width={'full'}>
+          <Icon type={'close'} />
           <input
             id="zoomInput"
             type="range"
@@ -106,20 +87,21 @@ const ImageCropper: FC<ImageCropProps> = ({
             onChange={handleChange}
             step="0.1"
           />
-          <Button
-            onClick={() => {
-              setRotation(rotation + 90)
-            }}
-          >
-            Rotate right
-          </Button>
-          <Button
+          <Icon type={'plus'} />
+          <button
             onClick={() => {
               setRotation(rotation - 90)
             }}
           >
-            Rotate left
-          </Button>
+            <Icon type={'arrowLeft'} />
+          </button>
+          <button
+            onClick={() => {
+              setRotation(rotation + 90)
+            }}
+          >
+            <Icon type={'arrowRight'} />
+          </button>
           <Button onClick={cropImage}>Crop</Button>
           <Button
             onClick={() => {
