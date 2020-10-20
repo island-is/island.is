@@ -23,7 +23,7 @@ export const Header: FC = () => {
   const {
     activeLocale,
     locale,
-    t: { routes },
+    t: { header: t, routes },
   } = useI18n()
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
@@ -56,7 +56,7 @@ export const Header: FC = () => {
           <a>{logo}</a>
         </Link>
       )}
-      logoutText={'Log out'}
+      logoutText={t.logoutText}
       userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}
       switchLanguage={() => switchLanguage(nextLanguage)}
