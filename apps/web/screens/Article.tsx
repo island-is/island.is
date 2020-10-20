@@ -1,13 +1,5 @@
-import React, {
-  FC,
-  useState,
-  useMemo,
-  ReactNode,
-  Fragment,
-  useEffect,
-} from 'react'
+import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
@@ -32,6 +24,7 @@ import {
   Bullet,
   SidebarSubNav,
   RichText,
+  SocialSharing,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -378,21 +371,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   ]
 
   const metaTitle = `${article.title} | Ísland.is`
-  const metaDescription =
-    article.intro ||
-    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
-
-  const metaImage = article.featuredImage
-    ? article.featuredImage.url
-    : '/island-fb-1200x630.png'
-
-  const metaImageWidth = article.featuredImage
-    ? article.featuredImage.width.toString()
-    : '1200'
-
-  const metaImageHeight = article.featuredImage
-    ? article.featuredImage.height.toString()
-    : '630'
 
   const processEntries = article?.body?.length
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
@@ -404,18 +382,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   return (
     <>
-      <Head>
-        <title>{metaTitle}</title>
-        <meta name="title" property="og:title" content={metaTitle} />
-        <meta
-          name="description"
-          property="og:description"
-          content={metaDescription}
-        />
-        <meta property="og:image" content={metaImage} />
-        <meta property="og:image:width" content={metaImageWidth} />
-        <meta property="og:image:height" content={metaImageHeight} />
-      </Head>
+      <SocialSharing
+        title={metaTitle}
+        description={article.intro}
+        imageUrl={article.featuredImage?.url}
+        imageWidth={article.featuredImage?.width.toString()}
+        imageHeight={article.featuredImage?.height.toString()}
+      />
       <ArticleLayout
         sidebar={
           <ArticleSidebar
