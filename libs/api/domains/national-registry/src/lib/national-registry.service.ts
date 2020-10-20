@@ -9,7 +9,7 @@ export class NationalRegistryService {
   async GetMyinfo(nationalId: string): Promise<MyInfo | null> {
     console.log('getmyinof')
     const result = await this.nationalRegistryApi.getMyInfo(nationalId)
-    console.log(result?.table.diffgram.DocumentElement.Thjodskra.Nafn)
-    return null
+
+    return result
   }
 }

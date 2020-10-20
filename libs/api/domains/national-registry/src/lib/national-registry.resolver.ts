@@ -7,7 +7,7 @@ import { NationalRegistryService } from './national-registry.service'
 export class NationalRegistryResolver {
   constructor(private nationalRegistryService: NationalRegistryService) { }
 
-  @Query(() => [MyInfo], { nullable: true })
+  @Query(() => MyInfo, { nullable: true })
   getMyInfo(
     /*TODO replace with proper authentication */
     @Args('input') input: GetMyinfoInput
