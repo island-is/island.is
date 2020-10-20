@@ -39,6 +39,9 @@ module.exports = withTreat(
         graphqlEndpoint: graphqlPath,
         SENTRY_DSN,
       },
+      env: {
+        API_MOCKS: process.env.API_MOCKS,
+      },
     }),
   ),
 )
