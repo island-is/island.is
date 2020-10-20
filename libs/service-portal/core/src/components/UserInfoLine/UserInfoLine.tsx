@@ -16,7 +16,7 @@ interface Props {
   editExternalLink?: string
 }
 
-const UserInfoLine: FC<Props> = ({
+export const UserInfoLine: FC<Props> = ({
   label,
   content,
   onEdit,
@@ -72,5 +72,3 @@ const UserInfoLine: FC<Props> = ({
     </Box>
   )
 }
-
-export default UserInfoLine
