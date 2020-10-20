@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db:
+  db_services_auth_api:
     image: postgres:11.6
-    container_name: db
+    container_name: db_services_auth_api
     networks:
       - local
     environment:

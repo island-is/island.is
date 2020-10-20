@@ -6,19 +6,19 @@ services:
       context: .
       dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
-        DB_NAME: db_auth_api
+        DB_NAME: db_services_auth_api
         APP: services-auth-api
     networks:
       - local
     depends_on:
-      - db
+      - db_services_auth_api
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
-      - DB_HOST=db
+      - DB_HOST=db_services_auth_api
     volumes:
       - ../../..:/code
       
-  db:
+  db_services_auth_api:
     ports: []
