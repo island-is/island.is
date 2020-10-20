@@ -4,10 +4,8 @@ import {
   DataType,
   Model,
   Table,
-  ForeignKey,
   CreatedAt,
   UpdatedAt,
-  BelongsTo,
   HasMany,
 } from 'sequelize-typescript'
 import { VehicleModel } from '../../vehicle/model/vehicle.model'

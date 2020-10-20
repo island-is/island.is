@@ -13,7 +13,7 @@ export class VehicleService {
   ) {}
 
   async findAll(): Promise<VehicleModel[]> {
-    //this.logger.debug(`Finding gdpr for nationalId - "${nationalId}"`)
+    this.logger.debug(`Finding gdprs`)
     return await this.vehicleModel.findAll()
   }
 
