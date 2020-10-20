@@ -472,20 +472,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   marginY={3}
                   borderRadius="large"
                 >
-                  <Link
-                    passHref
-                    href={processEntry.processLink}
-                    underline="normal"
-                  >
-                    <Text variant="h4" as="span" color="blue400">
-                      <span>
-                        {processEntry.buttonText || n('processLinkButtonText')}
-                      </span>
-                      <Box component="span" marginLeft={2}>
-                        <Icon type="external" width="15" />
-                      </Box>
-                    </Text>
-                  </Link>
+                  <ProcessEntryLinkButton variant="text" {...processEntry} />
                 </Box>
               </Hidden>
             )}

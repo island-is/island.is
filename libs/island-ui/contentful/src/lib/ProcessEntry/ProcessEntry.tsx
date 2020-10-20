@@ -8,6 +8,7 @@ import {
   Stack,
   Link,
   ButtonProps,
+  ButtonVariants,
 } from '@island.is/island-ui/core'
 import IframeModal from '../IframeModal/IframeModal'
 
@@ -25,13 +26,13 @@ export const Titles: { [k: string]: string } = {
 export interface ProcessEntryProps {
   processTitle: string
   processLink: string
-  openLinkInModal: boolean
+  openLinkInModal?: boolean
   type: string
   buttonText: string
 }
 
 export const ProcessEntryLinkButton: FC<
-  Omit<ProcessEntryProps, 'type'> & ButtonProps
+  Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonVariants
 > = ({
   processTitle,
   buttonText,
@@ -80,7 +81,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
               paddingX={[3, 3, 3, 3, 0]}
               display="flex"
               flexGrow={1}
-              flexDirection={['column', 'column', 'row', 'row', 'row']}
+              flexDirection={['column', 'column', 'column', 'row', 'row']}
             >
               <Box flexGrow={1}>
                 <Stack space={1}>
@@ -97,7 +98,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
               <Box
                 flexShrink={0}
                 paddingTop={[3, 3, 3, 3, 0]}
-                paddingLeft={[0, 0, 0, 0, 8]}
+                paddingLeft={[0, 0, 0, 4, 8]}
                 alignItems="flexStart"
                 justifyContent="flexStart"
               >

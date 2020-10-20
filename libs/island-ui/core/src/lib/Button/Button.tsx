@@ -10,7 +10,7 @@ import { Icon as IconType, Type } from '../IconRC/iconMap'
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 
 type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
-type Variants =
+export type ButtonVariants =
   | {
       variant?: 'primary'
       colorScheme?: keyof typeof styles.colors.primary
@@ -45,7 +45,10 @@ export interface ButtonProps {
   iconType?: Type
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
+export const Button = forwardRef<
+  HTMLButtonElement,
+  ButtonProps & ButtonVariants
+>(
   (
     {
       variant = 'primary',
