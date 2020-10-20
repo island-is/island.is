@@ -51,6 +51,7 @@
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],
+      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
@@ -151,6 +152,7 @@
         "libs/service-portal/settings/src/index.ts"
       ],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
+      "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"

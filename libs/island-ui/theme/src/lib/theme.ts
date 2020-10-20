@@ -105,7 +105,6 @@ export const theme = {
 }
 
 export type Theme = typeof theme
-
 export type Colors = keyof typeof color
 
 type RequiredTokens = Pick<Theme, 'breakpoints'>
@@ -138,7 +137,6 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
 
   const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): Style => {
     const xsStyles = omit(xs, '@media')
-
     const smStyles = !sm || isEqual(sm, xsStyles) ? null : sm
     const mdStyles = !md || isEqual(md, xsStyles || smStyles) ? null : md
     const lgStyles =

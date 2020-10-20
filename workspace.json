@@ -787,6 +787,41 @@
         }
       }
     },
+    "api-mocks": {
+      "root": "libs/api/mocks",
+      "sourceRoot": "libs/api/mocks/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/mocks/tsconfig.lib.json",
+              "libs/api/mocks/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/mocks/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/mocks/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "graphql-codegen --config libs/api/mocks/codegen.yml",
+              "yarn ts-node -P libs/shared/mocking/tsconfig.json libs/shared/mocking/scripts/generate-gql.ts apps/api/src/api.graphql libs/api/mocks/src/schema.ts"
+            ]
+          }
+        }
+      }
+    },
     "api-schema": {
       "root": "libs/api/schema",
       "sourceRoot": "libs/api/schema/src",
@@ -3175,6 +3210,17 @@
             "jestConfig": "libs/service-portal/settings/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
         }
       }
     },
@@ -3546,6 +3592,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/shared/form-fields/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "shared-mocking": {
+      "root": "libs/shared/mocking",
+      "sourceRoot": "libs/shared/mocking/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/mocking/tsconfig.lib.json",
+              "libs/shared/mocking/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/mocking/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/mocking/jest.config.js",
             "passWithNoTests": true
           }
         }
