@@ -11,7 +11,7 @@ import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
-import { Icon } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
 import { Typography } from '../Typography/Typography'
 
 import * as styles from './DatePicker.treat'
@@ -106,7 +106,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             ) : null}
           </div>
         </div>
-        <Icon type="calendar" width="32" height="32" />
+        <Icon icon="calendar" type="outline" color="blue400" size="large" />
       </button>
     )
   })
@@ -163,7 +163,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   onClick={decreaseMonth}
                   className={styles.decreaseButton}
                 >
-                  <Icon type="cheveron" width="16" height="16" />
+                  <Icon icon="chevronBack" type="outline" color="blue400" />
                 </button>
                 <Typography variant="datepickerHeaderText">
                   {`${capitalizedMonth} ${getYear(date)}`}
@@ -173,7 +173,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   onClick={increaseMonth}
                   className={styles.increaseButton}
                 >
-                  <Icon type="cheveron" width="16" height="16" />
+                  <Icon icon="chevronForward" type="outline" color="blue400" />
                 </button>
               </div>
             )

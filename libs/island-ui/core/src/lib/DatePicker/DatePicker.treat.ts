@@ -85,7 +85,6 @@ export const customHeaderContainer = style({
 })
 
 export const decreaseButton = style({
-  transform: 'rotate(90deg)',
   outline: 'none',
 
   ':focus': {
@@ -94,7 +93,6 @@ export const decreaseButton = style({
 })
 
 export const increaseButton = style({
-  transform: 'rotate(-90deg)',
   outline: 'none',
 
   ':focus': {
