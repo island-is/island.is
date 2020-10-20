@@ -12,7 +12,6 @@ import { m } from './messages'
 
 export const ContactInfo: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  ownerId: 'TODO?',
   name: m.formName,
   children: [
     buildSection({

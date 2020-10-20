@@ -7,7 +7,6 @@ import {
 
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  ownerId: 'TODO?',
   name: 'Í vinnslu',
   mode: 'pending',
   children: [

@@ -9,7 +9,6 @@ import { m } from './messages'
 
 export const TestPhase: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  ownerId: 'TODO?',
   name: 'Útfærsla og prófanir.',
   children: [
     buildSection({

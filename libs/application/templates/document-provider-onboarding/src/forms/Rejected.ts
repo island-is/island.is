@@ -8,7 +8,6 @@ import {
 
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  ownerId: 'TODO?',
   name: 'Hafnað',
   mode: 'rejected',
   children: [

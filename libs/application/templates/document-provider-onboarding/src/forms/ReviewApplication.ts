@@ -14,7 +14,6 @@ import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  ownerId: 'TODO?',
   name: 'Úrvinnsla umsóknar um að gerast skjalaveitandi',
   mode: 'review',
   children: [
