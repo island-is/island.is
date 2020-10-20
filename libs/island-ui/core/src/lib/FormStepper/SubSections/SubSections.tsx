@@ -1,7 +1,7 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
+import cn from 'classnames'
 
-import { BulletList } from '../../BulletList/BulletList'
 import { Box } from '../../Box/Box'
 import { SubSectionItem } from '../SubSectionItem/SubSectionItem'
 import * as types from '../types'
@@ -21,13 +21,18 @@ export const SubSections: FC<{
   const isClient = typeof window === 'object'
 
   useEffect(() => {
-    if (!isClient) return
+    if (!isClient) {
+      return
+    }
+
     setContainerHeight((isActive && activeHeight) || 0)
   }, [activeHeight, isActive, isClient])
 
   return (
     <Box
-      className={styles.subSectionContainer}
+      className={cn(styles.subSectionContainer, {
+        [styles.subSectionContainerHidden]: !isActive,
+      })}
       style={{ height: containerHeight }}
     >
       <Box
@@ -35,7 +40,7 @@ export const SubSections: FC<{
         className={styles.subSectionInnerContainer}
         style={{ opacity: isActive ? 1 : 0 }}
       >
-        <BulletList>
+        <ul className={styles.subSectionList}>
           {subSections.map((subSection, i) => (
             <SubSectionItem
               key={`${subSection.name}-${i}`}
@@ -51,7 +56,7 @@ export const SubSections: FC<{
               {subSection.name}
             </SubSectionItem>
           ))}
-        </BulletList>
+        </ul>
       </Box>
     </Box>
   )
