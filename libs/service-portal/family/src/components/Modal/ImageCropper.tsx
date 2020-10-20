@@ -78,7 +78,7 @@ const ImageCropper: FC<ImageCropProps> = ({
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
-            width: '400px',
+            width: '%100',
             height: '400px',
           }}
         >
@@ -90,7 +90,6 @@ const ImageCropper: FC<ImageCropProps> = ({
             rotation={rotation}
             aspect={1}
             cropShape={'round'}
-            // cropSize={{ height: 200, width: 200 }}
             showGrid={false}
             onCropChange={setCrop}
             onCropComplete={onCropComplete}
