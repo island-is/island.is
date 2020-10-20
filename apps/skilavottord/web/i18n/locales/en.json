@@ -2,6 +2,9 @@
   "home": {
     "title": "Recycle your car"
   },
+  "header": {
+    "logoutText": "Log out"
+  },
   "myCars": {
     "title": "Recycle your car",
     "subTitles": {
@@ -142,7 +145,7 @@
     }
   },
   "routes": {
-    "home": "/en",
+    "home": "/en/grein/endurvinna-oekutaeki",
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",
