@@ -3,13 +3,16 @@ import {
   defaultFieldResolver,
   defaultTypeResolver,
   GraphQLFieldResolver,
+  GraphQLScalarType,
   GraphQLTypeResolver,
 } from 'graphql'
 
 export type ResolverMap = Record<
   string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Record<string, (...args: any) => any> | undefined
+  | Record<string, ((...args: any) => any) | undefined>
+  | GraphQLScalarType
+  | undefined
 >
 
 export type NewResolvers<Resolvers> = {
@@ -38,9 +41,10 @@ export const createResolvers = <T extends ResolverMap>(
   ) => {
     const { fieldName, parentType } = info
     const parentName = parentType.name
-    const resolver = resolvers?.[parentName]?.[fieldName]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const resolver = (resolvers?.[parentName] as any)?.[fieldName]
 
-    if (resolver) {
+    if (typeof resolver === 'function') {
       return resolver(obj, args, context, info)
     }
     return defaultFieldResolver(obj, args, context, info)
@@ -53,9 +57,10 @@ export const createResolvers = <T extends ResolverMap>(
     abstractType,
   ) => {
     const { name } = abstractType
-    const resolver = resolvers?.[name]?.__resolveType
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const resolver = (resolvers?.[name] as any)?.__resolveType
 
-    if (resolver) {
+    if (typeof resolver === 'function') {
       return resolver(value, context, info) as string
     }
     return defaultTypeResolver(value, context, info, abstractType)
