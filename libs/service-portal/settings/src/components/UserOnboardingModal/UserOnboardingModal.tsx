@@ -1,17 +1,15 @@
 import { toast } from '@island.is/island-ui/core'
-import { Modal } from '@island.is/service-portal/core'
-import { User } from 'oidc-client'
-import React, { FC, useState } from 'react'
-import { FormStep, UserProfileFormData } from './Steps/FormStep'
+import {
+  Modal,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+import React, { useState } from 'react'
+import { FormStep } from './Steps/FormStep'
 import { IntroStep } from './Steps/IntroStep'
 
 type OnboardingStep = 'intro' | 'user-info'
 
-interface Props {
-  userInfo: User
-}
-
-export const UserOnboardingModal: FC<Props> = ({ userInfo }) => {
+const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [step, setStep] = useState<OnboardingStep>('intro')
 
@@ -49,3 +47,5 @@ export const UserOnboardingModal: FC<Props> = ({ userInfo }) => {
     </Modal>
   )
 }
+
+export default UserOnboardingModal
