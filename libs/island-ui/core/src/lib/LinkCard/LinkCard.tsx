@@ -1,3 +1,5 @@
+/** @deprecated LinkCard has been deprecated in favor of TopicCard */
+
 import React, { forwardRef, ComponentPropsWithRef } from 'react'
 import cn from 'classnames'
 import { Box, BoxProps } from '../Box/Box'
