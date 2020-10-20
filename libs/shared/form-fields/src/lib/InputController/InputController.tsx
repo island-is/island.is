@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Input } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
+import { textarea } from 'libs/island-ui/core/src/lib/Input/Input.treat'
 
 interface Props {
   autoFocus?: boolean
@@ -13,6 +14,8 @@ interface Props {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   placeholder?: string
+  textarea?: boolean
+  type?: 'text' | 'email' | 'number' | 'tel'
 }
 export const InputController: FC<Props> = ({
   autoFocus,
@@ -22,6 +25,8 @@ export const InputController: FC<Props> = ({
   label,
   name = id,
   placeholder,
+  textarea,
+  type = 'text',
   onChange,
 }) => {
   const { register } = useFormContext()
@@ -36,6 +41,8 @@ export const InputController: FC<Props> = ({
       autoFocus={autoFocus}
       hasError={error !== undefined}
       errorMessage={error}
+      textarea={textarea}
+      type={type}
       onChange={onChange}
     />
   )

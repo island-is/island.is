@@ -9,6 +9,7 @@ export interface Option {
   excludeOthers?: boolean
 }
 export type FieldWidth = 'full' | 'half'
+export type TextFieldVariant = 'text' | 'email' | 'number' | 'tel' | 'textarea'
 
 export interface BaseField extends FormItem {
   readonly id: string
@@ -96,6 +97,7 @@ export interface TextField extends Question {
   minLength?: number
   maxLength?: number
   placeholder?: FormText
+  variant?: TextFieldVariant
 }
 
 export interface FileUploadField extends Question {
