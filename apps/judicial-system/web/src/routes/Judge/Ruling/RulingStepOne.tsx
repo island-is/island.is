@@ -24,77 +24,21 @@ import {
   updateState,
 } from '../../../utils/stepHelper'
 import * as api from '../../../api'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  validate,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
+import { formatISO } from 'date-fns'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
-  const caseDraft = window.localStorage.getItem('workingCase')
-  const caseDraftJSON = JSON.parse(caseDraft)
+  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const [workingCase, setWorkingCase] = useState<Case>()
 
-  const [workingCase, setWorkingCase] = useState<Case>({
-    id: caseDraftJSON.id ?? '',
-    created: caseDraftJSON.created ?? '',
-    modified: caseDraftJSON.modified ?? '',
-    state: caseDraftJSON.state ?? '',
-    policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-    accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-    accusedName: caseDraftJSON.accusedName ?? '',
-    accusedAddress: caseDraftJSON.accusedAddress ?? '',
-    court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-    arrestDate: caseDraftJSON.arrestDate ?? null,
-    requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-    requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-    lawsBroken: caseDraftJSON.lawsBroken ?? '',
-    custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-    requestedCustodyRestrictions:
-      caseDraftJSON.requestedCustodyRestrictions ?? [],
-    caseFacts: caseDraftJSON.caseFacts ?? '',
-    witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-    investigationProgress: caseDraftJSON.investigationProgress ?? '',
-    legalArguments: caseDraftJSON.legalArguments ?? '',
-    comments: caseDraftJSON.comments ?? '',
-    notifications: caseDraftJSON.Notification ?? [],
-    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-    courtStartTime: caseDraftJSON.courtStartTime ?? '',
-    courtEndTime: caseDraftJSON.courtEndTime ?? '',
-    courtAttendees: caseDraftJSON.courtAttendees ?? '',
-    policeDemands: caseDraftJSON.policeDemands ?? '',
-    accusedPlea: caseDraftJSON.accusedPlea ?? '',
-    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-    ruling: caseDraftJSON.ruling ?? '',
-    rejecting: caseDraftJSON.rejecting ?? false,
-    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-    accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
-    prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
-    accusedAppealAnnouncement: caseDraftJSON.accusedAppealAnnouncement ?? '',
-    prosecutorAppealAnnouncement:
-      caseDraftJSON.prosecutorAppealAnnouncement ?? '',
-    prosecutorId: caseDraftJSON.prosecutorId ?? null,
-    prosecutor: caseDraftJSON.prosecutor ?? null,
-    judgeId: caseDraftJSON.judgeId ?? null,
-    judge: caseDraftJSON.judge ?? null,
-  })
-
-  const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(
-      CaseCustodyRestrictions.ISOLATION,
-    ) > -1,
-  )
-  const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(
-      CaseCustodyRestrictions.VISITAION,
-    ) > -1,
-  )
-  const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(
-      CaseCustodyRestrictions.COMMUNICATION,
-    ) > -1,
-  )
-  const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
-    caseDraftJSON.custodyRestrictions?.indexOf(CaseCustodyRestrictions.MEDIA) >
-      -1,
-  )
+  const [, setRestrictionCheckboxOne] = useState<boolean>()
+  const [, setRestrictionCheckboxTwo] = useState<boolean>()
+  const [, setRestrictionCheckboxThree] = useState<boolean>()
+  const [, setRestrictionCheckboxFour] = useState<boolean>()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
@@ -103,7 +47,6 @@ export const RulingStepOne: React.FC = () => {
     {
       restriction: 'B - Einangrun',
       value: CaseCustodyRestrictions.ISOLATION,
-      getCheckbox: restrictionCheckboxOne,
       setCheckbox: setRestrictionCheckboxOne,
       explination:
         'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
@@ -111,7 +54,6 @@ export const RulingStepOne: React.FC = () => {
     {
       restriction: 'C - Heimsóknarbann',
       value: CaseCustodyRestrictions.VISITAION,
-      getCheckbox: restrictionCheckboxTwo,
       setCheckbox: setRestrictionCheckboxTwo,
       explination:
         'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
@@ -119,7 +61,6 @@ export const RulingStepOne: React.FC = () => {
     {
       restriction: 'D - Bréfskoðun, símabann',
       value: CaseCustodyRestrictions.COMMUNICATION,
-      getCheckbox: restrictionCheckboxThree,
       setCheckbox: setRestrictionCheckboxThree,
       explination:
         'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
@@ -127,7 +68,6 @@ export const RulingStepOne: React.FC = () => {
     {
       restriction: 'E - Fjölmiðlabann',
       value: CaseCustodyRestrictions.MEDIA,
-      getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
       explination:
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
@@ -138,6 +78,75 @@ export const RulingStepOne: React.FC = () => {
     document.title = 'Úrskurður - Réttarvörslugátt'
   }, [])
 
+  useEffect(() => {
+    const caseDraft = window.localStorage.getItem('workingCase')
+
+    if (caseDraft !== 'undefined' && !workingCase) {
+      const caseDraftJSON = JSON.parse(caseDraft || '{}')
+
+      setWorkingCase({
+        id: caseDraftJSON.id ?? '',
+        created: caseDraftJSON.created ?? '',
+        modified: caseDraftJSON.modified ?? '',
+        state: caseDraftJSON.state ?? '',
+        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
+        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
+        accusedName: caseDraftJSON.accusedName ?? '',
+        accusedAddress: caseDraftJSON.accusedAddress ?? '',
+        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
+        arrestDate: caseDraftJSON.arrestDate ?? null,
+        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
+        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
+        lawsBroken: caseDraftJSON.lawsBroken ?? '',
+        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
+        requestedCustodyRestrictions:
+          caseDraftJSON.requestedCustodyRestrictions ?? [],
+        caseFacts: caseDraftJSON.caseFacts ?? '',
+        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
+        investigationProgress: caseDraftJSON.investigationProgress ?? '',
+        legalArguments: caseDraftJSON.legalArguments ?? '',
+        comments: caseDraftJSON.comments ?? '',
+        notifications: caseDraftJSON.Notification ?? [],
+        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+        courtStartTime: caseDraftJSON.courtStartTime ?? '',
+        courtEndTime: caseDraftJSON.courtEndTime ?? '',
+        courtAttendees: caseDraftJSON.courtAttendees ?? '',
+        policeDemands: caseDraftJSON.policeDemands ?? '',
+        accusedPlea: caseDraftJSON.accusedPlea ?? '',
+        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+        ruling: caseDraftJSON.ruling ?? '',
+        rejecting: caseDraftJSON.rejecting ?? false,
+        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
+        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
+        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
+        accusedAppealAnnouncement:
+          caseDraftJSON.accusedAppealAnnouncement ?? '',
+        prosecutorAppealAnnouncement:
+          caseDraftJSON.prosecutorAppealAnnouncement ?? '',
+        prosecutorId: caseDraftJSON.prosecutorId ?? null,
+        prosecutor: caseDraftJSON.prosecutor ?? null,
+        judgeId: caseDraftJSON.judgeId ?? null,
+        judge: caseDraftJSON.judge ?? null,
+      })
+    }
+  }, [workingCase, setWorkingCase])
+
+  useEffect(() => {
+    const requiredFields: { value: string; validations: Validation[] }[] = [
+      { value: workingCase?.ruling, validations: ['empty'] },
+      { value: workingCase?.custodyEndDate, validations: ['empty'] },
+      {
+        value: custodyEndTimeRef.current?.value,
+        validations: ['empty', 'time-format'],
+      },
+    ]
+
+    if (workingCase) {
+      setIsStepIllegal(isNextDisabled(requiredFields))
+    }
+  }, [workingCase, isStepIllegal])
+  console.log(workingCase)
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -247,7 +256,7 @@ export const RulingStepOne: React.FC = () => {
                       updateState(
                         workingCase,
                         'custodyEndDate',
-                        date,
+                        formatISO(date, { representation: 'date' }),
                         setWorkingCase,
                       )
                     }}
@@ -261,7 +270,7 @@ export const RulingStepOne: React.FC = () => {
                     label="Tímasetning"
                     ref={custodyEndTimeRef}
                     defaultValue={
-                      workingCase.custodyEndDate?.indexOf('T') > -1
+                      workingCase.custodyEndDate.indexOf('T') > -1
                         ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
                         : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
                         ? formatDate(
@@ -329,14 +338,18 @@ export const RulingStepOne: React.FC = () => {
                             name={restriction.restriction}
                             label={restriction.restriction}
                             value={restriction.value}
-                            checked={restriction.getCheckbox}
+                            checked={
+                              workingCase.custodyRestrictions?.indexOf(
+                                restriction.value,
+                              ) > -1
+                            }
                             tooltip={restriction.explination}
                             onChange={({ target }) => {
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
                               const restrictionIsSelected =
-                                copyOfState.custodyRestrictions.indexOf(
+                                copyOfState.custodyRestrictions?.indexOf(
                                   target.value as CaseCustodyRestrictions,
                                 ) > -1
 
@@ -354,7 +367,7 @@ export const RulingStepOne: React.FC = () => {
                                 const restrictions =
                                   copyOfState.custodyRestrictions
                                 restrictions.splice(
-                                  restrictions.indexOf(
+                                  restrictions?.indexOf(
                                     target.value as CaseCustodyRestrictions,
                                   ),
                                   1,
@@ -391,14 +404,7 @@ export const RulingStepOne: React.FC = () => {
             </Box>
             <FormFooter
               nextUrl={Constants.RULING_STEP_TWO_ROUTE}
-              nextIsDisabled={isNextDisabled([
-                { value: workingCase.ruling, validations: ['empty'] },
-                { value: workingCase.custodyEndDate, validations: ['empty'] },
-                {
-                  value: custodyEndTimeRef.current?.value,
-                  validations: ['empty', 'time-format'],
-                },
-              ])}
+              nextIsDisabled={isStepIllegal}
             />
           </GridColumn>
         </GridRow>
