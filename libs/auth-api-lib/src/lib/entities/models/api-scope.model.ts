@@ -15,16 +15,6 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
   tableName: 'api_scope',
 })
 export class ApiScope extends Model<ApiScope> {
-  @PrimaryKey
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty({
-    example: 'domain',
-  })
-  domain: string
-
   // Common properties for all resources (no single table inheritance)
 
   @PrimaryKey

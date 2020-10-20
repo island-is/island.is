@@ -26,17 +26,6 @@ export class ApiResourceSecret extends Model<ApiResourceSecret> {
     allowNull: false,
   })
   @ForeignKey(() => ApiResource)
-  @ApiProperty({
-    example: 'domain',
-  })
-  domain: string
-
-  @PrimaryKey
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ForeignKey(() => ApiResource)
   @ApiProperty()
   apiResourceName: string
 

@@ -25,6 +25,8 @@ export class UserIdentityDto {
   @ApiProperty({
     example: 'set_active',
   })
+  readonly active: boolean
+
   @IsString()
   @ApiProperty({
     example: 'set_provider_subject_id',
