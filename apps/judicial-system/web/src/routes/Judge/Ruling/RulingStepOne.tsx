@@ -184,7 +184,7 @@ export const RulingStepOne: React.FC = () => {
                   label="Niðurstaða úrskurðar"
                   placeholder="Skrifa hér..."
                   defaultValue={workingCase.ruling}
-                  rows={3}
+                  rows={12}
                   errorMessage={rulingErrorMessage}
                   hasError={rulingErrorMessage !== ''}
                   onFocus={() => setRulingErrorMessage('')}
