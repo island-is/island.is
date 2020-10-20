@@ -1,6 +1,6 @@
 import { styleMap } from 'treat'
 import omit from 'lodash/omit'
-import { mapToStyleProperty } from '../../utils'
+import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 // Omitted because 'auto' negative margin doesn't make sense

@@ -4,8 +4,8 @@
     "types": ["node", "jest"],
     "emitDecoratorMetadata": true,
     "target": "es2015",
-    "experimentalDecorators": true
-    //"strict": false
+    "experimentalDecorators": true,
+    "strict": false
   },
   "include": ["**/*.ts"]
 }
