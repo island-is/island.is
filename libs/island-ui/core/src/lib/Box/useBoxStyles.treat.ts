@@ -3,7 +3,7 @@ import { Properties } from 'csstype'
 import omit from 'lodash/omit'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-import { mapToStyleProperty } from '../../utils'
+import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
 const spaceMapToCss = (
   t: typeof theme,

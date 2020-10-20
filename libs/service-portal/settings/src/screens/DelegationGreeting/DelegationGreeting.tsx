@@ -10,7 +10,7 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
     <InfoScreen
       title={defineMessage({
         id: 'sp.settings:delegation',
-        defaultMessage: 'Umboð',
+        defaultMessage: 'Mín réttindi',
       })}
       intro={defineMessage({
         id: 'sp.settings:delegation-about',
@@ -31,22 +31,26 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
       }}
       institutionTitle={defineMessage({
         id: 'service.portal:digital-iceland',
-        defaultMessage: 'Ísland.is',
+        defaultMessage: 'Stafrænt Ísland',
+      })}
+      institutionSubtitle={defineMessage({
+        id: 'service.portal:incoming',
+        defaultMessage: 'Á döfinni',
       })}
       institutionDescription={defineMessage({
-        id: 'sp.settings:delegation-institution-description',
+        id: 'service.portal:vision-segment',
         defaultMessage: `
-          Markmið ríkisstjórnarinnar er að stafræn samskipti verði megin samskiptaleið
-          fólks og fyrirtækja við hið opinbera. Þannig má einfalda líf þeirra sem búa
-          og starfa á Íslandi. Stafrænt Ísland, sem heyrir undir fjármála- og
-          efnahagsráðuneytið, vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
+          Markmið ríkisstjórnarinnar er að stafræn samskipti
+          verði megin samskiptaleið fólks og fyrirtækja við hið opinbera.
+          Þannig má einfalda líf þeirra sem búa og starfa á Íslandi.
+          Stafrænt Ísland, sem heyrir undir fjármála- og efnahagsráðuneytið,
+          vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
         `,
       })}
-      institutionHref="https://innskraning.island.is/addonbehalf.aspx"
+      institutionHref="https://island.is/um-island-is"
       institutionLinkTitle={defineMessage({
-        id: 'sp.settings:institution:link-title',
-        defaultMessage:
-          'Núverandi umboðskerfi Ísland.is - www.innskraning.island.is',
+        id: 'service.portal:timeline-link-title',
+        defaultMessage: 'Sjá tímalínu',
       })}
       figure="/assets/images/school.jpg"
     />

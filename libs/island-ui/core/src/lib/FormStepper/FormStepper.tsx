@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+import cn from 'classnames'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -39,11 +40,11 @@ export const FormStepper: FC<{
   const hasHead = formIcon || formName
 
   return (
-    <Box paddingTop={1} paddingBottom={[1, 1, 0]} width="full">
-      {tag && <Box className={styles.tagContainer}>{tag}</Box>}
+    <Box paddingTop={[0, 0, 1]} paddingBottom={[1, 1, 0]} width="full">
+      {tag && <Box className={styles.tag}>{tag}</Box>}
 
       {hasHead && (
-        <Box display="flex" alignItems="center">
+        <Box alignItems="center" className={styles.head}>
           {formIcon && <img src={formIcon} alt="application-icon" />}
 
           {formName && (
@@ -54,7 +55,11 @@ export const FormStepper: FC<{
         </Box>
       )}
 
-      <Box marginTop={hasHead ? 4 : 0}>
+      <Box
+        className={cn(styles.list, {
+          [styles.listWithHead]: hasHead,
+        })}
+      >
         {sections.map((section, index) => (
           <FormStepperSection
             theme={theme}
