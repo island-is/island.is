@@ -46,90 +46,118 @@ const getDemoTags = (amount) => {
   return tags
 }
 
-export const Default = () => {
-  return (
-    <CategoryCard heading="Heading" text="Text here" tags={getDemoTags(4)} />
-  )
-}
+export const Default = () => (
+  <CategoryCard heading="Heading" text="Text here" tags={getDemoTags(4)} />
+)
 
-export const NoTags = () => {
-  return <CategoryCard heading="Heading" text="Text here" />
-}
+export const Layout = () => (
+  <GridContainer>
+    <GridRow>
+      <GridColumn span="6/12" paddingBottom={3}>
+        <CategoryCard
+          heading="Fæðingarorlof"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(3)}
+        />
+      </GridColumn>
+      <GridColumn span="6/12" paddingBottom={3}>
+        <CategoryCard
+          heading="Fjármál"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(4)}
+        />
+      </GridColumn>
+      <GridColumn span="6/12" paddingBottom={3}>
+        <CategoryCard
+          heading="Tölfræði"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(2)}
+        />
+      </GridColumn>
+      <GridColumn span="6/12" paddingBottom={3}>
+        <CategoryCard
+          heading="Hagkerfið"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(5)}
+        />
+      </GridColumn>
+    </GridRow>
+  </GridContainer>
+)
 
-export const Layout = () => {
-  return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="6/12" paddingBottom={3}>
-          <CategoryCard
-            heading="Fæðingarorlof"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(3)}
-          />
-        </GridColumn>
-        <GridColumn span="6/12" paddingBottom={3}>
-          <CategoryCard
-            heading="Fjármál"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(4)}
-          />
-        </GridColumn>
-        <GridColumn span="6/12" paddingBottom={3}>
-          <CategoryCard
-            heading="Tölfræði"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(2)}
-          />
-        </GridColumn>
-        <GridColumn span="6/12" paddingBottom={3}>
-          <CategoryCard
-            heading="Hagkerfið"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(5)}
-          />
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
-}
+export const RedColorSchemeLayout = () => (
+  <GridContainer>
+    <GridRow>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          colorScheme="red"
+          heading="Fæðingarorlof"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(3)}
+        />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          colorScheme="red"
+          heading="Fjármál"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(4)}
+        />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          colorScheme="red"
+          heading="Tölfræði"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(2)}
+        />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          colorScheme="red"
+          heading="Hagkerfið"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+          tags={getDemoTags(5)}
+        />
+      </GridColumn>
+    </GridRow>
+  </GridContainer>
+)
 
-export const RedColorSchemeLayout = () => {
-  return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <CategoryCard
-            colorScheme="red"
-            heading="Fæðingarorlof"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(3)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <CategoryCard
-            colorScheme="red"
-            heading="Fjármál"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(4)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <CategoryCard
-            colorScheme="red"
-            heading="Tölfræði"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(2)}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <CategoryCard
-            colorScheme="red"
-            heading="Hagkerfið"
-            text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
-            tags={getDemoTags(5)}
-          />
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
-}
+export const NoTags = () => (
+  <CategoryCard
+    heading="Atvinnurekstur og sjálfstætt starfandi"
+    text="Stofnun fyrirtækja, launagreiðslur, gjaldþrot, löggildingar, starfsleyfi, vinnuvernd og fleira"
+  />
+)
+
+export const NoTagsLayout = () => (
+  <GridContainer>
+    <GridRow>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          heading="Atvinnurekstur og sjálfstætt starfandi"
+          text="Stofnun fyrirtækja, launagreiðslur, gjaldþrot, löggildingar, starfsleyfi, vinnuvernd og fleira"
+        />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          heading="Fjármál"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+        />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          heading="Tölfræði"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+        />
+      </GridColumn>
+      <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
+        <CategoryCard
+          heading="Hagkerfið"
+          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+        />
+      </GridColumn>
+    </GridRow>
+  </GridContainer>
+)
