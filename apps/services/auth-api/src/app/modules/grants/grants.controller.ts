@@ -9,12 +9,7 @@ import {
   UseGuards,
   Query,
 } from '@nestjs/common'
-import {
-  ApiOkResponse,
-  ApiTags,
-  ApiOAuth2,
-  ApiCreatedResponse,
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
 import {
   Grant,
   GrantDto,

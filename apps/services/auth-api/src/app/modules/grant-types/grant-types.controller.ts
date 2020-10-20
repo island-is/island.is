@@ -5,7 +5,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 import {
   GrantType,

@@ -3,7 +3,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  SetMetadata,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'

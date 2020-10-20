@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Counter } from 'prom-client'
 import { Op, WhereOptions } from 'sequelize'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'

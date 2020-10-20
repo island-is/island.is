@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Counter } from 'prom-client'
 import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 import { config } from './users-config'

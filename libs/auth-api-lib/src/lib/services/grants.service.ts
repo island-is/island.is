@@ -63,7 +63,7 @@ export class GrantsService {
     clientId?: string,
     type?: string,
   ): Promise<number> {
-    if (!Boolean(subjectId)) {
+    if (!subjectId) {
       throw new Error('subjectId must be specified.')
     }
 
