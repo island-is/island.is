@@ -6,8 +6,7 @@ import { GetApiCatalogueInput } from '@island.is/api/schema'
 import { ContentfulString } from '../../services/contentful.types'
 
 describe(' ServiceFilter ', () => {
-
-  const strings : Array<ContentfulString> = [
+  const strings: Array<ContentfulString> = [
     { id: 'catalog-filter-access', text: 'Aðgengi' },
     { id: 'catalog-filter-data', text: 'Gögn' },
     { id: 'catalog-filter-data-financial', text: 'Fjármál' },
@@ -36,9 +35,8 @@ describe(' ServiceFilter ', () => {
     query: null,
     type: [],
   }
-  
+
   it('should render successfully', () => {
-    
     const { baseElement } = render(
       <ServiceFilter
         iconVariant="default"

@@ -7,7 +7,7 @@ export const getStaticProps: GetStaticProps<DesignGuideProps> = async () => {
   const locale = 'is-IS'
 
   const pageContent = await client.fetchPageBySlug('design-guide', locale)
-  
+
   return {
     props: {
       pageContent: pageContent,

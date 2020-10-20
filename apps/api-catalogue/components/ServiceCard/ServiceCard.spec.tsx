@@ -2,25 +2,23 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { ServiceCard } from '.'
 
-import {	
-  PricingCategory,	
-  DataCategory,	
-  TypeCategory,	
-  AccessCategory,	
+import {
+  PricingCategory,
+  DataCategory,
+  TypeCategory,
+  AccessCategory,
 } from '../../const/TestConst'
 
 import {
   AccessCategory as AccessCategoryDisplay,
   PricingCategory as PricingCategoryDisplay,
   TypeCategory as TypeCategoryDisplay,
-  DataCategory as DataCategoryDisplay
+  DataCategory as DataCategoryDisplay,
 } from '@island.is/api-catalogue/consts'
 
 import { ContentfulString } from '../../services/contentful.types'
 
-
 describe(' ServiceCard ', () => {
-
   const service: any = {
     id: '0',
     owner: 'Þjóðskrá',
@@ -36,12 +34,12 @@ describe(' ServiceCard ', () => {
         memberClass: 'TestMemberClass',
         memberCode: 'TestMemberCode',
         subsystemCode: 'TestSubsystemCode',
-        serviceCode: 'TestServiceCode'
+        serviceCode: 'TestServiceCode',
       },
-    ]
+    ],
   }
 
-  const filterStrings : Array<ContentfulString> = [
+  const filterStrings: Array<ContentfulString> = [
     { id: 'catalog-filter-access', text: 'Aðgengi' },
     { id: 'catalog-filter-data', text: 'Gögn' },
     { id: 'catalog-filter-data-financial', text: 'Fjármál' },
@@ -58,11 +56,10 @@ describe(' ServiceCard ', () => {
     { id: 'catalog-filter-type-soap', text: 'SOAP' },
     { id: 'catalog-filter-access-xroad', text: AccessCategoryDisplay.XROAD },
     { id: 'catalog-filter-access-apigw', text: 'API GW' },
-    { id: 'catalog-filter-search', text: 'Leita' }
+    { id: 'catalog-filter-search', text: 'Leita' },
   ]
 
   it('should render successfully', async () => {
-    
     const { baseElement } = render(
       <ServiceCard service={service} strings={filterStrings} />,
     )
@@ -70,7 +67,6 @@ describe(' ServiceCard ', () => {
   })
 
   describe('Card values should contain', () => {
-    
     it('should contain service name', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterStrings} />,

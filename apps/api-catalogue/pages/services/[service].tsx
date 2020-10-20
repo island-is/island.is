@@ -1,13 +1,8 @@
-import {
-  Query,
-  QueryGetApiServiceByIdArgs,
-} from '@island.is/api/schema'
+import { Query, QueryGetApiServiceByIdArgs } from '@island.is/api/schema'
 import { GetServerSideProps } from 'next'
 import { ServiceDetail, ServiceDetailProps } from '../../screens'
 import ContentfulApi from '../../services/contentful'
-import {
-  GET_API_SERVICE_QUERY
-} from '../../screens/Queries'
+import { GET_API_SERVICE_QUERY } from '../../screens/Queries'
 import initApollo from '../../graphql/client'
 
 const apolloClient = initApollo({})
