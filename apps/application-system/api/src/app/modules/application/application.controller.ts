@@ -264,12 +264,22 @@ export class ApplicationController {
       )
     }
 
-    const helper = new ApplicationTemplateHelper(
+    const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
+    await validateIncomingAnswers(
       existingApplication as BaseApplication,
-      template,
+      newAnswers,
     )
 
-    // todo update the answers
+    await validateApplicationSchema(
+      existingApplication as BaseApplication,
+      newAnswers,
+    )
+    const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
+
+    const helper = new ApplicationTemplateHelper(
+      { ...existingApplication, answers: mergedAnswers } as BaseApplication,
+      template,
+    )
 
     const newState = helper.changeState(updateApplicationStateDto.event)
 
@@ -279,6 +289,7 @@ export class ApplicationController {
       } = await this.applicationService.updateApplicationState(
         existingApplication.id,
         newState.value.toString(), // TODO maybe ban more complicated states....
+        mergedAnswers,
       )
 
       return updatedApplication
