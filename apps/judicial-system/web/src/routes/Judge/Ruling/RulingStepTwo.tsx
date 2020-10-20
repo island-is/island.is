@@ -137,7 +137,10 @@ export const RulingStepTwo: React.FC = () => {
               <Box marginBottom={3}>
                 <Box marginBottom={2}>
                   <Text as="h4" variant="h4">
-                    Kærði
+                    Kærði{' '}
+                    <Text as="span" color="red400" fontWeight="semiBold">
+                      *
+                    </Text>
                   </Text>
                 </Box>
                 <Box marginBottom={3}>
@@ -265,7 +268,10 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
               <Box marginBottom={2}>
                 <Text as="h4" variant="h4">
-                  Sækjandi
+                  Sækjandi{' '}
+                  <Text as="span" color="red400" fontWeight="semiBold">
+                    *
+                  </Text>
                 </Text>
               </Box>
               <Box marginBottom={3}>
@@ -390,7 +396,8 @@ export const RulingStepTwo: React.FC = () => {
             <FormFooter
               nextUrl={Constants.CONFIRMATION_ROUTE}
               nextIsDisabled={
-                !workingCase.courtStartTime || !workingCase.courtEndTime
+                !workingCase.accusedAppealDecision ||
+                !workingCase.prosecutorAppealDecision
               }
             />
           </GridColumn>
