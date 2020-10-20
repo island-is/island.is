@@ -22,17 +22,6 @@ import { ApiResource } from './api-resource.model'
 export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
   @PrimaryKey
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ForeignKey(() => ApiResource)
-  @ApiProperty({
-    example: 'domain',
-  })
-  domain: string
-
-  @PrimaryKey
-  @Column({
     type: DataType.UUID,
     allowNull: false,
   })

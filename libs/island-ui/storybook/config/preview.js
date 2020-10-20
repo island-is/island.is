@@ -1,8 +1,9 @@
 import { addParameters } from '@storybook/react'
-import storyBookTheme from './storyBookTheme'
+
+import theme from './storyBookTheme'
 
 addParameters({
-  docs: { theme: storyBookTheme },
+  docs: { theme },
   layout: 'padded',
   viewMode: 'docs',
   previewTabs: { 'storybook/docs/panel': { index: -1 } },
