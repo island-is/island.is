@@ -15,8 +15,8 @@ export const familyModule: ServicePortalModule = {
         lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
     },
     {
-      name: 'Mínar upplýsingar',
-      path: ServicePortalPath.MinarUpplysingar,
+      name: 'Mín gögn',
+      path: ServicePortalPath.MinGogn,
       render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
     },
   ],

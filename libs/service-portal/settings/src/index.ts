@@ -7,6 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { lazy } from 'react'
+import { defineMessage } from 'react-intl'
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
@@ -17,6 +18,20 @@ export const settingsModule: ServicePortalModule = {
         name: 'Stillingar',
         path: ServicePortalPath.StillingarRoot,
         render: () => lazy(() => import('./lib/service-portal-settings')),
+      },
+      {
+        name: 'Mín réttindi',
+        path: ServicePortalPath.StillingarUmbod,
+        render: () =>
+          lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
+      },
+      {
+        name: defineMessage({
+          id: 'service-portal:profile-info',
+          defaultMessage: 'Mínar upplýsingar',
+        }),
+        path: ServicePortalPath.UserProfileRoot,
+        render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
     ]
 

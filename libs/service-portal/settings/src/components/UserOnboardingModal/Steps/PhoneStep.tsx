@@ -73,7 +73,7 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel }) => {
                   defaultMessage: 'Til baka',
                 })}
               </Button>
-              <Button variant="primary" type="submit" icon="arrowRight">
+              <Button variant="primary" type="submit" icon="arrowForward">
                 {formatMessage({
                   id: 'service.portal:next-step',
                   defaultMessage: 'Næsta skref',

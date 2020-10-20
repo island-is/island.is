@@ -1,28 +1,20 @@
-import { theme } from '@island.is/island-ui/theme'
 import React, { Suspense, useMemo } from 'react'
-import iconMap from './iconMap'
+import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
+import iconMap, { Icon as IconType, Type } from './iconMap'
+import { Box } from '../Box/Box'
+import * as styles from './Icon.treat'
 
 const colors = theme.color
-
-export type IconPropsType =
-  | {
-      type: 'filled'
-      icon: keyof typeof iconMap.filled
-    }
-  | {
-      type: 'outline'
-      icon: keyof typeof iconMap.outline
-    }
-  | {
-      type: 'sharp'
-      icon: keyof typeof iconMap.sharp
-    }
-interface IconProps {
+export interface IconProps {
+  type?: Type
+  icon: IconType
   title?: string
   titleId?: string
   color?: keyof typeof colors
   size?: 'small' | 'medium' | 'large'
   className?: string
+  skipPlaceholderSize?: boolean
 }
 
 export interface SvgProps {
@@ -41,6 +33,20 @@ const sizes = {
   large: '32px',
 }
 
+const Placeholder = ({
+  skipPlaceholderSize,
+  size,
+  className,
+}: Pick<IconProps, 'skipPlaceholderSize' | 'size' | 'className'>) => (
+  <Box
+    component="span"
+    display="inlineBlock"
+    className={cn(className, {
+      [styles.placeholder[size!]]: !skipPlaceholderSize && size,
+    })}
+  />
+)
+
 export const Icon = ({
   icon,
   type = 'filled',
@@ -49,12 +55,21 @@ export const Icon = ({
   className,
   title,
   titleId,
-}: IconProps & IconPropsType) => {
-  const path = iconMap[type!][icon!]
-
+  skipPlaceholderSize,
+}: IconProps) => {
+  const path = iconMap[type][icon]
   const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
     path,
   ])
+  if (typeof window === 'undefined') {
+    return (
+      <Placeholder
+        skipPlaceholderSize={skipPlaceholderSize}
+        size={size}
+        className={className}
+      />
+    )
+  }
   const optionalProps: SvgProps = {}
   if (className) {
     optionalProps.className = className
@@ -72,12 +87,10 @@ export const Icon = ({
   return (
     <Suspense
       fallback={
-        <span
-          style={{
-            display: 'inline-block',
-            width: sizes[size],
-            height: sizes[size],
-          }}
+        <Placeholder
+          skipPlaceholderSize={skipPlaceholderSize}
+          size={size}
+          className={className}
         />
       }
     >

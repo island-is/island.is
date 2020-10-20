@@ -1,4 +1,4 @@
-import { Box, Icon, IconPropsType, Typography } from '@island.is/island-ui/core'
+import { Box, Icon, IconProps, Typography } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -10,7 +10,7 @@ import * as styles from './MobileToolbar.treat'
 interface MenuItemProps {
   active: boolean
   title: string
-  icon: IconPropsType
+  icon: Pick<IconProps, 'icon' | 'type'>
   onClick?: () => void
 }
 

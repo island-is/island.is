@@ -113,27 +113,27 @@ export const constructConclusion = (workingCase: Case) => {
 
                   return custodyRestriction ===
                     CaseCustodyRestrictions.ISOLATION ? (
-                    <Text as="span" key={index}>
+                    <Text as="span" fontWeight="semiBold" key={index}>
                       {` einangrun${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
                       }`}
                     </Text>
                   ) : custodyRestriction ===
                     CaseCustodyRestrictions.COMMUNICATION ? (
-                    <Text as="span" key={index}>
+                    <Text as="span" fontWeight="semiBold" key={index}>
                       {` bréfa, og símabanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
                     </Text>
                   ) : custodyRestriction === CaseCustodyRestrictions.MEDIA ? (
-                    <Text as="span" key={index}>
+                    <Text as="span" fontWeight="semiBold" key={index}>
                       {` fjölmiðlabanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}
                     </Text>
                   ) : custodyRestriction ===
                     CaseCustodyRestrictions.VISITAION ? (
-                    <Text as="span" key={index}>
+                    <Text as="span" fontWeight="semiBold" key={index}>
                       {` heimsóknarbanni${
                         isLast ? '' : isNextLast && !isOnly ? ' og' : ','
                       }`}

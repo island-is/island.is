@@ -76,7 +76,7 @@ export const LanguageStep: FC<Props> = ({ onBack, onSubmit, language }) => {
                   defaultMessage: 'Til baka',
                 })}
               </Button>
-              <Button variant="primary" type="submit" icon="arrowRight">
+              <Button variant="primary" type="submit" icon="arrowForward">
                 {formatMessage({
                   id: 'service.portal:save-data',
                   defaultMessage: 'Vista upplýsingar',
