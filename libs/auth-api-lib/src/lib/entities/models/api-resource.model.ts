@@ -17,16 +17,6 @@ import { ApiResourceScope } from './api-resource-scope.model'
   tableName: 'api_resource',
 })
 export class ApiResource extends Model<ApiResource> {
-  @PrimaryKey
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty({
-    example: 'domain',
-  })
-  domain: string
-
   // Common properties for all resources (no single table inheritance)
 
   @PrimaryKey
