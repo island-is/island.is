@@ -34,16 +34,10 @@ const getDemoTags = (amount) => {
   const getRandomTag = () =>
     demoTags[Math.floor(Math.random() * demoTags.length)]
 
-  const tags = []
-
-  Array.from({ length: amount }, (_, i) => {
-    tags.push({
-      label: getRandomTag(),
-      href: '/',
-    })
-  })
-
-  return tags
+  return Array.from({ length: amount }, (_, i) => ({
+    label: getRandomTag(),
+    href: '/',
+  }))
 }
 
 export const Default = () => (
