@@ -305,7 +305,7 @@ export const Overview: React.FC = () => {
       {modalVisible && (
         <Modal
           title="Krafa um gæsluvarðhald hefur verið staðfest"
-          text="Tilkynning hefur verið send á ákæranda og dómara sem kvað upp úrskurð."
+          text="Tilkynning hefur verið send á dómara og dómritara á vakt."
           handleClose={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
           handlePrimaryButtonClick={() => {
             history.push(Constants.FEEDBACK_FORM_ROUTE)
