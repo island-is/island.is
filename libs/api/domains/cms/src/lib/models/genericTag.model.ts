@@ -13,5 +13,5 @@ export class GenericTag {
 
 export const mapGenericTag = ({ sys, fields }: IGenericTag): GenericTag => ({
   id: sys.id,
-  title: fields.title,
+  title: fields.title ?? '',
 })

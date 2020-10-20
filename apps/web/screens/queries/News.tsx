@@ -33,6 +33,15 @@ export const GET_NEWS_DATES_QUERY = gql`
   }
 `
 
+export const GET_NEWS_TAGS_QUERY = gql`
+  query GetNewsTags($input: GetNewsTagsInput!) {
+    getNewsTags(input: $input) {
+      id
+      title
+    }
+  }
+`
+
 export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
   query GetSingleNewsItem($input: GetSingleNewsInput!) {
     getSingleNews(input: $input) {

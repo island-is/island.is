@@ -29,6 +29,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
+  GET_NEWS_TAGS_QUERY,
 } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import {
@@ -39,6 +40,9 @@ import {
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
+  GetNewsTagsQuery,
+  QueryGetNewsTagsArgs,
+  GenericTag,
 } from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
@@ -49,35 +53,18 @@ interface NewsListProps {
   newsList: GetNewsQuery['getNews']['items']
   total: number
   datesMap: { [year: string]: number[] }
+  tagsList: GenericTag[]
   selectedYear: number
   selectedMonth: number
   selectedPage: number
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-const dummyTags = [
-  {
-    id: '1',
-    title: 'Services',
-  },
-  {
-    id: '2',
-    title: 'COVID-19',
-  },
-  {
-    id: '3',
-    title: 'Employment',
-  },
-  {
-    id: '4',
-    title: 'Family',
-  },
-]
-
 const NewsList: Screen<NewsListProps> = ({
   newsList,
   total,
   datesMap,
+  tagsList,
   selectedYear,
   selectedMonth,
   selectedPage,
@@ -203,7 +190,7 @@ const NewsList: Screen<NewsListProps> = ({
           </Text>
           <Divider weight="blueberry200" />
           <Inline space={2}>
-            {dummyTags.map(({ id, title }) => {
+            {tagsList.map(({ id, title }) => {
               return (
                 <Tag
                   onClick={onTagClick.bind(this, id)}
@@ -347,6 +334,9 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getNewsDates: newsDatesList },
     },
     {
+      data: { getNewsTags: newsTagsList },
+    },
+    {
       data: {
         getNews: { items: newsList, total },
       },
@@ -355,6 +345,14 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   ] = await Promise.all([
     apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
       query: GET_NEWS_DATES_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<GetNewsTagsQuery, QueryGetNewsTagsArgs>({
+      query: GET_NEWS_TAGS_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -395,6 +393,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     selectedYear: year,
     selectedMonth: month,
     datesMap: createDatesMap(newsDatesList),
+    tagsList: newsTagsList,
     selectedPage,
     namespace,
   }

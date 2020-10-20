@@ -13,7 +13,7 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { MappedData, SearchIndexes } from '../types'
+import { MappedData, SearchIndexes, TagAggregationResponse } from '../types'
 import { SearchResponse } from '@island.is/shared/types'
 import { environment } from '../environments/environment'
 import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
@@ -22,6 +22,10 @@ import {
   dateAggregationQuery,
   DateAggregationResponse,
 } from '../queries/dateAggregation'
+import {
+  TagAggregationInput,
+  tagAggregationQuery,
+} from '../queries/tagAggregation'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -140,6 +144,15 @@ export class ElasticService {
     return data.body
   }
 
+  async getTagAggregation(index: string, query: TagAggregationInput) {
+    const requestBody = tagAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, TagAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
+  }
+
   async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
@@ -161,10 +174,10 @@ export class ElasticService {
       countTag,
     })
 
-    return this.findByQuery<SearchResponse<MappedData>, typeof requestBody>(
-      index,
-      requestBody,
-    )
+    return this.findByQuery<
+      SearchResponse<MappedData, TagAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
   }
 
   async fetchAutocompleteTerm(

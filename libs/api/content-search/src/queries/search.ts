@@ -1,6 +1,7 @@
 import { Tag } from '../dto/searcher.input'
 
 import { tagQuery } from './documentByMetaData'
+import { aggregationQuery } from './tagAggregation'
 
 interface SearchInput {
   queryString: string
@@ -10,41 +11,6 @@ interface SearchInput {
   tags: Tag[]
   countTag: string
 }
-
-const aggregationQuery = (tagType) => ({
-  aggs: {
-    groupBy: {
-      nested: {
-        path: 'tags',
-      },
-      aggs: {
-        filtered: {
-          filter: {
-            term: {
-              'tags.type': tagType, // we only count tags of this value and return the keys and values
-            },
-          },
-          aggs: {
-            groupByCount: {
-              terms: {
-                field: 'tags.key', // get key of this tag
-                size: 20, // we limit the aggregation to X values (fits our current usecase)
-              },
-              aggs: {
-                groupByValue: {
-                  terms: {
-                    field: 'tags.value.keyword', // get value of this tag
-                    size: 1, // we only need the one value
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-})
 
 export const searchQuery = ({
   queryString,
