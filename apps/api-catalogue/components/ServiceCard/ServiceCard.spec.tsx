@@ -2,6 +2,13 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { ServiceCard } from '.'
 
+import {	
+  PricingCategory,	
+  DataCategory,	
+  TypeCategory,	
+  AccessCategory,	
+} from '../../const/TestConst'
+
 import {
   AccessCategory as AccessCategoryDisplay,
   PricingCategory as PricingCategoryDisplay,
@@ -10,25 +17,19 @@ import {
 } from '@island.is/api-catalogue/consts'
 
 import { ContentfulString } from '../../services/contentful.types'
-import { 
-  ApiService,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-  AccessCategory
- } from '@island.is/api/schema'
+
 
 describe(' ServiceCard ', () => {
 
-  const service: ApiService = {
+  const service: any = {
     id: '0',
     owner: 'Þjóðskrá',
     name: 'Fasteignaskrá',
     description: 'OK',
-    pricing: [PricingCategory.FREE, PricingCategory.PAID],
-    data: [DataCategory.PUBLIC],
-    type: [TypeCategory.REST],
-    access: [AccessCategory.XROAD],
+    pricing: [PricingCategory.Free, PricingCategory.Paid],
+    data: [DataCategory.Public],
+    type: [TypeCategory.Rest],
+    access: [AccessCategory.Xroad],
     xroadIdentifier: [
       {
         instance: 'TestInstance',
@@ -47,15 +48,15 @@ describe(' ServiceCard ', () => {
     { id: 'catalog-filter-data-health', text: 'Heilsa' },
     { id: 'catalog-filter-data-official', text: 'Opinber' },
     { id: 'catalog-filter-data-personal', text: 'Persónugreinanleg' },
-    { id: 'catalog-filter-data-public', text: 'Almenn' },
+    { id: 'catalog-filter-data-public', text: DataCategoryDisplay.PUBLIC },
     { id: 'catalog-filter-pricing', text: 'Verð' },
-    { id: 'catalog-filter-pricing-free', text: 'Gjaldfrjáls' },
-    { id: 'catalog-filter-pricing-paid', text: 'Gjaldskyld' },
+    { id: 'catalog-filter-pricing-free', text: PricingCategoryDisplay.FREE },
+    { id: 'catalog-filter-pricing-paid', text: PricingCategoryDisplay.PAID },
     { id: 'catalog-filter-type', text: 'Tegund' },
     { id: 'catalog-filter-type-graphql', text: 'GraphQL' },
-    { id: 'catalog-filter-type-react', text: 'REST' },
+    { id: 'catalog-filter-type-react', text: TypeCategoryDisplay.REST },
     { id: 'catalog-filter-type-soap', text: 'SOAP' },
-    { id: 'catalog-filter-access-xroad', text: 'X-Road' },
+    { id: 'catalog-filter-access-xroad', text: AccessCategoryDisplay.XROAD },
     { id: 'catalog-filter-access-apigw', text: 'API GW' },
     { id: 'catalog-filter-search', text: 'Leita' }
   ]
