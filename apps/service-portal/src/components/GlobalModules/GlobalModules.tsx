@@ -54,7 +54,7 @@ const ModuleLoader: FC<{
 
   useEffect(() => {
     loadComponents(modules)
-  }, modules)
+  }, [modules])
 
   return (
     <>
