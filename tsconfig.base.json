@@ -97,6 +97,7 @@
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
+      "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
