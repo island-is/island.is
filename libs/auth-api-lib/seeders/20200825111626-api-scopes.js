@@ -4,15 +4,8 @@
 
 module.exports = {
   up: (queryInterface) => {
-    const domains = [
-      {
-        name: '@island.is',
-      },
-    ]
-
     const scopes = [
       {
-        domain: domains[0].name,
         name: 'swagger_api.read',
         display_name: 'swagger_api.read',
         required: false,
@@ -21,7 +14,6 @@ module.exports = {
         show_in_discovery_document: true,
       },
       {
-        domain: domains[0].name,
         name: 'postman_resource.scope',
         display_name: 'postman_resource.scope',
         required: false,
@@ -30,7 +22,6 @@ module.exports = {
         show_in_discovery_document: true,
       },
       {
-        domain: domains[0].name,
         name: '@identityserver.api/read',
         display_name: '@identityserver.api/read',
         required: false,
@@ -40,9 +31,7 @@ module.exports = {
       },
     ]
 
-    return queryInterface
-      .bulkInsert('domain', domains, {})
-      .then(queryInterface.bulkInsert('api_scope', scopes, {}))
+    return queryInterface.bulkInsert('api_scope', scopes, {})
   },
 
   down: (queryInterface) => {
@@ -51,8 +40,7 @@ module.exports = {
       null,
       {},
     )
-    const apiScopes = queryInterface.bulkDelete('api_scope', null, {})
-    const domains = queryInterface.bulkDelete('domain', null, {})
-    return domains.then(userClaims).then(apiScopes)
+
+    return queryInterface.bulkDelete('api_scope', null, {})
   },
 }

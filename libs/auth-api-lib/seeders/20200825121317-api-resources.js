@@ -5,18 +5,14 @@
 
 module.exports = {
   up: (queryInterface) => {
-    const domain = '@island.is'
-
     const apiResources = [
       {
-        domain: domain,
         name: 'swagger_api',
         display_name: 'Demo API',
         enabled: true,
         show_in_discovery_document: true,
       },
       {
-        domain: domain,
         name: 'postman_resource',
         display_name: 'postman_resource',
         enabled: true,
@@ -26,7 +22,6 @@ module.exports = {
 
     const userClaims = [
       {
-        domain: domain,
         api_resource_name: apiResources[1].name,
         claim_name: 'natreg',
       },
@@ -34,12 +29,10 @@ module.exports = {
 
     const scopes = [
       {
-        domain: domain,
         api_resource_name: apiResources[0].name,
         scope_name: 'swagger_api.read',
       },
       {
-        domain: domain,
         api_resource_name: apiResources[1].name,
         scope_name: 'postman_resource.scope',
       },
@@ -47,7 +40,6 @@ module.exports = {
 
     const secrets = [
       {
-        domain: domain,
         api_resource_name: apiResources[1].name,
         value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=',
         type: 'SharedSecret',
