@@ -22,8 +22,15 @@ thead {
 th,
 td {
   text-align: left;
-  padding: 8px 24px;
   max-width: 224px;
+}
+
+th {
+  padding: 12px 24px;
+}
+
+td {
+  padding: 6px 24px;
 }
 
 td:last-child {
