@@ -9,6 +9,7 @@
 
 export interface Translation {
   home: Home
+  header: Header
   myCars: MyCars
   confirm: Confirm
   handover: Handover
@@ -22,6 +23,10 @@ export interface Translation {
 
 export interface Home {
   title: string
+}
+
+export interface Header {
+  logoutText: string
 }
 
 export interface MyCars {
