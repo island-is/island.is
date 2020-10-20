@@ -12,8 +12,9 @@ export const titleContainer = style({
   alignItems: 'left',
 })
 export const title = style({
+  paddingTop: 3,
   marginLeft: 10,
-  fontSize: 18,
+  fontSize: theme.typography.baseFontSize,
 })
 
 export const root = style({

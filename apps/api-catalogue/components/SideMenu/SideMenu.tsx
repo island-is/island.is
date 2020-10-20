@@ -6,6 +6,7 @@ import {
   Box,
   FocusableBox,
   IconDeprecated as Icon,
+  Logo,
   Text,
 } from '@island.is/island-ui/core'
 import { useKey } from 'react-use'
@@ -62,8 +63,7 @@ export const SideMenu = (props: SideMenuProps) => {
             justifyContent="spaceBetween"
           >
             <Box className={cn(styles.titleContainer)}>
-              {/*<Logo width={30} iconOnly solid solidColor={theme.color.blueberry600} />*/}
-              <Icon type="logo" />
+              <Logo iconOnly width={30} id="side_menu-logo" />
               <span className={cn(styles.title)}>{props?.title}</span>
             </Box>
             <FocusableBox
