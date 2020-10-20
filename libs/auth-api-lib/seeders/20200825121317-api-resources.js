@@ -5,7 +5,6 @@
 
 module.exports = {
   up: (queryInterface) => {
-
     const apiResources = [
       {
         name: 'swagger_api',

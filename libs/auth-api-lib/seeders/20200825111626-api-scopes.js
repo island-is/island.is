@@ -4,7 +4,6 @@
 
 module.exports = {
   up: (queryInterface) => {
-
     const scopes = [
       {
         name: 'swagger_api.read',
