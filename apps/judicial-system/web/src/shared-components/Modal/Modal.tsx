@@ -13,6 +13,7 @@ interface ModalProps {
   title: string
   text: string | JSX.Element
   primaryButtonText: string
+  secondaryButtonText?: string
   handleClose?: () => void
   handleSecondaryButtonClick?: () => void
   handlePrimaryButtonClick?: () => void
@@ -23,6 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   title,
   text,
   primaryButtonText,
+  secondaryButtonText,
   handleClose,
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
@@ -48,10 +50,10 @@ const Modal: React.FC<ModalProps> = ({
           }
         </Box>
         <Box display="flex">
-          {handleSecondaryButtonClick && (
+          {secondaryButtonText && (
             <Box marginRight={3}>
               <Button onClick={handleSecondaryButtonClick} variant="ghost">
-                Halda áfram með kröfu
+                {secondaryButtonText}
               </Button>
             </Box>
           )}
@@ -74,6 +76,7 @@ const ModalPortal = ({
   title,
   text,
   primaryButtonText,
+  secondaryButtonText,
   handleClose,
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
@@ -87,6 +90,7 @@ const ModalPortal = ({
       title={title}
       text={text}
       primaryButtonText={primaryButtonText}
+      secondaryButtonText={secondaryButtonText}
       handleClose={handleClose}
       handleSecondaryButtonClick={handleSecondaryButtonClick}
       handlePrimaryButtonClick={handlePrimaryButtonClick}
