@@ -56,11 +56,28 @@ export const rootReviewing = style({
   },
 })
 
-export const largeSidebarContainer = style({
-  display: 'none',
+export const shellContainer = style({
+  order: 2,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      display: 'block',
+      order: 1,
+    },
+  },
+})
+
+export const largeSidebarContainer = style({
+  order: 1,
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      marginLeft: -theme.grid.gutter.mobile * 2,
+      marginRight: -theme.grid.gutter.mobile * 2,
+
+      maxWidth: `calc(100% + ${theme.grid.gutter.mobile * 4}px)`,
+    },
+
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      order: 2,
     },
   },
 })
