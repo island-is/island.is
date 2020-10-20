@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Icon, IconPropsType, Typography } from '@island.is/island-ui/core'
+import { Box, Icon, IconProps, Typography } from '@island.is/island-ui/core'
 import * as styles from './IconButton.treat'
 import { Link } from 'react-router-dom'
 
 interface Props {
-  icon: IconPropsType | undefined
+  icon: Pick<IconProps, 'icon' | 'type'> | undefined
   onClick?: () => void
   url?: string
   active?: boolean

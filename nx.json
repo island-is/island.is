@@ -71,6 +71,9 @@
     "api-domains-user-profile": {
       "tags": []
     },
+    "api-mocks": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },
@@ -264,6 +267,9 @@
       "tags": []
     },
     "shared-form-fields": {
+      "tags": []
+    },
+    "shared-mocking": {
       "tags": []
     },
     "skilavottord-consts": {

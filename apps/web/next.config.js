@@ -32,6 +32,9 @@ module.exports = withTreat(
         graphqlUrl: '',
         graphqlEndpoint: graphqlPath,
       },
+      env: {
+        API_MOCKS: process.env.API_MOCKS,
+      },
     }),
   ),
 )

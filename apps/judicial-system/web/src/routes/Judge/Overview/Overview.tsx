@@ -18,7 +18,6 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  autoSave,
   isNextDisabled,
   renderFormStepper,
   updateState,

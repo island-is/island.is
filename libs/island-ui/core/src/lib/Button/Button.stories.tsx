@@ -73,7 +73,7 @@ export const GhostWithIcon = Template.bind({})
 GhostWithIcon.args = {
   children: 'Ghost With Icon',
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const GhostNegative = () => (
@@ -108,7 +108,7 @@ export const TextWithIcon = Template.bind({})
 TextWithIcon.args = {
   children: 'Text with icon',
   variant: 'text',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const TextNegative = () => (
@@ -128,7 +128,7 @@ export const TextMultiline = () => (
 )
 
 export const TextMultilineWithIcon = () => (
-  <Button variant="text" icon="arrowRight">
+  <Button variant="text" icon="arrowForward">
     Text button with long text that
     <br />
     breaks down into multiple lines
@@ -138,33 +138,33 @@ export const TextMultilineWithIcon = () => (
 export const Circle = Template.bind({})
 Circle.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const CircleSmall = Template.bind({})
 CircleSmall.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'small',
 }
 
 export const CircleLarge = Template.bind({})
 CircleLarge.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'large',
 }
 
 export const CircleDestructive = Template.bind({})
 CircleDestructive.args = {
   circle: true,
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   colorScheme: 'destructive',
 }
 
 export const CircleNegative = () => (
   <Box background="blue400" padding={4}>
-    <Button colorScheme="negative" circle icon="arrowRight" />
+    <Button colorScheme="negative" circle icon="arrowForward" />
   </Box>
 )
 
@@ -172,14 +172,14 @@ export const CircleGhost = Template.bind({})
 CircleGhost.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const CircleGhostSmall = Template.bind({})
 CircleGhostSmall.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'small',
 }
 
@@ -187,7 +187,7 @@ export const CircleGhostLarge = Template.bind({})
 CircleGhostLarge.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   size: 'large',
 }
 
@@ -195,12 +195,12 @@ export const CircleGhostDestructive = Template.bind({})
 CircleGhostDestructive.args = {
   circle: true,
   variant: 'ghost',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
   colorScheme: 'destructive',
 }
 export const CircleGhostNegative = () => (
   <Box background="blue400" padding={4}>
-    <Button variant="ghost" colorScheme="negative" circle icon="arrowRight" />
+    <Button variant="ghost" colorScheme="negative" circle icon="arrowForward" />
   </Box>
 )
 
@@ -208,7 +208,7 @@ export const Utility = Template.bind({})
 Utility.args = {
   children: 'Utility Button',
   variant: 'utility',
-  icon: 'arrowRight',
+  icon: 'arrowForward',
 }
 
 export const UtilityDestructive = Template.bind({})
@@ -216,12 +216,12 @@ UtilityDestructive.args = {
   children: 'Utility Button',
   variant: 'utility',
   colorScheme: 'destructive',
-  icon: 'globe',
+  icon: 'arrowForward',
 }
 
 export const UtilityNegative = () => (
   <Box background="blue400" padding={4}>
-    <Button variant="utility" colorScheme="negative" icon="arrowRight">
+    <Button variant="utility" colorScheme="negative" icon="arrowForward">
       Utility Button
     </Button>
   </Box>

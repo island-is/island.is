@@ -15,6 +15,9 @@ export class AboutPage {
   title: string
 
   @Field()
+  slug: string
+
+  @Field()
   seoDescription: string
 
   @Field()
@@ -33,6 +36,7 @@ export const mapAboutPage = ({ fields, sys }: types.IPage): AboutPage => ({
   pageHeader: mapPageHeader(fields.header),
   slices: fields.slices?.map(safelyMapSlices).filter(Boolean), // filter out empty slices that failed mapping
   title: fields.title ?? '',
+  slug: fields.slug ?? '',
   theme: fields.theme ?? '',
   seoDescription: fields.seoDescription ?? '',
 })

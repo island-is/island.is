@@ -1,1 +1,0 @@
-export { mapToStyleProperty } from './mapToStyleProperty'
