@@ -12,7 +12,7 @@ import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
 import { Icon } from '../IconRC/Icon'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
@@ -93,16 +93,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           <div className={styles.value}>
             {value ? (
               <span data-testid="datepicker-value">
-                <Typography variant="h3">
+                <Text variant="h3">
                   {format(valueAsDate, 'P', {
                     locale: getLocale(locale),
                   })}
-                </Typography>
+                </Text>
               </span>
             ) : placeholderText ? (
-              <Typography as="span" variant="placeholderText" color="dark300">
+              <Text as="span" color="dark300">
                 {placeholderText}
-              </Typography>
+              </Text>
             ) : null}
           </div>
         </div>
@@ -165,9 +165,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 >
                   <Icon icon="chevronBack" type="outline" color="blue400" />
                 </button>
-                <Typography variant="datepickerHeaderText">
-                  {`${capitalizedMonth} ${getYear(date)}`}
-                </Typography>
+                <Text variant="h4">{`${capitalizedMonth} ${getYear(
+                  date,
+                )}`}</Text>
                 <button
                   type="button"
                   onClick={increaseMonth}

@@ -12,11 +12,12 @@ export const inputContainer = style({
   justifyContent: 'space-between',
   borderTopRightRadius: 8,
   borderTopLeftRadius: 8,
-  padding: `${theme.spacing[1]}px ${theme.spacing[3]}px ${theme.spacing[1]}px ${theme.spacing[1]}px`,
+  padding: '7px 24px 13px 7px',
   width: '100%',
   outline: 'none',
   backgroundColor: theme.color.white,
   border: `1px solid transparent`,
+  lineHeight: 'inherit',
 
   ':active': {
     boxShadow: '0 0 0 4px transparent',
@@ -31,12 +32,14 @@ export const inputContainerVariants = styleMap({
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,
     boxShadow: `0 0 0 4px ${theme.color.mint400}`,
-    border: `1px solid transparent`,
   },
   closed: {
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,
     border: `1px solid ${theme.color.blue200}`,
+    ':hover': {
+      borderColor: theme.color.blue400,
+    },
   },
 })
 
