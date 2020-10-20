@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { RecyclingRequestModel } from '../models'
+import { RecyclingRequestModel } from './model/recycling.request.model'
 
 @Injectable()
 export class RecyclingRequestService {

@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
+import { RecyclingPartnerModel } from './model/recycling.partner.model'
 import { RecyclingPartnerService } from './recycling.partner.service'
-import { RecyclingPartnerModel } from '../models'
 // import { GdprService } from './models'
 
 @Resolver(() => RecyclingPartnerModel)

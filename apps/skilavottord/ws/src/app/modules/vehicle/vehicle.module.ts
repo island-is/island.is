@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { VehicleModel } from '../models'
+import { VehicleModel } from './model/vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { VehicleResolver } from './vehicle.resolver'
 

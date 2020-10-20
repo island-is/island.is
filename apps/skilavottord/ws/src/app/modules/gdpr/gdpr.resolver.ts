@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver, Float, Args } from '@nestjs/graphql'
 import { GdprService } from './gdpr.service'
-import { GdprModel } from '../models'
+import { GdprModel } from './model/gdpr.model'
 // import { GdprService } from './models'
 
 @Resolver(() => GdprModel)

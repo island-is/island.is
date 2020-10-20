@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { VehicleModel, VehicleOwnerModel } from '../models'
 import { Logger } from '@island.is/logging'
+import { VehicleOwnerModel } from './model/vehicle.owner.model'
+import { VehicleModel } from '../vehicle/model/vehicle.model'
 
 @Injectable()
 export class VehicleOwnerService {

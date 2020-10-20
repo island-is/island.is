@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
+import { VehicleOwnerModel } from './model/vehicle.owner.model'
 import { VehicleOwnerService } from './vehicle.owner.service'
-import { VehicleOwnerModel } from '../models'
 
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {

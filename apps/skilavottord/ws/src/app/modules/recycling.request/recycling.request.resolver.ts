@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
+import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
-import { RecyclingRequestModel } from '../models'
 
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
