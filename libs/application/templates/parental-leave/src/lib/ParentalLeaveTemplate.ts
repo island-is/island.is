@@ -28,7 +28,7 @@ const dataSchema = z.object({
     privatePensionFund: z.enum(['frjalsi']).optional(),
     privatePensionFundPercentage: z.enum(['2', '4']).optional(),
   }),
-  shareInformationWithSpouse: z.enum(['yes', 'no']),
+  shareInformationWithOtherParent: z.enum(['yes', 'no']),
   usePrivatePensionFund: z.enum(['yes', 'no']),
   periods: z.array(
     z.object({
@@ -46,6 +46,13 @@ const dataSchema = z.object({
     name: z.string().nonempty(),
     nationalRegistryId: z.string().nonempty(),
   }),
+  requestExtraTime: z.enum(['yes', 'no']),
+  giveExtraTime: z.enum(['yes', 'no']),
+  singlePeriod: z.enum(['yes', 'no']),
+  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
+  confirmLeaveDuration: z.enum(['duration', 'specificDate']),
+  secondaryParentName: z.string().optional(),
+  secondaryParentId: z.string().optional(),
 })
 
 const ParentalLeaveTemplate: ApplicationTemplate<

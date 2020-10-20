@@ -8,6 +8,28 @@ export const isLocale = (x: string): x is Locale => {
   return x === 'is' || x === 'en'
 }
 
+// Log and handle missing translations in development (also when running against mocks).
+const wrapTranslations = <T extends { [key: string]: string }>(
+  translations: T,
+): T => {
+  if (process.env.NODE_ENV === 'development' && typeof Proxy !== 'undefined') {
+    const warnedKeys = {}
+    return new Proxy(translations, {
+      get(target: T, p: string): string {
+        if (p in target) {
+          return target[p]
+        }
+        if (!(p in warnedKeys)) {
+          console.warn(`Missing translation for ${p}`)
+          warnedKeys[p] = true
+        }
+        return p
+      },
+    })
+  }
+  return translations
+}
+
 const i18n = rosetta()
 i18n.locale(defaultLanguage)
 
@@ -44,7 +66,7 @@ export default function I18n({ children, locale, translations }) {
 
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
-    t: translations,
+    t: wrapTranslations(translations),
     locale: (l, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l

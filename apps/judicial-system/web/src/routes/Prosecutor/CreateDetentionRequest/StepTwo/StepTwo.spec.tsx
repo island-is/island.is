@@ -5,6 +5,9 @@ import StepTwo from './StepTwo'
 import { Router } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/extend-expect'
+import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 
 describe('Create detention request, step two', () => {
   test('should now allow users to continue unless every required field has been filled out', async () => {
@@ -52,6 +55,32 @@ describe('Create detention request, step two', () => {
         (getByTestId('continueButton') as HTMLButtonElement).disabled,
       ).toBe(false)
     })
+  })
+
+  test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
+    // Arrange
+    const history = createMemoryHistory()
+
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({
+        requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
+        lawsBroken:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tempus est, si videtur, et recta quidem ad me. Negat enim summo bono afferre incrementum diem. Quo plebiscito decreta a senatu est consuli quaestio Cn. Iam quae corporis sunt, ea nec auctoritatem cum animi partibus, comparandam et cognitionem habent faciliorem. Sin kakan malitiam dixisses, ad aliud nos unum certum vitium consuetudo Latina traduceret. Comprehensum, quod cognitum non habet? Duo Reges: constructio interrete. Neque enim civitas in seditione beata esse potest nec in discordia dominorum domus; At modo dixeras nihil in istis rebus esse, quod interesset. Cur tantas regiones barbarorum pedibus obiit, tot maria transmisit? Quod totum contra est. Quid, si etiam iucunda memoria est praeteritorum malorum?',
+        custodyProvisions: [CaseCustodyProvisions._95_1_C],
+      })
+    })
+
+    // Act
+    const { getByTestId } = render(
+      <Router history={history}>
+        <StepTwo />
+      </Router>,
+    )
+
+    // Assert
+    expect(
+      getByTestId('continueButton') as HTMLButtonElement,
+    ).not.toBeDisabled()
   })
 
   test("should display the correct requestedCustodyEndTime if it's in localstorage", () => {

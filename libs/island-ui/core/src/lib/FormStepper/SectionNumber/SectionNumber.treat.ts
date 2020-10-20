@@ -14,8 +14,15 @@ export const number = style({
 })
 
 export const progressLine = style({
+  display: 'none',
   width: 2,
   left: '50%',
   marginLeft: '-1px',
   top: '50%',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'flex',
+    },
+  },
 })
