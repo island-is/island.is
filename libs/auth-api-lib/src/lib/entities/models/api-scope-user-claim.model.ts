@@ -26,17 +26,6 @@ export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
     allowNull: false,
   })
   @ForeignKey(() => ApiScope)
-  @ApiProperty({
-    example: 'domain',
-  })
-  domain: string
-
-  @PrimaryKey
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ForeignKey(() => ApiScope)
   @ApiProperty()
   apiScopeName: string
 

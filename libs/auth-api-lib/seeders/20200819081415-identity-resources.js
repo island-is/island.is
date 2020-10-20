@@ -16,7 +16,7 @@ module.exports = {
     const openIdClaims = [
       { identity_resource_name: openId.name, claim_name: 'sub' },
       { identity_resource_name: openId.name, claim_name: 'nat' },
-      { identity_resource_name: openId.name, claim_name: 'natreg' },
+      { identity_resource_name: openId.name, claim_name: 'nationalId' },
     ]
 
     const profile = {
