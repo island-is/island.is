@@ -18,9 +18,12 @@ interface Options<Context> {
   contextValue?: Context
 }
 
-const runGraphQLRequest = <Context>(request: GraphQLRequest, options: Options<Context>) => {
+const runGraphQLRequest = <Context>(
+  request: GraphQLRequest,
+  options: Options<Context>,
+) => {
   const { schema, fieldResolver, typeResolver, contextValue = {} } = options
-  if (typeof request !== 'object' || !request ||  request.query !== 'string') {
+  if (typeof request !== 'object' || !request || request.query !== 'string') {
     return
   }
   return graphql({
@@ -41,9 +44,7 @@ export const handle = <Context>(
   if (Array.isArray(query)) {
     // A batched query using the BatchHttpLink.
     return Promise.all(
-      query.map((subQuery) =>
-        runGraphQLRequest(subQuery, options),
-      ),
+      query.map((subQuery) => runGraphQLRequest(subQuery, options)),
     )
   } else {
     return runGraphQLRequest(query, options)
