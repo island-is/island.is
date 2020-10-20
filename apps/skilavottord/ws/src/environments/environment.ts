@@ -9,7 +9,7 @@ export default {
     audience: 'localhost:4200',
     audience2: 'localhost:4200',
     jwtSecret: 'securesecret',
-    jwtSecret2: 'securesecret'
+    jwtSecret2: 'securesecret',
   },
   backendUrl: 'http://localhost:3333',
 }

@@ -1,9 +1,9 @@
 import { LazyExoticComponent, FC } from 'react'
-import { IconTypes } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
 import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { MessageDescriptor } from 'react-intl'
+import { IconProps } from '@island.is/island-ui/core'
 
 /**
  * A navigational item used by the service portal
@@ -14,7 +14,7 @@ export interface ServicePortalNavigationItem {
   external?: boolean
   // System routes are always rendered in the navigation
   systemRoute?: boolean
-  icon?: IconTypes
+  icon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 }
 

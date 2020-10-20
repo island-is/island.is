@@ -3,7 +3,7 @@ import * as styles from './NotificationMenuTrigger.treat'
 import {
   ButtonDeprecated as Button,
   Box,
-  Icon,
+  IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
 import { useStore } from '../../../store/stateProvider'
 import { ActionType, MenuState } from '../../../store/actions'
@@ -22,7 +22,10 @@ const NotificationMenuTrigger: FC<{}> = () => {
 
   const handleClick = () =>
     setMenuState(notificationMenuState === 'open' ? 'closed' : 'open')
-  useClickAway(ref, () => setMenuState('closed'))
+
+  useClickAway(ref, () =>
+    notificationMenuState === 'open' ? setMenuState('closed') : null,
+  )
 
   return (
     <Box position="relative" display="flex" ref={ref}>

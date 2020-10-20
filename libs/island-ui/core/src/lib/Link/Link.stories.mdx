@@ -1,12 +1,30 @@
-import { Meta, Story, Canvas, Props } from '@storybook/addon-docs/blocks'
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
+import { withDesign } from 'storybook-addon-designs'
 
+import { withFigma, DescriptionFigma } from '../../utils/withFigma'
 import { Box } from '../Box/Box'
 import { Link } from './Link'
 import { ArrowLink } from './ArrowLink/ArrowLink'
 
-<Meta title="Core/Link" component={Link} />
+export const links = {
+  desktop:
+    'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=140%3A709',
+  mobile:
+    'https://www.figma.com/file/rU3mPM1cLfHa3u7TWuutPQ/UI-Library-%E2%80%93-%F0%9F%93%B1Mobile?node-id=30%3A0',
+}
+
+<Meta
+  title="Core/Link"
+  component={Link}
+  decorators={[withDesign]}
+  parameters={withFigma(links)}
+/>
 
 # Link
+
+<DescriptionFigma links={links} />
+
+<br />
 
 ### Default
 
@@ -56,3 +74,7 @@ import { ArrowLink } from './ArrowLink/ArrowLink'
     </Box>
   </Story>
 </Canvas>
+
+# Props
+
+<ArgsTable of={Link} />

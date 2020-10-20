@@ -1,1 +1,1 @@
-export { CarDetailsBox } from './CarDetailsBox/CarDetailsBox'
+export * from './CarDetailsBox'

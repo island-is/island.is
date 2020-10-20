@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
+import { withDesign } from 'storybook-addon-designs'
 
+import { withFigma } from '../../utils/withFigma'
 import { InputFileUpload, fileToObject, UploadFile } from './InputFileUpload'
-
 import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
 
 export default {
   title: 'Form/InputFileUpload',
   component: InputFileUpload,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '[View in Figma](https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=341%3A253)',
-      },
-    },
-  },
+  decorators: [withDesign],
+  parameters: withFigma({
+    desktop:
+      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=341%3A253',
+    mobile:
+      'https://www.figma.com/file/rU3mPM1cLfHa3u7TWuutPQ/UI-Library-%E2%80%93-%F0%9F%93%B1Mobile?node-id=62%3A11',
+  }),
 }
 
 enum ActionTypes {

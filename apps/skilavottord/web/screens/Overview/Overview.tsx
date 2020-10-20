@@ -25,11 +25,7 @@ const Overview: FC = () => {
   const router = useRouter()
 
   if (error || (loading && !data)) {
-    return (
-      <PageWrapper t={t}>
-        <Error />
-      </PageWrapper>
-    )
+    return <PageWrapper t={t}>{error && <Error />}</PageWrapper>
   }
 
   const { cars } = data.getVehiclesForNationalId || {}
@@ -60,7 +56,7 @@ const Overview: FC = () => {
           {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
-              car={car}
+              car={{ ...car, status: 'pendingRecycle' }}
               onClick={() => onOpenProcess(car.permno)}
             />
           ))}
@@ -88,7 +84,7 @@ const Overview: FC = () => {
           {cars.map((car: MockCar) => (
             <ProgressCard
               key={car.permno}
-              car={{ ...car, status: 'done' }}
+              car={{ ...car, status: 'handedOver' }}
               onClick={() => onSeeDetails(car.permno)}
             />
           ))}

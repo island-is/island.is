@@ -30,12 +30,11 @@ export type FormMode =
   | 'pending'
 
 export interface Form {
-  id: ApplicationTypes
+  id: string
   name: StaticText
   type: FormItemTypes.FORM
   mode?: FormMode
   icon?: string
-  ownerId: string
   children: FormChildren[]
 }
 
@@ -68,7 +67,6 @@ export interface Repeater extends FormItem {
   component: string
   children: FormLeaf[]
   repetitions: number
-  required?: boolean
   repeaterIndex?: number
 }
 
@@ -76,6 +74,7 @@ export interface MultiField extends FormItem {
   type: FormItemTypes.MULTI_FIELD
   children: Field[]
   repeaterIndex?: number
+  readonly description?: FormText
 }
 
 export interface ExternalDataProvider extends FormItem {

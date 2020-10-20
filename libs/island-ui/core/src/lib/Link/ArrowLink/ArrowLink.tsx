@@ -3,8 +3,9 @@ import { Link, LinkColor } from '../Link'
 import * as styles from './ArrowLink.treat'
 import { Icon } from '../../Icon/Icon'
 import { Box } from '../../Box/Box'
+import { Text } from '../../Text/Text'
 
-interface Props {
+interface ArrowLinkProps {
   href?: string
   as?: string
   color?: LinkColor
@@ -14,7 +15,7 @@ interface Props {
 // ArrowLink has the "arrow" icon and a permanent custom underline.
 // If there's not 'href' provided it will render a Box. Useful for when the ArrowLink is inside a clickable card.
 
-export const ArrowLink: React.FC<Props> = ({
+export const ArrowLink: React.FC<ArrowLinkProps> = ({
   href,
   as,
   children,
@@ -28,9 +29,11 @@ export const ArrowLink: React.FC<Props> = ({
     color={color}
     className={styles.root}
   >
-    {children}
-    <span className={styles.iconWrap}>
-      <Icon type="arrowRight" height={arrowHeight} color="currentColor" />
-    </span>
+    <Text variant="eyebrow" color={color}>
+      {children}
+      <span className={styles.iconWrap}>
+        <Icon type="arrowRight" height={arrowHeight} color="currentColor" />
+      </span>
+    </Text>
   </Box>
 )

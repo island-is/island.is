@@ -1,4 +1,4 @@
-import { Box, Icon, IconTypes, Typography } from '@island.is/island-ui/core'
+import { Box, Icon, IconProps, Typography } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -10,7 +10,7 @@ import * as styles from './MobileToolbar.treat'
 interface MenuItemProps {
   active: boolean
   title: string
-  icon: IconTypes
+  icon: Pick<IconProps, 'icon' | 'type'>
   onClick?: () => void
 }
 
@@ -34,9 +34,9 @@ const MenuItem: FC<MenuItemProps> = ({ active, title, icon, onClick }) => (
       background={active ? 'blueberry200' : 'transparent'}
     >
       <Icon
-        type={icon}
-        width={18}
-        height={18}
+        type={icon.type}
+        icon={icon.icon}
+        size="medium"
         color={active ? 'blueberry400' : 'blueberry300'}
       />
     </Box>
@@ -77,28 +77,40 @@ const MobileToolbar: FC<{}> = () => {
       <Link to={ServicePortalPath.RafraenSkjolRoot} onClick={handleLinkClick}>
         <MenuItem
           active={pathname === ServicePortalPath.RafraenSkjolRoot}
-          icon="file"
+          icon={{
+            type: 'outline',
+            icon: 'reader',
+          }}
           title="Rafræn skjöl"
         />
       </Link>
       <Link to={ServicePortalPath.UmsoknirRoot} onClick={handleLinkClick}>
         <MenuItem
           active={pathname === ServicePortalPath.UmsoknirRoot}
-          icon="download"
+          icon={{
+            type: 'outline',
+            icon: 'fileTrayFull',
+          }}
           title="Umsóknir"
         />
       </Link>
       <Link to={ServicePortalPath.StillingarRoot} onClick={handleLinkClick}>
         <MenuItem
           active={pathname === ServicePortalPath.StillingarRoot}
-          icon="globe"
+          icon={{
+            type: 'outline',
+            icon: 'settings',
+          }}
           title="Stillingar"
         />
       </Link>
       <Box className={styles.burger}>
         <MenuItem
           active={mobileMenuState === 'open'}
-          icon="logo"
+          icon={{
+            type: 'outline',
+            icon: 'menu',
+          }}
           title="Valmynd"
           onClick={handleMenuTriggerClick}
         />

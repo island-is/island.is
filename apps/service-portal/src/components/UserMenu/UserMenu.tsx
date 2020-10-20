@@ -59,46 +59,40 @@ const UserMenu: FC<{}> = () => {
                   background="blue200"
                   className={styles.avatar}
                 >
-                  <Icon type="user" width={30} height={30} />
+                  <Icon type="outline" icon="person" size="large" />
                 </Box>
-                <Typography variant="h4">{userInfo?.profile.name}</Typography>
+                <Box marginRight={4}>
+                  <Typography variant="h4">{userInfo?.profile.name}</Typography>
+                </Box>
               </Box>
               <Box padding={3} background="blue100">
                 <Stack space={1}>
                   <NavItem
-                    path={ServicePortalPath.MinarUpplysingar}
+                    path={ServicePortalPath.MinGogn}
                     onClick={setIsOpen.bind(null, false)}
-                    icon="user"
+                    icon={{
+                      type: 'outline',
+                      icon: 'person',
+                    }}
                     active={false}
-                    variant="blue"
                   >
                     {formatMessage({
                       id: 'service.portal:my-info',
-                      defaultMessage: 'Mínar upplýsingar',
+                      defaultMessage: 'Mín gögn',
                     })}
                   </NavItem>
                   <NavItem
                     path={ServicePortalPath.StillingarRoot}
                     onClick={setIsOpen.bind(null, false)}
-                    icon="globe"
+                    icon={{
+                      type: 'outline',
+                      icon: 'settings',
+                    }}
                     active={false}
-                    variant="blue"
                   >
                     {formatMessage({
                       id: 'service.portal:settings',
                       defaultMessage: 'Stillingar',
-                    })}
-                  </NavItem>
-                  <NavItem
-                    path={ServicePortalPath.StillingarUmbod}
-                    onClick={setIsOpen.bind(null, false)}
-                    icon="lock"
-                    active={false}
-                    variant="blue"
-                  >
-                    {formatMessage({
-                      id: 'service.portal:delegation',
-                      defaultMessage: 'Umboð',
                     })}
                   </NavItem>
                 </Stack>

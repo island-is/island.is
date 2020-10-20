@@ -36,7 +36,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
       </Box>
       <Box marginTop={6}>
         <Controller
-          defaultValue=""
+          defaultValue={defaultUsage}
           name={id}
           render={({ onChange, value }) => (
             <Slider
@@ -52,6 +52,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
                 }
               }}
               showLabel
+              showProgressOverlay={false}
               label={{ singular: 'mánuður', plural: 'mánuðir' }}
               currentIndex={value || defaultUsage}
               onChange={(selectedMonths: number) => {

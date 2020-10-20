@@ -1,0 +1,31 @@
+@import '../../../../libs/island-ui/fonts/fonts.css';
+
+/* You can add global styles to this file, and also import other style files */
+#root {
+  min-height: 100vh;
+}
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+caption {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+thead {
+  background: #f2f7ff;
+  box-shadow: inset 0px -1px 0px #ccdfff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 24px;
+  max-width: 224px;
+}
+
+td:last-child {
+  text-align: right;
+}

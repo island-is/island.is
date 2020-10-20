@@ -1,9 +1,12 @@
+/** @deprecated LinkCard has been deprecated in favor of TopicCard */
+
 import React, { forwardRef, ComponentPropsWithRef } from 'react'
 import cn from 'classnames'
 import { Box, BoxProps } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { Tag, TagVariant, TagProps } from '../Tag/Tag'
 import * as styles from './LinkCard.treat'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export interface LinkCardProps extends ComponentPropsWithRef<'div'> {
   onClick?: () => void
@@ -29,6 +32,8 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
     }: LinkCardProps,
     ref,
   ) => {
+    useDeprecatedComponent('LinkCard', 'TopicCard')
+
     return (
       <Box
         background={background}

@@ -6,35 +6,42 @@ import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
+import { defineMessage } from 'react-intl'
 
 const navScreenItems: NavigationScreenItem[] = [
   {
-    name: 'Mínar upplýsingar',
-    url: ServicePortalPath.MinarUpplysingar,
-    text: 'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.',
-    tags: ['Fæðingarorlof', 'Skilnaður', 'COVID-19'],
-  },
-  {
-    name: 'Skilaboð',
-    url: ServicePortalPath.SkilabodRoot,
-    text: 'Leikskólar, grunnskólar, framhaldsskólar, háskólar, styrkir og lán.',
-    tags: ['Gefa umboð', 'Sækja um umboð', 'Breyta umboði'],
-  },
-  {
-    name: 'Umboð',
-    url: ServicePortalPath.StillingarUmbod,
-    text: 'Hér er hægt að sækja um breyta, gefa eða eyða umboðum.',
-    tags: ['Gefa umboð', 'Sækja um umboð', 'Breyta umboði'],
-  },
-  {
-    name: 'Greiðslur',
-    url: ServicePortalPath.FjarmalGreidslur,
-    text: 'Hér er hægt að bæta við, breyta og eyða upplýsingum um greiðslur.',
-    tags: ['Gefa umboð', 'Sækja um umboð', 'Breyta umboði'],
+    name: defineMessage({
+      id: 'sp.settings:change-profile',
+      defaultMessage: 'Breyta prófíl',
+    }),
+    url: ServicePortalPath.UserProfileRoot,
+    text: defineMessage({
+      id: 'sp.settings:change-profile-description',
+      defaultMessage:
+        'Hér getur þú m.a breytt upplýsingum um símanúmer, netfangi og prófíl myndinni þinni.',
+    }),
+    tags: [
+      defineMessage({
+        id: 'service.portal:email',
+        defaultMessage: 'Netfang',
+      }),
+      defineMessage({
+        id: 'service.portal:tel',
+        defaultMessage: 'Símanúmer',
+      }),
+    ],
   },
 ]
 
-const SettingsNavScreen = () => <NavigationScreen items={navScreenItems} />
+const SettingsNavScreen = () => (
+  <NavigationScreen
+    title={defineMessage({
+      id: 'service.portal:settings',
+      defaultMessage: 'Stillingar',
+    })}
+    items={navScreenItems}
+  />
+)
 
 export const ServicePortalSettings: ServicePortalModuleComponent = () => {
   return (

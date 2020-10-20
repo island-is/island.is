@@ -2,7 +2,7 @@ import {
   Box,
   ButtonDeprecated as Button,
   Icon,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -13,6 +13,7 @@ interface ModalProps {
   title: string
   text: string | JSX.Element
   primaryButtonText: string
+  secondaryButtonText?: string
   handleClose?: () => void
   handleSecondaryButtonClick?: () => void
   handlePrimaryButtonClick?: () => void
@@ -23,6 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   title,
   text,
   primaryButtonText,
+  secondaryButtonText,
   handleClose,
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
@@ -34,24 +36,24 @@ const Modal: React.FC<ModalProps> = ({
         {handleClose && (
           <Box position="absolute" top={0} right={0}>
             <button className={styles.closeButton} onClick={handleClose}>
-              <Icon type="close" />
+              <Icon icon="close" type="outline" color="blue400" />
             </button>
           </Box>
         )}
         <Box marginBottom={4}>
-          <Typography variant="h1">{title}</Typography>
+          <Text variant="h1">{title}</Text>
         </Box>
         <Box marginBottom={6}>
           {
             // Check if text is a string or Element
-            React.isValidElement(text) ? text : <Typography>{text}</Typography>
+            React.isValidElement(text) ? text : <Text>{text}</Text>
           }
         </Box>
         <Box display="flex">
-          {handleSecondaryButtonClick && (
+          {secondaryButtonText && (
             <Box marginRight={3}>
               <Button onClick={handleSecondaryButtonClick} variant="ghost">
-                Halda áfram með kröfu
+                {secondaryButtonText}
               </Button>
             </Box>
           )}
@@ -74,6 +76,7 @@ const ModalPortal = ({
   title,
   text,
   primaryButtonText,
+  secondaryButtonText,
   handleClose,
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
@@ -87,6 +90,7 @@ const ModalPortal = ({
       title={title}
       text={text}
       primaryButtonText={primaryButtonText}
+      secondaryButtonText={secondaryButtonText}
       handleClose={handleClose}
       handleSecondaryButtonClick={handleSecondaryButtonClick}
       handlePrimaryButtonClick={handlePrimaryButtonClick}

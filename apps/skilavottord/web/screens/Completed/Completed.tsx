@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
   Stack,
-  Typography,
   GridContainer,
   GridRow,
   GridColumn,
-  Link,
-  Box,
+  Text,
+  Divider,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
@@ -39,12 +38,16 @@ const Completed = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout activeSection={2} activeCar={id.toString()}>
+        <ProcessPageLayout
+          sectionType={'citizen'}
+          activeSection={2}
+          activeCar={id.toString()}
+        >
           <Stack space={3}>
-            <Typography variant="h1">{t.title}</Typography>
+            <Text variant="h1">{t.title}</Text>
             <Stack space={4}>
               <Stack space={2}>
-                <Typography variant="h3">{t.subTitles.summary}</Typography>
+                <Text variant="h3">{t.subTitles.summary}</Text>
                 <CarDetailsBox car={car} />
               </Stack>
               <GridContainer>
@@ -52,71 +55,55 @@ const Completed = ({ apolloState }) => {
                   <Stack space={2}>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                        <Typography variant="p">
-                          {`${t.confirmedBy.user} Albert Flores`}
-                        </Typography>
+                        <Text>{`${t.confirmedBy.user} Albert Flores`}</Text>
                       </GridColumn>
                       <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                        <Typography variant="h5">2019-06-12 00:55</Typography>
+                        <Text variant="h5">2019-06-12 00:55</Text>
                       </GridColumn>
                     </GridRow>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                        <Typography variant="p">
-                          {`${t.confirmedBy.user} Albert Flores`}
-                        </Typography>
+                        <Text>{`${t.confirmedBy.user} Albert Flores`}</Text>
                       </GridColumn>
                       <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                        <Typography variant="h5">2019-06-12 00:55</Typography>
+                        <Text variant="h5">2019-06-12 00:55</Text>
                       </GridColumn>
                     </GridRow>
                   </Stack>
-                  <Box borderTopWidth="standard" borderColor="blue200"></Box>
+                  <Divider />
                   <Stack space={1}>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                        <Typography variant="p">
-                          {`${t.confirmedBy.company} VAKA`}
-                        </Typography>
+                        <Text>{`${t.confirmedBy.company} VAKA`}</Text>
                       </GridColumn>
                       <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                        <Typography variant="h5">2019-06-12 00:55</Typography>
+                        <Text variant="h5">2019-06-12 00:55</Text>
                       </GridColumn>
                     </GridRow>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                        <Typography variant="p">
-                          {`${t.confirmedBy.authority}`}
-                        </Typography>
+                        <Text>{`${t.confirmedBy.authority}`}</Text>
                       </GridColumn>
                       <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                        <Typography variant="h5">2019-06-12 00:55</Typography>
+                        <Text variant="h5">2019-06-12 00:55</Text>
                       </GridColumn>
                     </GridRow>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                        <Typography variant="p">
-                          {`${t.confirmedBy.fund}`}
-                        </Typography>
+                        <Text>{`${t.confirmedBy.fund}`}</Text>
                       </GridColumn>
                       <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                        <Typography variant="h5">2019-06-12 00:55</Typography>
+                        <Text variant="h5">2019-06-12 00:55</Text>
                       </GridColumn>
                     </GridRow>
                   </Stack>
                 </Stack>
               </GridContainer>
               <Stack space={2}>
-                <Typography variant="h3">{t.subTitles.payment}</Typography>
-
-                <Typography variant="p">
-                  {t.info.payment}
-                  <Link href="" color="blue400">
-                    {' '}
-                    {t.info.paymentLinkText}
-                  </Link>
-                  .
-                </Typography>
+                <Text variant="h3">{t.subTitles.payment}</Text>
+                <Text>
+                  {t.info.payment} <a href="/.">{t.info.paymentLinkText}</a>.
+                </Text>
               </Stack>
               <Button variant="normal" onClick={onClose}>
                 Close

@@ -14,7 +14,7 @@ import { User } from '../../types'
 import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
 import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
-import Ruling from '../../routes/Judge/Ruling/Ruling'
+import { RulingStepOne, RulingStepTwo } from '../../routes/Judge/Ruling'
 import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
 import * as api from '../../api'
 
@@ -44,11 +44,21 @@ const App: React.FC = () => {
           <Header />
           <main className={styles.mainConainer}>
             <Switch>
+              <Route
+                path={Constants.FEEDBACK_FORM_ROUTE}
+                component={() => {
+                  window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+                  return <DetentionRequests />
+                }}
+              />
               <Route path={Constants.CONFIRMATION_ROUTE}>
                 <Confirmation />
               </Route>
-              <Route path={Constants.RULING_ROUTE}>
-                <Ruling />
+              <Route path={Constants.RULING_STEP_TWO_ROUTE}>
+                <RulingStepTwo />
+              </Route>
+              <Route path={Constants.RULING_STEP_ONE_ROUTE}>
+                <RulingStepOne />
               </Route>
               <Route path={Constants.COURT_DOCUMENT_ROUTE}>
                 <CourtRecord />

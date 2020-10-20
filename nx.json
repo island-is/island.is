@@ -13,13 +13,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "build-storybook"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
@@ -74,6 +68,12 @@
     "api-domains-translations": {
       "tags": []
     },
+    "api-domains-user-profile": {
+      "tags": []
+    },
+    "api-mocks": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },
@@ -112,6 +112,9 @@
       "tags": []
     },
     "application-ui-shell": {
+      "tags": []
+    },
+    "auth-api-lib": {
       "tags": []
     },
     "cache": {
@@ -173,6 +176,9 @@
     "island-ui-core": {
       "tags": [],
       "implicitDependencies": ["island-ui-theme"]
+    },
+    "island-ui-fonts": {
+      "tags": []
     },
     "island-ui-storybook": {
       "tags": []
@@ -257,10 +263,22 @@
     "service-portal-settings": {
       "tags": []
     },
+    "services-auth-admin-api": {
+      "tags": []
+    },
+    "services-auth-api": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
+    "services-user-profile": {
+      "tags": []
+    },
     "shared-form-fields": {
+      "tags": []
+    },
+    "shared-mocking": {
       "tags": []
     },
     "skilavottord-consts": {

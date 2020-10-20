@@ -1,6 +1,6 @@
 // TODO: Add tests
 
-type Validation =
+export type Validation =
   | 'empty'
   | 'time-format'
   | 'police-casenumber-format'
@@ -8,8 +8,12 @@ type Validation =
 
 export const validate = (value: string, validation: Validation) => {
   const v = getRegexByValidation(validation)
-  const isValid = v.regex.test(value)
-  return { isValid, errorMessage: isValid ? '' : v.errorMessage }
+  if (!value) {
+    return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
+  } else {
+    const isValid = v.regex.test(value)
+    return { isValid, errorMessage: isValid ? '' : v.errorMessage }
+  }
 }
 
 export const getRegexByValidation = (validation: Validation) => {

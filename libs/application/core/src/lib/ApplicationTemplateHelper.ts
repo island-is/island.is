@@ -8,6 +8,7 @@ import {
   ApplicationStateMeta,
   ApplicationStateSchema,
   createApplicationMachine,
+  ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 
@@ -70,7 +71,7 @@ export class ApplicationTemplateHelper<
     return this.stateMachine.transition(this.application.state, event)
   }
 
-  getPermittedAnswersAndExternalData(
+  getReadableAnswersAndExternalData(
     role: ApplicationRole,
   ): { answers: FormValue; externalData: ExternalData } {
     const returnValue: { answers: FormValue; externalData: ExternalData } = {
@@ -109,5 +110,19 @@ export class ApplicationTemplateHelper<
       returnValue.externalData[dataKey] = externalData[dataKey]
     })
     return returnValue
+  }
+  getWritableAnswersAndExternalData(
+    role: ApplicationRole,
+  ): ReadWriteValues | undefined {
+    const stateInformation = this.getApplicationStateInformation(
+      this.application.state,
+    )
+    if (!stateInformation) return undefined
+
+    const roleInState = stateInformation.roles?.find(({ id }) => id === role)
+    if (!roleInState) {
+      return undefined
+    }
+    return roleInState.write
   }
 }

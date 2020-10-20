@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import {
   Box,
   Stack,
-  Typography,
+  Text,
   Tag,
   ButtonDeprecated as Button,
   GridContainer,
@@ -23,7 +23,7 @@ interface ProgressCardProps {
 
 export const ProgressCard: FC<ProgressCardProps> = ({
   onClick,
-  car: { permno, type, newregdate, status = 'pending' },
+  car: { permno, type, newregdate, status },
 }: ProgressCardProps) => {
   const {
     t: { myCars: t },
@@ -40,11 +40,13 @@ export const ProgressCard: FC<ProgressCardProps> = ({
           <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
             <Stack space={2}>
               <Stack space={1}>
-                <Typography variant="h5">{permno}</Typography>
-                <Typography variant="p">{`${type}, ${newregdate}`}</Typography>
+                <Text variant="h3">{permno}</Text>
+                <Text>{`${type}, ${newregdate}`}</Text>
               </Stack>
               <Box paddingRight={[0, 0, 0, 4]}>
-                <ProgressBar progress={status === 'pending' ? 50 : 100} />
+                <ProgressBar
+                  progress={status === 'pendingRecycle' ? 50 : 100}
+                />
               </Box>
             </Stack>
           </GridColumn>
@@ -54,12 +56,14 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                 <Box display="flex" justifyContent={justifyContent}>
                   <Box>
                     <Tag
-                      variant={status === 'pending' ? 'rose' : 'darkerMint'}
+                      variant={
+                        status === 'pendingRecycle' ? 'rose' : 'darkerMint'
+                      }
                       label
                     >
-                      {status === 'pending'
-                        ? 'Take to recycling company'
-                        : 'Recycled'}
+                      {status === 'pendingRecycle'
+                        ? t.status.recycle
+                        : t.status.done}
                     </Tag>
                   </Box>
                 </Box>
@@ -74,7 +78,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                     size="small"
                     onClick={onClick}
                   >
-                    {status === 'pending'
+                    {status === 'pendingRecycle'
                       ? t.buttons.openProcess
                       : t.buttons.seeDetails}
                   </Button>

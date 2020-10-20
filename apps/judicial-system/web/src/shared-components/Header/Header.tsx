@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import {
   Logo,
-  Typography,
+  Text,
   Box,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
@@ -25,9 +25,9 @@ const Header: React.FC = () => {
         <Box display="flex" alignItems="center">
           <Logo width={32} iconOnly />
           <Box marginLeft={[1, 2, 4]}>
-            <Typography as="h1" variant="h4">
+            <Text as="h1" variant="h4">
               Réttarvörslugátt
-            </Typography>
+            </Text>
           </Box>
         </Box>
       </Link>

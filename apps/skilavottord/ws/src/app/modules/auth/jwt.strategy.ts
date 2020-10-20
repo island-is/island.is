@@ -6,7 +6,6 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/skilavottord/consts'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
-import { CurrentUser } from './auth.decorator'
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {

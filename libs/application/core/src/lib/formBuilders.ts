@@ -13,14 +13,13 @@ import {
   SubSection,
   DataProviderItem,
   FormMode,
+  FormText,
 } from '../types/Form'
-import { ApplicationTypes } from '../types/ApplicationTypes'
 import { DataProviderTypes } from '../types/DataProvider'
 import { MessageDescriptor } from 'react-intl'
 
 export function buildForm(data: {
-  id: ApplicationTypes
-  ownerId: string
+  id: string
   name: MessageDescriptor | string
   mode?: FormMode
   children: FormChildren[]
@@ -33,6 +32,7 @@ export function buildMultiField(data: {
   id?: string
   condition?: Condition
   name: MessageDescriptor | string
+  description?: FormText
   children: Field[]
 }): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }

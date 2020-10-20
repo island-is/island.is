@@ -19,7 +19,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Icon,
+  IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
