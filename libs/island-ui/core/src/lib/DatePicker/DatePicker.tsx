@@ -12,7 +12,11 @@ import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
 import { Icon } from '../IconRC/Icon'
+<<<<<<< HEAD
 import { Text } from '../Text/Text'
+=======
+import { Typography } from '../Typography/Typography'
+>>>>>>> Replaced the old Icon with the new Icon component
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
