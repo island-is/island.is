@@ -51,7 +51,11 @@ export const UserInfoLine: FC<Props> = ({
                   })}
                 </Button>
               ) : (
-                <a href={editExternalLink} target="_blank">
+                <a
+                  href={editExternalLink}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
                   <Button
                     variant="text"
                     size="small"
