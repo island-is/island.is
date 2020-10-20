@@ -2,12 +2,13 @@ import {
   buildForm,
   buildIntroductionField,
   Form,
+  FormModes,
 } from '@island.is/application/core'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
   name: 'Samþykkt',
-  mode: 'approved',
+  mode: FormModes.APPROVED,
   children: [
     buildIntroductionField({
       id: 'approved',
