@@ -101,6 +101,7 @@ export const JudgeOverview: React.FC = () => {
                   data-testid="courtCaseNumber"
                   name="courtCaseNumber"
                   label="Slá inn málsnúmer"
+                  placeholder="R-X/ÁÁÁÁ"
                   defaultValue={workingCase?.courtCaseNumber}
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={courtCaseNumberErrorMessage !== ''}
