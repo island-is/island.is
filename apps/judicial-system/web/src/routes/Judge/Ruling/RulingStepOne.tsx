@@ -146,7 +146,7 @@ export const RulingStepOne: React.FC = () => {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, isStepIllegal])
-  console.log(workingCase)
+
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
