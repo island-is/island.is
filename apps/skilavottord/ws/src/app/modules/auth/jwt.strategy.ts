@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 
-//import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/skilavottord/consts'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/skilavottord/consts'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
@@ -27,19 +26,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(req: Request, { csrfToken, user }: Credentials) {
-    this.logger.error(csrfToken)
-    this.logger.error(`Bearer ${csrfToken}`)
-    this.logger.error(req.headers['authorization'])
-    this.logger.error(user.mobile)
-    this.logger.error(user.name)
-    this.logger.error(user.nationalId)
-    //    this.logger.error(CurrentUser.name)
+    this.logger.info(`--- validate starting ---`)
     if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
-      //    if ( 0 ) {
-      this.logger.error('invalid csrf token -')
+        this.logger.error('invalid csrf token -')
       return null
     }
-
+    this.logger.info(`  - csrf token for ${user.name} is valid, returning user stucture`)
     return user
   }
 }
