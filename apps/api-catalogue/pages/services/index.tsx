@@ -1,8 +1,8 @@
-import { GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { ServiceList, ServiceListProps } from '../../screens'
 import ContentfulApi from '../../services/contentful'
 
-export const getStaticProps: GetStaticProps<ServiceListProps> = async () => {
+export const getServerSideProps: GetServerSideProps<ServiceListProps> = async () => {
   const client = new ContentfulApi()
   const locale = 'is-IS'
 
