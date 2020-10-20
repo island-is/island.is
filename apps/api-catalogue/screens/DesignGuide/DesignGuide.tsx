@@ -51,7 +51,7 @@ export function DesignGuide({ pageContent }: DesignGuideProps) {
                     ).text
                   }
                 >
-                  <Button variant="primary" icon="open">
+                  <Button iconType="outline" variant="primary" icon="open">
                     {
                       pageContent.strings.find((s) => s.id === 'dg-view-button')
                         .text
