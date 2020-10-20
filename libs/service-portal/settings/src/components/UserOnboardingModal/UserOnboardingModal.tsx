@@ -1,19 +1,12 @@
 import { useMutation } from '@apollo/client'
-import {
-  Mutation,
-  MutationCreateProfileArgs,
-  MutationUpdateProfileArgs,
-} from '@island.is/api/schema'
+import { Mutation, MutationCreateProfileArgs } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/localization'
 import {
   Modal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import {
-  CREATE_USER_PROFILE,
-  UPDATE_USER_PROFILE,
-} from '@island.is/service-portal/graphql'
+import { CREATE_USER_PROFILE } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData, EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
@@ -38,11 +31,8 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
-  // const [createUserProfile] = useMutation<Mutation, MutationCreateProfileArgs>(
-  //   CREATE_USER_PROFILE,
-  // )
-  const [updateUserProfile] = useMutation<Mutation, MutationUpdateProfileArgs>(
-    UPDATE_USER_PROFILE,
+  const [createUserProfile] = useMutation<Mutation, MutationCreateProfileArgs>(
+    CREATE_USER_PROFILE,
   )
 
   const handleCloseModal = () => {
@@ -62,7 +52,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     gotoStep('submit-form')
 
     try {
-      await updateUserProfile({
+      await createUserProfile({
         variables: {
           input: {
             email,
