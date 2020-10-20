@@ -1,17 +1,18 @@
 import React, { FC } from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useUserProfile } from '@island.is/service-portal/graphql'
 import { UserOnboardingModal } from '../../components/UserOnboardingModal/UserOnboardingModal'
+import { UserProfile as UserProfileType } from '@island.is/api/schema'
 
-export const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { data, loading, error } = useUserProfile(userInfo.profile.natreg)
+interface Props {
+  userProfile?: UserProfileType | null
+}
 
-  // If there is no user profile present, graphQL returns an error
-  // In which case, we render the onboarding modal
-  if (!data && !loading && error)
-    return <UserOnboardingModal userInfo={userInfo} />
-  // Otherwise we return nothing
-  return null
+export const UserProfile: ServicePortalModuleComponent<Props> = ({
+  userInfo,
+  userProfile,
+}) => {
+  console.log('user profile', userProfile)
+  return <UserOnboardingModal userInfo={userInfo} />
 }
 
 export default UserProfile

@@ -57,30 +57,21 @@ const WidgetLoader: FC<{
 
   return (
     <>
-      {widgets.map((widget, index) =>
-        widget.utility ? (
+      {widgets.map((widget, index) => (
+        <Box marginBottom={8} key={index}>
+          <Box marginBottom={2}>
+            <Typography variant="h3" as="h3">
+              {formatMessage(widget.name)}
+            </Typography>
+          </Box>
           <Widget
             key={`widget-${index}`}
             widget={widget}
             userInfo={userInfo}
             client={client}
           />
-        ) : (
-          <Box marginBottom={8} key={index}>
-            <Box marginBottom={2}>
-              <Typography variant="h3" as="h3">
-                {formatMessage(widget.name)}
-              </Typography>
-            </Box>
-            <Widget
-              key={`widget-${index}`}
-              widget={widget}
-              userInfo={userInfo}
-              client={client}
-            />
-          </Box>
-        ),
-      )}
+        </Box>
+      ))}
     </>
   )
 }

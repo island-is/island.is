@@ -29,13 +29,15 @@ export interface ServicePortalModuleProps {
 /**
  * A rendered out by the render value of a service portal route
  */
-export type ServicePortalModuleComponent = FC<ServicePortalModuleProps>
+export type ServicePortalModuleComponent<P = {}> = FC<
+  ServicePortalModuleProps & P
+>
 
 /**
  * The render value of a service portal route
  */
-export type ServicePortalModuleRenderValue = LazyExoticComponent<
-  ServicePortalModuleComponent
+export type ServicePortalModuleRenderValue<P = {}> = LazyExoticComponent<
+  ServicePortalModuleComponent<P>
 >
 
 /**
@@ -70,17 +72,24 @@ export type ServicePortalWidget = {
    */
   weight: number
   /**
-   * Utility widgets get rendered straight into the dashboard
-   * without a layout box and a title.
-   * These are usually widgets that provide functionality
-   * that does not get rendered on the dashboard itself.
-   * Fx: The user profile onboarding modal
-   */
-  utility?: boolean
-  /**
    * The render value of this widget
    */
   render: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
+}
+
+/**
+ * A global component provides functionality that
+ * is applicable system wide and does not belong in one route
+ */
+export interface ServicePortalGlobalComponent {
+  /**
+   * A selection of props that should be given to the component
+   */
+  props?: any
+  /**
+   * The render value of the component
+   */
+  render: () => ServicePortalModuleRenderValue<any>
 }
 
 export interface ServicePortalModule {
@@ -99,4 +108,13 @@ export interface ServicePortalModule {
    * within itself and use the provided render function to render out the component
    */
   routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
+  /**
+   * Global components will always be rendered by default
+   * These are usually utility components that prompt the user about certain
+   * things or provide other global functionality
+   * Example: A modal providing onboarding for unfilled user profiles
+   */
+  global?: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalGlobalComponent[]>
 }
