@@ -46,6 +46,40 @@ describe('Ruling routes', () => {
   })
 
   describe(Constants.RULING_STEP_TWO_ROUTE, () => {
+    describe(Constants.RULING_STEP_ONE_ROUTE, () => {
+      test('should now allow users to continue unless every required field has been filled out', () => {
+        // Arrange
+
+        // Have custodyEndDate in localstorage because it's hard to use the datepicker with useEvents
+        Storage.prototype.getItem = jest.fn(() => {
+          return JSON.stringify({
+            custodyEndDate: '2020-10-24',
+          })
+        })
+
+        Storage.prototype.setItem = jest.fn()
+
+        // Act and Assert
+        const { getByLabelText, getByTestId } = render(<RulingStepTwo />)
+
+        userEvent.click(
+          getByLabelText('Sækjandi kærir málið') as HTMLInputElement,
+        )
+
+        expect(
+          (getByTestId('continueButton') as HTMLButtonElement).disabled,
+        ).toBe(true)
+
+        userEvent.click(getByLabelText('Sækjandi kærir málið'))
+
+        waitFor(() => {
+          expect(
+            (getByTestId('continueButton') as HTMLButtonElement).disabled,
+          ).toBe(false)
+        })
+      })
+    })
+
     test('should not have a selected radio button by default', () => {
       // Arrange
       Storage.prototype.getItem = jest.fn(() => {

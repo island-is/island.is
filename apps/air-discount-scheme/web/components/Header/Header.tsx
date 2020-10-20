@@ -1,6 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
@@ -29,7 +27,6 @@ export const UserQuery = gql`
 `
 
 function Header({ routeKey, localeKey }: PropTypes) {
-  const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
   const { data } = useQuery(UserQuery, { ssr: false })
   const user = data?.user
@@ -39,16 +36,13 @@ function Header({ routeKey, localeKey }: PropTypes) {
   const { toRoute, activeLocale, switchLanguage } = useI18n()
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
+  const nextPath = activeLocale === 'is' ? '/' : '/en'
   // TODO: get text from cms and pass down to Header
   const logoutText = activeLocale === 'is' ? 'Útskrá' : 'Logout'
 
   return (
     <IslandUIHeader
-      logoRender={(logo) => (
-        <Link href={activeLocale === 'is' ? '/' : '/en'}>
-          <a>{logo}</a>
-        </Link>
-      )}
+      logoRender={(logo) => <a href={nextPath}>{logo}</a>}
       logoutText={logoutText}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}
@@ -61,7 +55,7 @@ function Header({ routeKey, localeKey }: PropTypes) {
       onLogout={() => {
         api.logout().then(() => {
           localStorage.removeItem(REDIRECT_KEY)
-          router.push(toRoute('home'))
+          window.location.pathname = nextPath
         })
       }}
     />

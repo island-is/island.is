@@ -1,6 +1,9 @@
 import React, { Suspense, useMemo } from 'react'
+import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import iconMap, { Icon as IconType, Type } from './iconMap'
+import { Box } from '../Box/Box'
+import * as styles from './Icon.treat'
 
 const colors = theme.color
 export interface IconProps {
@@ -11,6 +14,7 @@ export interface IconProps {
   color?: keyof typeof colors
   size?: 'small' | 'medium' | 'large'
   className?: string
+  skipPlaceholderSize?: boolean
 }
 
 export interface SvgProps {
@@ -29,6 +33,20 @@ const sizes = {
   large: '32px',
 }
 
+const Placeholder = ({
+  skipPlaceholderSize,
+  size,
+  className,
+}: Pick<IconProps, 'skipPlaceholderSize' | 'size' | 'className'>) => (
+  <Box
+    component="span"
+    display="inlineBlock"
+    className={cn(className, {
+      [styles.placeholder[size!]]: !skipPlaceholderSize && size,
+    })}
+  />
+)
+
 export const Icon = ({
   icon,
   type = 'filled',
@@ -37,6 +55,7 @@ export const Icon = ({
   className,
   title,
   titleId,
+  skipPlaceholderSize,
 }: IconProps) => {
   const path = iconMap[type][icon]
   const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
@@ -44,12 +63,10 @@ export const Icon = ({
   ])
   if (typeof window === 'undefined') {
     return (
-      <span
-        style={{
-          display: 'inline-block',
-          width: sizes[size],
-          height: sizes[size],
-        }}
+      <Placeholder
+        skipPlaceholderSize={skipPlaceholderSize}
+        size={size}
+        className={className}
       />
     )
   }
@@ -70,12 +87,10 @@ export const Icon = ({
   return (
     <Suspense
       fallback={
-        <span
-          style={{
-            display: 'inline-block',
-            width: sizes[size],
-            height: sizes[size],
-          }}
+        <Placeholder
+          skipPlaceholderSize={skipPlaceholderSize}
+          size={size}
+          className={className}
         />
       }
     >

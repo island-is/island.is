@@ -299,6 +299,7 @@
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
     "http-proxy": "1.18.1",
-    "node-forge": "0.10.0"
+    "node-forge": "0.10.0",
+    "object-path": "0.11.5"
   }
 }
