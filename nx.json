@@ -136,6 +136,9 @@
     "application-ui-shell": {
       "tags": []
     },
+    "auth-api-lib": {
+      "tags": []
+    },
     "cache": {
       "tags": []
     },
@@ -280,6 +283,12 @@
       "tags": []
     },
     "service-portal-settings": {
+      "tags": []
+    },
+    "services-auth-admin-api": {
+      "tags": []
+    },
+    "services-auth-api": {
       "tags": []
     },
     "services-search-indexer": {
