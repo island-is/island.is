@@ -8,13 +8,11 @@ const DataRepeater: FC<RepeaterProps> = ({
   repeater,
   application,
 }) => {
-  useEffect(() => {
-    expandRepeater()
-  }, [])
-
   return (
     <>
       <Text as={'p'}>TODO</Text>
+
+      <Button onClick={expandRepeater}>Bæta við</Button>
     </>
   )
 }

@@ -51,12 +51,14 @@ export const ApplicationForm: Form = buildForm({
               name: m.email,
               required: false,
               width: 'half',
+              variant: 'email',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.phoneNumber,
               required: false,
               width: 'half',
+              variant: 'tel',
             }),
           ],
         }),
@@ -85,6 +87,7 @@ export const ApplicationForm: Form = buildForm({
                   name: m.serviceCount,
                   required: false,
                   width: 'half',
+                  variant: 'number',
                 }),
                 buildTextField({
                   id: 'service.users',
@@ -119,7 +122,6 @@ export const ApplicationForm: Form = buildForm({
                   required: false,
                   width: 'half',
                   condition: (formValue: FormValue) => {
-                    console.log('FORMVAL__', formValue)
                     return (
                       (formValue as { service: { digital: string } })?.service
                         ?.digital === 'yes'
@@ -141,35 +143,29 @@ export const ApplicationForm: Form = buildForm({
           name: 'Hvaða gögn þarf að skila með umsókn?',
           component: 'DataRepeater',
           children: [
-            buildMultiField({
-              id: 'data.fields',
-              name: m.data,
-              children: [
-                buildTextField({
-                  id: 'data.name',
-                  name: m.dataName,
-                  required: false,
-                  width: 'half',
-                }),
-                buildTextField({
-                  id: 'data.publisher',
-                  name: m.dataPublisher,
-                  required: false,
-                  width: 'half',
-                }),
-                buildTextField({
-                  id: 'data.download',
-                  name: m.dataDownload,
-                  required: false,
-                  width: 'half',
-                }),
-                buildTextField({
-                  id: 'data.upload',
-                  name: m.dataUpload,
-                  required: false,
-                  width: 'half',
-                }),
-              ],
+            buildTextField({
+              id: 'name',
+              name: m.dataName,
+              required: false,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'publisher',
+              name: m.dataPublisher,
+              required: false,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'download',
+              name: m.dataDownload,
+              required: false,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'upload',
+              name: m.dataUpload,
+              required: false,
+              width: 'half',
             }),
           ],
         }),
@@ -207,6 +203,7 @@ export const ApplicationForm: Form = buildForm({
               id: 'payment.amount',
               name: m.paymentAmount,
               required: false,
+              variant: 'number',
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { payment: { radio: string } })?.payment
@@ -238,9 +235,21 @@ export const ApplicationForm: Form = buildForm({
       name: m.other,
       children: [
         buildTextField({
-          id: 'other.info',
+          id: 'info',
           name: m.otherInfo,
           required: false,
+          variant: 'textarea',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'final',
+      name: m.other,
+      children: [
+        buildIntroductionField({
+          id: 'final.intro',
+          name: 'Takk fyrir',
+          introduction: 'Umsókn þín hefur verið send',
         }),
       ],
     }),

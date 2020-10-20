@@ -93,8 +93,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: 'reviewer',
               formLoader: () =>
-                import('../forms/ApplicationForm').then((val) =>
-                  Promise.resolve(val.ApplicationForm),
+                import('../forms/Review').then((val) =>
+                  Promise.resolve(val.Review),
                 ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
@@ -105,8 +105,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/ApplicationForm').then((val) =>
-                  Promise.resolve(val.ApplicationForm),
+                import('../forms/PendingReview').then((val) =>
+                  Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
             },
@@ -125,8 +125,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/ApplicationForm').then((val) =>
-                  Promise.resolve(val.ApplicationForm),
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
                 ),
             },
           ],
@@ -140,8 +140,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               formLoader: () =>
-                import('../forms/ApplicationForm').then((val) =>
-                  Promise.resolve(val.ApplicationForm),
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
                 ),
             },
           ],
@@ -151,6 +151,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   },
   mapUserToRole(id: string, state: string): ApplicationRole {
     if (state === 'inReview') {
+      // TODO
       return 'reviewer'
     }
     return 'applicant'

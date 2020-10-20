@@ -151,4 +151,64 @@ export const m = defineMessages({
     defaultMessage: 'Annað sem þarf að koma fram',
     description: 'Some description',
   },
+  rejected: {
+    id: 'example.application:rejected',
+    defaultMessage: 'Hafnað',
+    description: 'Some description',
+  },
+  rejectedName: {
+    id: 'example.application:rejected.name',
+    defaultMessage: 'Því miður...',
+    description: 'Some description',
+  },
+  rejectedIntroduction: {
+    id: 'example.application:rejected.intro',
+    defaultMessage: 'Umsókn þinni verið hafnað.',
+    description: 'Some description',
+  },
+  approved: {
+    id: 'example.application:approved',
+    defaultMessage: 'Samþykkt',
+    description: 'Some description',
+  },
+  approvedName: {
+    id: 'example.application:approved.name',
+    defaultMessage: 'Til hamingju!',
+    description: 'Some description',
+  },
+  approvedIntroduction: {
+    id: 'example.application:approved.intro',
+    defaultMessage: 'Umsókn þín hefur verið samþykkt.',
+    description: 'Some description',
+  },
+  pendingReview: {
+    id: 'example.application:pendingReview',
+    defaultMessage: 'Í vinnslu',
+    description: 'Some description',
+  },
+  pendingReviewName: {
+    id: 'example.application:pendingReview.name',
+    defaultMessage: 'Í vinnslu',
+    description: 'Some description',
+  },
+  pendingReviewIntroduction: {
+    id: 'example.application:pendingReview.intro',
+    defaultMessage: 'Umsókn þín er í vinnslu.',
+    description: 'Some description',
+  },
+  reviewQuestion: {
+    id: 'example.application.review.question',
+    defaultMessage: 'Samþykkirðu þessa umsókn?',
+    description: 'Some description',
+  },
+  approveOption: {
+    id: 'example.application.approve.option',
+    defaultMessage: 'Samþykkja',
+    description: 'Some description',
+  },
+  declineOption: {
+    id: 'example.application.decline.option',
+    defaultMessage: 'Hafna',
+    description: 'Some description',
+  },
 })
