@@ -1,11 +1,11 @@
-type FactoryFn<T, FactoryArgs extends Array<any>> = (...args: FactoryArgs) => T
+type FactoryFn<T, FactoryArgs extends Array<unknown>> = (...args: FactoryArgs) => T
 
-type TimesFn<T, FactoryArgs extends Array<any>> = (
+type TimesFn<T, FactoryArgs extends Array<unknown>> = (
   times: number,
   ...args: FactoryArgs
 ) => Array<T>
 
-type Times = <T, FactoryArgs extends Array<any>>(
+type Times = <T, FactoryArgs extends Array<unknown>>(
   factory: FactoryFn<T, FactoryArgs>,
 ) => TimesFn<T, FactoryArgs>
 

@@ -3,14 +3,9 @@
  */
 import { times } from './times'
 
-type InitializerFn<T, FactoryArgs extends Array<any>> = (
+type InitializerFn<T, FactoryArgs extends Array<unknown>> = (
   ...args: FactoryArgs
 ) => T
-
-type Factory<T, FactoryArgs extends Array<any>> = {
-  (...args: FactoryArgs): T
-  list(count: number, ...args: FactoryArgs): T[]
-}
 
 /**
  * Factory to create one or more objects with a function factory.
@@ -44,7 +39,7 @@ type Factory<T, FactoryArgs extends Array<any>> = {
  * > [imageSection, imageSection, imageSection]
  * ```
  */
-export const simpleFactory = <T, FactoryArgs extends Array<any>>(
+export const simpleFactory = <T, FactoryArgs extends Array<unknown>>(
   initializer: InitializerFn<T, FactoryArgs>,
 ) => {
   const factoryFn = (...args: FactoryArgs) => initializer(...args)

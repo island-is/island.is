@@ -7,19 +7,22 @@ import {
 
 interface GraphQLRequest {
   query: string
-  variables?: Record<string, any>
+  variables?: Record<string, unknown>
   operationName?: string
 }
 
-interface Options<C> {
+interface Options<Context> {
   schema: GraphQLSchema
-  fieldResolver: GraphQLFieldResolver<any, any>
-  typeResolver?: GraphQLTypeResolver<any, any>
-  contextValue?: C
+  fieldResolver: GraphQLFieldResolver<unknown, Context>
+  typeResolver?: GraphQLTypeResolver<unknown, Context>
+  contextValue?: Context
 }
 
-const runGraphQLRequest = (request: GraphQLRequest, options: Options<any>) => {
+const runGraphQLRequest = <Context>(request: GraphQLRequest, options: Options<Context>) => {
   const { schema, fieldResolver, typeResolver, contextValue = {} } = options
+  if (typeof request !== 'object' || !request ||  request.query !== 'string') {
+    return
+  }
   return graphql({
     schema,
     source: request.query,
@@ -31,18 +34,18 @@ const runGraphQLRequest = (request: GraphQLRequest, options: Options<any>) => {
   })
 }
 
-export const handle = (
-  query: Record<string, any> | Array<Record<string, any>>,
-  options: Options<any>,
+export const handle = <Context>(
+  query: GraphQLRequest | Array<GraphQLRequest>,
+  options: Options<Context>,
 ) => {
   if (Array.isArray(query)) {
     // A batched query using the BatchHttpLink.
     return Promise.all(
       query.map((subQuery) =>
-        runGraphQLRequest(subQuery as GraphQLRequest, options),
+        runGraphQLRequest(subQuery, options),
       ),
     )
   } else {
-    return runGraphQLRequest(query as GraphQLRequest, options)
+    return runGraphQLRequest(query, options)
   }
 }

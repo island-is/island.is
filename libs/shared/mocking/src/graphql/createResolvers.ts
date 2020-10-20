@@ -6,7 +6,10 @@ import {
   GraphQLTypeResolver,
 } from 'graphql'
 
-export type ResolverMap = Record<string, Record<string, any> | undefined>
+export type ResolverMap = Record<
+  string,
+  Record<string, (...args: unknown[]) => unknown> | undefined
+>
 
 export type NewResolvers<Resolvers> = {
   [R in keyof Resolvers]?: {
@@ -15,8 +18,8 @@ export type NewResolvers<Resolvers> = {
 }
 
 export type Resolvers<T> = {
-  fieldResolver: GraphQLFieldResolver<any, any>
-  typeResolver: GraphQLTypeResolver<any, any>
+  fieldResolver: GraphQLFieldResolver<unknown, unknown>
+  typeResolver: GraphQLTypeResolver<unknown, unknown>
   add: (newResolvers: NewResolvers<T>) => void
   reset: () => void
 }
@@ -26,17 +29,15 @@ export const createResolvers = <T extends ResolverMap>(
 ): Resolvers<T> => {
   let resolvers = baseResolvers
 
-  const fieldResolver: GraphQLFieldResolver<any, any> = (
+  const fieldResolver: GraphQLFieldResolver<unknown, unknown> = (
     obj,
     args,
     context,
     info,
   ) => {
     const { fieldName, parentType } = info
-    const resolver =
-      resolvers &&
-      resolvers[parentType.name] &&
-      resolvers[parentType.name]![fieldName]
+    const parentName = parentType.name
+    const resolver = resolvers?.[parentName]?.[fieldName]
 
     if (resolver) {
       return resolver(obj, args, context, info)
@@ -44,18 +45,17 @@ export const createResolvers = <T extends ResolverMap>(
     return defaultFieldResolver(obj, args, context, info)
   }
 
-  const typeResolver: GraphQLTypeResolver<any, any> = (
+  const typeResolver: GraphQLTypeResolver<unknown, unknown> = (
     value,
     context,
     info,
     abstractType,
   ) => {
     const { name } = abstractType
-    const resolver =
-      resolvers && resolvers[name] && resolvers[name]!.__resolveType
+    const resolver = resolvers?.[name]?.__resolveType
 
     if (resolver) {
-      return resolver(value, context, info)
+      return resolver(value, context, info) as string
     }
     return defaultTypeResolver(value, context, info, abstractType)
   }

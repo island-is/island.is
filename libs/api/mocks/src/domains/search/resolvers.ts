@@ -5,7 +5,7 @@ import { store } from '../cms'
 export const resolvers: Resolvers = {
   Items: {
     __resolveType: (parent) => {
-      return parent.typename as any
+      return parent.typename as never
     },
   },
 

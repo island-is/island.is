@@ -16,14 +16,19 @@ export const createGraphqlHandler = <T>({
 }: Options<T>) =>
   rest.post(mask, async (req, res, ctx) => {
     const query = req.method === 'POST' ? req.body : req.params
-    if (typeof query !== 'object') {
-      throw new Error('Expected graphql query to be an object.')
+    const isQueryIsh =
+      (typeof query === 'object' && query.query) ||
+      (Array.isArray(query) && query.every((query) => query.query))
+    if (!isQueryIsh) {
+      throw new Error('Expected one or more GraphQL queries.')
     }
+
     const context = {
       fetch: ctx.fetch,
     }
 
-    const graphqlResponse = await handle(query, {
+    type Query = Parameters<typeof handle>[0]
+    const graphqlResponse = await handle(query as Query, {
       schema,
       fieldResolver: resolvers.fieldResolver,
       typeResolver: resolvers.typeResolver,

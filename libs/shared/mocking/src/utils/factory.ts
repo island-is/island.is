@@ -30,7 +30,7 @@ const findTrait = <T>(
   traits: TraitMap<T>,
 ): InitializerProps<T> => {
   if (name in traits) {
-    return (traits as any)[name]
+    return (traits as never)[name]
   }
   throw new Error(`Trait ${name} does not exist.`)
 }
@@ -87,7 +87,7 @@ const findTrait = <T>(
 export const factory = <T extends object>(init: Initializer<T>): Factory<T> => {
   const traitMap = init.$traits || {}
   const factoryFn = (...data: FactoryArgs<T>) => {
-    const record: any = {}
+    const record: Record<string, unknown> = {}
     const initializers = [init as OverrideProps<T>].concat(
       data.map((arg) =>
         typeof arg === 'string' ? findTrait<T>(arg, traitMap) : arg,
@@ -101,7 +101,7 @@ export const factory = <T extends object>(init: Initializer<T>): Factory<T> => {
 
       // Find the last initializer that defines this attribute.
       for (let i = initializers.length - 1; i >= 0; i--) {
-        let value = (initializers[i] as any)[key] as unknown
+        let value = (initializers[i] as never)[key] as unknown
         if (value !== undefined) {
           if (typeof value === 'function') {
             value = value.call(record, record)

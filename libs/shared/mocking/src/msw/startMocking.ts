@@ -1,7 +1,7 @@
 import { RequestHandler } from 'msw'
 
 export const startMocking = (
-  requestHandlers: RequestHandler<any, any, any, any, any>[],
+  requestHandlers: RequestHandler<unknown, unknown, unknown, unknown>[],
 ) => {
   if (typeof window === 'undefined') {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
