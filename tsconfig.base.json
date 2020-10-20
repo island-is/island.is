@@ -59,6 +59,9 @@
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],
+      "@island.is/application/templates/application-application": [
+        "libs/application/templates/application-application/src/index.ts"
+      ],
       "@island.is/application/templates/driving-lessons": [
         "libs/application/templates/driving-lessons/src/index.ts"
       ],

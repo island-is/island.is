@@ -7,6 +7,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/parental-leave'),
   [ApplicationTypes.DRIVING_LESSONS]: () =>
     import('@island.is/application/templates/driving-lessons'),
+  [ApplicationTypes.APPLICATION_APPLICATION]: () =>
+    import('@island.is/application/templates/application-application'),
 }
 
 export default templates
