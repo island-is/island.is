@@ -8,7 +8,7 @@ import {
   Stack,
   Link,
   ButtonProps,
-  ButtonVariants,
+  ButtonTypes,
 } from '@island.is/island-ui/core'
 import IframeModal from '../IframeModal/IframeModal'
 
@@ -32,7 +32,7 @@ export interface ProcessEntryProps {
 }
 
 export const ProcessEntryLinkButton: FC<
-  Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonVariants
+  Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonTypes
 > = ({
   processTitle,
   buttonText,
