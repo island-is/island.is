@@ -15,6 +15,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             title
           }
           category {
+            id
             slug
             title
           }
@@ -40,6 +41,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           slug
           intro
           category {
+            id
             slug
             title
           }
@@ -69,6 +71,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
         }
 
         ... on AboutPage {
+          id
           title
           seoDescription
           slug
@@ -130,6 +133,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             title
           }
           category {
+            id
             slug
             title
           }
@@ -140,6 +144,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             slug
           }
           relatedArticles {
+            id
             title
             slug
           }
@@ -155,6 +160,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug
           intro
           category {
+            id
             slug
             title
           }
@@ -184,6 +190,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         }
 
         ... on AboutPage {
+          id
           title
           seoDescription
           slug
