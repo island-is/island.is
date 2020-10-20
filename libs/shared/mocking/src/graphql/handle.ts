@@ -23,9 +23,6 @@ const runGraphQLRequest = <Context>(
   options: Options<Context>,
 ) => {
   const { schema, fieldResolver, typeResolver, contextValue = {} } = options
-  if (typeof request !== 'object' || !request || request.query !== 'string') {
-    return
-  }
   return graphql({
     schema,
     source: request.query,

@@ -8,7 +8,8 @@ import {
 
 export type ResolverMap = Record<
   string,
-  Record<string, (...args: unknown[]) => unknown> | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Record<string, (...args: any) => any> | undefined
 >
 
 export type NewResolvers<Resolvers> = {
