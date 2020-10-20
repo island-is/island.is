@@ -21,11 +21,7 @@ const CompanyInfo: FC = () => {
   })
 
   const {
-    t: {
-      companyInfo: t,
-      companySidenav: sidenavText,
-      routes,
-    },
+    t: { companyInfo: t, companySidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
@@ -34,7 +30,10 @@ const CompanyInfo: FC = () => {
   }
 
   const handleEditLocation = (id: number) => {
-    router.push(routes.companyInfo.edit, `${routes.companyInfo.baseRoute}/edit/${id}`)
+    router.push(
+      routes.companyInfo.edit,
+      `${routes.companyInfo.baseRoute}/edit/${id}`,
+    )
   }
 
   if (error || (loading && !data)) {
