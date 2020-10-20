@@ -3,20 +3,21 @@ import { Properties } from 'csstype'
 import omit from 'lodash/omit'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-import { mapToStyleProperty } from '../../utils'
+import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
 const spaceMapToCss = (
   t: typeof theme,
   cssPropertyName: keyof Properties,
   breakpoint: keyof typeof theme['breakpoints'],
 ) => {
-  const spaceWithNone = {
+  const spaceWithKeywords = {
     ...t.spacing,
     none: 0,
+    auto: 'auto',
   }
 
   return mapToStyleProperty(
-    spaceWithNone,
+    spaceWithKeywords,
     cssPropertyName,
     (value, propertyName) => {
       const styles = {

@@ -36,7 +36,7 @@ function Header() {
                 <Button
                   variant="utility"
                   onClick={() => setSideMenuOpen(true)}
-                  icon="burger"
+                  icon="menu"
                   size="small"
                 >
                   Valmynd

@@ -12,6 +12,7 @@ export * from './lib/VideoIframe/VideoIframe'
 export * from './lib/Tooltip/Tooltip'
 export * from './lib/LinkCard/LinkCard'
 export * from './lib/Tag/Tag'
+export * from './lib/ProgressMeter/ProgressMeter'
 export * from './lib/SkeletonLoader/SkeletonLoader'
 export * from './lib/Blockquote/Blockquote'
 export * from './lib/ProfileCard/ProfileCard'
@@ -70,5 +71,5 @@ export * from './lib/Tabs/Tabs'
 // Context
 export * from './lib/context'
 
-// Global reset
-export * from './global/global.treat'
+// Util functions
+export * from './utils/global.treat'

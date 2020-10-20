@@ -6,5 +6,3 @@ export { ServiceList } from './ServiceList'
 export type { ServiceListProps } from './ServiceList'
 export { ServiceDetail } from './ServiceDetail'
 export type { ServiceDetailProps } from './ServiceDetail'
-
-

@@ -73,6 +73,7 @@
     "@sentry/react": "^5.22.3",
     "@sentry/tracing": "^5.22.3",
     "@sindresorhus/slugify": "1.0.0",
+    "@types/faker": "^5.1.2",
     "@types/form-data": "^2.5.0",
     "@types/nodemailer": "^6.4.0",
     "@types/pdfkit": "^0.10.6",
@@ -119,6 +120,7 @@
     "entropy-string": "4.2.0",
     "express": "4.17.1",
     "express-validator": "6.4.1",
+    "faker": "^5.1.0",
     "formik": "2.1.4",
     "glob": "7.1.6",
     "graphql": "15.3.0",
@@ -143,6 +145,7 @@
     "lottie-web": "^5.7.3",
     "miragejs": "^0.1.40",
     "mobx": "^4.2.0",
+    "msw": "^0.21.2",
     "nest-winston": "1.4.0",
     "next": "9.5.4",
     "next-cookies": "2.0.3",
@@ -306,6 +309,7 @@
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
     "http-proxy": "1.18.1",
-    "node-forge": "0.10.0"
+    "node-forge": "0.10.0",
+    "object-path": "0.11.5"
   }
 }

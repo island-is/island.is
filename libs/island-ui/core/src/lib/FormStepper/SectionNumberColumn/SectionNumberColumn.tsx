@@ -1,18 +1,27 @@
 import React, { FC } from 'react'
+import cn from 'classnames'
 
 import { Box } from '../../Box/Box'
 import * as styles from './SectionNumberColumn.treat'
 
-export const SectionNumberColumn: FC<{ children?: React.ReactNode }> = ({
+interface SectionNumberColumnProps {
+  children?: React.ReactNode
+  type?: 'section' | 'subSection'
+}
+
+export const SectionNumberColumn: FC<SectionNumberColumnProps> = ({
   children,
+  type = 'section',
 }) => (
   <Box
     position="relative"
     display="flex"
     alignItems="center"
     justifyContent="center"
-    marginRight={2}
-    className={styles.root}
+    marginRight={[1, 1, 2]}
+    className={cn(styles.root, {
+      [styles.rootSubSection]: type === 'subSection',
+    })}
   >
     {children}
   </Box>

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Client } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
-// @ts-ignore
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
