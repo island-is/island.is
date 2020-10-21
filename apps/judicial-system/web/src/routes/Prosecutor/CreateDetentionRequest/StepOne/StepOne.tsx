@@ -289,6 +289,7 @@ export const StepOne: React.FC = () => {
                     data-testid="policeCaseNumber"
                     name="policeCaseNumber"
                     label="Slá inn LÖKE málsnúmer"
+                    placeholder="007-2020-X"
                     defaultValue={workingCase.policeCaseNumber}
                     ref={policeCaseNumberRef}
                     errorMessage={policeCaseNumberErrorMessage}
@@ -345,6 +346,7 @@ export const StepOne: React.FC = () => {
                       data-testid="nationalId"
                       name="nationalId"
                       label="Kennitala"
+                      placeholder="Kennitala"
                       defaultValue={workingCase.accusedNationalId}
                       ref={accusedNationalIdRef}
                       errorMessage={nationalIdErrorMessage}
@@ -401,6 +403,7 @@ export const StepOne: React.FC = () => {
                       data-testid="accusedName"
                       name="accusedName"
                       label="Fullt nafn"
+                      placeholder="Fullt nafn"
                       defaultValue={workingCase.accusedName}
                       errorMessage={accusedNameErrorMessage}
                       hasError={accusedNameErrorMessage !== ''}
@@ -439,6 +442,7 @@ export const StepOne: React.FC = () => {
                       data-testid="accusedAddress"
                       name="accusedAddress"
                       label="Lögheimili/dvalarstaður"
+                      placeholder="Lögheimili eða dvalarstaður"
                       defaultValue={workingCase.accusedAddress}
                       errorMessage={accusedAddressErrorMessage}
                       hasError={accusedAddressErrorMessage !== ''}

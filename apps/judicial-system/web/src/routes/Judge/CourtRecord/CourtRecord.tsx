@@ -237,7 +237,7 @@ export const CourtRecord: React.FC = () => {
                     hasError={courtAttendeesErrorMessage !== ''}
                     onFocus={() => setCourtAttendeesMessage('')}
                     textarea
-                    rows={3}
+                    rows={6}
                     required
                   />
                 </Box>
@@ -246,7 +246,7 @@ export const CourtRecord: React.FC = () => {
                   name="policeDemands"
                   label="Krafa lögreglu"
                   defaultValue={workingCase?.policeDemands}
-                  placeholder="Skrifa hér..."
+                  placeholder="Hvað hafði ákæruvaldið að segja?"
                   onBlur={(evt) => {
                     updateState(
                       workingCase,
@@ -272,7 +272,7 @@ export const CourtRecord: React.FC = () => {
                   hasError={policeDemandsErrorMessage !== ''}
                   onFocus={() => setPoliceDemandsMessage('')}
                   textarea
-                  rows={3}
+                  rows={6}
                   required
                 />
               </Box>
@@ -313,7 +313,7 @@ export const CourtRecord: React.FC = () => {
                   name="accusedPlea"
                   label="Afstaða kærða"
                   defaultValue={workingCase.accusedPlea}
-                  placeholder="Skrifa hér..."
+                  placeholder="Hvað hafði kærði að segja um kröfuna? Mótmælti eða samþykkti?"
                   onBlur={(evt) => {
                     updateState(
                       workingCase,
@@ -339,7 +339,7 @@ export const CourtRecord: React.FC = () => {
                   hasError={accusedPleaErrorMessage !== ''}
                   onFocus={() => setAccusedPleaMessage('')}
                   textarea
-                  rows={3}
+                  rows={6}
                   required
                 />
               </Box>
@@ -354,7 +354,7 @@ export const CourtRecord: React.FC = () => {
                   name="litigationPresentations"
                   label="Málflutningsræður"
                   defaultValue={workingCase.litigationPresentations}
-                  placeholder="Skrifa hér..."
+                  placeholder="Almennar málflutningsræður skráðar hér..."
                   onBlur={(evt) => {
                     updateState(
                       workingCase,
@@ -385,7 +385,7 @@ export const CourtRecord: React.FC = () => {
                   hasError={litigationPresentationsErrorMessage !== ''}
                   onFocus={() => setLitigationPresentationsMessage('')}
                   textarea
-                  rows={3}
+                  rows={6}
                   required
                 />
               </Box>
