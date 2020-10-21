@@ -196,7 +196,6 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 2
     strategy:
       fail-fast: false

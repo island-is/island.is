@@ -91,4 +91,4 @@ barabrian - Brian
 
 dabbeg - Davíð Guðni
 
-darrikonn - Darri Steinn
+darrikonn - Darri Steinn Sveinn
