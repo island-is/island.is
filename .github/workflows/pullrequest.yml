@@ -94,6 +94,10 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
+        env:
+          # Temporary - There are some builds that are taking way too much time.
+          # By running only 1 chunk at a time we might be able to figure out which one's failing
+          CHUNK_SIZE: 4
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
           if [[ $CHUNKS != "[]" ]]; then
@@ -191,7 +195,7 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 4
+      MAX_JOBS: 2
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
