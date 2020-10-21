@@ -56,13 +56,14 @@ export const close = style({
   top: spacing,
   right: spacing,
   lineHeight: 0,
+  padding: spacing,
   outline: 0,
   ':before': {
     content: '""',
     position: 'absolute',
-    top: -spacing,
-    left: -spacing,
-    right: -spacing,
-    bottom: -spacing,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 })
