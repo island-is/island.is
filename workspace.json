@@ -3873,7 +3873,8 @@
             "tsConfig": "apps/services/xroad-collector/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "shared-form-fields": {
