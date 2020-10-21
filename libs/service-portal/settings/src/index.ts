@@ -14,7 +14,8 @@ export const settingsModule: ServicePortalModule = {
       {
         name: 'Stillingar',
         path: ServicePortalPath.StillingarRoot,
-        render: () => lazy(() => import('./lib/service-portal-settings')),
+        render: () =>
+          lazy(() => import('./screens/NavigationScreen/NavigationScreen')),
       },
       {
         name: 'Mín réttindi',

@@ -7,3 +7,8 @@ export const card = style({
     borderColor: theme.color.blue300,
   },
 })
+
+export const disabled = style({
+  filter: 'blur(6px)',
+  pointerEvents: 'none',
+})
