@@ -1,6 +1,11 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
+const borderStyle = `1px solid ${theme.color.dark200}`
+
+// ********************************************
+// Left Panel Styles
+// ********************************************
 export const panel = style({
   minWidth: '160px',
   '@media': {
@@ -10,17 +15,24 @@ export const panel = style({
   },
 })
 
-const borderStyle = `1px solid ${theme.color.dark200}`
+export const firstPanelRowSeparator = style({
+  borderRight: borderStyle,
+  bottom: 0,
+  height: '14px',
+  position: 'absolute',
+  right: 0,
+})
 
 export const panelRow = style({
-  borderTop: borderStyle,
-  borderRight: borderStyle,
-  height: '64px',
-  display: 'flex',
   alignItems: 'flex-start',
-  justifyContent: 'center',
+  borderRight: borderStyle,
+  borderTop: borderStyle,
+  display: 'flex',
   flexDirection: 'column',
+  height: '64px',
+  justifyContent: 'center',
   paddingRight: theme.spacing[2],
+  position: 'relative',
   selectors: {
     [`&:first-child`]: {
       borderTop: 'none',
@@ -32,12 +44,22 @@ export const panelRow = style({
   },
 })
 
-export const firstPanelRowSeparator = style({
-  right: 0,
-  bottom: 0,
-  height: '14px',
-  borderRight: borderStyle,
+const iconSize = 24
+export const deleteIcon = style({
+  cursor: 'pointer',
+  left: `${-(iconSize + theme.spacing[1] / 2)}px`,
+  position: 'absolute',
+  top: `calc(50% - ${iconSize / 2}px)`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      left: `${-(iconSize + theme.spacing[2])}px`,
+    },
+  },
 })
+
+// ********************************************
+// Chart Styles
+// ********************************************
 
 export const chartContainer = style({
   width: '75%',
@@ -46,16 +68,18 @@ export const chartContainer = style({
 })
 
 export const chartMonth = style({
-  whiteSpace: 'nowrap',
   position: 'relative',
+  whiteSpace: 'nowrap',
 })
 
 export const row = style({
-  borderTop: borderStyle,
-  height: '64px',
-  display: 'flex',
   alignItems: 'flex-start',
+  borderTop: borderStyle,
+  display: 'flex',
   flexDirection: 'column',
+  justifyContent: 'flex-end',
+  height: '64px',
+  position: 'relative',
   selectors: {
     [`&:first-child`]: {
       borderTop: 'none',
@@ -76,16 +100,27 @@ export const period = style({
   backgroundSize: '10px 10px',
   display: 'flex',
   flexDirection: 'column',
+  height: '63px',
   justifyContent: 'center',
   padding: '0 16px',
-  height: '63px',
 })
 
 export const highlightDay = style({
-  position: 'absolute',
-  left: 0,
-  top: '7px',
   borderLeft: `1px solid ${theme.color.blueberry300}`,
   height: '1000px',
+  left: 0,
+  position: 'absolute',
+  top: '7px',
   zIndex: 99,
+})
+
+export const scrollGradient = style({
+  background:
+    'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)',
+  bottom: 0,
+  pointerEvents: 'none',
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  width: '100px',
 })

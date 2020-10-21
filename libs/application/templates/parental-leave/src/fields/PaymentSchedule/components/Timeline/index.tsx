@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react'
+import React, { FC, useRef } from 'react'
 import {
   format,
   subMonths,
@@ -12,9 +12,9 @@ import {
 import { useWindowSize } from 'react-use'
 import { useDrag } from './utils'
 
-import * as styles from './Timeline.treat'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import * as styles from './Timeline.treat'
 
 export interface Period {
   startDate: string
@@ -30,13 +30,14 @@ const Panel: FC<{
   titleSmall: string
   periods: Period[]
   isMobile: boolean
-}> = ({ initDate, title, titleSmall, periods, isMobile }) => {
+  onDeletePeriod?: (index: number) => void
+}> = ({ initDate, title, titleSmall, periods, isMobile, onDeletePeriod }) => {
   const formatStyle = isMobile ? 'dd MMM' : 'dd MMM yyyy'
   const titleLabel = isMobile ? titleSmall : title
 
   return (
     <Box className={styles.panel}>
-      <Box position="relative" className={styles.panelRow}>
+      <Box className={styles.panelRow}>
         <Text variant="small">
           <Text variant="small" as="span" fontWeight="semiBold" color="blue400">
             {titleLabel}
@@ -44,11 +45,24 @@ const Panel: FC<{
           <br />
           {format(initDate, 'dd MMM yyyy')}
         </Text>
-        <Box position="absolute" className={styles.firstPanelRowSeparator} />
+        <Box className={styles.firstPanelRowSeparator} />
       </Box>
       {periods.map((p, index) => {
         return (
           <Box className={styles.panelRow} key={index}>
+            {p.canDelete && onDeletePeriod && (
+              <Box
+                className={styles.deleteIcon}
+                onClick={() => onDeletePeriod(index)}
+              >
+                <Icon
+                  color="dark200"
+                  icon="removeCircle"
+                  size="medium"
+                  type="outline"
+                />
+              </Box>
+            )}
             <Text variant="small">
               <Text variant="small" as="span" fontWeight="semiBold">
                 {p.title}
@@ -69,19 +83,11 @@ const ChartMonths: FC<{
   rowWidth: string
   chartColumns: string
   totalDays: Date[]
-  lastDayAvailableForLeave: Date
-}> = ({
-  initDate,
-  rowWidth,
-  chartColumns,
-  totalDays,
-  lastDayAvailableForLeave,
-}) => {
+  lastDayInTimespan: Date
+}> = ({ initDate, rowWidth, chartColumns, totalDays, lastDayInTimespan }) => {
   return (
     <Box
       className={styles.row}
-      position="relative"
-      justifyContent="flexEnd"
       style={{
         width: rowWidth,
         left: '-1px',
@@ -95,7 +101,7 @@ const ChartMonths: FC<{
       >
         {totalDays.map((day, index) => {
           const isInitDay = isSameDay(initDate, day)
-          const isLastDayAvailable = isSameDay(lastDayAvailableForLeave, day)
+          const isLastDayAvailable = isSameDay(lastDayInTimespan, day)
           const isFirstDayOfMonth = totalDays[index].getDate() === 1
           const height = isFirstDayOfMonth || index === 0 ? 14 : 0
           const color = isInitDay ? theme.color.yellow200 : theme.color.dark200
@@ -135,8 +141,8 @@ const Chart: FC<{
   spanInMonths?: number
 }> = ({ initDate, dayWidth, periods, spanInMonths = 18 }) => {
   const padStart = subMonths(initDate, 1).setDate(1)
-  const lastDayAvailableForLeave = addMonths(initDate, spanInMonths)
-  const padEnd = endOfMonth(lastDayAvailableForLeave)
+  const lastDayInTimespan = addMonths(initDate, spanInMonths)
+  const padEnd = endOfMonth(lastDayInTimespan)
   const totalDays = eachDayOfInterval({
     start: padStart,
     end: padEnd,
@@ -208,7 +214,7 @@ const Chart: FC<{
         rowWidth={chartRowWidth}
         chartColumns={chartColumns}
         totalDays={totalDays}
-        lastDayAvailableForLeave={lastDayAvailableForLeave}
+        lastDayInTimespan={lastDayInTimespan}
       />
 
       {periods.map((p, index) => {
@@ -266,13 +272,14 @@ const Timeline: FC<TimelineProps> = ({
   const dayWidth = isMobile ? 2 : 3
 
   return (
-    <Box display="flex" width="full">
+    <Box display="flex" width="full" position="relative">
       <Panel
         initDate={initDate}
         title={title}
         titleSmall={titleSmall || title}
         periods={periods}
         isMobile={isMobile}
+        onDeletePeriod={onDeletePeriod}
       />
       <Chart
         initDate={initDate}
@@ -280,6 +287,7 @@ const Timeline: FC<TimelineProps> = ({
         dayWidth={dayWidth}
         spanInMonths={spanInMonths}
       />
+      <Box className={styles.scrollGradient} />
     </Box>
   )
 }
