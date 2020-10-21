@@ -101,6 +101,7 @@ export const JudgeOverview: React.FC = () => {
                   data-testid="courtCaseNumber"
                   name="courtCaseNumber"
                   label="Slá inn málsnúmer"
+                  placeholder="R-X/ÁÁÁÁ"
                   defaultValue={workingCase?.courtCaseNumber}
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={courtCaseNumberErrorMessage !== ''}
@@ -140,7 +141,9 @@ export const JudgeOverview: React.FC = () => {
                   Kennitala
                 </Text>
               </Box>
-              <Text>{formatNationalId(workingCase?.accusedNationalId)}</Text>
+              <Text variant="h3">
+                {formatNationalId(workingCase?.accusedNationalId)}
+              </Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -148,7 +151,7 @@ export const JudgeOverview: React.FC = () => {
                   Fullt nafn
                 </Text>
               </Box>
-              <Text>{workingCase?.accusedName}</Text>
+              <Text variant="h3">{workingCase?.accusedName}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -156,7 +159,7 @@ export const JudgeOverview: React.FC = () => {
                   Lögheimili/dvalarstaður
                 </Text>
               </Box>
-              <Text>{workingCase?.accusedAddress}</Text>
+              <Text variant="h3">{workingCase?.accusedAddress}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -164,7 +167,7 @@ export const JudgeOverview: React.FC = () => {
                   Dómstóll
                 </Text>
               </Box>
-              <Text>{workingCase?.court}</Text>
+              <Text variant="h3">{workingCase?.court}</Text>
             </Box>
             <Box component="section" marginBottom={5}>
               <Box marginBottom={1}>
@@ -172,7 +175,7 @@ export const JudgeOverview: React.FC = () => {
                   Tími handtöku
                 </Text>
               </Box>
-              <Text>
+              <Text variant="h3">
                 {workingCase?.arrestDate &&
                   `${capitalize(
                     formatDate(workingCase?.arrestDate, 'PPPP'),
@@ -185,7 +188,7 @@ export const JudgeOverview: React.FC = () => {
                   Ósk um fyrirtökudag og tíma
                 </Text>
               </Box>
-              <Text>
+              <Text variant="h3">
                 {`${capitalize(
                   formatDate(workingCase?.requestedCourtDate, 'PPPP'),
                 )} kl. ${formatDate(
@@ -200,7 +203,7 @@ export const JudgeOverview: React.FC = () => {
                   Ákærandi
                 </Text>
               </Box>
-              <Text>
+              <Text variant="h3">
                 {workingCase?.prosecutor
                   ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
                   : `${uContext?.user?.name}, ${uContext?.user?.title}`}
@@ -214,7 +217,7 @@ export const JudgeOverview: React.FC = () => {
                   startExpanded
                   labelVariant="h3"
                 >
-                  <Text>
+                  <Text variant="intro">
                     Gæsluvarðhald til
                     <strong>
                       {workingCase?.requestedCustodyEndDate &&
@@ -240,7 +243,7 @@ export const JudgeOverview: React.FC = () => {
                         Lagaákvæði sem brot varða við
                       </Text>
                     </Box>
-                    <Text>{workingCase?.lawsBroken}</Text>
+                    <Text variant="intro">{workingCase?.lawsBroken}</Text>
                   </Box>
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
@@ -252,7 +255,9 @@ export const JudgeOverview: React.FC = () => {
                       (custodyProvision: CaseCustodyProvisions, index) => {
                         return (
                           <div key={index}>
-                            <Text>{laws[custodyProvision]}</Text>
+                            <Text variant="intro">
+                              {laws[custodyProvision]}
+                            </Text>
                           </div>
                         )
                       },
@@ -265,7 +270,7 @@ export const JudgeOverview: React.FC = () => {
                   startExpanded
                   labelVariant="h3"
                 >
-                  <Text>
+                  <Text variant="intro">
                     {formatCustodyRestrictions(
                       workingCase.requestedCustodyRestrictions,
                     )}
@@ -282,7 +287,7 @@ export const JudgeOverview: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text variant="h5">Málsatvik rakin</Text>
                       </Box>
-                      <Text>{workingCase?.caseFacts}</Text>
+                      <Text variant="intro">{workingCase?.caseFacts}</Text>
                     </Box>
                   )}
                   {workingCase?.witnessAccounts && (
@@ -290,7 +295,9 @@ export const JudgeOverview: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text variant="h5">Framburður</Text>
                       </Box>
-                      <Text>{workingCase?.witnessAccounts}</Text>
+                      <Text variant="intro">
+                        {workingCase?.witnessAccounts}
+                      </Text>
                     </Box>
                   )}
                   {workingCase?.investigationProgress && (
@@ -300,7 +307,9 @@ export const JudgeOverview: React.FC = () => {
                           Staða rannsóknar og næstu skref
                         </Text>
                       </Box>
-                      <Text>{workingCase?.investigationProgress}</Text>
+                      <Text variant="intro">
+                        {workingCase?.investigationProgress}
+                      </Text>
                     </Box>
                   )}
                   {workingCase?.legalArguments && (
@@ -308,7 +317,7 @@ export const JudgeOverview: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text variant="h5">Lagarök</Text>
                       </Box>
-                      <Text>{workingCase?.legalArguments}</Text>
+                      <Text variant="intro">{workingCase?.legalArguments}</Text>
                     </Box>
                   )}
                 </AccordionItem>
@@ -318,7 +327,7 @@ export const JudgeOverview: React.FC = () => {
                   startExpanded
                   labelVariant="h3"
                 >
-                  <Text>{workingCase?.comments}</Text>
+                  <Text variant="intro">{workingCase?.comments}</Text>
                 </AccordionItem>
               </Accordion>
             </Box>
