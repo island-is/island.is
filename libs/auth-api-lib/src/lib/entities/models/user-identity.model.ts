@@ -51,14 +51,6 @@ export class UserIdentity extends Model<UserIdentity> {
   providerSubjectId: string
 
   @Column({
-    type: DataType.UUID,
-    primaryKey: false,
-    allowNull: true,
-  })
-  @ApiProperty()
-  profileId: string
-
-  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
