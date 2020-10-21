@@ -1,6 +1,0 @@
-@import '../../../libs/island-ui/fonts/fonts.css';
-
-div.filterX [aria-controls$='_category'] {
-  padding-top: 0px;
-  padding-bottom: 0px;
-}

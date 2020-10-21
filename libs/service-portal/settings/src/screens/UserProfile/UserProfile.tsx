@@ -60,6 +60,19 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={userProfile?.mobilePhoneNumber || ''}
         />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:language',
+            defaultMessage: 'Tungumál',
+          })}
+          content={
+            userProfile
+              ? userProfile.locale === 'is'
+                ? 'Íslenska'
+                : 'English'
+              : ''
+          }
+        />
       </Stack>
     </>
   )
