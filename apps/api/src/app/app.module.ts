@@ -10,6 +10,7 @@ import { DocumentModule } from '@island.is/api/domains/documents'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { HealthController } from './health.controller'
+import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -42,6 +43,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     DocumentModule,
     TranslationsModule,
     TerminusModule,
+    ApiCatalogueModule,
     UserProfileModule.register({
       userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
     }),
