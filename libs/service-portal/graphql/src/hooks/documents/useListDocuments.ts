@@ -38,7 +38,7 @@ export const useListDocuments = (
   ]
 
   return {
-    data: mockData,
+    data: data?.listDocuments || mockData,
     loading,
     error,
   }
