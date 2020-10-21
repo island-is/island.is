@@ -1,18 +1,18 @@
 import React, { useContext } from 'react'
-import {
-  Logo,
-  Text,
-  Box,
-  ButtonDeprecated as Button,
-} from '@island.is/island-ui/core'
+import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
 import { userContext } from '../../utils/userContext'
 import * as api from '../../api'
 import * as styles from './Header.treat'
 import * as Constants from '../../utils/constants'
+import { IslandIsApplicationLogo } from '../Logos'
 
-const Header: React.FC = () => {
+interface Props {
+  pathname: string
+}
+
+const Header: React.FC<Props> = (props: Props) => {
   const uContext = useContext(userContext)
 
   return (
@@ -22,18 +22,32 @@ const Header: React.FC = () => {
         style={{ textDecoration: 'none' }}
         data-testid="link-to-home"
       >
-        <Box display="flex" alignItems="center">
-          <Logo width={32} iconOnly />
-          <Box marginLeft={[1, 2, 4]}>
-            <Text as="h1" variant="h4">
-              Réttarvörslugátt
-            </Text>
+        {!props.pathname ||
+        props.pathname === '/' ||
+        props.pathname === Constants.DETENTION_REQUESTS_ROUTE ? (
+          <Logo width={146} />
+        ) : (
+          <Box display="flex">
+            <div className={styles.islandIsApplicationLogoWrapper}>
+              <IslandIsApplicationLogo />
+            </div>
+            {/* Text does not allow className prop so we need to do this on a separate span */}
+            <span className={styles.headerDiviter} />
+            <span className={styles.headerTextWrapper}>
+              <Text>Gæsluvarðhald</Text>
+            </span>
           </Box>
-        </Box>
+        )}
       </Link>
       {uContext?.user && (
-        <Button variant="text" size="small" onClick={() => api.logOut()}>
-          Útskráning
+        <Button
+          variant="ghost"
+          icon="logOut"
+          iconType="outline"
+          size="small"
+          onClick={() => api.logOut()}
+        >
+          {uContext.user.name}
         </Button>
       )}
     </header>
