@@ -1,1 +1,0 @@
-export { InputSearch } from './InputSearch'
