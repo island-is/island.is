@@ -26,7 +26,7 @@ export const PageLayout: FC<PageProps> = ({
 
   return (
     <Box
-      paddingY={[0, 0, 10, 10]}
+      paddingY={[3, 3, 3, 6]}
       background="purple100"
       className={styles.processContainer}
     >
@@ -34,7 +34,7 @@ export const PageLayout: FC<PageProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
-              paddingY={[3, 3, 3, 6]}
+              paddingY={[0, 0, 10, 10]}
               background="white"
               borderColor="white"
               borderRadius="large"

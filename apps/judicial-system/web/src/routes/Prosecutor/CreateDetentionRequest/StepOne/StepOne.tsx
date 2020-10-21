@@ -258,9 +258,11 @@ export const StepOne: React.FC = () => {
   return (
     workingCase && (
       <PageLayout activeSection={0} activeSubSection={0}>
-        <Text as="h1" variant="h1">
-          Krafa um gæsluvarðhald
-        </Text>
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            Krafa um gæsluvarðhald
+          </Text>
+        </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
