@@ -8,7 +8,7 @@ import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
 } from '../queries/autocomplete'
-import { searchQuery } from '../queries/search'
+import { searchQuery, SearchInput } from '../queries/search'
 import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
@@ -22,6 +22,11 @@ import {
   dateAggregationQuery,
   DateAggregationResponse,
 } from '../queries/dateAggregation'
+import {
+  RankQuery,
+  Request,
+  precisionEvaluation,
+} from '../queries/rankEvaluation'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -149,10 +154,38 @@ export class ElasticService {
     return data.body
   }
 
-  async search(index: SearchIndexes, query: SearcherInput) {
+  async rankEvaluation(index: string | string[], query: RankQuery) {
+    const client = await this.getClient()
+    return client.rank_eval({
+      index: index,
+      body: query,
+    })
+  }
+
+  async precisionEvaluation(
+    index: string | string[],
+    requests: Request[],
+    size = 10,
+  ) {
+    const requestBody = precisionEvaluation(requests, size)
+    return this.rankEvaluation(index, requestBody)
+  }
+
+  async getIndexFromAliases(name: string) {
+    const client = await this.getClient()
+    const response = await client.cat.aliases({
+      name,
+      h: 'index',
+      format: 'json',
+    })
+
+    return response.body
+  }
+
+  getSearchQuery(query: SearcherInput | SearchInput) {
     const { queryString, size, page, types, tags, countTag } = query
 
-    const requestBody = searchQuery({
+    return searchQuery({
       queryString,
       size,
       page,
@@ -160,6 +193,10 @@ export class ElasticService {
       tags,
       countTag,
     })
+  }
+
+  async search(index: SearchIndexes, query: SearcherInput) {
+    const requestBody = this.getSearchQuery(query)
 
     return this.findByQuery<SearchResponse<MappedData>, typeof requestBody>(
       index,

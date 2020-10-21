@@ -57,4 +57,16 @@ export class IndexingController {
       acknowledge: true,
     }
   }
+
+  @Get('rank-evaluation')
+  async rankEvaluation(@Query() { locale = 'is', token = '' }: SyncInput) {
+    if (environment.syncToken !== token) {
+      logger.warn('Failed to validate sync access token', {
+        receivedToken: token,
+      })
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+    }
+
+    return this.indexingService.rankEvaluation(locale)
+  }
 }

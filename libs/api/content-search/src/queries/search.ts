@@ -2,7 +2,7 @@ import { Tag } from '../dto/searcher.input'
 
 import { tagQuery } from './documentByMetaData'
 
-interface SearchInput {
+export interface SearchInput {
   queryString: string
   size: number
   page: number
