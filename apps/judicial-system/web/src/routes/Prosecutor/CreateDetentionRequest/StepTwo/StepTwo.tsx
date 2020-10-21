@@ -361,6 +361,7 @@ export const StepTwo: React.FC = () => {
                   data-testid="lawsBroken"
                   name="lawsBroken"
                   label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+                  placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
                   defaultValue={workingCase?.lawsBroken}
                   errorMessage={lawsBrokenErrorMessage}
                   hasError={lawsBrokenErrorMessage !== ''}
@@ -385,7 +386,7 @@ export const StepTwo: React.FC = () => {
                   onFocus={() => setLawsBrokenErrorMessage('')}
                   required
                   textarea
-                  rows={3}
+                  rows={6}
                 />
               </Box>
               <Box component="section" marginBottom={7}>
@@ -595,12 +596,10 @@ export const StepTwo: React.FC = () => {
                 </Box>
                 <Box marginBottom={3}>
                   <Input
-                    textarea
-                    rows={2}
                     name="caseFacts"
                     label="Málsatvik rakin"
-                    defaultValue={workingCase?.caseFacts}
                     placeholder="Skrifa hér..."
+                    defaultValue={workingCase?.caseFacts}
                     onBlur={(evt) => {
                       autoSave(
                         workingCase,
@@ -609,12 +608,12 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
+                    rows={12}
+                    textarea
                   />
                 </Box>
                 <Box marginBottom={3}>
                   <Input
-                    textarea
-                    rows={2}
                     name="witnessAccounts"
                     label="Framburðir"
                     placeholder="Skrifa hér..."
@@ -627,12 +626,12 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
+                    rows={6}
+                    textarea
                   />
                 </Box>
                 <Box marginBottom={3}>
                   <Input
-                    textarea
-                    rows={2}
                     name="investigationProgress"
                     label="Staða rannsóknar og næstu skref"
                     placeholder="Skrifa hér..."
@@ -645,15 +644,15 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
+                    rows={6}
+                    textarea
                   />
                 </Box>
                 <Box marginBottom={7}>
                   <Input
-                    textarea
-                    rows={2}
                     name="legalArguments"
                     label="Lagarök"
-                    placeholder="Skrifa hér..."
+                    placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
                     defaultValue={workingCase?.legalArguments}
                     onBlur={(evt) => {
                       autoSave(
@@ -663,6 +662,8 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
+                    textarea
+                    rows={12}
                   />
                 </Box>
                 <Box component="section" marginBottom={7}>
@@ -678,11 +679,9 @@ export const StepTwo: React.FC = () => {
                   </Box>
                   <Box marginBottom={3}>
                     <Input
-                      textarea
-                      rows={2}
                       name="comments"
-                      label="Athugasemdir til dómara"
-                      placeholder="Skrifa hér..."
+                      label="Skilaboð til dómara"
+                      placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
                       defaultValue={workingCase?.comments}
                       onBlur={(evt) => {
                         autoSave(
@@ -692,6 +691,8 @@ export const StepTwo: React.FC = () => {
                           setWorkingCase,
                         )
                       }}
+                      textarea
+                      rows={6}
                     />
                   </Box>
                 </Box>

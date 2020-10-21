@@ -6,6 +6,7 @@ import {
   Table,
   UpdatedAt,
   ForeignKey,
+  PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { UserIdentity } from './user-identity.model'
@@ -19,21 +20,21 @@ import { UserIdentity } from './user-identity.model'
   ],
 })
 export class Claim extends Model<Claim> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
-
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
   type: string
+
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ForeignKey(() => UserIdentity)
+  subjectId: string
 
   @Column({
     type: DataType.STRING,
@@ -70,7 +71,4 @@ export class Claim extends Model<Claim> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
-
-  @ForeignKey(() => UserIdentity)
-  userIdentityId: string
 }

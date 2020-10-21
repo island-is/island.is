@@ -22,8 +22,11 @@ export class RecyclingPartnerService {
   }
 
   async findAll(): Promise<RecyclingPartnerModel[]> {
-    //this.logger.debug(`Finding gdpr for nationalId - "${nationalId}"`)
-    return await this.recyclingPartnerModel.findAll()
+    const res = await this.recyclingPartnerModel.findAll()
+    this.logger.debug(
+      'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
+    )
+    return res
   }
 
   async create(
