@@ -39,7 +39,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
         },
@@ -76,7 +76,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
         },
