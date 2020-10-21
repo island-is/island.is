@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react'
 import { Colors, theme } from '@island.is/island-ui/theme'
-import anime from 'animejs'
+import anime, { AnimeInstance } from 'animejs'
 
 interface LoadingIconProps {
   animate?: boolean
@@ -10,18 +10,15 @@ interface LoadingIconProps {
 
 export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
   ({ animate = true, color, size }, ref) => {
-    const animationRef = useRef(null)
-    const lineRef = useRef<SVGLineElement>()
+    const animationRef = useRef<AnimeInstance | null>(null)
+    const lineRef = useRef<SVGLineElement | null>(null)
 
     const usedColor = color
       ? theme.color[color]
       : `url(#loading-icon-new-linear-gradient)`
 
-    let props = {}
-
-    if (size) {
-      props['width'] = size
-      props['height'] = size
+    const props = {
+      ...(size && { width: size, height: size }),
     }
 
     useEffect(() => {
