@@ -480,7 +480,9 @@ export const StepTwo: React.FC = () => {
                   <Text as="h3" variant="h3">
                     Takmarkanir á gæslu
                   </Text>
-                  <Text>Ef ekkert er valið, er viðkomandi í lausagæslu</Text>
+                  <Text fontWeight="regular">
+                    Ef ekkert er valið, er viðkomandi í lausagæslu
+                  </Text>
                 </Box>
                 <GridContainer>
                   <GridRow>
@@ -497,7 +499,7 @@ export const StepTwo: React.FC = () => {
                               ) > -1
                             }
                             tooltip={restriction.explination}
-                            onChange={({ target }) => {
+                            onChange={async ({ target }) => {
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
@@ -547,7 +549,7 @@ export const StepTwo: React.FC = () => {
                               setWorkingCase(copyOfState)
 
                               // Save case
-                              api.saveCase(
+                              await api.saveCase(
                                 workingCase.id,
                                 parseArray(
                                   'requestedCustodyRestrictions',
@@ -555,7 +557,7 @@ export const StepTwo: React.FC = () => {
                                 ),
                               )
                               // TODO: COMBINE IN A SINGLE API CALL
-                              api.saveCase(
+                              await api.saveCase(
                                 workingCase.id,
                                 parseArray(
                                   'custodyRestrictions',
@@ -645,7 +647,7 @@ export const StepTwo: React.FC = () => {
                     }}
                   />
                 </Box>
-                <Box marginBottom={3}>
+                <Box marginBottom={7}>
                   <Input
                     textarea
                     rows={2}
