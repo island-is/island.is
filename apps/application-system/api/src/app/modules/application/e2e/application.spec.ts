@@ -19,7 +19,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ParentalLeave',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           usage: 3,
         },
@@ -39,7 +39,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
@@ -151,7 +151,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
         },
@@ -185,7 +185,7 @@ describe('Application system API', () => {
       .send({
         applicant: '123456-4321',
         attachments: {},
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           usage: 4,
         },
@@ -206,7 +206,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -237,7 +237,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -264,7 +264,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -289,7 +289,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -302,7 +302,7 @@ describe('Application system API', () => {
     // Assert
     expect(getResponse.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ assignee: '123456-1234' }),
+        expect.objectContaining({ assignees: ['123456-1234'] }),
       ]),
     )
   })

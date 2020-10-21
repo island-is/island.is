@@ -289,6 +289,7 @@ export const StepOne: React.FC = () => {
                     data-testid="policeCaseNumber"
                     name="policeCaseNumber"
                     label="Slá inn LÖKE málsnúmer"
+                    placeholder="007-2020-X"
                     defaultValue={workingCase.policeCaseNumber}
                     ref={policeCaseNumberRef}
                     errorMessage={policeCaseNumberErrorMessage}
@@ -345,6 +346,7 @@ export const StepOne: React.FC = () => {
                       data-testid="nationalId"
                       name="nationalId"
                       label="Kennitala"
+                      placeholder="Kennitala"
                       defaultValue={workingCase.accusedNationalId}
                       ref={accusedNationalIdRef}
                       errorMessage={nationalIdErrorMessage}
@@ -401,6 +403,7 @@ export const StepOne: React.FC = () => {
                       data-testid="accusedName"
                       name="accusedName"
                       label="Fullt nafn"
+                      placeholder="Fullt nafn"
                       defaultValue={workingCase.accusedName}
                       errorMessage={accusedNameErrorMessage}
                       hasError={accusedNameErrorMessage !== ''}
@@ -439,6 +442,7 @@ export const StepOne: React.FC = () => {
                       data-testid="accusedAddress"
                       name="accusedAddress"
                       label="Lögheimili/dvalarstaður"
+                      placeholder="Lögheimili eða dvalarstaður"
                       defaultValue={workingCase.accusedAddress}
                       errorMessage={accusedAddressErrorMessage}
                       hasError={accusedAddressErrorMessage !== ''}
@@ -702,6 +706,7 @@ export const StepOne: React.FC = () => {
             title="Viltu senda tilkynningu?"
             text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
             primaryButtonText="Senda tilkynningu"
+            secondaryButtonText="Halda áfram með kröfu"
             handleClose={() => setModalVisible(false)}
             handleSecondaryButtonClick={() =>
               history.push(Constants.STEP_TWO_ROUTE)

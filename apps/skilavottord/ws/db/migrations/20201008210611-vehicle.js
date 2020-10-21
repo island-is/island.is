@@ -10,16 +10,16 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.STRING,
       },
-      vehicle_type: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      vehicle_owner_id: {
+      owner_national_id: {
         allowNull: false,
         references: {
           key: 'national_id',
           model: 'vehicle_owner',
         },
+        type: DataTypes.STRING,
+      },
+      vehicle_type: {
+        allowNull: false,
         type: DataTypes.STRING,
       },
       vehicle_type: {

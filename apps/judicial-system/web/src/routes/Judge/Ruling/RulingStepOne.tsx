@@ -146,7 +146,7 @@ export const RulingStepOne: React.FC = () => {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, isStepIllegal])
-  console.log(workingCase)
+
   return workingCase ? (
     <Box marginTop={7} marginBottom={30}>
       <GridContainer>
@@ -182,9 +182,9 @@ export const RulingStepOne: React.FC = () => {
                   data-testid="ruling"
                   name="ruling"
                   label="Niðurstaða úrskurðar"
-                  placeholder="Skrifa hér..."
+                  placeholder="Hver er niðurstaðan að mati dómara?"
                   defaultValue={workingCase.ruling}
-                  rows={3}
+                  rows={12}
                   errorMessage={rulingErrorMessage}
                   hasError={rulingErrorMessage !== ''}
                   onFocus={() => setRulingErrorMessage('')}

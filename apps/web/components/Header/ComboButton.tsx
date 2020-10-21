@@ -1,10 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
-import {
-  Box,
-  IconDeprecated as Icon,
-  ColorSchemeContext,
-} from '@island.is/island-ui/core'
+import { Box, Icon, ColorSchemeContext } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './ComboButton.treat'
 import cn from 'classnames'
@@ -38,8 +34,9 @@ export const ComboButton: FC<ComboButtonProps> = ({
           onClick={sideMenuSearchFocus}
         >
           <Icon
-            type={'search'}
-            width={15}
+            size="small"
+            type="filled"
+            icon="search"
             color={colorSchemeIsWhite ? 'white' : 'blue400'}
           />
         </Box>
@@ -53,12 +50,13 @@ export const ComboButton: FC<ComboButtonProps> = ({
         })}
         onClick={sideBarMenuOpen}
       >
+        <span className={styles.buttonText}>{t.menuCaption}</span>
         <Icon
-          type={'burger'}
-          width={15}
+          size="small"
+          type="filled"
+          icon="menu"
           color={colorSchemeIsWhite ? 'white' : 'blue400'}
         />
-        <span className={styles.buttonText}>{t.menuCaption}</span>
       </Box>
     </>
   )

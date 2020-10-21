@@ -6,7 +6,7 @@ import { DataProviderTypes } from './DataProvider'
 import { MessageDescriptor } from 'react-intl'
 import { Application } from './Application'
 
-export type StaticText = MessageDescriptor | string
+export type StaticText = (MessageDescriptor & { values?: object }) | string
 
 export type FormText = StaticText | ((application: Application) => StaticText)
 
