@@ -19,7 +19,7 @@ export class UserIdentitiesService {
 
   async create(userIdentity: UserIdentityDto): Promise<UserIdentity> {
     this.logger.debug(
-      `Creating user identity with subjectIdId - ${userIdentity.subjectId}`,
+      `Creating user identity with subjectId - ${userIdentity.subjectId}`,
     )
 
     userIdentity.profileId = await this.findLinkableProfileId(userIdentity)
@@ -34,14 +34,6 @@ export class UserIdentitiesService {
     } catch {
       this.logger.warn('Error when executing transaction, rollbacked.')
     }
-  }
-
-  async getById(id: string): Promise<UserIdentity> {
-    this.logger.debug('Getting user identity data for id: ', id)
-
-    return this.userIdentityModel.findOne({
-      where: { id: id },
-    })
   }
 
   async findBySubjectId(subjectId: string): Promise<UserIdentity> {
@@ -93,27 +85,27 @@ export class UserIdentitiesService {
     })
   }
 
-  async update(
-    userIdentity: UserIdentityDto,
-    id: string,
-  ): Promise<UserIdentity> {
-    this.logger.debug('Updating the user identity with id: ', id)
+  async update(userIdentity: UserIdentityDto): Promise<UserIdentity> {
+    this.logger.debug(
+      'Updating the user identity with id: ',
+      userIdentity.subjectId,
+    )
 
     await this.userIdentityModel.update(
       { ...userIdentity },
       {
-        where: { id: id },
+        where: { subjectId: userIdentity.subjectId },
       },
     )
 
-    return await this.getById(id)
+    return await this.findBySubjectId(userIdentity.subjectId)
   }
 
-  async delete(id: string): Promise<number> {
-    this.logger.debug('Deleting user identity with id: ', id)
+  async delete(subjectId: string): Promise<number> {
+    this.logger.debug('Deleting user identity with id: ', subjectId)
 
     return await this.userIdentityModel.destroy({
-      where: { id: id },
+      where: { subjectId: subjectId },
     })
   }
 }
