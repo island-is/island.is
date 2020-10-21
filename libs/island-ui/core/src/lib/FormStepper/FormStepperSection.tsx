@@ -1,10 +1,12 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
+import cn from 'classnames'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { SectionNumber } from './SectionNumber/SectionNumber'
 import { SubSections } from './SubSections/SubSections'
+import * as styles from './FormStepperSection.treat'
 import * as types from './types'
 
 function getSubSectionsInSection(
@@ -54,9 +56,9 @@ export const FormStepperSection: FC<{
 
   return (
     <Box>
-      <Box ref={containerRef}>
-        <Box display="flex" alignItems="flexStart" marginBottom={1}>
-          <Box paddingTop={2}>
+      <Box ref={containerRef} className={styles.container}>
+        <Box display="flex" alignItems="center" marginBottom={[0, 0, 1]}>
+          <Box paddingTop={[0, 0, 2]}>
             <SectionNumber
               theme={theme}
               lineHeight={isLastSection ? 0 : containerHeight}
@@ -67,7 +69,13 @@ export const FormStepperSection: FC<{
             />
           </Box>
 
-          <Box paddingTop={2} width="full">
+          <Box
+            paddingTop={[0, 0, 2]}
+            width="full"
+            className={cn(styles.name, {
+              [styles.nameWithActiveSubSections]: hasSubSections && isActive,
+            })}
+          >
             <Text lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
               {section.name}
             </Text>

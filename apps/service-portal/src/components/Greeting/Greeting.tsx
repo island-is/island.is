@@ -14,9 +14,9 @@ const Greeting: FC<{}> = () => {
         <Box marginTop={[2, 3, 8]} marginBottom={2}>
           <Typography variant="h1">
             {formatMessage({
-              defaultMessage: 'Velkomin/nn aftur',
-              description: 'Welcome user',
-              id: 'service.portal:welcome-back',
+              defaultMessage: 'Góðan dag,',
+              description: 'Welcome the user',
+              id: 'service.portal:good-day',
             })}
           </Typography>
           <Typography variant="h3" color="purple400">

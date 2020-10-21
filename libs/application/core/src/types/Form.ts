@@ -6,7 +6,7 @@ import { DataProviderTypes } from './DataProvider'
 import { MessageDescriptor } from 'react-intl'
 import { Application } from './Application'
 
-export type StaticText = MessageDescriptor | string
+export type StaticText = (MessageDescriptor & { values?: object }) | string
 
 export type FormText = StaticText | ((application: Application) => StaticText)
 
@@ -30,12 +30,11 @@ export type FormMode =
   | 'pending'
 
 export interface Form {
-  id: ApplicationTypes
+  id: string
   name: StaticText
   type: FormItemTypes.FORM
   mode?: FormMode
   icon?: string
-  ownerId: string
   children: FormChildren[]
 }
 
@@ -68,7 +67,6 @@ export interface Repeater extends FormItem {
   component: string
   children: FormLeaf[]
   repetitions: number
-  required?: boolean
   repeaterIndex?: number
 }
 

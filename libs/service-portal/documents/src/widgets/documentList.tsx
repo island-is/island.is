@@ -13,12 +13,15 @@ import {
 import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import DocumentCard from '../components/DocumentCard/DocumentCard'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const pageSize = 2
 const dateFrom = new Date('2000-01-01T00:00:00.000')
 const dateTo = new Date()
 
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.documents')
+  const { formatMessage } = useLocale()
   const { data, loading, error } = useListDocuments(
     userInfo.profile.natreg,
     dateFrom,
@@ -34,14 +37,22 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         {error && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
             <Typography variant="h3">
-              Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+              {formatMessage({
+                id: 'sp.documents:error',
+                defaultMessage:
+                  'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
+              })}
             </Typography>
           </Box>
         )}
         {!loading && !error && data?.length === 0 && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
             <Typography variant="h3">
-              Engin skjöl fundust fyrir gefin leitarskilyrði
+              {formatMessage({
+                id: 'sp.documents:not-found',
+                defaultMessage:
+                  'Engin skjöl fundust fyrir gefin leitarskilyrði',
+              })}
             </Typography>
           </Box>
         )}
@@ -52,7 +63,10 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box display="flex" justifyContent="flexEnd" marginTop={3}>
         <Link to={ServicePortalPath.RafraenSkjolRoot}>
           <Button variant="text" icon="arrowRight">
-            Fara í rafræn skjöl
+            {formatMessage({
+              id: 'sp.documents:goto-documents',
+              defaultMessage: 'Fara í rafræn skjöl',
+            })}
           </Button>
         </Link>
       </Box>

@@ -15,7 +15,7 @@ const InfoIcon: FC = () => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      style={{ width: '100%' }}
+      className={styles.iconSVG}
       viewBox={`0 0 20 20`}
     >
       <path

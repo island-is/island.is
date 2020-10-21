@@ -1,14 +1,14 @@
-import React, { FC } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { Stack, Typography, Box, Link } from '@island.is/island-ui/core'
 import * as styles from './CompanyListItem.treat'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Button } from '@island.is/skilavottord-web/components'
 
 export interface CompanyProps {
-  name?: string
-  address?: string
-  phone?: string
-  website?: string
+  name: string
+  address: string
+  phone: string
+  website: string
+  buttons?: ReactNode
 }
 
 export const CompanyListItem: FC<CompanyProps> = ({
@@ -16,6 +16,7 @@ export const CompanyListItem: FC<CompanyProps> = ({
   address,
   phone,
   website,
+  buttons,
 }: CompanyProps) => {
   const {
     t: { handover: t },
@@ -45,6 +46,7 @@ export const CompanyListItem: FC<CompanyProps> = ({
           </Typography>
         </Stack>
       </Box>
+      {buttons}
     </Box>
   )
 }

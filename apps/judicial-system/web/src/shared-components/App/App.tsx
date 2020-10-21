@@ -41,9 +41,20 @@ const App: React.FC = () => {
     !isLoading && (
       <userContext.Provider value={{ user: user }}>
         <BrowserRouter>
-          <Header />
+          <Route
+            render={(props) => {
+              return <Header pathname={props.location.pathname} />
+            }}
+          ></Route>
           <main className={styles.mainConainer}>
             <Switch>
+              <Route
+                path={Constants.FEEDBACK_FORM_ROUTE}
+                component={() => {
+                  window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+                  return <DetentionRequests />
+                }}
+              />
               <Route path={Constants.CONFIRMATION_ROUTE}>
                 <Confirmation />
               </Route>

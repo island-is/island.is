@@ -1,4 +1,4 @@
-import { IsObject, IsString, IsOptional } from 'class-validator'
+import { IsObject, IsString, IsOptional, IsArray } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
@@ -8,14 +8,9 @@ export class UpdateApplicationDto {
   readonly applicant?: string
 
   @IsOptional()
-  @IsString()
+  @IsArray()
   @ApiPropertyOptional()
-  readonly assignee?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly externalId?: string
+  readonly assignees?: string[]
 
   @IsOptional()
   @IsObject()

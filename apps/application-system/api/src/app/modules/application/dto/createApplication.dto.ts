@@ -4,6 +4,7 @@ import {
   IsObject,
   IsString,
   IsOptional,
+  IsArray,
 } from 'class-validator'
 import { ApplicationTypes } from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -20,14 +21,9 @@ export class CreateApplicationDto {
   readonly applicant!: string
 
   @IsNotEmpty()
-  @IsString()
+  @IsArray()
   @ApiProperty()
-  readonly assignee!: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly externalId?: string
+  readonly assignees!: string[]
 
   @IsNotEmpty()
   @IsString()

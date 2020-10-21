@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { ProsecutorLogo } from '../../../../shared-components/Logos'
 import Modal from '../../../../shared-components/Modal/Modal'
 import {
-  Typography,
+  Text,
   GridContainer,
   GridRow,
   GridColumn,
@@ -38,6 +38,7 @@ import {
 export const StepOne: React.FC = () => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
 
   const [
     policeCaseNumberErrorMessage,
@@ -71,29 +72,6 @@ export const StepOne: React.FC = () => {
   const accusedNationalIdRef = useRef<HTMLInputElement>()
   const arrestTimeRef = useRef<HTMLInputElement>()
   const requestedCourtTimeRef = useRef<HTMLInputElement>()
-
-  const requiredFields: { value: string; validations: Validation[] }[] = [
-    {
-      value: workingCase?.policeCaseNumber,
-      validations: ['empty', 'police-casenumber-format'],
-    },
-    {
-      value: workingCase?.accusedNationalId,
-      validations: ['empty', 'national-id'],
-    },
-    { value: workingCase?.accusedName, validations: ['empty'] },
-    { value: workingCase?.accusedAddress, validations: ['empty'] },
-    { value: workingCase?.arrestDate, validations: ['empty'] },
-    {
-      value: arrestTimeRef.current?.value,
-      validations: ['empty', 'time-format'],
-    },
-    { value: workingCase?.requestedCourtDate, validations: ['empty'] },
-    {
-      value: requestedCourtTimeRef.current?.value,
-      validations: ['empty', 'time-format'],
-    },
-  ]
 
   const courts = [
     {
@@ -219,7 +197,13 @@ export const StepOne: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, id])
 
-  // Run this if id is in url, i.e. if user is opening an existing request.
+  /**
+   * Run this if id is in url, i.e. if user is opening an existing request.
+   *
+   * This can't be done in the render function because the time refs will always be null
+   * until the user clicks the time inputs and then the continue button becomes enabled.
+   *  */
+
   useEffect(() => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
@@ -239,6 +223,40 @@ export const StepOne: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase])
 
+  // Run this to validate form after each change
+  useEffect(() => {
+    const requiredFields: { value: string; validations: Validation[] }[] = [
+      {
+        value: workingCase?.policeCaseNumber,
+        validations: ['empty', 'police-casenumber-format'],
+      },
+      {
+        value: workingCase?.accusedNationalId,
+        validations: ['empty', 'national-id'],
+      },
+      { value: workingCase?.accusedName, validations: ['empty'] },
+      { value: workingCase?.accusedAddress, validations: ['empty'] },
+      { value: workingCase?.arrestDate, validations: ['empty'] },
+      {
+        value: arrestTimeRef.current?.value,
+        validations: ['empty', 'time-format'],
+      },
+      { value: workingCase?.requestedCourtDate, validations: ['empty'] },
+      {
+        value: requestedCourtTimeRef.current?.value,
+        validations: ['empty', 'time-format'],
+      },
+    ]
+    if (workingCase) {
+      setIsStepIllegal(isNextDisabled(requiredFields))
+    }
+  }, [
+    workingCase,
+    setIsStepIllegal,
+    arrestTimeRef.current?.value,
+    requestedCourtTimeRef.current?.value,
+  ])
+
   return (
     workingCase && (
       <>
@@ -250,9 +268,9 @@ export const StepOne: React.FC = () => {
                   <ProsecutorLogo />
                 </GridColumn>
                 <GridColumn span={'8/12'} offset={'1/12'}>
-                  <Typography as="h1" variant="h1">
+                  <Text as="h1" variant="h1">
                     Krafa um gæsluvarðhald
-                  </Typography>
+                  </Text>
                 </GridColumn>
               </GridRow>
             </Box>
@@ -263,9 +281,9 @@ export const StepOne: React.FC = () => {
               <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       LÖKE málsnúmer
-                    </Typography>
+                    </Text>
                   </Box>
                   <Input
                     data-testid="policeCaseNumber"
@@ -276,49 +294,51 @@ export const StepOne: React.FC = () => {
                     errorMessage={policeCaseNumberErrorMessage}
                     hasError={policeCaseNumberErrorMessage !== ''}
                     onBlur={(evt) => {
-                      updateState(
-                        workingCase,
-                        'policeCaseNumber',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-
-                      const validateField = validate(evt.target.value, 'empty')
-                      const validateFieldFormat = validate(
-                        evt.target.value,
-                        'police-casenumber-format',
-                      )
-                      if (
-                        validateField.isValid &&
-                        validateFieldFormat.isValid
-                      ) {
-                        if (workingCase.id !== '') {
-                          autoSave(
-                            workingCase,
-                            'policeCaseNumber',
-                            evt.target.value,
-                            setWorkingCase,
-                          )
-                        } else {
-                          createCaseIfPossible()
-                        }
-                      } else {
-                        setPoliceCaseNumberErrorMessage(
-                          validateField.errorMessage ||
-                            validateFieldFormat.errorMessage,
+                      if (workingCase.policeCaseNumber !== evt.target.value) {
+                        updateState(
+                          workingCase,
+                          'policeCaseNumber',
+                          evt.target.value,
+                          setWorkingCase,
                         )
+
+                        const validateField = validate(
+                          evt.target.value,
+                          'empty',
+                        )
+                        const validateFieldFormat = validate(
+                          evt.target.value,
+                          'police-casenumber-format',
+                        )
+                        if (
+                          validateField.isValid &&
+                          validateFieldFormat.isValid
+                        ) {
+                          if (workingCase.id !== '') {
+                            api.saveCase(
+                              workingCase.id,
+                              parseString('policeCaseNumber', evt.target.value),
+                            )
+                          } else {
+                            createCaseIfPossible()
+                          }
+                        } else {
+                          setPoliceCaseNumberErrorMessage(
+                            validateField.errorMessage ||
+                              validateFieldFormat.errorMessage,
+                          )
+                        }
                       }
                     }}
                     onFocus={() => setPoliceCaseNumberErrorMessage('')}
                     required
-                    autoFocus
                   />
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Sakborningur
-                    </Typography>
+                    </Text>
                   </Box>
                   <Box marginBottom={3}>
                     <Input
@@ -330,41 +350,46 @@ export const StepOne: React.FC = () => {
                       errorMessage={nationalIdErrorMessage}
                       hasError={nationalIdErrorMessage !== ''}
                       onBlur={(evt) => {
-                        updateState(
-                          workingCase,
-                          'accusedNationalId',
-                          evt.target.value.replace('-', ''),
-                          setWorkingCase,
-                        )
-
-                        const validateField = validate(
-                          evt.target.value,
-                          'empty',
-                        )
-                        const validateFieldFormat = validate(
-                          evt.target.value,
-                          'national-id',
-                        )
-
                         if (
-                          validateField.isValid &&
-                          validateFieldFormat.isValid
+                          workingCase.accusedNationalId !== evt.target.value
                         ) {
-                          if (workingCase.id !== '') {
-                            autoSave(
-                              workingCase,
-                              'accusedNationalId',
-                              evt.target.value,
-                              setWorkingCase,
-                            )
-                          } else {
-                            createCaseIfPossible()
-                          }
-                        } else {
-                          setNationalIdErrorMessage(
-                            validateField.errorMessage ||
-                              validateFieldFormat.errorMessage,
+                          updateState(
+                            workingCase,
+                            'accusedNationalId',
+                            evt.target.value.replace('-', ''),
+                            setWorkingCase,
                           )
+
+                          const validateField = validate(
+                            evt.target.value,
+                            'empty',
+                          )
+                          const validateFieldFormat = validate(
+                            evt.target.value,
+                            'national-id',
+                          )
+
+                          if (
+                            validateField.isValid &&
+                            validateFieldFormat.isValid
+                          ) {
+                            if (workingCase.id !== '') {
+                              api.saveCase(
+                                workingCase.id,
+                                parseString(
+                                  'accusedNationalId',
+                                  evt.target.value,
+                                ),
+                              )
+                            } else {
+                              createCaseIfPossible()
+                            }
+                          } else {
+                            setNationalIdErrorMessage(
+                              validateField.errorMessage ||
+                                validateFieldFormat.errorMessage,
+                            )
+                          }
                         }
                       }}
                       onFocus={() => setNationalIdErrorMessage('')}
@@ -380,28 +405,29 @@ export const StepOne: React.FC = () => {
                       errorMessage={accusedNameErrorMessage}
                       hasError={accusedNameErrorMessage !== ''}
                       onBlur={(evt) => {
-                        updateState(
-                          workingCase,
-                          'accusedName',
-                          evt.target.value,
-                          setWorkingCase,
-                        )
-
-                        const validateField = validate(
-                          evt.target.value,
-                          'empty',
-                        )
-
-                        if (
-                          validateField.isValid &&
-                          workingCase.accusedName !== evt.target.value
-                        ) {
-                          api.saveCase(
-                            workingCase.id,
-                            parseString('accusedName', evt.target.value),
+                        if (workingCase.accusedName !== evt.target.value) {
+                          updateState(
+                            workingCase,
+                            'accusedName',
+                            evt.target.value,
+                            setWorkingCase,
                           )
-                        } else {
-                          setAccusedNameErrorMessage(validateField.errorMessage)
+
+                          const validateField = validate(
+                            evt.target.value,
+                            'empty',
+                          )
+
+                          if (validateField.isValid) {
+                            api.saveCase(
+                              workingCase.id,
+                              parseString('accusedName', evt.target.value),
+                            )
+                          } else {
+                            setAccusedNameErrorMessage(
+                              validateField.errorMessage,
+                            )
+                          }
                         }
                       }}
                       onFocus={() => setAccusedNameErrorMessage('')}
@@ -417,30 +443,29 @@ export const StepOne: React.FC = () => {
                       errorMessage={accusedAddressErrorMessage}
                       hasError={accusedAddressErrorMessage !== ''}
                       onBlur={(evt) => {
-                        updateState(
-                          workingCase,
-                          'accusedAddress',
-                          evt.target.value,
-                          setWorkingCase,
-                        )
-
-                        const validateField = validate(
-                          evt.target.value,
-                          'empty',
-                        )
-
-                        if (
-                          validateField.isValid &&
-                          workingCase.accusedAddress !== evt.target.value
-                        ) {
-                          api.saveCase(
-                            workingCase.id,
-                            parseString('accusedAddress', evt.target.value),
+                        if (workingCase.accusedAddress !== evt.target.value) {
+                          updateState(
+                            workingCase,
+                            'accusedAddress',
+                            evt.target.value,
+                            setWorkingCase,
                           )
-                        } else {
-                          setAccusedAddressErrorMessage(
-                            validateField.errorMessage,
+
+                          const validateField = validate(
+                            evt.target.value,
+                            'empty',
                           )
+
+                          if (validateField.isValid) {
+                            api.saveCase(
+                              workingCase.id,
+                              parseString('accusedAddress', evt.target.value),
+                            )
+                          } else {
+                            setAccusedAddressErrorMessage(
+                              validateField.errorMessage,
+                            )
+                          }
                         }
                       }}
                       onFocus={() => setAccusedAddressErrorMessage('')}
@@ -450,9 +475,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Dómstóll
-                    </Typography>
+                    </Text>
                   </Box>
                   <Select
                     name="court"
@@ -475,9 +500,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Tími handtöku
-                    </Typography>
+                    </Text>
                   </Box>
                   <GridRow>
                     <GridColumn span="5/8">
@@ -570,9 +595,9 @@ export const StepOne: React.FC = () => {
                 </Box>
                 <Box component="section" marginBottom={7}>
                   <Box marginBottom={2}>
-                    <Typography as="h3" variant="h3">
+                    <Text as="h3" variant="h3">
                       Ósk um fyrirtökudag og tíma
-                    </Typography>
+                    </Text>
                   </Box>
                   <GridRow>
                     <GridColumn span="5/8">
@@ -666,7 +691,7 @@ export const StepOne: React.FC = () => {
                 <FormFooter
                   nextUrl={Constants.STEP_TWO_ROUTE}
                   onNextButtonClick={() => setModalVisible(true)}
-                  nextIsDisabled={isNextDisabled(requiredFields)}
+                  nextIsDisabled={isStepIllegal}
                 />
               </GridColumn>
             </GridRow>
@@ -677,6 +702,7 @@ export const StepOne: React.FC = () => {
             title="Viltu senda tilkynningu?"
             text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
             primaryButtonText="Senda tilkynningu"
+            secondaryButtonText="Halda áfram með kröfu"
             handleClose={() => setModalVisible(false)}
             handleSecondaryButtonClick={() =>
               history.push(Constants.STEP_TWO_ROUTE)

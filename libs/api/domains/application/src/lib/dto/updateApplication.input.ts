@@ -18,11 +18,6 @@ export class UpdateApplicationInput {
   @IsOptional()
   assignee?: string
 
-  @Field((type) => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  externalId?: string
-
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()

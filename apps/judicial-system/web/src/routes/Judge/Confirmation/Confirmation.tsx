@@ -406,10 +406,10 @@ export const Confirmation: React.FC = () => {
               ? 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
               : confirmSignatureResponse?.httpStatusCode >= 200 &&
                 confirmSignatureResponse?.httpStatusCode < 300
-              ? 'Tilkynning um úrskurð hefur verið send á ákæranda, verjanda og fangelsi.'
+              ? 'Tilkynning hefur verið send á ákæranda og dómara sem kvað upp úrskurð.'
               : renderContolCode()
           }
-          primaryButtonText={
+          secondaryButtonText={
             !confirmSignatureResponse
               ? null
               : confirmSignatureResponse.httpStatusCode >= 200 &&
@@ -417,7 +417,11 @@ export const Confirmation: React.FC = () => {
               ? 'Loka glugga og fara í yfirlit krafna'
               : 'Loka og reyna aftur'
           }
-          handlePrimaryButtonClick={async () => {
+          primaryButtonText="Gefa endurgjöf á gáttina"
+          handlePrimaryButtonClick={() => {
+            history.push(Constants.FEEDBACK_FORM_ROUTE)
+          }}
+          handleSecondaryButtonClick={async () => {
             if (
               confirmSignatureResponse.httpStatusCode >= 200 &&
               confirmSignatureResponse.httpStatusCode < 300

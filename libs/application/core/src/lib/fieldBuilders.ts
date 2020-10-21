@@ -1,4 +1,3 @@
-import { MessageDescriptor } from 'react-intl'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -26,7 +25,6 @@ export function buildCheckboxField(data: {
   name: FormText
   description?: FormText
   options: Option[]
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): CheckboxField {
@@ -36,13 +34,11 @@ export function buildCheckboxField(data: {
     name,
     description,
     options,
-    required = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
-    required,
     disabled,
     width,
     condition,
@@ -63,7 +59,6 @@ export function buildDateField(data: {
   description?: FormText
   maxDate?: Date
   minDate?: Date
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): DateField {
@@ -74,7 +69,6 @@ export function buildDateField(data: {
     description,
     maxDate,
     minDate,
-    required = false,
     disabled = false,
     width = 'full',
     placeholder,
@@ -83,7 +77,6 @@ export function buildDateField(data: {
     children: undefined,
     condition,
     id,
-    required,
     placeholder,
     disabled,
     width,
@@ -120,7 +113,6 @@ export function buildRadioField(data: {
   name: FormText
   description?: FormText
   options: Option[]
-  required?: boolean
   emphasize?: boolean
   largeButtons?: boolean
   disabled?: boolean
@@ -132,7 +124,6 @@ export function buildRadioField(data: {
     name,
     description,
     options,
-    required = false,
     emphasize = false,
     largeButtons = false,
     disabled = false,
@@ -140,7 +131,6 @@ export function buildRadioField(data: {
   } = data
   return {
     children: undefined,
-    required,
     emphasize,
     largeButtons,
     disabled,
@@ -162,7 +152,6 @@ export function buildSelectField(data: {
   description?: FormText
   placeholder?: string
   options: Option[]
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
 }): SelectField {
@@ -173,14 +162,12 @@ export function buildSelectField(data: {
     description,
     options,
     placeholder,
-    required = false,
     disabled = false,
     width = 'full',
   } = data
   return {
     children: undefined,
     placeholder,
-    required,
     disabled,
     width,
     condition,
@@ -198,7 +185,6 @@ export function buildTextField(data: {
   id: string
   name: FormText
   description?: FormText
-  required?: boolean
   disabled?: boolean
   width?: FieldWidth
   variant?: TextFieldVariant
@@ -208,14 +194,12 @@ export function buildTextField(data: {
     id,
     name,
     description,
-    required = false,
     disabled = false,
     width = 'full',
     variant = 'text',
   } = data
   return {
     children: undefined,
-    required,
     disabled,
     width,
     condition,
@@ -234,15 +218,13 @@ export function buildCustomField(
     id: string
     name: FormText
     description?: FormText
-    required?: boolean
     component: string
   },
   props: object,
 ): CustomField {
-  const { condition, id, name, description, required = false, component } = data
+  const { condition, id, name, description, component } = data
   return {
     children: undefined,
-    required,
     condition,
     id,
     name,
@@ -263,7 +245,6 @@ export function buildFileUploadField(data: {
   uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
-  required?: boolean
 }): FileUploadField {
   const {
     condition,
@@ -275,11 +256,9 @@ export function buildFileUploadField(data: {
     uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
-    required = false,
   } = data
   return {
     children: undefined,
-    required,
     condition,
     id,
     name,

@@ -1,6 +1,7 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import { DataProviderTypes } from '@island.is/application/core'
 
 let app: INestApplication
 
@@ -18,8 +19,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ParentalLeave',
-        assignee: '123456-1234',
-        externalId: '123',
+        assignees: ['123456-1234'],
         answers: {
           usage: 3,
         },
@@ -30,14 +30,87 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
+  it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
+    const server = request(app.getHttpServer())
+    const response = await server
+      .post('/applications')
+      .send({
+        applicant: '123456-4321',
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers: {
+          careerHistoryCompanies: ['government'],
+        },
+      })
+      .expect(201)
+
+    const newStateResponse = await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(newStateResponse.body.state).toBe('inReview')
+
+    const failedResponse = await server
+      .put(`/applications/${response.body.id}`)
+      .send({
+        answers: {
+          careerHistoryCompanies: ['government', 'aranja'],
+        },
+      })
+      .expect(400)
+
+    expect(failedResponse.body.message).toBe(
+      'Current user is not permitted to update answers in this state: inReview',
+    )
+  })
+
+  it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
+    const server = request(app.getHttpServer())
+    const response = await server
+      .post('/applications')
+      .send({
+        applicant: '123456-4321',
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers: {
+          careerHistoryCompanies: ['government'],
+        },
+      })
+      .expect(201)
+
+    const newStateResponse = await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(newStateResponse.body.state).toBe('inReview')
+
+    const failedResponse = await server
+      .put(`/applications/${response.body.id}/externalData`)
+      .send({
+        dataProviders: [
+          { id: 'test', type: DataProviderTypes.ExampleSucceeds },
+        ],
+      })
+      .expect(400)
+
+    expect(failedResponse.body.message).toBe(
+      'Current user is not permitted to update external data in this state: inReview',
+    )
+  })
+
   it('should fail when PUT-ing an application that does not exist', async () => {
     const response = await request(app.getHttpServer())
       .put('/applications/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
         applicant: '123456-4321',
         attachments: {},
-        assignee: '123456-1234',
-        externalId: '123',
+        assignees: ['123456-1234'],
         answers: {
           usage: 4,
         },
@@ -58,8 +131,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
-      externalId: '123',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -83,15 +155,14 @@ describe('Application system API', () => {
     expect(putResponse.body.answers.spread).toBe(22)
   })
 
-  it('PUT /application/:id should not be able to overwrite external data', async () => {
+  it('PUT /applications/:id should not be able to overwrite external data', async () => {
     const server = request(app.getHttpServer())
     const response = await server.post('/applications').send({
       applicant: '123456-4321',
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
-      externalId: '123',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -118,8 +189,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
-      externalId: '123',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -144,8 +214,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
-      externalId: '123',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -158,7 +227,7 @@ describe('Application system API', () => {
     // Assert
     expect(getResponse.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ assignee: '123456-1234' }),
+        expect.objectContaining({ assignees: ['123456-1234'] }),
       ]),
     )
   })

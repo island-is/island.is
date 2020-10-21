@@ -17,6 +17,7 @@ export interface BaseField extends FormItem {
   readonly name: FormText
   readonly description?: FormText
   readonly children: undefined
+  disabled?: boolean
   width?: FieldWidth
   condition?: Condition
   repeaterIndex?: number
@@ -50,18 +51,13 @@ export enum FieldComponents {
   REVIEW = 'ReviewFormField',
 }
 
-export interface Question extends BaseField {
-  required?: boolean
-  disabled?: boolean
-}
-
-export interface CheckboxField extends Question {
+export interface CheckboxField extends BaseField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
   options: Option[]
 }
 
-export interface DateField extends Question {
+export interface DateField extends BaseField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
@@ -75,7 +71,7 @@ export interface IntroductionField extends BaseField {
   readonly introduction: FormText
 }
 
-export interface RadioField extends Question {
+export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: Option[]
@@ -83,14 +79,14 @@ export interface RadioField extends Question {
   largeButtons?: boolean
 }
 
-export interface SelectField extends Question {
+export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: Option[]
   placeholder?: FormText
 }
 
-export interface TextField extends Question {
+export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
@@ -100,7 +96,7 @@ export interface TextField extends Question {
   variant?: TextFieldVariant
 }
 
-export interface FileUploadField extends Question {
+export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
   readonly introduction: FormText
@@ -122,7 +118,7 @@ export interface DividerField extends BaseField {
   component: FieldComponents.DIVIDER
 }
 
-export interface CustomField extends Question {
+export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
   props?: object

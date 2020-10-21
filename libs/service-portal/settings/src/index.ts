@@ -4,6 +4,7 @@ import {
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
+import { defineMessage } from 'react-intl'
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
@@ -16,15 +17,18 @@ export const settingsModule: ServicePortalModule = {
         render: () => lazy(() => import('./lib/service-portal-settings')),
       },
       {
-        name: 'Umboð',
+        name: 'Mín réttindi',
         path: ServicePortalPath.StillingarUmbod,
         render: () =>
           lazy(() => import('./screens/DelegationGreeting/DelegationGreeting')),
       },
       {
-        name: 'Skilaboð',
-        path: ServicePortalPath.SkilabodRoot,
-        render: () => lazy(() => import('./screens/Messages/Messages')),
+        name: defineMessage({
+          id: 'service-portal:profile-info',
+          defaultMessage: 'Mínar upplýsingar',
+        }),
+        path: ServicePortalPath.UserProfileRoot,
+        render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
     ]
 
