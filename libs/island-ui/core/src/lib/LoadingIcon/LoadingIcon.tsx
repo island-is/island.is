@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useEffect, useRef } from 'react'
 import { Colors, theme } from '@island.is/island-ui/theme'
+import anime from 'animejs'
 
 interface LoadingIconProps {
   animate?: boolean
@@ -7,30 +8,14 @@ interface LoadingIconProps {
   color?: Colors
 }
 
-const keyTimes = `
-  0 ; 0.25 ; 0.5 ; 0.75 ; 1
-`
-
-const keySplines = `
-  0.5 0 0.5 1 ;
-  0.5 0 0.5 1 ;
-  0.5 0 0.5 1 ;
-  0.5 0 0.5 1
-`
-
-const sharedProps = {
-  keyTimes,
-  keySplines,
-  fill: 'freeze',
-  calcMode: 'spline',
-  dur: `1.5s`,
-}
-
 export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
   ({ animate = true, color, size }, ref) => {
+    const animationRef = useRef(null)
+    const lineRef = useRef<SVGLineElement>()
+
     const usedColor = color
       ? theme.color[color]
-      : `url(#loading-icon-linear-gradient)`
+      : `url(#loading-icon-new-linear-gradient)`
 
     let props = {}
 
@@ -39,11 +24,44 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
       props['height'] = size
     }
 
+    useEffect(() => {
+      if (lineRef.current) {
+        animationRef.current = anime({
+          targets: lineRef.current,
+          keyframes: [
+            // right
+            { x1: 12, x2: 50, y1: 12, y2: 12 },
+            { x1: 50, x2: 50, y1: 12, y2: 12 },
+            { x1: 50, x2: 88, y1: 12, y2: 12 },
+            { x1: 88, x2: 88, y1: 12, y2: 12 },
+            // down
+            { x1: 88, x2: 88, y1: 50, y2: 12 },
+            { x1: 88, x2: 88, y1: 50, y2: 50 },
+            { x1: 88, x2: 88, y1: 88, y2: 50 },
+            { x1: 88, x2: 88, y1: 88, y2: 88 },
+            // left
+            { x1: 88, x2: 50, y1: 88, y2: 88 },
+            { x1: 50, x2: 50, y1: 88, y2: 88 },
+            { x1: 50, x2: 12, y1: 88, y2: 88 },
+            { x1: 12, x2: 12, y1: 88, y2: 88 },
+            // up
+            { x1: 12, x2: 12, y1: 88, y2: 50 },
+            { x1: 12, x2: 12, y1: 50, y2: 50 },
+            { x1: 12, x2: 12, y1: 50, y2: 12 },
+            { x1: 12, x2: 12, y1: 12, y2: 12 },
+          ],
+          duration: 2000,
+          loop: true,
+          easing: 'easeInOutSine',
+        })
+      }
+    }, [lineRef])
+
     return (
       <svg ref={ref} viewBox="0 0 100 100" {...props}>
         <defs>
           <linearGradient
-            id="loading-icon-linear-gradient"
+            id="loading-icon-new-linear-gradient"
             x1="2.819"
             y1="4.015725"
             x2="95.98525"
@@ -68,6 +86,7 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
         <circle cx="88" cy="88" r="12" fill={usedColor} />
         {!!animate && (
           <line
+            ref={lineRef}
             x1="12"
             x2="12"
             y1="12"
@@ -75,64 +94,7 @@ export const LoadingIcon = forwardRef<SVGSVGElement, LoadingIconProps>(
             stroke={usedColor}
             strokeWidth="24"
             strokeLinecap="round"
-          >
-            <animate
-              attributeName="x1"
-              begin="0s ; loading-icon-y1b-anim.end + 0s"
-              values="12 ; 12 ; 50 ; 50 ; 88"
-              {...sharedProps}
-              id="loading-icon-x1-anim"
-            />
-            <animate
-              attributeName="x2"
-              begin="0s ; loading-icon-y2b-anim.end + 0s"
-              values="12 ; 50 ; 50 ; 88 ; 88"
-              {...sharedProps}
-              id="loading-icon-x2-anim"
-            />
-            <animate
-              attributeName="y1"
-              begin="loading-icon-x2-anim.end + 0s"
-              values="12 ; 50 ; 50 ; 88 ; 88"
-              {...sharedProps}
-              id="loading-icon-y1-anim"
-            />
-            <animate
-              attributeName="y2"
-              begin="loading-icon-x1-anim.end + 0s"
-              values="12 ; 12 ; 50 ; 50 ; 88"
-              {...sharedProps}
-              id="loading-icon-y2-anim"
-            />
-            <animate
-              attributeName="x1"
-              begin="loading-icon-y2-anim.end + 0s"
-              values="88 ; 88 ; 50 ; 50 ; 12"
-              {...sharedProps}
-              id="loading-icon-x1b-anim"
-            />
-            <animate
-              attributeName="x2"
-              begin="loading-icon-y1-anim.end + 0s"
-              values="88 ; 50 ; 50 ; 12 ; 12"
-              {...sharedProps}
-              id="loading-icon-x2b-anim"
-            />
-            <animate
-              attributeName="y1"
-              begin="loading-icon-x2b-anim.end + 0s"
-              values="88 ; 50 ; 50 ; 12 ; 12"
-              {...sharedProps}
-              id="loading-icon-y1b-anim"
-            />
-            <animate
-              attributeName="y2"
-              begin="loading-icon-x1b-anim.end + 0s"
-              values="88 ; 88 ; 50 ; 50 ; 12"
-              {...sharedProps}
-              id="loading-icon-y2b-anim"
-            />
-          </line>
+          />
         )}
       </svg>
     )
