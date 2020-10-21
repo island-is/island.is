@@ -16,7 +16,7 @@ output=$($AUDIT_CMD)
 result=$?
 set -e
 
-if [ $result -eq 0 ]; then
+if [ $result -lt 4 ]; then
     # everything is fine
     exit 0
 fi
