@@ -2,6 +2,8 @@ const fs = require('fs')
 const { exec } = require('child_process')
 const { promisify } = require('util')
 
+// empty comment for rerun of schemas
+
 const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 const YARN_COMMANDS = [
   'yarn nx run application-system-api:build-schema',
