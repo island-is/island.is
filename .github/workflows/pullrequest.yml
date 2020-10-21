@@ -162,6 +162,8 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       MAX_JOBS: 4
+      # TODO: Can we get rid of this?
+      NODE_OPTIONS: --max-old-space-size=4096
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
