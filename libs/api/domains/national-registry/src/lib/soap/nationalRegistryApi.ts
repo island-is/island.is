@@ -1,18 +1,21 @@
-import { NotFoundException } from '@nestjs/common';
-import { arrayUnique } from 'class-validator';
+import { Inject, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { logger } from '@island.is/logging'
 import Soap from 'soap'
 import { MyInfo } from '../myInfo.model';
 import { GetViewHusaskraDto } from './dto/getViewHusaskraDto';
 import { GetViewKennitalaOgTrufelag } from './dto/getViewKennitalaOgTrufelag';
 import { GetViewSveitarfelagDto } from './dto/getViewSveitarfelagDto';
 import { GetViewThjodskraDto } from './dto/getViewThjodskraDto';
+import { GetViewFjolskyldanDto } from './dto/getViewFjolskyldanDto';
+import { FamilyMember } from '../familyMember.model';
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client
   private readonly clientUser: string
   private readonly clientPassword: string
 
-  constructor(private soapClient: Soap.Client,
+  constructor(
+    private soapClient: Soap.Client,
     clientPassword: string, clientUser: string) {
     this.client = soapClient
     this.clientUser = clientUser
@@ -26,24 +29,40 @@ export class NationalRegistryApi {
 
     const userInfo = response.table.diffgram.DocumentElement.Thjodskra
 
-    //GetViewHusaskra
     const houseResponse = await this.getViewHusaskra(userInfo.LoghHusk)
-    //GetViewKennitalaOgTrufelag
     const religionResponse = await this.getViewKennitalaOgTrufelag(nationalId)
-    //GetSambud?
-    //GetViewSveitarfelag
     const birthPlaceResponse = await this.getViewSveitarfelag(userInfo.Faedsvfnr)
 
     return {
       fullName: userInfo.Nafn,
       citizenship: userInfo.Rikisfang,
-      gender: userInfo.Kyn,
+      gender: this.formatGender(userInfo.Kyn),
       birthPlace: this.formatBirthPlaceString(birthPlaceResponse),
       religion: this.formatReligionString(religionResponse),
       legalResidence: this.formatResidenceAddressString(houseResponse),
-      maritalStatus: userInfo.Hju,
+      maritalStatus: this.formatMartialStatus(userInfo.Hju),
       banMarking: 'not implemented'
     }
+  }
+
+  public async getMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
+    const response = await this.getViewFjolskyldan(nationalId)
+    if (!response) throw new NotFoundException(`family for nationalId ${nationalId} not found`)
+    console.log(response)
+
+    const family = response?.table.diffgram.DocumentElement.Fjolskyldan
+
+    if (!family) throw new NotFoundException(`family for nationalId ${nationalId} not found`)
+
+    const members = family.map(x => ({
+      fullName: x.Nafn,
+      nationalId: x.Kennitala,
+      gender: x.Kyn,
+      maritalStatus: x.Hjuskapur,
+      address: `${x.Husheiti} , ${x.Pnr} ${x.Sveitarfelag}`
+    } as FamilyMember))
+
+    return members
   }
 
   private formatResidenceAddressString(houseDto: GetViewHusaskraDto | null): string {
@@ -63,6 +82,33 @@ export class NationalRegistryApi {
     return birthPlaceDto.table.diffgram.DocumentElement.Sveitarfelag.Sokn
   }
 
+  private formatMartialStatus(maritalCode: string): string {
+    switch (maritalCode) {
+      case '1':
+        return 'Ógift (ókvæntur)'
+      case '3':
+        return 'Gift (kvæntur) eða staðfest samvist'
+      case '4':
+        return 'Ekkill, ekkja'
+      case '5':
+        return 'Skilin(n) að borði og sæng'
+      case '6':
+        return 'Skilin(n) að lögum'
+      case '7':
+        return 'Hjón ekki í samvistum'
+      case '8':
+        return 'Íslendingur í hjúskap með útlendingi sem nýtur úrlendisréttar og verður því ekki skráður (t.d. varnarliðsmaður eða sendiráðsmaður)'
+      case '9':
+        return 'Hjúskaparstaða óupplýst'
+      case '0':
+        return 'Íslendingur með lögheimili erlendis; í hjúskap með útlendingi sem ekki er á skrá'
+      case 'L':
+        return 'Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá'
+      default:
+        return maritalCode
+    }
+  }
+
   private formatGender(genderIndex: string): string {
     switch (genderIndex) {
       case "1":
@@ -73,6 +119,10 @@ export class NationalRegistryApi {
         return "Drengur"
       case "4":
         return "Stúlka"
+      case "7":
+        return "Kynsegin"
+      case "8":
+        return "Kynsegin"
       default:
         return genderIndex
     }
@@ -86,18 +136,20 @@ export class NationalRegistryApi {
         ":S5Username": this.clientUser,
         ":S5Password": this.clientPassword,
         ":Kennitala": nationalId,
-      }, (err: any, { GetViewThjodskraResult: result }: { GetViewThjodskraResult: GetViewThjodskraDto }) => {
-        if (err) {
-          _reject(err);
+      }, (error: any, { GetViewThjodskraResult: result }: { GetViewThjodskraResult: GetViewThjodskraDto }) => {
+        if (!result.success) {
+          logger.error(result.message)
+          _reject(result)
         }
-
+        if (error) {
+          _reject(error);
+        }
         resolve(result);
       });
     });
   }
 
   public async getViewHusaskra(houseCode: string): Promise<GetViewHusaskraDto | null> {
-    console.log('get husaskra')
     return await new Promise((resolve, _reject) => {
       this.client.GetViewHusaskra({
         ":SortColumn": 1,
@@ -105,12 +157,14 @@ export class NationalRegistryApi {
         ":S5Username": this.clientUser,
         ":S5Password": this.clientPassword,
         ":HusKodi": houseCode,
-      }, (err: any, { GetViewHusaskraResult: result }: { GetViewHusaskraResult: GetViewHusaskraDto }) => {
-        if (err) {
-          console.log(err)
-          _reject(err);
+      }, (error: any, { GetViewHusaskraResult: result }: { GetViewHusaskraResult: GetViewHusaskraDto }) => {
+        if (!result.success) {
+          logger.error(result.message)
+          _reject(result)
         }
-        console.log('response ', result)
+        if (error) {
+          _reject(error);
+        }
         resolve(result);
       });
     });
@@ -124,12 +178,14 @@ export class NationalRegistryApi {
         ":S5Username": this.clientUser,
         ":S5Password": this.clientPassword,
         ":Kennitala": nationalId,
-      }, (err: any, { GetViewKennitalaOgTrufelagResult: result }: { GetViewKennitalaOgTrufelagResult: GetViewKennitalaOgTrufelag }) => {
-        if (err) {
-          console.log(err)
-          _reject(err);
+      }, (error: any, { GetViewKennitalaOgTrufelagResult: result }: { GetViewKennitalaOgTrufelagResult: GetViewKennitalaOgTrufelag }) => {
+        if (!result.success) {
+          logger.error(result.message)
+          _reject(result)
         }
-        console.log(JSON.stringify(result))
+        if (error) {
+          _reject(error);
+        }
         resolve(result);
       });
     });
@@ -143,15 +199,37 @@ export class NationalRegistryApi {
         ":S5Username": this.clientUser,
         ":S5Password": this.clientPassword,
         ":SvfNr": municipalCode,
-      }, (err: any, { GetViewSveitarfelagResult: result }: { GetViewSveitarfelagResult: GetViewSveitarfelagDto }) => {
-        if (err) {
-          console.log(err)
-          _reject(err);
+      }, (error: any, { GetViewSveitarfelagResult: result }: { GetViewSveitarfelagResult: GetViewSveitarfelagDto }) => {
+        if (!result.success) {
+          logger.error(result.message)
+          _reject(result)
+        }
+        if (error) {
+          _reject(error);
         }
         resolve(result);
       });
     });
   }
 
-  //GetViewFjolskyldan
+  public async getViewFjolskyldan(nationalId: string): Promise<GetViewFjolskyldanDto | null> {
+    return await new Promise((resolve, _reject) => {
+      this.client.GetViewFjolskyldan({
+        ":SortColumn": 1,
+        ":SortAscending": true,
+        ":S5Username": this.clientUser,
+        ":S5Password": this.clientPassword,
+        ":Kennitala": nationalId,
+      }, (error: any, { GetViewFjolskyldanResult: result }: { GetViewFjolskyldanResult: GetViewFjolskyldanDto }) => {
+        if (!result.success) {
+          logger.error(result.message)
+          _reject(result)
+        }
+        if (error) {
+          _reject(error);
+        }
+        resolve(result);
+      });
+    });
+  }
 }

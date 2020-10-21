@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging';
 import * as Soap from 'soap'
 
 export class SoapClient {
@@ -9,7 +10,7 @@ export class SoapClient {
         (error, client) => {
           if (error) {
             //TODO log to provider
-            console.log('error', error)
+            logger.error(error)
             reject(error);
           }
           client.setEndpoint(`${baseUrl}/lisaws/service.asmx`);

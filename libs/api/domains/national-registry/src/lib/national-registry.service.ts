@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { FamilyMember } from './familyMember.model';
 import { MyInfo } from './myInfo.model';
 import { NationalRegistryApi } from './soap/nationalRegistryApi';
 
@@ -7,9 +8,10 @@ export class NationalRegistryService {
   constructor(private nationalRegistryApi: NationalRegistryApi) { }
 
   async GetMyinfo(nationalId: string): Promise<MyInfo | null> {
-    console.log('getmyinof')
-    const result = await this.nationalRegistryApi.getMyInfo(nationalId)
+    return await this.nationalRegistryApi.getMyInfo(nationalId)
+  }
 
-    return result
+  async GetMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
+    return await this.nationalRegistryApi.getMyFamily(nationalId)
   }
 }
