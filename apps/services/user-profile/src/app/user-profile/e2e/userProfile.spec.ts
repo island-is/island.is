@@ -6,7 +6,6 @@ let app: INestApplication
 
 beforeAll(async () => {
   app = await setup()
-  console.log(app)
 })
 
 describe('User profile API', () => {
