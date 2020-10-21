@@ -8,17 +8,16 @@ import {
 } from '@island.is/island-ui/core'
 import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
+import { UserRole } from '../../utils/authenticate'
+import { JudgeLogo, ProsecutorLogo } from '../Logos'
 
 interface PageProps {
   children: ReactNode
-}
-
-interface ProcessPageProps extends PageProps {
   activeSection: number
   activeSubSection: number
 }
 
-export const ProcessPageLayout: FC<ProcessPageProps> = ({
+export const PageLayout: FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
@@ -50,6 +49,15 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
             </Box>
           </GridColumn>
           <GridColumn span={['0', '0', '3/12', '3/12']}>
+            {uContext.user?.role === UserRole.JUDGE ? (
+              <Box marginBottom={7}>
+                <JudgeLogo />
+              </Box>
+            ) : uContext.user?.role === UserRole.PROSECUTOR ? (
+              <Box marginBottom={7}>
+                <ProsecutorLogo />
+              </Box>
+            ) : null}
             <FormStepper
               sections={[
                 {
@@ -71,6 +79,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
                   ],
                 },
               ]}
+              formName="Gæsluvarðhald"
               activeSection={activeSection}
               activeSubSection={activeSubSection}
             />

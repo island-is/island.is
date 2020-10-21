@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom'
 import Modal from '../../../../shared-components/Modal/Modal'
 import {
   Text,
-  GridContainer,
   GridRow,
   GridColumn,
   Input,
@@ -32,7 +31,7 @@ import {
   parseString,
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { ProcessPageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
@@ -258,7 +257,7 @@ export const StepOne: React.FC = () => {
 
   return (
     workingCase && (
-      <ProcessPageLayout activeSection={0} activeSubSection={0}>
+      <PageLayout activeSection={0} activeSubSection={0}>
         <Text as="h1" variant="h1">
           Krafa um gæsluvarðhald
         </Text>
@@ -653,7 +652,7 @@ export const StepOne: React.FC = () => {
             isPrimaryButtonLoading={isSendingNotification}
           />
         )}
-      </ProcessPageLayout>
+      </PageLayout>
     )
   )
 }
