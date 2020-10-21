@@ -24,25 +24,25 @@ const variantStyles: VariantStyles = {
     background: 'red100',
     borderColor: 'red200',
     iconColor: 'red400',
-    icon: 'alert',
+    icon: 'warning',
   },
   info: {
     background: 'blue100',
     borderColor: 'blue200',
     iconColor: 'blue400',
-    icon: 'information',
+    icon: 'informationCircle',
   },
   success: {
     background: 'mint100',
     borderColor: 'mint200',
     iconColor: 'mint400',
-    icon: 'checkmark',
+    icon: 'checkmarkCircle',
   },
   warning: {
     background: 'yellow200',
     borderColor: 'yellow400',
     iconColor: 'yellow600',
-    icon: 'alert',
+    icon: 'warning',
   },
 }
 
@@ -68,16 +68,8 @@ export const AlertMessage: React.FC<AlertMessageProps> = ({
       borderWidth="standard"
     >
       <Box display="flex" alignItems="center" marginBottom={1}>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          marginRight={2}
-          flexShrink={0}
-          borderRadius="circle"
-          background={variant.iconColor}
-        >
-          <Icon type="outline" icon={variant.icon} color="white" />
+        <Box display="flex" alignItems="center" marginRight={2} flexShrink={0}>
+          <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
         </Box>
         <Text as="h5" variant="h5">
           {title}
