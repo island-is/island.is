@@ -73,4 +73,3 @@ export * from './lib/context'
 
 // Util functions
 export * from './utils/global.treat'
-export * from './utils/escapeGrid'
