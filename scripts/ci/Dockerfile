@@ -22,7 +22,7 @@ ENV APP=${APP}
 
 RUN yarn run build ${APP} --prod
 
-FROM node:12.16.2-alpine3.11 as output-base
+FROM node:12.19.0-alpine3.11 as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
