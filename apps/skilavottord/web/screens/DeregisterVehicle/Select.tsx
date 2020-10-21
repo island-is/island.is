@@ -58,7 +58,7 @@ const Select: FC = () => {
             </Button>
           </Hidden>
           <Button
-            icon="arrowBack"
+            icon="arrowForward"
             disabled={!registrationNumber}
             onClick={handleContinue}
           >
