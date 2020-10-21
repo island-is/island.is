@@ -15,16 +15,12 @@ import { useRouter } from 'next/router'
 
 const CompanyOverview: FC = () => {
   const {
-    t: {
-      companyOverview: t,
-      companySidenav: sidenavText,
-      routes: { deregisterVehicle: routes },
-    },
+    t: { companyOverview: t, companySidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
   const handleDeregister = () => {
-    router.push(routes.select)
+    router.push(routes.deregisterVehicle.select)
   }
 
   return (
@@ -59,12 +55,12 @@ const CompanyOverview: FC = () => {
             {
               icon: 'car',
               title: `${sidenavText.deregister}`,
-              link: './company-overview',
+              link: `${routes.deregisterVehicle.baseRoute}`,
             },
             {
               icon: 'business',
               title: `${sidenavText.companyInfo}`,
-              link: './company-info',
+              link: `${routes.companyInfo.baseRoute}`,
             },
           ]}
           activeSection={0}

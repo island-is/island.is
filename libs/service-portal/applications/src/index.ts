@@ -27,6 +27,12 @@ export const applicationsModule: ServicePortalModule = {
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),
       },
+      {
+        name: rootName,
+        path: ServicePortalPath.UmsoknirKynning,
+        render: () =>
+          lazy(() => import('./screens/ApplicationListWip/ApplicationListWip')),
+      },
     ]
 
     return applicationRoutes

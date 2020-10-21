@@ -96,6 +96,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         {hasCTA && (
           <Button
             variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+            size="small"
             onClick={cta.onClick}
           >
             {cta.label}

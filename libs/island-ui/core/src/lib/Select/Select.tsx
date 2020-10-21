@@ -15,7 +15,7 @@ import ReactSelect, {
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
-import { Icon } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
 
 export type Option = {
   label: string
@@ -57,7 +57,7 @@ export const Select = ({
   errorMessage = '',
   placeholder = '',
   defaultValue,
-  icon = 'cheveron',
+  icon = 'chevronDown',
   isSearchable = true,
 }: SelectProps) => {
   return (
@@ -127,7 +127,12 @@ const DropdownIndicator = (props: IndicatorProps<Option>) => {
       className={styles.dropdownIndicator}
       {...props}
     >
-      <Icon type={icon} width="22" color={hasError ? 'red400' : 'blue400'} />
+      <Icon
+        icon={icon}
+        type="outline"
+        size="large"
+        color={hasError ? 'red400' : 'blue400'}
+      />
     </components.DropdownIndicator>
   )
 }
