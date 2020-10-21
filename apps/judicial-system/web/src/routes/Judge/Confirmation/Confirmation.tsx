@@ -160,6 +160,7 @@ export const Confirmation: React.FC = () => {
                   <AccordionItem
                     id="id_1"
                     label="Krafan um gæsluvarðhald frá Lögreglu"
+                    labelVariant="h3"
                   >
                     <Box marginBottom={2}>
                       <Text variant="h4" as="h4">
@@ -167,46 +168,58 @@ export const Confirmation: React.FC = () => {
                       </Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Text>Kennitala: {workingCase.accusedNationalId}</Text>
+                      <Text variant="intro">
+                        Kennitala: {workingCase.accusedNationalId}
+                      </Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Text>Fullt nafn: {workingCase.accusedName}</Text>
+                      <Text variant="intro">
+                        Fullt nafn: {workingCase.accusedName}
+                      </Text>
                     </Box>
                     <Box marginBottom={3}>
-                      <Text>Lögheimili: {workingCase.accusedAddress}</Text>
+                      <Text variant="intro">
+                        Lögheimili: {workingCase.accusedAddress}
+                      </Text>
                     </Box>
                     <AccordionListItem title="Tími handtöku">
-                      {`${capitalize(
-                        formatDate(workingCase.arrestDate, 'PPPP'),
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`}
+                      <Text variant="intro">
+                        {`${capitalize(
+                          formatDate(workingCase.arrestDate, 'PPPP'),
+                        )} kl. ${formatDate(
+                          workingCase.arrestDate,
+                          TIME_FORMAT,
+                        )}`}
+                      </Text>
                     </AccordionListItem>
                     <AccordionListItem title="Ósk um fyrirtökudag og tíma">
-                      {`${capitalize(
-                        formatDate(workingCase.requestedCourtDate, 'PPPP'),
-                      )} kl. ${formatDate(
-                        workingCase.requestedCourtDate,
-                        TIME_FORMAT,
-                      )}`}
+                      <Text variant="intro">
+                        {`${capitalize(
+                          formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                        )} kl. ${formatDate(
+                          workingCase.requestedCourtDate,
+                          TIME_FORMAT,
+                        )}`}
+                      </Text>
                     </AccordionListItem>
                     <AccordionListItem title="Dómkröfur">
-                      {`Gæsluvarðhald til ${capitalize(
-                        formatDate(workingCase.custodyEndDate, 'PPP'),
-                      )} kl. ${formatDate(
-                        workingCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`}
+                      <Text variant="intro">
+                        {`Gæsluvarðhald til ${capitalize(
+                          formatDate(workingCase.custodyEndDate, 'PPP'),
+                        )} kl. ${formatDate(
+                          workingCase.custodyEndDate,
+                          TIME_FORMAT,
+                        )}`}
+                      </Text>
                     </AccordionListItem>
                     <AccordionListItem title="Lagaákvæði">
-                      {workingCase.lawsBroken}
+                      <Text variant="intro">{workingCase.lawsBroken}</Text>
                     </AccordionListItem>
                     <Box marginBottom={1}>
                       <Text variant="h5">Takmarkanir á gæslu</Text>
                     </Box>
                     <Box marginBottom={4}>
-                      <Text>
+                      <Text variant="intro">
                         {formatCustodyRestrictions(
                           workingCase.custodyRestrictions,
                         )}
@@ -218,26 +231,28 @@ export const Confirmation: React.FC = () => {
                       </Text>
                     </Box>
                     <AccordionListItem title="Málsatvik rakin">
-                      {workingCase.caseFacts}
+                      <Text variant="intro">{workingCase.caseFacts}</Text>
                     </AccordionListItem>
                     <AccordionListItem title="Framburðir">
-                      {workingCase.witnessAccounts}
+                      <Text variant="intro">{workingCase.witnessAccounts}</Text>
                     </AccordionListItem>
                     <AccordionListItem title="Staða rannsóknar og næstu skref">
-                      {workingCase.investigationProgress}
+                      <Text variant="intro">
+                        {workingCase.investigationProgress}
+                      </Text>
                     </AccordionListItem>
                     <AccordionListItem title="Lagarök">
-                      {workingCase.legalArguments}
+                      <Text variant="intro">{workingCase.legalArguments}</Text>
                     </AccordionListItem>
                   </AccordionItem>
-                  <AccordionItem id="id_2" label="Þingbók">
+                  <AccordionItem id="id_2" label="Þingbók" labelVariant="h3">
                     <Box marginBottom={2}>
                       <Text variant="h4" as="h4">
                         Upplýsingar
                       </Text>
                     </Box>
                     <Box marginBottom={1}>
-                      <Text>
+                      <Text variant="intro">
                         {`Þinghald frá kl. ${formatDate(
                           workingCase.courtStartTime,
                           TIME_FORMAT,
@@ -248,27 +263,33 @@ export const Confirmation: React.FC = () => {
                       </Text>
                     </Box>
                     <AccordionListItem title="Krafa lögreglu">
-                      {workingCase.policeDemands}
+                      <Text variant="intro">{workingCase.policeDemands}</Text>
                     </AccordionListItem>
                     <AccordionListItem title="Viðstaddir">
-                      {workingCase.courtAttendees}
+                      <Text variant="intro">{workingCase.courtAttendees}</Text>
                     </AccordionListItem>
                     <AccordionListItem title="Dómskjöl">
-                      Rannsóknargögn málsins liggja frammi. Krafa lögreglu
-                      þingmerkt nr. 1.
+                      <Text variant="intro">
+                        Rannsóknargögn málsins liggja frammi. Krafa lögreglu
+                        þingmerkt nr. 1.
+                      </Text>
                     </AccordionListItem>
                     <AccordionListItem title="Réttindi kærða">
-                      Kærða er bent á að honum sé óskylt að svara spurningum er
-                      varða brot það sem honum er gefið að sök, sbr. 2. mgr.
-                      113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um
-                      sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1.
-                      mgr. 114. gr. sömu laga.
+                      <Text variant="intro">
+                        Kærða er bent á að honum sé óskylt að svara spurningum
+                        er varða brot það sem honum er gefið að sök, sbr. 2.
+                        mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur
+                        áminntur um sannsögli kjósi hann að tjá sig um
+                        sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
+                      </Text>
                     </AccordionListItem>
                     <AccordionListItem title="Afstaða kærða">
-                      {workingCase.accusedPlea}
+                      <Text variant="intro">{workingCase.accusedPlea}</Text>
                     </AccordionListItem>
                     <AccordionListItem title="Málflutningur">
-                      {workingCase.litigationPresentations}
+                      <Text variant="intro">
+                        {workingCase.litigationPresentations}
+                      </Text>
                     </AccordionListItem>
                   </AccordionItem>
                 </Accordion>
@@ -280,10 +301,10 @@ export const Confirmation: React.FC = () => {
                   </Text>
                 </Box>
                 <Box marginBottom={7}>
-                  <Text variant="tag" color="blue400">
+                  <Text variant="eyebrow" color="blue400">
                     Niðurstaða úrskurðar
                   </Text>
-                  <Text>{workingCase.ruling}</Text>
+                  <Text variant="intro">{workingCase.ruling}</Text>
                 </Box>
               </Box>
               <Box component="section" marginBottom={7}>
@@ -295,26 +316,34 @@ export const Confirmation: React.FC = () => {
                 <Box marginBottom={3}>
                   <Text>{constructConclusion(workingCase)}</Text>
                 </Box>
-                <Text>
+                <Text variant="h4" fontWeight="light">
                   Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
                   verjanda hans, túlki og aðstoðarsaksóknara.
                 </Text>
               </Box>
               <Box component="section" marginBottom={3}>
-                <Box marginBottom={2}>
+                <Box marginBottom={1}>
                   <Text as="h4" variant="h4">
                     Ákvörðun um kæru
                   </Text>
                 </Box>
                 <Box marginBottom={1}>
-                  <Text>
+                  <Text variant="h4" fontWeight="light">
+                    Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
+                    úrskurð þennan til Landsréttar innan þriggja sólarhringa.
+                    Dómari bendir kærða á að honum sé heimilt að bera atriði er
+                    lúta að framkvæmd gæsluvarðhaldsins undir dómara.
+                  </Text>
+                </Box>
+                <Box marginBottom={1}>
+                  <Text variant="h4">
                     {getAppealDecitionText(
                       AppealDecitionRole.ACCUSED,
                       workingCase.accusedAppealDecision,
                     )}
                   </Text>
                 </Box>
-                <Text>
+                <Text variant="h4">
                   {getAppealDecitionText(
                     AppealDecitionRole.PROSECUTOR,
                     workingCase.prosecutorAppealDecision,
@@ -331,7 +360,9 @@ export const Confirmation: React.FC = () => {
                         <Text variant="eyebrow" color="blue400">
                           Yfirlýsing um kæru kærða
                         </Text>
-                        <Text>{workingCase.accusedAppealAnnouncement}</Text>
+                        <Text variant="intro">
+                          {workingCase.accusedAppealAnnouncement}
+                        </Text>
                       </Box>
                     )}
                   {workingCase.prosecutorAppealAnnouncement &&
@@ -341,7 +372,9 @@ export const Confirmation: React.FC = () => {
                         <Text variant="eyebrow" color="blue400">
                           Yfirlýsing um kæru sækjanda
                         </Text>
-                        <Text>{workingCase.prosecutorAppealAnnouncement}</Text>
+                        <Text variant="intro">
+                          {workingCase.prosecutorAppealAnnouncement}
+                        </Text>
                       </Box>
                     )}
                 </Box>
