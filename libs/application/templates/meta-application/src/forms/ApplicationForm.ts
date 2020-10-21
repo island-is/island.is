@@ -16,8 +16,7 @@ import {
 import { m } from './messages'
 
 export const ApplicationForm: Form = buildForm({
-  id: ApplicationTypes.APPLICATION_APPLICATION,
-  ownerId: 'DOL',
+  id: ApplicationTypes.META_APPLICATION,
   name: 'Meta application',
   children: [
     buildSection({
@@ -31,32 +30,27 @@ export const ApplicationForm: Form = buildForm({
             buildTextField({
               id: 'applicant.institution',
               name: m.institution,
-              required: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.ministry',
               name: m.ministry,
-              required: false,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.contact',
               name: m.contact,
-              required: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.email',
               name: m.email,
-              required: false,
               width: 'half',
               variant: 'email',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.phoneNumber,
-              required: false,
               width: 'half',
               variant: 'tel',
             }),
@@ -79,20 +73,17 @@ export const ApplicationForm: Form = buildForm({
                 buildTextField({
                   id: 'service.name',
                   name: m.serviceName,
-                  required: false,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'service.countPerYEar',
                   name: m.serviceCount,
-                  required: false,
                   width: 'half',
                   variant: 'number',
                 }),
                 buildTextField({
                   id: 'service.users',
                   name: m.serviceUsers,
-                  required: false,
                   width: 'half',
                 }),
               ],
@@ -110,7 +101,6 @@ export const ApplicationForm: Form = buildForm({
                 buildRadioField({
                   id: 'service.digital',
                   name: m.serviceDigital,
-                  required: true,
                   options: [
                     { value: 'yes', label: m.yesOptionLabel },
                     { value: 'no', label: m.noOptionLabel },
@@ -119,7 +109,6 @@ export const ApplicationForm: Form = buildForm({
                 buildTextField({
                   id: 'service.link',
                   name: m.serviceLink,
-                  required: false,
                   width: 'half',
                   condition: (formValue: FormValue) => {
                     return (
@@ -143,29 +132,31 @@ export const ApplicationForm: Form = buildForm({
           name: 'Hvaða gögn þarf að skila með umsókn?',
           component: 'DataRepeater',
           children: [
-            buildTextField({
-              id: 'name',
-              name: m.dataName,
-              required: false,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'publisher',
-              name: m.dataPublisher,
-              required: false,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'download',
-              name: m.dataDownload,
-              required: false,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'upload',
-              name: m.dataUpload,
-              required: false,
-              width: 'half',
+            buildMultiField({
+              id: 'data.fields',
+              name: '',
+              children: [
+                buildTextField({
+                  id: 'name',
+                  name: m.dataName,
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'publisher',
+                  name: m.dataPublisher,
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'download',
+                  name: m.dataDownload,
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'upload',
+                  name: m.dataUpload,
+                  width: 'half',
+                }),
+              ],
             }),
           ],
         }),
@@ -182,7 +173,6 @@ export const ApplicationForm: Form = buildForm({
             buildRadioField({
               id: 'payment.radio',
               name: m.paymentRadio,
-              required: true,
               options: [
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
@@ -191,7 +181,6 @@ export const ApplicationForm: Form = buildForm({
             buildTextField({
               id: 'payment.tbr',
               name: m.paymentTBR,
-              required: false,
               condition: (formValue: FormValue) => {
                 return (
                   (formValue as { payment: { radio: string } })?.payment
@@ -202,7 +191,6 @@ export const ApplicationForm: Form = buildForm({
             buildTextField({
               id: 'payment.amount',
               name: m.paymentAmount,
-              required: false,
               variant: 'number',
               condition: (formValue: FormValue) => {
                 return (
@@ -214,7 +202,6 @@ export const ApplicationForm: Form = buildForm({
             buildRadioField({
               id: 'payment.charge',
               name: m.paymentCharge,
-              required: false,
               options: [
                 { value: 'in advance', label: m.inAdvanceOptionLabel },
                 { value: 'on approval', label: m.onApprovalOptionLabel },
@@ -237,14 +224,13 @@ export const ApplicationForm: Form = buildForm({
         buildTextField({
           id: 'info',
           name: m.otherInfo,
-          required: false,
           variant: 'textarea',
         }),
       ],
     }),
     buildSection({
       id: 'final',
-      name: m.other,
+      name: m.final,
       children: [
         buildIntroductionField({
           id: 'final.intro',

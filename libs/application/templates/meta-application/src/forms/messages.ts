@@ -211,4 +211,9 @@ export const m = defineMessages({
     defaultMessage: 'Hafna',
     description: 'Some description',
   },
+  final: {
+    id: 'example.application.decline.option',
+    defaultMessage: 'Lokið',
+    description: 'Some description',
+  },
 })

@@ -35,7 +35,7 @@ interface InputProps extends InputComponentProps {
   tooltip?: string
   backgroundColor?: InputBackgroundColor
   textarea?: boolean
-  type: 'text' | 'number' | 'email' | 'tel'
+  type?: 'text' | 'number' | 'email' | 'tel'
 }
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {

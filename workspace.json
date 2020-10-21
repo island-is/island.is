@@ -1413,35 +1413,6 @@
         }
       }
     },
-    "application-templates-application-application": {
-      "root": "libs/application/templates/application-application",
-      "sourceRoot": "libs/application/templates/application-application/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/application-application/tsconfig.lib.json",
-              "libs/application/templates/application-application/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/application-application/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/application/templates/application-application/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
       "sourceRoot": "libs/application/templates/driving-lessons/src",
@@ -1473,6 +1444,35 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-meta-application": {
+      "root": "libs/application/templates/meta-application",
+      "sourceRoot": "libs/application/templates/meta-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/meta-application/tsconfig.lib.json",
+              "libs/application/templates/meta-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/meta-application/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/meta-application/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

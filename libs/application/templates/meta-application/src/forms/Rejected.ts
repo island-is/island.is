@@ -7,8 +7,7 @@ import {
 import { m } from './messages'
 
 export const Rejected: Form = buildForm({
-  id: ApplicationTypes.APPLICATION_APPLICATION,
-  ownerId: 'TODO?',
+  id: ApplicationTypes.META_APPLICATION,
   name: m.rejected,
   mode: 'rejected',
   children: [

@@ -54,7 +54,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.APPLICATION_APPLICATION,
+  type: ApplicationTypes.META_APPLICATION,
   name: 'Application application',
   dataProviders: [],
   dataSchema: Schema,
