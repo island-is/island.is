@@ -23,7 +23,7 @@
     "affected:schemas": "nx affected --target=init-schema --parallel --maxParallel=5 --exclude=$EXCLUDES_SCHEMAS",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
-    "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
+    "security-audit": "./scripts/security-audit.sh",
     "license-audit": "license-checker --failOn 'GPL; AGPL; UNLICENSED' --summary",
     "generate": "nx generate",
     "env-secrets": "./scripts/secrets.sh",
