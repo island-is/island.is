@@ -1,21 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import {
-  GridContainer,
-  GridRow,
-  Box,
-  GridColumn,
-  Text,
-  Accordion,
-  AccordionItem,
-} from '@island.is/island-ui/core'
+import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
   CaseCustodyProvisions,
   CaseTransition,
 } from '@island.is/judicial-system/types'
 
-import { ProsecutorLogo } from '../../../shared-components/Logos'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
   formatDate,
@@ -33,7 +24,6 @@ import {
 import * as api from '../../../api'
 import { Case } from '@island.is/judicial-system-web/src/types'
 import { userContext } from '../../../utils/userContext'
-import { renderFormStepper } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 
 export const Overview: React.FC = () => {
@@ -87,7 +77,7 @@ export const Overview: React.FC = () => {
 
   return workingCase ? (
     <PageLayout activeSection={0} activeSubSection={2}>
-      <Box marginBottom={7}>
+      <Box marginBottom={10}>
         <Text as="h1" variant="h1">
           Krafa um gæsluvarðhald
         </Text>

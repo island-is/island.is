@@ -1,4 +1,4 @@
-import React, { ReactNode, FC, useState, useContext } from 'react'
+import React, { ReactNode, FC, useContext } from 'react'
 import {
   Box,
   GridContainer,
@@ -49,40 +49,42 @@ export const PageLayout: FC<PageProps> = ({
             </Box>
           </GridColumn>
           <GridColumn span={['0', '0', '3/12', '3/12']}>
-            {uContext.user?.role === UserRole.JUDGE ? (
-              <Box marginBottom={7}>
-                <JudgeLogo />
-              </Box>
-            ) : uContext.user?.role === UserRole.PROSECUTOR ? (
-              <Box marginBottom={7}>
-                <ProsecutorLogo />
-              </Box>
-            ) : null}
-            <FormStepper
-              sections={[
-                {
-                  name: 'Krafa um gæsluvarðhald',
-                  children: [
-                    { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
-                    { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
-                    { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-                  ],
-                },
-                {
-                  name: 'Úrskurður Héraðsdóms',
-                  children: [
-                    { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-                    { type: 'SUB_SECTION', name: 'Þingbók' },
-                    { type: 'SUB_SECTION', name: 'Úrskurður' },
-                    { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
-                    { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
-                  ],
-                },
-              ]}
-              formName="Gæsluvarðhald"
-              activeSection={activeSection}
-              activeSubSection={activeSubSection}
-            />
+            <Box marginLeft={2}>
+              {uContext.user?.role === UserRole.JUDGE ? (
+                <Box marginBottom={7}>
+                  <JudgeLogo />
+                </Box>
+              ) : uContext.user?.role === UserRole.PROSECUTOR ? (
+                <Box marginBottom={7}>
+                  <ProsecutorLogo />
+                </Box>
+              ) : null}
+              <FormStepper
+                sections={[
+                  {
+                    name: 'Krafa um gæsluvarðhald',
+                    children: [
+                      { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
+                      { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
+                      { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                    ],
+                  },
+                  {
+                    name: 'Úrskurður Héraðsdóms',
+                    children: [
+                      { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                      { type: 'SUB_SECTION', name: 'Þingbók' },
+                      { type: 'SUB_SECTION', name: 'Úrskurður' },
+                      { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+                      { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+                    ],
+                  },
+                ]}
+                formName="Gæsluvarðhald"
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
+            </Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

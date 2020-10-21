@@ -258,7 +258,7 @@ export const StepOne: React.FC = () => {
   return (
     workingCase && (
       <PageLayout activeSection={0} activeSubSection={0}>
-        <Box marginBottom={7}>
+        <Box marginBottom={10}>
           <Text as="h1" variant="h1">
             Krafa um gæsluvarðhald
           </Text>

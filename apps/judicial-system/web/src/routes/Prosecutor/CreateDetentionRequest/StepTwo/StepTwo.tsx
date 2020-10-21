@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
 
-import { ProsecutorLogo } from '@island.is/judicial-system-web/src/shared-components/Logos'
 import {
   Text,
   GridContainer,
@@ -20,7 +19,6 @@ import {
 import {
   updateState,
   autoSave,
-  renderFormStepper,
   isNextDisabled,
 } from '../../../../utils/stepHelper'
 import {
@@ -219,7 +217,7 @@ export const StepTwo: React.FC = () => {
   return (
     workingCase && (
       <PageLayout activeSection={0} activeSubSection={1}>
-        <Box marginBottom={7}>
+        <Box marginBottom={10}>
           <Text as="h1" variant="h1">
             Krafa um gæsluvarðhald
           </Text>
