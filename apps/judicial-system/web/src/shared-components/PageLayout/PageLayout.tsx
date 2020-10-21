@@ -1,0 +1,82 @@
+import React, { ReactNode, FC, useState, useContext } from 'react'
+import {
+  Box,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  FormStepper,
+} from '@island.is/island-ui/core'
+import { userContext } from '../../utils/userContext'
+import * as styles from './PageLayout.treat'
+
+interface PageProps {
+  children: ReactNode
+}
+
+interface ProcessPageProps extends PageProps {
+  activeSection: number
+  activeSubSection: number
+}
+
+export const ProcessPageLayout: FC<ProcessPageProps> = ({
+  children,
+  activeSection,
+  activeSubSection,
+}) => {
+  const uContext = useContext(userContext)
+
+  return (
+    <Box
+      paddingY={[0, 0, 10, 10]}
+      background="purple100"
+      className={styles.processContainer}
+    >
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            <Box
+              paddingY={[3, 3, 3, 6]}
+              background="white"
+              borderColor="white"
+              borderRadius="large"
+              className={styles.processContent}
+            >
+              <GridColumn
+                span={['9/9', '9/9', '7/9', '7/9']}
+                offset={['0', '0', '1/9', '1/9']}
+              >
+                {children}
+              </GridColumn>
+            </Box>
+          </GridColumn>
+          <GridColumn span={['0', '0', '3/12', '3/12']}>
+            <FormStepper
+              sections={[
+                {
+                  name: 'Krafa um gæsluvarðhald',
+                  children: [
+                    { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
+                    { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
+                    { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                  ],
+                },
+                {
+                  name: 'Úrskurður Héraðsdóms',
+                  children: [
+                    { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                    { type: 'SUB_SECTION', name: 'Þingbók' },
+                    { type: 'SUB_SECTION', name: 'Úrskurður' },
+                    { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+                    { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+                  ],
+                },
+              ]}
+              activeSection={activeSection}
+              activeSubSection={activeSubSection}
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
+  )
+}
