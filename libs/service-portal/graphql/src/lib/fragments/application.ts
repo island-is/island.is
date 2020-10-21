@@ -8,9 +8,8 @@ export const ApplicationFragment = gql`
     applicant
     assignees
     state
-    attachments
     typeId
-    answers
-    externalData
+    name
+    progress
   }
 `
