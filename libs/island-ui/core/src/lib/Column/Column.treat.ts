@@ -1,4 +1,8 @@
 import { style, styleMap } from 'treat'
+import mapValues from 'lodash/mapValues'
+import { themeUtils, Theme } from '@island.is/island-ui/theme'
+
+type Breakpoint = keyof Theme['breakpoints']
 
 export const column = style({})
 
@@ -10,29 +14,58 @@ export const columnContent = style({
   },
 })
 
-const getSizeStyle = (scale: number) => ({
-  flex: `0 0 ${scale * 100}%`,
-})
+const availableWidths = [
+  '11/12',
+  '10/12',
+  '9/12',
+  '8/12',
+  '7/12',
+  '6/12',
+  '5/12',
+  '4/12',
+  '3/12',
+  '2/12',
+  '1/12',
+  '4/5',
+  '3/5',
+  '2/5',
+  '1/5',
+  '3/4',
+  '1/4',
+  '2/3',
+  '1/3',
+  '1/2',
+  'content',
+] as const
 
-export const width = styleMap({
-  '1/2': getSizeStyle(1 / 2),
-  '1/3': getSizeStyle(1 / 3),
-  '2/3': getSizeStyle(2 / 3),
-  '1/4': getSizeStyle(1 / 4),
-  '3/4': getSizeStyle(3 / 4),
-  '1/5': getSizeStyle(1 / 5),
-  '2/5': getSizeStyle(2 / 5),
-  '3/5': getSizeStyle(3 / 5),
-  '4/5': getSizeStyle(4 / 5),
-  '1/12': getSizeStyle(1 / 12),
-  '2/12': getSizeStyle(2 / 12),
-  '3/12': getSizeStyle(3 / 12),
-  '4/12': getSizeStyle(4 / 12),
-  '5/12': getSizeStyle(5 / 12),
-  '6/12': getSizeStyle(6 / 12),
-  '7/12': getSizeStyle(7 / 12),
-  '8/12': getSizeStyle(8 / 12),
-  '9/12': getSizeStyle(9 / 12),
-  '10/12': getSizeStyle(10 / 12),
-  '11/12': getSizeStyle(11 / 12),
-})
+export type AvailableWidths = typeof availableWidths[number]
+
+const widths = availableWidths.reduce((acc, column) => {
+  if (column === 'content') {
+    acc[column] = 'content'
+    return acc
+  }
+  const range = column.split('/')
+
+  acc[column] = parseInt(range[0]) / parseInt(range[1])
+  return acc
+}, {})
+
+const makeWidth = (breakpoint: Breakpoint) =>
+  styleMap(
+    mapValues(widths, (width) =>
+      themeUtils.responsiveStyle({
+        [breakpoint]:
+          width === 'content'
+            ? { flex: 'initial', flexShrink: 0, width: 'auto' }
+            : { flex: `0 0 ${width * 100}%`, width: '100%' },
+      }),
+    ),
+    `columnWidth_${breakpoint}`,
+  ) as any
+
+export const widthXs = makeWidth('xs')
+export const widthSm = makeWidth('sm')
+export const widthMd = makeWidth('md')
+export const widthLg = makeWidth('lg')
+export const widthXl = makeWidth('xl')

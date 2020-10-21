@@ -1,12 +1,16 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { ReactNode, useContext } from 'react'
+import cn from 'classnames'
+import {
+  resolveResponsiveProp,
+  ResponsiveProp,
+} from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
 import { ColumnsContext } from '../Columns/Columns'
 import * as styles from './Column.treat'
 
 export interface ColumnProps {
   children: ReactNode
-  width?: keyof typeof styles.width | 'content'
+  width?: ResponsiveProp<styles.AvailableWidths>
 }
 
 /** Standard columns */
@@ -23,16 +27,24 @@ export const Column = ({ children, width }: ColumnProps) => {
     xlSpace,
     collapsibleAlignmentChildProps,
   } = useContext(ColumnsContext)
+  const isFluid = width === undefined
 
   return (
     <Box
       minWidth={0}
-      width={width !== 'content' ? 'full' : undefined}
-      flexShrink={width === 'content' ? 0 : undefined}
-      className={[
+      width={isFluid ? 'full' : undefined}
+      className={cn(
         styles.column,
-        width !== 'content' ? styles.width[width!] : null,
-      ]}
+        !isFluid &&
+          resolveResponsiveProp(
+            width,
+            styles.widthXs,
+            styles.widthSm,
+            styles.widthMd,
+            styles.widthLg,
+            styles.widthXl,
+          ),
+      )}
     >
       <Box
         paddingLeft={[
