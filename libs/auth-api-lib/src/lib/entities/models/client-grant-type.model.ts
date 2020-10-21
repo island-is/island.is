@@ -16,7 +16,7 @@ import { GrantType } from './grant-type.model'
   tableName: 'client_grant_type',
   indexes: [
     {
-      fields: ['client_id', 'grant_type_id'],
+      fields: ['client_id', 'grant_type'],
     },
   ],
 })

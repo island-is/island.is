@@ -1,4 +1,4 @@
-import { style, globalStyle } from 'treat'
+import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const buttonBase = style({
@@ -38,7 +38,7 @@ export const menuButton = style({
 })
 
 export const buttonText = style({
-  marginLeft: '8px',
+  marginRight: '8px',
 })
 
 export const white = style({
