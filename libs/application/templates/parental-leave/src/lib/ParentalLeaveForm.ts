@@ -24,14 +24,6 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'theApplicant',
       name: m.applicantSection,
       children: [
-        buildCustomField(
-          {
-            id: 'scheduleTest',
-            name: 'Here is your current leave plan',
-            component: 'PaymentSchedule',
-          },
-          {},
-        ),
         buildExternalDataProvider({
           name: m.introductionProvider,
           id: 'approveExternalData',
