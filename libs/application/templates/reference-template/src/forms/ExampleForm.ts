@@ -28,10 +28,12 @@ export const ExampleForm: Form = buildForm({
         buildIntroductionField({
           id: 'field',
           name: m.introField,
-          introduction: (application) =>
+          introduction: (application) => ({
+            ...m.introIntroduction,
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
-            `Halló ${application.answers.person?.name}`,
+            values: { name: application.answers.person?.name },
+          }),
         }),
         buildMultiField({
           id: 'about',
