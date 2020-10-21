@@ -53,6 +53,7 @@ export async function validateIncomingAnswers(
     (!writableAnswersAndExternalData ||
       !writableAnswersAndExternalData?.answers)
   ) {
+    console.log('im going to throw an error here', application.state)
     throw new BadRequestException(
       `Current user is not permitted to update answers in this state: ${application.state}`,
     )

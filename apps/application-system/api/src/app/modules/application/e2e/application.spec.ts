@@ -80,6 +80,7 @@ describe('Application system API', () => {
         assignee: '123456-1234',
         answers: {
           careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
         },
       })
       .expect(201)
