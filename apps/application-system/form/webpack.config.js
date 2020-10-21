@@ -7,7 +7,9 @@ module.exports = (config) => {
   nrwlConfig(config) // first call it so that it @nrwl/react plugin adds its configs,
   config.stats.chunks = false
   config.stats.modules = false
-  config.devServer.noInfo = true
+  if (process.env.NODE_ENV === 'development') {
+    config.devServer.noInfo = true
+  }
   return {
     ...config,
     plugins: [...config.plugins, new TreatPlugin()],
