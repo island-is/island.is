@@ -5,31 +5,21 @@ import {
   Table,
   CreatedAt,
   UpdatedAt,
+  PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { uuid as uuidv4 } from 'uuidv4'
 
 @Table({
   tableName: 'grant_type',
   indexes: [
     {
-      fields: ['id'],
+      fields: ['name'],
     },
   ],
   timestamps: false,
 })
 export class GrantType extends Model<GrantType> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty({
-    example: uuidv4(),
-  })
-  id: string
-
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
