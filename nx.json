@@ -47,7 +47,29 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
+    "api-catalogue-consts": {
+      "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
+    },
+    "api-catalogue-elastic": {
+      "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
     "api-content-search": {
+      "tags": []
+    },
+    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
@@ -112,6 +134,9 @@
       "tags": []
     },
     "application-ui-shell": {
+      "tags": []
+    },
+    "auth-api-lib": {
       "tags": []
     },
     "cache": {
@@ -260,10 +285,19 @@
     "service-portal-settings": {
       "tags": []
     },
+    "services-auth-admin-api": {
+      "tags": []
+    },
+    "services-auth-api": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
     "services-user-profile": {
+      "tags": []
+    },
+    "services-xroad-collector": {
       "tags": []
     },
     "shared-form-fields": {

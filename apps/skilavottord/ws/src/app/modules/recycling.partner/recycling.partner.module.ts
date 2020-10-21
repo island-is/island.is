@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { RecyclingPartnerModel } from '../models'
+import { RecyclingPartnerModel } from './model/recycling.partner.model'
 import { RecyclingPartnerResolver } from './recycling.partner.resolver'
 import { RecyclingPartnerService } from './recycling.partner.service'
 

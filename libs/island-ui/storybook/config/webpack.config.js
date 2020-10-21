@@ -10,7 +10,7 @@ module.exports = async ({ config }) => {
     {
       test: /\.(ts|tsx)$/,
       exclude: [
-        path.resolve(__dirname, '../node_modules/'),
+        path.resolve(__dirname, '../../../../node_modules'),
         path.resolve(__dirname, '../../core/src/lib/IconRC/icons'),
       ],
       use: [
@@ -24,7 +24,7 @@ module.exports = async ({ config }) => {
     },
     {
       test: /\.stories\.(ts|tsx)$/,
-      exclude: path.resolve(__dirname, '../node_modules/'),
+      exclude: path.resolve(__dirname, '../../../../node_modules'),
       use: [
         {
           // needed for docs addon
