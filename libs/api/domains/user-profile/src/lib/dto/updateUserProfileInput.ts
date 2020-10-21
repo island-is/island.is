@@ -24,5 +24,4 @@ export class UpdateUserProfileInput {
   @IsEmail()
   @IsOptional()
   email?: string
-
 }

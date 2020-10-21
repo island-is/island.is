@@ -1,26 +1,25 @@
 import { Args, Resolver, Mutation, Query } from '@nestjs/graphql'
-import { GetMyinfoInput } from './dto/getMyInfoInput'
+import { GetMyInfoInput } from './dto/getMyInfoInput'
 import { FamilyMember } from './familyMember.model'
 import { MyInfo } from './myInfo.model'
 import { NationalRegistryService } from './national-registry.service'
 
 @Resolver()
 export class NationalRegistryResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) { }
+  constructor(private nationalRegistryService: NationalRegistryService) {}
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(
     /*TODO replace with proper authentication */
-    @Args('input') input: GetMyinfoInput
+    @Args('input') input: GetMyInfoInput,
   ): Promise<MyInfo | null> {
     return this.nationalRegistryService.GetMyinfo(input.nationalId)
   }
 
-
   @Query(() => [FamilyMember], { nullable: true })
   getMyFamily(
     /*TODO replace with proper authentication */
-    @Args('input') input: GetMyinfoInput
+    @Args('input') input: GetMyInfoInput,
   ): Promise<FamilyMember[] | null> {
     return this.nationalRegistryService.GetMyFamily(input.nationalId)
   }

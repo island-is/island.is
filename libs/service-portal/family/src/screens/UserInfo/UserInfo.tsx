@@ -5,11 +5,15 @@ import UserInfoLine from '../../components/UserInfoLine/UserInfoLine'
 import * as styles from './UserInfo.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useUserProfile,
+  useNationalRegistryInfo,
+} from '@island.is/service-portal/graphql'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: natRegInfo } = useNationalRegistryInfo(userInfo.profile.natreg)
 
   return (
     <>
@@ -82,6 +86,41 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Tungumál',
           })}
           content={userProfile?.locale || ''}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:legal-residence',
+            defaultMessage: 'Lögheimili',
+          })}
+          content={natRegInfo?.legalResidence || ''}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:birth-place',
+            defaultMessage: 'Fæðingarstaður',
+          })}
+          content={natRegInfo?.birthPlace || ''}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:gender',
+            defaultMessage: 'Kyn',
+          })}
+          content={natRegInfo?.gender || ''}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:marital-status',
+            defaultMessage: 'Hjúskaparstaða',
+          })}
+          content={natRegInfo?.maritalStatus || ''}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:religion',
+            defaultMessage: 'Trúfélag',
+          })}
+          content={natRegInfo?.religion || ''}
         />
       </Stack>
     </>

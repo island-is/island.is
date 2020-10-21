@@ -14,7 +14,7 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(private userProfileApi: UserProfileApi) { }
+  constructor(private userProfileApi: UserProfileApi) {}
 
   async getUser(nationalId: string): Promise<UserProfile> {
     return await this.userProfileApi

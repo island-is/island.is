@@ -7,7 +7,7 @@ import { UserProfileService } from './userProfile.service'
 
 @Resolver()
 export class UserProfileResolver {
-  constructor(private readonly userUserProfileService: UserProfileService) { }
+  constructor(private readonly userUserProfileService: UserProfileService) {}
 
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(

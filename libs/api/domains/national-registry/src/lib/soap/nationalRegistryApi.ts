@@ -1,13 +1,18 @@
-import { Inject, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import Soap from 'soap'
-import { MyInfo } from '../myInfo.model';
-import { GetViewHusaskraDto } from './dto/getViewHusaskraDto';
-import { GetViewKennitalaOgTrufelag } from './dto/getViewKennitalaOgTrufelag';
-import { GetViewSveitarfelagDto } from './dto/getViewSveitarfelagDto';
-import { GetViewThjodskraDto } from './dto/getViewThjodskraDto';
-import { GetViewFjolskyldanDto } from './dto/getViewFjolskyldanDto';
-import { FamilyMember } from '../familyMember.model';
+import { MyInfo } from '../myInfo.model'
+import { GetViewHusaskraDto } from './dto/getViewHusaskraDto'
+import { GetViewKennitalaOgTrufelag } from './dto/getViewKennitalaOgTrufelag'
+import { GetViewSveitarfelagDto } from './dto/getViewSveitarfelagDto'
+import { GetViewThjodskraDto } from './dto/getViewThjodskraDto'
+import { GetViewFjolskyldanDto } from './dto/getViewFjolskyldanDto'
+import { FamilyMember } from '../familyMember.model'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client
@@ -16,7 +21,9 @@ export class NationalRegistryApi {
 
   constructor(
     private soapClient: Soap.Client,
-    clientPassword: string, clientUser: string) {
+    clientPassword: string,
+    clientUser: string,
+  ) {
     this.client = soapClient
     this.clientUser = clientUser
     this.clientPassword = clientPassword
@@ -25,13 +32,18 @@ export class NationalRegistryApi {
   public async getMyInfo(nationalId: string): Promise<MyInfo | null> {
     const response = await this.getViewThjodskra(nationalId)
 
-    if (!response) throw new NotFoundException(`user with nationalId ${nationalId} not found in national Registry`)
+    if (!response)
+      throw new NotFoundException(
+        `user with nationalId ${nationalId} not found in national Registry`,
+      )
 
     const userInfo = response.table.diffgram.DocumentElement.Thjodskra
 
     const houseResponse = await this.getViewHusaskra(userInfo.LoghHusk)
     const religionResponse = await this.getViewKennitalaOgTrufelag(nationalId)
-    const birthPlaceResponse = await this.getViewSveitarfelag(userInfo.Faedsvfnr)
+    const birthPlaceResponse = await this.getViewSveitarfelag(
+      userInfo.Faedsvfnr,
+    )
 
     return {
       fullName: userInfo.Nafn,
@@ -41,44 +53,60 @@ export class NationalRegistryApi {
       religion: this.formatReligionString(religionResponse),
       legalResidence: this.formatResidenceAddressString(houseResponse),
       maritalStatus: this.formatMartialStatus(userInfo.Hju),
-      banMarking: 'not implemented'
+      banMarking: 'not implemented',
     }
   }
 
   public async getMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
     const response = await this.getViewFjolskyldan(nationalId)
-    if (!response) throw new NotFoundException(`family for nationalId ${nationalId} not found`)
+    if (!response)
+      throw new NotFoundException(
+        `family for nationalId ${nationalId} not found`,
+      )
     console.log(response)
 
     const family = response?.table.diffgram.DocumentElement.Fjolskyldan
 
-    if (!family) throw new NotFoundException(`family for nationalId ${nationalId} not found`)
+    if (!family)
+      throw new NotFoundException(
+        `family for nationalId ${nationalId} not found`,
+      )
 
-    const members = family.map(x => ({
-      fullName: x.Nafn,
-      nationalId: x.Kennitala,
-      gender: x.Kyn,
-      maritalStatus: x.Hjuskapur,
-      address: `${x.Husheiti} , ${x.Pnr} ${x.Sveitarfelag}`
-    } as FamilyMember))
+    const members = family.map(
+      (x) =>
+        ({
+          fullName: x.Nafn,
+          nationalId: x.Kennitala,
+          gender: x.Kyn,
+          maritalStatus: x.Hjuskapur,
+          address: `${x.Husheiti} , ${x.Pnr} ${x.Sveitarfelag}`,
+        } as FamilyMember),
+    )
 
     return members
   }
 
-  private formatResidenceAddressString(houseDto: GetViewHusaskraDto | null): string {
-    if (!houseDto) return "address not found"
+  private formatResidenceAddressString(
+    houseDto: GetViewHusaskraDto | null,
+  ): string {
+    if (!houseDto) return 'address not found'
     const houseInfo = houseDto.table.diffgram.DocumentElement.Husaskra
     return `${houseInfo.HusHeiti}, ${houseInfo.PostNr} ${houseInfo.Nafn}`
   }
 
-  private formatReligionString(religtionDto: GetViewKennitalaOgTrufelag | null): string {
-    if (!religtionDto) return "religion info not found"
+  private formatReligionString(
+    religtionDto: GetViewKennitalaOgTrufelag | null,
+  ): string {
+    if (!religtionDto) return 'religion info not found'
     religtionDto?.table.diffgram.DocumentElement.KennitalaOgTrufelag.Trufelag
-    return religtionDto.table.diffgram.DocumentElement.KennitalaOgTrufelag.Trufelag
+    return religtionDto.table.diffgram.DocumentElement.KennitalaOgTrufelag
+      .Trufelag
   }
 
-  private formatBirthPlaceString(birthPlaceDto: GetViewSveitarfelagDto | null): string {
-    if (!birthPlaceDto) return "birth place not found"
+  private formatBirthPlaceString(
+    birthPlaceDto: GetViewSveitarfelagDto | null,
+  ): string {
+    if (!birthPlaceDto) return 'birth place not found'
     return birthPlaceDto.table.diffgram.DocumentElement.Sveitarfelag.Sokn
   }
 
@@ -111,125 +139,175 @@ export class NationalRegistryApi {
 
   private formatGender(genderIndex: string): string {
     switch (genderIndex) {
-      case "1":
-        return "Karl"
-      case "2":
-        return "Kona"
-      case "3":
-        return "Drengur"
-      case "4":
-        return "Stúlka"
-      case "7":
-        return "Kynsegin"
-      case "8":
-        return "Kynsegin"
+      case '1':
+        return 'Karl'
+      case '2':
+        return 'Kona'
+      case '3':
+        return 'Drengur'
+      case '4':
+        return 'Stúlka'
+      case '7':
+        return 'Kynsegin'
+      case '8':
+        return 'Kynsegin'
       default:
         return genderIndex
     }
   }
 
-  public async getViewThjodskra(nationalId: string): Promise<GetViewThjodskraDto | null> {
+  public async getViewThjodskra(
+    nationalId: string,
+  ): Promise<GetViewThjodskraDto | null> {
     return await new Promise((resolve, _reject) => {
-      this.client.GetViewThjodskra({
-        ":SortColumn": 1,
-        ":SortAscending": true,
-        ":S5Username": this.clientUser,
-        ":S5Password": this.clientPassword,
-        ":Kennitala": nationalId,
-      }, (error: any, { GetViewThjodskraResult: result }: { GetViewThjodskraResult: GetViewThjodskraDto }) => {
-        if (!result.success) {
-          logger.error(result.message)
-          _reject(result)
-        }
-        if (error) {
-          _reject(error);
-        }
-        resolve(result);
-      });
-    });
+      this.client.GetViewThjodskra(
+        {
+          ':SortColumn': 1,
+          ':SortAscending': true,
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':Kennitala': nationalId,
+        },
+        (
+          error: any,
+          {
+            GetViewThjodskraResult: result,
+          }: { GetViewThjodskraResult: GetViewThjodskraDto },
+        ) => {
+          if (!result.success) {
+            logger.error(result.message)
+            _reject(result)
+          }
+          if (error) {
+            _reject(error)
+          }
+          resolve(result)
+        },
+      )
+    })
   }
 
-  public async getViewHusaskra(houseCode: string): Promise<GetViewHusaskraDto | null> {
+  public async getViewHusaskra(
+    houseCode: string,
+  ): Promise<GetViewHusaskraDto | null> {
     return await new Promise((resolve, _reject) => {
-      this.client.GetViewHusaskra({
-        ":SortColumn": 1,
-        ":SortAscending": true,
-        ":S5Username": this.clientUser,
-        ":S5Password": this.clientPassword,
-        ":HusKodi": houseCode,
-      }, (error: any, { GetViewHusaskraResult: result }: { GetViewHusaskraResult: GetViewHusaskraDto }) => {
-        if (!result.success) {
-          logger.error(result.message)
-          _reject(result)
-        }
-        if (error) {
-          _reject(error);
-        }
-        resolve(result);
-      });
-    });
+      this.client.GetViewHusaskra(
+        {
+          ':SortColumn': 1,
+          ':SortAscending': true,
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':HusKodi': houseCode,
+        },
+        (
+          error: any,
+          {
+            GetViewHusaskraResult: result,
+          }: { GetViewHusaskraResult: GetViewHusaskraDto },
+        ) => {
+          if (!result.success) {
+            logger.error(result.message)
+            _reject(result)
+          }
+          if (error) {
+            _reject(error)
+          }
+          resolve(result)
+        },
+      )
+    })
   }
 
-  public async getViewKennitalaOgTrufelag(nationalId: string): Promise<GetViewKennitalaOgTrufelag | null> {
+  public async getViewKennitalaOgTrufelag(
+    nationalId: string,
+  ): Promise<GetViewKennitalaOgTrufelag | null> {
     return await new Promise((resolve, _reject) => {
-      this.client.GetViewKennitalaOgTrufelag({
-        ":SortColumn": 1,
-        ":SortAscending": true,
-        ":S5Username": this.clientUser,
-        ":S5Password": this.clientPassword,
-        ":Kennitala": nationalId,
-      }, (error: any, { GetViewKennitalaOgTrufelagResult: result }: { GetViewKennitalaOgTrufelagResult: GetViewKennitalaOgTrufelag }) => {
-        if (!result.success) {
-          logger.error(result.message)
-          _reject(result)
-        }
-        if (error) {
-          _reject(error);
-        }
-        resolve(result);
-      });
-    });
+      this.client.GetViewKennitalaOgTrufelag(
+        {
+          ':SortColumn': 1,
+          ':SortAscending': true,
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':Kennitala': nationalId,
+        },
+        (
+          error: any,
+          {
+            GetViewKennitalaOgTrufelagResult: result,
+          }: { GetViewKennitalaOgTrufelagResult: GetViewKennitalaOgTrufelag },
+        ) => {
+          if (!result.success) {
+            logger.error(result.message)
+            _reject(result)
+          }
+          if (error) {
+            _reject(error)
+          }
+          resolve(result)
+        },
+      )
+    })
   }
 
-  public async getViewSveitarfelag(municipalCode: string): Promise<GetViewSveitarfelagDto | null> {
+  public async getViewSveitarfelag(
+    municipalCode: string,
+  ): Promise<GetViewSveitarfelagDto | null> {
     return await new Promise((resolve, _reject) => {
-      this.client.GetViewSveitarfelag({
-        ":SortColumn": 1,
-        ":SortAscending": true,
-        ":S5Username": this.clientUser,
-        ":S5Password": this.clientPassword,
-        ":SvfNr": municipalCode,
-      }, (error: any, { GetViewSveitarfelagResult: result }: { GetViewSveitarfelagResult: GetViewSveitarfelagDto }) => {
-        if (!result.success) {
-          logger.error(result.message)
-          _reject(result)
-        }
-        if (error) {
-          _reject(error);
-        }
-        resolve(result);
-      });
-    });
+      this.client.GetViewSveitarfelag(
+        {
+          ':SortColumn': 1,
+          ':SortAscending': true,
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':SvfNr': municipalCode,
+        },
+        (
+          error: any,
+          {
+            GetViewSveitarfelagResult: result,
+          }: { GetViewSveitarfelagResult: GetViewSveitarfelagDto },
+        ) => {
+          if (!result.success) {
+            logger.error(result.message)
+            _reject(result)
+          }
+          if (error) {
+            _reject(error)
+          }
+          resolve(result)
+        },
+      )
+    })
   }
 
-  public async getViewFjolskyldan(nationalId: string): Promise<GetViewFjolskyldanDto | null> {
+  public async getViewFjolskyldan(
+    nationalId: string,
+  ): Promise<GetViewFjolskyldanDto | null> {
     return await new Promise((resolve, _reject) => {
-      this.client.GetViewFjolskyldan({
-        ":SortColumn": 1,
-        ":SortAscending": true,
-        ":S5Username": this.clientUser,
-        ":S5Password": this.clientPassword,
-        ":Kennitala": nationalId,
-      }, (error: any, { GetViewFjolskyldanResult: result }: { GetViewFjolskyldanResult: GetViewFjolskyldanDto }) => {
-        if (!result.success) {
-          logger.error(result.message)
-          _reject(result)
-        }
-        if (error) {
-          _reject(error);
-        }
-        resolve(result);
-      });
-    });
+      this.client.GetViewFjolskyldan(
+        {
+          ':SortColumn': 1,
+          ':SortAscending': true,
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':Kennitala': nationalId,
+        },
+        (
+          error: any,
+          {
+            GetViewFjolskyldanResult: result,
+          }: { GetViewFjolskyldanResult: GetViewFjolskyldanDto },
+        ) => {
+          if (!result.success) {
+            logger.error(result.message)
+            _reject(result)
+          }
+          if (error) {
+            _reject(error)
+          }
+          resolve(result)
+        },
+      )
+    })
   }
 }

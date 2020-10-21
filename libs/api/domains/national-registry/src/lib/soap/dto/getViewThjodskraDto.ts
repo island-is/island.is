@@ -1,107 +1,107 @@
 export interface GetViewThjodskraDto {
-  message: string;
-  table: Table;
-  success: boolean;
+  message: string
+  table: Table
+  success: boolean
 }
 
 export interface Table {
-  schema: Schema;
-  diffgram: Diffgram;
+  schema: Schema
+  diffgram: Diffgram
 }
 
 export interface Diffgram {
-  DocumentElement: DocumentElement;
+  DocumentElement: DocumentElement
 }
 
 export interface DocumentElement {
-  Thjodskra: Thjodskra;
+  Thjodskra: Thjodskra
 }
 
 export interface Thjodskra {
-  attributes: ThjodskraAttributes;
-  Kennitala: string;
-  Fjolsknr: string;
-  Nafn: string;
-  Kyn: string;
-  Hju: string;
-  Tru: string;
-  Sambud: null;
-  Rikisfang: string;
-  Faedsvfnr: string;
-  FaedD: string;
-  LoghHusk: string;
-  MakiKt: string;
+  attributes: ThjodskraAttributes
+  Kennitala: string
+  Fjolsknr: string
+  Nafn: string
+  Kyn: string
+  Hju: string
+  Tru: string
+  Sambud: null
+  Rikisfang: string
+  Faedsvfnr: string
+  FaedD: string
+  LoghHusk: string
+  MakiKt: string
 }
 
 export interface ThjodskraAttributes {
-  "diffgr:id": string;
-  "msdata:rowOrder": string;
-  "diffgr:hasChanges": string;
+  'diffgr:id': string
+  'msdata:rowOrder': string
+  'diffgr:hasChanges': string
 }
 
 export interface Schema {
-  attributes: SchemaAttributes;
-  element: SchemaElement;
+  attributes: SchemaAttributes
+  element: SchemaElement
 }
 
 export interface SchemaAttributes {
-  id: string;
+  id: string
 }
 
 export interface SchemaElement {
-  attributes: PurpleAttributes;
-  complexType: PurpleComplexType;
+  attributes: PurpleAttributes
+  complexType: PurpleComplexType
 }
 
 export interface PurpleAttributes {
-  name: string;
-  "msdata:IsDataSet": string;
-  "msdata:MainDataTable": string;
-  "msdata:UseCurrentLocale": string;
+  name: string
+  'msdata:IsDataSet': string
+  'msdata:MainDataTable': string
+  'msdata:UseCurrentLocale': string
 }
 
 export interface PurpleComplexType {
-  choice: Choice;
+  choice: Choice
 }
 
 export interface Choice {
-  attributes: ChoiceAttributes;
-  element: ChoiceElement;
+  attributes: ChoiceAttributes
+  element: ChoiceElement
 }
 
 export interface ChoiceAttributes {
-  minOccurs: string;
-  maxOccurs: string;
+  minOccurs: string
+  maxOccurs: string
 }
 
 export interface ChoiceElement {
-  attributes: FluffyAttributes;
-  complexType: FluffyComplexType;
+  attributes: FluffyAttributes
+  complexType: FluffyComplexType
 }
 
 export interface FluffyAttributes {
-  name: string;
+  name: string
 }
 
 export interface FluffyComplexType {
-  sequence: Sequence;
+  sequence: Sequence
 }
 
 export interface Sequence {
-  element: ElementElement[];
+  element: ElementElement[]
 }
 
 export interface ElementElement {
-  attributes: TentacledAttributes;
+  attributes: TentacledAttributes
 }
 
 export interface TentacledAttributes {
-  name: string;
-  "msprop:ColumnId": string;
-  type: Type;
-  minOccurs: string;
+  name: string
+  'msprop:ColumnId': string
+  type: Type
+  minOccurs: string
 }
 
 export enum Type {
-  XsString = "xs:string",
+  XsString = 'xs:string',
 }

@@ -47,4 +47,4 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     NationalRegistryModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

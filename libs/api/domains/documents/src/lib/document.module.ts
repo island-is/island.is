@@ -26,4 +26,4 @@ import { DocumentOauthConnection } from './document.connection'
     },
   ],
 })
-export class DocumentModule { }
+export class DocumentModule {}

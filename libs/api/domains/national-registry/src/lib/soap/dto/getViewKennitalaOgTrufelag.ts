@@ -1,95 +1,95 @@
 export interface GetViewKennitalaOgTrufelag {
-  message: string;
-  table: Table;
-  success: boolean;
+  message: string
+  table: Table
+  success: boolean
 }
 
 export interface Table {
-  schema: Schema;
-  diffgram: Diffgram;
+  schema: Schema
+  diffgram: Diffgram
 }
 
 export interface Diffgram {
-  DocumentElement: DocumentElement;
+  DocumentElement: DocumentElement
 }
 
 export interface DocumentElement {
-  KennitalaOgTrufelag: KennitalaOgTrufelag;
+  KennitalaOgTrufelag: KennitalaOgTrufelag
 }
 
 export interface KennitalaOgTrufelag {
-  attributes: KennitalaOgTrufelagAttributes;
-  Kennitala: string;
-  Nafn: string;
-  Kodi: string;
-  Trufelag: string;
+  attributes: KennitalaOgTrufelagAttributes
+  Kennitala: string
+  Nafn: string
+  Kodi: string
+  Trufelag: string
 }
 
 export interface KennitalaOgTrufelagAttributes {
-  "diffgr:id": string;
-  "msdata:rowOrder": string;
-  "diffgr:hasChanges": string;
+  'diffgr:id': string
+  'msdata:rowOrder': string
+  'diffgr:hasChanges': string
 }
 
 export interface Schema {
-  attributes: SchemaAttributes;
-  element: SchemaElement;
+  attributes: SchemaAttributes
+  element: SchemaElement
 }
 
 export interface SchemaAttributes {
-  id: string;
+  id: string
 }
 
 export interface SchemaElement {
-  attributes: PurpleAttributes;
-  complexType: PurpleComplexType;
+  attributes: PurpleAttributes
+  complexType: PurpleComplexType
 }
 
 export interface PurpleAttributes {
-  name: string;
-  "msdata:IsDataSet": string;
-  "msdata:MainDataTable": string;
-  "msdata:UseCurrentLocale": string;
+  name: string
+  'msdata:IsDataSet': string
+  'msdata:MainDataTable': string
+  'msdata:UseCurrentLocale': string
 }
 
 export interface PurpleComplexType {
-  choice: Choice;
+  choice: Choice
 }
 
 export interface Choice {
-  attributes: ChoiceAttributes;
-  element: ChoiceElement;
+  attributes: ChoiceAttributes
+  element: ChoiceElement
 }
 
 export interface ChoiceAttributes {
-  minOccurs: string;
-  maxOccurs: string;
+  minOccurs: string
+  maxOccurs: string
 }
 
 export interface ChoiceElement {
-  attributes: FluffyAttributes;
-  complexType: FluffyComplexType;
+  attributes: FluffyAttributes
+  complexType: FluffyComplexType
 }
 
 export interface FluffyAttributes {
-  name: string;
+  name: string
 }
 
 export interface FluffyComplexType {
-  sequence: Sequence;
+  sequence: Sequence
 }
 
 export interface Sequence {
-  element: ElementElement[];
+  element: ElementElement[]
 }
 
 export interface ElementElement {
-  attributes: TentacledAttributes;
+  attributes: TentacledAttributes
 }
 
 export interface TentacledAttributes {
-  name: string;
-  "msprop:ColumnId": string;
-  type: string;
-  minOccurs: string;
+  name: string
+  'msprop:ColumnId': string
+  type: string
+  minOccurs: string
 }

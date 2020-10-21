@@ -23,5 +23,4 @@ export class CreateUserProfileInput {
   @IsEmail()
   @IsOptional()
   email?: string
-
 }
