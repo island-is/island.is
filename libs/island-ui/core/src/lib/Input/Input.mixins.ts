@@ -62,6 +62,30 @@ export const input = {
   }),
 }
 
+export const textarea = {
+  caretColor: theme.color.blue400,
+  fontFamily: theme.typography.fontFamily,
+  fontWeight: theme.typography.light,
+  fontSize: theme.typography.baseFontSize,
+  lineHeight: 1.5555,
+  padding: inputPadding,
+  border: 'none',
+  width: '100%',
+  background: 'none',
+  boxShadow: 'none',
+  appearance: 'none' as const,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      fontSize: 15,
+      lineHeight: 1.3,
+    },
+    md: {
+      fontSize: theme.typography.baseFontSize,
+      lineHeight: 1.5555,
+    },
+  }),
+}
+
 export const inputPlaceholder = {
   color: theme.color.dark300,
   fontWeight: theme.typography.light,

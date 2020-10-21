@@ -13,12 +13,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
@@ -28,9 +23,7 @@
     },
     "adgerdir-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "adgerdir"
-      ]
+      "implicitDependencies": ["adgerdir"]
     },
     "air-discount-scheme-api": {
       "tags": []
@@ -49,38 +42,12 @@
     },
     "air-discount-scheme/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "air-discount-scheme-web"
-      ]
+      "implicitDependencies": ["air-discount-scheme-web"]
     },
     "api": {
       "tags": []
     },
-    "api-catalogue": {
-      "tags": []
-    },
-    "api-catalogue-consts": {
-      "tags": []
-    },
-    "api-catalogue-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "api-catalogue"
-      ]
-    },
-    "api-catalogue-elastic": {
-      "tags": []
-    },
-    "api-catalogue-services": {
-      "tags": []
-    },
-    "api-catalogue-types": {
-      "tags": []
-    },
     "api-content-search": {
-      "tags": []
-    },
-    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
@@ -127,14 +94,15 @@
     },
     "application-system-form-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "application-system-form"
-      ]
+      "implicitDependencies": ["application-system-form"]
     },
     "application-template-loader": {
       "tags": []
     },
     "application-templates-driving-lessons": {
+      "tags": []
+    },
+    "application-templates-meta-application": {
       "tags": []
     },
     "application-templates-parental-leave": {
@@ -187,15 +155,11 @@
     },
     "gjafakort-web": {
       "tags": [],
-      "implicitDependencies": [
-        "gjafakort-api"
-      ]
+      "implicitDependencies": ["gjafakort-api"]
     },
     "gjafakort-web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "gjafakort-web"
-      ]
+      "implicitDependencies": ["gjafakort-web"]
     },
     "infra-express-server": {
       "tags": []
@@ -214,9 +178,7 @@
     },
     "island-ui-core": {
       "tags": [],
-      "implicitDependencies": [
-        "island-ui-theme"
-      ]
+      "implicitDependencies": ["island-ui-theme"]
     },
     "island-ui-fonts": {
       "tags": []
@@ -244,9 +206,7 @@
     },
     "judicial-system/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "judicial-system-web"
-      ]
+      "implicitDependencies": ["judicial-system-web"]
     },
     "localization": {
       "tags": []
@@ -286,9 +246,7 @@
     },
     "service-portal-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "service-portal"
-      ]
+      "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
       "tags": []
@@ -320,9 +278,6 @@
     "services-user-profile": {
       "tags": []
     },
-    "services-xroad-collector": {
-      "tags": []
-    },
     "shared-form-fields": {
       "tags": []
     },
@@ -343,21 +298,14 @@
     },
     "skilavottord/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "skilavottord-web"
-      ]
+      "implicitDependencies": ["skilavottord-web"]
     },
     "web": {
       "tags": []
     },
     "web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "web"
-      ]
-    },
-    "application-templates-meta-application": {
-      "tags": []
+      "implicitDependencies": ["web"]
     }
   },
   "affected": {

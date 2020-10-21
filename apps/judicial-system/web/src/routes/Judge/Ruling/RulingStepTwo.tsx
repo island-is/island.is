@@ -116,7 +116,7 @@ export const RulingStepTwo: React.FC = () => {
                 <Box marginBottom={3}>
                   <Text>{constructConclusion(workingCase)}</Text>
                 </Box>
-                <Text>
+                <Text variant="h4" fontWeight="light">
                   Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
                   verjanda hans, túlki og aðstoðarsaksóknara.
                 </Text>
@@ -129,7 +129,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={3}>
-                <Text>
+                <Text variant="h4" fontWeight="light">
                   Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra
                   úrskurð þennan til Landsréttar innan þriggja sólarhringa.
                 </Text>
@@ -261,7 +261,7 @@ export const RulingStepTwo: React.FC = () => {
                 />
               </Box>
               <Box marginBottom={3}>
-                <Text>
+                <Text variant="h4" fontWeight="light">
                   Dómari bendir kærða á að honum sé heimilt að bera atriði er
                   lúta að framkvæmd gæsluvarðhaldsins undir dómara.
                 </Text>
