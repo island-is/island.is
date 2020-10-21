@@ -1,9 +1,5 @@
 import React, { FC } from 'react'
-import {
-  IconDeprecated as Icon,
-  Typography,
-  TypographyProps,
-} from '@island.is/island-ui/core'
+import { Icon, Typography, TypographyProps } from '@island.is/island-ui/core'
 
 import * as styles from './Hyperlink.treat'
 

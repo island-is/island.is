@@ -4,7 +4,7 @@ import cn from 'classnames'
 import {
   Box,
   Typography,
-  IconDeprecated as Icon,
+  Icon,
   Stack,
   Divider,
 } from '@island.is/island-ui/core'

@@ -6,7 +6,7 @@ import {
   Box,
   Typography,
   Stack,
-  IconDeprecated as Icon,
+  Icon,
   GridContainer,
   GridRow,
   GridColumn,

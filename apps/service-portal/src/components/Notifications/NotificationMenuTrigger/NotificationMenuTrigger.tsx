@@ -3,7 +3,7 @@ import * as styles from './NotificationMenuTrigger.treat'
 import {
   ButtonDeprecated as Button,
   Box,
-  IconDeprecated as Icon,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useStore } from '../../../store/stateProvider'
 import { ActionType, MenuState } from '../../../store/actions'

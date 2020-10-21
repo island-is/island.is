@@ -10,7 +10,7 @@ import {
   Typography,
   Tag,
   Inline,
-  IconDeprecated as Icon,
+  Icon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'

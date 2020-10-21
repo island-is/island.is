@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import {
-  IconDeprecated as Icon,
+  Icon,
   Box,
   ButtonDeprecated as Button,
   Typography,

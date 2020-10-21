@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconDeprecated as Icon } from '@island.is/island-ui/core'
+import { Icon } from '@island.is/island-ui/core'
 import * as styles from './ToggleButton.treat'
 
 interface ToggleButtonProps {

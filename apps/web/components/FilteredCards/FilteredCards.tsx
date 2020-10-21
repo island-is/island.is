@@ -10,7 +10,7 @@ import {
   Text,
   Tag,
   Inline,
-  IconDeprecated as Icon,
+  Icon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Organization, OrganizationTag } from '@island.is/api/schema'

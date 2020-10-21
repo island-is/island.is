@@ -9,7 +9,7 @@ import {
   Box,
   ContentBlock,
   Typography,
-  IconDeprecated as Icon,
+  Icon,
   ButtonDeprecated as Button,
   Select,
   Column,

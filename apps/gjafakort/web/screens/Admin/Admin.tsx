@@ -7,7 +7,7 @@ import {
   Hidden,
   Columns,
   Column,
-  IconDeprecated as Icon,
+  Icon,
   Box,
   ButtonDeprecated as Button,
   Typography,

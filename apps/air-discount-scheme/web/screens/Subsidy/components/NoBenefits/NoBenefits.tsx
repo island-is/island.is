@@ -4,7 +4,7 @@ import {
   Typography,
   ButtonDeprecated as Button,
   Stack,
-  IconDeprecated as Icon,
+  Icon,
 } from '@island.is/island-ui/core'
 import { Link } from '@island.is/air-discount-scheme-web/components'
 

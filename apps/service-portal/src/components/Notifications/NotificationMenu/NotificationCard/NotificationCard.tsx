@@ -3,7 +3,7 @@ import { NotificationCard as Card } from '../mockNotifications'
 import {
   Box,
   Typography,
-  IconDeprecated as Icon,
+  Icon,
   Stack,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'

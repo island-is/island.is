@@ -4,7 +4,7 @@ import Router from 'next/router'
 import {
   Box,
   ButtonDeprecated as Button,
-  IconDeprecated as Icon,
+  Icon,
   Typography,
   GridContainer,
   GridRow,

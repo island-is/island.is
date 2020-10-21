@@ -6,7 +6,7 @@ import {
   Box,
   Typography,
   Stack,
-  IconDeprecated as Icon,
+  Icon,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { UserCredit, NoBenefits } from '../'
