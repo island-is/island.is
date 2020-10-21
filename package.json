@@ -256,6 +256,7 @@
     "@testing-library/jest-dom": "^5.11.3",
     "@testing-library/react": "10.4.1",
     "@testing-library/user-event": "^12.1.5",
+    "@types/animejs": "^3.1.2",
     "@types/bull": "3.14.2",
     "@types/cache-manager-ioredis": "^2.0.1",
     "@types/classnames": "^2.2.10",
