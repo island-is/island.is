@@ -9,6 +9,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
 
 export class CreateUserProfileDto {
+  //needs authentication (added for rebuild of shemas)
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
