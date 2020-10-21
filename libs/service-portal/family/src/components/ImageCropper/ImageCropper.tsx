@@ -6,29 +6,30 @@ import getCroppedImg from './CropImage'
 import { Icon } from '@island.is/island-ui/core'
 
 interface ImageCropProps {
-  imageSrc?: ArrayBuffer
+  imageSrc?: string
   onCrop: Function
   onCancel: Function
 }
 
 const ImageCropper: FC<ImageCropProps> = ({
-  imageSrc = null,
+  imageSrc = '',
   onCrop,
   onCancel,
 }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState({
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  })
 
-  const dogImg =
-    'https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000'
-
-  // call upload from parent
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
-
+  console.log(croppedAreaPixels)
   const cropImage = useCallback(async () => {
     try {
       const croppedImage = await getCroppedImg(

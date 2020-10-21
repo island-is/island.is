@@ -15,7 +15,7 @@ import * as styles from './UserInfo.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { Modal } from '../../components/Modal'
-import FileUploadshi from '../../components/Modal/FileUpload'
+import ImageCropper from '../../components/ImageCropper/FileUpload'
 
 export type UserInfoSidebarType =
   | null
@@ -98,16 +98,16 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         />
         <Modal
           show={showModal}
-          onCancel={() => setModal(false)}
+          onCancel={() => showModal == true && setModal(false)}
           onContinue={() => {
             setModal(false)
           }}
           onClickOutside={() => {
-            setModal(false)
+            showModal == true && setModal(false)
           }}
           title="Skipta út mynd"
         >
-          <FileUploadshi />
+          <ImageCropper />
         </Modal>
         {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine
