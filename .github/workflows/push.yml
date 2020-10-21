@@ -6,6 +6,7 @@ on:
       - 'master'
       - 'release/**'
       - 'hotfix/**'
+      - 'revert-possible-memleaks'
     paths-ignore:
       - '**/*.md'
     tags:
