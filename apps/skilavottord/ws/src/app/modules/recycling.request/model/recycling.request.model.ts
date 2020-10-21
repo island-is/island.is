@@ -7,9 +7,7 @@ import {
   ForeignKey,
   CreatedAt,
   UpdatedAt,
-  HasMany,
   BelongsTo,
-  HasOne,
 } from 'sequelize-typescript'
 import { VehicleModel } from '../../vehicle/model/vehicle.model'
 
