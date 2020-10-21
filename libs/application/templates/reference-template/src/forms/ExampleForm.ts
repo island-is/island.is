@@ -1,14 +1,15 @@
 import {
+  buildCheckboxField,
   buildForm,
+  buildIntroductionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubSection,
-  buildCheckboxField,
-  buildIntroductionField,
-  buildRadioField,
   buildTextField,
-  Form,
   Comparators,
+  Form,
+  FormModes,
   FormValue,
 } from '@island.is/application/core'
 import { m } from './messages'
@@ -16,6 +17,7 @@ import { m } from './messages'
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   name: 'Atvinnuleysisbætur',
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'intro',

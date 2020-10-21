@@ -34,9 +34,10 @@ export async function validateApplicationSchema(
 export async function validateIncomingAnswers(
   application: Application,
   newAnswers: FormValue | undefined,
-) {
+  isStrict = true,
+): Promise<FormValue> {
   if (!newAnswers) {
-    return
+    return {}
   }
   const template = await getApplicationTemplateByTypeId(application.typeId)
   const helper = new ApplicationTemplateHelper(application, template)
@@ -45,30 +46,38 @@ export async function validateIncomingAnswers(
     application.state === 'inReview' ? 'reviewer' : 'applicant',
   )
   if (writableAnswersAndExternalData === 'all') {
-    return
+    return newAnswers
   }
   if (
-    !writableAnswersAndExternalData ||
-    !writableAnswersAndExternalData?.answers
+    isStrict &&
+    (!writableAnswersAndExternalData ||
+      !writableAnswersAndExternalData?.answers)
   ) {
+    console.log('im going to throw an error here', application.state)
     throw new BadRequestException(
       `Current user is not permitted to update answers in this state: ${application.state}`,
     )
   }
-  const permittedAnswers = writableAnswersAndExternalData.answers
-
+  const permittedAnswers =
+    isStrict && writableAnswersAndExternalData?.answers
+      ? writableAnswersAndExternalData.answers
+      : []
+  const trimmedAnswers: FormValue = {}
   const illegalAnswers: string[] = []
 
   Object.keys(newAnswers).forEach((key) => {
     if (permittedAnswers.indexOf(key) === -1) {
       illegalAnswers.push(key)
+    } else {
+      trimmedAnswers[key] = newAnswers[key]
     }
   })
-  if (illegalAnswers.length > 0) {
+  if (isStrict && illegalAnswers.length > 0) {
     throw new BadRequestException(
       `Current user is not permitted to update the following answers: ${illegalAnswers.toString()}`,
     )
   }
+  return trimmedAnswers
 }
 // TODO
 export async function validateIncomingExternalDataProviders(

@@ -1,18 +1,23 @@
 import React, { FC, useMemo } from 'react'
-import { ReviewField, FieldBaseProps } from '@island.is/application/core'
+import { SubmitField, FieldBaseProps } from '@island.is/application/core'
 import { Text, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 
 interface Props extends FieldBaseProps {
-  field: ReviewField
+  field: SubmitField
 }
-const ReviewFormField: FC<Props> = ({ field, error }) => {
-  const { id, name, actions } = field
+
+const SubmitFormField: FC<Props> = ({ field, error }) => {
+  const { id, name, actions, placement } = field
+
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
       return { label: a.name, value: a.event as string }
     })
   }, [actions])
+  if (placement === 'footer') {
+    return null
+  }
   return (
     <Box
       background="blue100"
@@ -29,4 +34,4 @@ const ReviewFormField: FC<Props> = ({ field, error }) => {
   )
 }
 
-export default ReviewFormField
+export default SubmitFormField

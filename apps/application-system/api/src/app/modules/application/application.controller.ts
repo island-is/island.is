@@ -265,19 +265,27 @@ export class ApplicationController {
     }
 
     const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
-    await validateIncomingAnswers(
+
+    const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
+      false,
     )
 
     await validateApplicationSchema(
       existingApplication as BaseApplication,
-      newAnswers,
+      permittedAnswers,
     )
-    const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
+    const mergedAnswers = mergeAnswers(
+      existingApplication.answers,
+      permittedAnswers,
+    )
 
     const helper = new ApplicationTemplateHelper(
-      { ...existingApplication, answers: mergedAnswers } as BaseApplication,
+      {
+        ...(existingApplication.toJSON() as BaseApplication),
+        answers: mergedAnswers,
+      } as BaseApplication,
       template,
     )
 
