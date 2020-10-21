@@ -14,11 +14,11 @@ export class GrantTypeService {
     private logger: Logger,
   ) {}
 
-  async getGrantType(id: string): Promise<GrantType> {
-    this.logger.debug(`Finding grant type for id - "${id}"`)
+  async getGrantType(name: string): Promise<GrantType> {
+    this.logger.debug(`Finding grant type for name - "${name}"`)
 
     return await this.grantTypeModel.findOne({
-      where: { id: id },
+      where: { name: name },
     })
   }
 }
