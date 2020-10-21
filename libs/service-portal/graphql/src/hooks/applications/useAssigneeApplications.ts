@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { Query, QueryListDocumentsArgs } from '@island.is/api/schema'
-import { LIST_APPLICATIONS } from '../../lib/queries/listApplications'
+import { ASSIGNEE_APPLICATIONS } from '../../lib/queries/assigneeApplications'
 import { useState } from 'react'
 
-export const useListApplications = (natReg: string) => {
-  const { data, loading, error } = useQuery(LIST_APPLICATIONS, {
+export const useAssigneeApplications = (natReg: string) => {
+  const { data, loading, error } = useQuery(ASSIGNEE_APPLICATIONS, {
     variables: {
       input: {
         nationalRegistryId: natReg,
@@ -13,7 +13,7 @@ export const useListApplications = (natReg: string) => {
   })
 
   return {
-    data: data?.getApplicationsByApplicant || null,
+    data: data?.getApplicationsByAssignee || null,
     loading,
     error,
   }
