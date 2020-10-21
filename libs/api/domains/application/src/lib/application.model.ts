@@ -9,34 +9,34 @@ registerEnumType(ApplicationResponseDtoTypeIdEnum, {
 @ObjectType()
 export class Application {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => Date)
-  created: Date
+  created!: Date
 
   @Field(() => Date)
-  modified: Date
+  modified!: Date
 
   @Field(() => String)
-  applicant: string
+  applicant!: string
+
+  @Field(() => [String])
+  assignees!: string[]
 
   @Field(() => String)
-  assignee: string
-
-  @Field(() => String)
-  state: string
+  state!: string
 
   @Field(() => graphqlTypeJson, { nullable: true })
   attachments?: object
 
   @Field(() => ApplicationResponseDtoTypeIdEnum)
-  typeId: ApplicationResponseDtoTypeIdEnum
+  typeId!: ApplicationResponseDtoTypeIdEnum
 
   @Field(() => graphqlTypeJson)
-  answers: object
+  answers!: object
 
   @Field(() => graphqlTypeJson)
-  externalData: object
+  externalData!: object
 
   @Field(() => String, { nullable: true })
   name?: string
