@@ -52,12 +52,6 @@ export class Application extends Model<Application> {
   @Column({
     type: DataType.STRING,
   })
-  @ApiPropertyOptional()
-  externalId?: string
-
-  @Column({
-    type: DataType.STRING,
-  })
   @ApiProperty()
   state!: string
 

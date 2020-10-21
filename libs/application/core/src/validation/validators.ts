@@ -43,8 +43,8 @@ export function extractPartialSchemaForValues(
           }),
         )
       }
-    } else {
-      returnSchema = returnSchema.merge(schema?.pick({ [key]: true }))
+    } else if (schema?.pick) {
+      returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
     }
   })
   return returnSchema

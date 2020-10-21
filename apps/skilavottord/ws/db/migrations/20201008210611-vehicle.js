@@ -10,11 +10,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.STRING,
       },
-      vehicle_type: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      vehicle_owner_id: {
+      owner_national_id: {
         allowNull: false,
         references: {
           key: 'national_id',
@@ -26,11 +22,18 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      vehicle_type: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
       vehicle_color: {
         type: DataTypes.STRING,
       },
       newreg_date: {
         type: DataTypes.DATE,
+      },
+      vin_number: {
+        type: DataTypes.STRING,
       },
       created_at: {
         type: DataTypes.DATE,

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
@@ -42,7 +42,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       },
       //logging: (message) => this.logger.debug(message),
       autoLoadModels: true,
-      synchronize: true,
+      synchronize: false,
     }
   }
 }

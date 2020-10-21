@@ -42,9 +42,16 @@ import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import { buildDataProviders, buildExternalData } from './externalDataUtils'
+import {
+  buildDataProviders,
+  buildExternalData,
+} from './utils/externalDataUtils'
 import { ApplicationByIdPipe } from './tools/applicationById.pipe'
-import { validateApplicationSchema } from './schemaValidationUtils'
+import {
+  validateApplicationSchema,
+  validateIncomingAnswers,
+  validateIncomingExternalDataProviders,
+} from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
@@ -172,14 +179,17 @@ export class ApplicationController {
     @Body()
     application: UpdateApplicationDto,
   ): Promise<ApplicationResponseDto> {
+    const newAnswers = application.answers as FormValue
+    await validateIncomingAnswers(
+      existingApplication as BaseApplication,
+      newAnswers,
+    )
+
     await validateApplicationSchema(
       existingApplication as BaseApplication,
-      application.answers as FormValue,
+      newAnswers,
     )
-    const mergedAnswers = mergeAnswers(
-      existingApplication.answers,
-      application.answers as FormValue,
-    )
+    const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
@@ -207,7 +217,11 @@ export class ApplicationController {
     @Body()
     externalDataDto: PopulateExternalDataDto,
   ): Promise<ApplicationResponseDto> {
-    // TODO how can we know if the requested data-providers are actually associated with this given form?
+    await validateIncomingExternalDataProviders(
+      existingApplication as BaseApplication,
+      externalDataDto,
+    )
+
     const results = await callDataProviders(
       buildDataProviders(externalDataDto),
       existingApplication as BaseApplication,

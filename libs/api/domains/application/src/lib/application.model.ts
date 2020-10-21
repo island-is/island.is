@@ -23,9 +23,6 @@ export class Application {
   @Field(() => [String])
   assignees!: string[]
 
-  @Field(() => String, { nullable: true })
-  externalId?: string
-
   @Field(() => String)
   state!: string
 

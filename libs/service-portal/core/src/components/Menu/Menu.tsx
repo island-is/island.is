@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import * as styles from './Menu.treat'
-import { Box, IconDeprecated as Icon } from '@island.is/island-ui/core'
+import { Box, Icon } from '@island.is/island-ui/core'
 
 interface Props {
   isOpen: boolean
@@ -32,7 +32,7 @@ export const Menu: FC<Props> = ({ isOpen, children, onCloseMenu }) => {
         })}
       >
         <button className={styles.closeButton} onClick={onCloseMenu}>
-          <Icon type="close" color="blue400" width={10} height={10} />
+          <Icon type="outline" icon="close" color="blue400" size="medium" />
         </button>
         {children}
       </Box>

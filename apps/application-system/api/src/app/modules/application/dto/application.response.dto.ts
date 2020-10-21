@@ -36,11 +36,6 @@ export class ApplicationResponseDto {
   @IsArray()
   assignees!: string[]
 
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  externalId?: string
-
   @ApiProperty()
   @Expose()
   @IsString()

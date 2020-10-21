@@ -27,9 +27,6 @@ module.exports = {
         assignee: {
           type: Sequelize.STRING,
         },
-        ['external_id']: {
-          type: Sequelize.STRING,
-        },
         state: {
           type: Sequelize.STRING,
           allowNull: false,

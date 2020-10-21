@@ -26,7 +26,6 @@ export const Applications: FC = () => {
             attachments: {},
             typeId: type,
             assignees: [nationalRegistryId],
-            externalId: 'some_id',
             answers: {},
           },
         },

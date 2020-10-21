@@ -25,11 +25,6 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly assignees!: string[]
 
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly externalId?: string
-
   @IsNotEmpty()
   @IsString()
   @ApiProperty()

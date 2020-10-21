@@ -1,13 +1,11 @@
 import {
-  ApplicationTypes,
   buildForm,
   buildIntroductionField,
   Form,
 } from '@island.is/application/core'
 
 export const PendingReview: Form = buildForm({
-  id: ApplicationTypes.EXAMPLE,
-  ownerId: 'TODO?',
+  id: 'ExamplePending',
   name: 'Í vinnslu',
   mode: 'pending',
   children: [

@@ -23,11 +23,6 @@ export class CreateApplicationInput {
   @IsArray()
   assignees!: string[]
 
-  @Field((type) => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  externalId?: string
-
   @Field((type) => String)
   @IsString()
   state!: string
