@@ -8,12 +8,14 @@ module.exports = {
         {
           national_id: '0301665909',
           gdpr_status: true,
+          created_at: '2020-09-08 04:05:06',
           updated_at: '2020-09-08 04:05:06',
         },
         {
           national_id: '0404815409',
           gdpr_status: false,
-          updated_at: '2020-09-09 04:05:06',
+          created_at: '2020-09-08 04:05:06',
+          updated_at: '2020-09-08 04:05:06',
         },
       ],
       {},

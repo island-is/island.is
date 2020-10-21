@@ -25,7 +25,7 @@ export const Applications: FC = () => {
             state: 'draft',
             attachments: {},
             typeId: type,
-            assignee: nationalRegistryId,
+            assignees: [nationalRegistryId],
             answers: {},
           },
         },
