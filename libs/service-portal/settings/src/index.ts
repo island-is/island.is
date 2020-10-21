@@ -30,6 +30,15 @@ export const settingsModule: ServicePortalModule = {
         path: ServicePortalPath.UserProfileRoot,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
+      {
+        name: defineMessage({
+          id: 'sp.settings:edit-phone-number',
+          defaultMessage: 'Breyta símanúmeri',
+        }),
+        path: ServicePortalPath.UserProfileEditPhoneNumber,
+        render: () =>
+          lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
+      },
     ]
 
     return routes

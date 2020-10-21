@@ -1,6 +1,9 @@
 import React from 'react'
 import { Typography, Box, Stack, Icon, Hidden } from '@island.is/island-ui/core'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import {
+  ServicePortalModuleComponent,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import * as styles from './UserProfile.treat'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
@@ -59,6 +62,13 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Símanúmer',
           })}
           content={userProfile?.mobilePhoneNumber || ''}
+          editLink={{
+            url: ServicePortalPath.UserProfileEditPhoneNumber,
+            title: defineMessage({
+              id: 'sp.settings:edit-phone-number',
+              defaultMessage: 'Breyta símanúmeri',
+            }),
+          }}
         />
         <UserInfoLine
           label={defineMessage({
