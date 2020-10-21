@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
+import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
-import { RecyclingRequestModel } from '../models'
 
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
@@ -12,7 +12,9 @@ export class RecyclingRequestResolver {
 
   @Query(() => [RecyclingRequestModel])
   async getAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
-    return await this.recyclingRequestService.findAll()
+    const res = await this.recyclingRequestService.findAll()
+    console.log('res->' + JSON.stringify(res, null, 2))
+    return res
   }
 
   // @Query(() => Gdpr)

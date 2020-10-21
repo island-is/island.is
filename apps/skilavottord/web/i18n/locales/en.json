@@ -118,6 +118,53 @@
     },
     "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
   },
+  "companyInfo": {
+    "title": "Company information",
+    "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
+    "subtitles": {
+      "companyLocation": "Recycling company location"
+    },
+    "buttons": {
+      "add": "Add another location",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "companyInfoForm": {
+    "addTitle": "Add new location",
+    "editTitle": "Edit location",
+    "form": {
+      "title": "Adress and contact information",
+      "company": {
+        "label": "Company"
+      },
+      "visitingAddress": {
+        "label": "Visiting adress",
+        "placeholder": "Ex. Maplestreet 2"
+      },
+      "postNumber": {
+        "label": "Post number",
+        "placeholder": "Postnumber of visiting adress"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Ex. Reykjavik"
+      },
+      "website": {
+        "label": "Website (optional)",
+        "placeholder": "Ex. www.website.is"
+      },
+      "phoneNumber": {
+        "label": "Phone number (including country code)",
+        "placeholder": "Ex. +3545551900"
+      }
+    },
+    "buttons": {
+      "add": "Add location",
+      "save": "Save changes",
+      "cancel": "Cancel"
+    }
+  },
   "companySidenav": {
     "deregister": "Deregister car",
     "companyInfo": "Company information"
@@ -157,6 +204,11 @@
       "baseRoute": "/en/deregister-vehicle",
       "select": "/en/deregister-vehicle/select",
       "deregister": "/en/deregister-vehicle/[id]"
+    },
+    "companyInfo": {
+      "baseRoute": "/en/company-info",
+      "add": "/en/company-info/edit",
+      "edit": "/en/company-info/add"
     }
   }
 }

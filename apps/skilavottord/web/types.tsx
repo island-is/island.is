@@ -13,6 +13,17 @@ export interface MockCar {
   isCoOwned?: boolean
 }
 
+export interface MockRecyclingPartner {
+  id: number
+  name: string
+  address: string
+  postNumber: number
+  city?: string
+  website?: string
+  phone?: string
+  active?: boolean
+}
+
 export interface MockUser {
   name: string
   nationalId: string

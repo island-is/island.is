@@ -53,6 +53,7 @@ export const Checkbox = ({
         onChange={onChange}
         value={value}
         {...ariaError}
+        checked={checked}
       />
       <label
         className={cn(styles.label, {
