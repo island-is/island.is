@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { GdprModel } from '../models'
+import { GdprModel } from './model/gdpr.model'
 
 @Injectable()
 export class GdprService {
