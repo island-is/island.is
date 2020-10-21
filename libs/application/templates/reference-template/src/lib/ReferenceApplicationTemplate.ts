@@ -90,6 +90,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
+              write: { answers: ['careerHistoryCompanies'] },
               read: 'all',
             },
             {
@@ -118,6 +119,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
+              read: 'all',
             },
           ],
         },

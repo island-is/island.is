@@ -1,6 +1,11 @@
 import React, { FC, useReducer } from 'react'
 import cn from 'classnames'
-import { Application, Form, Schema } from '@island.is/application/core'
+import {
+  Application,
+  Form,
+  FormModes,
+  Schema,
+} from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -16,7 +21,6 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { FormModes } from '../types'
 import * as styles from './FormShell.treat'
 
 export const FormShell: FC<{
@@ -52,6 +56,8 @@ export const FormShell: FC<{
 
   const { mode = FormModes.APPLYING } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
+
+  const currentScreen = screens[activeScreen]
 
   return (
     <Box
@@ -100,9 +106,9 @@ export const FormShell: FC<{
                     })
                   }
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                  shouldSubmit={activeScreen === screens.length - 2}
-                  isLastScreen={activeScreen === screens.length - 1} // TODO do this better
-                  screen={screens[activeScreen]}
+                  activeScreenIndex={activeScreen}
+                  numberOfScreens={screens.length}
+                  screen={currentScreen}
                   mode={mode}
                 />
               </Box>

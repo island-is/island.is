@@ -6,7 +6,7 @@ import {
   StateSchema,
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
-import { Form } from './Form'
+import { Form, StaticText } from './Form'
 import { Application } from './Application'
 
 export type ApplicationRole = 'applicant' | 'reviewer' | string
@@ -32,7 +32,7 @@ export interface ApplicationContext {
 
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
-  name: string
+  name: StaticText
   type: 'primary' | 'subtle' | 'reject' | string
 }
 
