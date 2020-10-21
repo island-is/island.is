@@ -41,7 +41,11 @@ const App: React.FC = () => {
     !isLoading && (
       <userContext.Provider value={{ user: user }}>
         <BrowserRouter>
-          <Header />
+          <Route
+            render={(props) => {
+              return <Header pathname={props.location.pathname} />
+            }}
+          ></Route>
           <main className={styles.mainConainer}>
             <Switch>
               <Route

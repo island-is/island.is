@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, Translation } from "./file";
+//   import { Convert, Translation } from ./file;
 //
 //   const translation = Convert.toTranslation(json);
 //
@@ -16,6 +16,8 @@ export interface Translation {
   completed: Completed
   processes: Processes
   companyOverview: CompanyOverview
+  companyInfo: CompanyInfo
+  companyInfoForm: CompanyInfoFormPage
   companySidenav: CompanySidenav
   deregisterVehicle: DeregisterVehicle
   routes: Routes
@@ -173,6 +175,30 @@ export interface CompanyOverview {
   table: string[]
 }
 
+export interface CompanyInfo {
+  title: string
+  info: string
+  subtitles: CompanyInfoSubTitles
+  buttons: CompanyInfoButtons
+}
+
+export interface CompanyInfoFormPage {
+  addTitle: string
+  editTitle: string
+  form: CompanyInfoForm
+  buttons: CompanyInfoFormButtons
+}
+
+export interface CompanyInfoForm {
+  title: string
+  company: InputField
+  visitingAddress: InputField
+  postNumber: InputField
+  city: InputField
+  website: InputField
+  phoneNumber: InputField
+}
+
 export interface CompanySidenav {
   deregister: string
   companyInfo: string
@@ -204,6 +230,16 @@ export interface CompanyOverviewButtons {
   deregister: string
 }
 
+export interface CompanyInfoSubTitles {
+  companyLocation: string
+}
+
+export interface CompanyOverviewButtons {
+  add: string
+  delete: string
+  edit: string
+}
+
 export interface DeregisterSelectButtons {
   cancel: string
   continue: string
@@ -224,6 +260,7 @@ export interface Routes {
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
+  companyInfo: CompanyInfoRoutes
 }
 
 export interface RecycleVehicleRoutes {
@@ -237,6 +274,12 @@ export interface DeregisterVehicleRoutes {
   baseRoute: string
   select: string
   deregister: string
+}
+
+export interface CompanyInfoRoutes {
+  baseRoute: string
+  add: string
+  edit: string
 }
 
 // Converts JSON strings to/from your types
