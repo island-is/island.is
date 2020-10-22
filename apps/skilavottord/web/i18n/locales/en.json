@@ -176,7 +176,12 @@
       "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
       "input": {
         "label": "Car registration number",
-        "placeholder": "ex MD2341"
+        "placeholder": "ex MDX34",
+        "errors": {
+          "empty": "Please enter a car registration number",
+          "length": "Please enter 5 or 7 characters",
+          "invalidRegNumber": "Please enter registration number in a valid format"
+        }
       },
       "buttons": {
         "cancel": "Cancel",

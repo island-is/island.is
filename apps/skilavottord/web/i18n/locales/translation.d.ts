@@ -254,6 +254,7 @@ export interface DeregisterButtons {
 export interface InputField {
   label: string
   placeholder: string
+  errors: InputErrors
 }
 
 export interface Routes {
