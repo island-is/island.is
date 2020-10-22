@@ -3389,9 +3389,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "sequelize-cli db:seed:all"
-            ],
+            "commands": ["sequelize-cli db:seed:all"],
             "cwd": "libs/auth-api-lib"
           }
         }
