@@ -28,7 +28,14 @@ export const BackdropDiv = forwardRef(
 )
 
 type ModalBaseProps = {
+  /**
+   * Element that opens the dialog.
+   * It will be forwarded neccessery props for a11y and event handling.
+   */
   disclosure: ReactElement
+  /**
+   * Unique ID for accessibility purposes
+   */
   baseId: string
   className?: string
 }

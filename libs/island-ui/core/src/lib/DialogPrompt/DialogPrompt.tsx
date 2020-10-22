@@ -1,12 +1,4 @@
-import React, {
-  forwardRef,
-  ReactElement,
-  Ref,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { ReactElement } from 'react'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
 import { Box } from '../Box/Box'
@@ -21,14 +13,42 @@ import { ModalBase } from '../ModalBase/ModalBase'
 import * as styles from './DialogPrompt.treat'
 
 interface DialogPromptProps {
+  /**
+   * The heading text content
+   */
   title: string
+  /**
+   * The paragraph text content
+   */
   description?: string
+  /**
+   * Explain what this modal is for
+   */
   ariaLabel: string
+  /**
+   * Unique ID for accessibility purposes
+   */
   baseId: string
+  /**
+   * Element that opens the dialog.
+   * It will be forwarded neccessery props for a11y and event handling.
+   */
   disclosureElement?: ReactElement
+  /**
+   * User presses confirm callback
+   */
   onConfirm?: () => void
+  /**
+   * User presses cancel callback
+   */
   onCancel?: () => void
+  /**
+   * If left empty the button won't be rendered
+   */
   buttonTextConfirm?: string
+  /**
+   * If left empty the button won't be rendered
+   */
   buttonTextCancel?: string
 }
 
@@ -54,11 +74,11 @@ export const DialogPrompt = ({
     >
       {({ closeModal }) => {
         const handleClose = () => {
-          onCancel?.()
+          onCancel && onCancel()
           closeModal()
         }
         const handleConfirm = () => {
-          onConfirm?.()
+          onConfirm && onConfirm()
           closeModal()
         }
         return (
