@@ -1,4 +1,4 @@
-import { Args, Resolver, Mutation, Query } from '@nestjs/graphql'
+import { Args, Resolver, Query } from '@nestjs/graphql'
 import { GetMyInfoInput } from './dto/getMyInfoInput'
 import { FamilyMember } from './familyMember.model'
 import { MyInfo } from './myInfo.model'
@@ -6,7 +6,7 @@ import { NationalRegistryService } from './national-registry.service'
 
 @Resolver()
 export class NationalRegistryResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) {}
+  constructor(private nationalRegistryService: NationalRegistryService) { }
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(

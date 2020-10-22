@@ -1,7 +1,4 @@
 import {
-  Inject,
-  InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
@@ -47,12 +44,12 @@ export class NationalRegistryApi {
 
     return {
       fullName: userInfo.Nafn,
-      citizenship: userInfo.Rikisfang,
+      citizenship: userInfo.Rikisfang === 'IS' ? 'Ísland' : userInfo.Rikisfang,
       gender: this.formatGender(userInfo.Kyn),
       birthPlace: this.formatBirthPlaceString(birthPlaceResponse),
       religion: this.formatReligionString(religionResponse),
       legalResidence: this.formatResidenceAddressString(houseResponse),
-      maritalStatus: this.formatMartialStatus(userInfo.Hju),
+      maritalStatus: this.formatMartialStatus(userInfo.Hju, userInfo.Kyn),
       banMarking: 'not implemented',
     }
   }
@@ -76,7 +73,7 @@ export class NationalRegistryApi {
         ({
           fullName: x.Nafn,
           nationalId: x.Kennitala,
-          gender: x.Kyn,
+          gender: x.Kyn + x.KynKodi,
           maritalStatus: x.Hjuskapur,
           address: `${x.Husheiti} , ${x.Pnr} ${x.Sveitarfelag}`,
         } as FamilyMember),
@@ -109,18 +106,20 @@ export class NationalRegistryApi {
     return birthPlaceDto.table.diffgram.DocumentElement.Sveitarfelag.Sokn
   }
 
-  private formatMartialStatus(maritalCode: string): string {
+  private formatMartialStatus(maritalCode: string, genderCode: string): string {
+    const isMale = genderCode === '1'
+    console.log('Mf', isMale)
     switch (maritalCode) {
       case '1':
-        return 'Ógift(ur) (ókvæntur)'
+        return isMale ? 'Ógiftur' : 'Ógift'
       case '3':
-        return 'Gift(ur) (kvæntur) eða staðfest samvist'
+        return isMale ? 'Giftur eða staðfest samvist' : 'Gift eða staðfest samvist'
       case '4':
-        return 'Ekkill, ekkja'
+        return isMale ? 'Ekkill' : 'Ekkja'
       case '5':
-        return 'Skilin(n) að borði og sæng'
+        return `Skilin${isMale ? 'n' : ''} að borði og sæng`
       case '6':
-        return 'Skilin(n) að lögum'
+        return `Skilin${isMale ? 'n' : ''} að lögum`
       case '7':
         return 'Hjón ekki í samvistum'
       case '8':
@@ -168,6 +167,7 @@ export class NationalRegistryApi {
           ':Kennitala': nationalId,
         },
         (
+          // eslint-disable-next-line
           error: any,
           {
             GetViewThjodskraResult: result,
@@ -203,6 +203,7 @@ export class NationalRegistryApi {
           ':HusKodi': houseCode,
         },
         (
+          // eslint-disable-next-line
           error: any,
           {
             GetViewHusaskraResult: result,
@@ -238,6 +239,7 @@ export class NationalRegistryApi {
           ':Kennitala': nationalId,
         },
         (
+          // eslint-disable-next-line
           error: any,
           {
             GetViewKennitalaOgTrufelagResult: result,
@@ -273,6 +275,7 @@ export class NationalRegistryApi {
           ':SvfNr': municipalCode,
         },
         (
+          // eslint-disable-next-line
           error: any,
           {
             GetViewSveitarfelagResult: result,
@@ -308,6 +311,7 @@ export class NationalRegistryApi {
           ':Kennitala': nationalId,
         },
         (
+          // eslint-disable-next-line
           error: any,
           {
             GetViewFjolskyldanResult: result,

@@ -6,11 +6,10 @@ export class SoapClient {
     baseUrl: string,
     host: string,
   ): Promise<Soap.Client> {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     return new Promise<Soap.Client>((resolve, reject) => {
       Soap.createClient(
         `${baseUrl}/lisaws/service.asmx?WSDL`,
-        { wsdl_headers: { Host: host } },
+        { 'wsdl_headers': { Host: host } },
         (error, client) => {
           if (error) {
             //TODO log to provider
