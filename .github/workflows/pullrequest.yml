@@ -4,9 +4,6 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
-env:
-  NODE_OPTIONS: --max-old-space-size=4096
-
 jobs:
   prepare:
     runs-on: ubuntu-20.04
@@ -164,6 +161,7 @@ jobs:
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 4
     strategy:
       fail-fast: false
@@ -196,7 +194,6 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 2
     strategy:
       fail-fast: false
