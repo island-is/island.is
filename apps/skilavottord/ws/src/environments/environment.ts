@@ -8,7 +8,6 @@ export default {
     samlEntryPoint2: 'https://innskraning.island.is/?id=sv_company.local',
     audience: 'localhost:4200',
     jwtSecret: 'securesecret',
-
   },
   backendUrl: 'http://localhost:3333',
 }

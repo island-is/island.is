@@ -23,7 +23,7 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     // console.log("--- canActivate method starting")
     const ctx = GqlExecutionContext.create(context)
-    const { req } = ctx.getContext() 
+    const { req } = ctx.getContext()
     return super.canActivate(new ExecutionContextHost([req]))
   }
 

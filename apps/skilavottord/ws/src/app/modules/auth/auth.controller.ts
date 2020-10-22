@@ -27,7 +27,12 @@ import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
-const { samlEntryPoint, samlEntryPoint2, audience: audienceUrl, jwtSecret } = environment.auth
+const {
+  samlEntryPoint,
+  samlEntryPoint2,
+  audience: audienceUrl,
+  jwtSecret,
+} = environment.auth
 //const { samlEntryPoint2, audience: audienceUrl2, jwtSecret2 } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 3600
@@ -77,7 +82,7 @@ export class AuthController {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-         return res.redirect('/error')
+      return res.redirect('/error')
     }
 
     const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
@@ -112,18 +117,20 @@ export class AuthController {
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    
-    this.logger.info(`  - kennitala = ${user.kennitala}  nafn = ${user.fullname}   simi = ${user.mobile}`)
+
+    this.logger.info(
+      `  - kennitala = ${user.kennitala}  nafn = ${user.fullname}   simi = ${user.mobile}`,
+    )
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - returnUrl = ${returnUrl}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     //const authService = new AuthService()
-    
+
     let RoleForUser: string = 'Citizen'
-    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)  
-    this.logger.info(`--- /citizen/callback ending ---`)  
+    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
+    this.logger.info(`--- /citizen/callback ending ---`)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -138,15 +145,15 @@ export class AuthController {
   }
 
   @Post('/company/callback')
- // async callback2(@Body('token') token, @Res() res, @Req() req) {
-    async callback2(@Body('token') token, @Res() res) {
+  // async callback2(@Body('token') token, @Res() res, @Req() req) {
+  async callback2(@Body('token') token, @Res() res) {
     this.logger.info('--- /company/callback starting ---')
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-         return res.redirect('/error')
+      return res.redirect('/error')
     }
 
     // const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
@@ -181,21 +188,27 @@ export class AuthController {
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    
-    this.logger.info(`  - kennitala = ${user.kennitala}  nafn = ${user.fullname}   simi = ${user.mobile}`)
+
+    this.logger.info(
+      `  - kennitala = ${user.kennitala}  nafn = ${user.fullname}   simi = ${user.mobile}`,
+    )
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     const authService = new AuthService()
-    
-    const RoleUser: AuthUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
-  //  RoleUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
-    let RoleForUser: Role = 'user'
-    RoleForUser=authService.getRole(RoleUser)  
 
-    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`) 
-    let returnUrlComp: string  
+    const RoleUser: AuthUser = {
+      nationalId: user.kennitala,
+      mobile: user.mobile,
+      name: user.fullname,
+    }
+    //  RoleUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
+    let RoleForUser: Role = 'user'
+    RoleForUser = authService.getRole(RoleUser)
+
+    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
+    let returnUrlComp: string
     if (RoleForUser.includes('RecyclingCompany')) {
       returnUrlComp = '/deregister-vehicle'
     } else if (RoleForUser.includes('RecyclingFund')) {
@@ -203,8 +216,8 @@ export class AuthController {
     } else {
       return '/error'
     }
-    this.logger.info(`  - redirecting to ${returnUrlComp}`) 
-    this.logger.info(`--- /company/callback ending ---`) 
+    this.logger.info(`  - redirecting to ${returnUrlComp}`)
+    this.logger.info(`--- /company/callback ending ---`)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -220,7 +233,7 @@ export class AuthController {
 
   @Get('/citizen/login')
   login1(@Res() res, @Query() query) {
-    this.logger.info('--- /citizen/login starting ---')    
+    this.logger.info('--- /citizen/login starting ---')
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
@@ -233,7 +246,7 @@ export class AuthController {
 
   @Get('/company/login')
   login2(@Res() res, @Query() query) {
-    this.logger.info('--- /company/login starting ---')    
+    this.logger.info('--- /company/login starting ---')
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
