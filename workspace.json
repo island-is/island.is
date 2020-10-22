@@ -3385,6 +3385,15 @@
             ],
             "cwd": "libs/auth-api-lib"
           }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "sequelize-cli db:seed:all"
+            ],
+            "cwd": "libs/auth-api-lib"
+          }
         }
       }
     },
