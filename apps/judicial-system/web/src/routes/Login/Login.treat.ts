@@ -6,7 +6,9 @@ export const loginContainer = style({
   gridColumnGap: 24,
   gridTemplateColumns: 'repeat(12, 1fr)',
   gridTemplateRows: 'repeat(5, auto)',
-  margin: `${theme.spacing[30]}px ${theme.spacing[6]}px 0`,
+  maxWidth: '1440px',
+  margin: `${theme.spacing[30]}px auto 0`,
+  padding: `${theme.spacing[6]}px`,
 })
 
 export const errorMessage = style({

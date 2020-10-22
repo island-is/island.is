@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import {
   Text,
@@ -7,14 +7,26 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { apiUrl } from '../../api'
+import * as api from '../../api'
 import * as styles from './Login.treat'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
+  const uContext = useContext(userContext)
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
   }, [])
+
+  useEffect(() => {
+    const logoutCurrentUser = async () => {
+      api.logOut()
+    }
+    if (uContext.user) {
+      logoutCurrentUser()
+    }
+  }, [uContext])
 
   return (
     <div className={styles.loginContainer}>

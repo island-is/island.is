@@ -1,7 +1,7 @@
 import { styleMap, style, globalStyle } from 'treat'
 import * as CSS from 'csstype'
 import { theme } from '@island.is/island-ui/theme'
-import { mapToStyleProperty } from '../../utils'
+import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
 export type TextVariants =
@@ -61,7 +61,7 @@ const availableLineHeights = {
 
 const availableFontSizes = {
   xs: { xs: 12, md: 14 },
-  sm: { xs: 15, md: 18 },
+  sm: { xs: 16, md: 18 },
   md: { xs: 18, md: 20 },
   lg: { xs: 20, md: 24 },
   xl: { xs: 26, md: 34 },

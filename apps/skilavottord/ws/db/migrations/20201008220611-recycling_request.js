@@ -4,12 +4,18 @@ module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
     'recycling_request',
     {
-      vehicle_id: {
+      id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
+        autoIncrement: true,
+      },
+      vehicle_id: {
+        allowNull: false,
         references: {
           key: 'vehicle_id',
           model: 'vehicle',
+          onDelete: 'CASCADE',
         },
         type: DataTypes.STRING,
       },

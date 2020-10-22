@@ -5,6 +5,10 @@ import * as Constants from '../../../utils/constants'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
 import fetchMock from 'fetch-mock'
+import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/extend-expect'
+import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 describe('Ruling routes', () => {
   describe(Constants.RULING_STEP_ONE_ROUTE, () => {
@@ -21,7 +25,11 @@ describe('Ruling routes', () => {
       Storage.prototype.setItem = jest.fn()
 
       // Act and Assert
-      const { getByTestId } = render(<RulingStepOne />)
+      const { getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepOne />
+        </userContext.Provider>,
+      )
 
       await act(async () => {
         await userEvent.type(
@@ -43,6 +51,29 @@ describe('Ruling routes', () => {
         ).toBe(false)
       })
     })
+
+    test('should not have a disabled continue button by default if case data is valid', () => {
+      // Arrange
+      Storage.prototype.getItem = jest.fn(() => {
+        return JSON.stringify({
+          ruling:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui autem de summo bono dissentit de tota philosophiae ratione dissentit. Sed est forma eius disciplinae, sicut fere ceterarum, triplex: una pars est naturae, disserendi altera, vivendi tertia. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Tu enim ista lenius, hic Stoicorum more nos vexat. Si est nihil nisi corpus, summa erunt illa: valitudo, vacuitas doloris, pulchritudo, cetera. Prodest, inquit, mihi eo esse animo. Quonam modo? Duo Reges: constructio interrete.',
+          custodyEndDate: '2020-09-16T19:51:39.466Z',
+        })
+      })
+
+      // Act
+      const { getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepOne />
+        </userContext.Provider>,
+      )
+
+      // Assert
+      expect(
+        getByTestId('continueButton') as HTMLButtonElement,
+      ).not.toBeDisabled()
+    })
   })
 
   describe(Constants.RULING_STEP_TWO_ROUTE, () => {
@@ -60,7 +91,11 @@ describe('Ruling routes', () => {
         Storage.prototype.setItem = jest.fn()
 
         // Act and Assert
-        const { getByLabelText, getByTestId } = render(<RulingStepTwo />)
+        const { getByLabelText, getByTestId } = render(
+          <userContext.Provider value={{ user: mockJudge }}>
+            <RulingStepTwo />
+          </userContext.Provider>,
+        )
 
         userEvent.click(
           getByLabelText('Sækjandi kærir málið') as HTMLInputElement,
@@ -89,7 +124,11 @@ describe('Ruling routes', () => {
       })
 
       // Act
-      const { getAllByRole } = render(<RulingStepTwo />)
+      const { getAllByRole } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepTwo />
+        </userContext.Provider>,
+      )
 
       // Assert
       expect(
@@ -104,7 +143,11 @@ describe('Ruling routes', () => {
       fetchMock.mock('/api/case/test_id', 200)
 
       // Act
-      const { getByText, getByTestId } = render(<RulingStepTwo />)
+      const { getByText, getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepTwo />
+        </userContext.Provider>,
+      )
 
       await waitFor(() =>
         userEvent.click(getByText('Kærði tekur sér lögboðinn frest')),
@@ -127,7 +170,11 @@ describe('Ruling routes', () => {
       // Arrange
 
       // Act
-      const { getByText, getByTestId } = render(<RulingStepTwo />)
+      const { getByText, getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepTwo />
+        </userContext.Provider>,
+      )
 
       await waitFor(() => userEvent.click(getByText('Kærði kærir málið')))
       await waitFor(() => userEvent.click(getByText('Sækjandi kærir málið')))

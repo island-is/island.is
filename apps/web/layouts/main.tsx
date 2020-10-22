@@ -12,6 +12,9 @@ import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
+import * as Sentry from '@sentry/node'
+import { RewriteFrames } from '@sentry/integrations'
+import { useRouter } from 'next/router'
 
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
@@ -27,11 +30,12 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
-import { GlobalContextProvider, GlobalContext } from '../context'
+import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
 
 export interface LayoutProps {
@@ -48,6 +52,21 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+}
+
+if (environment.sentryDsn) {
+  Sentry.init({
+    dsn: environment.sentryDsn,
+    enabled: environment.production,
+    integrations: [
+      new RewriteFrames({
+        iteratee: (frame) => {
+          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
+          return frame
+        },
+      }),
+    ],
+  })
 }
 
 const Layout: NextComponentType<
@@ -73,6 +92,24 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)
+  const { route, pathname, query, asPath } = useRouter()
+
+  Sentry.configureScope((scope) => {
+    scope.setExtra('lang', activeLocale)
+
+    scope.setContext('router', {
+      route,
+      pathname,
+      query,
+      asPath,
+    })
+  })
+
+  Sentry.addBreadcrumb({
+    category: 'pages/main',
+    message: `Rendering from ${process.browser ? 'browser' : 'server'}`,
+    level: Sentry.Severity.Debug,
+  })
 
   const menuTabs = [
     {

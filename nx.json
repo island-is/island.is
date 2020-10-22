@@ -71,6 +71,9 @@
     "api-domains-user-profile": {
       "tags": []
     },
+    "api-mocks": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },
@@ -109,6 +112,9 @@
       "tags": []
     },
     "application-ui-shell": {
+      "tags": []
+    },
+    "auth-api-lib": {
       "tags": []
     },
     "cache": {
@@ -257,6 +263,12 @@
     "service-portal-settings": {
       "tags": []
     },
+    "services-auth-admin-api": {
+      "tags": []
+    },
+    "services-auth-api": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
@@ -264,6 +276,9 @@
       "tags": []
     },
     "shared-form-fields": {
+      "tags": []
+    },
+    "shared-mocking": {
       "tags": []
     },
     "skilavottord-consts": {

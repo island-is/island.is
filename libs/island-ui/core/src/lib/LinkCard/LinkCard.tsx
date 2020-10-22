@@ -1,7 +1,9 @@
+/** @deprecated LinkCard has been deprecated in favor of TopicCard */
+
 import React, { forwardRef, ComponentPropsWithRef } from 'react'
 import cn from 'classnames'
 import { Box, BoxProps } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Tag, TagVariant, TagProps } from '../Tag/Tag'
 import * as styles from './LinkCard.treat'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
@@ -44,9 +46,9 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
         width="full"
         className={cn(styles.container, { [styles.focused]: isFocused })}
       >
-        <Typography variant="h4" as="span" color="blue400">
+        <Text variant="h4" as="span" color="blue400">
           {children}
-        </Typography>
+        </Text>
         {tag && (
           <Box className={styles.tag} paddingLeft={2}>
             <Tag variant={tagVariant} {...tagProps}>

@@ -1,15 +1,21 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
+import { VehicleModel } from './model/vehicle.model'
 import { VehicleService } from './vehicle.service'
-import { VehicleModel } from '../models'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Resolver(() => VehicleModel)
 export class VehicleResolver {
-  constructor(@Inject(VehicleService) private vehicleService: VehicleService) {}
+  constructor(
+    @Inject(VehicleService) private vehicleService: VehicleService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
 
   @Query(() => [VehicleModel])
   async getAllVehicles(): Promise<VehicleModel[]> {
-    return await this.vehicleService.findAll()
+    const res = await this.vehicleService.findAll()
+    this.logger.debug('getAllVehicle responce:' + JSON.stringify(res, null, 2))
+    return res
   }
 
   // @Query(() => Gdpr)

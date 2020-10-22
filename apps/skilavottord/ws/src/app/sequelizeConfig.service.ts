@@ -42,7 +42,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       },
       //logging: (message) => this.logger.debug(message),
       autoLoadModels: true,
-      synchronize: true,
+      synchronize: false,
     }
   }
 }
