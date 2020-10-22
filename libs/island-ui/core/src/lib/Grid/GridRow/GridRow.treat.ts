@@ -1,5 +1,6 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { mapToStyleProperty } from '../../../utils/mapToStyleProperty'
 
 export const gridRow = style({
   boxSizing: 'border-box',
@@ -16,3 +17,14 @@ export const gridRow = style({
     },
   },
 })
+
+const alignRules = {
+  center: 'center',
+  end: 'flexEnd',
+  normal: 'normal',
+  spaceAround: 'spaceAround',
+  spaceBetween: 'spaceBetween',
+  start: 'flexStart',
+}
+
+export const align = styleMap(mapToStyleProperty(alignRules, 'justifyContent'))

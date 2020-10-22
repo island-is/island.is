@@ -95,9 +95,11 @@ export const DialogPrompt = ({
                 {description}
               </Text>
             )}
-            <Box paddingTop={[2, 3, 7]}></Box>
-            <Columns collapseBelow="md" space="gutter" align="spaceBetween">
-              <Column width="1/3">
+            <GridRow align="spaceBetween">
+              <GridColumn
+                span={['12/12', '12/12', '1/3']}
+                paddingTop={[2, 2, 7]}
+              >
                 <Button
                   size="default"
                   variant="ghost"
@@ -106,13 +108,16 @@ export const DialogPrompt = ({
                 >
                   {buttonTextCancel}
                 </Button>
-              </Column>
-              <Column width="1/3">
+              </GridColumn>
+              <GridColumn
+                span={['12/12', '12/12', '1/3']}
+                paddingTop={[2, 2, 7]}
+              >
                 <Button size="default" onClick={handleConfirm} fluid>
                   {buttonTextConfirm}
                 </Button>
-              </Column>
-            </Columns>
+              </GridColumn>
+            </GridRow>
           </GridContainer>
         </Box>
       )

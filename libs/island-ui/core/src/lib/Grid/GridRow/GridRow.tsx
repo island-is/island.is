@@ -5,18 +5,26 @@ import * as styles from './GridRow.treat'
 import { ResponsiveProp } from '../../../utils/responsiveProp'
 import * as styleRefs from '../../Box/useBoxStyles.treat'
 
+type Align = 'flexStart' | 'spaceAround' | 'spaceBetween' | 'center'
+
 interface Props {
   className?: string
   direction?: ResponsiveProp<keyof typeof styleRefs.flexDirection>
+  align?: ResponsiveProp<keyof typeof styleRefs.justifyContent>
 }
 
 export const GridRow: FC<Props> = ({
   children,
   className,
   direction = 'row',
+  align,
 }) => {
   return (
-    <Box flexDirection={direction} className={cn(className, styles.gridRow)}>
+    <Box
+      flexDirection={direction}
+      justifyContent={align}
+      className={cn(className, styles.gridRow)}
+    >
       {children}
     </Box>
   )
