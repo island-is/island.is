@@ -99,7 +99,8 @@
       "sections": [
         "Samþykkja úrvinnslu ökutækis",
         "Afhenda ökutæki á móttökustöð"
-      ]
+      ],
+      "completed": "Completed"
     },
     "company": {
       "title": "Deregister car",

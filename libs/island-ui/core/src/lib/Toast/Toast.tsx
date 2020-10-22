@@ -21,6 +21,7 @@ interface ToastProps {
   hideProgressBar?: boolean
   timeout?: number
   closeButton?: boolean
+  useKeyframeStyles?: boolean
 }
 
 const RenderMessage = ({
@@ -58,6 +59,7 @@ export const ToastContainer: React.FC<ToastProps> = ({
   hideProgressBar = false,
   timeout = 5000,
   closeButton = false,
+  useKeyframeStyles = true,
 }) => {
   return (
     <div className={toastStyles.root}>
@@ -72,7 +74,7 @@ export const ToastContainer: React.FC<ToastProps> = ({
         pauseOnHover
         transition={Slide}
       />
-      <style jsx>{toastKeyframes}</style>
+      {useKeyframeStyles && <style jsx>{toastKeyframes}</style>}
     </div>
   )
 }
