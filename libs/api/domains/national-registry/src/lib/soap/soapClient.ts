@@ -9,7 +9,10 @@ export class SoapClient {
     return new Promise<Soap.Client>((resolve, reject) => {
       Soap.createClient(
         `${baseUrl}/lisaws/service.asmx?WSDL`,
-        { wsdl_headers: { Host: host } },
+        {
+          // eslint-disable-next-line
+          wsdl_headers: { Host: host },
+        },
         (error, client) => {
           if (error) {
             logger.error(error)
