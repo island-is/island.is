@@ -128,8 +128,8 @@ export class AuthController {
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     //const authService = new AuthService()
 
-    let RoleForUser: string = 'Citizen'
-    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
+    //const RoleForUser: string = 'Citizen'
+    this.logger.info(`  - Role for ${user.fullname} is Citizen`)
     this.logger.info(`--- /citizen/callback ending ---`)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
