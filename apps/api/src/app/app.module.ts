@@ -14,6 +14,7 @@ import { HealthController } from './health.controller'
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
+
 @Module({
   controllers: [HealthController],
   imports: [
@@ -42,7 +43,9 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     DocumentModule,
     TranslationsModule,
     TerminusModule,
-    UserProfileModule,
+    UserProfileModule.register({
+      userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+    }),
   ],
 })
 export class AppModule {}
