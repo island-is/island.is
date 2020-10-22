@@ -1,20 +1,19 @@
 import { CommunicationsResolver } from './communications.resolver'
 
-// TODO: Define test for this
-describe('communications', () => {
-  it('should work', () => {
-    expect(CommunicationsResolver).toEqual('CommunicationsResolver')
+describe('communications.service', () => {
+  it('should send emails', () => {
+    // TODO: SendEmail should get a valid request for type x
+  })
+
+  it('should support multiple message types', () => {})
+
+  it('should generate different templates', () => {
+    // TODO: Should not allways return the same template
+  })
+
+  it('should throw errors', () => {
+    // TODO: Invalid input
+    // TODO: Error thrown in sendmail
+    // TODO: Missing template
   })
 })
-
-// TODO: Should send emails
-
-// TODO: Should support multiple templates
-
-// TODO: Should throw error on unsuported template
-
-// TODO: Should return error to users
-
-// TODO: Should throw error on invalid input
-
-// TODO: Should generate templates for all types

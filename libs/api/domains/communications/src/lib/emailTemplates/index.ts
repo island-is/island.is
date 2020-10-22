@@ -18,5 +18,9 @@ export const getEmailTemplate = (
     case 'tellUsAStory': {
       return getTellUsAStoryTemplate(input)
     }
+
+    default: {
+      throw new Error('Message type is not supported')
+    }
   }
 }

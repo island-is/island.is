@@ -16,5 +16,3 @@ import { environment } from './environments/environment'
   ],
 })
 export class CommunicationsModule {}
-
-//TODO: Add required healthchecks for this module
