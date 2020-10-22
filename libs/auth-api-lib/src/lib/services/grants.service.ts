@@ -97,6 +97,10 @@ export class GrantsService {
   async removeAsync(key: string): Promise<number> {
     this.logger.debug(`Removing grant with key - "${key}"`)
 
+    if (!key) {
+      throw new BadRequestException('Key must be provided')
+    }
+
     return await this.grantModel.destroy({
       where: {
         key: key,
