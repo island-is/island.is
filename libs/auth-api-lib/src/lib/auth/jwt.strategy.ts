@@ -11,10 +11,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       secretOrKeyProvider: passportJwtSecret({
         cache: true,
-        cacheMaxEntries: 5, // Default value
-        // cacheMaxAge: ms('10m'), // Default value
         rateLimit: true,
-        jwksRequestsPerMinute: 5,
         jwksUri: configService.get<string>('IDS_JWKS_URI'),
       }),
 
