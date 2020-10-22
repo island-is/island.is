@@ -5,7 +5,7 @@ import * as AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
-import { SearchResponse } from './types/types.model'
+import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
 

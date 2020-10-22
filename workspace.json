@@ -3750,6 +3750,32 @@
         }
       }
     },
+    "shared-types": {
+      "root": "libs/shared/types",
+      "sourceRoot": "libs/shared/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/types/tsconfig.lib.json",
+              "libs/shared/types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/types/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/types/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
