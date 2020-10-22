@@ -1,4 +1,4 @@
-export type Type = 'filled' | 'sharp' | 'outline'
+export type Type = 'filled' | 'outline'
 export type Icon =
   | 'accessibility'
   | 'add'
@@ -100,7 +100,7 @@ export default {
     search: 'SearchSharp',
     settings: 'SettingsSharp',
     wallet: 'WalletSharp',
-    warning: 'Warning',
+    warning: 'WarningSharp',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -134,6 +134,6 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     wallet: 'WalletOutline',
-    warning: 'Warning',
+    warning: 'WarningOutline',
   },
 }
