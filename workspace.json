@@ -1209,6 +1209,35 @@
         }
       }
     },
+    "application-templates-meta-application": {
+      "root": "libs/application/templates/meta-application",
+      "sourceRoot": "libs/application/templates/meta-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/meta-application/tsconfig.lib.json",
+              "libs/application/templates/meta-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/meta-application/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/meta-application/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-parental-leave": {
       "root": "libs/application/templates/parental-leave",
       "sourceRoot": "libs/application/templates/parental-leave/src",
