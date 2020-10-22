@@ -25,12 +25,7 @@ globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
 
 export const placeholder = style(
   {
-    selectors: {
-      [`${wrapper} &`]: {
-        marginLeft: 0,
-        ...inputMixins.placeholder,
-      },
-    },
+    ...inputMixins.placeholder,
   },
   'placeholder',
 )

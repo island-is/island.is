@@ -1,13 +1,13 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const containerPaddingTop = 7
-const containerPaddingRight = 7
-const containerPaddingBottom = 13
-const containerPaddingLeft = 7
-const containerPadding = `${containerPaddingTop}px ${containerPaddingRight}px ${containerPaddingBottom}px ${containerPaddingLeft}px`
 const inputPadding = `0 ${theme.spacing[2]}px`
-const inputLabelFontSize = 14
+const mobileInputPadding = `0 ${theme.spacing[1]}px`
+const labelFontSize = 14
+const mobileLabelFontSize = 12
 const inputFontSize = 24
+const mobileInputFontSize = 20
+const inputFontSizeSmall = 18
+const mobileInputFontSizeSmall = 16
 const inputBorderRadius = 5
 
 export const label = {
@@ -15,75 +15,103 @@ export const label = {
   width: '100%',
   color: theme.color.blue400,
   fontWeight: theme.typography.medium,
-  fontSize: inputLabelFontSize,
-  marginBottom: theme.spacing[1],
+  fontSize: mobileLabelFontSize,
+  lineHeight: 1.3333333333,
   transition: 'color 0.1s',
   ...themeUtils.responsiveStyle({
-    xs: {
-      fontSize: 12,
-    },
     md: {
-      fontSize: inputLabelFontSize,
+      lineHeight: 1.1428571429,
+      fontSize: labelFontSize,
     },
   }),
+}
+
+export const labelSizes = {
+  sm: {
+    marginBottom: 4,
+    ...themeUtils.responsiveStyle({
+      md: {
+        marginBottom: 4,
+      },
+    }),
+  },
+  md: {
+    marginBottom: 6,
+    ...themeUtils.responsiveStyle({
+      md: {
+        marginBottom: 8,
+      },
+    }),
+  },
 }
 
 export const container = {
   backgroundColor: theme.color.white,
   width: '100%',
-  border: `1px solid ${theme.color.blue200}`,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
   borderRadius: inputBorderRadius,
-  padding: containerPadding,
   cursor: 'text',
-  transition: 'box-shadow 0.1s, border-color 0.1s',
+  transition: 'box-shadow 0.3s',
+}
+
+export const containerSizes = {
+  sm: {
+    padding: 8,
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '8px 24px 8px 8px',
+      },
+    }),
+  },
+  md: {
+    padding: '8px 8px 16px 8px',
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '8px 24px 14px 8px',
+      },
+    }),
+  },
 }
 
 export const input = {
   caretColor: theme.color.blue400,
   fontFamily: theme.typography.fontFamily,
   fontWeight: theme.typography.medium,
-  fontSize: inputFontSize,
-  lineHeight: 1.4666,
-  padding: inputPadding,
   border: 'none',
   width: '100%',
   background: 'none',
   boxShadow: 'none',
   appearance: 'none' as const,
+  padding: mobileInputPadding,
   ...themeUtils.responsiveStyle({
-    xs: {
-      fontSize: 20,
-      lineHeight: 1.3,
-    },
     md: {
-      fontSize: inputFontSize,
-      lineHeight: 1.4666,
+      padding: inputPadding,
     },
   }),
 }
 
-export const textarea = {
-  caretColor: theme.color.blue400,
-  fontFamily: theme.typography.fontFamily,
-  fontWeight: theme.typography.light,
-  fontSize: theme.typography.baseFontSize,
-  lineHeight: 1.5555,
-  padding: inputPadding,
-  border: 'none',
-  width: '100%',
-  background: 'none',
-  boxShadow: 'none',
-  appearance: 'none' as const,
-  ...themeUtils.responsiveStyle({
-    xs: {
-      fontSize: 15,
-      lineHeight: 1.3,
-    },
-    md: {
-      fontSize: theme.typography.baseFontSize,
-      lineHeight: 1.5555,
-    },
-  }),
+export const inputSizes = {
+  sm: {
+    fontSize: mobileInputFontSizeSmall,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: inputFontSizeSmall,
+        lineHeight: 1.555556,
+      },
+    }),
+  },
+  md: {
+    fontSize: mobileInputFontSize,
+    lineHeight: 1.3,
+    padding: inputPadding,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: inputFontSize,
+        lineHeight: 1.4166666667,
+      },
+    }),
+  },
 }
 
 export const inputPlaceholder = {
@@ -94,31 +122,29 @@ export const inputPlaceholder = {
 export const placeholder = {
   color: theme.color.dark300,
   fontWeight: theme.typography.light,
-  fontSize: theme.typography.baseFontSize,
-  padding: inputPadding,
   width: '100%',
 }
 
 // Error state
 export const errorMessage = {
-  color: theme.color.red400,
+  color: theme.color.red600,
   fontWeight: theme.typography.medium,
-  fontSize: inputLabelFontSize,
+  fontSize: labelFontSize,
   marginTop: theme.spacing[1],
 }
 
 export const inputErrorState = {
-  borderColor: theme.color.red400,
+  boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
 }
 
 export const labelErrorState = {
-  color: theme.color.red400,
+  color: theme.color.red600,
 }
 
 // Focus state
 export const containerFocus = {
   outline: 'none',
-  boxShadow: `0 0 0 4px ${theme.color.mint400}`,
+  boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
 }
 
 export const inputFocus = {
@@ -127,7 +153,7 @@ export const inputFocus = {
 
 // Hover state
 export const containerHover = {
-  borderColor: theme.color.blue400,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue400}`,
 }
 
 // Disabled state

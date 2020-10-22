@@ -2,9 +2,8 @@ import React from 'react'
 import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
+import { Input } from '../Input/Input'
 import { Select } from './Select'
-import { Box } from '../Box/Box'
-import { ContentBlock } from '../ContentBlock/ContentBlock'
 
 export default {
   title: 'Form/Select',
@@ -16,31 +15,37 @@ export default {
   }),
 }
 
-export const Default = () => (
-  <ContentBlock>
-    <Box padding={['gutter', 2, 3, 4]}>
-      <div style={{ minHeight: 300 }}>
-        <Select
-          name="select1"
-          label="Tegund fyrirtækis"
-          placeholder="Veldu tegund"
-          options={[
-            {
-              label: 'Valmöguleiki 1',
-              value: '0',
-            },
-            {
-              label: 'Valmöguleiki 2',
-              value: '1',
-            },
-            {
-              label: 'Valmöguleiki 3',
-              value: '2',
-            },
-          ]}
-          noOptionsMessage="Enginn valmöguleiki"
-        />
-      </div>
-    </Box>
-  </ContentBlock>
+export const TempTest = () => (
+  <div>
+    <Template
+      name="select"
+      label="tester select"
+      placeholder="placeholder test"
+    />
+    <Input name="test" label="tester input" placeholder="placeholder test" />
+  </div>
 )
+
+const Template = (args) => <Select {...args} />
+
+export const Default = Template.bind({})
+Default.args = {
+  name: 'select1',
+  label: 'Tegund fyrirtækis',
+  placeholder: 'Veldu tegund',
+  options: [
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+    {
+      label: 'Valmöguleiki 3',
+      value: '2',
+    },
+  ],
+  noOptionsMessage: 'Enginn valmöguleiki',
+}

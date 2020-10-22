@@ -42,6 +42,7 @@ export interface SelectProps {
   defaultValue?: Option
   icon?: string
   isSearchable?: boolean
+  size?: 'sm' | 'md'
 }
 
 export const Select = ({
@@ -59,9 +60,10 @@ export const Select = ({
   defaultValue,
   icon = 'chevronDown',
   isSearchable = true,
+  size = 'md',
 }: SelectProps) => {
   return (
-    <div className={styles.wrapper} data-testid={`select-${name}`}>
+    <div className={cn(styles.wrapper, size)} data-testid={`select-${name}`}>
       <ReactSelect
         instanceId={id}
         noOptionsMessage={() => noOptionsMessage || null}

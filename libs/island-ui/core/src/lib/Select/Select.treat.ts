@@ -48,10 +48,14 @@ export const container = style({}, 'container')
 globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
   color: theme.color.dark400,
 })
+globalStyle(`${wrapper} .css-1g6gooi`, {
+  padding: 0,
+  margin: 0,
+})
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
   paddingRight: 70,
-  transition: 'border-color 0.1s',
+  border: 0,
 })
 globalStyle(
   `${wrapper} .island-select__control${container}${hasError}`,
