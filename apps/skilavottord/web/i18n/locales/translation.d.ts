@@ -75,6 +75,7 @@ export interface Processes {
 export interface ProcessSections {
   title: string
   sections: string[]
+  completed: string
 }
 
 export interface CancelModal {
