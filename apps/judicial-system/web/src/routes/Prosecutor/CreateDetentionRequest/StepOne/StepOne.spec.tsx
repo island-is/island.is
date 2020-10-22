@@ -6,8 +6,10 @@ import StepOne from './StepOne'
 import { Route, Router, MemoryRouter } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
+import { userContext } from '../../../../utils/userContext'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
+import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -22,11 +24,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Act
     await act(async () => {
       const { getByTestId } = render(
-        <MemoryRouter initialEntries={['/krafa/test_id']}>
-          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-            <StepOne />
-          </Route>
-        </MemoryRouter>,
+        <userContext.Provider value={{ user: mockProsecutor }}>
+          <MemoryRouter initialEntries={['/krafa/test_id']}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>,
       )
 
       // Assert
@@ -62,9 +66,11 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepOne />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
@@ -81,9 +87,11 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     })
 
     const { getByTestId, queryAllByTestId } = render(
-      <Router history={history}>
-        <StepOne />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Act
@@ -138,9 +146,11 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepOne />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
     )
     const policeCaseNumber = getByTestId(
       /policeCaseNumber/i,
@@ -187,9 +197,11 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepOne />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
@@ -215,9 +227,11 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepOne />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
@@ -247,9 +261,11 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act and Assert
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepOne />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
     )
 
     await act(async () => {

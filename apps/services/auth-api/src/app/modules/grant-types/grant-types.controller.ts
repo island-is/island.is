@@ -6,25 +6,25 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { AuthGuard } from '@nestjs/passport'
 import {
   GrantType,
   GrantTypeService,
   Scopes,
   ScopesGuard,
+  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
-@UseGuards(AuthGuard('jwt'), ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('grants')
 export class GrantTypeController {
   constructor(private readonly grantTypeService: GrantTypeService) {}
 
   @Scopes('@identityserver.api/authentication')
-  @Get('type/:id')
+  @Get('type/:name')
   @ApiOkResponse({ type: GrantType })
-  async getGrantType(@Param('id') id: string): Promise<GrantType> {
-    const grantType = await this.grantTypeService.getGrantType(id)
+  async getGrantType(@Param('name') name: string): Promise<GrantType> {
+    const grantType = await this.grantTypeService.getGrantType(name)
 
     if (!grantType) {
       throw new NotFoundException("This particular grantType doesn't exist")

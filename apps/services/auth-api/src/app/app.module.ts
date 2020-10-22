@@ -11,7 +11,11 @@ import { GrantTypesModule } from './modules/grant-types/grant-types.module'
 
 @Module({
   imports: [
-    AuthModule,
+    AuthModule.register({
+      audience: '@identityserver.api',
+      issuer: 'https://localhost:6001', // TODO: Get from env
+      jwksUri: 'http://localhost:6002/.well-known/openid-configuration/jwks', // TODO: Get from env
+    }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

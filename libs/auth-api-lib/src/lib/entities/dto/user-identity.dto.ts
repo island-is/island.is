@@ -36,6 +36,4 @@ export class UserIdentityDto {
   @IsArray()
   @ApiProperty({ type: [ClaimDto] })
   readonly claims: ClaimDto[]
-
-  profileId: string
 }

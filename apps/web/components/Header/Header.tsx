@@ -5,7 +5,7 @@ import {
   Columns,
   Column,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   Hidden,
   ResponsiveSpace,
   GridContainer,
@@ -130,7 +130,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     marginLeft={marginLeft}
                     borderRadius="large"
                   >
-                    <Button variant="menu" leftIcon="user" tabIndex={-1}>
+                    <Button variant="utility" icon="person">
                       {t.login}
                     </Button>
                   </FocusableBox>
@@ -141,9 +141,9 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 <Hidden below="md">
                   <Box marginLeft={marginLeft} position="relative">
                     <Button
-                      variant="menu"
+                      variant="utility"
                       onClick={() => setSideMenuOpen(true)}
-                      leftIcon="burger"
+                      icon="menu"
                       aria-haspopup="true"
                       aria-controls="sideMenu"
                       id="sideMenuToggle"
