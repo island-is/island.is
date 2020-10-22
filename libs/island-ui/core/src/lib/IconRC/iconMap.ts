@@ -2,7 +2,7 @@ export type Type = 'filled' | 'sharp' | 'outline'
 export type Icon =
   | 'accessibility'
   // | 'addCircle'
-  // | 'add'
+  | 'add'
   // | 'airplane'
   // | 'alarm'
   // | 'albums'
@@ -72,7 +72,7 @@ export type Icon =
   // | 'call'
   // | 'camera'
   // | 'cameraReverse'
-  // | 'car'
+  | 'car'
   // | 'carSport'
   // | 'card'
   // | 'caretBackCircle'
@@ -99,13 +99,13 @@ export type Icon =
   // | 'chevronBackCircle'
   | 'chevronBack'
   // | 'chevronDownCircle'
-  // | 'chevronDown'
+  | 'chevronDown'
   // | 'chevronForwardCircle'
   | 'chevronForward'
   // | 'chevronUpCircle'
   // | 'chevronUp'
   // | 'clipboard'
-  // | 'closeCircle'
+  | 'closeCircle'
   | 'close'
   // | 'cloudCircle'
   // | 'cloudDone'
@@ -313,7 +313,7 @@ export type Icon =
   // | 'refresh'
   // | 'reloadCircle'
   // | 'reload'
-  // | 'removeCircle'
+  | 'removeCircle'
   // | 'remove'
   // | 'reorderFour'
   // | 'reorderThree'
@@ -409,7 +409,7 @@ export default {
   filled: {
     accessibility: 'Accessibility',
     // addCircle: 'AddCircle',
-    // add: 'Add',
+    add: 'Add',
     // airplane: 'Airplane',
     // alarm: 'Alarm',
     // albums: 'Albums',
@@ -480,7 +480,7 @@ export default {
     // cameraReverse: 'CameraReverse',
     // camera: 'Camera',
     // carSport: 'CarSport',
-    // car: 'Car',
+    car: 'Car',
     // card: 'Card',
     // caretBackCircle: 'CaretBackCircle',
     // caretBack: 'CaretBack',
@@ -506,13 +506,13 @@ export default {
     // chevronBackCircle: 'ChevronBackCircle',
     chevronBack: 'ChevronBack',
     // chevronDownCircle: 'ChevronDownCircle',
-    // chevronDown: 'ChevronDown',
+    chevronDown: 'ChevronDown',
     // chevronForwardCircle: 'ChevronForwardCircle',
     chevronForward: 'ChevronForward',
     // chevronUpCircle: 'ChevronUpCircle',
     // chevronUp: 'ChevronUp',
     // clipboard: 'Clipboard',
-    // closeCircle: 'CloseCircle',
+    closeCircle: 'CloseCircle',
     close: 'Close',
     // cloudCircle: 'CloudCircle',
     // cloudDone: 'CloudDone',
@@ -808,7 +808,7 @@ export default {
     // refresh: 'Refresh',
     // reloadCircle: 'ReloadCircle',
     // reload: 'Reload',
-    // removeCircle: 'RemoveCircle',
+    removeCircle: 'RemoveCircle',
     // remove: 'Remove',
     // reorderFour: 'ReorderFour',
     // reorderThree: 'ReorderThree',
@@ -903,7 +903,7 @@ export default {
   sharp: {
     accessibility: 'AccessibilitySharp',
     // addCircle: 'AddCircleSharp',
-    // add: 'AddSharp',
+    add: 'AddSharp',
     // airplane: 'AirplaneSharp',
     // alarm: 'AlarmSharp',
     // albums: 'AlbumsSharp',
@@ -973,7 +973,7 @@ export default {
     // call: 'CallSharp',
     // cameraReverse: 'CameraReverseSharp',
     // camera: 'CameraSharp',
-    // car: 'CarSharp',
+    car: 'CarSharp',
     // carSport: 'CarSportSharp',
     // card: 'CardSharp',
     // caretBackCircle: 'CaretBackCircleSharp',
@@ -1000,13 +1000,13 @@ export default {
     // chevronBackCircle: 'ChevronBackCircleSharp',
     chevronBack: 'ChevronBackSharp',
     // chevronDownCircle: 'ChevronDownCircleSharp',
-    // chevronDown: 'ChevronDownSharp',
+    chevronDown: 'ChevronDownSharp',
     // chevronForwardCircle: 'ChevronForwardCircleSharp',
     chevronForward: 'ChevronForwardSharp',
     // chevronUpCircle: 'ChevronUpCircleSharp',
     // chevronUp: 'ChevronUpSharp',
     // clipboard: 'ClipboardSharp',
-    // closeCircle: 'CloseCircleSharp',
+    closeCircle: 'CloseCircleSharp',
     close: 'CloseSharp',
     // cloudCircle: 'CloudCircleSharp',
     // cloudDone: 'CloudDoneSharp',
@@ -1214,7 +1214,7 @@ export default {
     // refresh: 'RefreshSharp',
     // reloadCircle: 'ReloadCircleSharp',
     // reload: 'ReloadSharp',
-    // removeCircle: 'RemoveCircleSharp',
+    removeCircle: 'RemoveCircleSharp',
     // remove: 'RemoveSharp',
     // reorderFour: 'ReorderFourSharp',
     // reorderThree: 'ReorderThreeSharp',
@@ -1309,7 +1309,7 @@ export default {
   outline: {
     accessibility: 'AccessibilityOutline',
     // addCircle: 'AddCircleOutline',
-    // add: 'AddOutline',
+    add: 'AddOutline',
     // airplane: 'AirplaneOutline',
     // alarm: 'AlarmOutline',
     // albums: 'AlbumsOutline',
@@ -1379,7 +1379,7 @@ export default {
     // call: 'CallOutline',
     // camera: 'CameraOutline',
     // cameraReverse: 'CameraReverseOutline',
-    // car: 'CarOutline',
+    car: 'CarOutline',
     // carSport: 'CarSportOutline',
     // card: 'CardOutline',
     // caretBackCircle: 'CaretBackCircleOutline',
@@ -1406,13 +1406,13 @@ export default {
     // chevronBackCircle: 'ChevronBackCircleOutline',
     chevronBack: 'ChevronBackOutline',
     // chevronDownCircle: 'ChevronDownCircleOutline',
-    // chevronDown: 'ChevronDownOutline',
+    chevronDown: 'ChevronDownOutline',
     // chevronForwardCircle: 'ChevronForwardCircleOutline',
     chevronForward: 'ChevronForwardOutline',
     // chevronUpCircle: 'ChevronUpCircleOutline',
     // chevronUp: 'ChevronUpOutline',
     // clipboard: 'ClipboardOutline',
-    // closeCircle: 'CloseCircleOutline',
+    closeCircle: 'CloseCircleOutline',
     close: 'CloseOutline',
     // cloudCircle: 'CloudCircleOutline',
     // cloudDone: 'CloudDoneOutline',
@@ -1620,7 +1620,7 @@ export default {
     // refresh: 'RefreshOutline',
     // reloadCircle: 'ReloadCircleOutline',
     // reload: 'ReloadOutline',
-    // removeCircle: 'RemoveCircleOutline',
+    removeCircle: 'RemoveCircleOutline',
     // remove: 'RemoveOutline',
     // reorderFour: 'ReorderFourOutline',
     // reorderThree: 'ReorderThreeOutline',
