@@ -81,7 +81,7 @@ export class IndexingService {
         page: 1,
         size: 10,
         tags: [],
-        types: ['webArticle', 'webLifeEventPage'],
+        types: ['webArticle', 'webLifeEventPage', 'webAboutPage', 'webNews'],
       }).query
       entry.request = { query }
       entry.ratings.map((rating) => (rating._index = index))
