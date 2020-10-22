@@ -171,8 +171,6 @@ export const StepTwo: React.FC = () => {
         requestedCustodyRestrictions:
           caseDraftJSON.requestedCustodyRestrictions ?? [],
         caseFacts: caseDraftJSON.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.investigationProgress ?? '',
         legalArguments: caseDraftJSON.legalArguments ?? '',
         comments: caseDraftJSON.comments ?? '',
         notifications: caseDraftJSON.Notification ?? [],
@@ -582,42 +580,6 @@ export const StepTwo: React.FC = () => {
                 )
               }}
               rows={16}
-              textarea
-            />
-          </Box>
-          <Box marginBottom={3}>
-            <Input
-              name="witnessAccounts"
-              label="Framburðir"
-              placeholder="Skrifa hér..."
-              defaultValue={workingCase?.witnessAccounts}
-              onBlur={(evt) => {
-                autoSave(
-                  workingCase,
-                  'witnessAccounts',
-                  evt.target.value,
-                  setWorkingCase,
-                )
-              }}
-              rows={7}
-              textarea
-            />
-          </Box>
-          <Box marginBottom={3}>
-            <Input
-              name="investigationProgress"
-              label="Staða rannsóknar og næstu skref"
-              placeholder="Skrifa hér..."
-              defaultValue={workingCase?.investigationProgress}
-              onBlur={(evt) => {
-                autoSave(
-                  workingCase,
-                  'investigationProgress',
-                  evt.target.value,
-                  setWorkingCase,
-                )
-              }}
-              rows={7}
               textarea
             />
           </Box>
