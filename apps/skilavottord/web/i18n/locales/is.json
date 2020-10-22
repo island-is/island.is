@@ -107,7 +107,7 @@
       "sections": ["Velja ökutæki", "Afskrá Ökutæki"]
     }
   },
-  "companyOverview": {
+  "deregisterOverview": {
     "title": "Deregister car",
     "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
     "subtitles": {
@@ -125,6 +125,7 @@
   "companyInfo": {
     "title": "Company information",
     "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
+    "error": "Add your companies locations so that the users can find your company on iceland.is.",
     "subtitles": {
       "companyLocation": "Recycling company location"
     },
@@ -167,9 +168,10 @@
       "add": "Add location",
       "save": "Save changes",
       "cancel": "Cancel"
-    }
+    },
+    "success": "Company location was successfully updated."
   },
-  "companySidenav": {
+  "deregisterSidenav": {
     "deregister": "Deregister car",
     "companyInfo": "Company information"
   },
@@ -179,7 +181,12 @@
       "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
       "input": {
         "label": "Car registration number",
-        "placeholder": "ex MD2341"
+        "placeholder": "ex MDX34",
+        "errors": {
+          "empty": "Please enter a car registration number",
+          "length": "Please enter 5 or 7 characters",
+          "invalidRegNumber": "Please enter registration number in a valid format"
+        }
       },
       "buttons": {
         "cancel": "Cancel",
@@ -192,7 +199,8 @@
       "buttons": {
         "back": "Back",
         "confirm": "Confirm"
-      }
+      },
+      "success": "Deregistration was successful."
     }
   },
   "routes": {

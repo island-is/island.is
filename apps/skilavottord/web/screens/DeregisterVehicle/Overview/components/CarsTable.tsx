@@ -15,7 +15,7 @@ const CarsTable: FC = () => {
   const totalPages = 47
 
   const {
-    t: { companyOverview: t },
+    t: { deregisterOverview: t },
   } = useI18n()
 
   return (
