@@ -100,6 +100,7 @@
         "libs/island-ui/contentful/src/index.ts"
       ],
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
+      "@island.is/island-ui/icons": ["libs/island-ui/icons/src/index.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/judicial-system/consts": [

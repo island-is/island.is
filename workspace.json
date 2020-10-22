@@ -2043,6 +2043,32 @@
       "root": "libs/island-ui/fonts",
       "projectType": "library"
     },
+    "island-ui-icons": {
+      "root": "libs/island-ui/icons",
+      "sourceRoot": "libs/island-ui/icons/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/island-ui/icons/tsconfig.lib.json",
+              "libs/island-ui/icons/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/icons/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/icons/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "island-ui-storybook": {
       "root": "libs/island-ui/storybook",
       "sourceRoot": "libs/island-ui/storybook/src",
