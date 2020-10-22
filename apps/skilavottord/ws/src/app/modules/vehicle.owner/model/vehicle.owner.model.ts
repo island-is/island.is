@@ -29,17 +29,15 @@ export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
 
   @Field()
   @CreatedAt
+  @Column
   createdAt: Date
 
   @Field()
+  @Column
   @UpdatedAt
   updatedAt: Date
 
+  @Field(() => [VehicleModel], { nullable: true })
   @HasMany(() => VehicleModel)
   vehicles!: VehicleModel[]
-
-  // //ATH
-  // @Field((type) => [VehicleModel])
-  // @HasMany(() => VehicleModel)
-  // vehicle: VehicleModel[]
 }

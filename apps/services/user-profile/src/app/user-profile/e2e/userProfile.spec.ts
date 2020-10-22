@@ -17,7 +17,6 @@ describe('User profile API', () => {
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
         locale: 'en',
-        profileImageUrl: 'image',
         email: 'email@email.is',
       })
       .expect(201)
@@ -34,7 +33,6 @@ describe('User profile API', () => {
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
         locale: 'en123',
-        profileImageUrl: 'image',
         email: 'email@email.is',
       })
       .expect(400)
@@ -65,7 +63,6 @@ describe('User profile API', () => {
       nationalId: '1234567890',
       mobilePhoneNumber: '123456799',
       locale: 'en',
-      profileImageUrl: 'image',
       email: 'email@email.is',
     }
 
@@ -95,7 +92,6 @@ describe('User profile API', () => {
     const updatedProfile = {
       mobilePhoneNumber: '987654331',
       locale: 'is',
-      profileImageUrl: 'image',
       email: 'email@email.is',
     }
 
@@ -117,13 +113,11 @@ describe('User profile API', () => {
       nationalId: '1234567890',
       mobilePhoneNumber: '123456799',
       locale: 'en',
-      profileImageUrl: 'image',
       email: 'email@email.is',
     }
     const updatedProfile = {
       mobilePhoneNumber: '987654331',
       locale: 'is',
-      profileImageUrl: 'image',
       email: 'email@email.is',
     }
 
@@ -160,7 +154,6 @@ describe('User profile API', () => {
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
         locale: 'en',
-        profileImageUrl: 'image',
         email: 'email@email.is',
       })
       .expect(201)
@@ -171,7 +164,6 @@ describe('User profile API', () => {
         nationalId: '1234567890',
         mobilePhoneNumber: '123456799',
         locale: 'en',
-        profileImageUrl: 'image',
         email: 'email@email.is',
       })
       .expect(409)

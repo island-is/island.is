@@ -7,8 +7,7 @@ export const header = style({
   justifyContent: 'space-between',
   height: 112,
   borderBottom: `1px solid ${theme.color.blue200}`,
-  maxWidth: 1344,
-  margin: '0 auto',
+  padding: `0 ${theme.spacing[6]}px`,
 })
 
 export const headerTextWrapper = style({

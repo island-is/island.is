@@ -5,6 +5,7 @@ export enum ServicePortalPath {
   MinarSidurSilentSignInOidc = '/silent/signin-oidc',
   // Umsoknir
   UmsoknirRoot = '/umsoknir',
+  UmsoknirKynning = '/umsoknir-kynning',
   UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
   UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
   UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',

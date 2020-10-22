@@ -3,6 +3,8 @@ import { render, waitFor } from '@testing-library/react'
 import Overview from './Overview'
 import * as Constants from '../../../utils/constants'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { mockProsecutor } from '../../../utils/mocks'
 
 describe(`${Constants.STEP_THREE_ROUTE}`, () => {
   test('should display the approprieate custody provisions', async () => {
@@ -36,7 +38,11 @@ describe(`${Constants.STEP_THREE_ROUTE}`, () => {
     })
 
     // Act
-    const { getByText } = render(<Overview />)
+    const { getByText } = render(
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Overview />
+      </userContext.Provider>,
+    )
 
     // Assert
     await waitFor(() => getByText('a-lið 1. mgr. 95. gr.'))

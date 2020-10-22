@@ -5,6 +5,8 @@ import {
   BulletList,
   GridColumn,
   GridRow,
+  Inline,
+  Tag,
   Typography,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
@@ -33,13 +35,8 @@ export const InfoScreen: FC<Props> = ({
   title,
   intro,
   list,
-  institutionTitle,
   externalHref,
   externalLinkTitle,
-  institutionSubtitle,
-  institutionDescription,
-  institutionHref,
-  institutionLinkTitle,
   figure,
 }) => {
   const { formatMessage } = useLocale()
@@ -50,8 +47,16 @@ export const InfoScreen: FC<Props> = ({
         <GridRow>
           <GridColumn span={['12/12', '7/12']}>
             <Box marginTop={[2, 3, 8]} marginBottom={2}>
-              <Box marginBottom={[2, 3]}>
-                <Typography variant="h1">{formatMessage(title)}</Typography>
+              <Box display="flex" marginBottom={[2, 3]}>
+                <Inline space={1}>
+                  <Typography variant="h1">{formatMessage(title)}</Typography>
+                  <Tag variant="mint">
+                    {formatMessage({
+                      id: 'service-portal:in-progress',
+                      defaultMessage: 'Í vinnslu',
+                    })}
+                  </Tag>
+                </Inline>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
                 <Typography variant="intro">{formatMessage(intro)}</Typography>
@@ -83,31 +88,6 @@ export const InfoScreen: FC<Props> = ({
             <img src={figure} alt={`skrautmynd fyrir ${title}`} />
           </GridColumn>
         </GridRow>
-      </Box>
-      <Box
-        className={styles.externalCTA}
-        paddingY={[6, 6, 6, 9]}
-        paddingX={[3, 4, 7, 10, 15]}
-        background="purple100"
-      >
-        <Box marginBottom={[3, 4]}>
-          <Typography variant="h2">
-            {formatMessage(institutionTitle)}
-          </Typography>
-        </Box>
-        <Box marginBottom={[2, 3]}>
-          <Typography variant="h3">
-            {formatMessage(institutionSubtitle)}
-          </Typography>
-        </Box>
-        <Box marginBottom={[2, 3]}>
-          <Typography variant="p">
-            {formatMessage(institutionDescription)}
-          </Typography>
-        </Box>
-        <ArrowLink href={institutionHref}>
-          {formatMessage(institutionLinkTitle)}
-        </ArrowLink>
       </Box>
     </>
   )

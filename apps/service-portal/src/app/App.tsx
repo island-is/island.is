@@ -14,6 +14,7 @@ import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
+import { GlobalModules } from '../components/GlobalModules/GlobalModules'
 
 export const App = () => {
   return (
@@ -47,6 +48,7 @@ export const App = () => {
                           <Modules />
                         </Route>
                       </Switch>
+                      <GlobalModules />
                     </Layout>
                   </Authenticator>
                 </Route>

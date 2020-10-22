@@ -17,7 +17,6 @@ export class GdprService {
   // }
 
   async findAll(): Promise<GdprModel[]> {
-    //this.logger.debug(`Finding gdpr for nationalId - "${nationalId}"`)
     return await this.gdprModel.findAll()
   }
 
