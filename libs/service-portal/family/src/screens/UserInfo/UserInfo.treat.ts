@@ -6,6 +6,11 @@ export const iconContainer = style({
   alignSelf: 'center',
 })
 
-export const arrowIcon = style({
-  paddingLeft: '2px',
+export const figure = style({
+  maxHeight: '200px',
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      display: 'None',
+    },
+  },
 })
