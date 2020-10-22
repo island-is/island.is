@@ -6,15 +6,15 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { AuthGuard } from '@nestjs/passport'
 import {
   GrantType,
   GrantTypeService,
   Scopes,
   ScopesGuard,
+  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
-@UseGuards(AuthGuard('jwt'), ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('grants')
 export class GrantTypeController {
