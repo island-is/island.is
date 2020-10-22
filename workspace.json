@@ -772,6 +772,12 @@
             ]
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run api-domains-user-profile:codegen"
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
@@ -1199,6 +1205,35 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-meta-application": {
+      "root": "libs/application/templates/meta-application",
+      "sourceRoot": "libs/application/templates/meta-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/meta-application/tsconfig.lib.json",
+              "libs/application/templates/meta-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/meta-application/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/meta-application/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -3369,10 +3404,10 @@
           "options": {
             "commands": [
               {
-                "command": "../../node_modules/.bin/sequelize-cli db:migrate"
+                "command": "sequelize-cli db:migrate"
               }
             ],
-            "cwd": "apps/services/auth-api"
+            "cwd": "libs/auth-api-lib"
           }
         },
         "migrate/generate": {
@@ -3380,10 +3415,17 @@
           "options": {
             "commands": [
               {
-                "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+                "command": "sequelize-cli migration:generate --name $(whoami)"
               }
             ],
-            "cwd": "apps/services/auth-api"
+            "cwd": "libs/auth-api-lib"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["sequelize-cli db:seed:all"],
+            "cwd": "libs/auth-api-lib"
           }
         }
       }
@@ -3796,6 +3838,27 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate",
+            "cwd": "apps/skilavottord/ws"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/skilavottord/ws"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:seed:all",
+            "cwd": "apps/skilavottord/ws"
           }
         },
         "docker-express": {}

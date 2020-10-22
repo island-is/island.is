@@ -6,11 +6,13 @@ export const ApplicationFragment = gql`
     created
     modified
     applicant
-    assignee
+    assignees
     state
     attachments
     typeId
     answers
     externalData
+    progress
+    name
   }
 `

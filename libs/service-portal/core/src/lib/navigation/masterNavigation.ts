@@ -102,7 +102,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:applications',
           defaultMessage: 'Umsóknir',
         }),
-        path: ServicePortalPath.UmsoknirRoot,
+        path: ServicePortalPath.UmsoknirKynning,
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',

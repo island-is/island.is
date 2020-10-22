@@ -6,6 +6,8 @@ import fetchMock from 'fetch-mock'
 import * as Constants from '../../../utils/constants'
 import CourtRecord from './CourtRecord'
 import userEvent from '@testing-library/user-event'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
   test('should now allow users to continue unless every required field has been filled out', async () => {
@@ -27,9 +29,11 @@ describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <CourtRecord />
-      </Router>,
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Router history={history}>
+          <CourtRecord />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert

@@ -2,11 +2,10 @@ import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Handover.treat'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { Button } from '@island.is/skilavottord-web/components'
 import CompanyList from './components/CompanyList'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 
@@ -58,19 +57,27 @@ const Handover: FC = () => {
         </Stack>
         <Box display="flex" justifyContent="spaceBetween" flexWrap="wrap">
           {isMobile ? (
-            <div className={styles.cancelButtonContainer}>
-              <button onClick={onCancel} className={styles.cancelButton}>
-                <Text variant="h5" color="red400">
-                  {t.buttons.cancel}
-                </Text>
-              </button>
-            </div>
+            <Box paddingBottom={4} className={styles.cancelButtonContainer}>
+              <Button
+                onClick={onCancel}
+                variant="text"
+                colorScheme="destructive"
+              >
+                {t.buttons.cancel}
+              </Button>
+            </Box>
           ) : (
-            <Button variant="redGhost" onClick={onCancel}>
+            <Button
+              onClick={onCancel}
+              variant="ghost"
+              colorScheme="destructive"
+            >
               {t.buttons.cancel}
             </Button>
           )}
-          <Button onClick={onContinue}>{t.buttons.close}</Button>
+          <Button onClick={onContinue} fluid={isMobile}>
+            {t.buttons.close}
+          </Button>
         </Box>
       </Stack>
       <Modal

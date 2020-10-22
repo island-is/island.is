@@ -4,7 +4,7 @@ import { Locale } from '../types/locales.enum'
 
 @InputType()
 export class UpdateUserProfileInput {
-  //Pendig AuthGuards
+  //Pending AuthGuards
   @Field(() => String)
   @IsString()
   nationalId!: string
@@ -24,9 +24,4 @@ export class UpdateUserProfileInput {
   @IsEmail()
   @IsOptional()
   email?: string
-
-  @Field(() => String)
-  @IsString()
-  @IsOptional()
-  profileImageUrl?: string
 }

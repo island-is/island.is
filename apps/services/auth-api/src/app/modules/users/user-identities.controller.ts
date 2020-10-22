@@ -13,11 +13,11 @@ import {
   UserIdentityDto,
   ScopesGuard,
   Scopes,
+  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { AuthGuard } from '@nestjs/passport'
 
-@UseGuards(AuthGuard('jwt'), ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('user-identities')
 @Controller('user-identities')
 export class UserIdentitiesController {

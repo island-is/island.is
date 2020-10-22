@@ -185,7 +185,13 @@ export function formatText(
   formatMessage: MessageFormatter,
 ): string {
   if (typeof text === 'function') {
-    return formatMessage(text(application))
+    const message = text(application)
+
+    if (typeof message === 'string') return formatMessage(message)
+
+    const { values = {}, ...descriptor } = message
+
+    return formatMessage(descriptor, values)
   }
   return formatMessage(text)
 }
