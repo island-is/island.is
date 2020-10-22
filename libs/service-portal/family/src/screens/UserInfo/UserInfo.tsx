@@ -7,7 +7,6 @@ import {
 import UserInfoOverviewItem from '../../components/UserInfoItem/UserInfoOverview'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
-import { MockUserInfoList, userInfoItem } from './mockUserInfoList'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
@@ -29,19 +28,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
         </Typography>
       </Box>
-      <Stack space={10}>
-        {MockUserInfoList.map((UserInfoItem: userInfoItem, index: number) => (
-          <UserInfoOverviewItem
-            key={index}
-            heading={UserInfoItem.heading}
-            subtext={UserInfoItem.subtext}
-            link={UserInfoItem.link}
-            image={UserInfoItem.image}
-          />
-        ))}
-      </Stack>
 
-      {/* <Stack space={1}>
+      <Stack space={1}>
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:display-name',
@@ -66,7 +54,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
-      </Stack> */}
+      </Stack>
     </>
   )
 }
