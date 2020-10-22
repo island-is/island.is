@@ -64,7 +64,7 @@ export type Icon =
   // | 'build'
   // | 'bulb'
   // | 'bus'
-  // | 'business'
+  | 'business'
   // | 'cafe'
   // | 'calculator'
   // | 'calendarClear'
@@ -263,7 +263,7 @@ export type Icon =
   // | 'notifications'
   // | 'nuclear'
   // | 'nutrition'
-  // | 'open'
+  | 'open'
   // | 'options'
   // | 'paperPlane'
   // | 'partlySunny'
@@ -471,7 +471,7 @@ export default {
     // build: 'Build',
     // bulb: 'Bulb',
     // bus: 'Bus',
-    // business: 'Business',
+    business: 'Business',
     // cafe: 'Cafe',
     // calculator: 'Calculator',
     // calendarClear: 'CalendarClear',
@@ -758,7 +758,7 @@ export default {
     // notifications: 'Notifications',
     // nuclear: 'Nuclear',
     // nutrition: 'Nutrition',
-    // open: 'Open',
+    open: 'Open',
     // options: 'Options',
     // paperPlane: 'PaperPlane',
     // partlySunny: 'PartlySunny',
@@ -965,7 +965,7 @@ export default {
     // build: 'BuildSharp',
     // bulb: 'BulbSharp',
     // bus: 'BusSharp',
-    // business: 'BusinessSharp',
+    business: 'BusinessSharp',
     // cafe: 'CafeSharp',
     // calculator: 'CalculatorSharp',
     // calendarClear: 'CalendarClearSharp',
@@ -1164,7 +1164,7 @@ export default {
     // notifications: 'NotificationsSharp',
     // nuclear: 'NuclearSharp',
     // nutrition: 'NutritionSharp',
-    // open: 'OpenSharp',
+    open: 'OpenSharp',
     // options: 'OptionsSharp',
     // paperPlane: 'PaperPlaneSharp',
     // partlySunny: 'PartlySunnySharp',
@@ -1371,7 +1371,7 @@ export default {
     // build: 'BuildOutline',
     // bulb: 'BulbOutline',
     // bus: 'BusOutline',
-    // business: 'BusinessOutline',
+    business: 'BusinessOutline',
     // cafe: 'CafeOutline',
     // calculator: 'CalculatorOutline',
     // calendarClear: 'CalendarClearOutline',
@@ -1570,7 +1570,7 @@ export default {
     // notifications: 'NotificationsOutline',
     // nuclear: 'NuclearOutline',
     // nutrition: 'NutritionOutline',
-    // open: 'OpenOutline',
+    open: 'OpenOutline',
     // options: 'OptionsOutline',
     // paperPlane: 'PaperPlaneOutline',
     // partlySunny: 'PartlySunnyOutline',
