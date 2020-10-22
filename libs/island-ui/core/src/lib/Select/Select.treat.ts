@@ -45,6 +45,9 @@ export const hasError = style({})
 
 export const containerDisabled = style({})
 export const container = style({}, 'container')
+globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
+  color: theme.color.dark400,
+})
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
   paddingRight: 70,

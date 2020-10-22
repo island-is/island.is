@@ -10,7 +10,7 @@ import { Icon as IconType, Type } from '../IconRC/iconMap'
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 
 type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
-type Variants =
+export type ButtonTypes =
   | {
       variant?: 'primary'
       colorScheme?: keyof typeof styles.colors.primary
@@ -43,9 +43,10 @@ export interface ButtonProps {
   fluid?: boolean
   icon?: IconType
   iconType?: Type
+  type?: NativeButtonProps['type']
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
   (
     {
       variant = 'primary',
@@ -55,6 +56,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
       iconType = 'filled',
       children,
       circle,
+      type = 'button',
       fluid,
       ...buttonProps
     },
@@ -65,6 +67,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
+        type={type}
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],

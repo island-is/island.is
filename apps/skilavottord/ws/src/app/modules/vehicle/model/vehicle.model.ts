@@ -8,7 +8,9 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
+  HasOne,
 } from 'sequelize-typescript'
+import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
 import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
 @ObjectType()
 @Table({ tableName: 'vehicle' })
@@ -58,10 +60,12 @@ export class VehicleModel extends Model<VehicleModel> {
 
   @Field()
   @CreatedAt
+  @Column
   createdAt: Date
 
   @Field()
   @UpdatedAt
+  @Column
   updatedAt: Date
 
   //ATH
@@ -70,5 +74,5 @@ export class VehicleModel extends Model<VehicleModel> {
   //   as: 'recycling_request',
   //   onDelete: 'CASCADE',
   // })
-  // vehicle!: VehicleModel
+  // recyclingRequest!: RecyclingRequestModel
 }

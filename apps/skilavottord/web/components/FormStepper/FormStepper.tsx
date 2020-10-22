@@ -4,11 +4,12 @@ import {
   FormStepper as IslandUIFormStepper,
   FormStepperSection,
   Stack,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 
 interface ProcessProps {
   title: string
+  completedText: string
   sections: FormStepperSection[]
   activeSection: number
   activeCar?: string
@@ -16,6 +17,7 @@ interface ProcessProps {
 
 const FormStepper = ({
   title,
+  completedText,
   sections,
   activeSection,
   activeCar,
@@ -23,11 +25,13 @@ const FormStepper = ({
   <Box padding={4}>
     <Stack space={4}>
       <Box>
-        <Typography variant="h3">{title}</Typography>
-        <Typography variant="intro">{activeCar}</Typography>
-        <Typography variant="intro">{`Step ${activeSection + 1} out of ${
-          sections.length
-        }`}</Typography>
+        <Text variant="h3">{title}</Text>
+        <Text variant="intro">{activeCar}</Text>
+        <Text variant="intro">
+          {activeSection < sections.length
+            ? `Step ${activeSection + 1} out of ${sections.length}`
+            : completedText}
+        </Text>
       </Box>
       <IslandUIFormStepper sections={sections} activeSection={activeSection} />
     </Stack>

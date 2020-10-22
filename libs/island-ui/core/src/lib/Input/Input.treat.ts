@@ -48,6 +48,7 @@ export const inputBackground = styleMap({
 })
 
 export const textarea = style({
+  ...mixins.textarea,
   resize: 'vertical',
 })
 

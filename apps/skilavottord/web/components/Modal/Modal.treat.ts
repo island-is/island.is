@@ -21,7 +21,8 @@ export const overlay = style({
   left: 0,
   right: 0,
   bottom: 0,
-  opacity: '70%',
+  opacity: 0.7,
+  background: theme.color.blue100,
   '@keyframes': {
     from: {
       opacity: 0,
@@ -57,8 +58,8 @@ export const modalContainer = style({
 
 export const modalClose = style({
   position: 'absolute',
-  top: 30,
-  right: 30,
+  top: 8,
+  right: 8,
   lineHeight: 0,
   outline: 0,
 })
