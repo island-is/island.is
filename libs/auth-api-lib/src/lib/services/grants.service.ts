@@ -1,7 +1,6 @@
 import { Grant } from '../entities/models/grants.model'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Sequelize } from 'sequelize-typescript'
 import { InjectModel } from '@nestjs/sequelize'
 import { GrantDto } from '../entities/dto/grant-dto'
 import { WhereOptions } from 'sequelize/types'
@@ -9,13 +8,13 @@ import { WhereOptions } from 'sequelize/types'
 @Injectable()
 export class GrantsService {
   constructor(
-    private sequelize: Sequelize,
     @InjectModel(Grant)
     private grantModel: typeof Grant,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
+  /** Gets grants by provided parameters */
   async getAllAsync(
     subjectId: string,
     sessionId: string,
@@ -47,8 +46,13 @@ export class GrantsService {
     })
   }
 
+  /** Gets a grant by it's key */
   async getAsync(key: string): Promise<Grant> {
     this.logger.debug(`Finding grant with key - "${key}"`)
+
+    if (!key) {
+      throw new BadRequestException('Key must be provided')
+    }
 
     return await this.grantModel.findOne({
       where: {
@@ -57,6 +61,7 @@ export class GrantsService {
     })
   }
 
+  /** Removes a grant by subjectId and other properties if provided */
   async removeAllAsync(
     subjectId: string,
     sessionId?: string,
@@ -64,7 +69,7 @@ export class GrantsService {
     type?: string,
   ): Promise<number> {
     if (!subjectId) {
-      throw new Error('subjectId must be specified.')
+      throw new BadRequestException('subjectId must be specified.')
     }
 
     let whereOptions: WhereOptions = { subjectId: subjectId }
@@ -88,8 +93,9 @@ export class GrantsService {
     })
   }
 
+  /** Removes a grant by key */
   async removeAsync(key: string): Promise<number> {
-    this.logger.debug(`Removing grants with key - "${key}"`)
+    this.logger.debug(`Removing grant with key - "${key}"`)
 
     return await this.grantModel.destroy({
       where: {
@@ -98,6 +104,7 @@ export class GrantsService {
     })
   }
 
+  /** Creates a grant */
   async createAsync(grant: GrantDto): Promise<Grant> {
     this.logger.debug(`Creating a new grant`)
 
