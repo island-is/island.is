@@ -61,6 +61,7 @@ export class GrantDto {
   readonly consumedTime: Date
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'set_data',
   })
