@@ -10,7 +10,7 @@ import React, {
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 
-import { Box } from '../../Box/Box'
+import { Box, BoxProps } from '../../Box/Box'
 import { Column } from '../../Column/Column'
 import { Columns } from '../../Columns/Columns'
 import { AllOrNone } from '../../private/AllOrNone'
@@ -38,6 +38,7 @@ export type AccordionItemBaseProps = {
   onClick?: () => void
   onBlur?: () => void
   onFocus?: () => void
+  boxProps?: BoxProps
 }
 
 export type AccordionItemStateProps = AllOrNone<{
@@ -64,6 +65,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       onClick,
       onBlur,
       onFocus,
+      boxProps,
     },
     forwardedRef,
   ) => {
@@ -141,19 +143,25 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            paddingX={[2, 2, 0]}
-            paddingY={2}
             onClick={onClick ? onClick : handleOpen}
+            {...boxProps}
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Text variant={labelVariant} as={labelUse} paddingBottom={1}>
-                  {label}
-                </Text>
+                <Box
+                  height="full"
+                  width="full"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Text variant={labelVariant} as={labelUse}>
+                    {label}
+                  </Text>
+                </Box>
                 {visibleContent && (
-                  <div className={styles.visibleContent}>
+                  <Box paddingTop={2}>
                     <Text>{visibleContent}</Text>
-                  </div>
+                  </Box>
                 )}
               </Column>
               <Column width="content">
@@ -193,7 +201,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingX={[2, 2, 0]} paddingBottom={2} id={id}>
+          <Box id={id} {...boxProps} paddingTop={visibleContent ? 0 : 2}>
             {children}
           </Box>
         </AnimateHeight>
@@ -218,10 +226,14 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
-      padding={[2, 2, 4]}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >
-      <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
+      <AccordionItem
+        {...props}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        boxProps={{ padding: [2, 2, 4] }}
+      >
         {props.children}
       </AccordionItem>
     </Box>
@@ -233,7 +245,12 @@ export const SidebarAccordion: FC<Omit<
   'labelVariant'
 >> = (props) => {
   return (
-    <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
+    <AccordionItem
+      {...props}
+      labelVariant="default"
+      iconVariant="sidebar"
+      boxProps={{ padding: 0, margin: 0 }}
+    >
       {props.children}
     </AccordionItem>
   )
