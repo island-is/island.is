@@ -182,7 +182,7 @@ const SubArticleNavigation: FC<{
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
     return createSubArticleNavigation(selectedSubArticle?.body ?? [])
-  }, [selectedSubArticle])
+  }, [selectedSubArticle?.body])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
@@ -375,11 +375,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       title: n('categoryOverview', 'Efnisyfirlit'),
       items: contentOverviewOptions,
     },
-    {
+  ]
+
+  if (relatedLinks.length) {
+    combinedMobileNavigation.push({
       title: n('relatedMaterial'),
       items: relatedLinks,
-    },
-  ]
+    })
+  }
 
   const metaTitle = `${article.title} | Ísland.is`
   const metaDescription =
