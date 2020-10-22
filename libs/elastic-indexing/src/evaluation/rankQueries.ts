@@ -84,10 +84,10 @@ export const rankQueries: Request[] = [
       { _index: '_all', _id: '4rVlMI2YRoNhrpdXHjHQuR', rating: 8 }, // title: Flutningur aflahlutdeildar
       { _index: '_all', _id: '5HSAXc9bvZ5SAQieDaHdDn', rating: 7 }, // title: Flutningur krókaaflamarks
       { _index: '_all', _id: '3GvUzzXXN8pH0hemVZeQ9x', rating: 6 }, // title: Umsókn um rafræna afladagbók fyrir skip
-      { _index: '_all', _id: 'RxshrDyWeuAVSsDZmrnP9', rating: 5}, // title: Aflamark til frístundaskipa
-      { _index: '_all', _id: '4dH6N62YJguMRZysu31xqo', rating: 4}, // title: Flutningur aflamarks
-      { _index: '_all', _id: '1rGrVudguQJXzMzdbr9b66', rating: 3}, // title: Afli uppsjávarveiðiskips
-      { _index: '_all', _id: '6Z3CrVVjcWDPswYM2RkQr9', rating: 2}, // title: Áætlaður úthafskarfaafli
+      { _index: '_all', _id: 'RxshrDyWeuAVSsDZmrnP9', rating: 5 }, // title: Aflamark til frístundaskipa
+      { _index: '_all', _id: '4dH6N62YJguMRZysu31xqo', rating: 4 }, // title: Flutningur aflamarks
+      { _index: '_all', _id: '1rGrVudguQJXzMzdbr9b66', rating: 3 }, // title: Afli uppsjávarveiðiskips
+      { _index: '_all', _id: '6Z3CrVVjcWDPswYM2RkQr9', rating: 2 }, // title: Áætlaður úthafskarfaafli
     ],
   },
   {

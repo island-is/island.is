@@ -40,7 +40,10 @@ export class IndexingController {
 
     //
     // eslint-disable-next-line @typescript-eslint/camelcase
-    logger.info('Rank evaluation, metric score: ', { locale, metric_score: rankEvaluation.body?.metric_score ?? null })
+    logger.info('Rank evaluation, metric score: ', {
+      locale,
+      metric_score: rankEvaluation.body?.metric_score ?? null,
+    })
 
     logger.info('Doing sync')
     await this.indexingService.doSync({ fullSync: false, locale })
