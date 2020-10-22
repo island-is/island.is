@@ -19,6 +19,9 @@ export class ProcessEntry {
   @Field()
   processLink: string
 
+  @Field({ nullable: true })
+  openLinkInModal?: boolean
+
   @Field()
   buttonText: string
 }
@@ -32,5 +35,6 @@ export const mapProcessEntry = ({
   type: fields.type ?? '',
   processTitle: fields.processTitle ?? '',
   processLink: fields.processLink ?? '',
+  openLinkInModal: Boolean(fields.openLinkInModal),
   buttonText: fields.buttonText ?? '',
 })
