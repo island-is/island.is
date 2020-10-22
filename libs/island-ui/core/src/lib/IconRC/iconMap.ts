@@ -66,7 +66,7 @@ export default {
     search: 'Search',
     settings: 'Settings',
     wallet: 'Wallet',
-    warning: 'Warning',
+    warning: 'WarningOutline',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
