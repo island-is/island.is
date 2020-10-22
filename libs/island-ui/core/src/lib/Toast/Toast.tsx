@@ -6,7 +6,7 @@ import {
 } from 'react-toastify'
 import { Box } from '../Box/Box'
 import { Icon } from '../Icon/Icon'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import * as toastStyles from './Toast.treat'
 import { toastKeyframes } from './toastKeyframes'
 
@@ -48,7 +48,7 @@ const RenderMessage = ({
         <Icon type={icons[type]} color={colors[type]} />
       </Box>
       <Box paddingLeft={2}>
-        <Typography variant="h5">{message}</Typography>
+        <Text variant="h5">{message}</Text>
       </Box>
     </Box>
   )
