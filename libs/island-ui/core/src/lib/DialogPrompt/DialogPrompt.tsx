@@ -13,22 +13,12 @@ import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
 
-import {
-  useDialogState,
-  DialogDisclosure,
-  DialogBackdrop,
-  DialogProps,
-} from 'reakit/Dialog'
-
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
-
 import { ModalBase } from '../ModalBase/ModalBase'
 
 import * as styles from './DialogPrompt.treat'
-import { Columns } from '../Columns/Columns'
-import { Column } from '../Column/Column'
 
 interface DialogPromptProps {
   title: string
