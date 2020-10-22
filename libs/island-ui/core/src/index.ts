@@ -6,6 +6,7 @@ export * from './lib/Toast/Toast'
 // Components
 export * from './lib/AsyncSearch/AsyncSearch'
 export * from './lib/Logo/Logo'
+export * from './lib/LoadingIcon/LoadingIcon'
 export * from './lib/Page/Page'
 export * from './lib/BulletList/BulletList'
 export * from './lib/VideoIframe/VideoIframe'
