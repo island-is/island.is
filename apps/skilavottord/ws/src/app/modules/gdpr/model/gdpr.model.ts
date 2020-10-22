@@ -28,9 +28,11 @@ export class GdprModel extends Model<GdprModel> {
 
   @Field()
   @CreatedAt
+  @Column
   createdAt: Date
 
   @Field()
   @UpdatedAt
+  @Column
   updatedAt: Date
 }
