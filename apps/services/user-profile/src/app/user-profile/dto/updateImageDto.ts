@@ -5,4 +5,8 @@ export class UpdateImageDto {
   @IsString()
   @ApiProperty()
   readonly url!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly key!: string
 }

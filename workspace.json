@@ -772,6 +772,12 @@
             ]
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run api-domains-user-profile:codegen"
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
@@ -3369,10 +3375,10 @@
           "options": {
             "commands": [
               {
-                "command": "../../node_modules/.bin/sequelize-cli db:migrate"
+                "command": "sequelize-cli db:migrate"
               }
             ],
-            "cwd": "apps/services/auth-api"
+            "cwd": "libs/auth-api-lib"
           }
         },
         "migrate/generate": {
@@ -3380,10 +3386,10 @@
           "options": {
             "commands": [
               {
-                "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+                "command": "sequelize-cli migration:generate --name $(whoami)"
               }
             ],
-            "cwd": "apps/services/auth-api"
+            "cwd": "libs/auth-api-lib"
           }
         }
       }
