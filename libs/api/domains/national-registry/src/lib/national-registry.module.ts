@@ -1,29 +1,37 @@
-import { Module } from '@nestjs/common'
+import { DynamicModule } from '@nestjs/common'
 import { NationalRegistryResolver } from './national-registry.resolver'
 import { NationalRegistryService } from './national-registry.service'
 import { NationalRegistryApi } from './soap/nationalRegistryApi'
 import { SoapClient } from './soap/soapClient'
 
-const baseSoapUrl = 'https://localhost:8443'
-const host = 'soffiaprufa.skra.is'
-const user = process.env.SOFFIA_USER ?? ''
-const password = process.env.SOFFIA_PASS ?? ''
+export interface Config {
+  baseSoapUrl: string
+  host: string
+  user: string
+  password: string
+}
 
-@Module({
-  controllers: [],
-  providers: [
-    NationalRegistryService,
-    NationalRegistryResolver,
-    {
-      provide: NationalRegistryApi,
-      useFactory: async () =>
-        new NationalRegistryApi(
-          await SoapClient.generateClient(baseSoapUrl, host),
-          password,
-          user,
-        ),
-    },
-  ],
-  exports: [],
-})
-export class NationalRegistryModule {}
+export class NationalRegistryModule {
+  static register(config: Config): DynamicModule {
+    return {
+      module: NationalRegistryModule,
+      providers: [
+        NationalRegistryService,
+        NationalRegistryResolver,
+        {
+          provide: NationalRegistryApi,
+          useFactory: async () =>
+            new NationalRegistryApi(
+              await SoapClient.generateClient(
+                config.baseSoapUrl ?? 'https://localhost:8443',
+                config.host ?? 'soffiaprufa.skra.is',
+              ),
+              config.password ?? '',
+              config.user ?? '',
+            ),
+        },
+      ],
+      exports: [],
+    }
+  }
+}

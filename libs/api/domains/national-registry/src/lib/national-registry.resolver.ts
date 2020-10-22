@@ -6,7 +6,7 @@ import { NationalRegistryService } from './national-registry.service'
 
 @Resolver()
 export class NationalRegistryResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) { }
+  constructor(private nationalRegistryService: NationalRegistryService) {}
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(

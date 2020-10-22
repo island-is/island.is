@@ -1,6 +1,4 @@
-import {
-  NotFoundException,
-} from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import Soap from 'soap'
 import { MyInfo } from '../myInfo.model'
@@ -35,7 +33,6 @@ export class NationalRegistryApi {
       )
 
     const userInfo = response.table.diffgram.DocumentElement.Thjodskra
-
     const houseResponse = await this.getViewHusaskra(userInfo.LoghHusk)
     const religionResponse = await this.getViewKennitalaOgTrufelag(nationalId)
     const birthPlaceResponse = await this.getViewSveitarfelag(
@@ -75,7 +72,7 @@ export class NationalRegistryApi {
           nationalId: x.Kennitala,
           gender: x.Kyn + x.KynKodi,
           maritalStatus: x.Hjuskapur,
-          address: `${x.Husheiti} , ${x.Pnr} ${x.Sveitarfelag}`,
+          address: `${x.Husheiti}, ${x.Pnr} ${x.Sveitarfelag}`,
         } as FamilyMember),
     )
 
@@ -108,12 +105,13 @@ export class NationalRegistryApi {
 
   private formatMartialStatus(maritalCode: string, genderCode: string): string {
     const isMale = genderCode === '1'
-    console.log('Mf', isMale)
     switch (maritalCode) {
       case '1':
         return isMale ? 'Ógiftur' : 'Ógift'
       case '3':
-        return isMale ? 'Giftur eða staðfest samvist' : 'Gift eða staðfest samvist'
+        return isMale
+          ? 'Giftur eða staðfest samvist'
+          : 'Gift eða staðfest samvist'
       case '4':
         return isMale ? 'Ekkill' : 'Ekkja'
       case '5':

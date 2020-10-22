@@ -13,13 +13,17 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class NationalRegistryService {
-  constructor(private nationalRegistryApi: NationalRegistryApi) { }
+  constructor(private nationalRegistryApi: NationalRegistryApi) {}
 
   async GetMyinfo(nationalId: string): Promise<MyInfo | null> {
-    return await this.nationalRegistryApi.getMyInfo(nationalId).catch(handleError)
+    return await this.nationalRegistryApi
+      .getMyInfo(nationalId)
+      .catch(handleError)
   }
 
   async GetMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
-    return await this.nationalRegistryApi.getMyFamily(nationalId).catch(handleError)
+    return await this.nationalRegistryApi
+      .getMyFamily(nationalId)
+      .catch(handleError)
   }
 }

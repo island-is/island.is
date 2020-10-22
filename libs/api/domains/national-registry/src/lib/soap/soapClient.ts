@@ -9,7 +9,7 @@ export class SoapClient {
     return new Promise<Soap.Client>((resolve, reject) => {
       Soap.createClient(
         `${baseUrl}/lisaws/service.asmx?WSDL`,
-        { 'wsdl_headers': { Host: host } },
+        { wsdl_headers: { Host: host } },
         (error, client) => {
           if (error) {
             //TODO log to provider

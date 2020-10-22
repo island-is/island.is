@@ -9,7 +9,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
 
 export class CreateUserProfileDto {
-
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
