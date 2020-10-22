@@ -6,14 +6,13 @@ import {
 } from '@island.is/service-portal/core'
 import { useCreateUserProfile } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
-import { EmailFormData, EmailStep } from './Steps/EmailStep'
+import { EmailFormData } from '../Forms/EmailForm'
+import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
+import { PhoneFormData } from '../Forms/PhoneForm'
+import { EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
-import {
-  LanguageFormData,
-  LanguageFormOption,
-  LanguageStep,
-} from './Steps/LanguageStep'
-import { PhoneFormData, PhoneStep } from './Steps/PhoneStep'
+import { LanguageStep } from './Steps/LanguageStep'
+import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 
 type OnboardingStep =

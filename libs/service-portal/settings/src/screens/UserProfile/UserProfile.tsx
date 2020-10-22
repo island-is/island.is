@@ -55,6 +55,13 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Netfang',
           })}
           content={userProfile?.email || ''}
+          editLink={{
+            url: ServicePortalPath.UserProfileEditEmail,
+            title: defineMessage({
+              id: 'sp.settings:edit-email',
+              defaultMessage: 'Breyta netfangi',
+            }),
+          }}
         />
         <UserInfoLine
           label={defineMessage({

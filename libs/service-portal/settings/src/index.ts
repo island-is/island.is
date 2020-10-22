@@ -43,6 +43,14 @@ export const settingsModule: ServicePortalModule = {
         render: () =>
           lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
       },
+      {
+        name: defineMessage({
+          id: 'sp.settings:edit-email',
+          defaultMessage: 'Breyta netfangi',
+        }),
+        path: ServicePortalPath.UserProfileEditEmail,
+        render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
+      },
     ]
 
     return routes
