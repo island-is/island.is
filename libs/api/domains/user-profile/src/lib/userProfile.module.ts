@@ -9,11 +9,6 @@ export interface Config {
 
 export class UserProfileModule {
   static register(config: Config): DynamicModule {
-    console.log('config ', config)
-    console.log(
-      'config will be',
-      config.userProfileServiceBasePath ?? 'http://localhost:3333',
-    )
     return {
       module: UserProfileModule,
       providers: [
