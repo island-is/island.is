@@ -89,9 +89,9 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.settings:edit-language-description',
                 defaultMessage: `
-					  Hér getur þú gert breytingar á því tungumáli
-					  sem þú vilt nota í kerfum island.is.
-					`,
+                  Hér getur þú gert breytingar á því tungumáli
+                  sem þú vilt nota í kerfum island.is.
+                `,
               })}
             </Text>
           </GridColumn>

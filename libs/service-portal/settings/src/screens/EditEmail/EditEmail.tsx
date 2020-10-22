@@ -76,10 +76,10 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.settings:edit-email-description',
                 defaultMessage: `
-					Hér getur þú gert breytingar á þínu netfangi.
-					Ath. netfangið er notað til þess að senda þér
-					upplýsingar og ná í þig ef þörf krefur.
-				  `,
+                  Hér getur þú gert breytingar á þínu netfangi.
+                  Ath. netfangið er notað til þess að senda þér
+                  upplýsingar og ná í þig ef þörf krefur.
+                `,
               })}
             </Text>
           </GridColumn>
