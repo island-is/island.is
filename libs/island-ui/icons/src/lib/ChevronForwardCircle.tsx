@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SvgProps as SVGRProps } from '../Icon'
+import { SvgProps as SVGRProps, sizes } from '../IconSettings'
 
 const SvgChevronForwardCircle = ({
   title,
@@ -10,6 +10,8 @@ const SvgChevronForwardCircle = ({
     <svg
       className="chevron-forward-circle_svg__ionicon"
       viewBox="0 0 512 512"
+      width={props.size ? sizes[props.size] : null}
+      height={props.size ? sizes[props.size] : null}
       aria-labelledby={titleId}
       {...props}
     >
