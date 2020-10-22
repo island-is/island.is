@@ -3,6 +3,7 @@ export type Icon =
   | 'accessibility'
   | 'add'
   | 'arrowForward'
+  | 'arrowBack'
   | 'attach'
   | 'business'
   | 'calendar'
@@ -34,6 +35,7 @@ export default {
     accessibility: 'Accessibility',
     add: 'Add',
     arrowForward: 'ArrowForward',
+    arrowBack: 'ArrowBack',
     attach: 'Attach',
     business: 'Business',
     calendar: 'Calendar',
@@ -64,6 +66,7 @@ export default {
     accessibility: 'AccessibilitySharp',
     add: 'AddSharp',
     arrowForward: 'ArrowForwardSharp',
+    arrowBack: 'ArrowBackSharp',
     attach: 'AttachSharp',
     business: 'BusinessSharp',
     calendar: 'CalendarSharp',
@@ -94,6 +97,7 @@ export default {
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
     arrowForward: 'ArrowForwardOutline',
+    arrowBack: 'ArrowBackOutline',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
