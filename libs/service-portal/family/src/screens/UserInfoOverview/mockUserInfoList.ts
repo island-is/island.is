@@ -13,11 +13,11 @@ import { MessageDescriptor } from 'react-intl'
 export const mockUserInfoList: UserInfoItem[] = [
   {
     heading: defineMessage({
-      id: 'service.portal:my-info-my-info',
+      id: 'service.portal:user-info',
       defaultMessage: 'Mínar upplýsingar',
     }),
     subtext: defineMessage({
-      id: 'service.portal:my-info-my-info-subtext',
+      id: 'service.portal:user-info-card-description',
       defaultMessage:
         'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn. Hér fyrir neðan getur þú lesið okkar helstu.',
     }),
