@@ -9,6 +9,7 @@ export type Icon =
   | 'calendar'
   | 'car'
   | 'cellular'
+  | 'checkmarkCircle'
   | 'chevronBack'
   | 'chevronDown'
   | 'chevronForward'
@@ -16,6 +17,7 @@ export type Icon =
   | 'close'
   | 'fileTrayFull'
   | 'home'
+  | 'informationCircle'
   | 'lockClosed'
   | 'logOut'
   | 'menu'
@@ -29,6 +31,7 @@ export type Icon =
   | 'search'
   | 'settings'
   | 'wallet'
+  | 'warning'
 
 export default {
   filled: {
@@ -41,6 +44,7 @@ export default {
     calendar: 'Calendar',
     car: 'Car',
     cellular: 'Cellular',
+    checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
     chevronForward: 'ChevronForward',
@@ -48,6 +52,7 @@ export default {
     close: 'Close',
     fileTrayFull: 'FileTrayFull',
     home: 'Home',
+    informationCircle: 'InformationCircle',
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
     menu: 'Menu',
@@ -61,6 +66,7 @@ export default {
     search: 'Search',
     settings: 'Settings',
     wallet: 'Wallet',
+    warning: 'Warning',
   },
   sharp: {
     accessibility: 'AccessibilitySharp',
@@ -72,6 +78,7 @@ export default {
     calendar: 'CalendarSharp',
     car: 'CarSharp',
     cellular: 'CellularSharp',
+    checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBackSharp',
     chevronDown: 'ChevronDownSharp',
     chevronForward: 'ChevronForwardSharp',
@@ -79,6 +86,7 @@ export default {
     close: 'CloseSharp',
     fileTrayFull: 'FileTrayFullSharp',
     home: 'HomeSharp',
+    informationCircle: 'InformationCircle',
     lockClosed: 'LockClosedSharp',
     logOut: 'LogOutSharp',
     menu: 'MenuSharp',
@@ -92,6 +100,7 @@ export default {
     search: 'SearchSharp',
     settings: 'SettingsSharp',
     wallet: 'WalletSharp',
+    warning: 'Warning',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -103,6 +112,7 @@ export default {
     calendar: 'CalendarOutline',
     car: 'CarOutline',
     cellular: 'CellularOutline',
+    checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBackOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
@@ -110,6 +120,7 @@ export default {
     close: 'CloseOutline',
     fileTrayFull: 'FileTrayFullOutline',
     home: 'HomeOutline',
+    informationCircle: 'InformationCircle',
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
     menu: 'MenuOutline',
@@ -123,5 +134,6 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     wallet: 'WalletOutline',
+    warning: 'Warning',
   },
 }
