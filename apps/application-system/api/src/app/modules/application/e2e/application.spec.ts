@@ -77,7 +77,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
@@ -98,6 +98,7 @@ describe('Application system API', () => {
     expect(newStateResponse.body.state).toBe('inReview')
     expect(newStateResponse.body.answers).toEqual({
       careerHistoryCompanies: ['advania', 'aranja'],
+      dreamJob: 'pilot',
     })
   })
 
@@ -110,7 +111,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
