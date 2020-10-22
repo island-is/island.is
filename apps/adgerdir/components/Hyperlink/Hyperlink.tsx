@@ -2,7 +2,7 @@
 import React, { FC, ReactElement } from 'react'
 import Link from 'next/link'
 import {
-  IconDeprecated as Icon,
+  Icon,
   Typography,
   TypographyProps,
   ButtonDeprecated as Button,

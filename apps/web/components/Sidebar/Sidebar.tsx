@@ -4,7 +4,7 @@ import cn from 'classnames'
 import {
   Box,
   Text,
-  IconDeprecated as Icon,
+  Icon,
   Stack,
   Divider,
   FocusableBox,

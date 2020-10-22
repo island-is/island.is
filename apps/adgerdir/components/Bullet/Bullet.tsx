@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import * as styles from './Bullet.treat'
-import { IconDeprecated as Icon } from '@island.is/island-ui/core'
+import { Icon } from '@island.is/island-ui/core'
 
 interface BulletProps {
   align?: 'left' | 'right'

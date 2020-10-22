@@ -5,7 +5,7 @@ import {
   Typography,
   Stack,
   ButtonDeprecated as Button,
-  IconDeprecated as Icon,
+  Icon,
 } from '@island.is/island-ui/core'
 
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'

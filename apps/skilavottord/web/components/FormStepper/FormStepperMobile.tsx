@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import {
   Box,
   FormStepperSection,
-  IconDeprecated as Icon,
+  Icon,
   Typography,
 } from '@island.is/island-ui/core'
 import * as styles from './FormStepperMobile.treat'

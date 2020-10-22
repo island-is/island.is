@@ -1,10 +1,6 @@
 import React, { FC } from 'react'
 
-import {
-  Box,
-  IconDeprecated as Icon,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, Icon, Typography } from '@island.is/island-ui/core'
 
 export interface InlineErrorProps {
   message: string

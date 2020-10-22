@@ -7,7 +7,7 @@ import {
   Box,
   Typography,
   ButtonDeprecated as Button,
-  IconDeprecated as Icon,
+  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './BulletList.treat'
 

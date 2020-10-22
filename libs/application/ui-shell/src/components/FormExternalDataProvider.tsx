@@ -3,7 +3,7 @@ import { ExternalDataProviderScreen } from '../types'
 import {
   Box,
   Checkbox,
-  IconDeprecated as Icon,
+  Icon,
   InputError,
   Typography,
 } from '@island.is/island-ui/core'

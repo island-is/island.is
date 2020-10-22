@@ -23,7 +23,7 @@ import {
   Tag,
   Divider,
   Link,
-  IconDeprecated as Icon,
+  Icon,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import {

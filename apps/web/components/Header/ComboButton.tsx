@@ -1,10 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
-import {
-  Box,
-  IconDeprecated as Icon,
-  ColorSchemeContext,
-} from '@island.is/island-ui/core'
+import { Box, Icon, ColorSchemeContext } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './ComboButton.treat'
 import cn from 'classnames'

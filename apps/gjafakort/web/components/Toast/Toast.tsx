@@ -4,7 +4,7 @@ import {
   Box,
   Columns,
   Column,
-  IconDeprecated as Icon,
+  Icon,
   Typography,
 } from '@island.is/island-ui/core'
 
