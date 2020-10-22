@@ -13,7 +13,7 @@ export class VehicleService {
   ) {}
 
   async findAll(): Promise<VehicleModel[]> {
-    this.logger.debug(`Getting all vehicles...`)
+    this.logger.debug('Getting all vehicles...')
     return await this.vehicleModel.findAll()
   }
 

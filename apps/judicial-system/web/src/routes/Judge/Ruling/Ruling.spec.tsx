@@ -7,6 +7,8 @@ import userEvent from '@testing-library/user-event'
 import fetchMock from 'fetch-mock'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
+import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 describe('Ruling routes', () => {
   describe(Constants.RULING_STEP_ONE_ROUTE, () => {
@@ -23,7 +25,11 @@ describe('Ruling routes', () => {
       Storage.prototype.setItem = jest.fn()
 
       // Act and Assert
-      const { getByTestId } = render(<RulingStepOne />)
+      const { getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepOne />
+        </userContext.Provider>,
+      )
 
       await act(async () => {
         await userEvent.type(
@@ -57,7 +63,11 @@ describe('Ruling routes', () => {
       })
 
       // Act
-      const { getByTestId } = render(<RulingStepOne />)
+      const { getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepOne />
+        </userContext.Provider>,
+      )
 
       // Assert
       expect(
@@ -81,7 +91,11 @@ describe('Ruling routes', () => {
         Storage.prototype.setItem = jest.fn()
 
         // Act and Assert
-        const { getByLabelText, getByTestId } = render(<RulingStepTwo />)
+        const { getByLabelText, getByTestId } = render(
+          <userContext.Provider value={{ user: mockJudge }}>
+            <RulingStepTwo />
+          </userContext.Provider>,
+        )
 
         userEvent.click(
           getByLabelText('Sækjandi kærir málið') as HTMLInputElement,
@@ -110,7 +124,11 @@ describe('Ruling routes', () => {
       })
 
       // Act
-      const { getAllByRole } = render(<RulingStepTwo />)
+      const { getAllByRole } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepTwo />
+        </userContext.Provider>,
+      )
 
       // Assert
       expect(
@@ -125,7 +143,11 @@ describe('Ruling routes', () => {
       fetchMock.mock('/api/case/test_id', 200)
 
       // Act
-      const { getByText, getByTestId } = render(<RulingStepTwo />)
+      const { getByText, getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepTwo />
+        </userContext.Provider>,
+      )
 
       await waitFor(() =>
         userEvent.click(getByText('Kærði tekur sér lögboðinn frest')),
@@ -148,7 +170,11 @@ describe('Ruling routes', () => {
       // Arrange
 
       // Act
-      const { getByText, getByTestId } = render(<RulingStepTwo />)
+      const { getByText, getByTestId } = render(
+        <userContext.Provider value={{ user: mockJudge }}>
+          <RulingStepTwo />
+        </userContext.Provider>,
+      )
 
       await waitFor(() => userEvent.click(getByText('Kærði kærir málið')))
       await waitFor(() => userEvent.click(getByText('Sækjandi kærir málið')))
