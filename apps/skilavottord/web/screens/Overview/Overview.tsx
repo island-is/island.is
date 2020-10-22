@@ -24,15 +24,7 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  if (error || (loading && !data)) {
-    return (
-      <PageWrapper t={t} route={homeRoute}>
-        {error && <Error />}
-      </PageWrapper>
-    )
-  }
-
-  const { cars } = data.getVehiclesForNationalId || {}
+  const { cars } = data?.getVehiclesForNationalId || {}
 
   const onRecycleCar = (id: string) => {
     router
@@ -53,65 +45,62 @@ const Overview: FC = () => {
   }
 
   return (
-    <PageWrapper t={t} route={homeRoute}>
-      <Box paddingBottom={10}>
-        <Stack space={[2, 2]}>
-          <Typography variant="h3">{t.subTitles.pending}</Typography>
-          {cars.map((car: MockCar) => (
-            <ProgressCard
-              key={car.permno}
-              car={{ ...car, status: 'pendingRecycle' }}
-              onClick={() => onOpenProcess(car.permno)}
-            />
-          ))}
-        </Stack>
-      </Box>
-      <Box paddingBottom={10}>
-        <Stack space={[2, 2]}>
-          <Typography variant="h3">{t.subTitles.active}</Typography>
-          {cars.length > 0 ? (
-            cars.map((car: MockCar) => (
-              <ActionCard
-                key={car.permno}
-                car={car}
-                onContinue={() => onRecycleCar(car.permno)}
-              />
-            ))
-          ) : (
-            <Typography variant="p">{t.info.noCarsAvailable}</Typography>
-          )}
-        </Stack>
-      </Box>
-      <Box paddingBottom={10}>
-        <Stack space={[2, 2]}>
-          <Typography variant="h3">{t.subTitles.done}</Typography>
-          {cars.map((car: MockCar) => (
-            <ProgressCard
-              key={car.permno}
-              car={{ ...car, status: 'handedOver' }}
-              onClick={() => onSeeDetails(car.permno)}
-            />
-          ))}
-        </Stack>
-      </Box>
-    </PageWrapper>
-  )
-}
-
-const PageWrapper = ({ children, t, route }) => {
-  console.log(route)
-  return (
     <PageLayout>
       <Box paddingBottom={6}>
         <Breadcrumbs>
-          <Link href={route}>Ísland.is</Link>
+          <Link href={homeRoute}>Ísland.is</Link>
           <span>{t.title}</span>
         </Breadcrumbs>
       </Box>
       <Box paddingBottom={4}>
         <Typography variant="h1">{t.title}</Typography>
       </Box>
-      {children}
+      {error || (loading && !data) ? (
+        <Box>{error && <Error />}</Box>
+      ) : (
+        <Box>
+          <Box paddingBottom={10}>
+            <Stack space={[2, 2]}>
+              <Typography variant="h3">{t.subTitles.pending}</Typography>
+              {cars.map((car: MockCar) => (
+                <ProgressCard
+                  key={car.permno}
+                  car={{ ...car, status: 'pendingRecycle' }}
+                  onClick={() => onOpenProcess(car.permno)}
+                />
+              ))}
+            </Stack>
+          </Box>
+          <Box paddingBottom={10}>
+            <Stack space={[2, 2]}>
+              <Typography variant="h3">{t.subTitles.active}</Typography>
+              {cars.length > 0 ? (
+                cars.map((car: MockCar) => (
+                  <ActionCard
+                    key={car.permno}
+                    car={car}
+                    onContinue={() => onRecycleCar(car.permno)}
+                  />
+                ))
+              ) : (
+                <Typography variant="p">{t.info.noCarsAvailable}</Typography>
+              )}
+            </Stack>
+          </Box>
+          <Box paddingBottom={10}>
+            <Stack space={[2, 2]}>
+              <Typography variant="h3">{t.subTitles.done}</Typography>
+              {cars.map((car: MockCar) => (
+                <ProgressCard
+                  key={car.permno}
+                  car={{ ...car, status: 'handedOver' }}
+                  onClick={() => onSeeDetails(car.permno)}
+                />
+              ))}
+            </Stack>
+          </Box>
+        </Box>
+      )}
     </PageLayout>
   )
 }
