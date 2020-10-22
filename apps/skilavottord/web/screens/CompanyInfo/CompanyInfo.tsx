@@ -42,9 +42,7 @@ const CompanyInfo: FC = () => {
         <Box>
           <Box paddingBottom={6}>
             <Breadcrumbs>
-              <Link href={'./'}>
-                <a>Ísland.is</a>
-              </Link>
+              <Link href={routes.home}>Ísland.is</Link>
               <span>{t.title}</span>
             </Breadcrumbs>
           </Box>

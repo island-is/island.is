@@ -19,13 +19,17 @@ const Overview: FC = () => {
   const {
     t: {
       myCars: t,
-      routes: { recycleVehicle: routes },
+      routes: { home: homeRoute, recycleVehicle: routes },
     },
   } = useI18n()
   const router = useRouter()
 
   if (error || (loading && !data)) {
-    return <PageWrapper t={t}>{error && <Error />}</PageWrapper>
+    return (
+      <PageWrapper t={t} route={homeRoute}>
+        {error && <Error />}
+      </PageWrapper>
+    )
   }
 
   const { cars } = data.getVehiclesForNationalId || {}
@@ -49,7 +53,7 @@ const Overview: FC = () => {
   }
 
   return (
-    <PageWrapper t={t}>
+    <PageWrapper t={t} route={homeRoute}>
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
           <Typography variant="h3">{t.subTitles.pending}</Typography>
@@ -94,14 +98,13 @@ const Overview: FC = () => {
   )
 }
 
-const PageWrapper = ({ children, t }) => {
+const PageWrapper = ({ children, t, route }) => {
+  console.log(route)
   return (
     <PageLayout>
       <Box paddingBottom={6}>
         <Breadcrumbs>
-          <Link href={'./'}>
-            <a>Ísland.is</a>
-          </Link>
+          <Link href={route}>Ísland.is</Link>
           <span>{t.title}</span>
         </Breadcrumbs>
       </Box>
