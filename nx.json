@@ -302,6 +302,9 @@
     "shared-mocking": {
       "tags": []
     },
+    "shared-types": {
+      "tags": []
+    },
     "skilavottord-consts": {
       "tags": []
     },

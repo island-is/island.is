@@ -1,10 +1,3 @@
-import {
-  AccessCategory,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
-
 interface SearchInput {
   limit: number
   searchAfter?: string[]
