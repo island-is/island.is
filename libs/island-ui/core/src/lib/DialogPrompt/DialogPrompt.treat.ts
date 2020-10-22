@@ -1,42 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { hexToRgba } from '../../utils/hexToRgba'
 
 const spacing = theme.spacing[3]
-
-export const backdrop = style({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  overflowX: 'hidden',
-  overflowY: 'auto',
-  backgroundColor: hexToRgba(theme.color.blue100, 0.7),
-  transition: `opacity 250ms ease-in-out`,
-  opacity: 0,
-  zIndex: 10000,
-  selectors: {
-    '&[data-enter]': {
-      opacity: 1,
-    },
-  },
-})
-
-export const dialog = style({
-  display: 'flex',
-  margin: `${spacing}px auto`,
-  maxWidth: '1000px',
-  width: '100%',
-  opacity: 0,
-  outline: 0,
-  transition: `opacity 250ms ease-in-out, transform 250ms ease-in-out`,
-  selectors: {
-    '&[data-enter]': {
-      opacity: 1,
-    },
-  },
-})
 
 export const content = style({
   filter: `drop-shadow(0 4px 70px rgba(0, 97, 255, 0.1))`,
@@ -57,4 +22,9 @@ export const close = style({
     right: 0,
     bottom: 0,
   },
+})
+
+export const dialog = style({
+  margin: '32px auto',
+  maxWidth: 888,
 })

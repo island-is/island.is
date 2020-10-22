@@ -1,6 +1,6 @@
 import { ResponsiveProp, mapResponsiveProp } from './responsiveProp'
 
-export type Align = 'left' | 'center' | 'right'
+export type Align = 'left' | 'center' | 'right' | 'spaceBetween'
 export type AlignY = 'top' | 'center' | 'bottom'
 
 export const alignToFlexAlign = (align: ResponsiveProp<Align> | undefined) =>
@@ -8,6 +8,7 @@ export const alignToFlexAlign = (align: ResponsiveProp<Align> | undefined) =>
     left: 'flexStart',
     center: 'center',
     right: 'flexEnd',
+    spaceBetween: 'spaceBetween',
   })
 
 export const alignYToFlexAlign = (alignY: ResponsiveProp<AlignY> | undefined) =>
