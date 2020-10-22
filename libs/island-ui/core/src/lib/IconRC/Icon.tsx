@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import iconMap, { Icon as IconType, Type } from './iconMap'
@@ -58,7 +58,9 @@ export const Icon = ({
   skipPlaceholderSize,
 }: IconProps) => {
   const path = iconMap[type][icon]
-  const IconSvg = () => React.lazy(() => import('./icons/' + path))
+  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
+    path,
+  ])
   if (typeof window === 'undefined') {
     return (
       <Placeholder
