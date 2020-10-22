@@ -36,4 +36,5 @@ export enum ServicePortalPath {
   UserProfileRoot = '/minar-upplysingar',
   UserProfileEditPhoneNumber = '/minar-upplysingar/breyta-simanumeri',
   UserProfileEditEmail = '/minar-upplysingar/breyta-netfangi',
+  UserProfileEditLanguage = '/minar-upplysingar/breyta-tungumali',
 }

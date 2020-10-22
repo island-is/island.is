@@ -28,7 +28,8 @@ export const PhoneForm: FC<Props> = ({
       }}
       validationSchema={Yup.object().shape({
         tel: Yup.string()
-          .length(7, 'Símanúmer getur eingöngu verið 7 stafir á lengd')
+          .matches(/^\d+$/, 'Eingöngu tölustafir eru leyfðir')
+          .min(7, 'Símanúmer þarf að vera minnst 7 tölustafir á lengd')
           .required('Skylda er að fylla út símanúmer'),
       })}
       onSubmit={onSubmit}

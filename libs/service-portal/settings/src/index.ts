@@ -51,6 +51,14 @@ export const settingsModule: ServicePortalModule = {
         path: ServicePortalPath.UserProfileEditEmail,
         render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
       },
+      {
+        name: defineMessage({
+          id: 'sp.settings:edit-language',
+          defaultMessage: 'Breyta tungumáli',
+        }),
+        path: ServicePortalPath.UserProfileEditLanguage,
+        render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
+      },
     ]
 
     return routes

@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import { useLocale } from '@island.is/localization'
+import { Locale, useLocale } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -18,14 +18,14 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
-import { PhoneForm } from '../../components/Forms/PhoneForm'
+import {
+  LanguageForm,
+  LanguageFormData,
+  LanguageFormOption,
+} from '../../components/Forms/LanguageForm'
 
-interface PhoneFormData {
-  tel: string
-}
-
-export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
-  const [tel, setTel] = useState('')
+export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
+  const [language, setLanguage] = useState<LanguageFormOption | null>(null)
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
@@ -36,22 +36,30 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
 
   useEffect(() => {
     if (!userProfile) return
-    if (userProfile.mobilePhoneNumber.length > 0)
-      setTel(userProfile.mobilePhoneNumber)
+    if (userProfile.locale.length > 0)
+      setLanguage({
+        value: userProfile.locale as Locale,
+        label: userProfile.locale === 'is' ? 'Íslenska' : 'English',
+      })
   }, [userProfile])
 
-  const submitFormData = async (formData: PhoneFormData) => {
+  const submitFormData = async (formData: LanguageFormData) => {
+    if (formData.language === null) {
+      setStatus('error')
+      return
+    }
+
     if (status !== 'passive') setStatus('passive')
 
     try {
       // Update the profile if it exists, otherwise create one
       if (userProfile) {
         await updateUserProfile({
-          mobilePhoneNumber: formData.tel,
+          locale: formData.language.value,
         })
       } else {
         await createUserProfile({
-          mobilePhoneNumber: formData.tel,
+          locale: formData.language.value,
         })
       }
       setStatus('success')
@@ -60,7 +68,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   }
 
-  const handleSubmit = (data: PhoneFormData) => {
+  const handleSubmit = (data: LanguageFormData) => {
     submitFormData(data)
   }
 
@@ -69,8 +77,8 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={4}>
         <Text variant="h1">
           {formatMessage({
-            id: 'sp.settings:edit-phone-number',
-            defaultMessage: 'Breyta símanúmeri',
+            id: 'sp.settings:edit-language',
+            defaultMessage: 'Breyta tungumáli',
           })}
         </Text>
       </Box>
@@ -79,19 +87,18 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['1/1', '6/8']}>
             <Text>
               {formatMessage({
-                id: 'sp.settings:edit-phone-number-description',
+                id: 'sp.settings:edit-language-description',
                 defaultMessage: `
-                  Hér getur þú gert breytingar á þínu símanúmeri.
-                  Ath. símanúmerið er notað til þess að senda þér
-                  upplýsingar í SMS og ná í þig símleiðis ef þörf krefur.
-                `,
+					  Hér getur þú gert breytingar á því tungumáli
+					  sem þú vilt nota í kerfum island.is.
+					`,
               })}
             </Text>
           </GridColumn>
         </GridRow>
       </Box>
-      <PhoneForm
-        tel={tel}
+      <LanguageForm
+        language={language}
         renderBackButton={() => (
           <Link to={ServicePortalPath.UserProfileRoot}>
             <Button variant="ghost">
@@ -117,14 +124,14 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
           {status === 'success' && (
             <AlertMessage
               type="success"
-              title="Nýtt símanúmer hefur verið vistað"
-              message="Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland"
+              title="Nýtt tungumál hefur verið vistað"
+              message="Þú hefur vistað nýtt tungumál hjá Stafrænt Ísland"
             />
           )}
           {status === 'error' && (
             <AlertMessage
               type="error"
-              title="Tókst ekki að vista símanúmer"
+              title="Tókst ekki að vista tungumál"
               message="Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar"
             />
           )}
@@ -134,4 +141,4 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default EditPhoneNumber
+export default EditLanguage

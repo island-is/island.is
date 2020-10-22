@@ -3,6 +3,7 @@ import { Mutation, MutationUpdateProfileArgs } from '@island.is/api/schema'
 import { UPDATE_USER_PROFILE } from '../../lib/mutations/updateUserProfile'
 import { Locale } from '@island.is/localization'
 import { useUserProfile } from './useUserProfile'
+import { USER_PROFILE } from '../../lib/queries/getUserProfile'
 
 export type UpdateUserProfileData = {
   email?: string
@@ -10,12 +11,23 @@ export type UpdateUserProfileData = {
   mobilePhoneNumber?: string
 }
 
-export const useUpdateUserProfile = (natreg: string) => {
-  const { data: userProfile } = useUserProfile(natreg)
+export const useUpdateUserProfile = (natReg: string) => {
+  const { data: userProfile } = useUserProfile(natReg)
   const [updateUserProfileMutation, { loading, error }] = useMutation<
     Mutation,
     MutationUpdateProfileArgs
-  >(UPDATE_USER_PROFILE)
+  >(UPDATE_USER_PROFILE, {
+    refetchQueries: [
+      {
+        query: USER_PROFILE,
+        variables: {
+          input: {
+            nationalId: natReg,
+          },
+        },
+      },
+    ],
+  })
 
   const updateUserProfile = (data: UpdateUserProfileData) => {
     if (!userProfile)
@@ -26,7 +38,7 @@ export const useUpdateUserProfile = (natreg: string) => {
     return updateUserProfileMutation({
       variables: {
         input: {
-          nationalId: natreg,
+          nationalId: natReg,
           email: data.email || userProfile.email,
           locale: data.locale || userProfile.locale,
           mobilePhoneNumber:

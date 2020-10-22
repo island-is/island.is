@@ -89,6 +89,13 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 : 'English'
               : ''
           }
+          editLink={{
+            url: ServicePortalPath.UserProfileEditLanguage,
+            title: defineMessage({
+              id: 'sp.settings:edit-language',
+              defaultMessage: 'Breyta tungumáli',
+            }),
+          }}
         />
       </Stack>
     </>
