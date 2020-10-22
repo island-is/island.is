@@ -325,10 +325,12 @@ export const Confirmation: React.FC = () => {
               ? null
               : confirmSignatureResponse.httpStatusCode >= 200 &&
                 confirmSignatureResponse.httpStatusCode < 300
-              ? 'Loka glugga og fara í yfirlit krafna'
+              ? 'Loka glugga'
               : 'Loka og reyna aftur'
           }
-          primaryButtonText="Gefa endurgjöf á gáttina"
+          primaryButtonText={
+            !confirmSignatureResponse ? null : 'Gefa endurgjöf á gáttina'
+          }
           handlePrimaryButtonClick={() => {
             history.push(Constants.FEEDBACK_FORM_ROUTE)
           }}

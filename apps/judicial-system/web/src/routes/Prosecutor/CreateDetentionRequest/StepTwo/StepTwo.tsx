@@ -364,7 +364,7 @@ export const StepTwo: React.FC = () => {
             onFocus={() => setLawsBrokenErrorMessage('')}
             required
             textarea
-            rows={6}
+            rows={7}
           />
         </Box>
         <Box component="section" marginBottom={7}>
@@ -581,7 +581,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
-              rows={12}
+              rows={16}
               textarea
             />
           </Box>
@@ -599,7 +599,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
-              rows={6}
+              rows={7}
               textarea
             />
           </Box>
@@ -617,7 +617,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
-              rows={6}
+              rows={7}
               textarea
             />
           </Box>
@@ -636,7 +636,7 @@ export const StepTwo: React.FC = () => {
                 )
               }}
               textarea
-              rows={12}
+              rows={16}
             />
           </Box>
           <Box component="section" marginBottom={7}>
@@ -665,7 +665,7 @@ export const StepTwo: React.FC = () => {
                   )
                 }}
                 textarea
-                rows={6}
+                rows={7}
               />
             </Box>
           </Box>
