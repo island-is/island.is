@@ -1,8 +1,9 @@
 import { style, styleMap } from 'treat'
 import { exportMe } from '@island.is/island-ui/core'
-import { themeUtils, theme } from '@island.is/island-ui/theme'
+import { themeUtils, theme, exportMe as exportMe2 } from '@island.is/island-ui/theme'
 
-exportMe()
+exportMe() // NOPE
+exportMe2() // YES
 
 export const container = style({
   position: 'relative',
