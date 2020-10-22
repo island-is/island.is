@@ -39,11 +39,11 @@ export * from './lib/services/user-identities.service'
 export * from './lib/services/sequelizeConfig.service'
 
 // Auth
-export * from './lib/auth/auth-config'
 export * from './lib/auth/auth.module'
 export * from './lib/auth/jwt.strategy'
 export * from './lib/auth/scopes.decorator'
 export * from './lib/auth/scopes.guard'
+export * from './lib/auth/ids-auth.guard'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'

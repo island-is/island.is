@@ -63,9 +63,11 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
 
   @Field()
   @CreatedAt
+  @Column
   createdAt: Date
 
   @Field()
   @UpdatedAt
+  @Column
   updatedAt: Date
 }

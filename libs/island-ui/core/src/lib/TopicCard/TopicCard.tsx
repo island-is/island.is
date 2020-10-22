@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Tag } from '../Tag/Tag'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 
@@ -44,13 +44,9 @@ export const TopicCard: React.FC<TopicCardProps> = ({
       position="relative"
       width="full"
     >
-      <Typography
-        variant="h5"
-        as="span"
-        color={colorSchemes[colorScheme].textColor}
-      >
+      <Text variant="h5" as="span" color={colorSchemes[colorScheme].textColor}>
         {children}
-      </Typography>
+      </Text>
       {tag && (
         <Box paddingLeft={2} marginLeft="auto">
           <Tag

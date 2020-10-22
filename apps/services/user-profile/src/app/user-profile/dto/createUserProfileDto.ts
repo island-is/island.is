@@ -9,6 +9,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
 
 export class CreateUserProfileDto {
+  //needs authentication (added for refresh of schemas)
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -24,11 +25,6 @@ export class CreateUserProfileDto {
   @IsEnum(Locale)
   @ApiPropertyOptional()
   readonly locale?: Locale
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly profileImageUrl?: string
 
   @IsOptional()
   @IsEmail()
