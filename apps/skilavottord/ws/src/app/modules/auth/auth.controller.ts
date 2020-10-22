@@ -23,7 +23,7 @@ import { environment } from '../../../environments'
 
 //import { UserResolver } from './../user/user.resolver'
 
-import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
+import { Cookie, CookieOptions, Credentials, VerifiedUser, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
@@ -121,16 +121,9 @@ export class AuthController {
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     const authService = new AuthService()
     
-    let notandi: AuthUser
-    notandi = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
-  /*  notandi.nationalId = '2811638099'   
-    notandi.mobile = '8926309' 
-    notandi.name = 'Gaur Gaurs'*/
-    let rulla: Role = "admin"
-    rulla = "user"
-    console.log(rulla)
-    rulla=authService.getRole(notandi)  
-      
+    let RoleForUser: string = 'Citizen'
+    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)  
+    this.logger.info(`--- /citizen/callback ending ---`)  
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -192,20 +185,25 @@ export class AuthController {
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
-    this.logger.info(`  - returnUrl = ${returnUrl}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     const authService = new AuthService()
     
-    let notandi: AuthUser
-    notandi = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
-  /*  notandi.nationalId = '2811638099'   
-    notandi.mobile = '8926309' 
-    notandi.name = 'Gaur Gaurs'*/
-    let rulla: Role = "admin"
-    rulla = "user"
-    console.log(rulla)
-    rulla=authService.getRole(notandi)  
-      
+    let RoleUser: AuthUser
+    RoleUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
+    let RoleForUser: Role = 'user'
+    RoleForUser=authService.getRole(RoleUser)  
+
+    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`) 
+    let returnUrlComp: string  
+    if (RoleForUser.includes('RecyclingCompany')) {
+      returnUrlComp = '/deregister-vehicle'
+    } else if (RoleForUser.includes('RecyclingFund')) {
+      returnUrlComp = '/list-vehicles'
+    } else {
+      return '/error'
+    }
+    this.logger.info(`  - redirecting to ${returnUrlComp}`) 
+    this.logger.info(`--- /company/callback ending ---`) 
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
@@ -216,7 +214,7 @@ export class AuthController {
         maxAge,
       })
 
-      .redirect(returnUrl ?? '/_')
+      .redirect(returnUrlComp ?? '/_')
   }
 
   @Get('/citizen/login')

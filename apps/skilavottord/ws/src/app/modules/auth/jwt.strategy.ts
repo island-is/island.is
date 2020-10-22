@@ -30,7 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         this.logger.error('invalid csrf token -')
       return null
     }
-    this.logger.info(`  - csrf token for ${user.name} is valid, returning user stucture`)
+    this.logger.info(`  - csrf token for ${user.name} - ${user.nationalId} is valid`)
     return user
   }
 }
