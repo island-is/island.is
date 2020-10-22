@@ -77,12 +77,6 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Málsatvik rakin">
         <Text variant="intro">{workingCase.caseFacts}</Text>
       </AccordionListItem>
-      <AccordionListItem title="Framburðir">
-        <Text variant="intro">{workingCase.witnessAccounts}</Text>
-      </AccordionListItem>
-      <AccordionListItem title="Staða rannsóknar og næstu skref">
-        <Text variant="intro">{workingCase.investigationProgress}</Text>
-      </AccordionListItem>
       <AccordionListItem title="Lagarök">
         <Text variant="intro">{workingCase.legalArguments}</Text>
       </AccordionListItem>

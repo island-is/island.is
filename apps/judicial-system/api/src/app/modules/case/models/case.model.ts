@@ -148,22 +148,6 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  // Framburðir
-  witnessAccounts: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Staða rannsóknar og næstu skref
-  investigationProgress: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
   // Lagarök
   legalArguments: string
 
