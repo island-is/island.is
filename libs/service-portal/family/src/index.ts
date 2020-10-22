@@ -10,12 +10,6 @@ export const familyModule: ServicePortalModule = {
   widgets: () => [],
   routes: () => [
     {
-      name: 'Fjölskyldan',
-      path: ServicePortalPath.FjolskyldanRoot,
-      render: () =>
-        lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
-    },
-    {
       name: 'Mín gögn',
       path: ServicePortalPath.MinGognRoot,
       render: () =>

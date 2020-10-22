@@ -34,19 +34,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'person',
         },
-      },
-
-      // Fjolskyldan
-      {
-        name: defineMessage({
-          id: 'service.portal:family',
-          defaultMessage: 'Fjölskyldan',
-        }),
-        path: ServicePortalPath.FjolskyldanRoot,
-        icon: {
-          type: 'outline',
-          icon: 'people',
-        },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:user-info',
+              defaultMessage: 'Mínar upplýsingar',
+            }),
+            path: ServicePortalPath.UserInfo,
+          },
+        ],
       },
 
       // Fjarmal
