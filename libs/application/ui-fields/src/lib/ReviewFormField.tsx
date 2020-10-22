@@ -1,18 +1,28 @@
 import React, { FC, useMemo } from 'react'
-import { ReviewField, FieldBaseProps } from '@island.is/application/core'
+import {
+  ReviewField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
 import { Text, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
+import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
   field: ReviewField
 }
-const ReviewFormField: FC<Props> = ({ field, error }) => {
+const ReviewFormField: FC<Props> = ({ application, field, error }) => {
   const { id, name, actions } = field
+  const { formatMessage } = useLocale()
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
-      return { label: a.name, value: a.event as string }
+      return {
+        label: formatText(a.name, application, formatMessage),
+        value: a.event as string,
+      }
     })
   }, [actions])
+
   return (
     <Box
       background="blue100"
@@ -21,7 +31,7 @@ const ReviewFormField: FC<Props> = ({ field, error }) => {
       padding={4}
       marginTop={4}
     >
-      <Text variant="h4">{name}</Text>
+      <Text variant="h4">{formatText(name, application, formatMessage)}</Text>
       <Box paddingTop={1}>
         <RadioController id={id} options={actionsAsOptions} error={error} />
       </Box>

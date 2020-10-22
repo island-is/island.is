@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useRouter } from 'next/router'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import {
@@ -10,6 +10,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { Controller, useForm } from 'react-hook-form'
+
+type FormData = {
+  registrationNumber: string
+}
 
 const Select: FC = () => {
   const {
@@ -19,15 +24,14 @@ const Select: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
-  const [registrationNumber, setRegistrationNumber] = useState('')
+  const { handleSubmit, control, formState, errors } = useForm({
+    mode: 'onChange',
+  })
 
-  const handleInputChange = (value: string) => {
-    if (value.length <= 6) {
-      setRegistrationNumber(value)
-    }
-  }
-
-  const handleContinue = () => {
+  const handleContinue = (formData: FormData) => {
+    const registrationNumber = formData.registrationNumber
+      .replace(' ', '')
+      .replace('-', '')
     router.push(routes.deregister, `${routes.baseRoute}/${registrationNumber}`)
   }
 
@@ -35,18 +39,44 @@ const Select: FC = () => {
     router.push(routes.baseRoute)
   }
 
+  const validateRegNumber = (value: string) => {
+    const regular = new RegExp(/^[A-Z]{1,2}(\s|\-){0,1}([A-Z]){1}\d{2}$/gi)
+    const antique = new RegExp(/^[A-Z]{1}\s{0,1}\d{5}$/gi)
+    return regular.test(value) || antique.test(value)
+  }
+
   return (
     <ProcessPageLayout sectionType={'company'} activeSection={0}>
       <Stack space={4}>
         <Text variant="h1">{t.title}</Text>
         <Text variant="intro">{t.info}</Text>
-        <Input
-          label={t.input.label}
-          placeholder={t.input.placeholder}
+        <Controller
+          control={control}
           name="registrationNumber"
-          value={registrationNumber}
-          onChange={({ target }) => handleInputChange(target.value)}
-          required
+          rules={{
+            required: {
+              value: true,
+              message: t.input.errors.empty,
+            },
+            minLength: { value: 5, message: t.input.errors.length },
+            maxLength: { value: 7, message: t.input.errors.length },
+            validate: {
+              isValidRegNumber: (value) =>
+                validateRegNumber(value) || t.input.errors.invalidRegNumber,
+            },
+          }}
+          defaultValue=""
+          render={({ onChange, value, name }) => (
+            <Input
+              label={t.input.label}
+              placeholder={t.input.placeholder}
+              name={name}
+              value={value?.toUpperCase()}
+              onChange={({ target }) => onChange(target.value)}
+              hasError={errors.registrationNumber}
+              errorMessage={errors.registrationNumber?.message}
+            />
+          )}
         />
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
@@ -59,8 +89,8 @@ const Select: FC = () => {
           </Hidden>
           <Button
             icon="arrowForward"
-            disabled={!registrationNumber}
-            onClick={handleContinue}
+            disabled={!formState.isValid}
+            onClick={handleSubmit(handleContinue)}
           >
             {t.buttons.continue}
           </Button>

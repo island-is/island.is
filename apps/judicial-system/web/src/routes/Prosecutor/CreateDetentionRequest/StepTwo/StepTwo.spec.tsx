@@ -8,6 +8,8 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe('Create detention request, step two', () => {
   test('should now allow users to continue unless every required field has been filled out', async () => {
@@ -27,9 +29,11 @@ describe('Create detention request, step two', () => {
 
     // Act and Assert
     const { getByTestId, getByText } = render(
-      <Router history={history}>
-        <StepTwo />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepTwo />
+        </Router>
+      </userContext.Provider>,
     )
 
     await act(async () => {
@@ -72,9 +76,11 @@ describe('Create detention request, step two', () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepTwo />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepTwo />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
@@ -98,9 +104,11 @@ describe('Create detention request, step two', () => {
 
     // Act
     const { getByTestId } = render(
-      <Router history={history}>
-        <StepTwo />
-      </Router>,
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepTwo />
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
