@@ -28,8 +28,10 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   })
   vehicleId: string
   //ATH
+  @Field(() => VehicleModel, { nullable: true })
   @BelongsTo(() => VehicleModel, 'vehicleId')
   vehicle!: VehicleModel
+
   @Field()
   @Column({
     type: DataType.STRING,
@@ -46,9 +48,11 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
 
   @Field()
   @CreatedAt
+  @Column
   createdAt: Date
 
   @Field()
   @UpdatedAt
+  @Column
   updatedAt: Date
 }
