@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Box,
   Checkbox,
   DatePicker,
@@ -27,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatISO } from 'date-fns'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -156,6 +158,11 @@ export const RulingStepOne: React.FC = () => {
         <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
         <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
       </Box>
+      <Box component="section" marginBottom={7}>
+        <Accordion>
+          <PoliceRequestAccordionItem workingCase={workingCase} />
+        </Accordion>
+      </Box>
       <Box component="section" marginBottom={8}>
         <Box marginBottom={2}>
           <Text as="h3" variant="h3">
@@ -169,7 +176,7 @@ export const RulingStepOne: React.FC = () => {
             label="Niðurstaða úrskurðar"
             placeholder="Hver er niðurstaðan að mati dómara?"
             defaultValue={workingCase.ruling}
-            rows={12}
+            rows={16}
             errorMessage={rulingErrorMessage}
             hasError={rulingErrorMessage !== ''}
             onFocus={() => setRulingErrorMessage('')}
