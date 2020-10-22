@@ -442,6 +442,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       (article.group?.slug ? `#${article.group.slug}` : ''),
                   )}
                   href={makePath('ArticleCategory', '[slug]')}
+                  pureChildren
                 >
                   <Tag variant="blue">{article.group.title}</Tag>
                 </Link>
