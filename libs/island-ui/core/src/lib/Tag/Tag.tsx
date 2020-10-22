@@ -1,6 +1,6 @@
 import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 
 import * as styles from './Tag.treat'
 
@@ -64,9 +64,9 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     }
 
     const content = (
-      <Typography variant="tag" as="span">
+      <Text variant="tag" as="span">
         {children}
-      </Typography>
+      </Text>
     )
 
     if (label) {
