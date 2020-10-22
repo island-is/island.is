@@ -12,7 +12,6 @@ export class SoapClient {
         { wsdl_headers: { Host: host } },
         (error, client) => {
           if (error) {
-            //TODO log to provider
             logger.error(error)
             reject(error)
           }
