@@ -35,9 +35,18 @@ export const placeholder = style(
   'placeholder',
 )
 
-export const input = style(inputMixins.input, 'input')
+export const input = style(
+  {
+    ...inputMixins.input,
+    ...inputMixins.inputSizes.md,
+  },
+  'input',
+)
 
-globalStyle(`${wrapper} ${input} input`, inputMixins.input)
+globalStyle(`${wrapper} ${input} input`, {
+  ...inputMixins.input,
+  ...inputMixins.inputSizes.md,
+})
 globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
 
 export const errorMessage = style(inputMixins.errorMessage)
@@ -54,6 +63,7 @@ globalStyle(`${wrapper} .css-1g6gooi`, {
 })
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
+  ...inputMixins.containerSizes.md,
   paddingRight: 70,
   border: 0,
 })
@@ -82,17 +92,22 @@ globalStyle(
   },
 )
 
-export const label = style({
+const labelTest = {
+  ...inputMixins.labelSizes.md,
   ...inputMixins.label,
   selectors: {
     [`${hasError} &`]: inputMixins.labelErrorState,
   },
-})
+}
+console.log(inputMixins.labelSizes.md)
+export const label = style(labelTest)
+console.log(label)
 export const singleValue = style(
   {
     marginLeft: 0,
     marginRight: 0,
     ...inputMixins.input,
+    ...inputMixins.inputSizes.md,
     paddingRight: 0,
   },
   'singleValue',
@@ -130,7 +145,7 @@ export const menu = style(
     selectors: {
       [`${wrapper} &`]: {
         marginTop: -1,
-        boxShadow: `0 0 0 4px ${theme.color.mint400}`,
+        boxShadow: `inset 0 0 0 4px ${theme.color.mint400}`,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
       },

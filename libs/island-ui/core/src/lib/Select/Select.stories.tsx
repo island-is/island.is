@@ -16,13 +16,28 @@ export default {
 }
 
 export const TempTest = () => (
-  <div>
+  <div style={{ height: 600 }}>
+    <Input name="test" label="tester input" placeholder="placeholder test" />
+    <div style={{ height: 30 }} />
     <Template
       name="select"
       label="tester select"
       placeholder="placeholder test"
+      options={[
+        {
+          label: 'Valmöguleiki 1',
+          value: '0',
+        },
+        {
+          label: 'Valmöguleiki 2',
+          value: '1',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '2',
+        },
+      ]}
     />
-    <Input name="test" label="tester input" placeholder="placeholder test" />
   </div>
 )
 
