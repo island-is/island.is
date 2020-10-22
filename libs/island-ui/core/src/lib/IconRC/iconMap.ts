@@ -1,4 +1,4 @@
-export type Type = 'filled' | 'sharp' | 'outline'
+export type Type = 'filled' | 'outline'
 export type Icon =
   | 'accessibility'
   | 'add'
@@ -29,6 +29,7 @@ export type Icon =
   | 'search'
   | 'settings'
   | 'wallet'
+  | 'warning'
 
 export default {
   filled: {
@@ -61,37 +62,7 @@ export default {
     search: 'Search',
     settings: 'Settings',
     wallet: 'Wallet',
-  },
-  sharp: {
-    accessibility: 'AccessibilitySharp',
-    add: 'AddSharp',
-    arrowForward: 'ArrowForwardSharp',
-    arrowBack: 'ArrowBackSharp',
-    attach: 'AttachSharp',
-    business: 'BusinessSharp',
-    calendar: 'CalendarSharp',
-    car: 'CarSharp',
-    cellular: 'CellularSharp',
-    chevronBack: 'ChevronBackSharp',
-    chevronDown: 'ChevronDownSharp',
-    chevronForward: 'ChevronForwardSharp',
-    closeCircle: 'CloseCircleSharp',
-    close: 'CloseSharp',
-    fileTrayFull: 'FileTrayFullSharp',
-    home: 'HomeSharp',
-    lockClosed: 'LockClosedSharp',
-    logOut: 'LogOutSharp',
-    menu: 'MenuSharp',
-    open: 'OpenSharp',
-    people: 'PeopleSharp',
-    person: 'PersonSharp',
-    reader: 'ReaderSharp',
-    receipt: 'ReceiptSharp',
-    removeCircle: 'RemoveCircleSharp',
-    school: 'SchoolSharp',
-    search: 'SearchSharp',
-    settings: 'SettingsSharp',
-    wallet: 'WalletSharp',
+    warning: 'Warning',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -123,5 +94,6 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     wallet: 'WalletOutline',
+    warning: 'WarningOutline',
   },
 }
