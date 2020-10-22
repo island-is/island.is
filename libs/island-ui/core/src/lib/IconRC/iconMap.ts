@@ -85,7 +85,7 @@ export type Icon =
   // | 'caretUp'
   // | 'cart'
   // | 'cash'
-  // | 'cellular'
+  | 'cellular'
   // | 'chatboxEllipses'
   // | 'chatbox'
   // | 'chatbubbleEllipses'
@@ -106,7 +106,7 @@ export type Icon =
   // | 'chevronUp'
   // | 'clipboard'
   // | 'closeCircle'
-  // | 'close'
+  | 'close'
   // | 'cloudCircle'
   // | 'cloudDone'
   // | 'cloudDownload'
@@ -161,7 +161,7 @@ export type Icon =
   // | 'eyedrop'
   // | 'fastFood'
   // | 'female'
-  // | 'fileTrayFull'
+  | 'fileTrayFull'
   // | 'fileTray'
   // | 'fileTrayStacked'
   // | 'film'
@@ -207,7 +207,7 @@ export type Icon =
   // | 'helpBuoy'
   // | 'helpCircle'
   // | 'help'
-  // | 'home'
+  | 'home'
   // | 'hourglass'
   // | 'iceCream'
   // | 'image'
@@ -230,174 +230,174 @@ export type Icon =
   // | 'locate'
   // | 'location'
   | 'lockClosed'
-// | 'lockOpen'
-// | 'logIn'
-// | 'logOut'
-// | 'magnet'
-// | 'mailOpen'
-// | 'mail'
-// | 'mailUnread'
-// | 'maleFemale'
-// | 'male'
-// | 'man'
-// | 'map'
-// | 'medal'
-// | 'medical'
-// | 'medkit'
-// | 'megaphone'
-// | 'menu'
-// | 'micCircle'
-// | 'micOffCircle'
-// | 'micOff'
-// | 'mic'
-// | 'moon'
-// | 'move'
-// | 'musicalNote'
-// | 'musicalNotes'
-// | 'navigateCircle'
-// | 'navigate'
-// | 'newspaper'
-// | 'notificationsCircle'
-// | 'notificationsOffCircle'
-// | 'notificationsOff'
-// | 'notifications'
-// | 'nuclear'
-// | 'nutrition'
-// | 'open'
-// | 'options'
-// | 'paperPlane'
-// | 'partlySunny'
-// | 'pauseCircle'
-// | 'pause'
-// | 'paw'
-// | 'pencil'
-// | 'peopleCircle'
-// | 'people'
-// | 'personAdd'
-// | 'personCircle'
-// | 'person'
-// | 'personRemove'
-// | 'phoneLandscape'
-// | 'phonePortrait'
-// | 'pieChart'
-// | 'pin'
-// | 'pint'
-// | 'pizza'
-// | 'planet'
-// | 'playBackCircle'
-// | 'playBack'
-// | 'playCircle'
-// | 'playForwardCircle'
-// | 'playForward'
-// | 'play'
-// | 'playSkipBackCircle'
-// | 'playSkipBack'
-// | 'playSkipForwardCircle'
-// | 'playSkipForward'
-// | 'podium'
-// | 'power'
-// | 'pricetag'
-// | 'pricetags'
-// | 'print'
-// | 'pulse'
-// | 'push'
-// | 'qrCode'
-// | 'radioButtonOff'
-// | 'radioButtonOn'
-// | 'radio'
-// | 'rainy'
-// | 'reader'
-// | 'receipt'
-// | 'recording'
-// | 'refreshCircle'
-// | 'refresh'
-// | 'reloadCircle'
-// | 'reload'
-// | 'removeCircle'
-// | 'remove'
-// | 'reorderFour'
-// | 'reorderThree'
-// | 'reorderTwo'
-// | 'repeat'
-// | 'resize'
-// | 'restaurant'
-// | 'returnDownBack'
-// | 'returnDownForward'
-// | 'returnUpBack'
-// | 'returnUpForward'
-// | 'ribbon'
-// | 'rocket'
-// | 'rose'
-// | 'sad'
-// | 'save'
-// | 'scanCircle'
-// | 'scan'
-// | 'school'
-// | 'searchCircle'
-// | 'search'
-// | 'send'
-// | 'server'
-// | 'settings'
-// | 'shapes'
-// | 'share'
-// | 'shareSocial'
-// | 'shieldCheckmark'
-// | 'shield'
-// | 'shirt'
-// | 'shuffle'
-// | 'skull'
-// | 'snow'
-// | 'speedometer'
-// | 'square'
-// | 'starHalf'
-// | 'star'
-// | 'statsChart'
-// | 'stopCircle'
-// | 'stop'
-// | 'stopwatch'
-// | 'storefront'
-// | 'subway'
-// | 'sunny'
-// | 'swapHorizontal'
-// | 'swapVertical'
-// | 'syncCircle'
-// | 'sync'
-// | 'tabletLandscape'
-// | 'tabletPortrait'
-// | 'telescope'
-// | 'tennisball'
-// | 'terminal'
-// | 'text'
-// | 'thermometer'
-// | 'thumbsDown'
-// | 'thumbsUp'
-// | 'thunderstorm'
-// | 'ticket'
-// | 'time'
-// | 'timer'
-// | 'today'
-// | 'toggle'
-// | 'trailSign'
-// | 'train'
-// | 'transgender'
-// | 'trashBin'
-// | 'trash'
-// | 'trendingDown'
-// | 'trendingUp'
-// | 'triangle'
-// | 'trophy'
-// | 'tv'
-// | 'umbrella'
-// | 'unlink'
-// | 'videocamOff'
-// | 'videocam'
-// | 'volumeHigh'
-// | 'volumeLow'
-// | 'volumeMedium'
-// | 'volumeMute'
-// | 'volumeOff'
-// | 'walk'
-// | 'wallet'
+  // | 'lockOpen'
+  // | 'logIn'
+  | 'logOut'
+  // | 'magnet'
+  // | 'mailOpen'
+  // | 'mail'
+  // | 'mailUnread'
+  // | 'maleFemale'
+  // | 'male'
+  // | 'man'
+  // | 'map'
+  // | 'medal'
+  // | 'medical'
+  // | 'medkit'
+  // | 'megaphone'
+  | 'menu'
+  // | 'micCircle'
+  // | 'micOffCircle'
+  // | 'micOff'
+  // | 'mic'
+  // | 'moon'
+  // | 'move'
+  // | 'musicalNote'
+  // | 'musicalNotes'
+  // | 'navigateCircle'
+  // | 'navigate'
+  // | 'newspaper'
+  // | 'notificationsCircle'
+  // | 'notificationsOffCircle'
+  // | 'notificationsOff'
+  // | 'notifications'
+  // | 'nuclear'
+  // | 'nutrition'
+  // | 'open'
+  // | 'options'
+  // | 'paperPlane'
+  // | 'partlySunny'
+  // | 'pauseCircle'
+  // | 'pause'
+  // | 'paw'
+  // | 'pencil'
+  // | 'peopleCircle'
+  | 'people'
+  // | 'personAdd'
+  // | 'personCircle'
+  | 'person'
+  // | 'personRemove'
+  // | 'phoneLandscape'
+  // | 'phonePortrait'
+  // | 'pieChart'
+  // | 'pin'
+  // | 'pint'
+  // | 'pizza'
+  // | 'planet'
+  // | 'playBackCircle'
+  // | 'playBack'
+  // | 'playCircle'
+  // | 'playForwardCircle'
+  // | 'playForward'
+  // | 'play'
+  // | 'playSkipBackCircle'
+  // | 'playSkipBack'
+  // | 'playSkipForwardCircle'
+  // | 'playSkipForward'
+  // | 'podium'
+  // | 'power'
+  // | 'pricetag'
+  // | 'pricetags'
+  // | 'print'
+  // | 'pulse'
+  // | 'push'
+  // | 'qrCode'
+  // | 'radioButtonOff'
+  // | 'radioButtonOn'
+  // | 'radio'
+  // | 'rainy'
+  | 'reader'
+  | 'receipt'
+  // | 'recording'
+  // | 'refreshCircle'
+  // | 'refresh'
+  // | 'reloadCircle'
+  // | 'reload'
+  // | 'removeCircle'
+  // | 'remove'
+  // | 'reorderFour'
+  // | 'reorderThree'
+  // | 'reorderTwo'
+  // | 'repeat'
+  // | 'resize'
+  // | 'restaurant'
+  // | 'returnDownBack'
+  // | 'returnDownForward'
+  // | 'returnUpBack'
+  // | 'returnUpForward'
+  // | 'ribbon'
+  // | 'rocket'
+  // | 'rose'
+  // | 'sad'
+  // | 'save'
+  // | 'scanCircle'
+  // | 'scan'
+  | 'school'
+  // | 'searchCircle'
+  | 'search'
+  // | 'send'
+  // | 'server'
+  | 'settings'
+  // | 'shapes'
+  // | 'share'
+  // | 'shareSocial'
+  // | 'shieldCheckmark'
+  // | 'shield'
+  // | 'shirt'
+  // | 'shuffle'
+  // | 'skull'
+  // | 'snow'
+  // | 'speedometer'
+  // | 'square'
+  // | 'starHalf'
+  // | 'star'
+  // | 'statsChart'
+  // | 'stopCircle'
+  // | 'stop'
+  // | 'stopwatch'
+  // | 'storefront'
+  // | 'subway'
+  // | 'sunny'
+  // | 'swapHorizontal'
+  // | 'swapVertical'
+  // | 'syncCircle'
+  // | 'sync'
+  // | 'tabletLandscape'
+  // | 'tabletPortrait'
+  // | 'telescope'
+  // | 'tennisball'
+  // | 'terminal'
+  // | 'text'
+  // | 'thermometer'
+  // | 'thumbsDown'
+  // | 'thumbsUp'
+  // | 'thunderstorm'
+  // | 'ticket'
+  // | 'time'
+  // | 'timer'
+  // | 'today'
+  // | 'toggle'
+  // | 'trailSign'
+  // | 'train'
+  // | 'transgender'
+  // | 'trashBin'
+  // | 'trash'
+  // | 'trendingDown'
+  // | 'trendingUp'
+  // | 'triangle'
+  // | 'trophy'
+  // | 'tv'
+  // | 'umbrella'
+  // | 'unlink'
+  // | 'videocamOff'
+  // | 'videocam'
+  // | 'volumeHigh'
+  // | 'volumeLow'
+  // | 'volumeMedium'
+  // | 'volumeMute'
+  // | 'volumeOff'
+  // | 'walk'
+  | 'wallet'
 // | 'warning'
 // | 'watch'
 // | 'water'
@@ -475,7 +475,7 @@ export default {
     // cafe: 'Cafe',
     // calculator: 'Calculator',
     // calendarClear: 'CalendarClear',
-    // calendar: 'Calendar',
+    calendar: 'Calendar',
     // call: 'Call',
     // cameraReverse: 'CameraReverse',
     // camera: 'Camera',
@@ -492,7 +492,7 @@ export default {
     // caretUp: 'CaretUp',
     // cart: 'Cart',
     // cash: 'Cash',
-    // cellular: 'Cellular',
+    cellular: 'Cellular',
     // chatboxEllipses: 'ChatboxEllipses',
     // chatbox: 'Chatbox',
     // chatbubbleEllipses: 'ChatbubbleEllipses',
@@ -513,7 +513,7 @@ export default {
     // chevronUp: 'ChevronUp',
     // clipboard: 'Clipboard',
     // closeCircle: 'CloseCircle',
-    // close: 'Close',
+    close: 'Close',
     // cloudCircle: 'CloudCircle',
     // cloudDone: 'CloudDone',
     // cloudDownload: 'CloudDownload',
@@ -568,7 +568,7 @@ export default {
     // eyedrop: 'Eyedrop',
     // fastFood: 'FastFood',
     // female: 'Female',
-    // fileTrayFull: 'FileTrayFull',
+    fileTrayFull: 'FileTrayFull',
     // fileTrayStacked: 'FileTrayStacked',
     // fileTray: 'FileTray',
     // film: 'Film',
@@ -614,7 +614,7 @@ export default {
     // helpBuoy: 'HelpBuoy',
     // helpCircle: 'HelpCircle',
     // help: 'Help',
-    // home: 'Home',
+    home: 'Home',
     // hourglass: 'Hourglass',
     // iceCream: 'IceCream',
     // image: 'Image',
@@ -639,7 +639,7 @@ export default {
     lockClosed: 'LockClosed',
     // lockOpen: 'LockOpen',
     // logIn: 'LogIn',
-    // logOut: 'LogOut',
+    logOut: 'LogOut',
     // logoAlipay: 'LogoAlipay',
     // logoAmazon: 'LogoAmazon',
     // logoAmplify: 'LogoAmplify',
@@ -740,7 +740,7 @@ export default {
     // medical: 'Medical',
     // medkit: 'Medkit',
     // megaphone: 'Megaphone',
-    // menu: 'Menu',
+    menu: 'Menu',
     // micCircle: 'MicCircle',
     // micOffCircle: 'MicOffCircle',
     // micOff: 'MicOff',
@@ -767,11 +767,11 @@ export default {
     // paw: 'Paw',
     // pencil: 'Pencil',
     // peopleCircle: 'PeopleCircle',
-    // people: 'People',
+    people: 'People',
     // personAdd: 'PersonAdd',
     // personCircle: 'PersonCircle',
     // personRemove: 'PersonRemove',
-    // person: 'Person',
+    person: 'Person',
     // phoneLandscape: 'PhoneLandscape',
     // phonePortrait: 'PhonePortrait',
     // pieChart: 'PieChart',
@@ -801,8 +801,8 @@ export default {
     // radioButtonOn: 'RadioButtonOn',
     // radio: 'Radio',
     // rainy: 'Rainy',
-    // reader: 'Reader',
-    // receipt: 'Receipt',
+    reader: 'Reader',
+    receipt: 'Receipt',
     // recording: 'Recording',
     // refreshCircle: 'RefreshCircle',
     // refresh: 'Refresh',
@@ -827,12 +827,12 @@ export default {
     // save: 'Save',
     // scanCircle: 'ScanCircle',
     // scan: 'Scan',
-    // school: 'School',
+    school: 'School',
     // searchCircle: 'SearchCircle',
-    // search: 'Search',
+    search: 'Search',
     // send: 'Send',
     // server: 'Server',
-    // settings: 'Settings',
+    settings: 'Settings',
     // shapes: 'Shapes',
     // shareSocial: 'ShareSocial',
     // share: 'Share',
@@ -892,7 +892,7 @@ export default {
     // volumeMute: 'VolumeMute',
     // volumeOff: 'VolumeOff',
     // walk: 'Walk',
-    // wallet: 'Wallet',
+    wallet: 'Wallet',
     // warning: 'Warning',
     // watch: 'Watch',
     // water: 'Water',
