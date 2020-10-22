@@ -23,12 +23,12 @@ import { environment } from '../../../environments'
 
 //import { UserResolver } from './../user/user.resolver'
 
-import { Cookie, CookieOptions, Credentials, VerifiedUser, VerifyResult } from './auth.types'
+import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
-const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
-const { samlEntryPoint2, audience: audienceUrl2, jwtSecret2 } = environment.auth
+const { samlEntryPoint, samlEntryPoint2, audience: audienceUrl, jwtSecret } = environment.auth
+//const { samlEntryPoint2, audience: audienceUrl2, jwtSecret2 } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 3600
 const ONE_HOUR = 60 * 60 * 1000
@@ -119,7 +119,7 @@ export class AuthController {
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - returnUrl = ${returnUrl}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    const authService = new AuthService()
+    //const authService = new AuthService()
     
     let RoleForUser: string = 'Citizen'
     this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)  
@@ -138,7 +138,8 @@ export class AuthController {
   }
 
   @Post('/company/callback')
-  async callback2(@Body('token') token, @Res() res, @Req() req) {
+ // async callback2(@Body('token') token, @Res() res, @Req() req) {
+    async callback2(@Body('token') token, @Res() res) {
     this.logger.info('--- /company/callback starting ---')
     let verifyResult: VerifyResult
     try {
@@ -148,7 +149,7 @@ export class AuthController {
          return res.redirect('/error')
     }
 
-    const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    // const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user) {
       this.logger.error('Could not verify user authenticity')
@@ -188,8 +189,8 @@ export class AuthController {
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     const authService = new AuthService()
     
-    let RoleUser: AuthUser
-    RoleUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
+    const RoleUser: AuthUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
+  //  RoleUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
     let RoleForUser: Role = 'user'
     RoleForUser=authService.getRole(RoleUser)  
 

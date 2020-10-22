@@ -21,10 +21,11 @@ const RECYCLINGFUND = [
   '0101302129', // Gervimaður Noregur
   '1505664449', // Rúnar Sigurður Guðlaugsson
   '0301665909', // Sigurgeir Guðmundsson
-  '2311862559', // Quan Dong
+  '2311862559', //   Quan Dong
   // Urvinnslusjodur test
+  '3005594339', // Ólafur Kjartansson
   '0202614989', // Guðlaugur Gylfi Sverrisson
-  '0305695639', // Ása Hauksdóttir
+  '0305695639', // Ása Hauksdóttir 
 ]
 
 const ADMINS = [
