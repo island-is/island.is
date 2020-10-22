@@ -13,9 +13,9 @@ import CarsTable from './components/CarsTable'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { useRouter } from 'next/router'
 
-const CompanyOverview: FC = () => {
+const Overview: FC = () => {
   const {
-    t: { companyOverview: t, companySidenav: sidenavText, routes },
+    t: { deregisterOverview: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
@@ -70,4 +70,4 @@ const CompanyOverview: FC = () => {
   )
 }
 
-export default CompanyOverview
+export default Overview

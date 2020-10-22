@@ -104,7 +104,7 @@
       "sections": ["Select car", "Deregister car"]
     }
   },
-  "companyOverview": {
+  "deregisterOverview": {
     "title": "Deregister car",
     "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
     "subtitles": {
@@ -167,7 +167,7 @@
       "cancel": "Cancel"
     }
   },
-  "companySidenav": {
+  "deregisterSidenav": {
     "deregister": "Deregister car",
     "companyInfo": "Company information"
   },

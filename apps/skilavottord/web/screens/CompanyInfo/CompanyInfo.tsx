@@ -21,7 +21,7 @@ const CompanyInfo: FC = () => {
   })
 
   const {
-    t: { companyInfo: t, companySidenav: sidenavText, routes },
+    t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 

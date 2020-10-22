@@ -15,10 +15,10 @@ export interface Translation {
   handover: Handover
   completed: Completed
   processes: Processes
-  companyOverview: CompanyOverview
+  deregisterOverview: DeregisterOverview
   companyInfo: CompanyInfo
   companyInfoForm: CompanyInfoFormPage
-  companySidenav: CompanySidenav
+  deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
   routes: Routes
 }
@@ -167,11 +167,11 @@ export interface Errors {
   secondaryButton: string
 }
 
-export interface CompanyOverview {
+export interface DeregisterOverview {
   title: string
   info: string
-  subtitles: CompanyOverviewSubTitles
-  buttons: CompanyOverviewButtons
+  subtitles: DeregisterOverviewSubTitles
+  buttons: DeregisterOverviewButtons
   search: InputField
   table: string[]
 }
@@ -201,7 +201,7 @@ export interface CompanyInfoForm {
   phoneNumber: InputField
 }
 
-export interface CompanySidenav {
+export interface deregisterSidenav {
   deregister: string
   companyInfo: string
 }
@@ -224,11 +224,11 @@ export interface Deregister {
   buttons: DeregisterButtons
 }
 
-export interface CompanyOverviewSubTitles {
+export interface DeregisterOverviewSubTitles {
   history: string
 }
 
-export interface CompanyOverviewButtons {
+export interface DeregisterOverviewButtons {
   deregister: string
 }
 
@@ -236,7 +236,7 @@ export interface CompanyInfoSubTitles {
   companyLocation: string
 }
 
-export interface CompanyOverviewButtons {
+export interface DeregisterOverviewButtons {
   add: string
   delete: string
   edit: string
