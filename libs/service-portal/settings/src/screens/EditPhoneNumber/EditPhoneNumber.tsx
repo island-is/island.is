@@ -12,7 +12,11 @@ import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useCreateUserProfile,
+  useUpdateUserProfile,
+  useUserProfile,
+} from '@island.is/service-portal/graphql'
 import { Field, Form, Formik } from 'formik'
 import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
@@ -24,18 +28,42 @@ interface PhoneFormData {
 
 export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   const [tel, setTel] = useState('')
-  const { data } = useUserProfile(userInfo.profile.natreg)
-  const [mockSubmitted, setMockSubmitted] = useState(false)
+  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
+    'passive',
+  )
   const { formatMessage } = useLocale()
+  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
+  const { updateUserProfile } = useUpdateUserProfile(userInfo.profile.natreg)
 
   useEffect(() => {
-    if (!data) return
-    if (data.mobilePhoneNumber.length > 0) setTel(data.mobilePhoneNumber)
-  }, [data])
+    if (!userProfile) return
+    if (userProfile.mobilePhoneNumber.length > 0)
+      setTel(userProfile.mobilePhoneNumber)
+  }, [userProfile])
+
+  const submitFormData = async (formData: PhoneFormData) => {
+    if (status !== 'passive') setStatus('passive')
+
+    try {
+      // Update the profile if it exists, otherwise create one
+      if (userProfile) {
+        await updateUserProfile({
+          mobilePhoneNumber: formData.tel,
+        })
+      } else {
+        await createUserProfile({
+          mobilePhoneNumber: formData.tel,
+        })
+      }
+      setStatus('success')
+    } catch (err) {
+      setStatus('error')
+    }
+  }
 
   const handleSubmit = (data: PhoneFormData) => {
-    // TODO: Submit form data once PR #1439 is merged
-    setMockSubmitted(true)
+    submitFormData(data)
   }
 
   return (
@@ -95,8 +123,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
                   })}
                 </Button>
               </Link>
-              {/* TODO: Set type to submit once PR #1439 gets merged */}
-              <Button variant="primary" icon="arrowForward">
+              <Button type="submit" variant="primary" icon="arrowForward">
                 {formatMessage({
                   id: 'sp.settings:save-changes',
                   defaultMessage: 'Vista breytingar',
@@ -106,19 +133,22 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
           </Form>
         )}
       </Formik>
-      {mockSubmitted && (
+      {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
-          {/* TODO: Switch out once ready */}
-          {/* <AlertMessage
-            type="success"
-            title="Nýtt símanúmer hefur verið vistað"
-            message="Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland"
-          /> */}
-          <AlertMessage
-            type="info"
-            title="Þessi virkni er væntanleg"
-            message="Símanúmerinu þínu hefur ekki verið breytt"
-          />
+          {status === 'success' && (
+            <AlertMessage
+              type="success"
+              title="Nýtt símanúmer hefur verið vistað"
+              message="Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland"
+            />
+          )}
+          {status === 'error' && (
+            <AlertMessage
+              type="error"
+              title="Tókst ekki að vista símanúmer"
+              message="Eitthvað hefur farið úrskeiðis, vinsamlegast reyndu aftur síðar"
+            />
+          )}
         </Box>
       )}
     </>

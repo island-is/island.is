@@ -1,12 +1,10 @@
-import { useMutation } from '@apollo/client'
-import { Mutation, MutationCreateProfileArgs } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/localization'
 import {
   Modal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { CREATE_USER_PROFILE } from '@island.is/service-portal/graphql'
+import { useCreateUserProfile } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData, EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
@@ -31,9 +29,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
-  const [createUserProfile] = useMutation<Mutation, MutationCreateProfileArgs>(
-    CREATE_USER_PROFILE,
-  )
+  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
 
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
@@ -53,14 +49,9 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
     try {
       await createUserProfile({
-        variables: {
-          input: {
-            email,
-            locale,
-            mobilePhoneNumber,
-            nationalId: userInfo.profile.natreg,
-          },
-        },
+        email,
+        locale,
+        mobilePhoneNumber,
       })
 
       toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
