@@ -23,8 +23,8 @@ const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 const TARGETS = [
   'build-open-api', // First we generate all the openapi.yaml files needed to run openapi-generate commands
   'openapi-generator', // We then run openapi-generator than depends on openapi.yaml that have been generated just before
-  'build-schema',
-  'postinstall',
+  'build-schema', // buildSchema.ts
+  'codegen', // finally run commands for codegen.yml files
 ]
 
 const nx = (target) =>
