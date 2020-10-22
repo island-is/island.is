@@ -29,7 +29,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:my-info',
           defaultMessage: 'Mín gögn',
         }),
-        path: ServicePortalPath.MinGogn,
+        path: ServicePortalPath.MinGognRoot,
         icon: {
           type: 'outline',
           icon: 'person',
@@ -150,7 +150,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: defineMessage({
               id: 'service-portal:profile-info',
-              defaultMessage: 'Mínar upplýsingar',
+              defaultMessage: 'Minn aðgangur',
             }),
             path: ServicePortalPath.UserProfileRoot,
           },

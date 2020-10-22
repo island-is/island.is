@@ -1,43 +1,55 @@
 import React from 'react'
-import { Typography, Box, Stack } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Box,
+  Stack,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import UserInfoOverviewItem from '../../components/UserInfoItem/UserInfoOverview'
+import UserInfoOverviewItem from '../../components/UserInfoItem/UserInfoItem'
 import { useLocale } from '@island.is/localization'
-import { MockUserInfoList, userInfoItem } from './mockUserInfoList'
+import { mockUserInfoList } from './mockUserInfoList'
 
-const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
+const UserInfoOverview: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <>
-      <Box marginBottom={10}>
-        <Typography variant="h1" as="h1">
-          {formatMessage({
-            id: 'service.portal:my-info-my-data',
-            defaultMessage: 'Mín gögn',
-          })}
-        </Typography>
-        <Typography variant="p" as="p">
-          {formatMessage({
-            id: 'service.portal:my-info-my-data-subtext',
-            defaultMessage:
-              'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
-          })}
-        </Typography>
-      </Box>
-      <Stack space={10}>
-        {MockUserInfoList.map((UserInfoItem: userInfoItem, index: number) => (
+    <Box marginBottom={[6, 6, 10]}>
+      <Stack space={[6, 6, 10]}>
+        <Box>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+              <Stack space={2}>
+                <Typography variant="h1" as="h1">
+                  {formatMessage({
+                    id: 'service.portal:my-info-my-data',
+                    defaultMessage: 'Mín gögn',
+                  })}
+                </Typography>
+                <Typography variant="p" as="p">
+                  {formatMessage({
+                    id: 'service.portal:my-info-my-data-subtext',
+                    defaultMessage:
+                      'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
+                  })}
+                </Typography>
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        </Box>
+        {mockUserInfoList.map((item, index) => (
           <UserInfoOverviewItem
             key={index}
-            heading={UserInfoItem.heading}
-            subtext={UserInfoItem.subtext}
-            link={UserInfoItem.link}
-            image={UserInfoItem.image}
+            heading={item.heading}
+            subtext={item.subtext}
+            link={item.link}
+            image={item.image}
           />
         ))}
       </Stack>
-    </>
+    </Box>
   )
 }
 
-export default SubjectInfo
+export default UserInfoOverview

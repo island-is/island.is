@@ -3,6 +3,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
+import { defineMessage } from 'react-intl'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
@@ -16,7 +17,16 @@ export const familyModule: ServicePortalModule = {
     },
     {
       name: 'Mín gögn',
-      path: ServicePortalPath.MinGogn,
+      path: ServicePortalPath.MinGognRoot,
+      render: () =>
+        lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
+    },
+    {
+      name: defineMessage({
+        id: 'service.portal:user-info',
+        defaultMessage: 'Mínar upplýsingar',
+      }),
+      path: ServicePortalPath.UserInfo,
       render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
     },
   ],

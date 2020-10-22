@@ -13,7 +13,8 @@ export enum ServicePortalPath {
   StillingarUmbod = '/min-rettindi',
   // Fjolskyldan
   FjolskyldanRoot = '/fjolskyldan',
-  MinGogn = '/min-gogn',
+  MinGognRoot = '/min-gogn',
+  UserInfo = '/min-gogn/minar-upplysingar',
   // Fjarmal
   FjarmalRoot = '/fjarmal',
   FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
@@ -32,5 +33,5 @@ export enum ServicePortalPath {
   SkilabodRoot = '/skilabod',
 
   // User Profile
-  UserProfileRoot = '/minar-upplysingar',
+  UserProfileRoot = '/personuupplysingar',
 }

@@ -1,6 +1,6 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
-export interface userInfoItem {
+export type UserInfoItem = {
   heading: MessageDescriptor | string
   subtext: MessageDescriptor | string
   link: string
@@ -10,7 +10,7 @@ export interface userInfoItem {
 import { defineMessage } from 'react-intl'
 import { MessageDescriptor } from 'react-intl'
 
-export const MockUserInfoList: userInfoItem[] = [
+export const mockUserInfoList: UserInfoItem[] = [
   {
     heading: defineMessage({
       id: 'service.portal:my-info-my-info',
@@ -24,43 +24,43 @@ export const MockUserInfoList: userInfoItem[] = [
     link: ServicePortalPath.UserInfo,
     image: '/assets/images/individuals.jpg',
   },
-  {
-    heading: defineMessage({
-      id: 'service.portal:my-info-family',
-      defaultMessage: 'Fjölskyldan',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:my-info-family-subtext',
-      defaultMessage:
-        'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
-    }),
-    link: '',
-    image: '/assets/images/baby.jpg',
-  },
-  {
-    heading: defineMessage({
-      id: 'service.portal:my-info-housing',
-      defaultMessage: 'Fasteignir',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:my-info-housing-subtext',
-      defaultMessage:
-        'Markmið verkefnisins er að smíða kerfi, Viskuausuna, sem veitir upplýsingar um gögn og vefþjónustur ríkisins til notenda.',
-    }),
-    link: '',
-    image: '/assets/images/moving.jpg',
-  },
-  {
-    heading: defineMessage({
-      id: 'service.portal:my-info-vehicles',
-      defaultMessage: 'Ökutæki',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:my-info-vehicles-subtext',
-      defaultMessage:
-        'Markmið verkefnisins er að smíða kerfi, Viskuausuna, sem veitir upplýsingar um gögn og vefþjónustur ríkisins til notenda.',
-    }),
-    link: '',
-    image: '/assets/images/jobs.jpg',
-  },
+  // {
+  //   heading: defineMessage({
+  //     id: 'service.portal:my-info-family',
+  //     defaultMessage: 'Fjölskyldan',
+  //   }),
+  //   subtext: defineMessage({
+  //     id: 'service.portal:my-info-family-subtext',
+  //     defaultMessage:
+  //       'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
+  //   }),
+  //   link: '',
+  //   image: '/assets/images/baby.jpg',
+  // },
+  // {
+  //   heading: defineMessage({
+  //     id: 'service.portal:my-info-housing',
+  //     defaultMessage: 'Fasteignir',
+  //   }),
+  //   subtext: defineMessage({
+  //     id: 'service.portal:my-info-housing-subtext',
+  //     defaultMessage:
+  //       'Markmið verkefnisins er að smíða kerfi, Viskuausuna, sem veitir upplýsingar um gögn og vefþjónustur ríkisins til notenda.',
+  //   }),
+  //   link: '',
+  //   image: '/assets/images/moving.jpg',
+  // },
+  // {
+  //   heading: defineMessage({
+  //     id: 'service.portal:my-info-vehicles',
+  //     defaultMessage: 'Ökutæki',
+  //   }),
+  //   subtext: defineMessage({
+  //     id: 'service.portal:my-info-vehicles-subtext',
+  //     defaultMessage:
+  //       'Markmið verkefnisins er að smíða kerfi, Viskuausuna, sem veitir upplýsingar um gögn og vefþjónustur ríkisins til notenda.',
+  //   }),
+  //   link: '',
+  //   image: '/assets/images/jobs.jpg',
+  // },
 ]
