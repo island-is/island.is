@@ -238,6 +238,7 @@ export const RulingStepTwo: React.FC = () => {
               )
             }}
             textarea
+            rows={7}
           />
         </Box>
         <Box marginBottom={3}>
@@ -366,6 +367,7 @@ export const RulingStepTwo: React.FC = () => {
             )
           }}
           textarea
+          rows={7}
         />
       </Box>
       <FormFooter
