@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Box,
   Checkbox,
   DatePicker,
@@ -27,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatISO } from 'date-fns'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -155,6 +157,11 @@ export const RulingStepOne: React.FC = () => {
       <Box component="section" marginBottom={7}>
         <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
         <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+      </Box>
+      <Box component="section" marginBottom={7}>
+        <Accordion>
+          <PoliceRequestAccordionItem workingCase={workingCase} />
+        </Accordion>
       </Box>
       <Box component="section" marginBottom={8}>
         <Box marginBottom={2}>
