@@ -39,7 +39,6 @@ export * from './lib/services/user-identities.service'
 export * from './lib/services/sequelizeConfig.service'
 
 // Auth
-export * from './lib/auth/auth-config'
 export * from './lib/auth/auth.module'
 export * from './lib/auth/jwt.strategy'
 export * from './lib/auth/scopes.decorator'
