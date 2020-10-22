@@ -6,6 +6,7 @@ on:
       - 'master'
       - 'release/**'
       - 'hotfix/**'
+      - 'postinstall'
     paths-ignore:
       - '**/*.md'
     tags:

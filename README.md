@@ -209,8 +209,12 @@ However, if you need to generate all the schemas files manually, you can do it w
 
 - You will need to create a `buildSchema.ts`, if your project has a graphql module. (e.g. [air-discount-scheme-api](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/apps/air-discount-scheme/api/src/buildSchema.ts))
 - You will need to create a `buildOpenApi`, if your project has an open api. (e.g. [application-system-api](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/apps/application-system/api/src/buildOpenApi.ts))
+
+TODO
+
 - You will need to create a `codegen.yml`, if your project is a react application. (e.g. [adgerdir](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/apps/adgerdir/codegen.yml))
 
+TODO
 It's very common to create more than one file for the same project, for example the `buildSchema` and a `codegen`. Once you have one or multiple of these file, you can create your workspace architect:
 
 - `yarn schemas` runs all the `init-schema` that it can find for all the targets inside the workspace. If you create a new `init-schema` and place it your newly created file it will be triggered during postinstall. (e.g. [air-discount-scheme-api architect](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/workspace.json#L1584-L1593), [application-system-api architect](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/workspace.json#L2032-L2037), [adgerdir architect](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/workspace.json#L2161-L2172))
@@ -219,11 +223,15 @@ It's very common to create more than one file for the same project, for example 
 
 All api calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
 
+TODO
+
 ```
 yarn nx run <project>:generate-schema
 ```
 
 And generate client types that depend on the schema:
+
+TODO
 
 ```
 yarn nx run <project>:codegen

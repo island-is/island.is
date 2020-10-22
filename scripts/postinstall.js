@@ -1,4 +1,5 @@
 const { exec } = require('child_process')
+
 if (process.env.CI) {
   console.log('Skipping postinstall since CI env variable is set')
 } else {

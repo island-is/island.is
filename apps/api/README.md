@@ -101,6 +101,8 @@ yarn start api
 
 If you change a GraphQL schema, you need to update the generated TypeScript types which are used by resolvers and client applications:
 
+TODO
+
 ```
 yarn affected:codegen
 ```
