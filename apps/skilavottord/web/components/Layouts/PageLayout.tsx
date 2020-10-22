@@ -127,14 +127,14 @@ export const PartnerPageLayout: FC<PartnerPageProps> = ({
         <GridRow>
           <GridColumn span={['0', '0', '3/12', '3/12']}>{left}</GridColumn>
           <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-            <Stack space={4}>
+            {top && (
               <GridRow>
                 <GridColumn span={['12/12', '12/12', '7/8', '7/8']}>
-                  <Box>{top}</Box>
+                  <Box paddingBottom={4}>{top}</Box>
                 </GridColumn>
               </GridRow>
-              <Box>{bottom}</Box>
-            </Stack>
+            )}
+            <Box>{bottom}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

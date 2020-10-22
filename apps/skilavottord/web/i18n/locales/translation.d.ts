@@ -179,6 +179,7 @@ export interface CompanyOverview {
 export interface CompanyInfo {
   title: string
   info: string
+  error: string
   subtitles: CompanyInfoSubTitles
   buttons: CompanyInfoButtons
 }

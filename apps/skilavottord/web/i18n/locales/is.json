@@ -125,6 +125,7 @@
   "companyInfo": {
     "title": "Company information",
     "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
+    "error": "Add your companies locations so that the users can find your company on iceland.is.",
     "subtitles": {
       "companyLocation": "Recycling company location"
     },

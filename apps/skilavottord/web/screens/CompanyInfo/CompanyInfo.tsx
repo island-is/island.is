@@ -36,10 +36,6 @@ const CompanyInfo: FC = () => {
     )
   }
 
-  if (error || (loading && !data)) {
-    return <Text>No company info available</Text>
-  }
-
   return (
     <PartnerPageLayout
       bottom={
@@ -60,31 +56,35 @@ const CompanyInfo: FC = () => {
               </Stack>
             </Stack>
             <Text variant="h3">{t.subtitles.companyLocation}</Text>
-            <Box>
-              {[data?.getRecyclingPartner].map((company, index) => (
-                <CompanyListItem
-                  key={index}
-                  {...company}
-                  buttons={
-                    <Box display="flex">
-                      <Box paddingX={2}>
-                        <Button variant="ghost" colorScheme="destructive">
-                          {t.buttons.delete}
-                        </Button>
+            {error || (loading && !data) ? (
+              <Text>{t.error}</Text>
+            ) : (
+              <Box>
+                {[data?.getRecyclingPartner].map((company, index) => (
+                  <CompanyListItem
+                    key={index}
+                    {...company}
+                    buttons={
+                      <Box display="flex">
+                        <Box paddingX={2}>
+                          <Button variant="ghost" colorScheme="destructive">
+                            {t.buttons.delete}
+                          </Button>
+                        </Box>
+                        <Box paddingX={2}>
+                          <Button
+                            variant="ghost"
+                            onClick={() => handleEditLocation(company.id)}
+                          >
+                            {t.buttons.edit}
+                          </Button>
+                        </Box>
                       </Box>
-                      <Box paddingX={2}>
-                        <Button
-                          variant="ghost"
-                          onClick={() => handleEditLocation(company.id)}
-                        >
-                          {t.buttons.edit}
-                        </Button>
-                      </Box>
-                    </Box>
-                  }
-                />
-              ))}
-            </Box>
+                    }
+                  />
+                ))}
+              </Box>
+            )}
             <Button onClick={handleAddLocation}>{t.buttons.add}</Button>
           </Stack>
         </Box>
