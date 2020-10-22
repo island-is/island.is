@@ -18,8 +18,10 @@
           "lint",
           "test",
           "e2e",
-          "TODO-openapi",
-          "TODO-postinstall"
+          "build-open-api",
+          "openapi-generator",
+          "build-schema",
+          "codegen"
         ]
       }
     }
