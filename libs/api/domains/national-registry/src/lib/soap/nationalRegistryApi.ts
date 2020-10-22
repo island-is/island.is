@@ -8,6 +8,7 @@ import { GetViewSveitarfelagDto } from './dto/getViewSveitarfelagDto'
 import { GetViewThjodskraDto } from './dto/getViewThjodskraDto'
 import { GetViewFjolskyldanDto } from './dto/getViewFjolskyldanDto'
 import { FamilyMember } from '../familyMember.model'
+import { GetViewKennitalaOgBannmerkingDto } from './dto/getViewKennitalaOgBannmerkingDto'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client
@@ -38,6 +39,9 @@ export class NationalRegistryApi {
     const birthPlaceResponse = await this.getViewSveitarfelag(
       userInfo.Faedsvfnr,
     )
+    const banMarkingResponse = await this.getViewKennitalaOgBannmerking(
+      nationalId,
+    )
 
     return {
       fullName: userInfo.Nafn,
@@ -47,7 +51,7 @@ export class NationalRegistryApi {
       religion: this.formatReligionString(religionResponse),
       legalResidence: this.formatResidenceAddressString(houseResponse),
       maritalStatus: this.formatMartialStatus(userInfo.Hju, userInfo.Kyn),
-      banMarking: 'not implemented',
+      banMarking: this.formatBanMarking(banMarkingResponse),
     }
   }
 
@@ -70,7 +74,7 @@ export class NationalRegistryApi {
         ({
           fullName: x.Nafn,
           nationalId: x.Kennitala,
-          gender: x.Kyn + x.KynKodi,
+          gender: x.Kyn,
           maritalStatus: x.Hjuskapur,
           address: `${x.Husheiti}, ${x.Pnr} ${x.Sveitarfelag}`,
         } as FamilyMember),
@@ -91,7 +95,7 @@ export class NationalRegistryApi {
     religtionDto: GetViewKennitalaOgTrufelag | null,
   ): string {
     if (!religtionDto) return 'religion info not found'
-    religtionDto?.table.diffgram.DocumentElement.KennitalaOgTrufelag.Trufelag
+
     return religtionDto.table.diffgram.DocumentElement.KennitalaOgTrufelag
       .Trufelag
   }
@@ -150,6 +154,16 @@ export class NationalRegistryApi {
       default:
         return genderIndex
     }
+  }
+
+  private formatBanMarking(
+    banMarkingDto: GetViewKennitalaOgBannmerkingDto | null,
+  ): string {
+    if (!banMarkingDto) return ''
+    const banMarking =
+      banMarkingDto.table.diffgram.DocumentElement.KennitalaOgBannmerking
+    const isBanmarked = banMarking.Bannmerking === '1'
+    return isBanmarked ? `Já ${banMarking.Brdagur}` : 'Nei'
   }
 
   public async getViewThjodskra(
@@ -314,6 +328,44 @@ export class NationalRegistryApi {
           {
             GetViewFjolskyldanResult: result,
           }: { GetViewFjolskyldanResult: GetViewFjolskyldanDto },
+        ) => {
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              _reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              _reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
+          }
+          resolve(null)
+        },
+      )
+    })
+  }
+
+  public async getViewKennitalaOgBannmerking(
+    nationalId: string,
+  ): Promise<GetViewKennitalaOgBannmerkingDto | null> {
+    return await new Promise((resolve, _reject) => {
+      this.client.GetViewKennitalaOgBannmerking(
+        {
+          ':SortColumn': 1,
+          ':SortAscending': true,
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':Kennitala': nationalId,
+        },
+        (
+          // eslint-disable-next-line
+          error: any,
+          {
+            GetViewKennitalaOgBannmerkingResult: result,
+          }: {
+            GetViewKennitalaOgBannmerkingResult: GetViewKennitalaOgBannmerkingDto
+          },
         ) => {
           if (result != null) {
             if (!result.success) {

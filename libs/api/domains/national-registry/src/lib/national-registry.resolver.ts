@@ -10,7 +10,7 @@ export class NationalRegistryResolver {
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(
-    /*TODO replace with proper authentication */
+    /*TODO replace with authentication */
     @Args('input') input: GetMyInfoInput,
   ): Promise<MyInfo | null> {
     return this.nationalRegistryService.GetMyinfo(input.nationalId)
@@ -18,7 +18,7 @@ export class NationalRegistryResolver {
 
   @Query(() => [FamilyMember], { nullable: true })
   getMyFamily(
-    /*TODO replace with proper authentication */
+    /*TODO replace with authentication */
     @Args('input') input: GetMyInfoInput,
   ): Promise<FamilyMember[] | null> {
     return this.nationalRegistryService.GetMyFamily(input.nationalId)
