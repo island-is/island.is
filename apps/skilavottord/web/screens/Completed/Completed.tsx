@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Stack,
   GridContainer,
@@ -6,14 +6,18 @@ import {
   GridColumn,
   Text,
   Divider,
+  Button,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { CarDetailsBox } from '../Confirm/components'
-import { Button } from '@island.is/skilavottord-web/components'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const Completed = ({ apolloState }) => {
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
   const {
     t: { completed: t, routes },
   } = useI18n()
@@ -30,6 +34,13 @@ const Completed = ({ apolloState }) => {
       })
     }
   }, [car])
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   const onClose = () => {
     router.replace(routes.myCars)
@@ -105,8 +116,8 @@ const Completed = ({ apolloState }) => {
                   {t.info.payment} <a href="/.">{t.info.paymentLinkText}</a>.
                 </Text>
               </Stack>
-              <Button variant="normal" onClick={onClose}>
-                Close
+              <Button onClick={onClose} fluid={isMobile}>
+                {t.buttons.close}
               </Button>
             </Stack>
           </Stack>

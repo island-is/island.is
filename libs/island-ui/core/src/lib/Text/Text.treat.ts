@@ -61,7 +61,7 @@ const availableLineHeights = {
 
 const availableFontSizes = {
   xs: { xs: 12, md: 14 },
-  sm: { xs: 15, md: 18 },
+  sm: { xs: 16, md: 18 },
   md: { xs: 18, md: 20 },
   lg: { xs: 20, md: 24 },
   xl: { xs: 26, md: 34 },

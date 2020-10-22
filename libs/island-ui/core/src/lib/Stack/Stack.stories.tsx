@@ -2,7 +2,7 @@ import React from 'react'
 import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { Logo } from '../Logo/Logo'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Stack } from './Stack'
 
 export default {
@@ -14,11 +14,11 @@ export const Default = () => (
   <Box paddingY={2}>
     <ContentBlock width="medium">
       <Stack space="containerGutter">
-        <Typography>
+        <Text>
           Renders content horizontally with consistent spacing between all
           items, spanning multiple lines if needed. See `Inline` for a
           horizontal version.
-        </Typography>
+        </Text>
         <Logo />
         <Logo />
         <Logo />

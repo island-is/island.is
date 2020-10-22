@@ -6,7 +6,9 @@ export const detentionRequestsContainer = style({
   gridColumnGap: 24,
   gridTemplateColumns: 'repeat(12, 1fr)',
   gridTemplateRows: 'repeat(3, auto)',
-  margin: `${theme.spacing[12]}px ${theme.spacing[6]}px 0`,
+  maxWidth: '1440px',
+  margin: `${theme.spacing[12]}px auto 0`,
+  padding: `0 ${theme.spacing[6]}px`,
 })
 
 export const logoContainer = style({

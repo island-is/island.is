@@ -96,7 +96,8 @@
   "processes": {
     "citizen": {
       "title": "Recycle car",
-      "sections": ["Confirm car for recycling", "Handover car to recycle"]
+      "sections": ["Confirm car for recycling", "Handover car to recycle"],
+      "completed": "Completed"
     },
     "company": {
       "title": "Deregister car",
