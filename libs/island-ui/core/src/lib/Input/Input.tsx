@@ -26,6 +26,7 @@ interface InputComponentProps {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
   rows?: number
+  type?: 'text' | 'number' | 'email' | 'tel'
 }
 
 interface InputProps extends InputComponentProps {
@@ -35,7 +36,6 @@ interface InputProps extends InputComponentProps {
   tooltip?: string
   backgroundColor?: InputBackgroundColor
   textarea?: boolean
-  type?: 'text' | 'number' | 'email' | 'tel'
 }
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
@@ -92,6 +92,7 @@ export const Input = forwardRef(
       onFocus,
       onBlur,
       textarea,
+      type,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -166,6 +167,7 @@ export const Input = forwardRef(
                 onBlur(e)
               }
             }}
+            type={type}
             {...ariaError}
             {...inputProps}
           />

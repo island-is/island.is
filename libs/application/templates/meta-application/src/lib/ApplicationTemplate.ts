@@ -7,8 +7,6 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-
 type Events =
   | { type: 'APPROVE' }
   | { type: 'REJECT' }

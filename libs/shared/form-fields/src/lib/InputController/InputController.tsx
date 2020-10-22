@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { Input } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
-import { textarea } from 'libs/island-ui/core/src/lib/Input/Input.treat'
 
 interface Props {
   autoFocus?: boolean
