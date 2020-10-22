@@ -485,7 +485,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
             body={(subArticle ?? article).body as SliceType[]}
-            config={{ defaultPadding: 4 }}
+            config={{ defaultPadding: [2, 2, 4] }}
           />
         </Box>
       </ArticleLayout>

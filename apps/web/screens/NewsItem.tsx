@@ -106,7 +106,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
               <Box paddingBottom={4} width="full">
                 <RichText
                   body={newsItem.content as SliceType[]}
-                  config={{ defaultPadding: 4 }}
+                  config={{ defaultPadding: [2, 2, 4] }}
                 />
               </Box>
             </GridColumn>
