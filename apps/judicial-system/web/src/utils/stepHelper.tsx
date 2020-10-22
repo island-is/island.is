@@ -2,7 +2,7 @@ import React from 'react'
 import { AppealDecitionRole, Case, RequiredField } from '../types'
 import * as api from '../api'
 import { parseString } from './formatters'
-import { FormStepper, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -178,38 +178,6 @@ export const constructConclusion = (workingCase: Case) => {
       </>
     )
   }
-}
-
-export const renderFormStepper = (
-  activeSection: number,
-  activeSubsection: number,
-) => {
-  return (
-    <FormStepper
-      sections={[
-        {
-          name: 'Krafa um gæsluvarðhald',
-          children: [
-            { type: 'SUB_SECTION', name: 'Grunnupplýsingar' },
-            { type: 'SUB_SECTION', name: 'Málsatvik og lagarök' },
-            { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-          ],
-        },
-        {
-          name: 'Úrskurður Héraðsdóms',
-          children: [
-            { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-            { type: 'SUB_SECTION', name: 'Þingbók' },
-            { type: 'SUB_SECTION', name: 'Úrskurður' },
-            { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
-            { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
-          ],
-        },
-      ]}
-      activeSection={activeSection}
-      activeSubSection={activeSubsection}
-    />
-  )
 }
 
 export const isNextDisabled = (requiredFields: RequiredField[]) => {

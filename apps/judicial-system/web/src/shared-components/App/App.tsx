@@ -9,7 +9,6 @@ import {
 } from '../../routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '../../routes/DetentionRequests'
 import { Login } from '../../routes/Login'
-import * as styles from './App.treat'
 import { User } from '../../types'
 import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
@@ -46,7 +45,7 @@ const App: React.FC = () => {
               return <Header pathname={props.location.pathname} />
             }}
           ></Route>
-          <main className={styles.mainConainer}>
+          <main>
             <Switch>
               <Route
                 path={Constants.FEEDBACK_FORM_ROUTE}

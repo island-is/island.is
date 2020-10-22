@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import * as styles from './Blockquote.treat'
 
 export const Blockquote: FC = ({ children }) => (
@@ -14,8 +14,8 @@ export const Blockquote: FC = ({ children }) => (
     background="purple100"
     className={styles.blockquote}
   >
-    <Typography variant="intro" as="span">
+    <Text variant="intro" as="span">
       {children}
-    </Typography>
+    </Text>
   </Box>
 )

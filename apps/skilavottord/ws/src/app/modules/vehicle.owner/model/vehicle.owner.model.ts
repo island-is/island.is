@@ -29,9 +29,11 @@ export class VehicleOwnerModel extends Model<VehicleOwnerModel> {
 
   @Field()
   @CreatedAt
+  @Column
   createdAt: Date
 
   @Field()
+  @Column
   @UpdatedAt
   updatedAt: Date
 
