@@ -1,5 +1,5 @@
-import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { Field, HideField, InputType } from '@nestjs/graphql'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class ContactUsInput {
@@ -8,6 +8,7 @@ export class ContactUsInput {
   name: string
 
   @Field()
+  @IsOptional()
   @IsString()
   phone: string
 
@@ -16,10 +17,15 @@ export class ContactUsInput {
   email: string
 
   @Field()
+  @IsOptional()
   @IsString()
-  subject: string
+  subject: string = 'N/A'
 
   @Field()
   @IsString()
   message: string
+
+  @HideField()
+  @IsString()
+  type: 'contactUs' = 'contactUs'
 }

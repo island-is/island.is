@@ -58,4 +58,4 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     CommunicationsModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

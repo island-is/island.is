@@ -1,21 +1,30 @@
 import { Args, Resolver, Mutation } from '@nestjs/graphql'
-import { MailService } from './mail.service'
+import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
-import { ContactUsPayload } from './models/contactUsPayload.model'
+import { TellUsAStoryInput } from './dto/tellUsAStory.input'
+import { CommunicationResponse } from './models/communicationResponse.model'
 
 @Resolver()
 export class CommunicationsResolver {
-  constructor(private readonly mailService: MailService) {}
+  constructor(private readonly communicationsService: CommunicationsService) {}
 
-  @Mutation(() => ContactUsPayload)
+  @Mutation(() => CommunicationResponse)
   async contactUs(
     @Args('input') input: ContactUsInput,
-  ): Promise<ContactUsPayload> {
+  ): Promise<CommunicationResponse> {
+    await this.communicationsService.sendEmail(input)
     return {
-      success: await this.mailService.deliverContactUs(input),
+      sent: true,
+    }
+  }
+
+  @Mutation(() => CommunicationResponse)
+  async tellUsAStory(
+    @Args('input') input: TellUsAStoryInput,
+  ): Promise<CommunicationResponse> {
+    await this.communicationsService.sendEmail(input)
+    return {
+      sent: true,
     }
   }
 }
-
-// TODO: Design a more dynamic solution to this
-// TODO: Try to use ready made solution for this
