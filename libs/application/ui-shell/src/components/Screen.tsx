@@ -172,6 +172,7 @@ const Screen: FC<ScreenProps> = ({
           </Box>
         </GridColumn>
         <ScreenFooter
+          application={application}
           activeScreenIndex={activeScreenIndex}
           numberOfScreens={numberOfScreens}
           mode={mode}

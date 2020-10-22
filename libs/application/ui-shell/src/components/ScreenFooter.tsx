@@ -6,9 +6,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './Screen.treat'
-import { FormModes, StaticText, SubmitField } from '@island.is/application/core'
+import {
+  Application,
+  formatText,
+  FormModes,
+  FormText,
+  SubmitField,
+} from '@island.is/application/core'
 
 interface FooterProps {
+  application: Application
   mode?: FormModes
   activeScreenIndex: number
   numberOfScreens: number
@@ -20,6 +27,7 @@ interface FooterProps {
 
 export const ScreenFooter: FC<FooterProps> = ({
   activeScreenIndex,
+  application,
   canProceed,
   goBack,
   loading,
@@ -38,7 +46,7 @@ export const ScreenFooter: FC<FooterProps> = ({
     return null
   }
 
-  function getSubmitButtonText(): StaticText {
+  function getSubmitButtonText(): FormText {
     if (submitField?.placement === 'footer') {
       const { actions } = submitField
       if (actions.length === 1) {
@@ -93,7 +101,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 disabled={!canProceed}
                 htmlType="submit"
               >
-                {formatMessage(getSubmitButtonText())}
+                {formatText(getSubmitButtonText(), application, formatMessage)}
               </Button>
             ) : (
               <>

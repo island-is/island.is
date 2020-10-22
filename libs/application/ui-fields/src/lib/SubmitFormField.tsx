@@ -17,7 +17,10 @@ const SubmitFormField: FC<Props> = ({ application, field, error }) => {
   const { formatMessage } = useLocale()
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
-      return { label: formatText(a.name, application, formatMessage), value: a.event as string }
+      return {
+        label: formatText(a.name, application, formatMessage),
+        value: a.event as string,
+      }
     })
   }, [actions, formatMessage])
   if (placement === 'footer') {
