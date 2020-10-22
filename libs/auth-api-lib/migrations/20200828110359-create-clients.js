@@ -105,11 +105,20 @@ module.exports = {
         PRIMARY KEY (client_id, redirect_uri)
       );
 
+      Create Table grant_type (
+        name VARCHAR NOT NULL,
+        description VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        PRIMARY KEY (name)
+      );
+
       CREATE TABLE client_grant_type (
         client_id  VARCHAR NOT NULL,
         grant_type VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
+        CONSTRAINT FK_client_grant_type_grant_type FOREIGN KEY (grant_type) REFERENCES grant_type (name),
         CONSTRAINT FK_client_grant_type_client FOREIGN KEY (client_id) REFERENCES client (client_id),
         PRIMARY KEY (client_id, grant_type)
       );
@@ -122,15 +131,6 @@ module.exports = {
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_claim_client FOREIGN KEY (client_id) REFERENCES client (client_id),
         PRIMARY KEY (client_id, value)
-      );
-
-      Create Table grant_type (
-        id uuid NOT NULL,
-        name VARCHAR NOT NULL,
-        description VARCHAR NOT NULL,
-        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
-        modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (id)
       );
 
       CREATE TABLE grants (

@@ -1,6 +1,6 @@
 import { addParameters } from '@storybook/react'
 
-import theme from './storyBookTheme'
+import theme from './theme'
 
 addParameters({
   docs: { theme },

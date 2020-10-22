@@ -6,6 +6,7 @@ import {
   Table,
   UpdatedAt,
   HasMany,
+  PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Claim } from './claim.model'
@@ -14,24 +15,16 @@ import { Claim } from './claim.model'
   tableName: 'user_identity',
   indexes: [
     {
-      fields: ['id'],
+      fields: ['subject_id'],
     },
   ],
 })
 export class UserIdentity extends Model<UserIdentity> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
-
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
+    primaryKey: true,
     allowNull: false,
-    unique: true,
   })
   @ApiProperty()
   subjectId: string
@@ -58,12 +51,11 @@ export class UserIdentity extends Model<UserIdentity> {
   providerSubjectId: string
 
   @Column({
-    type: DataType.UUID,
-    primaryKey: false,
-    allowNull: true,
+    type: DataType.BOOLEAN,
+    allowNull: false,
   })
   @ApiProperty()
-  profileId: string
+  active: boolean
 
   @CreatedAt
   @ApiProperty()

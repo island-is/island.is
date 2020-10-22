@@ -111,7 +111,7 @@ export const Overview: React.FC = () => {
                     LÖKE málsnúmer
                   </Text>
                 </Box>
-                <Text>{workingCase.policeCaseNumber}</Text>
+                <Text variant="h3">{workingCase.policeCaseNumber}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -119,7 +119,9 @@ export const Overview: React.FC = () => {
                     Kennitala
                   </Text>
                 </Box>
-                <Text>{formatNationalId(workingCase.accusedNationalId)}</Text>
+                <Text variant="h3">
+                  {formatNationalId(workingCase.accusedNationalId)}
+                </Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -127,7 +129,7 @@ export const Overview: React.FC = () => {
                     Fullt nafn
                   </Text>
                 </Box>
-                <Text>{workingCase.accusedName}</Text>
+                <Text variant="h3"> {workingCase.accusedName}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -135,7 +137,7 @@ export const Overview: React.FC = () => {
                     Lögheimili/dvalarstaður
                   </Text>
                 </Box>
-                <Text>{workingCase.accusedAddress}</Text>
+                <Text variant="h3">{workingCase.accusedAddress}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -143,7 +145,7 @@ export const Overview: React.FC = () => {
                     Dómstóll
                   </Text>
                 </Box>
-                <Text>{workingCase.court}</Text>
+                <Text variant="h3">{workingCase.court}</Text>
               </Box>
               <Box component="section" marginBottom={5}>
                 <Box marginBottom={1}>
@@ -151,20 +153,20 @@ export const Overview: React.FC = () => {
                     Tími handtöku
                   </Text>
                 </Box>
-                <Text>
+                <Text variant="h3">
                   {`${capitalize(
                     formatDate(workingCase.arrestDate, 'PPPP'),
                   )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
                 </Text>
               </Box>
               {workingCase.requestedCourtDate && (
-                <Box component="section" marginBottom={5}>
+                <Box component="section" marginBottom={9}>
                   <Box marginBottom={1}>
                     <Text variant="eyebrow" color="blue400">
                       Ósk um fyrirtökudag og tíma
                     </Text>
                   </Box>
-                  <Text>
+                  <Text variant="h3">
                     {`${capitalize(
                       formatDate(workingCase.requestedCourtDate, 'PPPP'),
                     )} kl. ${formatDate(
@@ -223,7 +225,7 @@ export const Overview: React.FC = () => {
                   >
                     <Text>
                       {formatCustodyRestrictions(
-                        workingCase.requestedCustodyRestrictions,
+                        workingCase?.requestedCustodyRestrictions,
                       )}
                     </Text>
                   </AccordionItem>
