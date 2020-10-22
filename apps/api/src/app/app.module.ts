@@ -42,7 +42,9 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     DocumentModule,
     TranslationsModule,
     TerminusModule,
-    UserProfileModule,
+    UserProfileModule.register({
+      userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+    }),
   ],
 })
 export class AppModule {}
