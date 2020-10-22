@@ -16,7 +16,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={6}>
         <Typography variant="h1" as="h1">
           {formatMessage({
-            id: 'sp.settings:user-profile-title',
+            id: 'service.portal:profile-info',
             defaultMessage: 'Minn aðgangur',
           })}
         </Typography>

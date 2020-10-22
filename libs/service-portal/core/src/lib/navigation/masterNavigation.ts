@@ -145,7 +145,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             name: defineMessage({
-              id: 'service-portal:profile-info',
+              id: 'service.portal:profile-info',
               defaultMessage: 'Minn aðgangur',
             }),
             path: ServicePortalPath.UserProfileRoot,

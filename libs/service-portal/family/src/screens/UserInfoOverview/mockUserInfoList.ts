@@ -17,7 +17,7 @@ export const mockUserInfoList: UserInfoItem[] = [
       defaultMessage: 'Mínar upplýsingar',
     }),
     subtext: defineMessage({
-      id: 'service.portal:user-info-card-description',
+      id: 'sp.family:user-info-card-description',
       defaultMessage:
         'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn. Hér fyrir neðan getur þú lesið okkar helstu.',
     }),
