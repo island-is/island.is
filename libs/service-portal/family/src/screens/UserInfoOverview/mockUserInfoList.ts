@@ -1,4 +1,6 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { defineMessage } from 'react-intl'
+import { MessageDescriptor } from 'react-intl'
 
 export type UserInfoItem = {
   heading: MessageDescriptor | string
@@ -6,9 +8,6 @@ export type UserInfoItem = {
   link: string
   image: string
 }
-
-import { defineMessage } from 'react-intl'
-import { MessageDescriptor } from 'react-intl'
 
 export const mockUserInfoList: UserInfoItem[] = [
   {
