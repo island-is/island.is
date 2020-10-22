@@ -188,7 +188,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Box marginBottom={[0, 0, 8, 15]}>
-            <Header />
+            <Header buttonColorScheme="negative" />
           </Box>
         </ColorSchemeContext.Provider>
         <GridRow>
