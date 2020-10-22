@@ -199,7 +199,7 @@ export const CourtRecord: React.FC = () => {
             hasError={courtAttendeesErrorMessage !== ''}
             onFocus={() => setCourtAttendeesMessage('')}
             textarea
-            rows={6}
+            rows={7}
             required
           />
         </Box>
@@ -234,7 +234,7 @@ export const CourtRecord: React.FC = () => {
           hasError={policeDemandsErrorMessage !== ''}
           onFocus={() => setPoliceDemandsMessage('')}
           textarea
-          rows={6}
+          rows={7}
           required
         />
       </Box>
@@ -300,7 +300,7 @@ export const CourtRecord: React.FC = () => {
           hasError={accusedPleaErrorMessage !== ''}
           onFocus={() => setAccusedPleaMessage('')}
           textarea
-          rows={6}
+          rows={7}
           required
         />
       </Box>
@@ -341,7 +341,7 @@ export const CourtRecord: React.FC = () => {
           hasError={litigationPresentationsErrorMessage !== ''}
           onFocus={() => setLitigationPresentationsMessage('')}
           textarea
-          rows={6}
+          rows={7}
           required
         />
       </Box>
