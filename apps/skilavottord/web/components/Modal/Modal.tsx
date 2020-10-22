@@ -1,10 +1,9 @@
 import React, { FC, useEffect } from 'react'
 import {
-  ButtonDeprecated as Button,
+  Button,
   Box,
-  Typography,
+  Text,
   Stack,
-  IconDeprecated as Icon,
   GridContainer,
   GridRow,
   GridColumn,
@@ -41,7 +40,7 @@ export const Modal: FC<ModalProps> = ({
     <>
       {show && (
         <Box className={styles.container}>
-          <Box className={styles.overlay} background="blue100" />
+          <Box className={styles.overlay} />
           <GridContainer>
             <GridRow>
               <GridColumn
@@ -55,32 +54,30 @@ export const Modal: FC<ModalProps> = ({
                   background="white"
                   borderRadius="large"
                 >
-                  <button onClick={onCancel} className={styles.modalClose}>
-                    <Icon type="close" />
-                  </button>
+                  <Box className={styles.modalClose}>
+                    <Button
+                      colorScheme="negative"
+                      circle
+                      icon="close"
+                      size="large"
+                      onClick={onCancel}
+                    />
+                  </Box>
                   <GridColumn
                     span={['8/8', '6/8', '6/8', '6/8']}
                     offset={['0', '1/8', '1/8', '1/8']}
                   >
                     <Stack space={[6, 4, 4, 4]}>
                       <Stack space={2}>
-                        <Typography variant="h1">{title}</Typography>
-                        <Typography variant="intro">{text}</Typography>
+                        <Text variant="h1">{title}</Text>
+                        <Text variant="intro">{text}</Text>
                       </Stack>
                       <Box display="flex" justifyContent="spaceBetween">
-                        <Button
-                          variant="ghost"
-                          width="fixed"
-                          onClick={onCancel}
-                        >
+                        <Button variant="ghost" onClick={onCancel} fluid>
                           {cancelButtonText}
                         </Button>
-                        <Box paddingX={3}></Box>
-                        <Button
-                          variant="normal"
-                          width="fixed"
-                          onClick={onContinue}
-                        >
+                        <Box paddingX={[3, 3, 3, 15]}></Box>
+                        <Button onClick={onContinue} fluid>
                           {continueButtonText}
                         </Button>
                       </Box>

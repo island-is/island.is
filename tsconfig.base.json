@@ -54,6 +54,7 @@
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],
+      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
@@ -68,6 +69,9 @@
       "@island.is/application/templates/driving-lessons": [
         "libs/application/templates/driving-lessons/src/index.ts"
       ],
+      "@island.is/application/templates/meta-application": [
+        "libs/application/templates/meta-application/src/index.ts"
+      ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
@@ -80,6 +84,7 @@
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
+      "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
@@ -153,6 +158,7 @@
         "libs/service-portal/settings/src/index.ts"
       ],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
+      "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"

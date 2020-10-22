@@ -20,6 +20,8 @@ interface SidenavProps {
   activeSection: number
 }
 
+type SidenavIcon = 'car' | 'business'
+
 const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
   <Box background="purple100" padding={4} borderRadius="large">
     <Stack space={3}>
@@ -33,7 +35,13 @@ const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
             href={section.link}
             alignItems="center"
           >
-            {/* <Icon icon={section.icon} type="outline" color="dark300" /> */}
+            <Box paddingRight={1}>
+              <Icon
+                icon={section.icon as SidenavIcon}
+                type="outline"
+                color="dark300"
+              />
+            </Box>
             <Text variant={index === activeSection ? 'h5' : 'default'}>
               {section.title}
             </Text>

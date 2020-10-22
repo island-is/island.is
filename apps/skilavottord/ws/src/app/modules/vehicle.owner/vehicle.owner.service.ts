@@ -1,18 +1,32 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { VehicleOwnerModel } from '../models'
 import { Logger } from '@island.is/logging'
+import { VehicleOwnerModel } from './model/vehicle.owner.model'
+import { VehicleModel } from '../vehicle/model/vehicle.model'
 
 @Injectable()
 export class VehicleOwnerService {
   constructor(
     @InjectModel(VehicleOwnerModel)
     private vehicleOwnerModel: typeof VehicleOwnerModel,
+    @InjectModel(VehicleModel)
+    private vehicleModel: typeof VehicleModel,
   ) {}
 
+  // async findAll(): Promise<VehicleOwnerModel[]> {
+  //   //this.logger.debug(`Finding vehicle owner for nationalId - "${nationalId}"`)
+  //   return await this.vehicleOwnerModel.findAll()
+  // }
+
   async findAll(): Promise<VehicleOwnerModel[]> {
-    //this.logger.debug(`Finding vehicle owner for nationalId - "${nationalId}"`)
-    return await this.vehicleOwnerModel.findAll()
+    const res = this.vehicleOwnerModel.findAll({
+      include: [
+        {
+          model: this.vehicleModel,
+        },
+      ],
+    })
+    return res
   }
 
   // async findByNationalId(nationalId: string): Promise<VehicleOwnerModel> {

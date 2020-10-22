@@ -1,3 +1,4 @@
+import '@island.is/api/mocks'
 import getConfig from 'next/config'
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'

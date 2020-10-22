@@ -5,13 +5,25 @@ export const header = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  height: 80,
-  padding: '0 16px',
-  boxShadow: '0px 4px 26px rgba(0, 0, 0, 0.05)',
+  height: 112,
+  borderBottom: `1px solid ${theme.color.blue200}`,
+  padding: `0 ${theme.spacing[6]}px`,
+})
 
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      padding: '0 48px',
-    },
-  },
+export const headerTextWrapper = style({
+  marginTop: '5px',
+})
+
+export const headerDiviter = style({
+  display: 'inline-block',
+  alignSelf: 'center',
+  height: '19px',
+  width: '2px',
+  backgroundColor: theme.color.dark200,
+  margin: `5px ${theme.spacing[3]}px 0 ${theme.spacing[3]}px`,
+})
+
+export const islandIsApplicationLogoWrapper = style({
+  display: 'flex',
+  alignSelf: 'center',
 })

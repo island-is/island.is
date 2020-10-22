@@ -8,6 +8,7 @@ import {
   Hidden,
   Footer,
   ContentBlock,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
@@ -32,6 +33,7 @@ const Layout: FC = ({ children }) => {
   return (
     <>
       <UserInfoLoadingOverlay />
+      <ToastContainer useKeyframeStyles={false} />
       <Header />
       <Hidden above="md">
         <MobileToolbar />

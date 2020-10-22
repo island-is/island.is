@@ -63,7 +63,6 @@ export class NationalRegistryApi {
       throw new NotFoundException(
         `family for nationalId ${nationalId} not found`,
       )
-    console.log(response)
 
     const family = response?.table.diffgram.DocumentElement.Fjolskyldan
 
@@ -113,9 +112,9 @@ export class NationalRegistryApi {
   private formatMartialStatus(maritalCode: string): string {
     switch (maritalCode) {
       case '1':
-        return 'Ógift (ókvæntur)'
+        return 'Ógift(ur) (ókvæntur)'
       case '3':
-        return 'Gift (kvæntur) eða staðfest samvist'
+        return 'Gift(ur) (kvæntur) eða staðfest samvist'
       case '4':
         return 'Ekkill, ekkja'
       case '5':
@@ -174,14 +173,18 @@ export class NationalRegistryApi {
             GetViewThjodskraResult: result,
           }: { GetViewThjodskraResult: GetViewThjodskraDto },
         ) => {
-          if (!result.success) {
-            logger.error(result.message)
-            _reject(result)
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              _reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              _reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
           }
-          if (error) {
-            _reject(error)
-          }
-          resolve(result)
+          resolve(null)
         },
       )
     })
@@ -205,14 +208,18 @@ export class NationalRegistryApi {
             GetViewHusaskraResult: result,
           }: { GetViewHusaskraResult: GetViewHusaskraDto },
         ) => {
-          if (!result.success) {
-            logger.error(result.message)
-            _reject(result)
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              _reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              _reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
           }
-          if (error) {
-            _reject(error)
-          }
-          resolve(result)
+          resolve(null)
         },
       )
     })
@@ -236,14 +243,18 @@ export class NationalRegistryApi {
             GetViewKennitalaOgTrufelagResult: result,
           }: { GetViewKennitalaOgTrufelagResult: GetViewKennitalaOgTrufelag },
         ) => {
-          if (!result.success) {
-            logger.error(result.message)
-            _reject(result)
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              _reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              _reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
           }
-          if (error) {
-            _reject(error)
-          }
-          resolve(result)
+          resolve(null)
         },
       )
     })
@@ -267,14 +278,18 @@ export class NationalRegistryApi {
             GetViewSveitarfelagResult: result,
           }: { GetViewSveitarfelagResult: GetViewSveitarfelagDto },
         ) => {
-          if (!result.success) {
-            logger.error(result.message)
-            _reject(result)
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              _reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              _reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
           }
-          if (error) {
-            _reject(error)
-          }
-          resolve(result)
+          resolve(null)
         },
       )
     })
@@ -298,14 +313,18 @@ export class NationalRegistryApi {
             GetViewFjolskyldanResult: result,
           }: { GetViewFjolskyldanResult: GetViewFjolskyldanDto },
         ) => {
-          if (!result.success) {
-            logger.error(result.message)
-            _reject(result)
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              _reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              _reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
           }
-          if (error) {
-            _reject(error)
-          }
-          resolve(result)
+          resolve(null)
         },
       )
     })

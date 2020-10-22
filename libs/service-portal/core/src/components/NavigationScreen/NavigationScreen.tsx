@@ -1,34 +1,66 @@
 import React, { FC } from 'react'
-import { Typography, Box, Tiles } from '@island.is/island-ui/core'
+import { Typography, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
 import * as styles from './NavigationScreen.treat'
 import { Link } from 'react-router-dom'
 import Card from './Card/Card'
+import { MessageDescriptor } from 'react-intl'
+import { useLocale } from '@island.is/localization'
 
 export interface NavigationScreenItem {
-  name: string
+  name: string | MessageDescriptor
   url: string
-  text: string
-  tags: string[]
+  text: string | MessageDescriptor
+  tags: MessageDescriptor[]
+  disabled?: boolean
 }
 
 interface Props {
+  title: MessageDescriptor
+  inProgress?: boolean
   items: NavigationScreenItem[]
 }
 
-export const NavigationScreen: FC<Props> = ({ items }) => {
+export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <>
       <Box marginBottom={4}>
-        <Typography variant="h2" as="h2">
-          Stillingar
-        </Typography>
+        <Inline space={1}>
+          <Typography variant="h2" as="h2">
+            {formatMessage(title)}
+          </Typography>
+          {inProgress && (
+            <Tag variant="mint">
+              {formatMessage({
+                id: 'service-portal:in-progress',
+                defaultMessage: 'Í vinnslu',
+              })}
+            </Tag>
+          )}
+        </Inline>
       </Box>
       <Tiles space="gutter" columns={[1, 2]}>
-        {items.map((item, index) => (
-          <Link to={item.url} key={index} className={styles.link}>
-            <Card title={item.name} description={item.text} tags={item.tags} />
-          </Link>
-        ))}
+        {items.map((item, index) =>
+          item.disabled ? (
+            <Card
+              title={item.name}
+              description={item.text}
+              tags={item.tags}
+              disabled={item.disabled}
+              key={index}
+            />
+          ) : (
+            <Link to={item.url} key={index} className={styles.link}>
+              <Card
+                title={item.name}
+                description={item.text}
+                tags={item.tags}
+                disabled={item.disabled}
+              />
+            </Link>
+          ),
+        )}
       </Tiles>
     </>
   )

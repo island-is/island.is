@@ -4,7 +4,7 @@ import { Locale } from '../types/locales.enum'
 
 @InputType()
 export class UpdateUserProfileInput {
-  //Pendig AuthGuards
+  //Pending AuthGuards
   @Field(() => String)
   @IsString()
   nationalId!: string

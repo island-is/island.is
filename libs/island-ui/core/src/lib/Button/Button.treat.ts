@@ -46,6 +46,11 @@ const textBase = {
   },
 }
 
+export const fluid = style({
+  width: '100%',
+  justifyContent: 'center',
+})
+
 export const variants = styleMap({
   primary: buttonBase,
   ghost: buttonBase,
@@ -380,9 +385,15 @@ const utilityIconColor = (
 })
 
 export const icon = style({
-  width: 24,
-  height: 24,
+  width: 16,
+  height: 16,
   marginLeft: 15,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 24,
+      height: 24,
+    },
+  }),
   selectors: {
     [`${isEmpty} &`]: {
       marginLeft: 0,

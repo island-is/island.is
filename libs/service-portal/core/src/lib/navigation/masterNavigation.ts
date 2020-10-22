@@ -27,9 +27,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: defineMessage({
           id: 'service.portal:my-info',
-          defaultMessage: 'Mín síða',
+          defaultMessage: 'Mín gögn',
         }),
-        path: ServicePortalPath.MinarUpplysingar,
+        path: ServicePortalPath.MinGogn,
         icon: {
           type: 'outline',
           icon: 'person',
@@ -102,7 +102,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:applications',
           defaultMessage: 'Umsóknir',
         }),
-        path: ServicePortalPath.UmsoknirRoot,
+        path: ServicePortalPath.UmsoknirKynning,
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
@@ -122,17 +122,39 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      // Stillingar
+      // Mín réttindi
       {
         name: defineMessage({
           id: 'service.portal:delegation',
-          defaultMessage: 'Umboð',
+          defaultMessage: 'Mín réttindi',
         }),
         path: ServicePortalPath.StillingarUmbod,
         icon: {
           type: 'outline',
-          icon: 'lockClosed',
+          icon: 'receipt',
         },
+      },
+
+      // Stillingar
+      {
+        name: defineMessage({
+          id: 'service.portal:settings',
+          defaultMessage: 'Stillingar',
+        }),
+        path: ServicePortalPath.StillingarRoot,
+        icon: {
+          type: 'outline',
+          icon: 'settings',
+        },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service-portal:profile-info',
+              defaultMessage: 'Mínar upplýsingar',
+            }),
+            path: ServicePortalPath.UserProfileRoot,
+          },
+        ],
       },
     ],
   },

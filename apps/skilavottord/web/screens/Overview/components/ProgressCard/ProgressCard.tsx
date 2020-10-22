@@ -4,7 +4,7 @@ import {
   Stack,
   Text,
   Tag,
-  ButtonDeprecated as Button,
+  Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -62,8 +62,8 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                       label
                     >
                       {status === 'pendingRecycle'
-                        ? 'Take to recycling company'
-                        : 'Recycled'}
+                        ? t.status.recycle
+                        : t.status.done}
                     </Tag>
                   </Box>
                 </Box>
@@ -72,12 +72,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
                   justifyContent={justifyContent}
                   paddingTop={[0, 0, 0, 3]}
                 >
-                  <Button
-                    variant="text"
-                    icon="arrowRight"
-                    size="small"
-                    onClick={onClick}
-                  >
+                  <Button variant="text" icon="arrowForward" onClick={onClick}>
                     {status === 'pendingRecycle'
                       ? t.buttons.openProcess
                       : t.buttons.seeDetails}

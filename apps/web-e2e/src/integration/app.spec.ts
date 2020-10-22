@@ -1,10 +1,10 @@
-import { getGreeting } from '../support/app.po'
+import { cms } from '@island.is/api/mocks'
 
 describe('web', () => {
   beforeEach(() => cy.visit('/'))
 
-  it('should display welcome message', () => {
+  it('should display front page slider', () => {
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to')
+    cy.get('h1').contains(cms.store.frontPageSliders[0].title)
   })
 })
