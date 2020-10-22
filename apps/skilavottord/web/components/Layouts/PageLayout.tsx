@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Footer,
-  Stack,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
@@ -122,6 +122,7 @@ export const PartnerPageLayout: FC<PartnerPageProps> = ({
   left,
 }) => (
   <Box>
+    <ToastContainer />
     <Box paddingY={10}>
       <GridContainer>
         <GridRow>

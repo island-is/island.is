@@ -65,6 +65,7 @@ const Select: FC = () => {
                 validateRegNumber(value) || t.input.errors.invalidRegNumber,
             },
           }}
+          defaultValue=""
           render={({ onChange, value, name }) => (
             <Input
               label={t.input.label}

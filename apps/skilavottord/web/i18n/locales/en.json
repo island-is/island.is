@@ -165,7 +165,8 @@
       "add": "Add location",
       "save": "Save changes",
       "cancel": "Cancel"
-    }
+    },
+    "success": "Company location was successfully updated."
   },
   "deregisterSidenav": {
     "deregister": "Deregister car",
@@ -195,7 +196,8 @@
       "buttons": {
         "back": "Back",
         "confirm": "Confirm"
-      }
+      },
+      "success": "Deregistration was successful."
     }
   },
   "routes": {

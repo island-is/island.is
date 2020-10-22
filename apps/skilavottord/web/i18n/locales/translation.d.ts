@@ -174,6 +174,7 @@ export interface DeregisterOverview {
   buttons: DeregisterOverviewButtons
   search: InputField
   table: string[]
+  success: string
 }
 
 export interface CompanyInfo {
@@ -189,6 +190,7 @@ export interface CompanyInfoFormPage {
   editTitle: string
   form: CompanyInfoForm
   buttons: CompanyInfoFormButtons
+  success: string
 }
 
 export interface CompanyInfoForm {
@@ -222,6 +224,7 @@ export interface Deregister {
   title: string
   info: string
   buttons: DeregisterButtons
+  success: string
 }
 
 export interface DeregisterOverviewSubTitles {
