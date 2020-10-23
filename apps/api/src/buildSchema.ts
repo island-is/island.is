@@ -6,6 +6,7 @@ import { DocumentResolver } from '@island.is/api/domains/documents'
 import { FileUploadResolver } from '@island.is/api/domains/file-upload'
 import { TranslationsResolver } from '@island.is/api/domains/translations'
 import { UserProfileResolver } from '@island.is/api/domains/user-profile'
+import { NationalRegistryResolver } from '@island.is/api/domains/national-registry'
 
 buildSchema({
   path: 'apps/api/src/api.graphql',
@@ -17,5 +18,6 @@ buildSchema({
     DocumentResolver,
     TranslationsResolver,
     UserProfileResolver,
+    NationalRegistryResolver,
   ],
 })
