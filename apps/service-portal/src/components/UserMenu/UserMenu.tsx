@@ -68,7 +68,7 @@ const UserMenu: FC<{}> = () => {
               <Box padding={3} background="blue100">
                 <Stack space={1}>
                   <NavItem
-                    path={ServicePortalPath.MinGogn}
+                    path={ServicePortalPath.MinGognRoot}
                     onClick={setIsOpen.bind(null, false)}
                     icon={{
                       type: 'outline',

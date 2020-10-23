@@ -26,7 +26,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
           <Text variant="h1">Umsóknir</Text>
           <Tag variant="mint">
             {formatMessage({
-              id: 'service-portal:in-progress',
+              id: 'service.portal:in-progress',
               defaultMessage: 'Í vinnslu',
             })}
           </Tag>
