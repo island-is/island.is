@@ -1,8 +1,7 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/localization'
-import { Field, Form, Formik } from 'formik'
-import React, { FC } from 'react'
-import { FieldSelect } from '../FieldSelect/FieldSelect'
+import React, { FC, useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 
 export type LanguageFormOption = {
   label: string
@@ -26,36 +25,42 @@ export const LanguageForm: FC<Props> = ({
   renderSubmitButton,
   onSubmit,
 }) => {
-  return (
-    <Formik
-      initialValues={{
+  const { handleSubmit, control, reset } = useForm()
+
+  useEffect(() => {
+    if (language)
+      reset({
         language,
-      }}
-      onSubmit={onSubmit}
-      enableReinitialize
-    >
-      {() => (
-        <Form>
-          <Box>
-            <Field
-              component={FieldSelect}
+      })
+  }, [language])
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box>
+        <Controller
+          control={control}
+          name="language"
+          defaultValue={language}
+          render={({ onChange, value, name }) => (
+            <Select
+              name={name}
+              value={value}
+              onChange={onChange}
               label="Tungumál"
-              name="language"
-              placeholder="Tungumál"
               options={[
                 { label: 'Íslenska', value: 'is' },
                 { label: 'English', value: 'en' },
               ]}
             />
-          </Box>
-          {(renderBackButton || renderSubmitButton) && (
-            <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
-              {renderBackButton && renderBackButton()}
-              {renderSubmitButton && renderSubmitButton()}
-            </Box>
           )}
-        </Form>
+        />
+      </Box>
+      {(renderBackButton || renderSubmitButton) && (
+        <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
+          {renderBackButton && renderBackButton()}
+          {renderSubmitButton && renderSubmitButton()}
+        </Box>
       )}
-    </Formik>
+    </form>
   )
 }

@@ -1,8 +1,6 @@
-import { Box } from '@island.is/island-ui/core'
-import { Field, Form, Formik } from 'formik'
-import React, { FC } from 'react'
-import * as Yup from 'yup'
-import { FieldInput } from '../FieldInput/FieldInput'
+import React, { FC, useEffect } from 'react'
+import { Box, Input } from '@island.is/island-ui/core'
+import { useForm, Controller } from 'react-hook-form'
 
 export interface EmailFormData {
   email: string
@@ -21,37 +19,50 @@ export const EmailForm: FC<Props> = ({
   renderSubmitButton,
   onSubmit,
 }) => {
-  return (
-    <Formik
-      initialValues={{
+  const { handleSubmit, control, errors, reset } = useForm()
+
+  useEffect(() => {
+    if (email.length > 0)
+      reset({
         email,
-      }}
-      validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email('Netfangið er ekki á réttu formi')
-          .required('Skylda er að fylla út netfang'),
-      })}
-      onSubmit={onSubmit}
-      enableReinitialize
-    >
-      {() => (
-        <Form>
-          <Box>
-            <Field
-              component={FieldInput}
+      })
+  }, [email])
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box>
+        <Controller
+          control={control}
+          name="email"
+          rules={{
+            required: {
+              value: true,
+              message: 'Skylda er að fylla út netfang',
+            },
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'Netfangið er ekki á réttu formi',
+            },
+          }}
+          defaultValue={email}
+          render={({ onChange, value, name }) => (
+            <Input
+              name={name}
               label="Netfang"
-              name="email"
-              placeholder="Netfang"
+              value={value}
+              hasError={errors.email}
+              errorMessage={errors.email?.message}
+              onChange={onChange}
             />
-          </Box>
-          {(renderBackButton || renderSubmitButton) && (
-            <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
-              {renderBackButton && renderBackButton()}
-              {renderSubmitButton && renderSubmitButton()}
-            </Box>
           )}
-        </Form>
+        />
+      </Box>
+      {(renderBackButton || renderSubmitButton) && (
+        <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
+          {renderBackButton && renderBackButton()}
+          {renderSubmitButton && renderSubmitButton()}
+        </Box>
       )}
-    </Formik>
+    </form>
   )
 }
