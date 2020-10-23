@@ -117,6 +117,10 @@ export const StepOne: React.FC = () => {
         policeCaseNumber: policeCaseNumberRef.current.value,
         accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
         court: workingCase.court,
+        accusedName: workingCase.accusedName,
+        accusedAddress: workingCase.accusedAddress,
+        arrestDate: workingCase.arrestDate,
+        requestedCourtDate: workingCase.requestedCourtDate,
       })
 
       window.localStorage.setItem(

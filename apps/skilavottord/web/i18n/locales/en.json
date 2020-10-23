@@ -201,7 +201,7 @@
     }
   },
   "routes": {
-    "home": "/en/grein/endurvinna-oekutaeki",
+    "home": "https://beta.dev01.devland.is/en/grein/endurvinna-oekutaeki",
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",

@@ -1,5 +1,11 @@
 import React from 'react'
-import { Typography, Box, Stack } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Box,
+  Stack,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   UserInfoLine,
@@ -13,12 +19,25 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={6}>
-        <Typography variant="h1" as="h1">
-          {formatMessage({
-            id: 'service.portal:my-info',
-            defaultMessage: 'Mín gögn',
-          })}
-        </Typography>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+            <Stack space={2}>
+              <Typography variant="h1" as="h1">
+                {formatMessage({
+                  id: 'service.portal:user-info',
+                  defaultMessage: 'Mínar upplýsingar',
+                })}
+              </Typography>
+              <Typography variant="p" as="p">
+                {formatMessage({
+                  id: 'sp.family:user-info-description',
+                  defaultMessage:
+                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
+                })}
+              </Typography>
+            </Stack>
+          </GridColumn>
+        </GridRow>
       </Box>
       <Stack space={1}>
         <UserInfoLine

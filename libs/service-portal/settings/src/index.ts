@@ -28,8 +28,8 @@ export const settingsModule: ServicePortalModule = {
       },
       {
         name: defineMessage({
-          id: 'service-portal:profile-info',
-          defaultMessage: 'Mínar upplýsingar',
+          id: 'service.portal:profile-info',
+          defaultMessage: 'Minn aðgangur',
         }),
         path: ServicePortalPath.UserProfileRoot,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
