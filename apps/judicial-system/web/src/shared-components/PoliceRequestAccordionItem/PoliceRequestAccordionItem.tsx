@@ -20,7 +20,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_1"
-      label="Krafan um gæsluvarðhald frá Lögreglu"
+      label="Krafan um gæsluvarðhald frá lögreglu"
       labelVariant="h3"
     >
       <Box marginBottom={2}>
