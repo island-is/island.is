@@ -55,6 +55,10 @@ export const StepTwo: React.FC = () => {
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
+  const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
+  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
+    string
+  >('')
 
   const [, setCheckboxOne] = useState<boolean>()
   const [, setCheckboxTwo] = useState<boolean>()
@@ -573,9 +577,12 @@ export const StepTwo: React.FC = () => {
           </Box>
           <Box marginBottom={3}>
             <Input
+              data-testid="caseFacts"
               name="caseFacts"
               label="Málsatvik rakin"
               placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+              errorMessage={caseFactsErrorMessage}
+              hasError={caseFactsErrorMessage !== ''}
               defaultValue={workingCase?.caseFacts}
               onBlur={(evt) => {
                 autoSave(
@@ -584,7 +591,18 @@ export const StepTwo: React.FC = () => {
                   evt.target.value,
                   setWorkingCase,
                 )
+
+                const validateField = validate(evt.target.value, 'empty')
+                if (validateField.isValid) {
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('caseFacts', evt.target.value),
+                  )
+                } else {
+                  setCaseFactsErrorMessage(validateField.errorMessage)
+                }
               }}
+              onFocus={() => setCaseFactsErrorMessage('')}
               required
               rows={16}
               textarea
@@ -592,10 +610,13 @@ export const StepTwo: React.FC = () => {
           </Box>
           <Box marginBottom={7}>
             <Input
+              data-testid="legalArguments"
               name="legalArguments"
               label="Lagarök"
               placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
               defaultValue={workingCase?.legalArguments}
+              errorMessage={legalArgumentsErrorMessage}
+              hasError={legalArgumentsErrorMessage !== ''}
               onBlur={(evt) => {
                 autoSave(
                   workingCase,
@@ -603,7 +624,18 @@ export const StepTwo: React.FC = () => {
                   evt.target.value,
                   setWorkingCase,
                 )
+
+                const validateField = validate(evt.target.value, 'empty')
+                if (validateField.isValid) {
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('legalArguments', evt.target.value),
+                  )
+                } else {
+                  setLegalArgumentsErrorMessage(validateField.errorMessage)
+                }
               }}
+              onFocus={() => setLegalArgumentsErrorMessage('')}
               required
               textarea
               rows={16}
