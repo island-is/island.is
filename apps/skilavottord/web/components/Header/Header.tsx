@@ -14,7 +14,9 @@ const mockUser = {
   name: 'Mock User',
   nationalId: '2222222222',
   mobile: 123456,
-  role: 'developer',
+  // role: 'cat',
+  // role: 'developer',
+  role: 'recyclingPartner',
 }
 
 export const Header: FC = () => {

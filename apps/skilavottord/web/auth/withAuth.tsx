@@ -1,8 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, useContext } from 'react'
 import Router from 'next/router'
 import { NextComponentType } from 'next'
 
 import { AUTH_URL, isAuthenticated } from './utils'
+import { UserContext } from '../context'
 
 const withAuth = (WrappedComponent: NextComponentType) =>
   class extends Component {

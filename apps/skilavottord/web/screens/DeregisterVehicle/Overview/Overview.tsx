@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import {
   Box,
@@ -12,8 +12,12 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import CarsTable from './components/CarsTable'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { useRouter } from 'next/router'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 
 const Overview: FC = () => {
+  const { user } = useContext(UserContext)
+
   const {
     t: { deregisterOverview: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
@@ -21,6 +25,12 @@ const Overview: FC = () => {
 
   const handleDeregister = () => {
     router.push(routes.deregisterVehicle.select)
+  }
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('deregisterOverview', user?.role as Role)) {
+    return <Box>Unauthorized</Box>
   }
 
   return (
