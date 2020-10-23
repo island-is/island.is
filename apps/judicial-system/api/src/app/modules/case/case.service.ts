@@ -260,7 +260,7 @@ export class CaseService {
         documentToken,
       )
 
-      this.sendRulingAsSignedPdf(existingCase, signedPdf)
+      await this.sendRulingAsSignedPdf(existingCase, signedPdf)
     }
 
     return existingCase

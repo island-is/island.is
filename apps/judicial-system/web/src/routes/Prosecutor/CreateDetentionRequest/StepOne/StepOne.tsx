@@ -174,8 +174,6 @@ export const StepOne: React.FC = () => {
         requestedCustodyRestrictions:
           caseDraftJSON.requestedCustodyRestrictions ?? [],
         caseFacts: caseDraftJSON.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.investigationProgress ?? '',
         legalArguments: caseDraftJSON.legalArguments ?? '',
         comments: caseDraftJSON.comments ?? '',
         notifications: caseDraftJSON.Notification ?? [],
@@ -210,12 +208,12 @@ export const StepOne: React.FC = () => {
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
 
-      window.localStorage.setItem(
-        'workingCase',
-        JSON.stringify(currentCase.case),
-      )
-
       if (!workingCase) {
+        window.localStorage.setItem(
+          'workingCase',
+          JSON.stringify(currentCase.case),
+        )
+
         setWorkingCase(currentCase.case)
       }
     }
@@ -479,15 +477,27 @@ export const StepOne: React.FC = () => {
                 hasError={arrestDateErrorMessage !== ''}
                 selected={
                   workingCase.arrestDate
-                    ? parseISO(workingCase.arrestDate.toString())
+                    ? new Date(workingCase.arrestDate)
                     : null
                 }
                 handleChange={(date) => {
+                  const formattedDate = formatISO(date, {
+                    representation:
+                      workingCase.arrestDate?.indexOf('T') > -1
+                        ? 'complete'
+                        : 'date',
+                  })
+
                   updateState(
                     workingCase,
                     'arrestDate',
-                    formatISO(date, { representation: 'date' }),
+                    formattedDate,
                     setWorkingCase,
+                  )
+
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('arrestDate', formattedDate),
                   )
                 }}
                 handleCloseCalendar={(date: Date) => {
@@ -520,19 +530,19 @@ export const StepOne: React.FC = () => {
                     evt.target.value,
                     'time-format',
                   )
+                  const arrestDateMinutes = parseTime(
+                    workingCase.arrestDate,
+                    evt.target.value,
+                  )
+
+                  updateState(
+                    workingCase,
+                    'arrestDate',
+                    arrestDateMinutes,
+                    setWorkingCase,
+                  )
+
                   if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                    const arrestDateMinutes = parseTime(
-                      workingCase.arrestDate,
-                      evt.target.value,
-                    )
-
-                    updateState(
-                      workingCase,
-                      'arrestDate',
-                      arrestDateMinutes,
-                      setWorkingCase,
-                    )
-
                     api.saveCase(
                       workingCase.id,
                       parseString('arrestDate', arrestDateMinutes),
@@ -569,11 +579,23 @@ export const StepOne: React.FC = () => {
                     : null
                 }
                 handleChange={(date) => {
+                  const formattedDate = formatISO(date, {
+                    representation:
+                      workingCase.requestedCourtDate?.indexOf('T') > -1
+                        ? 'complete'
+                        : 'date',
+                  })
+
                   updateState(
                     workingCase,
                     'requestedCourtDate',
-                    formatISO(date, { representation: 'date' }),
+                    formattedDate,
                     setWorkingCase,
+                  )
+
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('requestedCourtDate', formattedDate),
                   )
                 }}
                 required
@@ -595,25 +617,24 @@ export const StepOne: React.FC = () => {
                 disabled={!workingCase.requestedCourtDate}
                 ref={requestedCourtTimeRef}
                 onBlur={(evt) => {
+                  const requestedCourtDateMinutes = parseTime(
+                    workingCase.requestedCourtDate,
+                    evt.target.value,
+                  )
                   const validateTimeEmpty = validate(evt.target.value, 'empty')
                   const validateTimeFormat = validate(
                     evt.target.value,
                     'time-format',
                   )
 
+                  updateState(
+                    workingCase,
+                    'requestedCourtDate',
+                    requestedCourtDateMinutes,
+                    setWorkingCase,
+                  )
+
                   if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                    const requestedCourtDateMinutes = parseTime(
-                      workingCase.requestedCourtDate,
-                      evt.target.value,
-                    )
-
-                    updateState(
-                      workingCase,
-                      'requestedCourtDate',
-                      requestedCourtDateMinutes,
-                      setWorkingCase,
-                    )
-
                     api.saveCase(
                       workingCase.id,
                       parseString(

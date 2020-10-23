@@ -7,8 +7,12 @@ import { polyfill } from './polyfills'
 
 export type Locale = 'is' | 'en'
 
-export const supportedLocales = ['is', 'en']
+export const supportedLocales: Locale[] = ['is', 'en']
 export const defaultLanguage: Locale = 'is'
+
+export const isLocale = (value: string): value is Locale => {
+  return supportedLocales.includes(value as Locale)
+}
 
 export interface MessagesDict {
   [key: string]: string
