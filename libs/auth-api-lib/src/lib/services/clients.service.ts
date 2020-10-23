@@ -30,8 +30,7 @@ export class ClientsService {
       throw new BadRequestException('Id must be provided')
     }
 
-    return this.clientModel.findOne({
-      where: { clientId: id },
+    return this.clientModel.findByPk(id, {
       include: [
         ClientAllowedScope,
         ClientAllowedCorsOrigin,

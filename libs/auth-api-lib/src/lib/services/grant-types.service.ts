@@ -20,8 +20,6 @@ export class GrantTypeService {
       throw new BadRequestException('Name must be provided')
     }
 
-    return await this.grantTypeModel.findOne({
-      where: { name: name },
-    })
+    return await this.grantTypeModel.findByPk(name)
   }
 }

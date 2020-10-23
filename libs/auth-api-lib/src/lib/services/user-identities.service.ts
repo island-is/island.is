@@ -34,7 +34,7 @@ export class UserIdentitiesService {
     }
   }
 
-  /** Gets a user identity by subject id */
+  /** Gets a user identity by subjectId */
   async findBySubjectId(subjectId: string): Promise<UserIdentity> {
     this.logger.debug(`Finding user identity for subjectId - "${subjectId}"`)
 
@@ -42,8 +42,7 @@ export class UserIdentitiesService {
       throw new BadRequestException('SubjectId must be provided')
     }
 
-    return await this.userIdentityModel.findOne({
-      where: { subjectId },
+    return await this.userIdentityModel.findByPk(subjectId, {
       include: [Claim],
     })
   }
@@ -61,6 +60,10 @@ export class UserIdentitiesService {
       throw new BadRequestException('Provider must be provided')
     }
 
+    if (!subjectId) {
+      throw new BadRequestException('SubjectId must be provided')
+    }
+
     return this.userIdentityModel.findOne({
       where: { providerName: provider, providerSubjectId: subjectId },
       include: [Claim],
@@ -70,7 +73,7 @@ export class UserIdentitiesService {
   /** Updates an existing user identity */
   async update(userIdentity: UserIdentityDto): Promise<UserIdentity> {
     this.logger.debug(
-      'Updating the user identity with id: ',
+      'Updating the user identity with subjectId: ',
       userIdentity.subjectId,
     )
 
@@ -86,7 +89,7 @@ export class UserIdentitiesService {
 
   /** Deletes an user identity by subjectid */
   async delete(subjectId: string): Promise<number> {
-    this.logger.debug('Deleting user identity with id: ', subjectId)
+    this.logger.debug('Deleting user identity with subjectId: ', subjectId)
 
     if (!subjectId) {
       throw new BadRequestException('SubjectId must be provided')

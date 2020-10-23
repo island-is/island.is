@@ -28,30 +28,26 @@ export class ResourcesService {
     private logger: Logger,
   ) {}
 
-  /** Gets Identity resource by id */
-  async getIdentityResourceById(id: string): Promise<IdentityResource> {
-    this.logger.debug('Getting data about identity resource with id: ', id)
+  /** Gets Identity resource by name */
+  async getIdentityResourceByName(name: string): Promise<IdentityResource> {
+    this.logger.debug('Getting data about identity resource with name: ', name)
 
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
     }
 
-    return this.identityResourceModel.findOne({
-      where: { id: id },
-    })
+    return this.identityResourceModel.findByPk(name)
   }
 
-  /** Gets API scope by id */
-  async getApiScopeById(id: string): Promise<ApiScope> {
-    this.logger.debug('Getting data about api scope with id: ', id)
+  /** Gets API scope by name */
+  async getApiScopeByName(name: string): Promise<ApiScope> {
+    this.logger.debug('Getting data about api scope with name: ', name)
 
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
     }
 
-    return this.apiScopeModel.findOne({
-      where: { id: id },
-    })
+    return this.apiScopeModel.findByPk(name)
   }
 
   /** Get identity resources by scope names */
@@ -167,31 +163,31 @@ export class ResourcesService {
   /** Updates an existing Identity resource */
   async updateIdentityResource(
     identityResource: IdentityResourcesDTO,
-    id: string,
+    name: string,
   ): Promise<IdentityResource> {
-    this.logger.debug('Updating identity resource with id: ', id)
+    this.logger.debug('Updating identity resource with name: ', name)
 
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
     }
 
     await this.identityResourceModel.update(
       { ...identityResource },
-      { where: { id: id } },
+      { where: { name: name } },
     )
 
-    return await this.getIdentityResourceById(id)
+    return await this.getIdentityResourceByName(name)
   }
 
-  /** Deletes an identity resource by id */
-  async deleteIdentityResource(id: string): Promise<number> {
-    this.logger.debug('Removing identity resource with id: ', id)
+  /** Deletes an identity resource by name */
+  async deleteIdentityResource(name: string): Promise<number> {
+    this.logger.debug('Removing identity resource with name: ', name)
 
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
     }
 
-    return await this.identityResourceModel.destroy({ where: { id: id } })
+    return await this.identityResourceModel.destroy({ where: { name: name } })
   }
 
   /** Creates a new Api Scope */
@@ -202,26 +198,29 @@ export class ResourcesService {
   }
 
   /** Updates an existing API scope */
-  async updateApiScope(apiScope: ApiScopesDTO, id: string): Promise<ApiScope> {
-    this.logger.debug('Updating api scope with id: ', id)
+  async updateApiScope(
+    apiScope: ApiScopesDTO,
+    name: string,
+  ): Promise<ApiScope> {
+    this.logger.debug('Updating api scope with name: ', name)
 
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
     }
 
-    await this.apiScopeModel.update({ ...apiScope }, { where: { id: id } })
+    await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
 
-    return this.getApiScopeById(id)
+    return this.getApiScopeByName(name)
   }
 
   /** Deletes an API scope */
-  async deleteApiScope(id: string): Promise<number> {
-    this.logger.debug('Deleting api scope with id: ', id)
+  async deleteApiScope(name: string): Promise<number> {
+    this.logger.debug('Deleting api scope with name: ', name)
 
-    if (!id) {
-      throw new BadRequestException('Id must be provided')
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
     }
 
-    return await this.apiScopeModel.destroy({ where: { id: id } })
+    return await this.apiScopeModel.destroy({ where: { name: name } })
   }
 }

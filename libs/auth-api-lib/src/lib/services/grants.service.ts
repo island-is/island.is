@@ -54,11 +54,7 @@ export class GrantsService {
       throw new BadRequestException('Key must be provided')
     }
 
-    return await this.grantModel.findOne({
-      where: {
-        key: key,
-      },
-    })
+    return await this.grantModel.findByPk(key)
   }
 
   /** Removes a grant by subjectId and other properties if provided */
