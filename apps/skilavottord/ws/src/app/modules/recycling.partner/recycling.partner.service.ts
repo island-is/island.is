@@ -27,6 +27,16 @@ export class RecyclingPartnerService {
     return res
   }
 
+  async findActive(): Promise<RecyclingPartnerModel[]> {
+    const res = await this.recyclingPartnerModel.findAll({
+      where: { active: true },
+    })
+    this.logger.debug(
+      'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
+    )
+    return res
+  }
+
   async create(
     recyclingPartner: RecyclingPartnerModel,
   ): Promise<RecyclingPartnerModel> {

@@ -15,4 +15,9 @@ export class RecyclingPartnerResolver {
   async getAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return await this.recyclingPartnerService.findAll()
   }
+
+  @Query(() => [RecyclingPartnerModel])
+  async getAllActiveRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+    return await this.recyclingPartnerService.findActive()
+  }
 }
