@@ -253,10 +253,7 @@ export class AuthController {
   @Get('/company/login')
   login2(@Res() res, @Query() query) {
     this.logger.info('--- /company/login starting ---')
-<<<<<<< HEAD
     const samlEntryPoint2 = 'https://innskraning.island.is/?id=sv_company.local'
-=======
->>>>>>> master
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
