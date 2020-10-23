@@ -585,7 +585,7 @@ export const StepTwo: React.FC = () => {
               hasError={caseFactsErrorMessage !== ''}
               defaultValue={workingCase?.caseFacts}
               onBlur={(evt) => {
-                autoSave(
+                updateState(
                   workingCase,
                   'caseFacts',
                   evt.target.value,
@@ -618,7 +618,7 @@ export const StepTwo: React.FC = () => {
               errorMessage={legalArgumentsErrorMessage}
               hasError={legalArgumentsErrorMessage !== ''}
               onBlur={(evt) => {
-                autoSave(
+                updateState(
                   workingCase,
                   'legalArguments',
                   evt.target.value,
