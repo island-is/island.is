@@ -22,7 +22,7 @@ export class GdprService {
     this.logger.debug(
       `Insert gdpr nationalId:${nationalId} gdprStatus: ${gdprStatus}`,
     )
-    let newGdpr: GdprModel = new GdprModel()
+    const newGdpr: GdprModel = new GdprModel()
     newGdpr.nationalId = nationalId
     newGdpr.gdprStatus = gdprStatus
     newGdpr.save()
