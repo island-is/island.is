@@ -1,5 +1,6 @@
 import { style, styleMap } from 'treat'
-import { themeUtils, theme, escapeGrid } from '@island.is/island-ui/theme'
+import { themeUtils, theme } from '@island.is/island-ui/theme'
+import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const container = style({
   position: 'relative',

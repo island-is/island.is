@@ -1,4 +1,4 @@
-import { theme } from './theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const escapeGrid = (gutter?: number) => {
   if (gutter) {

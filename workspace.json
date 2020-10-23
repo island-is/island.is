@@ -2150,6 +2150,32 @@
         }
       }
     },
+    "island-ui-utils": {
+      "root": "libs/island-ui/utils",
+      "sourceRoot": "libs/island-ui/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/island-ui/utils/tsconfig.lib.json",
+              "libs/island-ui/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "judicial-system-api": {
       "root": "apps/judicial-system/api",
       "sourceRoot": "apps/judicial-system/api/src",
