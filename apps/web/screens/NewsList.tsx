@@ -112,7 +112,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   const sidebar = (
     <Stack space={3}>
-      <Text variant="h4" as="h4">
+      <Text variant="h4" as="h1">
         {n('newsTitle', 'Fréttir og tilkynningar')}
       </Text>
       <Divider weight="alternate" />
@@ -217,6 +217,7 @@ const NewsList: Screen<NewsListProps> = ({
               slug={newsItem.slug}
               image={newsItem.image}
               as={makePath('news', newsItem.slug)}
+              titleAs="h2"
               url={makePath('news', '[slug]')}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
