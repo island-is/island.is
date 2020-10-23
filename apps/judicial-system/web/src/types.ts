@@ -91,6 +91,10 @@ export interface CreateCaseRequest {
   policeCaseNumber: string
   accusedNationalId: string
   court: string
+  accusedName?: string
+  accusedAddress?: string
+  arrestDate?: string
+  requestedCourtDate?: string
 }
 
 export interface User {
