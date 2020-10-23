@@ -20,8 +20,7 @@ export class UserProfileModule {
             new UserProfileApi(
               new Configuration({
                 fetchApi: fetch,
-                basePath:
-                  config.userProfileServiceBasePath ?? 'http://localhost:3333',
+                basePath: config.userProfileServiceBasePath,
               }),
             ),
         },
