@@ -1,23 +1,23 @@
 import {
+  ApplicationTypes,
   buildForm,
+  buildIntroductionField,
   buildMultiField,
+  buildRadioField,
+  buildRepeater,
   buildSection,
   buildSubSection,
-  buildCheckboxField,
-  buildIntroductionField,
-  buildRadioField,
   buildTextField,
   Form,
-  Comparators,
-  ApplicationTypes,
+  FormModes,
   FormValue,
-  buildRepeater,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const ApplicationForm: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
   name: 'Meta application',
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'intro',

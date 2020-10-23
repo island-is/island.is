@@ -1,14 +1,16 @@
 import {
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubSection,
   buildCheckboxField,
+  buildForm,
   buildIntroductionField,
+  buildMultiField,
   buildRadioField,
+  buildSection,
+  buildSubmitField,
+  buildSubSection,
   buildTextField,
-  Form,
   Comparators,
+  Form,
+  FormModes,
   FormValue,
 } from '@island.is/application/core'
 import { m } from './messages'
@@ -16,6 +18,7 @@ import { m } from './messages'
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   name: 'Atvinnuleysisbætur',
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'intro',
@@ -114,11 +117,24 @@ export const ExampleForm: Form = buildForm({
       id: 'confirmation',
       name: 'Staðfesta',
       children: [
-        buildIntroductionField({
-          id: 'overview',
-          name: 'Takk fyrir að sækja um',
-          introduction:
-            'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+        buildMultiField({
+          name: '',
+          children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              name: 'Senda inn umsókn',
+              actions: [
+                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
+              ],
+            }),
+            buildIntroductionField({
+              id: 'overview',
+              name: 'Takk fyrir að sækja um',
+              introduction:
+                'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+            }),
+          ],
         }),
         buildIntroductionField({
           id: 'final',
