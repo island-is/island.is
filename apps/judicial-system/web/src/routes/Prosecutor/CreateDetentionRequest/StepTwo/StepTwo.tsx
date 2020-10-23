@@ -205,6 +205,8 @@ export const StepTwo: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
       { value: workingCase?.lawsBroken, validations: ['empty'] },
+      { value: workingCase?.caseFacts, validations: ['empty'] },
+      { value: workingCase?.legalArguments, validations: ['empty'] },
     ]
 
     if (workingCase) {
@@ -244,7 +246,12 @@ export const StepTwo: React.FC = () => {
                   updateState(
                     workingCase,
                     'requestedCustodyEndDate',
-                    formatISO(date, { representation: 'date' }),
+                    formatISO(date, {
+                      representation:
+                        workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                          ? 'complete'
+                          : 'date',
+                    }),
                     setWorkingCase,
                   )
                 }}
@@ -285,13 +292,27 @@ export const StepTwo: React.FC = () => {
                     evt.target.value,
                     'time-format',
                   )
+                  const requestedCustodyEndDateMinutes = parseTime(
+                    workingCase.requestedCustodyEndDate,
+                    evt.target.value,
+                  )
+
+                  window.localStorage.setItem(
+                    'workingCase',
+                    JSON.stringify({
+                      ...workingCase,
+                      requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                      custodyEndDate: requestedCustodyEndDateMinutes,
+                    }),
+                  )
+
+                  setWorkingCase({
+                    ...workingCase,
+                    requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                    custodyEndDate: requestedCustodyEndDateMinutes,
+                  })
 
                   if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                    const requestedCustodyEndDateMinutes = parseTime(
-                      workingCase.requestedCustodyEndDate,
-                      evt.target.value,
-                    )
-
                     await api.saveCase(
                       workingCase.id,
                       JSON.parse(`{
@@ -299,21 +320,6 @@ export const StepTwo: React.FC = () => {
                             "custodyEndDate": "${requestedCustodyEndDateMinutes}"
                           }`),
                     )
-
-                    window.localStorage.setItem(
-                      'workingCase',
-                      JSON.stringify({
-                        ...workingCase,
-                        requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                        custodyEndDate: requestedCustodyEndDateMinutes,
-                      }),
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                      custodyEndDate: requestedCustodyEndDateMinutes,
-                    })
                   } else {
                     setRequestedCustodyEndTimeErrorMessage(
                       validateTimeEmpty.errorMessage ||
@@ -569,7 +575,7 @@ export const StepTwo: React.FC = () => {
             <Input
               name="caseFacts"
               label="Málsatvik rakin"
-              placeholder="Skrifa hér..."
+              placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
               defaultValue={workingCase?.caseFacts}
               onBlur={(evt) => {
                 autoSave(
@@ -579,6 +585,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              required
               rows={16}
               textarea
             />
@@ -597,6 +604,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              required
               textarea
               rows={16}
             />

@@ -1,29 +1,36 @@
 import * as React from 'react'
 import { SvgProps as SVGRProps } from '../Icon'
 
-const SvgAttachSharp = ({
+const SvgCheckmarkCircleOutline = ({
   title,
   titleId,
   ...props
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="attach-sharp_svg__ionicon"
+      className="checkmark-circle-outline_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
     >
       {title ? <title id={titleId}>{title}</title> : null}
       <path
-        d="M216.08 192v143.55a40.08 40.08 0 0080.15 0l.13-188.55a67.94 67.94 0 10-135.87 0v189.82a95.51 95.51 0 00191 0V159.44"
+        d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z"
         fill="none"
         stroke="currentColor"
-        strokeLinecap="square"
         strokeMiterlimit={10}
         strokeWidth={32}
+      />
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={32}
+        d="M352 176L217.6 336 160 272"
       />
     </svg>
   )
 }
 
-export default SvgAttachSharp
+export default SvgCheckmarkCircleOutline
