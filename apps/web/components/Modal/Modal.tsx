@@ -91,57 +91,59 @@ export const Modal: FC<ModalProps> = ({
           {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
         </DialogDisclosure>
       )}
-      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-        <DialogBackdrop {...dialog} as={ModalDiv}>
-          <Dialog
-            {...dialog}
-            role={role}
-            aria-label={label}
-            className={styles.dialog}
-          >
-            <Box
-              position="relative"
-              width="full"
-              marginX={3}
-              paddingX={[3, 6, 6, 15]}
-              paddingY={[6, 6, 6, 10]}
-              borderRadius="large"
-              className={styles.content}
+      {dialog.visible && (
+        <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+          <DialogBackdrop {...dialog} as={ModalDiv}>
+            <Dialog
+              {...dialog}
+              role={role}
+              aria-label={label}
+              className={styles.dialog}
             >
-              <button onClick={onCloseEvent} className={styles.close}>
-                <Icon type="close" color="blue400" width="18" height="18" />
-              </button>
-              <Stack space={3}>
-                {!!title && (
-                  <Text variant="h2" as="h3">
-                    {title}
-                  </Text>
-                )}
-                {children ?? null}
-                <Box marginTop={6} className={styles.buttons}>
-                  <Button
-                    ref={initialFocusedRef}
-                    width="fixed"
-                    variant="ghost"
-                    onClick={onCloseEvent}
-                  >
-                    {buttonTextCancel}
-                  </Button>
-                  <Button
-                    width="fixed"
-                    onClick={() => {
-                      onCloseEvent()
-                      onConfirm && onConfirm()
-                    }}
-                  >
-                    {buttonTextConfirm}
-                  </Button>
-                </Box>
-              </Stack>
-            </Box>
-          </Dialog>
-        </DialogBackdrop>
-      </ColorSchemeContext.Provider>
+              <Box
+                position="relative"
+                width="full"
+                marginX={3}
+                paddingX={[3, 6, 6, 15]}
+                paddingY={[6, 6, 6, 10]}
+                borderRadius="large"
+                className={styles.content}
+              >
+                <button onClick={onCloseEvent} className={styles.close}>
+                  <Icon type="close" color="blue400" width="18" height="18" />
+                </button>
+                <Stack space={3}>
+                  {!!title && (
+                    <Text variant="h2" as="h3">
+                      {title}
+                    </Text>
+                  )}
+                  {children ?? null}
+                  <Box marginTop={6} className={styles.buttons}>
+                    <Button
+                      ref={initialFocusedRef}
+                      width="fixed"
+                      variant="ghost"
+                      onClick={onCloseEvent}
+                    >
+                      {buttonTextCancel}
+                    </Button>
+                    <Button
+                      width="fixed"
+                      onClick={() => {
+                        onCloseEvent()
+                        onConfirm && onConfirm()
+                      }}
+                    >
+                      {buttonTextConfirm}
+                    </Button>
+                  </Box>
+                </Stack>
+              </Box>
+            </Dialog>
+          </DialogBackdrop>
+        </ColorSchemeContext.Provider>
+      )}
     </>
   )
 }
