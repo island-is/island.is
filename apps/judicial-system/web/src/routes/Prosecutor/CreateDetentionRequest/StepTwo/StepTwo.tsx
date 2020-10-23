@@ -205,6 +205,8 @@ export const StepTwo: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
       { value: workingCase?.lawsBroken, validations: ['empty'] },
+      { value: workingCase?.caseFacts, validations: ['empty'] },
+      { value: workingCase?.legalArguments, validations: ['empty'] },
     ]
 
     if (workingCase) {
@@ -573,7 +575,7 @@ export const StepTwo: React.FC = () => {
             <Input
               name="caseFacts"
               label="Málsatvik rakin"
-              placeholder="Skrifa hér..."
+              placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
               defaultValue={workingCase?.caseFacts}
               onBlur={(evt) => {
                 autoSave(
@@ -583,6 +585,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              required
               rows={16}
               textarea
             />
@@ -601,6 +604,7 @@ export const StepTwo: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              required
               textarea
               rows={16}
             />
