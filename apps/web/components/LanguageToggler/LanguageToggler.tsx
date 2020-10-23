@@ -74,6 +74,7 @@ export const LanguageToggler: FC<{
       variant="utility"
       onClick={otherLanguage === 'en' ? null : onClick}
       aria-label={t.otherLanguageAria}
+      lang={otherLanguage === 'en' ? 'en' : 'is'}
       fluid
     >
       {t.otherLanguageName}
