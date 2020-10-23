@@ -12,10 +12,8 @@ export class RecyclingPartnerService {
     private logger: Logger,
   ) {}
 
-  async findByCompanyId(companyId: string): Promise<RecyclingPartnerModel> {
-    this.logger.debug(
-      `Finding recycling partner for companyId - "${companyId}"`,
-    )
+  async findByPartnerId(companyId: string): Promise<RecyclingPartnerModel> {
+    this.logger.debug(`Finding recycling partner by companyId - "${companyId}"`)
     return this.recyclingPartnerModel.findOne({
       where: { companyId },
     })
