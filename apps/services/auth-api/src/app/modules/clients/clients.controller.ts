@@ -11,10 +11,10 @@ import {
   ClientsService,
   Scopes,
   ScopesGuard,
+  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
-import { AuthGuard } from '@nestjs/passport'
 
-@UseGuards(AuthGuard('jwt'), ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {

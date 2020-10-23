@@ -7,8 +7,9 @@ import {
   Stack,
   Tooltip,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
-import { Button, OutlinedBox } from '@island.is/skilavottord-web/components'
+import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -71,7 +72,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 paddingX={4}
                 paddingY={4}
               >
-                <Button size="small" onClick={onContinue}>
+                <Button onClick={onContinue} fluid={isMobile}>
                   {t.actions.valid}
                 </Button>
               </ColumnBox>

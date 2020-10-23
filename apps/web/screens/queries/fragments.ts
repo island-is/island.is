@@ -171,6 +171,7 @@ export const slices = gql`
     type
     processTitle
     processLink
+    openLinkInModal
     buttonText
   }
 

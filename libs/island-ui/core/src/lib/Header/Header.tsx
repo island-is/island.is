@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react'
 import { Logo } from '../Logo/Logo'
 
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import * as styles from './Header.treat'
 import { Button } from '../Button/Button'
 import { Hidden } from '../Hidden/Hidden'
@@ -70,9 +70,9 @@ export const Header = ({
                 </span>
               </Box>
             )}
-            <Typography variant="eyebrow" truncate>
+            <Text variant="eyebrow" truncate>
               {userName}
-            </Typography>
+            </Text>
           </Box>
         )}
         {language && (
