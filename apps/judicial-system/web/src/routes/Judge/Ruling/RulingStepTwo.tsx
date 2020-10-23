@@ -42,8 +42,6 @@ export const RulingStepTwo: React.FC = () => {
     requestedCustodyRestrictions:
       caseDraftJSON.requestedCustodyRestrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
-    witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-    investigationProgress: caseDraftJSON.investigationProgress ?? '',
     legalArguments: caseDraftJSON.legalArguments ?? '',
     comments: caseDraftJSON.comments ?? '',
     notifications: caseDraftJSON.Notification ?? [],

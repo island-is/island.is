@@ -1,4 +1,11 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import cn from 'classnames'
 import { Box, Text, Divider, DividerProps } from '@island.is/island-ui/core'
 import Bullet from '../../components/Bullet/Bullet'
@@ -37,23 +44,32 @@ export interface SidebarProps {
 }
 
 const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
-  const [container, containerRef] = useState(null)
+  const containerRef = useRef(null)
+  const [divStyles, setDivStyles] = useState(null)
   const [bullet, bulletRef] = useState(null)
   const colors = ColorConfig[type]
 
+  const onResize = useCallback(() => {
+    if (containerRef?.current) {
+      setDivStyles({
+        position: 'absolute',
+        top: containerRef.current.offsetTop + 'px',
+        left: containerRef.current.offsetLeft + 'px',
+        width: containerRef.current.offsetWidth + 'px',
+        bottom: theme.spacing[12] + 'px',
+      })
+    }
+  }, [containerRef])
+
+  useEffect(() => {
+    onResize()
+    window.addEventListener('resize', onResize, { passive: true })
+    return () => window.removeEventListener('resize', onResize)
+  }, [onResize])
+
   return (
     <div ref={containerRef} className={styles.container}>
-      <div
-        style={
-          container && {
-            position: 'absolute',
-            top: container.offsetTop + 'px',
-            left: container.offsetLeft + 'px',
-            width: container.offsetWidth + 'px',
-            bottom: theme.spacing[12] + 'px',
-          }
-        }
-      >
+      <div style={divStyles}>
         <div className={styles.sticky}>
           <div className={styles.stickyInner}>
             <div

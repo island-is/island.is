@@ -87,6 +87,21 @@ ipsum`
       // Assert
       expect(d).toEqual('2020-10-24T13:37:00Z')
     })
+
+    test('should return the date given a valid date and an invalid time', () => {
+      // Arrange
+      const date = '2020-10-24T12:25:00Z'
+      const time = '99:00'
+      const time2 = ''
+
+      // Act
+      const d = parseTime(date, time)
+      const dd = parseTime(date, time2)
+
+      // Assert
+      expect(d).toEqual('2020-10-24')
+      expect(dd).toEqual('2020-10-24')
+    })
   })
 })
 
@@ -98,6 +113,20 @@ describe('Validation', () => {
 
       // Act
       const r = validate(LOKE, 'police-casenumber-format')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+  })
+
+  describe('Validate time format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const time = '99:00'
+
+      // Act
+      const r = validate(time, 'time-format')
 
       // Assert
       expect(r.isValid).toEqual(false)
