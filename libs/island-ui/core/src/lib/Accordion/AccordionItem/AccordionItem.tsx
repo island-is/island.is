@@ -10,7 +10,7 @@ import React, {
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 
-import { Box, BoxProps } from '../../Box/Box'
+import { Box } from '../../Box/Box'
 import { Column } from '../../Column/Column'
 import { Columns } from '../../Columns/Columns'
 import { AllOrNone } from '../../private/AllOrNone'
@@ -38,7 +38,6 @@ export type AccordionItemBaseProps = {
   onClick?: () => void
   onBlur?: () => void
   onFocus?: () => void
-  boxProps?: BoxProps
 }
 
 export type AccordionItemStateProps = AllOrNone<{
@@ -65,7 +64,6 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       onClick,
       onBlur,
       onFocus,
-      boxProps,
     },
     forwardedRef,
   ) => {
@@ -144,7 +142,6 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             onFocus={onFocus}
             onBlur={onBlur}
             onClick={onClick ? onClick : handleOpen}
-            {...boxProps}
           >
             <Columns space={2} alignY="center">
               <Column>
@@ -201,7 +198,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box id={id} {...boxProps} paddingTop={visibleContent ? 0 : 2}>
+          <Box id={id} paddingTop={2}>
             {children}
           </Box>
         </AnimateHeight>
@@ -227,13 +224,9 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       background="white"
       borderRadius="large"
       className={cn(styles.card, { [styles.focused]: isFocused })}
+      padding={[2, 2, 4]}
     >
-      <AccordionItem
-        {...props}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        boxProps={{ padding: [2, 2, 4] }}
-      >
+      <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
         {props.children}
       </AccordionItem>
     </Box>
@@ -245,12 +238,7 @@ export const SidebarAccordion: FC<Omit<
   'labelVariant'
 >> = (props) => {
   return (
-    <AccordionItem
-      {...props}
-      labelVariant="default"
-      iconVariant="sidebar"
-      boxProps={{ padding: 0, margin: 0 }}
-    >
+    <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
       {props.children}
     </AccordionItem>
   )
