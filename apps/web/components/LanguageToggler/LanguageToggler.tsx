@@ -80,11 +80,13 @@ export const LanguageToggler: FC<{
     </Button>
   )
 
+  const LanguageButtonId =
+    'confirm-language-switch-dialog' + (!hideWhenMobile ? '-mobile' : '')
   const LanguageButton = (
     <>
       {otherLanguage === 'en' ? (
         <Modal
-          baseId="confirm-language-switch-dialog"
+          baseId={LanguageButtonId}
           title={gn('switchToEnglishModalTitle')}
           label="Confirm switching to english"
           disclosure={Disclosure}
