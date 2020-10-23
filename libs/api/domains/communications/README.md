@@ -1,7 +1,7 @@
 # communications
 
-This library was generated with [Nx](https://nx.dev).
+Endpoint to route send infromation to service desk
 
 ## Running unit tests
 
-Run `nx test communications` to execute the unit tests via [Jest](https://jestjs.io).
+Run `yarn test api-domains-communications` to execute the unit tests via [Jest](https://jestjs.io).
