@@ -36,6 +36,12 @@ export const GET_ARTICLE_QUERY = gql`
           ...AllSlices
         }
       }
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
     }
   }
   ${slices}
