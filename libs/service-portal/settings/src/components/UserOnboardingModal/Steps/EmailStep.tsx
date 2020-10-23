@@ -1,19 +1,7 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
-import { FieldInput } from '../../FieldInput/FieldInput'
-
-export interface EmailFormData {
-  email: string
-}
+import { EmailForm, EmailFormData } from '../../Forms/EmailForm'
 
 interface Props {
   email: string
@@ -45,44 +33,26 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
           </Text>
         </GridColumn>
       </GridRow>
-      <Formik
-        initialValues={{
-          email,
-        }}
-        validationSchema={Yup.object().shape({
-          email: Yup.string()
-            .email('Netfangið er ekki á réttu formi')
-            .required('Skylda er að fylla út netfang'),
-        })}
-        onSubmit={onSubmit}
-      >
-        {() => (
-          <Form>
-            <Box>
-              <Field
-                component={FieldInput}
-                label="Netfang"
-                name="email"
-                placeholder="Netfang"
-              />
-            </Box>
-            <Box display="flex" justifyContent="spaceBetween" marginTop={6}>
-              <Button variant="ghost" onClick={onBack}>
-                {formatMessage({
-                  id: 'service.portal:go-back',
-                  defaultMessage: 'Til baka',
-                })}
-              </Button>
-              <Button variant="primary" type="submit" icon="arrowForward">
-                {formatMessage({
-                  id: 'service.portal:next-step',
-                  defaultMessage: 'Næsta skref',
-                })}
-              </Button>
-            </Box>
-          </Form>
+      <EmailForm
+        email={email}
+        renderBackButton={() => (
+          <Button variant="ghost" onClick={onBack}>
+            {formatMessage({
+              id: 'service.portal:go-back',
+              defaultMessage: 'Til baka',
+            })}
+          </Button>
         )}
-      </Formik>
+        renderSubmitButton={() => (
+          <Button variant="primary" type="submit" icon="arrowForward">
+            {formatMessage({
+              id: 'service.portal:next-step',
+              defaultMessage: 'Næsta skref',
+            })}
+          </Button>
+        )}
+        onSubmit={onSubmit}
+      />
     </>
   )
 }

@@ -8,13 +8,14 @@ import {
   ApplicationTypes,
   FormValue,
   buildDividerField,
-  buildReviewField,
+  buildSubmitField,
+  FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const Review: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: 'Review',
+  name: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
@@ -151,7 +152,7 @@ export const Review: Form = buildForm({
               name: m.otherInfo,
               variant: 'textarea',
             }),
-            buildReviewField({
+            buildSubmitField({
               id: 'approvedByReviewer',
               name: m.reviewQuestion,
               actions: [

@@ -229,7 +229,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 aria-label="Flettiborði"
                 className={styles.tabWrapper}
               >
-                {tabs.map(({ subtitle = '' }, index) => {
+                {tabs.map(({ title = '' }, index) => {
                   return (
                     <Tab
                       key={index}
@@ -237,7 +237,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                       className={cn(styles.tabContainer)}
                     >
                       <TabBullet selected={selectedIndex === index} />
-                      <span className={styles.srOnly}>{subtitle}</span>
+                      <span className={styles.srOnly}>{title}</span>
                     </Tab>
                   )
                 })}
@@ -252,6 +252,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                   const visible = currentIndex === index
                   const isTabletOrMobile = width < theme.breakpoints.lg
+                  const tabTitleId = 'frontpageTabTitle' + index
                   return (
                     <TabPanel
                       key={index}
@@ -273,7 +274,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <Text variant="eyebrow" as="p" color="purple400">
                             <span className={styles.textItem}>{subtitle}</span>
                           </Text>
-                          <Text variant="h1" as="h1">
+                          <Text variant="h1" as="h1" id={tabTitleId}>
                             <span className={styles.textItem}>{title}</span>
                           </Text>
                           <Text>
@@ -289,6 +290,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                                 variant="text"
                                 icon="arrowRight"
                                 tabIndex={visible ? 0 : -1}
+                                aria-labelledby={tabTitleId}
                               >
                                 Sjá nánar
                               </Button>

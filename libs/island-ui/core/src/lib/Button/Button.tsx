@@ -44,6 +44,7 @@ export interface ButtonProps {
   icon?: IconType
   iconType?: Type
   type?: NativeButtonProps['type']
+  lang?: string
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
