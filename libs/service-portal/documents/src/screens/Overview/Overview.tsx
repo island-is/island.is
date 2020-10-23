@@ -10,6 +10,7 @@ import {
   Pagination,
   Option,
   DatePicker,
+  Input,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -20,14 +21,13 @@ import {
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
-import AnimateHeight from 'react-animate-height'
-import * as styles from './Overview.treat'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { mockDocuments } from './mock.data'
 
-const defaultCategory = { label: 'Allir flokkar', value: '' }
-const pageSize = 4
+const defaultCategory = { label: 'Allar Stofnanir', value: '' }
+const pageSize = 6
 const defaultStartDate = '2000-01-01T00:00:00.000'
 
 type FilterValues = {
@@ -47,14 +47,23 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     dateTo: new Date(),
   })
   const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
-  const { data, loading, error } = useListDocuments(
-    userInfo.profile.natreg,
-    filterValue.dateFrom,
-    filterValue.dateTo,
-    page,
-    pageSize,
-    activeCategory?.value.toString() || '',
-  )
+  // const { data, loading, error } = useListDocuments(
+  //   userInfo.profile.natreg,
+  //   filterValue.dateFrom,
+  //   filterValue.dateTo,
+  //   page,
+  //   pageSize,
+  //   activeCategory?.value.toString() || '',
+  // )
+  const { data, loading, error } = mockDocuments
+
+  const pagedDocuments = {
+    from: (page - 1) * pageSize,
+    to: pageSize * page,
+    totalPages: Math.ceil(data.length / pageSize),
+  }
+  console.log(data)
+  console.log(pagedDocuments)
   const { data: cats } = useDocumentCategories()
   useScrollTopOnUpdate([page])
 
@@ -116,66 +125,43 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <Stack space={2}>
             <div>
-              <Columns align="right" space={1} collapseBelow="sm">
-                <div className={styles.selectWrapper}>
-                  <Select
-                    name="categories"
-                    defaultValue={categories[0]}
-                    options={categories}
-                    value={activeCategory}
-                    onChange={handleCategoryChange}
+              <Stack space={3}>
+                <Box height="full">
+                  <Input
+                    name="rafraen-skjol-leit"
+                    placeholder="Leitaðu af rafrænu skjali"
                   />
-                </div>
-                <Column width="content">
-                  <Button
-                    variant="ghost"
-                    icon={searchOpen ? 'close' : 'plus'}
-                    onClick={handleExtendSearchClick}
-                  >
-                    {searchOpen
-                      ? formatMessage({
-                          id: 'sp.documents:close-filters',
-                          defaultMessage: 'Loka ítarleit',
-                        })
-                      : formatMessage({
-                          id: 'sp.documents:filters',
-                          defaultMessage: 'Ítarleit',
-                        })}
-                  </Button>
-                </Column>
-              </Columns>
-              <AnimateHeight height={searchOpen ? 'auto' : 0}>
-                <Box
-                  background="blue100"
-                  paddingY={3}
-                  paddingX={4}
-                  borderRadius="large"
-                  marginTop={2}
-                >
-                  <Stack space={2}>
-                    <Columns space={2} collapseBelow="sm">
-                      <Column width="1/2">
-                        <DatePicker
-                          label="Frá"
-                          placeholderText="Veldu dagsetningu"
-                          locale="is"
-                          value={filterValue.dateFrom?.toString() || undefined}
-                          handleChange={handleDateFromInput}
-                        />
-                      </Column>
-                      <Column width="1/2">
-                        <DatePicker
-                          label="Til"
-                          placeholderText="Veldu dagsetningu"
-                          locale="is"
-                          value={filterValue.dateTo?.toString() || undefined}
-                          handleChange={handleDateToInput}
-                        />
-                      </Column>
-                    </Columns>
-                  </Stack>
                 </Box>
-              </AnimateHeight>
+                <Columns space={2} collapseBelow="sm">
+                  <Column width="6/12">
+                    <Select
+                      name="categories"
+                      defaultValue={categories[0]}
+                      options={categories}
+                      value={activeCategory}
+                      onChange={handleCategoryChange}
+                    />
+                  </Column>
+                  <Column width="3/12">
+                    <DatePicker
+                      label="Frá"
+                      placeholderText="23.05.20"
+                      locale="is"
+                      value={filterValue.dateFrom?.toString() || undefined}
+                      handleChange={handleDateFromInput}
+                    />
+                  </Column>
+                  <Column width="3/12">
+                    <DatePicker
+                      label="Til"
+                      placeholderText="23.05.20"
+                      locale="is"
+                      value={filterValue.dateTo?.toString() || undefined}
+                      handleChange={handleDateToInput}
+                    />
+                  </Column>
+                </Columns>
+              </Stack>
             </div>
             {loading && <ActionCardLoader repeat={3} />}
             {error && (
@@ -200,13 +186,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Typography>
               </Box>
             )}
-            {data?.map((document) => (
-              <DocumentCard key={document.id} document={document} />
-            ))}
+            {data
+              ?.slice(pagedDocuments.from, pagedDocuments.to)
+              .map((document) => (
+                <DocumentCard key={document.id} document={document} />
+              ))}
             {data && data.length > pageSize && (
               <Pagination
                 page={page}
-                totalPages={data?.length === pageSize ? page + 1 : page}
+                totalPages={pagedDocuments.totalPages}
                 renderLink={(page, className, children) => (
                   <button
                     className={className}

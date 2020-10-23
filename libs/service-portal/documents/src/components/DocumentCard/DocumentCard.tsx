@@ -1,29 +1,56 @@
 import React, { FC } from 'react'
-import { ActionCard, ActionMenuItem } from '@island.is/service-portal/core'
+import { ActionCard } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
+import { useLazyDocumentDetail } from '@island.is/service-portal/graphql'
+
+const downloadAsPdf = (base64Pdf: string, fileName: string) => {
+  if (typeof window === 'undefined') {
+    return
+  }
+  const fakeLink = window.document.createElement('a')
+  const url = `data:application/pdf;base64,${base64Pdf}`
+  fakeLink.href = url
+  fakeLink.download = fileName
+  fakeLink.title = fileName
+  const clickHandler = () => {
+    setTimeout(() => {
+      URL.revokeObjectURL(url)
+      fakeLink.removeEventListener('click', clickHandler)
+    }, 150)
+  }
+  fakeLink.addEventListener('click', clickHandler, false)
+  fakeLink.click()
+}
 
 interface Props {
   document: Document
 }
 
 const DocumentCard: FC<Props> = ({ document }) => {
-  // TODO: This call is really heavy on the API
-  // const { data } = useDocumentDetail(document.id)
+  const { fetchDocument, loading, data } = useLazyDocumentDetail(document.id)
+  const fileName = `${document.subject}.pdf`
 
+  const handleOnDownload = () => {
+    if (loading) {
+      return
+    }
+    if (data) {
+      downloadAsPdf(data, fileName)
+      return
+    }
+    fetchDocument()
+  }
+
+  if (data) {
+    downloadAsPdf(data, fileName)
+  }
   return (
     <ActionCard
       title={document.subject}
       date={new Date(document.date)}
       label={document.senderName}
-      url={'//island.is'}
-      external
       key={document.id}
-      actionMenuRender={() => (
-        <>
-          <ActionMenuItem>Fela skjal</ActionMenuItem>
-          <ActionMenuItem>Eyða skjali</ActionMenuItem>
-        </>
-      )}
+      onDownload={handleOnDownload}
     />
   )
 }

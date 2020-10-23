@@ -6,10 +6,11 @@ import {
   Inline,
   Columns,
   Column,
+  Link,
+  Button,
 } from '@island.is/island-ui/core'
 import ActionMenu from '../ActionMenu/ActionMenu'
 import * as styles from './ActionCard.treat'
-import { Link } from 'react-router-dom'
 
 interface Props {
   label: string
@@ -20,18 +21,10 @@ interface Props {
   external?: boolean
   actionMenuRender?: () => JSX.Element
   buttonRender?: () => JSX.Element
+  onDownload?: () => void
 }
 
-export const ActionCard: FC<Props> = ({
-  label,
-  title,
-  text,
-  date,
-  url,
-  external,
-  actionMenuRender,
-  buttonRender,
-}) => {
+export const ActionCard: FC<Props> = ({ label, title, date, onDownload }) => {
   return (
     <Box
       className={styles.wrapper}
@@ -40,56 +33,39 @@ export const ActionCard: FC<Props> = ({
       border="standard"
       borderRadius="large"
     >
-      <Stack space={1}>
-        <Columns alignY="center" space={3}>
-          <Column>
+      <Columns alignY="center" space={3}>
+        <Column>
+          <Stack space={1}>
             <Typography variant="eyebrow" color="purple400">
               {label}
             </Typography>
-          </Column>
-          <Column width="content">
+            <Typography variant="h3">{title}</Typography>
+          </Stack>
+        </Column>
+        <Column width="content">
+          <Stack space={1}>
             <Inline space={1} alignY="center">
               <Typography
                 variant="pSmall"
                 color="dark300"
               >{`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`}</Typography>
-              {actionMenuRender && (
-                <ActionMenu>{actionMenuRender()}</ActionMenu>
-              )}
             </Inline>
-          </Column>
-        </Columns>
-        <Typography variant="h3">
-          {url ? (
-            external ? (
-              <a
-                href={url}
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {title}
-              </a>
-            ) : (
-              <Link to={url} className={styles.link}>
-                {title}
-              </Link>
-            )
-          ) : (
-            title
-          )}
-        </Typography>
-        <Columns alignY="center" collapseBelow="sm" space={3}>
-          <Column>{text && <Typography variant="p">{text}</Typography>}</Column>
-          {buttonRender ? (
-            <Column width="content">
-              <Box display="flex" justifyContent="flexEnd" flexShrink={0}>
-                {buttonRender()}
-              </Box>
-            </Column>
-          ) : null}
-        </Columns>
-      </Stack>
+            <Button
+              colorScheme="default"
+              icon="download"
+              iconType="filled"
+              onBlur={function noRefCheck() {}}
+              onClick={onDownload}
+              onFocus={function noRefCheck() {}}
+              size="default"
+              type="button"
+              variant="text"
+            >
+              Sækja pdf
+            </Button>
+          </Stack>
+        </Column>
+      </Columns>
     </Box>
   )
 }
