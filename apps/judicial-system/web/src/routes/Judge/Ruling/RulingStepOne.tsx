@@ -248,7 +248,12 @@ export const RulingStepOne: React.FC = () => {
                 updateState(
                   workingCase,
                   'custodyEndDate',
-                  formatISO(date, { representation: 'date' }),
+                  formatISO(date, {
+                    representation:
+                      workingCase.custodyEndDate?.indexOf('T') > -1
+                        ? 'complete'
+                        : 'date',
+                  }),
                   setWorkingCase,
                 )
               }}
@@ -277,18 +282,19 @@ export const RulingStepOne: React.FC = () => {
                   evt.target.value,
                   'time-format',
                 )
-                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                  const custodyEndDateMinutes = parseTime(
-                    workingCase.custodyEndDate,
-                    evt.target.value,
-                  )
+                const custodyEndDateMinutes = parseTime(
+                  workingCase.custodyEndDate,
+                  evt.target.value,
+                )
 
-                  updateState(
-                    workingCase,
-                    'custodyEndDate',
-                    custodyEndDateMinutes,
-                    setWorkingCase,
-                  )
+                updateState(
+                  workingCase,
+                  'custodyEndDate',
+                  custodyEndDateMinutes,
+                  setWorkingCase,
+                )
+
+                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
                   api.saveCase(
                     workingCase.id,
                     parseString('custodyEndDate', custodyEndDateMinutes),
