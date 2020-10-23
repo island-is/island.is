@@ -1,4 +1,4 @@
-import { Request } from '../../../api/content-search/src/queries/rankEvaluation'
+import { Request } from '@island.is/api/content-search'
 
 // Rank queries will be processed
 // and request attribute will be replaced with a standard search query, with the string as searchTerm

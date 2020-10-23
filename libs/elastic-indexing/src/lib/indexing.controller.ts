@@ -30,7 +30,7 @@ export class IndexingController {
   async sync(@Query() { locale = 'is', token = '' }: SyncInput) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
-        recivedToken: token,
+        receivedToken: token,
       })
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
@@ -42,6 +42,7 @@ export class IndexingController {
     // eslint-disable-next-line @typescript-eslint/camelcase
     logger.info('Rank evaluation, metric score: ', {
       locale,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       metric_score: rankEvaluation.body?.metric_score ?? null,
     })
 
@@ -56,7 +57,7 @@ export class IndexingController {
   async resync(@Query() { locale = 'is', token = '' }: SyncInput) {
     if (environment.syncToken !== token) {
       logger.warn('Failed to validate sync access token', {
-        recivedToken: token,
+        receivedToken: token,
       })
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
