@@ -2,13 +2,13 @@ import { NotFoundException } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import Soap from 'soap'
 import { MyInfo } from '../myInfo.model'
-import { GetViewHusaskraDto } from './dto/getViewHusaskraDto'
-import { GetViewKennitalaOgTrufelag } from './dto/getViewKennitalaOgTrufelag'
-import { GetViewSveitarfelagDto } from './dto/getViewSveitarfelagDto'
-import { GetViewThjodskraDto } from './dto/getViewThjodskraDto'
-import { GetViewFjolskyldanDto } from './dto/getViewFjolskyldanDto'
+import { GetViewHomeDto } from './dto/getViewHomeDto'
+import { GetViewReligionDto } from './dto/getViewReligionDto'
+import { GetViewMunicipalityDto } from './dto/getViewMunicipalityDto'
+import { GetViewRegistryDto } from './dto/getViewRegistryDto'
+import { GetViewFamilyDto } from './dto/getViewFamilyDto'
 import { FamilyMember } from '../familyMember.model'
-import { GetViewKennitalaOgBannmerkingDto } from './dto/getViewKennitalaOgBannmerkingDto'
+import { GetViewBanmarkingDto } from './dto/getViewBanmarkingDto'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client
@@ -70,13 +70,13 @@ export class NationalRegistryApi {
       )
 
     const members = family.map(
-      (x) =>
+      (familyMember) =>
         ({
-          fullName: x.Nafn,
-          nationalId: x.Kennitala,
-          gender: x.Kyn,
-          maritalStatus: x.Hjuskapur,
-          address: `${x.Husheiti}, ${x.Pnr} ${x.Sveitarfelag}`,
+          fullName: familyMember.Nafn,
+          nationalId: familyMember.Kennitala,
+          gender: familyMember.Kyn,
+          maritalStatus: familyMember.Hjuskapur,
+          address: `${familyMember.Husheiti}, ${familyMember.Pnr} ${familyMember.Sveitarfelag}`,
         } as FamilyMember),
     )
 
@@ -84,30 +84,33 @@ export class NationalRegistryApi {
   }
 
   private formatResidenceAddressString(
-    houseDto: GetViewHusaskraDto | null,
-  ): string {
-    if (!houseDto) return 'address not found'
+    houseDto: GetViewHomeDto | null,
+  ): string | null {
+    if (!houseDto) return null
     const houseInfo = houseDto.table.diffgram.DocumentElement.Husaskra
     return `${houseInfo.HusHeiti}, ${houseInfo.PostNr} ${houseInfo.Nafn}`
   }
 
   private formatReligionString(
-    religtionDto: GetViewKennitalaOgTrufelag | null,
-  ): string {
-    if (!religtionDto) return 'religion info not found'
+    religtionDto: GetViewReligionDto | null,
+  ): string | null {
+    if (!religtionDto) return null
 
     return religtionDto.table.diffgram.DocumentElement.KennitalaOgTrufelag
       .Trufelag
   }
 
   private formatBirthPlaceString(
-    birthPlaceDto: GetViewSveitarfelagDto | null,
-  ): string {
-    if (!birthPlaceDto) return 'birth place not found'
+    birthPlaceDto: GetViewMunicipalityDto | null,
+  ): string | null {
+    if (!birthPlaceDto) return null
     return birthPlaceDto.table.diffgram.DocumentElement.Sveitarfelag.Sokn
   }
 
-  private formatMartialStatus(maritalCode: string, genderCode: string): string {
+  private formatMartialStatus(
+    maritalCode: string,
+    genderCode: string,
+  ): string | null {
     const isMale = genderCode === '1'
     switch (maritalCode) {
       case '1':
@@ -133,11 +136,11 @@ export class NationalRegistryApi {
       case 'L':
         return 'Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá'
       default:
-        return maritalCode
+        return null
     }
   }
 
-  private formatGender(genderIndex: string): string {
+  private formatGender(genderIndex: string): string | null {
     switch (genderIndex) {
       case '1':
         return 'Karl'
@@ -152,14 +155,14 @@ export class NationalRegistryApi {
       case '8':
         return 'Kynsegin'
       default:
-        return genderIndex
+        return null
     }
   }
 
   private formatBanMarking(
-    banMarkingDto: GetViewKennitalaOgBannmerkingDto | null,
-  ): string {
-    if (!banMarkingDto) return ''
+    banMarkingDto: GetViewBanmarkingDto | null,
+  ): string | null {
+    if (!banMarkingDto) return null
     const banMarking =
       banMarkingDto.table.diffgram.DocumentElement.KennitalaOgBannmerking
     const isBanmarked = banMarking.Bannmerking === '1'
@@ -168,7 +171,7 @@ export class NationalRegistryApi {
 
   public async getViewThjodskra(
     nationalId: string,
-  ): Promise<GetViewThjodskraDto | null> {
+  ): Promise<GetViewRegistryDto | null> {
     return await new Promise((resolve, _reject) => {
       this.client.GetViewThjodskra(
         {
@@ -183,7 +186,7 @@ export class NationalRegistryApi {
           error: any,
           {
             GetViewThjodskraResult: result,
-          }: { GetViewThjodskraResult: GetViewThjodskraDto },
+          }: { GetViewThjodskraResult: GetViewRegistryDto },
         ) => {
           if (result != null) {
             if (!result.success) {
@@ -204,7 +207,7 @@ export class NationalRegistryApi {
 
   public async getViewHusaskra(
     houseCode: string,
-  ): Promise<GetViewHusaskraDto | null> {
+  ): Promise<GetViewHomeDto | null> {
     return await new Promise((resolve, _reject) => {
       this.client.GetViewHusaskra(
         {
@@ -219,7 +222,7 @@ export class NationalRegistryApi {
           error: any,
           {
             GetViewHusaskraResult: result,
-          }: { GetViewHusaskraResult: GetViewHusaskraDto },
+          }: { GetViewHusaskraResult: GetViewHomeDto },
         ) => {
           if (result != null) {
             if (!result.success) {
@@ -240,7 +243,7 @@ export class NationalRegistryApi {
 
   public async getViewKennitalaOgTrufelag(
     nationalId: string,
-  ): Promise<GetViewKennitalaOgTrufelag | null> {
+  ): Promise<GetViewReligionDto | null> {
     return await new Promise((resolve, _reject) => {
       this.client.GetViewKennitalaOgTrufelag(
         {
@@ -255,7 +258,7 @@ export class NationalRegistryApi {
           error: any,
           {
             GetViewKennitalaOgTrufelagResult: result,
-          }: { GetViewKennitalaOgTrufelagResult: GetViewKennitalaOgTrufelag },
+          }: { GetViewKennitalaOgTrufelagResult: GetViewReligionDto },
         ) => {
           if (result != null) {
             if (!result.success) {
@@ -276,7 +279,7 @@ export class NationalRegistryApi {
 
   public async getViewSveitarfelag(
     municipalCode: string,
-  ): Promise<GetViewSveitarfelagDto | null> {
+  ): Promise<GetViewMunicipalityDto | null> {
     return await new Promise((resolve, _reject) => {
       this.client.GetViewSveitarfelag(
         {
@@ -291,7 +294,7 @@ export class NationalRegistryApi {
           error: any,
           {
             GetViewSveitarfelagResult: result,
-          }: { GetViewSveitarfelagResult: GetViewSveitarfelagDto },
+          }: { GetViewSveitarfelagResult: GetViewMunicipalityDto },
         ) => {
           if (result != null) {
             if (!result.success) {
@@ -312,7 +315,7 @@ export class NationalRegistryApi {
 
   public async getViewFjolskyldan(
     nationalId: string,
-  ): Promise<GetViewFjolskyldanDto | null> {
+  ): Promise<GetViewFamilyDto | null> {
     return await new Promise((resolve, _reject) => {
       this.client.GetViewFjolskyldan(
         {
@@ -327,7 +330,7 @@ export class NationalRegistryApi {
           error: any,
           {
             GetViewFjolskyldanResult: result,
-          }: { GetViewFjolskyldanResult: GetViewFjolskyldanDto },
+          }: { GetViewFjolskyldanResult: GetViewFamilyDto },
         ) => {
           if (result != null) {
             if (!result.success) {
@@ -348,7 +351,7 @@ export class NationalRegistryApi {
 
   public async getViewKennitalaOgBannmerking(
     nationalId: string,
-  ): Promise<GetViewKennitalaOgBannmerkingDto | null> {
+  ): Promise<GetViewBanmarkingDto | null> {
     return await new Promise((resolve, _reject) => {
       this.client.GetViewKennitalaOgBannmerking(
         {
@@ -364,7 +367,7 @@ export class NationalRegistryApi {
           {
             GetViewKennitalaOgBannmerkingResult: result,
           }: {
-            GetViewKennitalaOgBannmerkingResult: GetViewKennitalaOgBannmerkingDto
+            GetViewKennitalaOgBannmerkingResult: GetViewBanmarkingDto
           },
         ) => {
           if (result != null) {

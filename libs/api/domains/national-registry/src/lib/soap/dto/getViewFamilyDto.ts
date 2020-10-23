@@ -1,4 +1,4 @@
-export interface GetViewThjodskraDto {
+export interface GetViewFamilyDto {
   message: string
   table: Table
   success: boolean
@@ -14,26 +14,32 @@ export interface Diffgram {
 }
 
 export interface DocumentElement {
-  Thjodskra: Thjodskra
+  Fjolskyldan: Fjolskyldan[]
 }
 
-export interface Thjodskra {
-  attributes: ThjodskraAttributes
-  Kennitala: string
-  Fjolsknr: string
+export interface Fjolskyldan {
+  attributes: FjolskyldanAttributes
   Nafn: string
+  Kennitala: string
+  KynKodi: string
   Kyn: string
-  Hju: string
-  Tru: string
-  Sambud: null
-  Rikisfang: string
-  Faedsvfnr: string
-  FaedD: string
+  FjolskNr: string
+  Hjusk: string
+  Hjuskapur: string
   LoghHusk: string
-  MakiKt: string
+  Husheiti: string
+  Husnumer: string
+  Pnr: string
+  Svfnr: string
+  Sveitarfelag: string
+  AdsHusk: null
+  Adsetur: null
+  AdseturPnr: null
+  AdseturSvfnr: null
+  AdseturSveitarfelag: null
 }
 
-export interface ThjodskraAttributes {
+export interface FjolskyldanAttributes {
   'diffgr:id': string
   'msdata:rowOrder': string
   'diffgr:hasChanges': string

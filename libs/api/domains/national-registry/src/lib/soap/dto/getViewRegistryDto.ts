@@ -1,4 +1,4 @@
-export interface GetViewKennitalaOgBannmerkingDto {
+export interface GetViewRegistryDto {
   message: string
   table: Table
   success: boolean
@@ -14,18 +14,26 @@ export interface Diffgram {
 }
 
 export interface DocumentElement {
-  KennitalaOgBannmerking: KennitalaOgBannmerking
+  Thjodskra: Thjodskra
 }
 
-export interface KennitalaOgBannmerking {
-  attributes: KennitalaOgBannmerkingAttributes
+export interface Thjodskra {
+  attributes: ThjodskraAttributes
   Kennitala: string
+  Fjolsknr: string
   Nafn: string
-  Bannmerking: string
-  Brdagur: string
+  Kyn: string
+  Hju: string
+  Tru: string
+  Sambud: null
+  Rikisfang: string
+  Faedsvfnr: string
+  FaedD: string
+  LoghHusk: string
+  MakiKt: string
 }
 
-export interface KennitalaOgBannmerkingAttributes {
+export interface ThjodskraAttributes {
   'diffgr:id': string
   'msdata:rowOrder': string
   'diffgr:hasChanges': string
@@ -90,6 +98,10 @@ export interface ElementElement {
 export interface TentacledAttributes {
   name: string
   'msprop:ColumnId': string
-  type: string
+  type: Type
   minOccurs: string
+}
+
+export enum Type {
+  XsString = 'xs:string',
 }

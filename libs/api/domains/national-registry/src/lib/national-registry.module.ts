@@ -22,12 +22,9 @@ export class NationalRegistryModule {
           provide: NationalRegistryApi,
           useFactory: async () =>
             new NationalRegistryApi(
-              await SoapClient.generateClient(
-                config.baseSoapUrl ?? 'https://localhost:8443',
-                config.host ?? 'soffiaprufa.skra.is',
-              ),
-              config.password ?? '',
-              config.user ?? '',
+              await SoapClient.generateClient(config.baseSoapUrl, config.host),
+              config.password,
+              config.user,
             ),
         },
       ],

@@ -1,4 +1,4 @@
-export interface GetViewFjolskyldanDto {
+export interface GetViewHomeDto {
   message: string
   table: Table
   success: boolean
@@ -14,32 +14,25 @@ export interface Diffgram {
 }
 
 export interface DocumentElement {
-  Fjolskyldan: Fjolskyldan[]
+  Husaskra: Husaskra
 }
 
-export interface Fjolskyldan {
-  attributes: FjolskyldanAttributes
+export interface Husaskra {
+  attributes: HusaskraAttributes
+  husinr: string
+  HusKodi: string
+  Kodi: null
+  SvfNr: string
   Nafn: string
-  Kennitala: string
-  KynKodi: string
-  Kyn: string
-  FjolskNr: string
-  Hjusk: string
-  Hjuskapur: string
-  LoghHusk: string
-  Husheiti: string
-  Husnumer: string
-  Pnr: string
-  Svfnr: string
-  Sveitarfelag: string
-  AdsHusk: null
-  Adsetur: null
-  AdseturPnr: null
-  AdseturSvfnr: null
-  AdseturSveitarfelag: null
+  GataNr: string
+  HusNr: string
+  PostNr: string
+  HusHeiti: string
+  HusHThgf: string
+  fjLogheimili: string
 }
 
-export interface FjolskyldanAttributes {
+export interface HusaskraAttributes {
   'diffgr:id': string
   'msdata:rowOrder': string
   'diffgr:hasChanges': string

@@ -1,4 +1,4 @@
-export interface GetViewHusaskraDto {
+export interface GetViewReligionDto {
   message: string
   table: Table
   success: boolean
@@ -14,25 +14,18 @@ export interface Diffgram {
 }
 
 export interface DocumentElement {
-  Husaskra: Husaskra
+  KennitalaOgTrufelag: KennitalaOgTrufelag
 }
 
-export interface Husaskra {
-  attributes: HusaskraAttributes
-  husinr: string
-  HusKodi: string
-  Kodi: null
-  SvfNr: string
+export interface KennitalaOgTrufelag {
+  attributes: KennitalaOgTrufelagAttributes
+  Kennitala: string
   Nafn: string
-  GataNr: string
-  HusNr: string
-  PostNr: string
-  HusHeiti: string
-  HusHThgf: string
-  fjLogheimili: string
+  Kodi: string
+  Trufelag: string
 }
 
-export interface HusaskraAttributes {
+export interface KennitalaOgTrufelagAttributes {
   'diffgr:id': string
   'msdata:rowOrder': string
   'diffgr:hasChanges': string
@@ -97,10 +90,6 @@ export interface ElementElement {
 export interface TentacledAttributes {
   name: string
   'msprop:ColumnId': string
-  type: Type
+  type: string
   minOccurs: string
-}
-
-export enum Type {
-  XsString = 'xs:string',
 }

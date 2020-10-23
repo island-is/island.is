@@ -1,4 +1,4 @@
-export interface GetViewKennitalaOgTrufelag {
+export interface GetViewBanmarkingDto {
   message: string
   table: Table
   success: boolean
@@ -14,18 +14,18 @@ export interface Diffgram {
 }
 
 export interface DocumentElement {
-  KennitalaOgTrufelag: KennitalaOgTrufelag
+  KennitalaOgBannmerking: KennitalaOgBannmerking
 }
 
-export interface KennitalaOgTrufelag {
-  attributes: KennitalaOgTrufelagAttributes
+export interface KennitalaOgBannmerking {
+  attributes: KennitalaOgBannmerkingAttributes
   Kennitala: string
   Nafn: string
-  Kodi: string
-  Trufelag: string
+  Bannmerking: string
+  Brdagur: string
 }
 
-export interface KennitalaOgTrufelagAttributes {
+export interface KennitalaOgBannmerkingAttributes {
   'diffgr:id': string
   'msdata:rowOrder': string
   'diffgr:hasChanges': string

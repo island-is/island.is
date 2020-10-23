@@ -1,4 +1,4 @@
-export interface GetViewSveitarfelagDto {
+export interface GetViewMunicipalityDto {
   message: string
   table: Table
   success: boolean
