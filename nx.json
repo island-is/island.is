@@ -28,8 +28,7 @@
   },
   "projects": {
     "adgerdir": {
-      "tags": [],
-      "implicitDependencies": ["api"]
+      "tags": []
     },
     "adgerdir-e2e": {
       "tags": [],
@@ -61,8 +60,7 @@
       "tags": []
     },
     "api-domains-application": {
-      "tags": [],
-      "implicitDependencies": ["application-system-api"]
+      "tags": []
     },
     "api-domains-cms": {
       "tags": []
@@ -80,8 +78,7 @@
       "tags": []
     },
     "api-domains-user-profile": {
-      "tags": [],
-      "implicitDependencies": ["services-user-profile"]
+      "tags": []
     },
     "api-mocks": {
       "tags": []
@@ -148,8 +145,7 @@
       "tags": []
     },
     "gjafakort-api": {
-      "tags": [],
-      "implicitDependencies": ["api"]
+      "tags": []
     },
     "gjafakort-application": {
       "tags": []
@@ -164,8 +160,7 @@
       "tags": []
     },
     "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
+      "tags": []
     },
     "gjafakort-web-e2e": {
       "tags": [],
@@ -312,8 +307,7 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "web": {
-      "tags": [],
-      "implicitDependencies": ["api"]
+      "tags": []
     },
     "web-e2e": {
       "tags": [],

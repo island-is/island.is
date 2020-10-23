@@ -62,7 +62,7 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/adgerdir/codegen.yml"
@@ -155,14 +155,14 @@
             "passWithNoTests": true
           }
         },
-        "build-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/air-discount-scheme/api.graphql",
             "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts"
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
@@ -245,7 +245,7 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
-        "build-open-api": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/air-discount-scheme/backend/src/openapi.yaml",
@@ -491,14 +491,14 @@
             "command": "./scripts/secrets.sh api --reset"
           }
         },
-        "build-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/api/src/api.graphql",
             "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": true,
@@ -577,7 +577,7 @@
             "passWithNoTests": true
           }
         },
-        "openapi-generator": {
+        "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
@@ -669,7 +669,7 @@
             "passWithNoTests": true
           }
         },
-        "openapi-generator": {
+        "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/documents/gen/fetch",
@@ -763,7 +763,7 @@
             "passWithNoTests": true
           }
         },
-        "openapi-generator": {
+        "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/user-profile/gen/fetch",
@@ -796,7 +796,7 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
@@ -973,7 +973,7 @@
             "cwd": "apps/application-system/api"
           }
         },
-        "build-open-api": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/application-system/api/src/openapi.yaml",
@@ -1545,7 +1545,7 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
@@ -2166,7 +2166,7 @@
             "cwd": "apps/judicial-system/api"
           }
         },
-        "build-open-api": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/judicial-system/api/src/openapi.yaml",
@@ -2560,7 +2560,7 @@
             "cwd": "apps/reference-backend"
           }
         },
-        "build-open-api": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/reference-backend/src/openapi.yaml",
@@ -3248,7 +3248,7 @@
             "cwd": "apps/services/auth-api"
           }
         },
-        "build-open-api": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/auth-api/src/openapi.yaml",
@@ -3414,7 +3414,7 @@
             "cwd": "apps/services/user-profile"
           }
         },
-        "build-open-api": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/user-profile/src/openapi.yaml",
@@ -3659,7 +3659,7 @@
             "passWithNoTests": true
           }
         },
-        "build-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/skilavottord/ws/src/app/api.graphql",
@@ -3758,7 +3758,7 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/web/codegen.yml"

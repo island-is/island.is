@@ -32,7 +32,7 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
-    "schemas": "node ./scripts/generate-schemas.js",
+    "schemas": "node ./scripts/schemas.js",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "dependencies": {
