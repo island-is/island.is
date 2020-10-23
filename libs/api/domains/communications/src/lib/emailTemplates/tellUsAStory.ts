@@ -1,4 +1,4 @@
-import dedent from 'dedent'
+import { dedent } from 'ts-dedent'
 import { SendMailOptions } from 'nodemailer'
 import { TellUsAStoryInput } from '../dto/tellUsAStory.input'
 
@@ -7,10 +7,14 @@ export const getTemplate = (input: TellUsAStoryInput): SendMailOptions => ({
     name: 'Island.is communications',
     address: 'island@island.is',
   },
+  replyTo: {
+    name: input.name,
+    address: input.email,
+  },
   to: [
     {
       name: 'Island.is þjónustuborð',
-      address: 'island@island.is',
+      address: 'sogur@island.is',
     },
   ],
   subject: `Tell us a story: ${input.name}`,
