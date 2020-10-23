@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import {
-  ReviewField,
+  SubmitField,
   FieldBaseProps,
   formatText,
 } from '@island.is/application/core'
@@ -9,10 +9,11 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
-  field: ReviewField
+  field: SubmitField
 }
-const ReviewFormField: FC<Props> = ({ application, field, error }) => {
-  const { id, name, actions } = field
+
+const SubmitFormField: FC<Props> = ({ application, field, error }) => {
+  const { id, name, actions, placement } = field
   const { formatMessage } = useLocale()
   const actionsAsOptions = useMemo(() => {
     return actions.map((a) => {
@@ -21,8 +22,10 @@ const ReviewFormField: FC<Props> = ({ application, field, error }) => {
         value: a.event as string,
       }
     })
-  }, [actions])
-
+  }, [actions, formatMessage])
+  if (placement === 'footer') {
+    return null
+  }
   return (
     <Box
       background="blue100"
@@ -39,4 +42,4 @@ const ReviewFormField: FC<Props> = ({ application, field, error }) => {
   )
 }
 
-export default ReviewFormField
+export default SubmitFormField

@@ -246,7 +246,12 @@ export const StepTwo: React.FC = () => {
                   updateState(
                     workingCase,
                     'requestedCustodyEndDate',
-                    formatISO(date, { representation: 'date' }),
+                    formatISO(date, {
+                      representation:
+                        workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                          ? 'complete'
+                          : 'date',
+                    }),
                     setWorkingCase,
                   )
                 }}
@@ -287,13 +292,27 @@ export const StepTwo: React.FC = () => {
                     evt.target.value,
                     'time-format',
                   )
+                  const requestedCustodyEndDateMinutes = parseTime(
+                    workingCase.requestedCustodyEndDate,
+                    evt.target.value,
+                  )
+
+                  window.localStorage.setItem(
+                    'workingCase',
+                    JSON.stringify({
+                      ...workingCase,
+                      requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                      custodyEndDate: requestedCustodyEndDateMinutes,
+                    }),
+                  )
+
+                  setWorkingCase({
+                    ...workingCase,
+                    requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                    custodyEndDate: requestedCustodyEndDateMinutes,
+                  })
 
                   if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                    const requestedCustodyEndDateMinutes = parseTime(
-                      workingCase.requestedCustodyEndDate,
-                      evt.target.value,
-                    )
-
                     await api.saveCase(
                       workingCase.id,
                       JSON.parse(`{
@@ -301,21 +320,6 @@ export const StepTwo: React.FC = () => {
                             "custodyEndDate": "${requestedCustodyEndDateMinutes}"
                           }`),
                     )
-
-                    window.localStorage.setItem(
-                      'workingCase',
-                      JSON.stringify({
-                        ...workingCase,
-                        requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                        custodyEndDate: requestedCustodyEndDateMinutes,
-                      }),
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                      custodyEndDate: requestedCustodyEndDateMinutes,
-                    })
                   } else {
                     setRequestedCustodyEndTimeErrorMessage(
                       validateTimeEmpty.errorMessage ||
