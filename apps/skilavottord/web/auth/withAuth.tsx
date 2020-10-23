@@ -1,15 +1,16 @@
-import React, { Component, useContext } from 'react'
+import React, { Component } from 'react'
 import Router from 'next/router'
 import { NextComponentType } from 'next'
 
 import { AUTH_URL, isAuthenticated } from './utils'
-import { UserContext } from '../context'
 
-const withAuth = (WrappedComponent: NextComponentType) =>
+type AuthType = 'citizen' | 'recyclingPartner'
+
+const withAuth = (WrappedComponent: NextComponentType, authType: AuthType) =>
   class extends Component {
     static async getInitialProps(ctx) {
       if (!isAuthenticated(ctx)) {
-        const authUrl = `${AUTH_URL}/login?returnUrl=${ctx.asPath}`
+        const authUrl = `${AUTH_URL[authType]}/login?returnUrl=${ctx.asPath}`
         const { res } = ctx
         if (res) {
           res.writeHead(302, {
