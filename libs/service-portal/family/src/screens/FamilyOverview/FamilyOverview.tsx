@@ -66,9 +66,4 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     </>
   )
 }
-/*
-   {natRegFamilyInfo?.map((document) => (
-              <DocumentCard key={document.id} document={document} />
-            ))}
-*/
 export default FamilyOverview
