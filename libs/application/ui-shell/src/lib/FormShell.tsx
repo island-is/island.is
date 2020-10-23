@@ -1,6 +1,11 @@
 import React, { FC, useReducer } from 'react'
 import cn from 'classnames'
-import { Application, Form, Schema } from '@island.is/application/core'
+import {
+  Application,
+  Form,
+  FormModes,
+  Schema,
+} from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -8,7 +13,7 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 
-import Sidebar from '../components/Sidebar'
+import { Sidebar } from '../components/Sidebar'
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
 import {
@@ -16,7 +21,6 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { FormModes } from '../types'
 import * as styles from './FormShell.treat'
 
 export const FormShell: FC<{
@@ -53,6 +57,8 @@ export const FormShell: FC<{
   const { mode = FormModes.APPLYING } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
 
+  const currentScreen = screens[activeScreen]
+
   return (
     <Box
       className={cn(styles.root, {
@@ -71,7 +77,10 @@ export const FormShell: FC<{
       >
         <GridContainer>
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            <GridColumn
+              span={['12/12', '12/12', '9/12', '9/12']}
+              className={styles.shellContainer}
+            >
               <Box
                 paddingTop={[3, 6, 8]}
                 height="full"
@@ -97,9 +106,9 @@ export const FormShell: FC<{
                     })
                   }
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                  shouldSubmit={activeScreen === screens.length - 2}
-                  isLastScreen={activeScreen === screens.length - 1} // TODO do this better
-                  screen={screens[activeScreen]}
+                  activeScreenIndex={activeScreen}
+                  numberOfScreens={screens.length}
+                  screen={currentScreen}
                   mode={mode}
                 />
               </Box>

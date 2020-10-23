@@ -12,7 +12,7 @@ import {
   SectionChildren,
   SubSection,
   DataProviderItem,
-  FormMode,
+  FormModes,
   FormText,
 } from '../types/Form'
 import { DataProviderTypes } from '../types/DataProvider'
@@ -21,7 +21,7 @@ import { MessageDescriptor } from 'react-intl'
 export function buildForm(data: {
   id: string
   name: MessageDescriptor | string
-  mode?: FormMode
+  mode?: FormModes
   children: FormChildren[]
   icon?: string
 }): Form {

@@ -4,9 +4,6 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
-env:
-  NODE_OPTIONS: --max-old-space-size=4096
-
 jobs:
   prepare:
     runs-on: ubuntu-20.04
@@ -98,9 +95,7 @@ jobs:
       - name: Prepare build targets
         id: build_projects
         env:
-          # Temporary - There are some builds that are taking way too much time.
-          # By running only 1 chunk at a time we might be able to figure out which one's failing
-          CHUNK_SIZE: 1
+          CHUNK_SIZE: 4
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
           if [[ $CHUNKS != "[]" ]]; then
@@ -164,6 +159,7 @@ jobs:
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 4
     strategy:
       fail-fast: false
@@ -196,7 +192,6 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
       MAX_JOBS: 2
     strategy:
       fail-fast: false

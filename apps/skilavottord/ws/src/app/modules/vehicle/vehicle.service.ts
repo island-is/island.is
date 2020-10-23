@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { VehicleModel } from '../models'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { VehicleModel } from './model/vehicle.model'
 
 @Injectable()
 export class VehicleService {
@@ -13,7 +13,7 @@ export class VehicleService {
   ) {}
 
   async findAll(): Promise<VehicleModel[]> {
-    //this.logger.debug(`Finding gdpr for nationalId - "${nationalId}"`)
+    this.logger.debug('Getting all vehicles...')
     return await this.vehicleModel.findAll()
   }
 

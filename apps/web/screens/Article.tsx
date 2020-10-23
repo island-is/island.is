@@ -3,7 +3,10 @@ import { useFirstMountState } from 'react-use'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
-import { Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  ProcessEntryLinkButton,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import {
   Box,
   Text,
@@ -140,7 +143,6 @@ const RelatedArticles: FC<{
 
 const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   content,
-  defaultText,
 }) => {
   const processEntries = content.filter((slice): slice is ProcessEntry => {
     return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
@@ -149,13 +151,22 @@ const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   // we'll only show the button if there is exactly one process entry on the page
   if (processEntries.length !== 1) return null
 
-  const { buttonText, processLink } = processEntries[0]
+  const {
+    processTitle,
+    buttonText,
+    processLink,
+    openLinkInModal,
+  } = processEntries[0]
 
   return (
     <SidebarBox>
-      <Button href={processLink} width="fluid">
-        {buttonText || defaultText}
-      </Button>
+      <ProcessEntryLinkButton
+        processTitle={processTitle}
+        buttonText={buttonText}
+        processLink={processLink}
+        openLinkInModal={openLinkInModal}
+        fluid
+      />
     </SidebarBox>
   )
 }
@@ -456,20 +467,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   marginY={3}
                   borderRadius="large"
                 >
-                  <Link
-                    passHref
-                    href={processEntry.processLink}
-                    underline="normal"
-                  >
-                    <Text variant="h4" as="span" color="blue400">
-                      <span>
-                        {processEntry.buttonText || n('processLinkButtonText')}
-                      </span>
-                      <Box component="span" marginLeft={2}>
-                        <Icon type="external" width="15" />
-                      </Box>
-                    </Text>
-                  </Link>
+                  <ProcessEntryLinkButton variant="text" {...processEntry} />
                 </Box>
               </Hidden>
             )}

@@ -1,41 +1,43 @@
 import React from 'react'
-import { Typography, Box, Stack, Icon, Hidden } from '@island.is/island-ui/core'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import UserInfoLine from '../../components/UserInfoLine/UserInfoLine'
-import * as styles from './UserInfo.treat'
+import {
+  Typography,
+  Box,
+  Stack,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
+import {
+  ServicePortalModuleComponent,
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
-import { useUserProfile } from '@island.is/service-portal/graphql'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
 
   return (
     <>
       <Box marginBottom={6}>
-        <Typography variant="h1" as="h1">
-          {formatMessage({
-            id: 'service.portal:my-info',
-            defaultMessage: 'Mínar upplýsingar',
-          })}
-        </Typography>
-      </Box>
-      <Box display="flex" alignItems="center" marginBottom={4}>
-        <Hidden below="sm">
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            marginRight={5}
-            borderRadius="circle"
-            background="purple200"
-            className={styles.avatar}
-          >
-            <Icon type="outline" icon="person" color="purple400" size="large" />
-          </Box>
-        </Hidden>
-        <Typography variant="h2">{userInfo.profile.name}</Typography>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+            <Stack space={2}>
+              <Typography variant="h1" as="h1">
+                {formatMessage({
+                  id: 'service.portal:user-info',
+                  defaultMessage: 'Mínar upplýsingar',
+                })}
+              </Typography>
+              <Typography variant="p" as="p">
+                {formatMessage({
+                  id: 'sp.family:user-info-description',
+                  defaultMessage:
+                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
+                })}
+              </Typography>
+            </Stack>
+          </GridColumn>
+        </GridRow>
       </Box>
       <Stack space={1}>
         <UserInfoLine
@@ -44,7 +46,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Birtingarnafn',
           })}
           content={userInfo.profile.name}
-          editExternalLink="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2"
+          editLink={{
+            external: true,
+            url:
+              'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
+          }}
         />
         <UserInfoLine
           label={defineMessage({
@@ -61,27 +67,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
-        />
-        <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:email',
-            defaultMessage: 'Netfang',
-          })}
-          content={userProfile?.email || ''}
-        />
-        <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:tel',
-            defaultMessage: 'Símanúmer',
-          })}
-          content={userProfile?.mobilePhoneNumber || ''}
-        />
-        <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:language',
-            defaultMessage: 'Tungumál',
-          })}
-          content={userProfile?.locale || ''}
         />
       </Stack>
     </>

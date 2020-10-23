@@ -1,4 +1,7 @@
 import React from 'react'
+import { NextPageContext } from 'next'
+import * as Sentry from '@sentry/node'
+
 import ErrorScreen from '../screens/Error/Error'
 import { getLocaleFromPath } from '../i18n/withLocale'
 import Layout, { LayoutProps } from '../layouts/main'
@@ -33,17 +36,17 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   render() {
-    if (this.props.layoutProps && !this.state.renderError) {
+    const { layoutProps, locale, statusCode } = this.props
+    const { renderError } = this.state
+
+    if (layoutProps && !renderError) {
       // getDerivedStateFromError catches client-side render errors, but we need
       // try-catch for server-side rendering
       try {
         return (
-          <I18n
-            locale={this.props.locale}
-            translations={this.props.layoutProps.namespace}
-          >
-            <Layout {...this.props.layoutProps}>
-              <ErrorScreen statusCode={this.props.statusCode} />
+          <I18n locale={locale} translations={layoutProps.namespace}>
+            <Layout {...layoutProps}>
+              <ErrorScreen statusCode={statusCode} />
             </Layout>
           </I18n>
         )
@@ -52,7 +55,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     }
 
     // fallback to simpler version if we're unable to use the Layout for any reason
-    return <ErrorScreen statusCode={this.props.statusCode} />
+    return <ErrorScreen statusCode={statusCode} />
   }
 
   static async getInitialProps(props /*: NextPageContext*/) {
@@ -93,11 +96,19 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       }
     }
 
-    // TODO: Next-js takes care of calling this function for any error that
-    // occurs anywhere in the application, so this would probably be an ideal
-    // place to add some error logging
+    if (err) {
+      Sentry.withScope((scope) => {
+        Object.keys(err).forEach((key) => {
+          scope.setExtra(key, err[key])
+        })
 
-    // Set the actual http resopnse code if rendering server-side
+        Sentry.captureException(err)
+      })
+
+      await Sentry.flush(2000)
+    }
+
+    // Set the actual http response code if rendering server-side
     if (res) {
       res.statusCode = statusCode
     }
@@ -109,6 +120,12 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       layoutProps = await Layout.getInitialProps({ ...props, locale })
       // eslint-disable-next-line no-empty
     } catch {}
+
+    Sentry.captureException(
+      new Error(`_error.tsx getInitialProps missing data at path: ${asPath}`),
+    )
+
+    await Sentry.flush(2000)
 
     return { statusCode, locale, layoutProps }
   }

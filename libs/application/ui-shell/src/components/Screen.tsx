@@ -1,63 +1,57 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
   ExternalData,
   FormItemTypes,
-  FormMode,
+  FormModes,
   FormValue,
   Schema,
   formatText,
 } from '@island.is/application/core'
-import {
-  Box,
-  ButtonDeprecated as Button,
-  GridColumn,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, Text } from '@island.is/island-ui/core'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { FormModes, FormScreen, ResolverContext } from '../types'
+import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
-import { findReviewField, verifyExternalData } from '../utils'
-
-import * as styles from './Screen.treat'
+import { findSubmitField, verifyExternalData } from '../utils'
 import { useLocale } from '@island.is/localization'
+import ScreenFooter from './ScreenFooter'
 
 type ScreenProps = {
+  activeScreenIndex: number
+  addExternalData(data: ExternalData): void
   application: Application
   answerAndGoToNextScreen(answers: FormValue): void
-  addExternalData(data: ExternalData): void
   answerQuestions(answers: FormValue): void
   dataSchema: Schema
-  shouldSubmit?: boolean
-  isLastScreen?: boolean
   expandRepeater(): void
+  mode?: FormModes
+  numberOfScreens: number
   prevScreen(): void
   screen: FormScreen
-  mode?: FormMode
 }
 
 const Screen: FC<ScreenProps> = ({
-  application,
+  activeScreenIndex,
   addExternalData,
   answerQuestions,
+  application,
   dataSchema,
   expandRepeater,
   answerAndGoToNextScreen,
-  prevScreen,
-  shouldSubmit = false,
-  isLastScreen = false,
-  screen,
   mode,
+  numberOfScreens,
+  prevScreen,
+  screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { formatMessage } = useLocale()
@@ -77,6 +71,8 @@ const Screen: FC<ScreenProps> = ({
   )
   const { handleSubmit, errors, reset } = hookFormData
 
+  const submitField = useMemo(() => findSubmitField(screen), [screen])
+
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
@@ -84,12 +80,11 @@ const Screen: FC<ScreenProps> = ({
   }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
-    if (shouldSubmit) {
+    if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-      const reviewField = findReviewField(screen)
 
-      const event = reviewField
-        ? finalAnswers[reviewField.id] ?? 'SUBMIT'
+      const event = submitField
+        ? finalAnswers[submitField.id] ?? 'SUBMIT'
         : 'SUBMIT'
       await submitApplication({
         variables: {
@@ -176,90 +171,16 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
-        {!isLastScreen &&
-          (mode === FormModes.REVIEW || mode === FormModes.APPLYING) && (
-            <Box marginTop={3} className={styles.buttonContainer}>
-              <GridColumn
-                span={['12/12', '12/12', '7/9', '7/9']}
-                offset={['0', '0', '1/9']}
-              >
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="spaceBetween"
-                  paddingTop={[1, 4]}
-                  paddingBottom={[1, 5]}
-                >
-                  <Box
-                    display={['none', 'inlineFlex']}
-                    padding={2}
-                    paddingLeft="none"
-                  >
-                    <Button variant="ghost" onClick={goBack}>
-                      {formatMessage({
-                        id: 'application.system:button.back',
-                        defaultMessage: 'Til baka',
-                        description: 'Back button text',
-                      })}
-                    </Button>
-                  </Box>
-                  <Box
-                    display={['inlineFlex', 'none']}
-                    padding={2}
-                    paddingLeft="none"
-                  >
-                    <Button
-                      variant="ghost"
-                      rounded={true}
-                      icon="arrowLeft"
-                      onClick={goBack}
-                    />
-                  </Box>
-                  <Box display="inlineFlex" padding={2} paddingRight="none">
-                    {shouldSubmit ? (
-                      <Button
-                        loading={loading}
-                        disabled={!canProceed()}
-                        htmlType="submit"
-                      >
-                        {formatMessage({
-                          id: 'application.system:button.submit',
-                          defaultMessage: 'Submit',
-                          description: 'Submit button text',
-                        })}
-                      </Button>
-                    ) : (
-                      <>
-                        <Box display={['none', 'inlineFlex']}>
-                          <Button
-                            loading={loading}
-                            disabled={!canProceed()}
-                            icon="arrowRight"
-                            htmlType="submit"
-                          >
-                            {formatMessage({
-                              id: 'application.system:button.next',
-                              defaultMessage: 'Halda áfram',
-                              description: 'Next button text',
-                            })}
-                          </Button>
-                        </Box>
-                        <Box display={['inlineFlex', 'none']}>
-                          <Button
-                            loading={loading}
-                            disabled={!canProceed()}
-                            icon="arrowRight"
-                            htmlType="submit"
-                            rounded
-                          />
-                        </Box>
-                      </>
-                    )}
-                  </Box>
-                </Box>
-              </GridColumn>
-            </Box>
-          )}
+        <ScreenFooter
+          application={application}
+          activeScreenIndex={activeScreenIndex}
+          numberOfScreens={numberOfScreens}
+          mode={mode}
+          goBack={goBack}
+          submitField={submitField}
+          loading={loading}
+          canProceed={canProceed()}
+        />
       </Box>
     </FormProvider>
   )

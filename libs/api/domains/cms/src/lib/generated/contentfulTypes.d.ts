@@ -137,13 +137,13 @@ export interface IArticleFields {
   /** Contains application form? */
   containsApplicationForm?: boolean | undefined
 
-  /** Category */
+  /** Category (Main) */
   category?: IArticleCategory | undefined
 
-  /** Group */
+  /** Group (Main) */
   group?: IArticleGroup | undefined
 
-  /** Subgroup */
+  /** Subgroup (Main) */
   subgroup?: IArticleSubgroup | undefined
 
   /** Other categories */
@@ -494,7 +494,7 @@ export interface IFaqList extends Entry<IFaqListFields> {
 
 export interface IFeaturedFields {
   /** Title */
-  title: string
+  title?: string | undefined
 
   /** Special attention */
   attention?: boolean | undefined
@@ -626,6 +626,30 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
     contentType: {
       sys: {
         id: 'genericPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericTagFields {
+  /** Title */
+  title: string
+}
+
+/** A generic uniquely named tag that can be used for tag miscellaneous things. */
+
+export interface IGenericTag extends Entry<IGenericTagFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericTag'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1098,8 +1122,8 @@ export interface INewsFields {
   /** Read More Text */
   readMoreText?: string | undefined
 
-  /** Tags */
-  items?: (IOrganization | IOrganizationTag)[] | undefined
+  /** Generic tags */
+  genericTags?: IGenericTag[] | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -1322,6 +1346,123 @@ export interface IPageHeader extends Entry<IPageHeaderFields> {
   }
 }
 
+export interface IPageLevel1Fields {
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: string | undefined
+
+  /** subPages */
+  subPages?: IPageLevel2[] | undefined
+}
+
+/** A first level page. */
+
+export interface IPageLevel1 extends Entry<IPageLevel1Fields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'pageLevel1'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IPageLevel2Fields {
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: string | undefined
+
+  /** subPages */
+  subPages?: IPageLevel3[] | undefined
+}
+
+/** A second level page. */
+
+export interface IPageLevel2 extends Entry<IPageLevel2Fields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'pageLevel2'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IPageLevel3Fields {
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: string | undefined
+}
+
+/** A third level page. */
+
+export interface IPageLevel3 extends Entry<IPageLevel3Fields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'pageLevel3'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IPageRootFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: string | undefined
+
+  /** subPages */
+  subPages?: IPageLevel1[] | undefined
+}
+
+/** A root level page. */
+
+export interface IPageRoot extends Entry<IPageRootFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'pageRoot'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
@@ -1336,6 +1477,9 @@ export interface IProcessEntryFields {
 
   /** Process link */
   processLink: string
+
+  /** Open link in modal */
+  openLinkInModal?: boolean | undefined
 
   /** Button text */
   buttonText: string
@@ -2183,6 +2327,7 @@ export type CONTENT_TYPE =
   | 'frontpageSlider'
   | 'frontpageSliderList'
   | 'genericPage'
+  | 'genericTag'
   | 'homepage'
   | 'iconBullet'
   | 'landingPage'
@@ -2204,6 +2349,10 @@ export type CONTENT_TYPE =
   | 'organizationTag'
   | 'page'
   | 'pageHeader'
+  | 'pageLevel1'
+  | 'pageLevel2'
+  | 'pageLevel3'
+  | 'pageRoot'
   | 'processEntry'
   | 'questionAndAnswer'
   | 'sectionHeading'

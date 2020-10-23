@@ -7,8 +7,10 @@ export * from './Handover'
 export * from './Completed'
 
 /* Company screens */
-export * from './CompanyOverview'
+export * from './CompanyInfo'
+export * from './CompanyInfoForm'
 export {
+  Overview as DeregisterOverview,
   Select as DeregisterSelect,
   Confirm as DeregisterConfirm,
 } from './DeregisterVehicle'

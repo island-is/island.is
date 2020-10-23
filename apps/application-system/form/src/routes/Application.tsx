@@ -7,7 +7,12 @@ import useAuth from '../hooks/useAuth'
 export const Application = () => {
   const { id } = useParams()
   const { userInfo } = useAuth()
-  useNamespaces(['dl.application', 'pl.application', 'application.system'])
+  useNamespaces([
+    'dl.application',
+    'pl.application',
+    'application.system',
+    'example.application',
+  ])
 
   const nationalRegistryId = userInfo?.profile?.natreg
 

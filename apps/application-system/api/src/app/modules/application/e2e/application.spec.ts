@@ -19,7 +19,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ParentalLeave',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           usage: 3,
         },
@@ -39,9 +39,10 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
         },
       })
       .expect(201)
@@ -57,14 +58,90 @@ describe('Application system API', () => {
       .put(`/applications/${response.body.id}`)
       .send({
         answers: {
-          careerHistoryCompanies: ['government', 'aranja'],
+          dreamJob: 'firefighter',
         },
       })
       .expect(400)
 
     expect(failedResponse.body.message).toBe(
-      'Current user is not permitted to update answers in this state: inReview',
+      'Current user is not permitted to update the following answers: dreamJob',
     )
+  })
+
+  it('should be able to PUT answers when updating the state of the application', async () => {
+    const server = request(app.getHttpServer())
+    const response = await server
+      .post('/applications')
+      .send({
+        applicant: '123456-4321',
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers: {
+          careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(201)
+
+    const newStateResponse = await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'SUBMIT',
+        answers: {
+          careerHistoryCompanies: ['advania', 'aranja'],
+        },
+      })
+      .expect(200)
+
+    expect(newStateResponse.body.state).toBe('inReview')
+    expect(newStateResponse.body.answers).toEqual({
+      careerHistoryCompanies: ['advania', 'aranja'],
+      dreamJob: 'pilot',
+    })
+  })
+
+  it('should not update non-writable answers when PUT-ing answers while updating the state', async () => {
+    const server = request(app.getHttpServer())
+    const response = await server
+      .post('/applications')
+      .send({
+        applicant: '123456-4321',
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers: {
+          careerHistoryCompanies: ['government'],
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'SUBMIT',
+      })
+      .expect(200)
+
+    const finalStateResponse = await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'APPROVE',
+        answers: {
+          careerHistoryCompanies: ['government', 'aranja', 'advania'],
+          dreamJob: 'firefighter',
+        },
+      })
+      .expect(200)
+
+    expect(finalStateResponse.body.state).toBe('approved')
+    expect(finalStateResponse.body.answers).toEqual({
+      careerHistoryCompanies: ['government', 'aranja', 'advania'],
+      dreamJob: 'pilot', // this answer is non-writable
+    })
   })
 
   it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
@@ -76,7 +153,7 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           careerHistoryCompanies: ['government'],
         },
@@ -110,7 +187,7 @@ describe('Application system API', () => {
       .send({
         applicant: '123456-4321',
         attachments: {},
-        assignee: '123456-1234',
+        assignees: ['123456-1234'],
         answers: {
           usage: 4,
         },
@@ -131,7 +208,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -162,7 +239,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -189,7 +266,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -214,7 +291,7 @@ describe('Application system API', () => {
       state: 'draft',
       attachments: {},
       typeId: 'ParentalLeave',
-      assignee: '123456-1234',
+      assignees: ['123456-1234'],
       answers: {
         usage: 4,
       },
@@ -227,7 +304,7 @@ describe('Application system API', () => {
     // Assert
     expect(getResponse.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ assignee: '123456-1234' }),
+        expect.objectContaining({ assignees: ['123456-1234'] }),
       ]),
     )
   })
