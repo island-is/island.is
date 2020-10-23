@@ -29,17 +29,9 @@ import { AuthService } from './auth.service'
 
 const {
   samlEntryPoint,
-<<<<<<< HEAD
   audience: audienceUrl,
   jwtSecret,
 } = environment.auth
-=======
-  samlEntryPoint2,
-  audience: audienceUrl,
-  jwtSecret,
-} = environment.auth
-//const { samlEntryPoint2, audience: audienceUrl2, jwtSecret2 } = environment.auth
->>>>>>> master
 
 const JWT_EXPIRES_IN_SECONDS = 3600
 const ONE_HOUR = 60 * 60 * 1000
