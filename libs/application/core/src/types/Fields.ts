@@ -35,7 +35,7 @@ export enum FieldTypes {
   SELECT = 'SELECT',
   TEXT = 'TEXT',
   FILEUPLOAD = 'FILEUPLOAD',
-  REVIEW = 'REVIEW',
+  SUBMIT = 'SUBMIT',
   DIVIDER = 'DIVIDER',
 }
 
@@ -48,7 +48,7 @@ export enum FieldComponents {
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
-  REVIEW = 'ReviewFormField',
+  SUBMIT = 'SubmitFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -107,10 +107,11 @@ export interface FileUploadField extends BaseField {
   readonly uploadAccept?: string
 }
 
-export interface ReviewField extends BaseField {
-  readonly type: FieldTypes.REVIEW
-  component: FieldComponents.REVIEW
+export interface SubmitField extends BaseField {
+  readonly type: FieldTypes.SUBMIT
+  component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
+  readonly placement: 'footer' | 'screen'
 }
 
 export interface DividerField extends BaseField {
@@ -134,4 +135,4 @@ export type Field =
   | TextField
   | FileUploadField
   | DividerField
-  | ReviewField
+  | SubmitField
