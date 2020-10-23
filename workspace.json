@@ -52,10 +52,7 @@
               "apps/adgerdir/tsconfig.json",
               "apps/adgerdir/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/adgerdir/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/adgerdir/**/*"]
           }
         },
         "test": {
@@ -96,13 +93,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/adgerdir-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/adgerdir-e2e/**/*"
-            ]
+            "tsConfig": ["apps/adgerdir-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/adgerdir-e2e/**/*"]
           }
         }
       }
@@ -437,9 +429,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/air-discount-scheme/web-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/air-discount-scheme/web-e2e/**/*"
@@ -485,10 +475,7 @@
               "apps/api/tsconfig.app.json",
               "apps/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/api/**/*"]
           }
         },
         "test": {
@@ -551,10 +538,7 @@
               "libs/api/content-search/tsconfig.lib.json",
               "libs/api/content-search/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/content-search/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/content-search/**/*"]
           }
         },
         "test": {
@@ -616,10 +600,7 @@
               "libs/api/domains/cms/tsconfig.lib.json",
               "libs/api/domains/cms/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/cms/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/domains/cms/**/*"]
           }
         },
         "test": {
@@ -805,10 +786,7 @@
               "libs/api/mocks/tsconfig.lib.json",
               "libs/api/mocks/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/mocks/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/mocks/**/*"]
           }
         },
         "test": {
@@ -839,13 +817,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "libs/api/schema/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/schema/**/*"
-            ]
+            "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
           }
         }
       }
@@ -864,10 +837,7 @@
               "libs/application/core/tsconfig.lib.json",
               "libs/application/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/core/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/application/core/**/*"]
           }
         },
         "test": {
@@ -928,10 +898,7 @@
               "libs/application/graphql/tsconfig.lib.json",
               "libs/application/graphql/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/graphql/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/application/graphql/**/*"]
           }
         },
         "test": {
@@ -956,9 +923,7 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": [
-              "apps/application-system/api/src/assets"
-            ]
+            "assets": ["apps/application-system/api/src/assets"]
           },
           "configurations": {
             "production": {
@@ -1049,9 +1014,7 @@
               "apps/application-system/form/src/favicon.ico",
               "apps/application-system/form/src/assets"
             ],
-            "styles": [
-              "apps/application-system/form/src/styles.css"
-            ],
+            "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js"
           },
@@ -1142,9 +1105,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/application-system/form-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/application-system/form-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/application-system/form-e2e/**/*"
@@ -1330,10 +1291,7 @@
               "libs/application/ui-shell/tsconfig.lib.json",
               "libs/application/ui-shell/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/ui-shell/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/application/ui-shell/**/*"]
           }
         },
         "test": {
@@ -1366,10 +1324,7 @@
               "libs/auth-api-lib/tsconfig.lib.json",
               "libs/auth-api-lib/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/auth-api-lib/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/auth-api-lib/**/*"]
           }
         },
         "test": {
@@ -1395,10 +1350,7 @@
               "libs/cache/tsconfig.lib.json",
               "libs/cache/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/cache/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/cache/**/*"]
           }
         },
         "test": {
@@ -1424,10 +1376,7 @@
               "libs/contentful-importer/tsconfig.lib.json",
               "libs/contentful-importer/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/contentful-importer/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/contentful-importer/**/*"]
           }
         },
         "test": {
@@ -1453,10 +1402,7 @@
               "libs/dokobit-signing/tsconfig.lib.json",
               "libs/dokobit-signing/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/dokobit-signing/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/dokobit-signing/**/*"]
           }
         },
         "test": {
@@ -1482,10 +1428,7 @@
               "libs/elastic-indexing/tsconfig.lib.json",
               "libs/elastic-indexing/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/elastic-indexing/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/elastic-indexing/**/*"]
           }
         },
         "test": {
@@ -1511,10 +1454,7 @@
               "libs/email-service/tsconfig.lib.json",
               "libs/email-service/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/email-service/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/email-service/**/*"]
           }
         },
         "test": {
@@ -1540,10 +1480,7 @@
               "libs/file-storage/tsconfig.lib.json",
               "libs/file-storage/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/file-storage/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/file-storage/**/*"]
           }
         },
         "test": {
@@ -1598,10 +1535,7 @@
               "apps/gjafakort/api/tsconfig.app.json",
               "apps/gjafakort/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/api/**/*"]
           }
         },
         "test": {
@@ -1718,10 +1652,7 @@
               "libs/gjafakort/consts/tsconfig.lib.json",
               "libs/gjafakort/consts/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/gjafakort/consts/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/gjafakort/consts/**/*"]
           }
         },
         "test": {
@@ -1805,10 +1736,7 @@
               "libs/gjafakort/types/tsconfig.lib.json",
               "libs/gjafakort/types/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/gjafakort/types/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/gjafakort/types/**/*"]
           }
         },
         "test": {
@@ -1877,10 +1805,7 @@
               "apps/gjafakort/web/tsconfig.json",
               "apps/gjafakort/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/web/**/*"]
           }
         },
         "test": {
@@ -1915,13 +1840,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/web-e2e/**/*"
-            ]
+            "tsConfig": ["apps/gjafakort/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**/*"]
           }
         }
       }
@@ -1940,10 +1860,7 @@
               "libs/infra-express-server/tsconfig.lib.json",
               "libs/infra-express-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-express-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-express-server/**/*"]
           }
         },
         "test": {
@@ -1969,10 +1886,7 @@
               "libs/infra-monitoring/tsconfig.lib.json",
               "libs/infra-monitoring/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-monitoring/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-monitoring/**/*"]
           }
         },
         "test": {
@@ -1998,10 +1912,7 @@
               "libs/infra-nest-server/tsconfig.lib.json",
               "libs/infra-nest-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-nest-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-nest-server/**/*"]
           }
         },
         "test": {
@@ -2027,10 +1938,7 @@
               "libs/infra-tracing/tsconfig.lib.json",
               "libs/infra-tracing/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-tracing/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-tracing/**/*"]
           }
         },
         "test": {
@@ -2056,10 +1964,7 @@
               "libs/island-ui/contentful/tsconfig.lib.json",
               "libs/island-ui/contentful/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/contentful/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/contentful/**/*"]
           }
         },
         "test": {
@@ -2085,10 +1990,7 @@
               "libs/island-ui/core/tsconfig.lib.json",
               "libs/island-ui/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/core/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/core/**/*"]
           }
         },
         "test": {
@@ -2114,13 +2016,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "libs/island-ui/storybook/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/storybook/**/*"
-            ]
+            "tsConfig": ["libs/island-ui/storybook/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**/*"]
           }
         },
         "serve": {
@@ -2175,10 +2072,7 @@
               "libs/island-ui/theme/tsconfig.lib.json",
               "libs/island-ui/theme/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/theme/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/theme/**/*"]
           }
         },
         "test": {
@@ -2255,10 +2149,7 @@
               "apps/judicial-system/api/tsconfig.app.json",
               "apps/judicial-system/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/judicial-system/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/api/**/*"]
           }
         },
         "test": {
@@ -2411,9 +2302,7 @@
               "apps/judicial-system/web/src/favicon.ico",
               "apps/judicial-system/web/src/assets"
             ],
-            "styles": [
-              "apps/judicial-system/web/src/styles.css"
-            ],
+            "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js"
           },
@@ -2462,10 +2351,7 @@
               "apps/judicial-system/web/tsconfig.app.json",
               "apps/judicial-system/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/judicial-system/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**/*"]
           }
         },
         "test": {
@@ -2500,9 +2386,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/judicial-system/web-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/judicial-system/web-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/judicial-system/web-e2e/**/*"
@@ -2525,10 +2409,7 @@
               "libs/localization/tsconfig.lib.json",
               "libs/localization/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/localization/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/localization/**/*"]
           }
         },
         "test": {
@@ -2554,10 +2435,7 @@
               "libs/logging/tsconfig.lib.json",
               "libs/logging/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/logging/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/logging/**/*"]
           }
         },
         "test": {
@@ -2583,10 +2461,7 @@
               "libs/message-queue/tsconfig.lib.json",
               "libs/message-queue/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/message-queue/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/message-queue/**/*"]
           }
         },
         "test": {
@@ -2612,10 +2487,7 @@
               "libs/nova-sms/tsconfig.lib.json",
               "libs/nova-sms/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/nova-sms/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/nova-sms/**/*"]
           }
         },
         "test": {
@@ -2640,9 +2512,7 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": [
-              "apps/reference-backend/src/assets"
-            ]
+            "assets": ["apps/reference-backend/src/assets"]
           },
           "configurations": {
             "production": {
@@ -2672,10 +2542,7 @@
               "apps/reference-backend/tsconfig.app.json",
               "apps/reference-backend/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/reference-backend/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/reference-backend/**/*"]
           }
         },
         "test": {
@@ -2766,10 +2633,7 @@
               "apps/reference-next-app/tsconfig.json",
               "apps/reference-next-app/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/reference-next-app/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/reference-next-app/**/*"]
           }
         },
         "test": {
@@ -2852,10 +2716,7 @@
               "apps/service-portal/tsconfig.app.json",
               "apps/service-portal/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/service-portal/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/service-portal/**/*"]
           }
         },
         "test": {
@@ -2981,10 +2842,7 @@
               "libs/service-portal/core/tsconfig.lib.json",
               "libs/service-portal/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/service-portal/core/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/service-portal/core/**/*"]
           }
         },
         "test": {
@@ -3059,13 +2917,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/service-portal-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/service-portal-e2e/**/*"
-            ]
+            "tsConfig": ["apps/service-portal-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/service-portal-e2e/**/*"]
           }
         }
       }
@@ -3287,9 +3140,7 @@
             "outputPath": "dist/apps/services/auth-admin-api",
             "main": "apps/services/auth-admin-api/src/main.ts",
             "tsConfig": "apps/services/auth-admin-api/tsconfig.app.json",
-            "assets": [
-              "apps/services/auth-admin-api/src/assets"
-            ]
+            "assets": ["apps/services/auth-admin-api/src/assets"]
           },
           "configurations": {
             "production": {
@@ -3348,9 +3199,7 @@
             "outputPath": "dist/apps/services/auth-api",
             "main": "apps/services/auth-api/src/main.ts",
             "tsConfig": "apps/services/auth-api/tsconfig.app.json",
-            "assets": [
-              "apps/services/auth-api/src/assets"
-            ]
+            "assets": ["apps/services/auth-api/src/assets"]
           },
           "configurations": {
             "production": {
@@ -3381,10 +3230,7 @@
               "apps/services/auth-api/tsconfig.app.json",
               "apps/services/auth-api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/services/auth-api/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/services/auth-api/**"]
           }
         },
         "test": {
@@ -3518,9 +3364,7 @@
             "outputPath": "dist/apps/services/user-profile",
             "main": "apps/services/user-profile/src/main.ts",
             "tsConfig": "apps/services/user-profile/tsconfig.app.json",
-            "assets": [
-              "apps/services/user-profile/src/assets"
-            ]
+            "assets": ["apps/services/user-profile/src/assets"]
           },
           "configurations": {
             "production": {
@@ -3608,10 +3452,7 @@
               "libs/shared/form-fields/tsconfig.lib.json",
               "libs/shared/form-fields/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/form-fields/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/form-fields/**/*"]
           }
         },
         "test": {
@@ -3637,10 +3478,7 @@
               "libs/shared/mocking/tsconfig.lib.json",
               "libs/shared/mocking/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/mocking/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/mocking/**/*"]
           }
         },
         "test": {
@@ -3666,10 +3504,7 @@
               "libs/skilavottord/consts/tsconfig.lib.json",
               "libs/skilavottord/consts/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/skilavottord/consts/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/consts/**/*"]
           }
         },
         "test": {
@@ -3695,10 +3530,7 @@
               "libs/skilavottord/types/tsconfig.lib.json",
               "libs/skilavottord/types/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/skilavottord/types/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/types/**/*"]
           }
         },
         "test": {
@@ -3761,10 +3593,7 @@
               "apps/skilavottord/web/tsconfig.json",
               "apps/skilavottord/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/skilavottord/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web/**/*"]
           }
         },
         "test": {
@@ -3790,9 +3619,7 @@
             "outputPath": "dist/apps/skilavottord/ws",
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
-            "assets": [
-              "apps/skilavottord/ws/src/assets"
-            ]
+            "assets": ["apps/skilavottord/ws/src/assets"]
           },
           "configurations": {
             "production": {
@@ -3822,10 +3649,7 @@
               "apps/skilavottord/ws/tsconfig.app.json",
               "apps/skilavottord/ws/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/skilavottord/ws/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/ws/**/*"]
           }
         },
         "test": {
@@ -3867,13 +3691,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/skilavottord/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/skilavottord/web-e2e/**/*"
-            ]
+            "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
           }
         }
       }
@@ -3929,10 +3748,7 @@
               "apps/web/tsconfig.json",
               "apps/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/web/**/*"]
           }
         },
         "test": {
@@ -3973,13 +3789,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web-e2e/**/*"
-            ]
+            "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
           }
         }
       }

@@ -29,15 +29,11 @@
   "projects": {
     "adgerdir": {
       "tags": [],
-      "implicitDependencies": [
-        "api"
-      ]
+      "implicitDependencies": ["api"]
     },
     "adgerdir-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "adgerdir"
-      ]
+      "implicitDependencies": ["adgerdir"]
     },
     "air-discount-scheme-api": {
       "tags": []
@@ -56,9 +52,7 @@
     },
     "air-discount-scheme/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "air-discount-scheme-web"
-      ]
+      "implicitDependencies": ["air-discount-scheme-web"]
     },
     "api": {
       "tags": []
@@ -68,9 +62,7 @@
     },
     "api-domains-application": {
       "tags": [],
-      "implicitDependencies": [
-        "application-system-api"
-      ]
+      "implicitDependencies": ["application-system-api"]
     },
     "api-domains-cms": {
       "tags": []
@@ -89,9 +81,7 @@
     },
     "api-domains-user-profile": {
       "tags": [],
-      "implicitDependencies": [
-        "services-user-profile"
-      ]
+      "implicitDependencies": ["services-user-profile"]
     },
     "api-mocks": {
       "tags": []
@@ -116,9 +106,7 @@
     },
     "application-system-form-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "application-system-form"
-      ]
+      "implicitDependencies": ["application-system-form"]
     },
     "application-template-loader": {
       "tags": []
@@ -161,9 +149,7 @@
     },
     "gjafakort-api": {
       "tags": [],
-      "implicitDependencies": [
-        "api"
-      ]
+      "implicitDependencies": ["api"]
     },
     "gjafakort-application": {
       "tags": []
@@ -179,15 +165,11 @@
     },
     "gjafakort-web": {
       "tags": [],
-      "implicitDependencies": [
-        "gjafakort-api"
-      ]
+      "implicitDependencies": ["gjafakort-api"]
     },
     "gjafakort-web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "gjafakort-web"
-      ]
+      "implicitDependencies": ["gjafakort-web"]
     },
     "infra-express-server": {
       "tags": []
@@ -206,9 +188,7 @@
     },
     "island-ui-core": {
       "tags": [],
-      "implicitDependencies": [
-        "island-ui-theme"
-      ]
+      "implicitDependencies": ["island-ui-theme"]
     },
     "island-ui-fonts": {
       "tags": []
@@ -236,9 +216,7 @@
     },
     "judicial-system/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "judicial-system-web"
-      ]
+      "implicitDependencies": ["judicial-system-web"]
     },
     "localization": {
       "tags": []
@@ -278,9 +256,7 @@
     },
     "service-portal-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "service-portal"
-      ]
+      "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
       "tags": []
@@ -329,27 +305,19 @@
     },
     "skilavottord-ws": {
       "tags": [],
-      "implicitDependencies": [
-        "air-discount-scheme-api"
-      ]
+      "implicitDependencies": ["air-discount-scheme-api"]
     },
     "skilavottord/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "skilavottord-web"
-      ]
+      "implicitDependencies": ["skilavottord-web"]
     },
     "web": {
       "tags": [],
-      "implicitDependencies": [
-        "api"
-      ]
+      "implicitDependencies": ["api"]
     },
     "web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "web"
-      ]
+      "implicitDependencies": ["web"]
     }
   },
   "affected": {
