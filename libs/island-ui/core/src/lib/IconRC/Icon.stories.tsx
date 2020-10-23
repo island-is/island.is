@@ -10,7 +10,9 @@ import { Icon } from './Icon'
 const description = `
 Icons are generated from [Ionicons Designer Pack](https://ionicons.com/).
 
-When adding icons in development navigate to the \`Icon\` directory and run \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js -d icons [src-dir]\` for more options check out [SVGR options](https://react-svgr.com/docs/options/)
+When adding icons in development navigate to the \`Icon\` directory and run \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js -d icons [src-dir]\`
+
+Generating single icons \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js --out-dir ./icons [src-icon]\` for more options check out [SVGR options](https://react-svgr.com/docs/options/)
 `
 
 export default {
@@ -36,7 +38,7 @@ export default {
 const Template = (args) => <Icon {...args} />
 
 export const Default = Template.bind({})
-Default.args = { icon: 'download' }
+Default.args = { icon: 'arrowForward' }
 
 const iconKeys = Object.keys(iconMap)
 

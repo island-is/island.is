@@ -420,6 +420,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}
+                            alt=""
                           />
                           <Typography variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}

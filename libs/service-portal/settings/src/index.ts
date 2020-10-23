@@ -28,11 +28,36 @@ export const settingsModule: ServicePortalModule = {
       },
       {
         name: defineMessage({
-          id: 'service-portal:profile-info',
-          defaultMessage: 'Mínar upplýsingar',
+          id: 'service.portal:profile-info',
+          defaultMessage: 'Minn aðgangur',
         }),
         path: ServicePortalPath.UserProfileRoot,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
+      },
+      {
+        name: defineMessage({
+          id: 'sp.settings:edit-phone-number',
+          defaultMessage: 'Breyta símanúmeri',
+        }),
+        path: ServicePortalPath.UserProfileEditPhoneNumber,
+        render: () =>
+          lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
+      },
+      {
+        name: defineMessage({
+          id: 'sp.settings:edit-email',
+          defaultMessage: 'Breyta netfangi',
+        }),
+        path: ServicePortalPath.UserProfileEditEmail,
+        render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
+      },
+      {
+        name: defineMessage({
+          id: 'sp.settings:edit-language',
+          defaultMessage: 'Breyta tungumáli',
+        }),
+        path: ServicePortalPath.UserProfileEditLanguage,
+        render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
     ]
 
