@@ -1,6 +1,6 @@
 # communications
 
-Endpoint to route send infromation to service desk
+Endpoint to route information to service desk
 
 ## Running unit tests
 
