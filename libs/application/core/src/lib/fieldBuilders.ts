@@ -11,7 +11,7 @@ import {
   IntroductionField,
   Option,
   RadioField,
-  ReviewField,
+  SubmitField,
   SelectField,
   TextField,
   TextFieldVariant,
@@ -284,18 +284,20 @@ export function buildDividerField(data: { name: string }): DividerField {
   }
 }
 
-export function buildReviewField(data: {
+export function buildSubmitField(data: {
   id: string
   name: FormText
+  placement?: 'footer' | 'screen'
   actions: CallToAction[]
-}): ReviewField {
-  const { id, name, actions } = data
+}): SubmitField {
+  const { id, placement = 'footer', name, actions } = data
   return {
     children: undefined,
     id,
     name,
     actions,
-    type: FieldTypes.REVIEW,
-    component: FieldComponents.REVIEW,
+    placement,
+    type: FieldTypes.SUBMIT,
+    component: FieldComponents.SUBMIT,
   }
 }
