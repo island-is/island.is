@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import Head from 'next/head'
 
-interface SocialSharingProps {
+interface HeadWithSocialSharingProps {
   title: string
   description?: string
   imageUrl?: string
@@ -9,12 +9,13 @@ interface SocialSharingProps {
   imageHeight?: string
 }
 
-export const SocialSharing: FC<SocialSharingProps> = ({
+export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
   title,
   description = 'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.',
   imageUrl = 'https://island.is/island-fb-1200x630.png',
   imageWidth = '1200',
   imageHeight = '630',
+  children,
 }) => (
   <Head>
     <title>{title}</title>
@@ -32,7 +33,8 @@ export const SocialSharing: FC<SocialSharingProps> = ({
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={imageUrl} />
+    {children}
   </Head>
 )
 
-export default SocialSharing
+export default HeadWithSocialSharing

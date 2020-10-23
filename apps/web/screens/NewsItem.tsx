@@ -25,7 +25,7 @@ import {
   QueryGetSingleNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { RichText } from '../components/RichText/RichText'
-import { SidebarBox, Sticky, SocialSharing } from '../components'
+import { SidebarBox, Sticky, HeadWithSocialSharing } from '../components'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -68,7 +68,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
 
   return (
     <>
-      <SocialSharing
+      <HeadWithSocialSharing
         title={metaTitle}
         description={newsItem.intro}
         imageUrl={newsItem.image?.url}

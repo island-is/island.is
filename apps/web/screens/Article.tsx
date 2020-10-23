@@ -24,7 +24,7 @@ import {
   Bullet,
   SidebarSubNav,
   RichText,
-  SocialSharing,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -382,7 +382,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   return (
     <>
-      <SocialSharing
+      <HeadWithSocialSharing
         title={metaTitle}
         description={article.intro}
         imageUrl={article.featuredImage?.url}
