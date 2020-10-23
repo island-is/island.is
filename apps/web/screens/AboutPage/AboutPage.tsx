@@ -188,7 +188,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Box marginBottom={[0, 0, 8, 15]}>
-            <Header />
+            <Header buttonColorScheme="negative" />
           </Box>
         </ColorSchemeContext.Provider>
         <GridRow>
@@ -420,6 +420,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}
+                            alt=""
                           />
                           <Typography variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}

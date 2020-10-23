@@ -6,7 +6,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   Application,
-  FormMode,
+  FormModes,
   Section,
   SectionChildren,
   formatText,
@@ -14,15 +14,13 @@ import {
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
-import { FormModes } from '../types'
-
 interface FormStepperProps {
   application: Application
   form: {
     name: MessageDescriptor | string
     icon?: string
   }
-  mode: FormMode
+  mode: FormModes
   showTag: boolean
   sections: Section[]
   activeSection: number

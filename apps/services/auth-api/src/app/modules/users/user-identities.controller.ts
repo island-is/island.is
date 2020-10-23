@@ -17,12 +17,14 @@ import {
 } from '@island.is/auth-api-lib'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+// TODO: Add guards after getting communications to work properly with IDS4
+// @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('user-identities')
 @Controller('user-identities')
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 
+  /** Creates a new User Identity */
   @Scopes('@identityserver.api/authentication')
   @Post()
   @ApiCreatedResponse({ type: UserIdentity })
@@ -30,6 +32,7 @@ export class UserIdentitiesController {
     return await this.userIdentityService.create(userIdentity)
   }
 
+  /** Gets User identity by subjectId */
   @Scopes('@identityserver.api/authentication')
   @Get(':subjectId')
   @ApiOkResponse({ type: UserIdentity })
@@ -44,6 +47,7 @@ export class UserIdentitiesController {
     return userIdentity
   }
 
+  /** Gets User Identity by provider and subject id */
   @Scopes('@identityserver.api/authentication')
   @Get('/:provider/:subjectId')
   @ApiOkResponse({ type: UserIdentity })

@@ -216,22 +216,6 @@ export const Overview: React.FC = () => {
                 <Text>{workingCase.caseFacts}</Text>
               </Box>
             )}
-            {workingCase.witnessAccounts && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Framburður</Text>
-                </Box>
-                <Text>{workingCase.witnessAccounts}</Text>
-              </Box>
-            )}
-            {workingCase.investigationProgress && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Staða rannsóknar og næstu skref</Text>
-                </Box>
-                <Text>{workingCase.investigationProgress}</Text>
-              </Box>
-            )}
             {workingCase.legalArguments && (
               <Box marginBottom={2}>
                 <Box marginBottom={2}>
