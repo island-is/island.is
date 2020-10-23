@@ -46,7 +46,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Birtingarnafn',
           })}
           content={userInfo.profile.name}
-          editExternalLink="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2"
+          editLink={{
+            external: true,
+            url:
+              'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
+          }}
         />
         <UserInfoLine
           label={defineMessage({

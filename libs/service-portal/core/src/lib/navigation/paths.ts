@@ -34,5 +34,8 @@ export enum ServicePortalPath {
   SkilabodRoot = '/skilabod',
 
   // User Profile
-  UserProfileRoot = '/personuupplysingar',
+  UserProfileRoot = '/minn-adgangur',
+  UserProfileEditPhoneNumber = '/minar-upplysingar/breyta-simanumeri',
+  UserProfileEditEmail = '/minar-upplysingar/breyta-netfangi',
+  UserProfileEditLanguage = '/minar-upplysingar/breyta-tungumali',
 }

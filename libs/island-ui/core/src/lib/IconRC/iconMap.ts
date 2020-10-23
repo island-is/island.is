@@ -9,6 +9,7 @@ export type Icon =
   | 'calendar'
   | 'car'
   | 'cellular'
+  | 'checkmarkCircle'
   | 'chevronBack'
   | 'chevronDown'
   | 'chevronForward'
@@ -16,6 +17,7 @@ export type Icon =
   | 'close'
   | 'fileTrayFull'
   | 'home'
+  | 'informationCircle'
   | 'lockClosed'
   | 'logOut'
   | 'menu'
@@ -42,6 +44,7 @@ export default {
     calendar: 'Calendar',
     car: 'Car',
     cellular: 'Cellular',
+    checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
     chevronForward: 'ChevronForward',
@@ -49,6 +52,7 @@ export default {
     close: 'Close',
     fileTrayFull: 'FileTrayFull',
     home: 'Home',
+    informationCircle: 'InformationCircle',
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
     menu: 'Menu',
@@ -74,6 +78,7 @@ export default {
     calendar: 'CalendarOutline',
     car: 'CarOutline',
     cellular: 'CellularOutline',
+    checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
@@ -81,6 +86,7 @@ export default {
     close: 'CloseOutline',
     fileTrayFull: 'FileTrayFullOutline',
     home: 'HomeOutline',
+    informationCircle: 'InformationCircleOutline',
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
     menu: 'MenuOutline',
