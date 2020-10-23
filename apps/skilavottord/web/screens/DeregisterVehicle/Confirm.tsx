@@ -1,6 +1,13 @@
 import React, { FC } from 'react'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { Box, Button, Hidden, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Hidden,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { CarDetailsBox } from '../Confirm/components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -26,7 +33,7 @@ const Confirm: FC = () => {
   }
 
   const handleConfirm = () => {
-    router.replace(routes.baseRoute)
+    router.replace(routes.baseRoute).then(() => toast.success(t.success))
   }
 
   const handleBack = () => {

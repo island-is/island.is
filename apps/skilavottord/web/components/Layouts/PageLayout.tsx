@@ -7,7 +7,7 @@ import {
   GridRow,
   GridColumn,
   Footer,
-  Stack,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
@@ -97,6 +97,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
             {!isMobile && (
               <FormStepper
                 title={t[sectionType].title}
+                completedText={t[sectionType].completed}
                 sections={sections}
                 activeSection={activeSection}
                 activeCar={activeCar}
@@ -121,19 +122,20 @@ export const PartnerPageLayout: FC<PartnerPageProps> = ({
   left,
 }) => (
   <Box>
+    <ToastContainer />
     <Box paddingY={10}>
       <GridContainer>
         <GridRow>
           <GridColumn span={['0', '0', '3/12', '3/12']}>{left}</GridColumn>
           <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-            <Stack space={4}>
+            {top && (
               <GridRow>
                 <GridColumn span={['12/12', '12/12', '7/8', '7/8']}>
-                  <Box>{top}</Box>
+                  <Box paddingBottom={4}>{top}</Box>
                 </GridColumn>
               </GridRow>
-              <Box>{bottom}</Box>
-            </Stack>
+            )}
+            <Box>{bottom}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

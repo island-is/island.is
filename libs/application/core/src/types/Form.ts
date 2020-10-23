@@ -22,18 +22,19 @@ export enum FormItemTypes {
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Schema = ZodObject<any>
 
-export type FormMode =
-  | 'review'
-  | 'applying'
-  | 'approved'
-  | 'rejected'
-  | 'pending'
+export enum FormModes {
+  APPLYING = 'applying',
+  APPROVED = 'approved',
+  PENDING = 'pending',
+  REVIEW = 'review',
+  REJECTED = 'rejected',
+}
 
 export interface Form {
   id: string
   name: StaticText
   type: FormItemTypes.FORM
-  mode?: FormMode
+  mode?: FormModes
   icon?: string
   children: FormChildren[]
 }

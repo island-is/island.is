@@ -7,6 +7,7 @@ import {
   Button,
   Input,
   GridColumn,
+  toast,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useRouter } from 'next/router'
@@ -30,21 +31,22 @@ const CompanyInfoForm: FC<FormProps> = ({
   },
   type,
 }) => {
+  const {
+    t: { companyInfoForm: t, routes },
+  } = useI18n()
+  const router = useRouter()
   const { handleSubmit, control, formState } = useForm({ mode: 'onChange' })
 
   const onSubmit = (formData: MockRecyclingPartner) => {
     console.log(formData)
-    router.push(routes.companyInfo.baseRoute)
+    router.push(routes.companyInfo.baseRoute).then(() => {
+      toast.success(t.success)
+    })
   }
 
   const handleCancel = () => {
     router.push(routes.companyInfo.baseRoute)
   }
-
-  const {
-    t: { companyInfoForm: t, routes },
-  } = useI18n()
-  const router = useRouter()
 
   return (
     <Stack space={4}>

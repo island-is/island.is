@@ -54,7 +54,7 @@ export const IntroductionSection: FC<Props> = ({
             alignItems="center"
             justifyContent="center"
           >
-            <Illustration width="100%" />
+            <Illustration width="100%" aria-hidden="true" />
           </Box>
         </GridColumn>
         <GridColumn

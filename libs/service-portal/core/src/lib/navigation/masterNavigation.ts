@@ -29,24 +29,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:my-info',
           defaultMessage: 'Mín gögn',
         }),
-        path: ServicePortalPath.MinGogn,
+        path: ServicePortalPath.MinGognRoot,
         icon: {
           type: 'outline',
           icon: 'person',
         },
-      },
-
-      // Fjolskyldan
-      {
-        name: defineMessage({
-          id: 'service.portal:family',
-          defaultMessage: 'Fjölskyldan',
-        }),
-        path: ServicePortalPath.FjolskyldanRoot,
-        icon: {
-          type: 'outline',
-          icon: 'people',
-        },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:user-info',
+              defaultMessage: 'Mínar upplýsingar',
+            }),
+            path: ServicePortalPath.UserInfo,
+          },
+        ],
       },
 
       // Fjarmal
@@ -149,8 +145,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             name: defineMessage({
-              id: 'service-portal:profile-info',
-              defaultMessage: 'Mínar upplýsingar',
+              id: 'service.portal:profile-info',
+              defaultMessage: 'Minn aðgangur',
             }),
             path: ServicePortalPath.UserProfileRoot,
           },

@@ -1,24 +1,26 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
+  buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildSection,
-  buildCustomField,
   buildIntroductionField,
-  Form,
-  DataProviderTypes,
-  buildRadioField,
   buildMultiField,
-  buildTextField,
+  buildRadioField,
   buildRepeater,
-  buildDateField,
+  buildSection,
   buildSelectField,
+  buildTextField,
+  DataProviderTypes,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
   name: 'Fæðingarorlof',
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'theApplicant',

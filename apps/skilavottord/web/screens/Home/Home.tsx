@@ -26,9 +26,7 @@ const Home: FC = () => {
     <PageLayout>
       <Box paddingBottom={6}>
         <Breadcrumbs>
-          <Link href={'./'}>
-            <a>Ísland.is</a>
-          </Link>
+          <Link href={routes.home}>Ísland.is</Link>
           <span>Recycle your car</span>
         </Breadcrumbs>
       </Box>

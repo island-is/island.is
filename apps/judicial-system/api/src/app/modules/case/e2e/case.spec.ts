@@ -45,8 +45,6 @@ const remainingCaseData = {
     CaseCustodyRestrictions.MEDIA,
   ],
   caseFacts: 'Case Facts',
-  witnessAccounts: 'Witness Accounts',
-  investigationProgress: 'Investigation Progress',
   legalArguments: 'Legal Arguments',
   comments: 'Comments',
   courtCaseNumber: 'Court Case Number',
@@ -137,10 +135,6 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
     caseTwo.requestedCustodyRestrictions || null,
   )
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
-  expect(caseOne.witnessAccounts || null).toBe(caseTwo.witnessAccounts || null)
-  expect(caseOne.investigationProgress || null).toBe(
-    caseTwo.investigationProgress || null,
-  )
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toStrictEqual(

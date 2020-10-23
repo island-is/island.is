@@ -143,7 +143,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           <Box paddingTop={[3, 3, 4]}>
             <RichText
               body={content as SliceType[]}
-              config={{ defaultPadding: 4 }}
+              config={{ defaultPadding: [2, 2, 4] }}
             />
           </Box>
         </>

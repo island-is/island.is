@@ -2,6 +2,8 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe('Confirmation route', () => {
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, () => {
@@ -18,7 +20,11 @@ describe('Confirmation route', () => {
     })
 
     // Act
-    const { queryByText } = render(<Confirmation />)
+    const { queryByText } = render(
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Confirmation />
+      </userContext.Provider>,
+    )
 
     // Assert
     expect(queryByText('accusedAppealAnnouncement test')).toBeNull()
@@ -39,7 +45,11 @@ describe('Confirmation route', () => {
     })
 
     // Act
-    const { queryByText } = render(<Confirmation />)
+    const { queryByText } = render(
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Confirmation />
+      </userContext.Provider>,
+    )
 
     // Assert
     expect(queryByText('accusedAppealAnnouncement test')).toBeTruthy()

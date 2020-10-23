@@ -8,6 +8,8 @@ import JudgeOverview from './Overview'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 import Overview from '../../Judge/Overview/Overview'
 import userEvent from '@testing-library/user-event'
+import { userContext } from '../../../utils/userContext'
+import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should now allow users to continue unless every required field has been filled out', async () => {
@@ -30,11 +32,13 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act and Assert
     const { getByTestId } = render(
-      <Router history={history}>
-        <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-          <Overview />
-        </Route>
-      </Router>,
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Router history={history}>
+          <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Overview />
+          </Route>
+        </Router>
+      </userContext.Provider>,
     )
     await act(async () => {
       await userEvent.type(
@@ -76,8 +80,6 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         custodyProvisions: ['_95_1_A'],
         requestedCustodyRestrictions: [],
         caseFacts: 'string',
-        witnessAccounts: 'string',
-        investigationProgress: 'string',
         legalArguments: 'string',
       },
       { overwriteRoutes: true },
@@ -85,11 +87,13 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByText } = render(
-      <Router history={history}>
-        <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-          <JudgeOverview />
-        </Route>
-      </Router>,
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Router history={history}>
+          <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <JudgeOverview />
+          </Route>
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
@@ -127,8 +131,6 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         custodyProvisions: ['_95_1_A'],
         requestedCustodyRestrictions: ['ISOLATION', 'MEDIA'],
         caseFacts: 'string',
-        witnessAccounts: 'string',
-        investigationProgress: 'string',
         legalArguments: 'string',
       },
       { overwriteRoutes: true },
@@ -136,11 +138,14 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByText } = render(
-      <Router history={history}>
-        <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-          <JudgeOverview />
-        </Route>
-      </Router>,
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Router history={history}>
+          <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <JudgeOverview />
+          </Route>
+        </Router>
+        ,
+      </userContext.Provider>,
     )
 
     // Assert
@@ -149,7 +154,7 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     cleanup()
   })
 
-  test('should display the approprieate custody provisions', async () => {
+  test('should display the appropriate custody provisions', async () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -181,8 +186,6 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         ],
         requestedCustodyRestrictions: ['ISOLATION', 'MEDIA'],
         caseFacts: 'string',
-        witnessAccounts: 'string',
-        investigationProgress: 'string',
         legalArguments: 'string',
       },
       { overwriteRoutes: true },
@@ -190,11 +193,13 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByText } = render(
-      <Router history={history}>
-        <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-          <JudgeOverview />
-        </Route>
-      </Router>,
+      <userContext.Provider value={{ user: mockJudge }}>
+        <Router history={history}>
+          <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <JudgeOverview />
+          </Route>
+        </Router>
+      </userContext.Provider>,
     )
 
     // Assert
