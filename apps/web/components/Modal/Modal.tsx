@@ -38,6 +38,7 @@ interface ModalProps {
   onClose?: () => void
   buttonTextConfirm?: string
   buttonTextCancel?: string
+  lang?: string
 }
 
 export const ModalDiv = forwardRef(
@@ -64,6 +65,7 @@ export const Modal: FC<ModalProps> = ({
   onClose,
   buttonTextCancel = 'Cancel',
   buttonTextConfirm = 'Confirm',
+  lang,
 }) => {
   const initialFocusedRef = useRef(null)
   const { colorScheme } = useContext(ColorSchemeContext)
@@ -72,6 +74,12 @@ export const Modal: FC<ModalProps> = ({
     animated,
     baseId,
   } as DialogProps)
+
+  const langProp = lang
+    ? {
+        lang: lang,
+      }
+    : {}
 
   useEffect(() => {
     if (dialog.visible && initialFocusedRef.current) {
@@ -99,6 +107,8 @@ export const Modal: FC<ModalProps> = ({
               role={role}
               aria-label={label}
               className={styles.dialog}
+              aria-modal="true"
+              {...langProp}
             >
               <Box
                 position="relative"

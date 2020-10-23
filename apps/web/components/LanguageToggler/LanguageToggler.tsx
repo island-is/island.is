@@ -92,6 +92,7 @@ export const LanguageToggler: FC<{
           label="Confirm switching to english"
           disclosure={Disclosure}
           onConfirm={onClick}
+          lang="en"
         >
           <Text variant="intro" as="p">
             {gn('switchToEnglishModalText')}
