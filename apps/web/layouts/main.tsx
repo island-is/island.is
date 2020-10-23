@@ -123,7 +123,10 @@ const Layout: NextComponentType<
           <meta property="og:title" content={n('title')} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://island.is/" />
-          <meta property="og:image" content="/island-fb-1200x630.png" />
+          <meta
+            property="og:image"
+            content="https://island.is/island-fb-1200x630.png"
+          />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta

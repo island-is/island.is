@@ -12,7 +12,7 @@ interface SocialSharingProps {
 export const SocialSharing: FC<SocialSharingProps> = ({
   title,
   description = 'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.',
-  imageUrl = '/island-fb-1200x630.png',
+  imageUrl = 'https://island.is/island-fb-1200x630.png',
   imageWidth = '1200',
   imageHeight = '630',
 }) => (
