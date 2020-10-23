@@ -10,7 +10,7 @@ export class ContactUsInput {
   @Field()
   @IsOptional()
   @IsString()
-  phone: string = 'N/A'
+  phone = 'N/A'
 
   @Field()
   @IsString()
@@ -19,7 +19,7 @@ export class ContactUsInput {
   @Field()
   @IsOptional()
   @IsString()
-  subject: string = 'N/A'
+  subject = 'N/A'
 
   @Field()
   @IsString()

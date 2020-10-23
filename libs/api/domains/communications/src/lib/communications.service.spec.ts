@@ -1,5 +1,5 @@
 import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
-import { Logger, logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
@@ -75,7 +75,6 @@ describe('communicationsService', () => {
     })
 
     it('should normalize throw errors', async () => {
-      const result = 'successId'
       jest.spyOn(emailService, 'sendEmail').mockImplementation(() => {
         throw new Error('Some unexpected error')
       })
