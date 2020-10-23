@@ -71,16 +71,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly witnessAccounts: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly investigationProgress: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
   readonly legalArguments: string
 
   @IsOptional()

@@ -5,22 +5,22 @@ import CompanyListItem from './CompanyListItem'
 const CompanyList = () => {
   const companies = [
     {
-      name: 'Company 1',
-      address: 'Address',
-      phone: '01234',
-      website: 'http://www.some-company.is',
+      name: 'Hringrás (Reykjavik)',
+      address: 'Klettagarðar 9, 105 Reykjavík',
+      phone: '+354 555 1900',
+      website: 'www.hringras.is',
     },
     {
-      name: 'Company 2',
-      address: 'Address',
-      phone: '01234',
-      website: 'http://www.some-company.is',
+      name: 'VAKA (Reykjavik)',
+      address: 'Héðinsgata 2, 105 Reykjavík',
+      phone: '+354 555 1900',
+      website: 'www.vaka.is',
     },
     {
-      name: 'Company 3',
-      address: 'Address',
-      phone: '01234',
-      website: 'http://www.some-company.is',
+      name: 'Hringrás (Akureyi)',
+      address: 'Ægisnesi 1, 105 Akureyri',
+      phone: '+354 555 1900',
+      website: 'www.hringras.is',
     },
   ]
 

@@ -5,7 +5,11 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import { ApplicationTypes, ExternalData } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/core'
 
 @Injectable()
 export class ApplicationService {
@@ -49,12 +53,12 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
-  async updateApplicationState(id: string, state: string) {
+  async updateApplicationState(id: string, state: string, answers: FormValue) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { state },
+      { state, answers },
       {
         where: { id },
         returning: true,

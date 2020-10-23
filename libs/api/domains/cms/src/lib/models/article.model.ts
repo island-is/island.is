@@ -2,6 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { IArticle } from '../generated/contentfulTypes'
 import { Slice, mapDocument } from './slice.model'
+import { Image, mapImage } from './image.model'
 
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
@@ -64,6 +65,9 @@ export class Article {
 
   @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
+
+  @Field(() => Image, { nullable: true })
+  featuredImage?: Image
 }
 
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
@@ -91,4 +95,5 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
+  featuredImage: mapImage(fields.featuredImage),
 })

@@ -1,6 +1,5 @@
 import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
@@ -28,6 +27,7 @@ import {
   Bullet,
   SidebarSubNav,
   RichText,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -385,9 +385,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   }
 
   const metaTitle = `${article.title} | Ísland.is`
-  const metaDescription =
-    article.intro ||
-    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
 
   const processEntries = article?.body?.length
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
@@ -399,15 +396,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   return (
     <>
-      <Head>
-        <title>{metaTitle}</title>
-        <meta name="title" property="og:title" content={metaTitle} />
-        <meta
-          name="description"
-          property="og:description"
-          content={metaDescription}
-        />
-      </Head>
+      <HeadWithSocialSharing
+        title={metaTitle}
+        description={article.intro}
+        imageUrl={article.featuredImage?.url}
+        imageWidth={article.featuredImage?.width.toString()}
+        imageHeight={article.featuredImage?.height.toString()}
+      />
       <ArticleLayout
         sidebar={
           <ArticleSidebar

@@ -8,20 +8,19 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { Link } from 'react-router-dom'
 
 interface Props {
   label: MessageDescriptor | string
   content?: string
-  onEdit?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void
-  editExternalLink?: string
+  editLink?: {
+    external?: boolean
+    url: string
+    title?: MessageDescriptor
+  }
 }
 
-export const UserInfoLine: FC<Props> = ({
-  label,
-  content,
-  onEdit,
-  editExternalLink,
-}) => {
+export const UserInfoLine: FC<Props> = ({ label, content, editLink }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -35,39 +34,35 @@ export const UserInfoLine: FC<Props> = ({
         <Column width="4/12">
           <Box overflow="hidden">{content}</Box>
         </Column>
-        {onEdit || editExternalLink ? (
+        {editLink ? (
           <Column width="3/12">
             <Box overflow="hidden" textAlign="right">
-              {onEdit ? (
-                <Button
-                  variant="text"
-                  size="small"
-                  icon="external"
-                  onClick={onEdit}
-                >
-                  {formatMessage({
-                    id: 'global:edit',
-                    defaultMessage: 'Breyta',
-                  })}
-                </Button>
-              ) : (
+              {editLink.external ? (
                 <a
-                  href={editExternalLink}
+                  href={editLink.url}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon="external"
-                    onClick={onEdit}
-                  >
-                    {formatMessage({
-                      id: 'global:edit',
-                      defaultMessage: 'Breyta',
-                    })}
+                  <Button variant="text" size="small" icon="external">
+                    {editLink.title
+                      ? formatMessage(editLink.title)
+                      : formatMessage({
+                          id: 'global:edit',
+                          defaultMessage: 'Breyta',
+                        })}
                   </Button>
                 </a>
+              ) : (
+                <Link to={editLink.url}>
+                  <Button variant="text" size="small">
+                    {editLink.title
+                      ? formatMessage(editLink.title)
+                      : formatMessage({
+                          id: 'global:edit',
+                          defaultMessage: 'Breyta',
+                        })}
+                  </Button>
+                </Link>
               )}
             </Box>
           </Column>
