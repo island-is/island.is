@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import Head from 'next/head'
 import {
   Text,
   Breadcrumbs,
@@ -16,7 +15,6 @@ import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { StandardLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { GET_SINGLE_NEWS_ITEM_QUERY } from '@island.is/web/screens/queries'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -27,7 +25,7 @@ import {
   QueryGetSingleNewsArgs,
 } from '@island.is/web/graphql/schema'
 import { RichText } from '../components/RichText/RichText'
-import { SidebarBox, Sticky } from '../components'
+import { SidebarBox, Sticky, HeadWithSocialSharing } from '../components'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -38,6 +36,8 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
+
+  const metaTitle = `${newsItem.title} | Ísland.is`
 
   const sidebar = (
     <SidebarBox>
@@ -68,9 +68,13 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
 
   return (
     <>
-      <Head>
-        <title>{newsItem.title} | Ísland.is</title>
-      </Head>
+      <HeadWithSocialSharing
+        title={metaTitle}
+        description={newsItem.intro}
+        imageUrl={newsItem.image?.url}
+        imageWidth={newsItem.image?.width.toString()}
+        imageHeight={newsItem.image?.height.toString()}
+      />
       <GridContainer>
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
           <GridRow>
