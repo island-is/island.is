@@ -10,7 +10,7 @@ export class ContactUsInput {
   @Field()
   @IsOptional()
   @IsString()
-  phone: string
+  phone: string = 'N/A'
 
   @Field()
   @IsString()
