@@ -2984,7 +2984,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components}/**/*.{js,ts,tsx}"
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
               }
             ]
           }

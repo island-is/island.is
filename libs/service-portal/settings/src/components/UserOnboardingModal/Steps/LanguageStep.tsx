@@ -1,23 +1,11 @@
 import React, { FC } from 'react'
+import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
-import { Locale, useLocale } from '@island.is/localization'
-import { Field, Form, Formik } from 'formik'
-import { FieldSelect } from '../../FieldSelect/FieldSelect'
-
-export type LanguageFormOption = {
-  label: string
-  value: Locale
-}
-
-export interface LanguageFormData {
-  language: LanguageFormOption | null
-}
+  LanguageForm,
+  LanguageFormData,
+  LanguageFormOption,
+} from '../../Forms/LanguageForm'
 
 interface Props {
   language: LanguageFormOption | null
@@ -49,43 +37,26 @@ export const LanguageStep: FC<Props> = ({ onBack, onSubmit, language }) => {
           </Text>
         </GridColumn>
       </GridRow>
-      <Formik
-        initialValues={{
-          language,
-        }}
-        onSubmit={onSubmit}
-      >
-        {() => (
-          <Form>
-            <Box>
-              <Field
-                component={FieldSelect}
-                label="Tungumál"
-                name="language"
-                placeholder="Tungumál"
-                options={[
-                  { label: 'Íslenska', value: 'is' },
-                  { label: 'English', value: 'en' },
-                ]}
-              />
-            </Box>
-            <Box display="flex" justifyContent="spaceBetween" marginTop={6}>
-              <Button variant="ghost" onClick={onBack}>
-                {formatMessage({
-                  id: 'service.portal:go-back',
-                  defaultMessage: 'Til baka',
-                })}
-              </Button>
-              <Button variant="primary" type="submit" icon="arrowForward">
-                {formatMessage({
-                  id: 'service.portal:save-data',
-                  defaultMessage: 'Vista upplýsingar',
-                })}
-              </Button>
-            </Box>
-          </Form>
+      <LanguageForm
+        language={language}
+        renderBackButton={() => (
+          <Button variant="ghost" onClick={onBack}>
+            {formatMessage({
+              id: 'service.portal:go-back',
+              defaultMessage: 'Til baka',
+            })}
+          </Button>
         )}
-      </Formik>
+        renderSubmitButton={() => (
+          <Button variant="primary" type="submit" icon="arrowForward">
+            {formatMessage({
+              id: 'service.portal:save-data',
+              defaultMessage: 'Vista upplýsingar',
+            })}
+          </Button>
+        )}
+        onSubmit={onSubmit}
+      />
     </>
   )
 }
