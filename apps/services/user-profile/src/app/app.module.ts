@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { UserProfileModule } from './user-profile/userProfile.module'
+import { VerificationModule } from './verification/verification.module'
 
 @Module({
   imports: [
@@ -9,6 +10,7 @@ import { UserProfileModule } from './user-profile/userProfile.module'
       useClass: SequelizeConfigService,
     }),
     UserProfileModule,
+    VerificationModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
