@@ -27,11 +27,7 @@ import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
-const {
-  samlEntryPoint,
-  audience: audienceUrl,
-  jwtSecret,
-} = environment.auth
+const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 3600
 const ONE_HOUR = 60 * 60 * 1000
