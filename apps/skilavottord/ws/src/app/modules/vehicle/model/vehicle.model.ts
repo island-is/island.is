@@ -8,7 +8,6 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
-  HasOne,
 } from 'sequelize-typescript'
 import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
 import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
@@ -31,7 +30,7 @@ export class VehicleModel extends Model<VehicleModel> {
   ownerNationalId!: string
 
   @BelongsTo(() => VehicleOwnerModel)
-  vehicleOwner: any
+  vehicleOwner: VehicleOwnerModel
 
   @Field()
   @Column({

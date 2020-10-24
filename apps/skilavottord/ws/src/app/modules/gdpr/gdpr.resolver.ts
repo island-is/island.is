@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Query, Resolver, Float, Args, Mutation } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './model/gdpr.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
