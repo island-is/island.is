@@ -16,7 +16,7 @@ export class GdprResolver {
     @Args('nationalId') nationalId: string,
     @Args('gdprStatus') gdprStatus: string,
   ): Promise<boolean> {
-    this.gdprService.insertNewGdpr(nationalId, gdprStatus)
+    await this.gdprService.createGdpr(nationalId, gdprStatus)
     return true
   }
 

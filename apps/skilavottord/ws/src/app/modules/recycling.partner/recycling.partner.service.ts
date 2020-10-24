@@ -37,12 +37,13 @@ export class RecyclingPartnerService {
     return res
   }
 
-  async create(
+  async createRecyclingPartner(
     recyclingPartner: RecyclingPartnerModel,
-  ): Promise<RecyclingPartnerModel> {
+  ): Promise<boolean> {
     this.logger.debug(
-      `Creating recycling partner with nationalId - ${recyclingPartner.companyId}`,
+      'Creating recycling partner:' + JSON.stringify(recyclingPartner, null, 2),
     )
-    return this.recyclingPartnerModel.create(recyclingPartner)
+    await recyclingPartner.save()
+    return true
   }
 }

@@ -18,7 +18,7 @@ export class GdprService {
     })
   }
 
-  insertNewGdpr(nationalId: string, gdprStatus: string) {
+  createGdpr(nationalId: string, gdprStatus: string) {
     this.logger.debug(
       `Insert gdpr nationalId:${nationalId} gdprStatus: ${gdprStatus}`,
     )
