@@ -27,7 +27,12 @@ import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
 
-const { samlEntryPoint, samlEntryPoint2, audience: audienceUrl, jwtSecret } = environment.auth
+const {
+  samlEntryPoint,
+  samlEntryPoint2,
+  audience: audienceUrl,
+  jwtSecret,
+} = environment.auth
 //const { samlEntryPoint2 } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 3600
@@ -242,11 +247,7 @@ export class AuthController {
   @Get('/company/login')
   login2(@Res() res, @Query() query) {
     this.logger.info('--- /company/login starting ---')
-<<<<<<< HEAD
-   // const samlEntryPoint2 = 'https://innskraning.island.is/?id=sv_company.local'
-=======
-    const samlEntryPoint2 = 'https://innskraning.island.is/?id=sv_company.local'
->>>>>>> master
+    // const samlEntryPoint2 = 'https://innskraning.island.is/?id=sv_company.local'
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
