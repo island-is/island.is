@@ -8,6 +8,8 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
+  HasMany,
+  HasOne,
 } from 'sequelize-typescript'
 import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
 import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
@@ -67,11 +69,8 @@ export class VehicleModel extends Model<VehicleModel> {
   @Column
   updatedAt: Date
 
-  //ATH
-  // @HasOne(() => RecyclingRequestModel, {
-  //   foreignKey: 'recycling_request',
-  //   as: 'recycling_request',
-  //   onDelete: 'CASCADE',
-  // })
-  // recyclingRequest!: RecyclingRequestModel
+  @Field(() => [RecyclingRequestModel], { nullable: true })
+  @HasMany(() => RecyclingRequestModel)
+  recyclingRequests!: RecyclingRequestModel[]
+
 }
