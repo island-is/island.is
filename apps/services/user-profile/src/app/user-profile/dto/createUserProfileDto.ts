@@ -29,4 +29,5 @@ export class CreateUserProfileDto {
   @IsEmail()
   @ApiPropertyOptional()
   readonly email?: string
+
 }

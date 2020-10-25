@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator'
+import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
 
@@ -23,4 +23,9 @@ export class UpdateUserProfileDto {
   @IsString()
   @ApiPropertyOptional()
   readonly email?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly emailVerified?: boolean
 }

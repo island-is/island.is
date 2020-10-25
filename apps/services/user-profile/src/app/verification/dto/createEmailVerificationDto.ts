@@ -1,11 +1,9 @@
 import {
   IsNotEmpty,
   IsString,
-  IsOptional,
   IsEmail,
-  IsEnum,
 } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateEmailVerificationDto {
   @IsNotEmpty()

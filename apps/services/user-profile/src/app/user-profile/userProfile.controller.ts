@@ -15,6 +15,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
+import { VerificationService } from '../verification/verification.service'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { UpdateImageDto } from './dto/updateImageDto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
@@ -25,7 +26,8 @@ import { UserProfileService } from './userProfile.service'
 @ApiTags('User Profile')
 @Controller()
 export class UserProfileController {
-  constructor(private userProfileService: UserProfileService) {}
+  constructor(private userProfileService: UserProfileService,
+    private verificationService: VerificationService) { }
 
   @Get('userProfile/:nationalId')
   @ApiParam({
@@ -55,7 +57,14 @@ export class UserProfileController {
         `A profile with nationalId - "${userProfileDto.nationalId}" already exists`,
       )
     }
-    return await this.userProfileService.create(userProfileDto)
+    const profile = await this.userProfileService.create(userProfileDto)
+
+    await this.verificationService.createEmailVerification(
+      profile.nationalId,
+      profile.email
+    )
+
+    return profile
   }
 
   @Put('userProfile/:nationalId')
@@ -68,7 +77,8 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   async update(
-    @Param('nationalId') nationalId: string,
+    @Param('nationalId')
+    nationalId: string,
     @Body() userProfileToUpdate: UpdateUserProfileDto,
   ): Promise<UserProfile> {
     const {
