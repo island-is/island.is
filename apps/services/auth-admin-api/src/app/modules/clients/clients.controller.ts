@@ -8,6 +8,7 @@ import {
   Body,
   Put,
   Delete,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -33,7 +34,12 @@ export class ClientsController {
   @Get(':id')
   @ApiOkResponse({ type: Client })
   async findOne(@Param('id') id: string): Promise<Client> {
+    if (!id) {
+      throw new BadRequestException('Id must be provided')
+    }
+
     const clientProfile = await this.clientsService.findClientById(id)
+
     if (!clientProfile) {
       throw new NotFoundException("This client doesn't exist")
     }
@@ -53,12 +59,20 @@ export class ClientsController {
     @Body() client: ClientUpdateDTO,
     @Param('id') id: string,
   ): Promise<Client> {
+    if (!id) {
+      throw new BadRequestException('Id must be provided')
+    }
+
     return await this.clientsService.update(client, id)
   }
 
   @Delete(':id')
   @ApiCreatedResponse()
   async delete(@Param('id') id: string): Promise<number> {
+    if (!id) {
+      throw new BadRequestException('Id must be provided')
+    }
+
     return await this.clientsService.delete(id)
   }
 }

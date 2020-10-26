@@ -188,6 +188,7 @@
     "sequelize": "5.21.8",
     "sequelize-replace-enum-postgres": "^1.5.0",
     "sequelize-typescript": "1.1.0",
+    "soap": "0.33.0",
     "sqs-consumer": "5.4.0",
     "stream-buffers": "^3.0.2",
     "supertest": "4.0.2",
