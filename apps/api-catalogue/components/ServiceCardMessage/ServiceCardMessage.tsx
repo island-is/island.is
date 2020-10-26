@@ -3,7 +3,7 @@ import * as styles from './ServiceCardMessage.treat'
 import cn from 'classnames'
 import { Box } from '@island.is/island-ui/core'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
- import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export type ServiceCardMessageTypes = 'default' | 'error'
 export type ServiceBorderStyleTypes = 'none' | 'default'
@@ -18,7 +18,6 @@ export interface ServiceCardMessageProps {
 }
 
 export const ServiceCardMessage = (props: ServiceCardMessageProps) => {
-
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = React.useState(false)
 
@@ -43,13 +42,15 @@ export const ServiceCardMessage = (props: ServiceCardMessageProps) => {
             props.borderStyle !== 'none' && props.messageType !== 'error',
         },
         {
-          [isMobile ? 
-            styles.wrapperFixedSizeMobile : styles.wrapperFixedSizeDesktop]:
+          [isMobile
+            ? styles.wrapperFixedSizeMobile
+            : styles.wrapperFixedSizeDesktop]:
             props.size === undefined || props.size === 'default',
         },
         {
-          [isMobile ? 
-            styles.wrapperGrowHeightMobile : styles.wrapperGrowHeightDesktop]:
+          [isMobile
+            ? styles.wrapperGrowHeightMobile
+            : styles.wrapperGrowHeightDesktop]:
             props.size !== undefined && props.size === 'growHeight',
         },
       )}
@@ -57,18 +58,26 @@ export const ServiceCardMessage = (props: ServiceCardMessageProps) => {
       <div className={cn(styles.cardTexts)}>
         <div
           className={cn(
-            props.messageType !== 'error' ? 
-              (isMobile ? styles.titleMobile : styles.title) : 
-              (isMobile ? styles.titleErrorMobile : styles.titleErrorDesktop),
+            props.messageType !== 'error'
+              ? isMobile
+                ? styles.titleMobile
+                : styles.title
+              : isMobile
+              ? styles.titleErrorMobile
+              : styles.titleErrorDesktop,
           )}
         >
           {props.title}
         </div>
         <div
           className={cn(
-            props.messageType !== 'error' ? 
-              (isMobile ? styles.textMobile : styles.text) : 
-              (isMobile ? styles.textErrorMobile : styles.textErrorDesktop),
+            props.messageType !== 'error'
+              ? isMobile
+                ? styles.textMobile
+                : styles.text
+              : isMobile
+              ? styles.textErrorMobile
+              : styles.textErrorDesktop,
           )}
         >
           {props.text}
