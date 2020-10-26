@@ -6,7 +6,6 @@ on:
       - 'master'
       - 'release/**'
       - 'hotfix/**'
-      - react-loadable-manifest-fix
     paths-ignore:
       - '**/*.md'
     tags:

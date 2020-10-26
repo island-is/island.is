@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   NotFoundException,
@@ -19,9 +20,14 @@ export class UserIdentitiesController {
   @Get(':subjectId')
   @ApiOkResponse({ type: UserIdentity })
   async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
+    if (!subjectId) {
+      throw new BadRequestException('SubjectId must be provided')
+    }
+
     const userIdentity = await this.userIdentityService.findBySubjectId(
       subjectId,
     )
+
     if (!userIdentity) {
       throw new NotFoundException("This user identity doesn't exist")
     }

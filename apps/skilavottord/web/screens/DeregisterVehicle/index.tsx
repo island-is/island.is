@@ -1,2 +1,3 @@
-export { default as DeregisterConfirm } from './Confirm'
-export { default as DeregisterSelect } from './Select'
+export { default as Confirm } from './Confirm'
+export { default as Select } from './Select'
+export * from './Overview'

@@ -1,12 +1,9 @@
 import {
-  Application,
   DataProviderItem,
   ExternalData,
   FieldTypes,
   FormItemTypes,
-  FormText,
-  ReviewField,
-  StaticText,
+  SubmitField,
 } from '@island.is/application/core'
 import { FormScreen } from './types'
 
@@ -24,16 +21,16 @@ export function verifyExternalData(
   return true
 }
 
-export function findReviewField(screen: FormScreen): ReviewField | undefined {
-  if (screen.type === FieldTypes.REVIEW) {
+export function findSubmitField(screen: FormScreen): SubmitField | undefined {
+  if (screen.type === FieldTypes.SUBMIT) {
     return screen
   }
   if (screen.type === FormItemTypes.MULTI_FIELD) {
     const reviewScreen = screen.children.find(
-      (child) => child.type === FieldTypes.REVIEW,
+      (child) => child.type === FieldTypes.SUBMIT,
     )
     if (reviewScreen !== undefined) {
-      return reviewScreen as ReviewField
+      return reviewScreen as SubmitField
     }
   }
   return undefined

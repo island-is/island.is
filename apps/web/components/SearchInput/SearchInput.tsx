@@ -277,7 +277,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               white={white}
               hasFocus={hasFocus}
               loading={search.isLoading}
-              rootProps={getRootProps()}
+              rootProps={{
+                'aria-controls': id + '-menu',
+                ...getRootProps(),
+              }}
               menuProps={{
                 comp: 'div',
                 ...getMenuProps(),

@@ -8,7 +8,7 @@ export const navScreenItems: NavigationScreenItem[] = [
   {
     name: defineMessage({
       id: 'sp.settings:change-profile',
-      defaultMessage: 'Breyta prófíl',
+      defaultMessage: 'Minn aðgangur',
     }),
     url: ServicePortalPath.UserProfileRoot,
     text: defineMessage({

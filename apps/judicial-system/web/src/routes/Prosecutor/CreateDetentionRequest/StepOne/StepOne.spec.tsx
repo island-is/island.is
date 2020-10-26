@@ -6,10 +6,11 @@ import StepOne from './StepOne'
 import { Route, Router, MemoryRouter } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
+import * as api from '../../../../api'
 import { userContext } from '../../../../utils/userContext'
+import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
-import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -271,7 +272,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     await act(async () => {
       await userEvent.type(
         getByTestId('policeCaseNumber') as HTMLInputElement,
-        '000-0000-000',
+        '000-0000-0010',
       )
       userEvent.tab()
       expect(
@@ -322,6 +323,70 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
       expect(
         (getByTestId('continueButton') as HTMLButtonElement).disabled,
       ).toBe(false)
+    })
+  })
+
+  test('should save case if accused name is entered first and then police case number and accused national id', async () => {
+    // Arrange
+    const spy = jest.spyOn(api, 'createCase')
+    const history = createMemoryHistory()
+    Storage.prototype.setItem = jest.fn()
+
+    Storage.prototype.getItem = jest.fn(() => {
+      return JSON.stringify({
+        arrestDate: '2020-11-02T12:03:00Z',
+        requestedCourtDate: '2020-11-12T12:03:00Z',
+      })
+    })
+
+    // Act
+    const { getByTestId } = render(
+      <userContext.Provider value={{ user: mockProsecutor }}>
+        <Router history={history}>
+          <StepOne />
+        </Router>
+      </userContext.Provider>,
+    )
+
+    await act(async () => {
+      await userEvent.type(
+        getByTestId('accusedName') as HTMLInputElement,
+        'Gervipersona',
+      )
+
+      userEvent.tab()
+
+      await userEvent.type(
+        getByTestId('accusedAddress') as HTMLInputElement,
+        'Batcave',
+      )
+
+      userEvent.tab()
+
+      await userEvent.type(
+        getByTestId('nationalId') as HTMLInputElement,
+        '0000000000',
+      )
+
+      userEvent.tab()
+
+      await userEvent.type(
+        getByTestId('policeCaseNumber') as HTMLInputElement,
+        '020-0202-2929',
+      )
+
+      userEvent.tab()
+
+      // Assert
+      expect(spy).toHaveBeenLastCalledWith({
+        policeCaseNumber: '020-0202-2929',
+        accusedNationalId: '0000000000',
+        court: 'Héraðsdómur Reykjavíkur',
+        accusedName: 'Gervipersona',
+        accusedAddress: 'Batcave',
+        arrestDate: '2020-11-02T12:03:00Z',
+        requestedCourtDate: '2020-11-12T12:03:00Z',
+      })
     })
   })
 })

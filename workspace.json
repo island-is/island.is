@@ -723,6 +723,35 @@
         }
       }
     },
+    "api-domains-national-registry": {
+      "root": "libs/api/domains/national-registry",
+      "sourceRoot": "libs/api/domains/national-registry/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/national-registry/tsconfig.lib.json",
+              "libs/api/domains/national-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/national-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/national-registry/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-translations": {
       "root": "libs/api/domains/translations",
       "sourceRoot": "libs/api/domains/translations/src",
@@ -2981,7 +3010,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components}/**/*.{js,ts,tsx}"
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
               }
             ]
           }

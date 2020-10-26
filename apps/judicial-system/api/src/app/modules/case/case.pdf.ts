@@ -22,7 +22,7 @@ function size(size: number): number {
 }
 
 function formatCourtCaseNumber(existingCase: Case): string {
-  return `Málsnúmer ${existingCase.court.replace(
+  return `Málsnúmer ${existingCase.court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
   )}: ${existingCase.courtCaseNumber}`
@@ -184,26 +184,6 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica')
     .fontSize(size(12))
     .text(existingCase.caseFacts, {
-      lineGap: 6,
-      paragraphGap: 10,
-    })
-    .font('Helvetica-Bold')
-    .fontSize(size(14))
-    .lineGap(8)
-    .text('Framburðir')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .text(existingCase.witnessAccounts, {
-      lineGap: 6,
-      paragraphGap: 10,
-    })
-    .font('Helvetica-Bold')
-    .fontSize(size(14))
-    .lineGap(8)
-    .text('Staða rannsóknar og næstu skref')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .text(existingCase.investigationProgress, {
       lineGap: 6,
       paragraphGap: 10,
     })
@@ -404,7 +384,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
 
   doc
     .font('Helvetica-Bold')
-    .text(`${existingCase.judge.name}, ${existingCase.judge.title}`)
+    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`)
     .end()
 
   // wait for the writing to finish
