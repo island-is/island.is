@@ -27,6 +27,7 @@ import { userContext } from '@island.is/judicial-system-web/src/utils/userContex
 import { useHistory } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
+import * as style from './Confirmation.treat'
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -137,8 +138,8 @@ export const Confirmation: React.FC = () => {
                 Upplýsingar
               </Text>
             </Box>
-            <Box marginBottom={1}>
-              <Text variant="intro">
+            <Box marginBottom={3}>
+              <Text>
                 {`Þinghald frá kl. ${formatDate(
                   workingCase.courtStartTime,
                   TIME_FORMAT,
@@ -149,30 +150,34 @@ export const Confirmation: React.FC = () => {
               </Text>
             </Box>
             <AccordionListItem title="Krafa lögreglu">
-              <Text variant="intro">{workingCase.policeDemands}</Text>
+              <span className={style.breakSpaces}>
+                {workingCase.policeDemands}
+              </span>
             </AccordionListItem>
             <AccordionListItem title="Viðstaddir">
-              <Text variant="intro">{workingCase.courtAttendees}</Text>
+              <span className={style.breakSpaces}>
+                {workingCase.courtAttendees}
+              </span>
             </AccordionListItem>
             <AccordionListItem title="Dómskjöl">
-              <Text variant="intro">
-                Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt
-                nr. 1.
-              </Text>
+              Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr.
+              1.
             </AccordionListItem>
             <AccordionListItem title="Réttindi kærða">
-              <Text variant="intro">
-                Kærða er bent á að honum sé óskylt að svara spurningum er varða
-                brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga
-                nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi
-                hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
-              </Text>
+              Kærða er bent á að honum sé óskylt að svara spurningum er varða
+              brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr.
+              88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að
+              tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
             </AccordionListItem>
             <AccordionListItem title="Afstaða kærða">
-              <Text variant="intro">{workingCase.accusedPlea}</Text>
+              <span className={style.breakSpaces}>
+                {workingCase.accusedPlea}
+              </span>
             </AccordionListItem>
             <AccordionListItem title="Málflutningur">
-              <Text variant="intro">{workingCase.litigationPresentations}</Text>
+              <span className={style.breakSpaces}>
+                {workingCase.litigationPresentations}
+              </span>
             </AccordionListItem>
           </AccordionItem>
         </Accordion>
@@ -187,7 +192,7 @@ export const Confirmation: React.FC = () => {
           <Text variant="eyebrow" color="blue400">
             Niðurstaða úrskurðar
           </Text>
-          <Text variant="intro">{workingCase.ruling}</Text>
+          <span className={style.breakSpaces}>{workingCase.ruling}</span>
         </Box>
       </Box>
       <Box component="section" marginBottom={7}>
@@ -196,9 +201,7 @@ export const Confirmation: React.FC = () => {
             Úrskurðarorð
           </Text>
         </Box>
-        <Box marginBottom={3}>
-          <Text>{constructConclusion(workingCase)}</Text>
-        </Box>
+        <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
         <Text variant="h4" fontWeight="light">
           Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða,
           verjanda hans, túlki og aðstoðarsaksóknara.

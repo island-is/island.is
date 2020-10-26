@@ -548,6 +548,127 @@
         "docker-express": {}
       }
     },
+    "api-catalogue-consts": {
+      "root": "libs/api-catalogue/consts",
+      "sourceRoot": "libs/api-catalogue/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalogue/consts/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalogue/consts/tsconfig.lib.json",
+              "libs/api-catalogue/consts/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/consts/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalogue/consts/jest.config.js",
+            "tsConfig": "libs/api-catalogue/consts/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-catalogue-elastic": {
+      "root": "libs/api-catalogue/elastic",
+      "sourceRoot": "libs/api-catalogue/elastic/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalogue/elastic/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalogue/elastic/tsconfig.lib.json",
+              "libs/api-catalogue/elastic/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/elastic/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalogue/elastic/jest.config.js",
+            "tsConfig": "libs/api-catalogue/elastic/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-catalogue-services": {
+      "root": "libs/api-catalogue/services",
+      "sourceRoot": "libs/api-catalogue/services/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalogue/services/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalogue/services/tsconfig.lib.json",
+              "libs/api-catalogue/services/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/services/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalogue/services/jest.config.js",
+            "tsConfig": "libs/api-catalogue/services/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
+              "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
+            ]
+          }
+        }
+      }
+    },
+    "api-catalogue-types": {
+      "root": "libs/api-catalogue/types",
+      "sourceRoot": "libs/api-catalogue/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalogue/types/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalogue/types/tsconfig.lib.json",
+              "libs/api-catalogue/types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/types/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalogue/types/jest.config.js",
+            "tsConfig": "libs/api-catalogue/types/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-content-search": {
       "root": "libs/api/content-search",
       "sourceRoot": "libs/api/content-search/src",
@@ -630,6 +751,35 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/api/domains/cms/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-communications": {
+      "root": "libs/api/domains/communications",
+      "sourceRoot": "libs/api/domains/communications/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/communications/tsconfig.lib.json",
+              "libs/api/domains/communications/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/communications/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/communications/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -2179,6 +2329,32 @@
         }
       }
     },
+    "island-ui-utils": {
+      "root": "libs/island-ui/utils",
+      "sourceRoot": "libs/island-ui/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/island-ui/utils/tsconfig.lib.json",
+              "libs/island-ui/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "judicial-system-api": {
       "root": "apps/judicial-system/api",
       "sourceRoot": "apps/judicial-system/api/src",
@@ -3360,7 +3536,29 @@
             "outputPath": "dist/apps/services/auth-api",
             "main": "apps/services/auth-api/src/main.ts",
             "tsConfig": "apps/services/auth-api/tsconfig.app.json",
-            "assets": ["apps/services/auth-api/src/assets"]
+            "assets": [
+              "apps/services/auth-api/src/assets",
+              {
+                "glob": "*",
+                "input": "libs/auth-api-lib/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "libs/auth-api-lib/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "libs/auth-api-lib",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "libs/auth-api-lib",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -3694,6 +3892,32 @@
         }
       }
     },
+    "shared-types": {
+      "root": "libs/shared/types",
+      "sourceRoot": "libs/shared/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/shared/types/tsconfig.lib.json",
+              "libs/shared/types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/shared/types/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/shared/types/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-consts": {
       "root": "libs/skilavottord/consts",
       "sourceRoot": "libs/skilavottord/consts/src",
@@ -3823,7 +4047,29 @@
             "outputPath": "dist/apps/skilavottord/ws",
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
-            "assets": ["apps/skilavottord/ws/src/assets"]
+            "assets": [
+              "apps/skilavottord/ws/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/skilavottord/ws/db/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/skilavottord/ws/db/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/skilavottord/ws",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/skilavottord/ws",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {

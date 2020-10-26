@@ -40,7 +40,6 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
         acquire: 30000,
         idle: 10000,
       },
-      //logging: (message) => this.logger.debug(message),
       autoLoadModels: true,
       synchronize: false,
     }
