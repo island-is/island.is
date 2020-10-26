@@ -14,6 +14,10 @@
     "checkbox": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis morbi ullamcorper ante amet eleifend ornare eget a, aliquam. Nunc, non dui tempor, lobortis diam quis egestas. Magna tempus accumsan fusce leo nisl nunc lacinia ultrices. Facilisi orci nec ut magna varius etiam feugiat. Lobortis consequat, arcu blandit tincidunt vitae cras.",
     "buttons": {
       "continue": "Continue"
+    },
+    "error": {
+      "message": "We have problem with the connection to the database and cannot save your preferences, please try to re-load the page.",
+      "primaryButton": "Re-load page"
     }
   },
   "myCars": {

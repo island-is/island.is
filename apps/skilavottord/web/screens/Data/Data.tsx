@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Box,
   Text,
@@ -14,33 +14,20 @@ import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-
-const nationalId = '2222222222'
+import { GET_GDPR_INFO } from '@island.is/skilavottord-web/graphql/queries'
+import { SET_GDPR_INFO } from '@island.is/skilavottord-web/graphql/mutations'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { InlineError } from '@island.is/skilavottord-web/components'
 
 const Data = () => {
+  const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-
-  // const { data, loading, error } = useQuery(GET_GDPR_INFO, {
-  //   variables: { nationalId },
-  // })
-
   const {
     t: { data: t, routes },
   } = useI18n()
   const router = useRouter()
-
-  // const [
-  //   setGDPRInfo,
-  //   { loading: mutationLoading, error: mutationError },
-  // ] = useMutation(SET_GDPR_INFO)
-
-  // useEffect(() => {
-  //   if (data) {
-  //     router.replace(routes.myCars)
-  //   }
-  // }, [data])
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -49,49 +36,85 @@ const Data = () => {
     setIsMobile(false)
   }, [width])
 
+  const { data, loading } = useQuery(GET_GDPR_INFO, {
+    variables: { nationalId: user?.nationalId },
+  })
+
+  const [setGDPRInfo, { error: mutationError }] = useMutation(SET_GDPR_INFO, {
+    onCompleted() {
+      router.replace(routes.myCars)
+    },
+    onError() {
+      console.log(mutationError)
+    },
+  })
+
   const handleContinue = () => {
-    // setGDPRInfo({ variables: { nationalId } })
-    router.replace(routes.myCars)
+    setGDPRInfo({
+      variables: {
+        gdprStatus: 'true',
+        nationalId: user.nationalId,
+      },
+    })
+  }
+
+  if (loading && !data) {
+    return null
+  } else if (data && data.getGDPRInfo.gdprStatus) {
+    router.push(routes.myCars)
+    return null
+  }
+
+  if (mutationError) {
+    return (
+      <PageLayout>
+        <Stack space={[3, 3, 3, 4]}>
+          <Text variant="h1">{t.title}</Text>
+          <InlineError
+            title={t.subTitles.info}
+            message={t.error.message}
+            primaryButton={{
+              text: t.error.primaryButton,
+              action: () => router.reload(),
+            }}
+          />
+        </Stack>
+      </PageLayout>
+    )
   }
 
   return (
     <PageLayout>
       <Stack space={[3, 3, 3, 4]}>
         <Text variant="h1">{t.title}</Text>
-        <Stack space={3}>
-          <Box display="flex" alignItems="center">
-            <Icon
-              icon="documents"
-              type="outline"
-              color="blue400"
-              size="large"
-            />
-            <Box marginLeft={1}>
-              <Text variant="h3">{t.subTitles.info}</Text>
-            </Box>
-          </Box>
+        <Stack space={[3, 3, 3, 3]}>
+          <Text variant="h3">{t.subTitles.info}</Text>
           <Text>{t.info}</Text>
+          <Box
+            paddingY={[3, 3, 3, 4]}
+            paddingLeft={[3, 3, 3, 4]}
+            paddingRight={[3, 3, 4, 20]}
+            background="blue100"
+          >
+            <Checkbox
+              label={t.checkbox}
+              checked={checkbox}
+              onChange={({ target }) => {
+                setCheckbox(target.checked)
+              }}
+            />
+          </Box>
+          <Box paddingY={3}>
+            <Button
+              onClick={handleContinue}
+              disabled={!checkbox}
+              fluid={isMobile}
+            >
+              {t.buttons.continue}
+            </Button>
+          </Box>
         </Stack>
-        <Box
-          paddingY={[3, 3, 3, 4]}
-          paddingLeft={[3, 3, 3, 4]}
-          paddingRight={[3, 3, 4, 20]}
-          background="blue100"
-        >
-          <Checkbox
-            label={t.checkbox}
-            checked={checkbox}
-            onChange={({ target }) => {
-              setCheckbox(target.checked)
-            }}
-          />
-        </Box>
       </Stack>
-      <Box paddingY={6}>
-        <Button onClick={handleContinue} disabled={!checkbox} fluid={isMobile}>
-          {t.buttons.continue}
-        </Button>
-      </Box>
     </PageLayout>
   )
 }

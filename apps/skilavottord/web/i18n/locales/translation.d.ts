@@ -39,6 +39,7 @@ export interface Data {
   info: string
   buttons: DataButtons
   checkbox: string
+  error: Errors
 }
 
 export interface MyCars {
@@ -284,7 +285,7 @@ export interface InputField {
 }
 
 export interface Routes {
-  home: HomeRoutes 
+  home: HomeRoutes
   data: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
