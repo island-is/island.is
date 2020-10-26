@@ -17,6 +17,7 @@ const mockUser = {
   role: 'citizen',
   // role: 'developer',
   // role: 'recyclingPartner',
+  // role: 'recyclingFund',
 }
 
 export const Header: FC = () => {

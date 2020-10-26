@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
 import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -8,14 +8,14 @@ import { useQuery } from '@apollo/client'
 import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
 import { MockCar } from '@island.is/skilavottord-web/types'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { Unauthorized } from '@island.is/skilavottord-web/components'
 
 const nationalId = '2222222222'
 
 const Overview: FC = () => {
-  const { data, loading, error } = useQuery(GET_VEHICLES, {
-    variables: { nationalId },
-  })
-
+  const { user } = useContext(UserContext)
   const {
     t: {
       myCars: t,
@@ -23,6 +23,9 @@ const Overview: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
+  const { data, loading, error } = useQuery(GET_VEHICLES, {
+    variables: { nationalId },
+  })
 
   const { cars } = data?.getVehiclesForNationalId || {}
 
@@ -42,6 +45,13 @@ const Overview: FC = () => {
     router
       .push(routes.completed, `${routes.baseRoute}/${id}/completed`)
       .then(() => window.scrollTo(0, 0))
+  }
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
+    console.log(user?.role, 'is not allowed to view this page')
+    return <Unauthorized />
   }
 
   return (

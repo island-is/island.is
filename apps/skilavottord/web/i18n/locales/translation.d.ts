@@ -20,6 +20,7 @@ export interface Translation {
   companyInfoForm: CompanyInfoFormPage
   deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
+  unauthorized: Unauthorized
   routes: Routes
 }
 
@@ -211,6 +212,10 @@ export interface deregisterSidenav {
 export interface DeregisterVehicle {
   select: DeregisterSelect
   deregister: Deregister
+}
+
+export interface Unauthorized {
+  message: string
 }
 
 export interface DeregisterSelect {
