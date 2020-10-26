@@ -26,7 +26,7 @@ export const UserInfoLine: FC<Props> = ({ label, content, editLink }) => {
   return (
     <Box paddingY={3} paddingX={4} border="standard" borderRadius="large">
       <Columns space={1} collapseBelow="sm" alignY="center">
-        <Column width="5/12">
+        <Column width="4/12">
           <Box overflow="hidden">
             <Typography variant="h5">{formatMessage(label)}</Typography>
           </Box>
@@ -35,7 +35,7 @@ export const UserInfoLine: FC<Props> = ({ label, content, editLink }) => {
           <Box overflow="hidden">{content}</Box>
         </Column>
         {editLink ? (
-          <Column width="3/12">
+          <Column width="4/12">
             <Box overflow="hidden" textAlign="right">
               {editLink.external ? (
                 <a
