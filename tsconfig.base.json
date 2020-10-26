@@ -28,6 +28,18 @@
       "@island.is/air-discount-scheme/types": [
         "libs/air-discount-scheme/types/src/index.ts"
       ],
+      "@island.is/api-catalogue/consts": [
+        "libs/api-catalogue/consts/src/index.ts"
+      ],
+      "@island.is/api-catalogue/elastic": [
+        "libs/api-catalogue/elastic/src/index.ts"
+      ],
+      "@island.is/api-catalogue/services": [
+        "libs/api-catalogue/services/src/index.ts"
+      ],
+      "@island.is/api-catalogue/types": [
+        "libs/api-catalogue/types/src/index.ts"
+      ],
       "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
@@ -160,6 +172,7 @@
       ],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
