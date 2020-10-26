@@ -15,7 +15,7 @@ module.exports = {
         ),
         queryInterface.addColumn(
           'user_profile',
-          'sms_verified',
+          'mobile_phone_number_verified',
           {
             type: Sequelize.BOOLEAN,
             defaultValue: false,

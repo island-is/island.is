@@ -72,7 +72,7 @@ export class UserProfile extends Model<UserProfile> {
     type: DataType.BOOLEAN,
   })
   @ApiProperty()
-  smsVerified?: boolean
+  mobilePhoneNumberVerified?: boolean
 
   @Column({
     type: DataType.STRING,

@@ -9,19 +9,17 @@ beforeAll(async () => {
 })
 
 describe('User profile API', () => {
-  it(`POST /userProfile should register userProfile`, async () => {
+  it(`POST /userProfile should register userProfile with no phonenumber`, async () => {
     // Act
     const response = await request(app.getHttpServer())
       .post('/userProfile')
       .send({
         nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
         locale: 'en',
         email: 'email@email.is',
       })
       .expect(201)
 
-    // Assert
     expect(response.body.id).toBeTruthy()
   })
 
@@ -61,7 +59,6 @@ describe('User profile API', () => {
     //Arrange
     const profile = {
       nationalId: '1234567890',
-      mobilePhoneNumber: '123456799',
       locale: 'en',
       email: 'email@email.is',
     }
@@ -79,9 +76,6 @@ describe('User profile API', () => {
     )
     expect(getResponse.body).toEqual(
       expect.objectContaining({ locale: profile.locale }),
-    )
-    expect(getResponse.body).toEqual(
-      expect.objectContaining({ mobilePhoneNumber: profile.mobilePhoneNumber }),
     )
     expect(getResponse.body).toEqual(
       expect.objectContaining({ email: profile.email }),
@@ -111,14 +105,10 @@ describe('User profile API', () => {
     //Arrange
     const profile = {
       nationalId: '1234567890',
-      mobilePhoneNumber: '123456799',
       locale: 'en',
-      email: 'email@email.is',
     }
     const updatedProfile = {
-      mobilePhoneNumber: '987654331',
       locale: 'is',
-      email: 'email@email.is',
     }
 
     // Act
@@ -136,14 +126,6 @@ describe('User profile API', () => {
     expect(updateResponse.body).toEqual(
       expect.objectContaining({ locale: updatedProfile.locale }),
     )
-    expect(updateResponse.body).toEqual(
-      expect.objectContaining({
-        mobilePhoneNumber: updatedProfile.mobilePhoneNumber,
-      }),
-    )
-    expect(updateResponse.body).toEqual(
-      expect.objectContaining({ email: updatedProfile.email }),
-    )
   })
 
   it(`POST /userProfile should return conflict on existing nationalId`, async () => {
@@ -152,7 +134,6 @@ describe('User profile API', () => {
       .post('/userProfile')
       .send({
         nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
         locale: 'en',
         email: 'email@email.is',
       })
@@ -162,7 +143,6 @@ describe('User profile API', () => {
       .post('/userProfile')
       .send({
         nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
         locale: 'en',
         email: 'email@email.is',
       })

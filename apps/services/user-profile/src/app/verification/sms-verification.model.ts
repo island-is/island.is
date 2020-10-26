@@ -50,6 +50,12 @@ export class SmsVerification extends Model<SmsVerification> {
   smsCode!: string
 
   @Column({
+    type: DataType.BOOLEAN,
+  })
+  @ApiProperty()
+  confirmed!: boolean
+
+  @Column({
     type: DataType.STRING,
   })
   @ApiProperty()

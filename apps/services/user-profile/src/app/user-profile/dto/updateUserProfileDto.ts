@@ -26,6 +26,9 @@ export class UpdateUserProfileDto {
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
   readonly emailVerified?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  readonly mobilePhoneNumberVerified?: boolean
 }

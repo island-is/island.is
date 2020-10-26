@@ -21,6 +21,10 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
+          confirmed: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false,
+          },
           mobile_phone_number: {
             type: Sequelize.STRING,
             allowNull: false,
