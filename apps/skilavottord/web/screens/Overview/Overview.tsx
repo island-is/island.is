@@ -19,7 +19,10 @@ const Overview: FC = () => {
   const {
     t: {
       myCars: t,
-      routes: { home: homeRoute, recycleVehicle: routes },
+      routes: {
+        home: { citizen: homeRoute },
+        recycleVehicle: routes,
+      },
     },
   } = useI18n()
   const router = useRouter()

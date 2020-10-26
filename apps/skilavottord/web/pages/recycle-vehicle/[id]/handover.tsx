@@ -4,4 +4,6 @@ import { Handover } from '@island.is/skilavottord-web/screens'
 import { withApollo } from '@island.is/skilavottord-web/graphql/withApollo'
 import { withAuth } from '@island.is/skilavottord-web/auth'
 
-export default withApollo(withAuth(withLocale('is')(Handover as Screen), 'citizen'))
+export default withApollo(
+  withAuth(withLocale('is')(Handover as Screen), 'citizen'),
+)
