@@ -65,8 +65,6 @@ import { Homepage } from './models/homepage.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
-import { GetNewsTagsInput } from './dto/getNewsTags.input'
-import { GenericTag } from './models/genericTag.model'
 
 const { cacheTime } = environment
 
@@ -323,15 +321,6 @@ export class CmsResolver {
   @Query(() => [String])
   getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
-      SearchIndexes[input.lang],
-      input,
-    )
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => [GenericTag])
-  getNewsTags(@Args('input') input: GetNewsTagsInput): Promise<GenericTag[]> {
-    return this.cmsElasticsearchService.getNewsTags(
       SearchIndexes[input.lang],
       input,
     )

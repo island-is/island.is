@@ -1,7 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { INews } from '../generated/contentfulTypes'
-
 import { Image, mapImage } from './image.model'
 import { Author, mapAuthor } from './author.model'
 import { Slice, mapDocument } from './slice.model'
@@ -39,7 +37,7 @@ export class News {
   @Field(() => [Slice], { nullable: true })
   content: Array<typeof Slice>
 
-  @Field(() => [GenericTag], { nullable: true })
+  @Field(() => [GenericTag])
   genericTags: GenericTag[]
 }
 

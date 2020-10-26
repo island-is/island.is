@@ -12,8 +12,6 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
-import { GenericTag } from './models/genericTag.model'
-import { GetNewsTagsInput } from './dto/getNewsTags.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -114,29 +112,6 @@ export class CmsElasticsearchService {
     // we return dates as array of strings on the format y-M
     return newsDatesResponse.aggregations.dates.buckets.map(
       (aggregationResult) => aggregationResult.key_as_string,
-    )
-  }
-
-  async getNewsTags(
-    index: SearchIndexes,
-    { size }: GetNewsTagsInput,
-  ): Promise<GenericTag[]> {
-    const query = {
-      documentTypes: ['webNews'],
-      tagType: 'genericTag',
-      size,
-    }
-
-    const newsDatesResponse = await this.elasticService.getTagAggregation(
-      index,
-      query,
-    )
-
-    return newsDatesResponse.aggregations.group.filtered.count.buckets.map(
-      (tagObject) => ({
-        id: tagObject.key,
-        title: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is allways the first value here we provide default value since value is optional
-      }),
     )
   }
 
