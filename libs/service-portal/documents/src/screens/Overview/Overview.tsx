@@ -132,17 +132,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     placeholder="Leitaðu af rafrænu skjali"
                   />
                 </Box>
+                <Box>
+                  <Select
+                    name="categories"
+                    defaultValue={categories[0]}
+                    options={categories}
+                    value={activeCategory}
+                    onChange={handleCategoryChange}
+                  />
+                </Box>
                 <Columns space={2} collapseBelow="sm">
                   <Column width="6/12">
-                    <Select
-                      name="categories"
-                      defaultValue={categories[0]}
-                      options={categories}
-                      value={activeCategory}
-                      onChange={handleCategoryChange}
-                    />
-                  </Column>
-                  <Column width="3/12">
                     <DatePicker
                       label="Frá"
                       placeholderText="23.05.20"
@@ -151,7 +151,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       handleChange={handleDateFromInput}
                     />
                   </Column>
-                  <Column width="3/12">
+                  <Column width="6/12">
                     <DatePicker
                       label="Til"
                       placeholderText="23.05.20"
