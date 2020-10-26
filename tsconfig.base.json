@@ -66,6 +66,9 @@
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
       ],
+      "@island.is/application/templates/document-provider-onboarding": [
+        "libs/application/templates/document-provider-onboarding/src/index.ts"
+      ],
       "@island.is/application/templates/driving-lessons": [
         "libs/application/templates/driving-lessons/src/index.ts"
       ],
