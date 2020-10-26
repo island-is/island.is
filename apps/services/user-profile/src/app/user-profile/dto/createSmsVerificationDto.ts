@@ -1,8 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsMobilePhone,
-} from 'class-validator'
+import { IsNotEmpty, IsString, IsMobilePhone } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateSmsVerificationDto {

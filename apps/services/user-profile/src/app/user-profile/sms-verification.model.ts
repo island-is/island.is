@@ -60,5 +60,4 @@ export class SmsVerification extends Model<SmsVerification> {
   })
   @ApiProperty()
   mobilePhoneNumber!: string
-
 }

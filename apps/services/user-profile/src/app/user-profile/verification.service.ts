@@ -1,18 +1,23 @@
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging';
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { EmailVerification } from './email-verification.model';
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { EmailVerification } from './email-verification.model'
 import * as CryptoJS from 'crypto-js'
-import { ConfirmEmailDto } from './dto/confirmEmailDto';
-import { UserProfile } from '../user-profile/userProfile.model';
-import { UserProfileService } from '../user-profile/userProfile.service';
-import { SmsVerification } from './sms-verification.model';
-import { ConfirmSmsDto } from './dto/confirmSmsDto';
-import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto';
-import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto';
-import { SmsService } from '@island.is/nova-sms';
-import { EmailService } from '@island.is/email-service';
-import environment from '../../environments/environment';
+import { ConfirmEmailDto } from './dto/confirmEmailDto'
+import { UserProfile } from '../user-profile/userProfile.model'
+import { UserProfileService } from '../user-profile/userProfile.service'
+import { SmsVerification } from './sms-verification.model'
+import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
+import { SmsService } from '@island.is/nova-sms'
+import { EmailService } from '@island.is/email-service'
+import environment from '../../environments/environment'
+import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { ConfirmSmsDto } from './dto/confirmSmsDto'
 /**
   *- Email verification procedure
     *- New User
@@ -52,19 +57,20 @@ export class VerificationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
-  async createEmailVerification(nationalId: string, email: string)
-    : Promise<EmailVerification | null> {
-    const hash = CryptoJS.MD5(nationalId + email);
+  async createEmailVerification(
+    nationalId: string,
+    email: string,
+  ): Promise<EmailVerification | null> {
+    const hash = CryptoJS.MD5(nationalId + email)
 
     const hashString = hash.toString(CryptoJS.enc.Hex)
     const verification = { ...{ nationalId, email }, hash: hashString }
 
-    const [record] = await this.emailVerificationModel.upsert(
-      verification,
-      { returning: true }
-    )
+    const [record] = await this.emailVerificationModel.upsert(verification, {
+      returning: true,
+    })
     if (record) {
       this.sendConfirmationEmail(record)
     }
@@ -72,7 +78,10 @@ export class VerificationService {
     return record
   }
 
-  async confirmEmail(confirmEmailDto: ConfirmEmailDto, userProfile: UserProfile) {
+  async confirmEmail(
+    confirmEmailDto: ConfirmEmailDto,
+    userProfile: UserProfile,
+  ) {
     const { nationalId } = userProfile
 
     const verification = await this.emailVerificationModel.findOne({
@@ -80,12 +89,17 @@ export class VerificationService {
     })
 
     if (confirmEmailDto.hash !== verification.hash) {
-      throw new NotFoundException(`Email verification with hash ${confirmEmailDto.hash} does not exist`)
+      throw new NotFoundException(
+        `Email verification with hash ${confirmEmailDto.hash} does not exist`,
+      )
     }
 
-    const {
-      numberOfAffectedRows
-    } = await this.userProfileService.update(nationalId, { emailVerified: true })
+    const { numberOfAffectedRows } = await this.userProfileService.update(
+      nationalId,
+      {
+        emailVerified: true,
+      },
+    )
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
         `A user profile with nationalId ${nationalId} does not exist`,
@@ -104,7 +118,7 @@ export class VerificationService {
         {
           name: '', // Get this from AuthToken
           address: verification.email,
-        }
+        },
       ],
       subject: `Staðfestingarpóstur`,
       html: `Opnaðu þennann hlekk til þess að staðfesta netfangið ${verification.email}
@@ -114,25 +128,25 @@ export class VerificationService {
 
   async removeSmsVerification(nationalId: string) {
     await this.smsVerificationModel.destroy({
-      where: { nationalId }
+      where: { nationalId },
     })
   }
 
   async removeEmailVerification(nationalId: string) {
     await this.emailVerificationModel.destroy({
-      where: { nationalId }
+      where: { nationalId },
     })
   }
 
-  async createSmsVerification(createSmsVerification: CreateSmsVerificationDto)
-    : Promise<SmsVerification | null> {
+  async createSmsVerification(
+    createSmsVerification: CreateSmsVerificationDto,
+  ): Promise<SmsVerification | null> {
     const code = Math.floor(100000 + Math.random() * 900000).toString()
     const verification = { ...createSmsVerification, smsCode: code }
 
-    const [record] = await this.smsVerificationModel.upsert(
-      verification,
-      { returning: true }
-    )
+    const [record] = await this.smsVerificationModel.upsert(verification, {
+      returning: true,
+    })
     if (record) {
       this.sendConfirmationSms(record)
     }
@@ -141,7 +155,6 @@ export class VerificationService {
   }
 
   async confirmSms(confirmSmsDto: ConfirmSmsDto, nationalId: string) {
-
     const verification = await this.smsVerificationModel.findOne({
       where: { nationalId },
     })
@@ -150,19 +163,27 @@ export class VerificationService {
       throw new BadRequestException(`SMS Code is not a match`)
     }
 
-    await this.smsVerificationModel.update({ confirmed: true }, {
-      where: { nationalId },
-      returning: true,
-    })
+    await this.smsVerificationModel.update(
+      { confirmed: true },
+      {
+        where: { nationalId },
+        returning: true,
+      },
+    )
   }
 
-  async isPhoneNumberVerified(createUserProfileDto: CreateUserProfileDto): Promise<boolean> {
+  async isPhoneNumberVerified(
+    createUserProfileDto: CreateUserProfileDto,
+  ): Promise<boolean> {
     const { nationalId, mobilePhoneNumber } = createUserProfileDto
     const verification = await this.smsVerificationModel.findOne({
       where: { nationalId },
     })
     if (!verification) return false
-    return verification.confirmed && verification.mobilePhoneNumber === mobilePhoneNumber
+    return (
+      verification.confirmed &&
+      verification.mobilePhoneNumber === mobilePhoneNumber
+    )
   }
 
   async sendConfirmationSms(verification: SmsVerification) {

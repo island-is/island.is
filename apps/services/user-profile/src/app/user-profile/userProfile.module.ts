@@ -6,15 +6,14 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { UploadProcessor } from './upload.processor'
 import { FileStorageService } from '@island.is/file-storage'
-import { VerificationService } from '../verification/verification.service'
-import { EmailVerification } from '../verification/email-verification.model'
-import { SmsVerification } from '../verification/sms-verification.model'
 import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { DataSourceConfig } from 'apollo-datasource'
 import environment from '../../environments/environment'
 import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
-
+import { SmsVerification } from './sms-verification.model'
+import { EmailVerification } from './email-verification.model'
+import { VerificationService } from './verification.service'
 
 let BullModule: DynamicModule
 
@@ -33,9 +32,20 @@ if (process.env.INIT_SCHEMA === 'true') {
 }
 
 @Module({
-  imports: [SequelizeModule.forFeature([EmailVerification, SmsVerification, UserProfile]), BullModule],
+  imports: [
+    SequelizeModule.forFeature([
+      EmailVerification,
+      SmsVerification,
+      UserProfile,
+    ]),
+    BullModule,
+  ],
   controllers: [UserProfileController],
-  providers: [UserProfileService, UploadProcessor, FileStorageService, VerificationService,
+  providers: [
+    UserProfileService,
+    UploadProcessor,
+    FileStorageService,
+    VerificationService,
     EmailService,
     {
       provide: SMS_OPTIONS,
@@ -53,7 +63,8 @@ if (process.env.INIT_SCHEMA === 'true') {
         return smsService
       },
       inject: [SMS_OPTIONS, LOGGER_PROVIDER],
-    }],
+    },
+  ],
   exports: [UserProfileService],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}

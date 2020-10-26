@@ -3,7 +3,8 @@ import {
   IsString,
   IsOptional,
   IsEmail,
-  IsEnum, IsBoolean
+  IsEnum,
+  IsBoolean,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
@@ -33,5 +34,4 @@ export class CreateUserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly mobilePhoneNumberVerified?: boolean
-
 }

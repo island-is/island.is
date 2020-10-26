@@ -5,7 +5,7 @@ export default {
     fromName: 'Olafur',
     replyToEmail: 'olafur@sendiradid.is',
     replyToName: 'Ólafur Björn Magnússon',
-    currentBaseUrl: 'http://localhost:4200'
+    currentBaseUrl: 'http://localhost:4200',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
