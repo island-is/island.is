@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Link } from '@island.is/island-ui/core'
+import { Box, Link, Stack } from '@island.is/island-ui/core'
 import * as styles from './ServiceCard.treat'
 import cn from 'classnames'
 import { useHorizontalDragScroll } from '..'
@@ -10,7 +10,10 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { ServiceStatus, SERVICE_STATUS } from '../ServiceStatus';
 import { ContentfulString } from '../../services/contentful.types'
+import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 export interface ServiceCardProps {
   service: ApiService
@@ -23,67 +26,89 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
   const preventDragHandler = (e) => {
     e.preventDefault()
   }
+
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   return (
-    <div onDragStart={preventDragHandler}>
-      <Box borderRadius="large" className={cn(styles.card, 'service-card')}>
+    <Box onDragStart={preventDragHandler}>
+      <Box 
+        borderRadius="large" 
+        className={cn(isMobile ? styles.cardMobile : styles.card)}
+      >
         <Link href={`./services/${service.id}`}>
-          <div className={cn(styles.cardTexts)}>
-            <div className={cn(styles.name)}>{service.name}</div>
-            {/*<ServiceStatus className={styles.serviceStatus} status={props.service.status}/>*/}
-            <div className={cn(styles.owner)}>{service.owner}</div>
-          </div>
+          <Stack space={3}>
+            <Box className={cn(styles.cardTexts)}>
+              <Stack space={1}>
+                <h1 className={cn(isMobile ? styles.nameMobile : styles.name)}>
+                  {service.name}
+                </h1>
+                <p className={cn(isMobile ? styles.ownerMobile : styles.owner)}>
+                  {service.owner}
+                </p>
+              </Stack>
+              {/* <ServiceStatus className={styles.serviceStatus} status={SERVICE_STATUS.OK}/> */}
+            </Box>
+            <Box {...dragProps} className={cn(styles.scrollBoxWrapper)}>
+              <Box className={cn(styles.category)}>
+                {service.pricing?.map((item, index) => (
+                  <Box
+                    className={cn(styles.categoryItem, styles.noSelect)}
+                    key={index}
+                  >
+                    {
+                      strings.find(
+                        (s) =>
+                          s.id ===
+                          `catalog-filter-pricing-${PricingCategory[
+                            item
+                          ].toLowerCase()}`,
+                      ).text
+                    }
+                  </Box>
+                ))}
+                {service.data?.map((item, index) => (
+                  <Box
+                    className={cn(styles.categoryItem, styles.noSelect)}
+                    key={index}
+                  >
+                    {
+                      strings.find(
+                        (s) =>
+                          s.id ===
+                          `catalog-filter-data-${DataCategory[item].toLowerCase()}`,
+                      ).text
+                    }
+                  </Box>
+                ))}
+                {service.type?.map((item, index) => (
+                  <Box
+                    className={cn(styles.categoryItem, styles.noSelect)}
+                    key={index}
+                  >
+                    {TypeCategory[item]}
+                  </Box>
+                ))}
+                {service.access?.map((item, index) => (
+                  <Box
+                    className={cn(styles.categoryItem, styles.noSelect)}
+                    key={index}
+                  >
+                    {AccessCategory[item]}
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          </Stack>
         </Link>
-        <div {...dragProps} className={cn(styles.scrollBoxWrapper)}>
-          <div className={cn(styles.category)}>
-            {service.pricing?.map((item, index) => (
-              <div
-                className={cn(styles.categoryItem, styles.noSelect)}
-                key={index}
-              >
-                {
-                  strings.find(
-                    (s) =>
-                      s.id ===
-                      `catalog-filter-pricing-${PricingCategory[
-                        item
-                      ].toLowerCase()}`,
-                  ).text
-                }
-              </div>
-            ))}
-            {service.data?.map((item, index) => (
-              <div
-                className={cn(styles.categoryItem, styles.noSelect)}
-                key={index}
-              >
-                {
-                  strings.find(
-                    (s) =>
-                      s.id ===
-                      `catalog-filter-data-${DataCategory[item].toLowerCase()}`,
-                  ).text
-                }
-              </div>
-            ))}
-            {service.type?.map((item, index) => (
-              <div
-                className={cn(styles.categoryItem, styles.noSelect)}
-                key={index}
-              >
-                {TypeCategory[item]}
-              </div>
-            ))}
-            {service.access?.map((item, index) => (
-              <div
-                className={cn(styles.categoryItem, styles.noSelect)}
-                key={index}
-              >
-                {AccessCategory[item]}
-              </div>
-            ))}
-          </div>
-        </div>
       </Box>
-    </div>
+    </Box>
   )
 }
