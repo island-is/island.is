@@ -47,5 +47,6 @@ export const exceptionHandler = async (err: any) => {
     )
   } else {
     logger.error(err)
+    throw err
   }
 }

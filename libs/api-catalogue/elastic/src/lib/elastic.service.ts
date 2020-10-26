@@ -132,7 +132,6 @@ export class ElasticService {
       body: {
         query: {
           bool: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             must: ids.map((id) => ({ match: { _id: id } })),
           },
         },
@@ -147,7 +146,6 @@ export class ElasticService {
       body: {
         query: {
           bool: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             must_not: excludeIds.map((id) => ({ match: { _id: id } })),
           },
         },

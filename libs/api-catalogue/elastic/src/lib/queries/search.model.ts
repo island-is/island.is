@@ -20,11 +20,9 @@ export const searchQuery = ({
   console.log(pricing)
   const should = []
   //minimum_should_match makes sure that we match all available categories in the should part
-  // eslint-disable-next-line @typescript-eslint/camelcase
   let minimum_should_match = 0
 
   if (pricing.length) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     minimum_should_match++
     should.push({
       terms: {
@@ -34,7 +32,6 @@ export const searchQuery = ({
   }
 
   if (data.length) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     minimum_should_match++
     should.push({
       terms: {
@@ -44,7 +41,6 @@ export const searchQuery = ({
   }
 
   if (type.length) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     minimum_should_match++
     should.push({
       terms: {
@@ -54,7 +50,6 @@ export const searchQuery = ({
   }
 
   if (access.length) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     minimum_should_match++
     should.push({
       terms: {
@@ -68,18 +63,15 @@ export const searchQuery = ({
       bool: {
         must: [
           {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             simple_query_string: {
               query: query + '*',
               fields: ['name', 'owner', 'description'],
-              // eslint-disable-next-line @typescript-eslint/camelcase
               analyze_wildcard: true,
             },
           },
           {
             bool: {
               should,
-              // eslint-disable-next-line @typescript-eslint/camelcase
               minimum_should_match,
             },
           },
