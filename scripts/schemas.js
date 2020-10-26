@@ -9,7 +9,7 @@ const { promisify } = require('util')
 const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 
 /**
- * See POSTINSTALL.md to setup your project with auto-generated schemas files
+ * See SCHEMAS.md to setup your project with auto-generated schemas files
  */
 const TARGETS = [
   'schemas/build-openapi', // Output openapi.yaml
