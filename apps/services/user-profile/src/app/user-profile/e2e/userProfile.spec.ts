@@ -1,6 +1,8 @@
 import { setup } from '../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import { EmailVerification } from '../../verification/email-verification.model'
+import { SmsVerification } from '../../verification/sms-verification.model'
 
 let app: INestApplication
 
@@ -154,5 +156,76 @@ describe('User profile API', () => {
     expect(conflictResponse.body.message).toBe(
       'A profile with nationalId - "1234567890" already exists',
     )
+  })
+
+
+  it(`POST /userProfile should return error on unverified Phone Number`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456798',
+        locale: 'en',
+        email: 'email@email.is',
+      })
+      .expect(400)
+
+    // Assert
+    expect(response.body.error).toBe('Bad Request')
+    expect(response.body.message).toBe(
+      'Phone number: 123456798 is not verified',
+    )
+  })
+})
+describe('Verify API', () => {
+
+  it(`POST /userProfile creates an email verfication in Db`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/userProfile/')
+      .send({
+        nationalId: '1234567890',
+        locale: 'en',
+        email: 'email@email.is',
+      })
+      .expect(201)
+
+    const verification = await EmailVerification.findOne({
+      where: { nationalId: response.body.nationalId }
+    })
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ nationalId: verification.nationalId }),
+    )
+    expect(response.body).toEqual(
+      expect.objectContaining({ email: verification.email }),
+    )
+  })
+
+
+  it(`POST /smsVerification/ creates an sms verfication in Db`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/smsVerification/')
+      .send({
+        nationalId: "string",
+        mobilePhoneNumber: "string"
+      })
+      .expect(201)
+
+    const verification = await SmsVerification.findOne({
+      where: { nationalId: response.body.nationalId }
+    })
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ nationalId: verification.nationalId }),
+    )
+    expect(response.body).toEqual(
+      expect.objectContaining({ smsCode: verification.smsCode }),
+    )
+
   })
 })
