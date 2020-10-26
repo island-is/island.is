@@ -31,8 +31,6 @@ describe(`${Constants.STEP_THREE_ROUTE}`, () => {
         ],
         requestedCustodyRestrictions: ['ISOLATION', 'MEDIA'],
         caseFacts: 'string',
-        witnessAccounts: 'string',
-        investigationProgress: 'string',
         legalArguments: 'string',
       })
     })

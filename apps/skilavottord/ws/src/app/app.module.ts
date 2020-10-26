@@ -1,3 +1,4 @@
+console.log('--- app.module starting')
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { RecyclingPartnerModule } from './modules/recyclingPartner'

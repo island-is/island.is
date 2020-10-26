@@ -16,6 +16,7 @@ interface NewsCardProps {
   as: string
   date?: string
   imagePosition?: 'top' | 'right'
+  titleAs?: 'h2' | 'h3' | 'h4'
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
@@ -27,6 +28,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   url,
   as,
   date,
+  titleAs = 'h3',
 }) => {
   const { format } = useDateUtils()
   return (
@@ -65,7 +67,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
             {format(new Date(date), 'do MMMM yyyy')}
           </Text>
         )}
-        <Text variant="h3" as="h3" paddingBottom={1}>
+        <Text variant="h3" as={titleAs} paddingBottom={1}>
           {title}
         </Text>
         <Text paddingBottom={3}>{introduction}</Text>

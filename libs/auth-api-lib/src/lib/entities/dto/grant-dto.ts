@@ -1,32 +1,37 @@
-import { IsDateString, IsOptional, IsString } from 'class-validator'
+import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class GrantDto {
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'set_key',
   })
   readonly key: string
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'set_type',
   })
   readonly type: string
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'set_subject_id',
   })
   readonly subjectId: string
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'sessionId',
   })
   readonly sessionId: string
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'set_clientId',
   })
@@ -56,6 +61,7 @@ export class GrantDto {
   readonly consumedTime: Date
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'set_data',
   })

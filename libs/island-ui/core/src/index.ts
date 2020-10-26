@@ -76,5 +76,5 @@ export * from './lib/Tabs/Tabs'
 // Context
 export * from './lib/context'
 
-// Util functions
-export * from './utils/global.treat'
+// Treat
+export * from './treat/global.treat'

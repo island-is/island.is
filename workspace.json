@@ -723,6 +723,35 @@
         }
       }
     },
+    "api-domains-national-registry": {
+      "root": "libs/api/domains/national-registry",
+      "sourceRoot": "libs/api/domains/national-registry/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/national-registry/tsconfig.lib.json",
+              "libs/api/domains/national-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/national-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/national-registry/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-translations": {
       "root": "libs/api/domains/translations",
       "sourceRoot": "libs/api/domains/translations/src",
@@ -2150,6 +2179,32 @@
         }
       }
     },
+    "island-ui-utils": {
+      "root": "libs/island-ui/utils",
+      "sourceRoot": "libs/island-ui/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/island-ui/utils/tsconfig.lib.json",
+              "libs/island-ui/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "judicial-system-api": {
       "root": "apps/judicial-system/api",
       "sourceRoot": "apps/judicial-system/api/src",
@@ -2955,7 +3010,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components}/**/*.{js,ts,tsx}"
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
               }
             ]
           }
@@ -3331,7 +3386,29 @@
             "outputPath": "dist/apps/services/auth-api",
             "main": "apps/services/auth-api/src/main.ts",
             "tsConfig": "apps/services/auth-api/tsconfig.app.json",
-            "assets": ["apps/services/auth-api/src/assets"]
+            "assets": [
+              "apps/services/auth-api/src/assets",
+              {
+                "glob": "*",
+                "input": "libs/auth-api-lib/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "libs/auth-api-lib/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "libs/auth-api-lib",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "libs/auth-api-lib",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -3794,7 +3871,29 @@
             "outputPath": "dist/apps/skilavottord/ws",
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
-            "assets": ["apps/skilavottord/ws/src/assets"]
+            "assets": [
+              "apps/skilavottord/ws/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/skilavottord/ws/db/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/skilavottord/ws/db/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/skilavottord/ws",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/skilavottord/ws",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {

@@ -20,11 +20,11 @@ export class GdprModel extends Model<GdprModel> {
 
   @Field()
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: true,
   })
-  gdprStatus: boolean
+  gdprStatus: string
 
   @Field()
   @CreatedAt

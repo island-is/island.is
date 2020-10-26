@@ -65,6 +65,9 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-national-registry": {
+      "tags": []
+    },
     "api-domains-translations": {
       "tags": []
     },
@@ -187,6 +190,9 @@
       "tags": []
     },
     "island-ui-theme": {
+      "tags": []
+    },
+    "island-ui-utils": {
       "tags": []
     },
     "judicial-system-api": {

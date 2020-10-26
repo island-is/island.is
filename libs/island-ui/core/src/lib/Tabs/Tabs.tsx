@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
@@ -6,8 +6,9 @@ import { Select, Option } from '../Select/Select'
 
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { useWindowSize } from 'react-use'
 
 type TabType = {
   label: string
@@ -46,20 +47,32 @@ export const Tabs: FC<TabInterface> = ({
     tab.move(tabOption?.value as string)
   }
 
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   return (
     <Box position="relative">
       <Box background={contentBackground} className={styles.bg} />
       <Box position="relative" paddingY="none">
-        <div className={styles.select}>
-          <Select
-            name={label}
-            label={label}
-            onChange={onChange}
-            options={selectOptions}
-            defaultValue={selectOptions[parseInt(selected)]}
-            isSearchable={false}
-          />
-        </div>
+        {isMobile && (
+          <div className={styles.select}>
+            <Select
+              name={label}
+              label={label}
+              onChange={onChange}
+              options={selectOptions}
+              defaultValue={selectOptions[parseInt(selected)]}
+              isSearchable={false}
+            />
+          </div>
+        )}
         <TabList
           className={styles.tabList}
           {...tab}

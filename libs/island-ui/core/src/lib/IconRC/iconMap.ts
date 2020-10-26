@@ -1,4 +1,4 @@
-export type Type = 'filled' | 'sharp' | 'outline'
+export type Type = 'filled' | 'outline'
 export type Icon =
   | 'accessibility'
   | 'add'
@@ -9,6 +9,7 @@ export type Icon =
   | 'calendar'
   | 'car'
   | 'cellular'
+  | 'checkmarkCircle'
   | 'chevronBack'
   | 'chevronDown'
   | 'chevronForward'
@@ -16,6 +17,7 @@ export type Icon =
   | 'close'
   | 'fileTrayFull'
   | 'home'
+  | 'informationCircle'
   | 'lockClosed'
   | 'logOut'
   | 'menu'
@@ -29,6 +31,7 @@ export type Icon =
   | 'search'
   | 'settings'
   | 'wallet'
+  | 'warning'
 
 export default {
   filled: {
@@ -41,6 +44,7 @@ export default {
     calendar: 'Calendar',
     car: 'Car',
     cellular: 'Cellular',
+    checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
     chevronForward: 'ChevronForward',
@@ -48,6 +52,7 @@ export default {
     close: 'Close',
     fileTrayFull: 'FileTrayFull',
     home: 'Home',
+    informationCircle: 'InformationCircle',
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
     menu: 'Menu',
@@ -61,37 +66,7 @@ export default {
     search: 'Search',
     settings: 'Settings',
     wallet: 'Wallet',
-  },
-  sharp: {
-    accessibility: 'AccessibilitySharp',
-    add: 'AddSharp',
-    arrowForward: 'ArrowForwardSharp',
-    arrowBack: 'ArrowBackSharp',
-    attach: 'AttachSharp',
-    business: 'BusinessSharp',
-    calendar: 'CalendarSharp',
-    car: 'CarSharp',
-    cellular: 'CellularSharp',
-    chevronBack: 'ChevronBackSharp',
-    chevronDown: 'ChevronDownSharp',
-    chevronForward: 'ChevronForwardSharp',
-    closeCircle: 'CloseCircleSharp',
-    close: 'CloseSharp',
-    fileTrayFull: 'FileTrayFullSharp',
-    home: 'HomeSharp',
-    lockClosed: 'LockClosedSharp',
-    logOut: 'LogOutSharp',
-    menu: 'MenuSharp',
-    open: 'OpenSharp',
-    people: 'PeopleSharp',
-    person: 'PersonSharp',
-    reader: 'ReaderSharp',
-    receipt: 'ReceiptSharp',
-    removeCircle: 'RemoveCircleSharp',
-    school: 'SchoolSharp',
-    search: 'SearchSharp',
-    settings: 'SettingsSharp',
-    wallet: 'WalletSharp',
+    warning: 'Warning',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -103,6 +78,7 @@ export default {
     calendar: 'CalendarOutline',
     car: 'CarOutline',
     cellular: 'CellularOutline',
+    checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
     chevronDown: 'ChevronDownOutline',
     chevronForward: 'ChevronForwardOutline',
@@ -110,6 +86,7 @@ export default {
     close: 'CloseOutline',
     fileTrayFull: 'FileTrayFullOutline',
     home: 'HomeOutline',
+    informationCircle: 'InformationCircleOutline',
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
     menu: 'MenuOutline',
@@ -123,5 +100,6 @@ export default {
     search: 'SearchOutline',
     settings: 'SettingsOutline',
     wallet: 'WalletOutline',
+    warning: 'WarningOutline',
   },
 }

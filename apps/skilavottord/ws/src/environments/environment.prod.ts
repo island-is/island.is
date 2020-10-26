@@ -5,6 +5,7 @@ export default {
   },
   auth: {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
+    samlEntryPoint2: process.env.SAML_ENTRY_POINT2,
     audience: process.env.AUTH_AUDIENCE,
     jwtSecret: process.env.AUTH_JWT_SECRET,
   },
