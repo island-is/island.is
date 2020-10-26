@@ -20,6 +20,7 @@ export interface Translation {
   companyInfoForm: CompanyInfoFormPage
   deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
+  unauthorized: Unauthorized
   routes: Routes
 }
 
@@ -213,6 +214,10 @@ export interface DeregisterVehicle {
   deregister: Deregister
 }
 
+export interface Unauthorized {
+  message: string
+}
+
 export interface DeregisterSelect {
   title: string
   info: string
@@ -262,11 +267,17 @@ export interface InputField {
 }
 
 export interface Routes {
-  home: string
+  home: HomeRoutes
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
   companyInfo: CompanyInfoRoutes
+}
+
+export interface HomeRoutes {
+  citizen: string
+  recyclingPartner: string
+  recyclingFund: string
 }
 
 export interface RecycleVehicleRoutes {
@@ -438,9 +449,4 @@ function m(additional: any) {
 
 function r(name: string) {
   return { ref: name }
-}
-
-const typeMap: any = {
-  Translation: o([{ json: 'home', js: 'home', typ: r('Home') }], false),
-  Home: o([{ json: 'title', js: 'title', typ: '' }], false),
 }

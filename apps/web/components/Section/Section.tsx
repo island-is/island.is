@@ -45,7 +45,7 @@ export const Section: React.FC<SectionProps> = ({
 
   const generateBackgroundBleed = () => {
     //Background bleed is not available on mobile.
-    if (!backgroundBleed || isMobile) {
+    if (!backgroundBleed.bleedAmount || isMobile) {
       return null
     }
 

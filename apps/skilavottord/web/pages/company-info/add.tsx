@@ -3,4 +3,7 @@ import { withLocale } from '@island.is/skilavottord-web/i18n'
 import { AddCompanyInfo } from '@island.is/skilavottord-web/screens'
 import { withAuth } from '@island.is/skilavottord-web/auth'
 
-export default withLocale('is')(AddCompanyInfo as Screen)
+export default withAuth(
+  withLocale('is')(AddCompanyInfo as Screen),
+  'recyclingPartner',
+)

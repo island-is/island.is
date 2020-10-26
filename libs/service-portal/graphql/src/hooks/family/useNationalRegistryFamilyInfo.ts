@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { Document, Query, QueryGetMyInfoArgs } from '@island.is/api/schema'
+import { Query, QueryGetMyInfoArgs } from '@island.is/api/schema'
 import { NATIONAL_REGISTRY_FAMILY_INFO } from '../../lib/queries/getNationalRegistryFamilyInfo'
 
 export const useNationalRegistryFamilyInfo = (natReg: string) => {
@@ -13,17 +13,6 @@ export const useNationalRegistryFamilyInfo = (natReg: string) => {
       },
     },
   )
-
-  const mockData: Document[] = [
-    {
-      date: new Date(),
-      id: '111',
-      opened: false,
-      senderName: 'Stafrænt Ísland',
-      senderNatReg: '',
-      subject: 'Rafræn skjöl frá Ísland.is',
-    },
-  ]
 
   return {
     data: data?.getMyFamily || null,
