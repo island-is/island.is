@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { Document, Query, QueryGetMyInfoArgs } from '@island.is/api/schema'
+import { Query, QueryGetMyInfoArgs } from '@island.is/api/schema'
 import { NATIONAL_REGISTRY_INFO } from '../../lib/queries/getNationaRegistryUserInfo'
 
 export const useNationalRegistryInfo = (natReg: string) => {

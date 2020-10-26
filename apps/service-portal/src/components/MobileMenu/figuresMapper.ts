@@ -2,8 +2,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
   if (path === ServicePortalPath.FjarmalRoot) return '/assets/images/study.jpg'
-  if (path === ServicePortalPath.FjolskyldanRoot)
-    return '/assets/images/family.jpg'
+  if (path === ServicePortalPath.FamilyRoot) return '/assets/images/family.jpg'
   if (path === ServicePortalPath.HeilsaRoot)
     return '/assets/images/retirement.jpg'
   if (path === ServicePortalPath.MenntunRoot)
