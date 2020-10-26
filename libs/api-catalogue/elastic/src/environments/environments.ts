@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
   elastic: {
-    node: 'http://localhost:9200/',
+    node: process.env.ELASTIC_NODE || 'http://localhost:9200',
   },
 }
