@@ -280,6 +280,9 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-my-service": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
