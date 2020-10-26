@@ -3386,7 +3386,29 @@
             "outputPath": "dist/apps/services/auth-api",
             "main": "apps/services/auth-api/src/main.ts",
             "tsConfig": "apps/services/auth-api/tsconfig.app.json",
-            "assets": ["apps/services/auth-api/src/assets"]
+            "assets": [
+              "apps/services/auth-api/src/assets",
+              {
+                "glob": "*",
+                "input": "libs/auth-api-lib/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "libs/auth-api-lib/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "libs/auth-api-lib",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "libs/auth-api-lib",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
