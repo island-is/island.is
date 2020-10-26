@@ -181,145 +181,125 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           position="static"
         >
           <Box ref={contentRef}>
-            <Box>
-              <TabList
-                {...tab}
-                aria-label="Flettiborði"
-                className={styles.tabWrapper}
-              >
-                {tabs.map(({ title = '' }, index) => {
-                  return (
-                    <Tab
-                      key={index}
-                      {...tab}
-                      className={cn(styles.tabContainer)}
-                    >
-                      <TabBullet selected={selectedIndex === index} />
-                      <span className={styles.srOnly}>{title}</span>
-                    </Tab>
-                  )
-                })}
-              </TabList>
-              <Box className={styles.tabPanelWrapper}>
-                {tabs.map(({ title, subtitle, content, link }, index) => {
-                  const linkUrls = generateUrls(link)
-
-                  const currentIndex = tab.items.findIndex(
-                    (x) => x.id === tab.currentId,
-                  )
-
-                  const visible = currentIndex === index
-                  const tabTitleId = 'frontpageTabTitle' + index
-                  return (
-                    <TabPanel
-                      key={index}
-                      {...tab}
-                      style={{
-                        display: 'inline-block',
-                      }}
-                      tabIndex={visible ? 0 : -1}
-                      className={cn(styles.tabPanel, {
-                        [styles.tabPanelVisible]: visible,
-                      })}
-                    >
-                      <Box
-                        paddingY={3}
-                        ref={(el) => (itemsRef.current[index] = el)}
-                        style={{ minHeight: `${minHeight}px` }}
-                      >
-                        <Stack space={3}>
-                          <Text variant="eyebrow" as="p" color="purple400">
-                            <span className={styles.textItem}>{subtitle}</span>
-                          </Text>
-                          <Text variant="h1" as="h1" id={tabTitleId}>
-                            <span className={styles.textItem}>{title}</span>
-                          </Text>
-                          <Text>
-                            <span className={styles.textItem}>{content}</span>
-                          </Text>
-                          {linkUrls?.href ? (
-                            <Link
-                              as={linkUrls.as}
-                              href={linkUrls.href}
-                              passHref
-                            >
-                              <Button
-                                variant="text"
-                                icon="arrowRight"
-                                tabIndex={visible ? 0 : -1}
-                                aria-labelledby={tabTitleId}
-                              >
-                                Sjá nánar
-                              </Button>
-                            </Link>
-                          ) : null}
-                        </Stack>
-                      </Box>
-                    </TabPanel>
-                  )
-                })}
-              </Box>
-            </Box>
-            <GridColumn hiddenBelow="lg" position="static">
-              <Box
-                display="flex"
-                height="full"
-                alignItems="center"
-                className={styles.tabListArrowLeft}
-              >
-                <button
-                  onClick={() => goTo('prev')}
-                  type="button"
-                  aria-label={t.frontpageTabsPrevious}
-                  className={cn(styles.arrowButton, {
-                    [styles.arrowButtonDisabled]: false,
-                  })}
-                >
-                  <Icon
-                    color="red400"
-                    width="18"
-                    height="18"
-                    type="arrowLeft"
-                  />
-                </button>
-              </Box>
-              <Box
-                display="flex"
-                height="full"
-                justifyContent="flexEnd"
-                alignItems="center"
-                className={styles.tabListArrowRight}
-              >
-                <button
-                  onClick={() => goTo('next')}
-                  type="button"
-                  aria-label={t.frontpageTabsNext}
-                  className={cn(styles.arrowButton, {
-                    [styles.arrowButtonDisabled]: false,
-                  })}
-                >
-                  <Icon
-                    color="red400"
-                    width="18"
-                    height="18"
-                    type="arrowRight"
-                  />
-                </button>
-              </Box>
-            </GridColumn>
-
-            <Box
-              display="inlineFlex"
-              alignItems="center"
-              width="full"
-              background="blue100"
-              paddingTop={[4, 4, 5]}
-              paddingBottom={4}
-              paddingX={[3, 3, 4]}
-              className={styles.searchContentContainer}
+            <TabList
+              {...tab}
+              aria-label="Flettiborði"
+              className={styles.tabWrapper}
             >
-              {searchContent}
+              {tabs.map(({ title = '' }, index) => {
+                return (
+                  <Tab key={index} {...tab} className={cn(styles.tabContainer)}>
+                    <TabBullet selected={selectedIndex === index} />
+                    <span className={styles.srOnly}>{title}</span>
+                  </Tab>
+                )
+              })}
+            </TabList>
+            <Box className={styles.tabPanelWrapper}>
+              {tabs.map(({ title, subtitle, content, link }, index) => {
+                const linkUrls = generateUrls(link)
+
+                const currentIndex = tab.items.findIndex(
+                  (x) => x.id === tab.currentId,
+                )
+
+                const visible = currentIndex === index
+                const tabTitleId = 'frontpageTabTitle' + index
+                return (
+                  <TabPanel
+                    key={index}
+                    {...tab}
+                    style={{
+                      display: 'inline-block',
+                    }}
+                    tabIndex={visible ? 0 : -1}
+                    className={cn(styles.tabPanel, {
+                      [styles.tabPanelVisible]: visible,
+                    })}
+                  >
+                    <Box
+                      paddingY={3}
+                      ref={(el) => (itemsRef.current[index] = el)}
+                      style={{ minHeight: `${minHeight}px` }}
+                    >
+                      <Stack space={3}>
+                        <Text variant="eyebrow" as="p" color="purple400">
+                          <span className={styles.textItem}>{subtitle}</span>
+                        </Text>
+                        <Text variant="h1" as="h1" id={tabTitleId}>
+                          <span className={styles.textItem}>{title}</span>
+                        </Text>
+                        <Text>
+                          <span className={styles.textItem}>{content}</span>
+                        </Text>
+                        {linkUrls?.href ? (
+                          <Link as={linkUrls.as} href={linkUrls.href} passHref>
+                            <Button
+                              variant="text"
+                              icon="arrowRight"
+                              tabIndex={visible ? 0 : -1}
+                              aria-labelledby={tabTitleId}
+                            >
+                              Sjá nánar
+                            </Button>
+                          </Link>
+                        ) : null}
+                      </Stack>
+                    </Box>
+                  </TabPanel>
+                )
+              })}
             </Box>
+          </Box>
+          <GridColumn hiddenBelow="lg" position="static">
+            <Box
+              display="flex"
+              height="full"
+              alignItems="center"
+              className={styles.tabListArrowLeft}
+            >
+              <button
+                onClick={() => goTo('prev')}
+                type="button"
+                aria-label={t.frontpageTabsPrevious}
+                className={cn(styles.arrowButton, {
+                  [styles.arrowButtonDisabled]: false,
+                })}
+              >
+                <Icon color="red400" width="18" height="18" type="arrowLeft" />
+              </button>
+            </Box>
+            <Box
+              display="flex"
+              height="full"
+              justifyContent="flexEnd"
+              alignItems="center"
+              className={styles.tabListArrowRight}
+            >
+              <button
+                onClick={() => goTo('next')}
+                type="button"
+                aria-label={t.frontpageTabsNext}
+                className={cn(styles.arrowButton, {
+                  [styles.arrowButtonDisabled]: false,
+                })}
+              >
+                <Icon color="red400" width="18" height="18" type="arrowRight" />
+              </button>
+            </Box>
+          </GridColumn>
+
+          <Box
+            display="inlineFlex"
+            alignItems="center"
+            width="full"
+            background="blue100"
+            paddingTop={[4, 4, 5]}
+            paddingBottom={4}
+            paddingX={[3, 3, 4]}
+            className={styles.searchContentContainer}
+          >
+            {searchContent}
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
