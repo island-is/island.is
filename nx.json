@@ -47,8 +47,15 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
     "api-catalogue-consts": {
       "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
     },
     "api-catalogue-elastic": {
       "tags": []
