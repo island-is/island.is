@@ -20,7 +20,7 @@ export class TellUsAStoryInput {
   @Field()
   @IsOptional()
   @IsString()
-  subject = 'N/A'
+  subject?: string = 'N/A'
 
   @Field()
   @IsString()
@@ -37,7 +37,7 @@ export class TellUsAStoryInput {
   @Field()
   @IsOptional()
   @IsBoolean()
-  publicationAllowed = false
+  publicationAllowed?: boolean = false
 
   @HideField()
   @IsString()
