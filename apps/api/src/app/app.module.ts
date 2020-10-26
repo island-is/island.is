@@ -9,7 +9,9 @@ import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
+import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthController } from './health.controller'
+import { environment } from './environments'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -42,8 +44,15 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     DocumentModule,
     TranslationsModule,
     TerminusModule,
+    NationalRegistryModule.register({
+      baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+      user: environment.nationalRegistry.user,
+      password: environment.nationalRegistry.password,
+      host: environment.nationalRegistry.host,
+    }),
     UserProfileModule.register({
-      userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+      userProfileServiceBasePath:
+        environment.userProfile.userProfileServiceBasePath,
     }),
   ],
 })

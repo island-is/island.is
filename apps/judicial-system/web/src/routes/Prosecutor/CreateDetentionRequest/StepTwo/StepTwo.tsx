@@ -247,16 +247,26 @@ export const StepTwo: React.FC = () => {
                 hasError={requestedCustodyEndDateErrorMessage !== ''}
                 errorMessage={requestedCustodyEndDateErrorMessage}
                 handleChange={(date) => {
+                  const formattedDate = formatISO(date, {
+                    representation:
+                      workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                        ? 'complete'
+                        : 'date',
+                  })
+
                   updateState(
                     workingCase,
                     'requestedCustodyEndDate',
-                    formatISO(date, {
-                      representation:
-                        workingCase.requestedCustodyEndDate?.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
-                    }),
+                    formattedDate,
                     setWorkingCase,
+                  )
+
+                  api.saveCase(
+                    workingCase.id,
+                    JSON.parse(`{
+                          "requestedCustodyEndDate": "${formattedDate}",
+                          "custodyEndDate": "${formattedDate}"
+                        }`),
                   )
                 }}
                 handleCloseCalendar={(date: Date) => {

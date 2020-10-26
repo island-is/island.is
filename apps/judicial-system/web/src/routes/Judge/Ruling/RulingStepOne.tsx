@@ -243,16 +243,23 @@ export const RulingStepOne: React.FC = () => {
                   : null
               }
               handleChange={(date) => {
+                const formattedDate = formatISO(date, {
+                  representation:
+                    workingCase.custodyEndDate?.indexOf('T') > -1
+                      ? 'complete'
+                      : 'date',
+                })
+
                 updateState(
                   workingCase,
                   'custodyEndDate',
-                  formatISO(date, {
-                    representation:
-                      workingCase.custodyEndDate?.indexOf('T') > -1
-                        ? 'complete'
-                        : 'date',
-                  }),
+                  formattedDate,
                   setWorkingCase,
+                )
+
+                api.saveCase(
+                  workingCase.id,
+                  parseString('custodyEndDate', formattedDate),
                 )
               }}
               required
