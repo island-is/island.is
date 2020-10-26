@@ -138,6 +138,13 @@
     "application-ui-shell": {
       "tags": []
     },
+    "auth-admin-web": {
+      "tags": []
+    },
+    "auth-admin-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["auth-admin-web"]
+    },
     "auth-api-lib": {
       "tags": []
     },
