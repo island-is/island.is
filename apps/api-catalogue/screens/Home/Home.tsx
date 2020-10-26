@@ -63,17 +63,6 @@ export function Home({ pageContent }: HomeProps) {
             pageContent.strings.find((s) => s.id === 'home-cata-btn-txt').text
           }
         />
-        {/* <Card
-          title={
-            pageContent.strings.find((s) => s.id === 'home-dm-button')
-              .text
-          }
-          slug="data-models"
-          text={
-            pageContent.strings.find((s) => s.id === 'home-dm-btn-txt')
-              .text
-          }
-        /> */}
         <Card
           title={
             pageContent.strings.find((s) => s.id === 'home-dg-button').text

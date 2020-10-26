@@ -3,8 +3,6 @@ import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Box,
   ContentBlock,
-  Columns,
-  Column,
   GridContainer,
   GridRow,
   GridColumn,

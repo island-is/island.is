@@ -7,6 +7,12 @@ export interface OpenApiProps {
   spec: OpenApi
 }
 
+interface Window {
+  Redoc: any
+}
+
+declare const window: Window
+
 const showLink = (key: string, value: string) => {
   let name: string
   switch (key) {
@@ -31,7 +37,6 @@ const showLink = (key: string, value: string) => {
 
 export const OpenApiView: FC<OpenApiProps> = ({ spec }: OpenApiProps) => {
   useEffect(() => {
-    //@ts-ignore
     window.Redoc.init(
       spec,
       {

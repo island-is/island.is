@@ -1,8 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-//export const defaultWidth = 400
-
 export const card = style({
   width: 432,
   minHeight: 163,
@@ -135,7 +133,5 @@ export const notDraggable = style({
 
 export const cardTexts = style({
   paddingLeft: globalItems.paddingLeft,
-  //paddingRight: globalItems.paddingRight,
   paddingTop: globalItems.paddingTop,
-  //paddingBottom: globalItems.paddingBottom,
 })

@@ -10,7 +10,6 @@ import {
   DataCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { ServiceStatus, SERVICE_STATUS } from '../ServiceStatus';
 import { ContentfulString } from '../../services/contentful.types'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -39,8 +38,8 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
 
   return (
     <Box onDragStart={preventDragHandler}>
-      <Box 
-        borderRadius="large" 
+      <Box
+        borderRadius="large"
         className={cn(isMobile ? styles.cardMobile : styles.card)}
       >
         <Link href={`./services/${service.id}`}>
@@ -54,7 +53,6 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                   {service.owner}
                 </p>
               </Stack>
-              {/* <ServiceStatus className={styles.serviceStatus} status={SERVICE_STATUS.OK}/> */}
             </Box>
             <Box {...dragProps} className={cn(styles.scrollBoxWrapper)}>
               <Box className={cn(styles.category)}>
@@ -83,7 +81,9 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                       strings.find(
                         (s) =>
                           s.id ===
-                          `catalog-filter-data-${DataCategory[item].toLowerCase()}`,
+                          `catalog-filter-data-${DataCategory[
+                            item
+                          ].toLowerCase()}`,
                       ).text
                     }
                   </Box>
