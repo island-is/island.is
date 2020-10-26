@@ -14,6 +14,7 @@ export enum ServicePortalPath {
   StillingarUmbod = '/min-rettindi',
   // Fjolskyldan
   FamilyRoot = '/fjolskyldan',
+  FamilyMember = '/fjolskyldan/:nationalId',
   MinGognRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   // Fjarmal

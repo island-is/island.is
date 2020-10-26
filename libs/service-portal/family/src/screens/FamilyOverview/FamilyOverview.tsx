@@ -51,6 +51,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
             key={index}
             title={familyMember.fullName}
             nationalId={familyMember.nationalId}
+            userInfoNationalId={userInfo.profile.natreg}
           />
         ))}
       </Stack>

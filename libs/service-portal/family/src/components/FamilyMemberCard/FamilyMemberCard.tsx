@@ -1,15 +1,24 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getNameAbbreviation } from '@island.is/service-portal/core'
+import {
+  getNameAbbreviation,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import React, { FC } from 'react'
+import { Link } from 'react-router-dom'
 import * as styles from './FamilyMemberCard.treat'
 
 interface Props {
   title: string
   nationalId: string
+  userInfoNationalId: string
 }
 
-export const FamilyMemberCard: FC<Props> = ({ title, nationalId }) => {
+export const FamilyMemberCard: FC<Props> = ({
+  title,
+  nationalId,
+  userInfoNationalId,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -47,6 +56,28 @@ export const FamilyMemberCard: FC<Props> = ({ title, nationalId }) => {
           : {nationalId}
         </div>
       </div>
+      {userInfoNationalId !== nationalId && (
+        <Box
+          display="flex"
+          alignItems="flexEnd"
+          marginTop="auto"
+          marginLeft="auto"
+        >
+          <Link
+            to={ServicePortalPath.FamilyMember.replace(
+              ':nationalId',
+              nationalId,
+            )}
+          >
+            <Button variant="text" size="small">
+              {formatMessage({
+                id: 'sp.family:see-info',
+                defaultMessage: 'Skoða upplýsingar',
+              })}
+            </Button>
+          </Link>
+        </Box>
+      )}
     </Box>
   )
 }
