@@ -11,37 +11,44 @@ const transpileModules = [
   'escape-string-regexp', // Used by slugify.
 ]
 const withTM = require('next-transpile-modules')(transpileModules)
-
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
 const { API_URL = 'http://localhost:4444', SENTRY_DSN } = process.env
 const graphqlPath = '/api/graphql'
 
-module.exports = withTreat(
-  withTM(
-    withHealthcheckConfig({
-      webpack: (config, options) => {
-        if (!options.isServer) {
-          config.resolve.alias['@sentry/node'] = '@sentry/browser'
-        }
+module.exports = withBundleAnalyzer(
+  withTreat(
+    withTM(
+      withHealthcheckConfig({
+        webpack: (config, options) => {
+          if (!options.isServer) {
+            config.resolve.alias['@sentry/node'] = '@sentry/browser'
+          }
 
-        return config
-      },
+          return config
+        },
 
-      cssModules: false,
-      serverRuntimeConfig: {
-        // Will only be available on the server side
-        // Requests made by the server are internal request made directly to the api hostname
-        graphqlUrl: API_URL,
-        graphqlEndpoint: graphqlPath,
-      },
-      publicRuntimeConfig: {
-        // Will be available on both server and client
-        graphqlUrl: '',
-        graphqlEndpoint: graphqlPath,
-        SENTRY_DSN,
-      },
-      env: {
-        API_MOCKS: process.env.API_MOCKS,
-      },
-    }),
+        cssModules: false,
+
+        serverRuntimeConfig: {
+          // Will only be available on the server side
+          // Requests made by the server are internal request made directly to the api hostname
+          graphqlUrl: API_URL,
+          graphqlEndpoint: graphqlPath,
+        },
+
+        publicRuntimeConfig: {
+          // Will be available on both server and client
+          graphqlUrl: '',
+          graphqlEndpoint: graphqlPath,
+          SENTRY_DSN,
+        },
+
+        env: {
+          API_MOCKS: process.env.API_MOCKS,
+        },
+      }),
+    ),
   ),
 )
