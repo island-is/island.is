@@ -7,10 +7,11 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
-import bodymovin from 'lottie-web'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
+import { useWindowSize } from 'react-use'
 import {
   Text,
   Stack,
@@ -25,7 +26,8 @@ import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
+
+const Illustration = dynamic(() => import('./illustrations/Illustration'))
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -71,10 +73,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   searchContent,
 }) => {
   const contentRef = useRef(null)
-  const [animationData, setAnimationData] = useState([])
-  const animationContainerRefs = useRef<Array<HTMLElement | null>>([])
-  const [animations, setAnimations] = useState([])
-  const animationDataLoaded = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
@@ -82,55 +80,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
+
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (!animationDataLoaded.current) {
-      const data = tabs.map((x) =>
-        x.animationJson ? JSON.parse(x.animationJson) : null,
-      )
-      setAnimationData(data)
-      animationDataLoaded.current = true
-    }
-  }, [tabs, animationDataLoaded])
-
-  useEffect(() => {
-    if (animationContainerRefs.current?.length) {
-      const newAnimations = []
-
-      animationContainerRefs.current.forEach((x, i) => {
-        newAnimations.push(
-          bodymovin.loadAnimation({
-            container: x,
-            loop: true,
-            autoplay: false,
-            animationData: animationData[i],
-          }),
-        )
-      })
-
-      setAnimations(newAnimations)
-    }
-  }, [animationData, animationContainerRefs])
-
-  const onResize = useCallback(() => {
-    setMinHeight(0)
-
-    let height = 0
-
-    itemsRef.current.forEach((x) => {
-      if (x) {
-        height =
-          width < theme.breakpoints.md
-            ? Math.min(height, x.offsetHeight)
-            : Math.max(height, x.offsetHeight)
-      }
-    })
-
-    setMinHeight(height)
-  }, [itemsRef, contentRef])
 
   const nextSlide = useCallback(() => {
     tab.next()
@@ -141,49 +94,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [tab])
 
   useEffect(() => {
-    setTimeout(onResize, 0)
-    window.addEventListener('resize', onResize, { passive: true })
-    return () => window.removeEventListener('resize', onResize)
-  }, [onResize])
-
-  useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
     setSelectedIndex(newSelectedIndex)
   }, [tab])
-
-  useEffect(() => {
-    if (animations.length) {
-      animations.forEach((x, i) => {
-        if (typeof animations[i] === 'object') {
-          if (i === selectedIndex) {
-            animations[i].play()
-          } else {
-            animations[i].stop()
-          }
-        }
-      })
-    }
-
-    itemsRef.current.forEach((x) => {
-      const spans = x.querySelectorAll('span')
-
-      Array.prototype.forEach.call(spans, (span) => {
-        span.classList.remove(styles.textItemVisible)
-      })
-    })
-
-    const el = itemsRef.current[selectedIndex]
-
-    if (el) {
-      const spans = el.querySelectorAll('span')
-
-      Array.prototype.forEach.call(spans, (span, index) => {
-        span.classList.add(styles.textItemVisible)
-        const ms = index * 100
-        span.style.transitionDelay = `${ms}ms`
-      })
-    }
-  }, [selectedIndex, animations])
 
   const goTo = (direction: string) => {
     switch (direction) {
@@ -213,6 +126,51 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       return { href: null, as: null }
     }
   }
+
+  const onResize = useCallback(() => {
+    setMinHeight(0)
+
+    let height = 0
+
+    itemsRef.current.forEach((x) => {
+      if (x) {
+        height =
+          width < theme.breakpoints.md
+            ? Math.min(height, x.offsetHeight)
+            : Math.max(height, x.offsetHeight)
+      }
+    })
+
+    setMinHeight(height)
+  }, [itemsRef, contentRef])
+
+  useEffect(() => {
+    setTimeout(onResize, 0)
+    window.addEventListener('resize', onResize, { passive: true })
+    return () => window.removeEventListener('resize', onResize)
+  }, [onResize])
+
+  useEffect(() => {
+    itemsRef.current.forEach((item) => {
+      const spans = item.querySelectorAll('span')
+
+      Array.prototype.forEach.call(spans, (span) => {
+        span.classList.remove(styles.textItemVisible)
+      })
+    })
+
+    const el = itemsRef.current[selectedIndex]
+
+    if (el) {
+      const spans = el.querySelectorAll('span')
+
+      Array.prototype.forEach.call(spans, (span, index) => {
+        span.classList.add(styles.textItemVisible)
+        const ms = index * 100
+        span.style.transitionDelay = `${ms}ms`
+      })
+    }
+  }, [selectedIndex])
 
   return (
     <GridContainer>
@@ -251,7 +209,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                   )
 
                   const visible = currentIndex === index
-                  const isTabletOrMobile = width < theme.breakpoints.lg
                   const tabTitleId = 'frontpageTabTitle' + index
                   return (
                     <TabPanel
@@ -366,20 +323,14 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
-          {animationData.map((_, index) => {
-            const visible = index === selectedIndex
-
-            return (
-              <div
-                key={index}
-                ref={(el) => (animationContainerRefs.current[index] = el)}
-                className={cn(styles.animationContainer, {
-                  [styles.animationContainerHidden]: !visible,
-                })}
-                aria-hidden="true"
-              />
-            )
-          })}
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            height="full"
+          >
+            <Illustration illustrationIndex={selectedIndex} />
+          </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />
       </GridRow>
