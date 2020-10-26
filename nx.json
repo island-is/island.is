@@ -302,6 +302,9 @@
     "services-user-profile": {
       "tags": []
     },
+    "services-xroad-collector": {
+      "tags": ["api-catalogue-services"]
+    },
     "shared-form-fields": {
       "tags": []
     },
