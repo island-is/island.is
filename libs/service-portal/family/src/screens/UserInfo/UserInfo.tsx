@@ -50,6 +50,10 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={userInfo.profile.name}
           editLink={{
             external: true,
+            title: defineMessage({
+              id: 'sp.family:change-name',
+              defaultMessage: 'Breyta nafni',
+            }),
             url:
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
@@ -67,6 +71,15 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Lögheimili',
           })}
           content={natRegInfo?.legalResidence || '...'}
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-legal-residence',
+              defaultMessage: 'Breyta lögheimili',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+          }}
         />
         <UserInfoLine
           label={defineMessage({
@@ -104,6 +117,15 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Trúfélag / lífsskoðunarfélag',
           })}
           content={natRegInfo?.religion || '...'}
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-religious-org',
+              defaultMessage: 'Breyta trú-/lífsskoðunarfélagi',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
+          }}
         />
       </Stack>
     </>
