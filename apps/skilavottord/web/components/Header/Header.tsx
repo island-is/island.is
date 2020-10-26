@@ -66,7 +66,10 @@ export const Header: FC = () => {
       userName={mockUser?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout(mockUser.role).then(() => router.push(routes.home))
+        const homeRoute = routes.home[mockUser.role] ?? routes.home['citizen']
+        api
+          .logout()
+          .then(() => router.push(homeRoute))
       }}
     />
   )

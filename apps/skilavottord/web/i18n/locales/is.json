@@ -207,7 +207,11 @@
     "message": "You are not allowed to view this page"
   },
   "routes": {
-    "home": "https://beta.dev01.devland.is/grein/endurvinna-oekutaeki",
+    "home": {
+      "citizen": "/my-cars",
+      "recyclingPartner": "/deregister-vehicle",
+      "recyclingFund": "/recycled-vehicles"
+    },
     "myCars": "/my-cars",
     "recycleVehicle": {
       "baseRoute": "/recycle-vehicle",

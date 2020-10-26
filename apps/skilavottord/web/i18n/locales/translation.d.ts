@@ -267,11 +267,17 @@ export interface InputField {
 }
 
 export interface Routes {
-  home: string
+  home: HomeRoutes
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
   companyInfo: CompanyInfoRoutes
+}
+
+export interface HomeRoutes {
+  citizen: string
+  recyclingPartner: string
+  recyclingFund: string
 }
 
 export interface RecycleVehicleRoutes {

@@ -1,7 +1,7 @@
 import { AUTH_URL } from '../auth/utils'
 
-export const logout = (permissionType) =>
-  fetch(`${AUTH_URL[permissionType]}/logout`, {
+export const logout = () =>
+  fetch(`${AUTH_URL['citizen']}/logout`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',
