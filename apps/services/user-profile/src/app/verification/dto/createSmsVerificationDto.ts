@@ -1,7 +1,7 @@
 import {
   IsNotEmpty,
   IsString,
-  IsEmail,
+  IsMobilePhone,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -12,7 +12,7 @@ export class CreateSmsVerificationDto {
   readonly nationalId!: string
 
   @IsNotEmpty()
-  @IsString()
+  @IsMobilePhone()
   @ApiProperty()
   readonly mobilePhoneNumber!: string
 }

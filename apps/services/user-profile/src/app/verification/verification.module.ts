@@ -8,13 +8,27 @@ import { EmailVerification } from './email-verification.model';
 import { SmsVerification } from './sms-verification.model';
 import { VerificationController } from './verification.controller';
 import { VerificationService } from './verification.service';
+import { DataSourceConfig } from 'apollo-datasource'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
+import environment from '../../environments/environment';
+import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 
 @Module({
   imports: [UserProfileModule, SequelizeModule.forFeature([EmailVerification, SmsVerification, UserProfile])],
   controllers: [VerificationController],
-  providers: [VerificationService,
+  providers: [
+    VerificationService,
+    {
+      provide: SMS_OPTIONS,
+      useValue: environment.smsOptions,
+    },
+    {
+      provide: EMAIL_OPTIONS,
+      useValue: environment.emailOptions,
+    },
     UserProfileService,
-    UserProfileByNationalIdPipe
+    UserProfileByNationalIdPipe,
     {
       provide: SmsService,
       useFactory: (options: SmsServiceOptions, logger: Logger) => {
@@ -23,7 +37,8 @@ import { VerificationService } from './verification.service';
         return smsService
       },
       inject: [SMS_OPTIONS, LOGGER_PROVIDER],
-    }
+    },
+    EmailService,
   ],
   exports: [VerificationService],
 })

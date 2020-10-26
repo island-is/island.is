@@ -7,7 +7,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { VerificationType } from './types/verificationTypes'
 
 @Table({
   tableName: 'email_verification',

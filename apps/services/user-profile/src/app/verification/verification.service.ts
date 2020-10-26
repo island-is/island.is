@@ -10,6 +10,9 @@ import { SmsVerification } from './sms-verification.model';
 import { ConfirmSmsDto } from './dto/confirmSmsDto';
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto';
 import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto';
+import { SmsService } from '@island.is/nova-sms';
+import { EmailService } from '@island.is/email-service';
+import environment from '../../environments/environment';
 /**
   *- Email verification procedure
     *- New User
@@ -45,7 +48,10 @@ export class VerificationService {
     private smsVerificationModel: typeof SmsVerification,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly userProfileService: UserProfileService
+    private readonly userProfileService: UserProfileService,
+    private readonly smsService: SmsService,
+    @Inject(EmailService)
+    private readonly emailService: EmailService,
   ) { }
 
   async createEmailVerification(nationalId: string, email: string)
@@ -55,12 +61,12 @@ export class VerificationService {
     const hashString = hash.toString(CryptoJS.enc.Hex)
     const verification = { ...{ nationalId, email }, hash: hashString }
 
-    const [record, created] = await this.emailVerificationModel.upsert(
+    const [record] = await this.emailVerificationModel.upsert(
       verification,
       { returning: true }
     )
-    if (created) {
-      const messsageId = this.sendConfirmationEmail(record)
+    if (record) {
+      this.sendConfirmationEmail(record)
     }
 
     return record
@@ -74,9 +80,9 @@ export class VerificationService {
     })
 
     if (confirmEmailDto.hash !== verification.hash) {
-      throw new NotFoundException(`Email verification with hash ${confirmEmailDto.hash} does not exitst`)
+      throw new NotFoundException(`Email verification with hash ${confirmEmailDto.hash} does not exist`)
     }
-    //email confirmed
+
     const {
       numberOfAffectedRows
     } = await this.userProfileService.update(nationalId, { emailVerified: true })
@@ -89,7 +95,21 @@ export class VerificationService {
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
-    return ""
+    await this.emailService.sendEmail({
+      from: {
+        name: environment.email.fromName,
+        address: environment.email.fromEmail,
+      },
+      to: [
+        {
+          name: '', // Get this from AuthToken
+          address: verification.email,
+        }
+      ],
+      subject: `Staðfestingarpóstur`,
+      html: `Opnaðu þennann hlekk til þess að staðfesta netfangið ${verification.email}
+      <a href="${environment.email.currentBaseUrl}/emailConfirm?hash=${verification.hash}" target="_blank"/>Stafesta </>`,
+    })
   }
 
   async removeSmsVerification(nationalId: string) {
@@ -108,13 +128,13 @@ export class VerificationService {
     : Promise<SmsVerification | null> {
     const code = Math.floor(100000 + Math.random() * 900000).toString()
     const verification = { ...createSmsVerification, smsCode: code }
-    console.log(verification)
-    const [record, created] = await this.smsVerificationModel.upsert(
+
+    const [record] = await this.smsVerificationModel.upsert(
       verification,
       { returning: true }
     )
-    if (created) {
-      const messsageId = this.sendConfirmationSms(record)
+    if (record) {
+      this.sendConfirmationSms(record)
     }
 
     return record
@@ -129,11 +149,8 @@ export class VerificationService {
     if (confirmSmsDto.code !== verification.smsCode) {
       throw new BadRequestException(`SMS Code is not a match`)
     }
-    //sms confirmed
-    const [
-      numberOfAffectedRows,
-      [updatedSmsVerification],
-    ] = await this.smsVerificationModel.update({ confirmed: true }, {
+
+    await this.smsVerificationModel.update({ confirmed: true }, {
       where: { nationalId },
       returning: true,
     })
@@ -149,6 +166,11 @@ export class VerificationService {
   }
 
   async sendConfirmationSms(verification: SmsVerification) {
-    return ""
+    const response = await this.smsService.sendSms(
+      verification.mobilePhoneNumber,
+      `Staðfestingarkóði fyrir Mínar síður : ${verification.smsCode}`,
+    )
+
+    return response
   }
 }

@@ -101,6 +101,7 @@ describe('User profile API', () => {
       'A user profile with nationalId 12312312313 does not exist',
     )
   })
+
   it(`PUT /userProfile should update profile`, async () => {
     //Arrange
     const profile = {

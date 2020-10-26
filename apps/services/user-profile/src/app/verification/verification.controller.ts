@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { UserProfileByNationalIdPipe } from '../user-profile/pipes/userProfileByNationalId.pipe';
 import { UserProfile } from '../user-profile/userProfile.model';
