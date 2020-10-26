@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class ContactUsPayload {
+export class CommunicationResponse {
   @Field(() => Boolean)
-  success: boolean
+  sent: boolean
 }
