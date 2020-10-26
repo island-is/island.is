@@ -4,4 +4,6 @@ import { EditCompanyInfo } from '@island.is/skilavottord-web/screens'
 import { withAuth } from '@island.is/skilavottord-web/auth'
 import { withApollo } from '@island.is/skilavottord-web/graphql/withApollo'
 
-export default withApollo(withLocale('en')(EditCompanyInfo as Screen))
+export default withApollo(
+  withAuth(withLocale('en')(EditCompanyInfo as Screen), 'recyclingPartner'),
+)

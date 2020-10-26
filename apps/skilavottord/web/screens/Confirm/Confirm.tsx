@@ -52,7 +52,7 @@ const Confirm = ({ apolloState }) => {
 
   const onConfirm = (id: string) => {
     router.replace(
-      `${AUTH_URL}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
+      `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
   }
 

@@ -9,7 +9,6 @@ import {
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
-import { MailService } from './cms.mail.service'
 import { CmsHealthIndicator } from './cms.health'
 
 @Module({
@@ -20,7 +19,6 @@ import { CmsHealthIndicator } from './cms.health'
     ElasticService,
     CmsContentfulService,
     CmsElasticsearchService,
-    MailService,
     ContentfulRepository,
     CmsHealthIndicator,
     LatestNewsSliceResolver,
