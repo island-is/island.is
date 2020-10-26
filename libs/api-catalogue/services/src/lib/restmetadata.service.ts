@@ -87,8 +87,12 @@ export class RestMetadataService {
    * @param xroadIdentifier Object identifying the service in X-Road
    * @returns OpenAPI object if spec is found, otherwise null
    */
-  async getOpenApi(xroadIdentifier: XroadIdentifier): Promise<OpenApi | undefined> {
-    return YamlParser.safeLoad(await this.getOpenApiString(xroadIdentifier)) as OpenApi
+  async getOpenApi(
+    xroadIdentifier: XroadIdentifier,
+  ): Promise<OpenApi | undefined> {
+    return YamlParser.safeLoad(
+      await this.getOpenApiString(xroadIdentifier),
+    ) as OpenApi
   }
 
   /**
