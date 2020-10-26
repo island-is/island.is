@@ -1,10 +1,8 @@
 import { logger } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { boolean } from 'yargs'
 import { RecyclingPartnerModel } from './model/recycling.partner.model'
 import { RecyclingPartnerService } from './recycling.partner.service'
-// import { GdprService } from './models'
 
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {

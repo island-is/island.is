@@ -9,7 +9,6 @@ import {
   UpdatedAt,
   BelongsTo,
   HasMany,
-  HasOne,
 } from 'sequelize-typescript'
 import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
 import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
@@ -72,5 +71,4 @@ export class VehicleModel extends Model<VehicleModel> {
   @Field(() => [RecyclingRequestModel], { nullable: true })
   @HasMany(() => RecyclingRequestModel)
   recyclingRequests!: RecyclingRequestModel[]
-
 }
