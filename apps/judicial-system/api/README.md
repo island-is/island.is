@@ -41,7 +41,7 @@ Make sure you are serving the graphql client as well in order for you to make gr
 
 When making changes to the module code, run
 
-`yarn nx build-open-api judicial-system-api`
+`yarn nx schemas/build-open-api judicial-system-api`
 
 to generate the code needed for openapi and swagger. Then you can visit
 

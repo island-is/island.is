@@ -26,7 +26,7 @@ Make sure you are serving the graphql client as well in order for you to make gr
 
 When making changes to the module code, run
 
-`yarn nx build-open-api application-system-api`
+`yarn nx schemas/build-open-api application-system-api`
 
 to generate the code needed for openapi and swagger. Then you can visit
 
@@ -34,8 +34,8 @@ to generate the code needed for openapi and swagger. Then you can visit
 
 In order to generate a typed fetch client run
 
-`yarn nx openapi-generator api-domains-application`
+`yarn nx schemas/openapi-generator api-domains-application`
 
 In order to update the graphql schema as well, run
 
-`yarn nx build-schema api`
+`yarn nx schemas/build-schema api`

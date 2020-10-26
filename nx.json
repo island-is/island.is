@@ -74,6 +74,9 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-national-registry": {
+      "tags": []
+    },
     "api-domains-translations": {
       "tags": []
     },
@@ -163,7 +166,8 @@
       "tags": []
     },
     "gjafakort-web": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["gjafakort-api"]
     },
     "gjafakort-web-e2e": {
       "tags": [],
@@ -195,6 +199,9 @@
       "tags": []
     },
     "island-ui-theme": {
+      "tags": []
+    },
+    "island-ui-utils": {
       "tags": []
     },
     "judicial-system-api": {
@@ -280,9 +287,6 @@
     "services-auth-api": {
       "tags": []
     },
-    "services-my-service": {
-      "tags": []
-    },
     "services-search-indexer": {
       "tags": []
     },
@@ -305,8 +309,7 @@
       "tags": []
     },
     "skilavottord-ws": {
-      "tags": [],
-      "implicitDependencies": ["air-discount-scheme-api"]
+      "tags": []
     },
     "skilavottord/web-e2e": {
       "tags": [],

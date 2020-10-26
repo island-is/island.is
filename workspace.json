@@ -707,6 +707,35 @@
         }
       }
     },
+    "api-domains-national-registry": {
+      "root": "libs/api/domains/national-registry",
+      "sourceRoot": "libs/api/domains/national-registry/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/national-registry/tsconfig.lib.json",
+              "libs/api/domains/national-registry/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/national-registry/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/national-registry/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-translations": {
       "root": "libs/api/domains/translations",
       "sourceRoot": "libs/api/domains/translations/src",
@@ -2119,6 +2148,32 @@
         }
       }
     },
+    "island-ui-utils": {
+      "root": "libs/island-ui/utils",
+      "sourceRoot": "libs/island-ui/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/island-ui/utils/tsconfig.lib.json",
+              "libs/island-ui/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/utils/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "judicial-system-api": {
       "root": "apps/judicial-system/api",
       "sourceRoot": "apps/judicial-system/api/src",
@@ -3309,61 +3364,6 @@
           "options": {
             "commands": ["sequelize-cli db:seed:all"],
             "cwd": "libs/auth-api-lib"
-          }
-        }
-      }
-    },
-    "services-my-service": {
-      "root": "apps/services/my-service",
-      "sourceRoot": "apps/services/my-service/src",
-      "projectType": "application",
-      "prefix": "services-my-service",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/services/my-service",
-            "main": "apps/services/my-service/src/main.ts",
-            "tsConfig": "apps/services/my-service/tsconfig.app.json",
-            "assets": ["apps/services/my-service/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/my-service/src/environments/environment.ts",
-                  "with": "apps/services/my-service/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "services-my-service:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/services/my-service/tsconfig.app.json",
-              "apps/services/my-service/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/services/my-service/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/services/my-service/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }
