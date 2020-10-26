@@ -200,8 +200,15 @@
       "success": "Deregistration was successful."
     }
   },
+  "unauthorized": {
+    "message": "You are not allowed to view this page"
+  },
   "routes": {
-    "home": "https://beta.dev01.devland.is/en/grein/endurvinna-oekutaeki",
+    "home": {
+      "citizen": "/my-cars",
+      "recyclingPartner": "/deregister-vehicle",
+      "recyclingFund": "/recycled-vehicles"
+    },
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",

@@ -25,6 +25,7 @@ import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import * as styles from './Overview.treat'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -194,7 +195,7 @@ export const JudgeOverview: React.FC = () => {
             startExpanded
             labelVariant="h3"
           >
-            <Text variant="intro">
+            <Text>
               Gæsluvarðhald til
               <strong>
                 {workingCase?.requestedCustodyEndDate &&
@@ -220,7 +221,11 @@ export const JudgeOverview: React.FC = () => {
                   Lagaákvæði sem brot varða við
                 </Text>
               </Box>
-              <Text variant="intro">{workingCase?.lawsBroken}</Text>
+              <Text>
+                <span className={styles.breakSpaces}>
+                  {workingCase?.lawsBroken}
+                </span>
+              </Text>
             </Box>
             <Box marginBottom={2}>
               <Box marginBottom={2}>
@@ -232,7 +237,7 @@ export const JudgeOverview: React.FC = () => {
                 (custodyProvision: CaseCustodyProvisions, index) => {
                   return (
                     <div key={index}>
-                      <Text variant="intro">{laws[custodyProvision]}</Text>
+                      <Text>{laws[custodyProvision]}</Text>
                     </div>
                   )
                 },
@@ -245,7 +250,7 @@ export const JudgeOverview: React.FC = () => {
             startExpanded
             labelVariant="h3"
           >
-            <Text variant="intro">
+            <Text>
               {formatCustodyRestrictions(
                 workingCase.requestedCustodyRestrictions,
               )}
@@ -262,24 +267,10 @@ export const JudgeOverview: React.FC = () => {
                 <Box marginBottom={2}>
                   <Text variant="h5">Málsatvik rakin</Text>
                 </Box>
-                <Text variant="intro">{workingCase?.caseFacts}</Text>
-              </Box>
-            )}
-            {workingCase?.witnessAccounts && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Framburður</Text>
-                </Box>
-                <Text variant="intro">{workingCase?.witnessAccounts}</Text>
-              </Box>
-            )}
-            {workingCase?.investigationProgress && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Staða rannsóknar og næstu skref</Text>
-                </Box>
-                <Text variant="intro">
-                  {workingCase?.investigationProgress}
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase?.caseFacts}
+                  </span>
                 </Text>
               </Box>
             )}
@@ -288,7 +279,11 @@ export const JudgeOverview: React.FC = () => {
                 <Box marginBottom={2}>
                   <Text variant="h5">Lagarök</Text>
                 </Box>
-                <Text variant="intro">{workingCase?.legalArguments}</Text>
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase?.legalArguments}
+                  </span>
+                </Text>
               </Box>
             )}
           </AccordionItem>
@@ -298,7 +293,11 @@ export const JudgeOverview: React.FC = () => {
             startExpanded
             labelVariant="h3"
           >
-            <Text variant="intro">{workingCase?.comments}</Text>
+            <Text>
+              <span className={styles.breakSpaces}>
+                {workingCase?.comments}
+              </span>
+            </Text>
           </AccordionItem>
         </Accordion>
       </Box>

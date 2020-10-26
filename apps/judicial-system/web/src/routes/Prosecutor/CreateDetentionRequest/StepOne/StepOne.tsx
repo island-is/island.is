@@ -174,8 +174,6 @@ export const StepOne: React.FC = () => {
         requestedCustodyRestrictions:
           caseDraftJSON.requestedCustodyRestrictions ?? [],
         caseFacts: caseDraftJSON.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.investigationProgress ?? '',
         legalArguments: caseDraftJSON.legalArguments ?? '',
         comments: caseDraftJSON.comments ?? '',
         notifications: caseDraftJSON.Notification ?? [],
@@ -483,16 +481,23 @@ export const StepOne: React.FC = () => {
                     : null
                 }
                 handleChange={(date) => {
+                  const formattedDate = formatISO(date, {
+                    representation:
+                      workingCase.arrestDate?.indexOf('T') > -1
+                        ? 'complete'
+                        : 'date',
+                  })
+
                   updateState(
                     workingCase,
                     'arrestDate',
-                    formatISO(date, {
-                      representation:
-                        workingCase.arrestDate?.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
-                    }),
+                    formattedDate,
                     setWorkingCase,
+                  )
+
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('arrestDate', formattedDate),
                   )
                 }}
                 handleCloseCalendar={(date: Date) => {
@@ -574,16 +579,23 @@ export const StepOne: React.FC = () => {
                     : null
                 }
                 handleChange={(date) => {
+                  const formattedDate = formatISO(date, {
+                    representation:
+                      workingCase.requestedCourtDate?.indexOf('T') > -1
+                        ? 'complete'
+                        : 'date',
+                  })
+
                   updateState(
                     workingCase,
                     'requestedCourtDate',
-                    formatISO(date, {
-                      representation:
-                        workingCase.requestedCourtDate?.indexOf('T') > -1
-                          ? 'complete'
-                          : 'date',
-                    }),
+                    formattedDate,
                     setWorkingCase,
+                  )
+
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('requestedCourtDate', formattedDate),
                   )
                 }}
                 required

@@ -25,6 +25,7 @@ import * as api from '../../../api'
 import { Case } from '@island.is/judicial-system-web/src/types'
 import { userContext } from '../../../utils/userContext'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -173,7 +174,11 @@ export const Overview: React.FC = () => {
                   Lagaákvæði sem brot varða við
                 </Text>
               </Box>
-              <Text>{workingCase?.lawsBroken}</Text>
+              <Text>
+                <span className={styles.breakSpaces}>
+                  {workingCase?.lawsBroken}
+                </span>
+              </Text>
             </Box>
             <Box marginBottom={2}>
               <Box marginBottom={2}>
@@ -213,23 +218,11 @@ export const Overview: React.FC = () => {
                 <Box marginBottom={2}>
                   <Text variant="h5">Málsatvik rakin</Text>
                 </Box>
-                <Text>{workingCase.caseFacts}</Text>
-              </Box>
-            )}
-            {workingCase.witnessAccounts && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Framburður</Text>
-                </Box>
-                <Text>{workingCase.witnessAccounts}</Text>
-              </Box>
-            )}
-            {workingCase.investigationProgress && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Staða rannsóknar og næstu skref</Text>
-                </Box>
-                <Text>{workingCase.investigationProgress}</Text>
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.caseFacts}
+                  </span>
+                </Text>
               </Box>
             )}
             {workingCase.legalArguments && (
@@ -237,7 +230,11 @@ export const Overview: React.FC = () => {
                 <Box marginBottom={2}>
                   <Text variant="h5">Lagarök</Text>
                 </Box>
-                <Text>{workingCase.legalArguments}</Text>
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.legalArguments}
+                  </span>
+                </Text>
               </Box>
             )}
           </AccordionItem>
@@ -246,7 +243,11 @@ export const Overview: React.FC = () => {
             label="Skilaboð til dómara"
             labelVariant="h3"
           >
-            <Text>{workingCase?.comments}</Text>
+            <Text>
+              <span className={styles.breakSpaces}>
+                {workingCase?.comments}
+              </span>
+            </Text>
           </AccordionItem>
         </Accordion>
       </Box>

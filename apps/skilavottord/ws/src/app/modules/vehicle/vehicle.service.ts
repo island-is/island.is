@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { VehicleModel } from './model/vehicle.model'
+import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
 
 @Injectable()
 export class VehicleService {
@@ -10,11 +11,19 @@ export class VehicleService {
     private vehicleModel: typeof VehicleModel,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @InjectModel(RecyclingRequestModel)
+    private recyclingRequestModel: typeof RecyclingRequestModel,
   ) {}
 
   async findAll(): Promise<VehicleModel[]> {
     this.logger.debug('Getting all vehicles...')
-    return await this.vehicleModel.findAll()
+    return await this.vehicleModel.findAll({
+      include: [
+        {
+          model: this.recyclingRequestModel,
+        },
+      ],
+    })
   }
 
   // async findByVehicleId(vehicleId: string): Promise<VehicleModel> {

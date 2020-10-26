@@ -141,19 +141,24 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            paddingX={[2, 2, 0]}
-            paddingY={2}
             onClick={onClick ? onClick : handleOpen}
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Text variant={labelVariant} as={labelUse} paddingBottom={1}>
-                  {label}
-                </Text>
+                <Box
+                  height="full"
+                  width="full"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Text variant={labelVariant} as={labelUse}>
+                    {label}
+                  </Text>
+                </Box>
                 {visibleContent && (
-                  <div className={styles.visibleContent}>
+                  <Box paddingTop={2}>
                     <Text>{visibleContent}</Text>
-                  </div>
+                  </Box>
                 )}
               </Column>
               <Column width="content">
@@ -193,7 +198,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
-          <Box paddingX={[2, 2, 0]} paddingBottom={2} id={id}>
+          <Box id={id} paddingTop={2}>
             {children}
           </Box>
         </AnimateHeight>
@@ -218,8 +223,8 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
-      padding={[2, 2, 4]}
       className={cn(styles.card, { [styles.focused]: isFocused })}
+      padding={[2, 2, 4]}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
         {props.children}

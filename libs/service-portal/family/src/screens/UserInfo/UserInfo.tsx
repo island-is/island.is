@@ -12,9 +12,11 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
+import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
+  const { data: natRegInfo } = useNationalRegistryInfo(userInfo.profile.natreg)
 
   return (
     <>
@@ -48,6 +50,10 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={userInfo.profile.name}
           editLink={{
             external: true,
+            title: defineMessage({
+              id: 'sp.family:change-name',
+              defaultMessage: 'Breyta nafni',
+            }),
             url:
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
@@ -61,12 +67,65 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         />
         <UserInfoLine
           label={defineMessage({
+            id: 'service.portal:legal-residence',
+            defaultMessage: 'Lögheimili',
+          })}
+          content={natRegInfo?.legalResidence || '...'}
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-legal-residence',
+              defaultMessage: 'Breyta lögheimili',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+          }}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:birth-place',
+            defaultMessage: 'Fæðingarstaður',
+          })}
+          content={natRegInfo?.birthPlace || '...'}
+        />
+        <UserInfoLine
+          label={defineMessage({
             id: 'service.portal:citizenship',
             defaultMessage: 'Ríkisfang',
           })}
           content={
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:gender',
+            defaultMessage: 'Kyn',
+          })}
+          content={natRegInfo?.gender || '...'}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:marital-status',
+            defaultMessage: 'Hjúskaparstaða',
+          })}
+          content={natRegInfo?.maritalStatus || '...'}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:religion',
+            defaultMessage: 'Trúfélag / lífsskoðunarfélag',
+          })}
+          content={natRegInfo?.religion || '...'}
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-religious-org',
+              defaultMessage: 'Breyta trú-/lífsskoðunarfélagi',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
+          }}
         />
       </Stack>
     </>

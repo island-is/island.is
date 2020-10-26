@@ -182,7 +182,7 @@ const SubArticleNavigation: FC<{
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
     return createSubArticleNavigation(selectedSubArticle?.body ?? [])
-  }, [selectedSubArticle])
+  }, [selectedSubArticle?.body])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
@@ -375,11 +375,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       title: n('categoryOverview', 'Efnisyfirlit'),
       items: contentOverviewOptions,
     },
-    {
+  ]
+
+  if (relatedLinks.length) {
+    combinedMobileNavigation.push({
       title: n('relatedMaterial'),
       items: relatedLinks,
-    },
-  ]
+    })
+  }
 
   const metaTitle = `${article.title} | Ísland.is`
 
@@ -434,6 +437,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       (article.group?.slug ? `#${article.group.slug}` : ''),
                   )}
                   href={makePath('ArticleCategory', '[slug]')}
+                  pureChildren
                 >
                   <Tag variant="blue">{article.group.title}</Tag>
                 </Link>
@@ -476,7 +480,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
             body={(subArticle ?? article).body as SliceType[]}
-            config={{ defaultPadding: 4 }}
+            config={{ defaultPadding: [2, 2, 4] }}
           />
         </Box>
       </ArticleLayout>

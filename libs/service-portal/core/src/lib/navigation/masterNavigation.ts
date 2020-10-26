@@ -42,6 +42,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             }),
             path: ServicePortalPath.UserInfo,
           },
+          {
+            name: defineMessage({
+              id: 'service.portal:family',
+              defaultMessage: 'Fjölskyldan',
+            }),
+            path: ServicePortalPath.FamilyRoot,
+          },
         ],
       },
 
