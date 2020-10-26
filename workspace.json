@@ -3871,7 +3871,29 @@
             "outputPath": "dist/apps/skilavottord/ws",
             "main": "apps/skilavottord/ws/src/main.ts",
             "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
-            "assets": ["apps/skilavottord/ws/src/assets"]
+            "assets": [
+              "apps/skilavottord/ws/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/skilavottord/ws/db/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/skilavottord/ws/db/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/skilavottord/ws",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/skilavottord/ws",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
