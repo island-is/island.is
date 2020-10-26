@@ -10,7 +10,7 @@ import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
-import { LinkContext, Text } from '@island.is/island-ui/core'
+import { LinkContext } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 interface Props extends AppProps {
