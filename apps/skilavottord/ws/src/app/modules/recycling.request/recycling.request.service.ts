@@ -14,13 +14,7 @@ export class RecyclingRequestService {
   ) {}
 
   async findAll(): Promise<RecyclingRequestModel[]> {
-    const res = await this.recyclingRequestModel.findAll({
-      include: [
-        {
-          model: this.vehicleModel,
-        },
-      ],
-    })
+    const res = await this.recyclingRequestModel.findAll()
     return res
   }
 
