@@ -7,8 +7,9 @@ import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { userContext } from '../../utils/userContext'
 import { mockJudge, mockProsecutor } from '../../utils/mocks'
+import { DetentionRequest } from '../../types'
 
-const mockDetensionRequests = [
+const mockDetensionRequests: DetentionRequest[] = [
   {
     id: 'fbad84cc-9cab-4145-bf8e-ac58cc9c2790',
     state: CaseState.DRAFT,
@@ -36,10 +37,20 @@ const mockDetensionRequests = [
     modified: '2020-08-31T10:47:35.565Z',
     created: '2020-08-31T10:47:35.565Z',
   },
+  {
+    id: 'fbad84cc-9cab-4145-bf8e-ac58cc9c2790',
+    state: CaseState.ACCEPTED,
+    policeCaseNumber: '008-2020-X',
+    accusedNationalId: '012345-6789',
+    accusedName: 'Erlingur L Kristinsson',
+    modified: '2020-08-31T10:47:35.565Z',
+    created: '2020-08-31T10:47:35.565Z',
+    custodyEndDate: '2020-11-01T12:31:00.000Z',
+  },
 ]
 
 describe('Detention requests route', () => {
-  test('should list submitted cases in a list if you are a judge', async () => {
+  test('should list all cases that are not a draft a list if you are a judge', async () => {
     const history = createMemoryHistory()
 
     fetchMock.mock('/api/cases', mockDetensionRequests)
@@ -60,7 +71,7 @@ describe('Detention requests route', () => {
 
     expect(getAllByTestId('detention-requests-table-row').length).toEqual(
       mockDetensionRequests.filter((dr) => {
-        return dr.state === CaseState.SUBMITTED
+        return dr.state !== CaseState.DRAFT
       }).length,
     )
   })
@@ -146,6 +157,28 @@ describe('Detention requests route', () => {
     expect(getAllByTestId('detention-requests-table-row').length).toEqual(
       mockDetensionRequests.length,
     )
+  })
+
+  test('should display custody end date if case has ACCEPTED status', async () => {
+    const history = createMemoryHistory()
+
+    const { queryByText } = render(
+      <userContext.Provider
+        value={{
+          user: mockProsecutor,
+        }}
+      >
+        <Router history={history}>
+          <DetentionRequests />
+        </Router>
+      </userContext.Provider>,
+    )
+
+    await waitFor(() => queryByText('1. nóv. 2020 kl. 12:31'))
+
+    expect(queryByText('1. nóv. 2020 kl. 12:31')).toBeTruthy()
+
+    fetchMock.restore()
   })
 
   test('should display an error alert if the api call fails', async () => {
