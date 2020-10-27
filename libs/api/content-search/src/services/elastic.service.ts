@@ -8,7 +8,7 @@ import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
 } from '../queries/autocomplete'
-import { searchQuery } from '../queries/search'
+import { SearchInput, searchQuery } from '../queries/search'
 import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
@@ -16,7 +16,7 @@ import {
 import { MappedData, SearchIndexes, TagAggregationResponse } from '../types'
 import { SearchResponse } from '@island.is/shared/types'
 import { environment } from '../environments/environment'
-import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
+import { WebSearchAutocompleteInput } from '../dto'
 import {
   DateAggregationInput,
   dateAggregationQuery,
@@ -162,7 +162,7 @@ export class ElasticService {
     return data.body
   }
 
-  async search(index: SearchIndexes, query: SearcherInput) {
+  async search(index: SearchIndexes, query: SearchInput) {
     const { queryString, size, page, types, tags, countTag } = query
 
     const requestBody = searchQuery({
@@ -289,5 +289,3 @@ export class ElasticService {
     logger.error(message, merge(context, errorCtx))
   }
 }
-
-// TODO: This service needs to include only generic functions anything specific to cms search should be in cms domain libary

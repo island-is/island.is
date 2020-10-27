@@ -43,7 +43,8 @@ export class GetNewsInput {
   @IsOptional()
   size?: number = 10
 
-  @Field(() => [String], { nullable: true })
+  @Field({ nullable: true })
+  @IsString()
   @IsOptional()
-  genericTagIds?: [string]
+  tag?: string
 }

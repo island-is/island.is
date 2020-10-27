@@ -1,24 +1,23 @@
 import { Tag } from '../dto/searcher.input'
-
-import { tagQuery } from './documentByMetaData'
 import { aggregationQuery } from './tagAggregation'
+import { tagQuery } from './tagQuery'
 
-interface SearchInput {
+export interface SearchInput {
   queryString: string
-  size: number
-  page: number
-  types: string[]
-  tags: Tag[]
-  countTag: string
+  size?: number
+  page?: number
+  types?: string[]
+  tags?: Tag[]
+  countTag?: string
 }
 
 export const searchQuery = ({
   queryString,
   size = 10,
   page = 1,
-  types,
-  tags,
-  countTag,
+  types = [],
+  tags = [],
+  countTag = '',
 }: SearchInput) => {
   const should = []
   const must = []

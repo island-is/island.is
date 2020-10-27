@@ -21,8 +21,6 @@ import {
   Option,
   Link,
   GridColumn,
-  Inline,
-  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -52,6 +50,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
+  selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -62,13 +61,11 @@ const NewsList: Screen<NewsListProps> = ({
   selectedYear,
   selectedMonth,
   selectedPage,
+  selectedTag,
   namespace,
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
-  const [tagIds, setTagIds] = useState<Array<string>>(
-    ((Router.query?.tags as string) ?? '').split(','),
-  )
   const { makePath } = routeNames(activeLocale)
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
@@ -103,37 +100,19 @@ const NewsList: Screen<NewsListProps> = ({
     })),
   ]
 
-  const makeHref = (y: string | number, m?: string | number) => {
-    const query: { [k: string]: number | string } = y ? { y } : null
-    if (y && m != null) {
-      query.m = m
-    }
+  const makeHref = (y: number | string, m?: number | string) => {
+    const params = { y, m, tag: selectedTag }
+    const query = Object.entries(params).reduce((queryObject, [key, value]) => {
+      if (value) {
+        queryObject[key] = value
+      }
+      return queryObject
+    }, {})
 
     return {
       pathname: makePath('news'),
       query,
     }
-  }
-
-  const onTagClick = (tagId: string) => {
-    const index = tagIds.findIndex((x) => x === tagId)
-
-    let newTagIds = [...tagIds]
-
-    if (index === -1) {
-      newTagIds.push(tagId)
-    } else {
-      newTagIds.splice(index, 1)
-    }
-
-    const joinedTagIds = decodeURI(newTagIds.join(','))
-
-    setTagIds(newTagIds)
-
-    Router.replace({
-      pathname: makePath('news'),
-      ...(joinedTagIds && { query: { tags: joinedTagIds } }),
-    })
   }
 
   const sidebar = (
@@ -300,7 +279,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
-  const tag = query.tag ?? null
+  const tag = (query.tag as string) ?? null
 
   const [
     {
@@ -318,6 +297,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          tag,
         },
       },
     }),
@@ -330,6 +310,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
           page: selectedPage,
           year,
           month,
+          tag,
         },
       },
     }),
@@ -354,6 +335,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
+    selectedTag: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

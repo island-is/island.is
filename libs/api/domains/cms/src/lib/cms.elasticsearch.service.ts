@@ -12,6 +12,7 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -58,7 +59,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: SearchIndexes,
-    { size, page, order, month, year }: GetNewsInput,
+    { size, page, order, month, year, tag }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {
@@ -72,10 +73,25 @@ export class CmsElasticsearchService {
       dateQuery = {}
     }
 
+    logger.info('TAG!', { tag })
+
+    let tagQuery
+    if (tag) {
+      tagQuery = {
+        tags: [
+          {
+            key: tag,
+            type: 'genericTag',
+          },
+        ],
+      }
+    }
+
     const query = {
       types: ['webNews'],
       sort: { dateCreated: order as sortDirection },
       ...dateQuery,
+      ...tagQuery,
       page,
       size,
     }
@@ -95,12 +111,25 @@ export class CmsElasticsearchService {
 
   async getNewsDates(
     index: SearchIndexes,
-    { order }: GetNewsDatesInput,
+    { order, tag }: GetNewsDatesInput,
   ): Promise<string[]> {
+    let tagQuery
+    if (tag) {
+      tagQuery = {
+        tags: [
+          {
+            key: tag,
+            type: 'genericTag',
+          },
+        ],
+      }
+    }
+
     const query = {
       types: ['webNews'],
       field: 'dateCreated',
       resolution: 'month' as dateResolution,
+      ...tagQuery,
       order,
     }
 

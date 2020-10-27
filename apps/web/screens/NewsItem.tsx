@@ -94,7 +94,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                     {!!newsItem.genericTags.length &&
                       newsItem.genericTags.map(({ id, title }, index) => {
                         return (
-                          <Link href={makePath('news', `?tags=${id}`)}>
+                          <Link href={makePath('news', `?tag=${id}`)}>
                             <Tag key={index} variant="blue" label>
                               {title}
                             </Tag>
