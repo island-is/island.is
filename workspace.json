@@ -3211,6 +3211,17 @@
             "jestConfig": "libs/service-portal/applications/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/applications/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+              }
+            ]
+          }
         }
       }
     },
@@ -3905,6 +3916,11 @@
             "tsConfig": "apps/services/user-profile/tsconfig.app.json",
             "assets": [
               "apps/services/user-profile/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/services/user-profile/migrations",
+                "output": "./migrations"
+              },
               {
                 "glob": "*",
                 "input": "apps/services/user-profile/seeders",
