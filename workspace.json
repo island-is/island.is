@@ -3922,11 +3922,6 @@
                 "output": "./migrations"
               },
               {
-                "glob": "*",
-                "input": "apps/services/user-profile/seeders",
-                "output": "./seeders"
-              },
-              {
                 "glob": ".sequelizerc",
                 "input": "apps/services/user-profile",
                 "output": "./"
