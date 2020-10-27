@@ -29,7 +29,7 @@ export class ResourcesService {
   ) {}
 
   /** Gets Identity resource by name */
-  async getIdentityResourceByName(name: string): Promise<IdentityResource> {
+  async getIdentityResourceByName(name: string): Promise<IdentityResource | null> {
     this.logger.debug('Getting data about identity resource with name: ', name)
 
     if (!name) {
@@ -40,7 +40,7 @@ export class ResourcesService {
   }
 
   /** Gets API scope by name */
-  async getApiScopeByName(name: string): Promise<ApiScope> {
+  async getApiScopeByName(name: string): Promise<ApiScope | null> {
     this.logger.debug('Getting data about api scope with name: ', name)
 
     if (!name) {
@@ -63,7 +63,7 @@ export class ResourcesService {
     }
 
     return this.identityResourceModel.findAll({
-      where: scopeNames ? whereOptions : null,
+      where: scopeNames ? whereOptions : undefined,
       include: [IdentityResourceUserClaim],
     })
   }
@@ -79,7 +79,7 @@ export class ResourcesService {
     }
 
     return this.apiScopeModel.findAll({
-      where: scopeNames ? whereOptions : null,
+      where: scopeNames ? whereOptions : undefined,
       include: [ApiScopeUserClaim],
     })
   }
@@ -100,7 +100,7 @@ export class ResourcesService {
     }
 
     return this.apiResourceModel.findAll({
-      where: apiResourceNames ? whereOptions : null,
+      where: apiResourceNames ? whereOptions : undefined,
       include: [ApiResourceSecret, ApiResourceScope, ApiResourceUserClaim],
     })
   }
@@ -121,7 +121,7 @@ export class ResourcesService {
     }
     const scopes = await this.apiResourceScopeModel.findAll({
       raw: true,
-      where: apiResourceScopeNames ? scopesWhereOptions : null,
+      where: apiResourceScopeNames ? scopesWhereOptions : undefined,
     })
 
     const whereOptions: WhereOptions = {
@@ -148,7 +148,7 @@ export class ResourcesService {
   async updateIdentityResource(
     identityResource: IdentityResourcesDTO,
     name: string,
-  ): Promise<IdentityResource> {
+  ): Promise<IdentityResource | null> {
     this.logger.debug('Updating identity resource with name: ', name)
 
     if (!name) {
@@ -185,7 +185,7 @@ export class ResourcesService {
   async updateApiScope(
     apiScope: ApiScopesDTO,
     name: string,
-  ): Promise<ApiScope> {
+  ): Promise<ApiScope | null> {
     this.logger.debug('Updating api scope with name: ', name)
 
     if (!name) {

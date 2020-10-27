@@ -17,7 +17,7 @@ export class UserIdentitiesService {
   ) {}
 
   /** Creates a new User Identity */
-  async create(userIdentity: UserIdentityDto): Promise<UserIdentity> {
+  async create(userIdentity: UserIdentityDto): Promise<UserIdentity | undefined> {
     this.logger.debug(
       `Creating user identity with subjectId - ${userIdentity.subjectId}`,
     )
@@ -35,7 +35,7 @@ export class UserIdentitiesService {
   }
 
   /** Gets a user identity by subjectId */
-  async findBySubjectId(subjectId: string): Promise<UserIdentity> {
+  async findBySubjectId(subjectId: string): Promise<UserIdentity | null> {
     this.logger.debug(`Finding user identity for subjectId - "${subjectId}"`)
 
     if (!subjectId) {
@@ -51,7 +51,7 @@ export class UserIdentitiesService {
   async findByProviderSubjectId(
     provider: string,
     subjectId: string,
-  ): Promise<UserIdentity> {
+  ): Promise<UserIdentity | null> {
     this.logger.debug(
       `Finding user identity for provider "${provider}" and subjectId - "${subjectId}"`,
     )
@@ -71,7 +71,7 @@ export class UserIdentitiesService {
   }
 
   /** Updates an existing user identity */
-  async update(userIdentity: UserIdentityDto): Promise<UserIdentity> {
+  async update(userIdentity: UserIdentityDto): Promise<UserIdentity | null> {
     this.logger.debug(
       'Updating the user identity with subjectId: ',
       userIdentity.subjectId,

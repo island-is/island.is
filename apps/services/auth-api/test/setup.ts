@@ -3,6 +3,7 @@ import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
+import { execSync } from 'child_process'
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -33,11 +34,20 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
     appModule: AppModule,
     ...options,
   })
-  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+  //TODO: find out why this setup does not work for this project
+  // sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+  // await sequelize.sync()
 
-  await sequelize.sync()
+  // Populate the database models
+  execSync('yarn nx run services-auth-api:migrate')
+  // Seed the database
+  execSync('yarn nx run services-auth-api:seed')
 
   return app
+}
+
+export const removeSetup = async() => {
+  execSync('yarn nx run services-auth-api:migrate_remove')
 }
 
 beforeEach(() => truncate())

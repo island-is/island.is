@@ -1,3 +1,5 @@
+import { ApiResource } from './../../../../../../../libs/auth-api-lib/src/lib/entities/models/api-resource.model';
+import { ApiScope } from './../../../../../../../libs/auth-api-lib/src/lib/entities/models/api-scope.model';
 import {
   Controller,
   Get,
@@ -10,11 +12,7 @@ import { ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger'
 import {
   IdentityResource,
   ResourcesService,
-  ApiScope,
-  ApiResource,
   Scopes,
-  ScopesGuard,
-  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
 // TODO: Add guards after getting communications to work properly with IDS4
@@ -23,7 +21,7 @@ import {
 @Controller()
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
-
+  
   /** Get Identity resources by scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('identity-resources')
@@ -35,15 +33,11 @@ export class ResourcesController {
   })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
   async FindIdentityResourcesByScopeName(
-    @Query(
-      'scopeNames',
-      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
-    )
-    scopeNames: string[],
+    @Query('scopeNames') scopeNames: string,
   ): Promise<IdentityResource[]> {
     const identityResources = await this.resourcesService.findIdentityResourcesByScopeName(
-      scopeNames,
-    )
+      scopeNames ? scopeNames.split(',') : null,
+    ) // TODO: Check if we can use ParseArrayPipe from v7
 
     return identityResources
   }
@@ -59,15 +53,11 @@ export class ResourcesController {
   })
   @ApiOkResponse({ type: ApiScope, isArray: true })
   async FindApiScopesByNameAsync(
-    @Query(
-      'scopeNames',
-      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
-    )
-    scopeNames: string[],
+    @Query('scopeNames') scopeNames: string,
   ): Promise<ApiScope[]> {
     const apiScopes = await this.resourcesService.findApiScopesByNameAsync(
-      scopeNames,
-    )
+      scopeNames ? scopeNames.split(',') : null,
+    ) // TODO: Check if we can use ParseArrayPipe from v7
 
     return apiScopes
   }
@@ -89,31 +79,23 @@ export class ResourcesController {
   })
   @ApiOkResponse({ type: ApiResource, isArray: true })
   async FindApiResourcesByNameAsync(
-    @Query(
-      'apiResourceNames',
-      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
-    )
-    apiResourceNames: string[],
-    @Query(
-      'apiScopeNames',
-      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
-    )
-    apiScopeNames: string[],
+    @Query('apiResourceNames') apiResourceNames: string,
+    @Query('apiScopeNames') apiScopeNames: string,
   ): Promise<ApiResource[]> {
     if (apiResourceNames && apiScopeNames) {
-      throw new BadRequestException(
+      throw new Error(
         'Specifying both apiResourceNames and apiScopeNames is not supported.',
       )
     }
 
     if (apiResourceNames) {
       return await this.resourcesService.findApiResourcesByNameAsync(
-        apiResourceNames,
-      )
+        apiResourceNames.split(','),
+      ) // TODO: Check if we can use ParseArrayPipe from v7
     } else {
       return await this.resourcesService.findApiResourcesByScopeNameAsync(
-        apiScopeNames,
-      )
+        apiScopeNames ? apiScopeNames.split(',') : null,
+      ) // TODO: Check if we can use ParseArrayPipe from v7
     }
   }
 }

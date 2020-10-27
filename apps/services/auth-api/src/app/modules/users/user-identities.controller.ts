@@ -28,7 +28,7 @@ export class UserIdentitiesController {
   @Scopes('@identityserver.api/authentication')
   @Post()
   @ApiCreatedResponse({ type: UserIdentity })
-  async create(@Body() userIdentity: UserIdentityDto): Promise<UserIdentity> {
+  async create(@Body() userIdentity: UserIdentityDto): Promise<UserIdentity| undefined> {
     return await this.userIdentityService.create(userIdentity)
   }
 
