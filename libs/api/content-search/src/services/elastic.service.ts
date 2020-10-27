@@ -25,8 +25,8 @@ import {
 import {
   RankQuery,
   Request,
-  precisionEvaluation,
-} from '../queries/rankEvaluation'
+  precisionEvaluation as precisionEvaluationQuery,
+} from '../queries'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -167,7 +167,7 @@ export class ElasticService {
     requests: Request[],
     size = 10,
   ) {
-    const requestBody = precisionEvaluation(requests, size)
+    const requestBody = precisionEvaluationQuery(requests, size)
     return this.rankEvaluation(index, requestBody)
   }
 
