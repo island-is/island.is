@@ -124,6 +124,7 @@
     "express-validator": "6.4.1",
     "faker": "^5.1.0",
     "formik": "2.1.4",
+    "fuse.js": "^6.4.2",
     "glob": "7.1.6",
     "graphql": "15.3.0",
     "graphql-middleware-sentry": "3.2.1",
