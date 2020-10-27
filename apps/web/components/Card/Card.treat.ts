@@ -1,5 +1,5 @@
-import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { style, styleMap } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
   display: 'flex',
@@ -44,4 +44,29 @@ export const imageContainerStacked = style({
   justifyContent: 'center',
   flexGrow: 0,
   marginBottom: 16,
+})
+
+export const statusPosition = style({
+  position: 'absolute',
+  top: 16,
+  right: 16,
+})
+
+export const status = style({
+  display: 'inline-block',
+  borderRadius: '50%',
+  width: 8,
+  height: 8,
+})
+
+export const statusType = styleMap({
+  ongoing: {
+    backgroundColor: theme.color.purple400,
+  },
+  preparing: {
+    backgroundColor: theme.color.yellow600,
+  },
+  completed: {
+    backgroundColor: theme.color.mint600,
+  },
 })

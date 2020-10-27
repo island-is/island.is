@@ -3779,7 +3779,24 @@
             "outputPath": "dist/apps/services/user-profile",
             "main": "apps/services/user-profile/src/main.ts",
             "tsConfig": "apps/services/user-profile/tsconfig.app.json",
-            "assets": ["apps/services/user-profile/src/assets"]
+            "assets": [
+              "apps/services/user-profile/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/services/user-profile/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/services/user-profile",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/services/user-profile",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {

@@ -1,68 +1,99 @@
 import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
-import * as z from 'zod'
+import { ZodError } from 'zod'
 
-export function extractPartialSchemaForValues(
-  schema: Schema,
-  values: FormValue,
-): Schema {
-  let returnSchema = z.object({})
-  if (!schema) {
-    //todo this could be dangerous right?
-    return returnSchema
+interface SchemaValidationError {
+  [key: string]: string
+}
+
+function populateError(
+  currentError: SchemaValidationError | undefined,
+  newError: ZodError | undefined,
+  pathToError: string,
+): SchemaValidationError | undefined {
+  if (newError === undefined) {
+    return currentError
   }
-  Object.keys(values).forEach((key) => {
-    const value = values[key]
 
-    if (typeof value === 'object') {
-      if (value.length) {
-        const answerToFocusOn = (value as Answer[])[
-          (value as Answer[]).length - 1
-        ]
-        if (typeof answerToFocusOn === 'object') {
-          returnSchema = returnSchema.merge(
-            z.object({
-              [key]: z.array(
-                extractPartialSchemaForValues(
-                  schema?.shape[key]?._def?.type,
-                  answerToFocusOn as FormValue,
-                ),
-              ),
-            }),
-          )
-        } else {
-          returnSchema = returnSchema.merge(schema?.pick({ [key]: true }))
-        }
+  if (!currentError) {
+    return { [pathToError]: newError.errors[0].message }
+  }
+
+  return { ...currentError, [pathToError]: newError.errors[0].message }
+}
+
+function constructPath(currentPath: string, newKey: string) {
+  if (currentPath === '') {
+    return newKey
+  }
+  return `${currentPath}.${newKey}`
+}
+
+function partialSchemaValidation(
+  answers: FormValue,
+  originalSchema: Schema,
+  error: SchemaValidationError | undefined,
+  isStrict?: boolean,
+  currentPath = '',
+): SchemaValidationError | undefined {
+  Object.keys(answers).forEach((key) => {
+    const newPath = constructPath(currentPath, key)
+    const answer = answers[key]
+    const trimmedSchema = originalSchema.pick({ [key]: true })
+    if (typeof answer === 'object') {
+      if (answer.length) {
+        // answer is array
+        const arrayElements = answer as Answer[]
+        arrayElements.forEach((el, index) => {
+          const elementPath = `${newPath}[${index}]`
+          if (typeof el === 'object') {
+            if (!isStrict && el !== null) {
+              error = partialSchemaValidation(
+                el as FormValue,
+                trimmedSchema?.shape[key]?._def?.type,
+                error,
+                isStrict,
+                elementPath,
+              )
+            }
+          } else {
+            try {
+              trimmedSchema.parse({ [key]: [el] })
+            } catch (e) {
+              error = populateError(error, e, elementPath)
+            }
+          }
+        })
       } else {
-        returnSchema = returnSchema.merge(
-          z.object({
-            [key]: extractPartialSchemaForValues(
-              schema.shape[key],
-              value as FormValue,
-            ),
-          }),
+        // answer is normal object
+        error = partialSchemaValidation(
+          answer as FormValue,
+          originalSchema.shape[key],
+          error,
+          isStrict,
+          newPath,
         )
       }
-    } else if (schema?.pick) {
-      returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
+    } else {
+      // answer is primitive
+      try {
+        trimmedSchema.parse({ [key]: answer })
+      } catch (e) {
+        error = populateError(error, e, newPath)
+      }
     }
   })
-  return returnSchema
+
+  return error
 }
 
 export function validateAnswers(
-  answers: FormValue,
-  partialValidation: boolean,
   dataSchema: Schema,
-): z.ZodError | undefined {
-  if (partialValidation) {
-    const newSchema = extractPartialSchemaForValues(dataSchema, answers)
-    try {
-      newSchema.parse(answers)
-    } catch (e) {
-      return e
-    }
-    return undefined
+  answers: FormValue,
+  isFullSchemaValidation?: boolean,
+): SchemaValidationError | undefined {
+  if (!isFullSchemaValidation) {
+    return partialSchemaValidation(answers, dataSchema, undefined, false, '')
   }
 
   try {
