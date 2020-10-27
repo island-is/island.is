@@ -11,6 +11,7 @@ import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { AuthModule } from '@island.is/auth-api-lib'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
 
@@ -45,6 +46,11 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     DocumentModule,
     TranslationsModule,
     TerminusModule,
+    AuthModule.register({
+      audience: '',
+      issuer: 'https://siidentityserverweb20200805020732.azurewebsites.net',
+      jwksUri: 'https://siidentityserverweb20200805020732.azurewebsites.net/.well-known/openid-configuration/jwks',
+    }),
     NationalRegistryModule.register({
       baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
       user: environment.nationalRegistry.user,
@@ -58,4 +64,4 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     CommunicationsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

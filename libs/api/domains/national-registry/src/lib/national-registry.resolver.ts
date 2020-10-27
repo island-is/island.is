@@ -1,12 +1,15 @@
+import { UseGuards } from '@nestjs/common'
 import { Args, Resolver, Query } from '@nestjs/graphql'
 import { GetMyInfoInput } from './dto/getMyInfoInput'
 import { FamilyMember } from './familyMember.model'
 import { MyInfo } from './myInfo.model'
 import { NationalRegistryService } from './national-registry.service'
+import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-api-lib'
 
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class NationalRegistryResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) {}
+  constructor(private nationalRegistryService: NationalRegistryService) { }
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(
