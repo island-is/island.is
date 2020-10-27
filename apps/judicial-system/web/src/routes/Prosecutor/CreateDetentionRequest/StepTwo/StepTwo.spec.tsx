@@ -19,7 +19,7 @@ describe('Create detention request, step two', () => {
     // Mock call to api.updateCase
     fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
 
-    // Have arrestDate and requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
+    // Have requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         id: 'test_id',
@@ -27,7 +27,6 @@ describe('Create detention request, step two', () => {
       })
     })
 
-    // Act and Assert
     const { getByTestId, getByText } = render(
       <userContext.Provider value={{ user: mockProsecutor }}>
         <Router history={history}>
@@ -36,6 +35,7 @@ describe('Create detention request, step two', () => {
       </userContext.Provider>,
     )
 
+    // Act and Assert
     await act(async () => {
       await userEvent.type(
         getByTestId('requestedCustodyEndTime') as HTMLInputElement,

@@ -16,6 +16,7 @@ export type Icon =
   | 'closeCircle'
   | 'close'
   | 'fileTrayFull'
+  | 'heart'
   | 'home'
   | 'informationCircle'
   | 'lockClosed'
@@ -51,6 +52,7 @@ export default {
     closeCircle: 'CloseCircle',
     close: 'Close',
     fileTrayFull: 'FileTrayFull',
+    heart: 'Heart',
     home: 'Home',
     informationCircle: 'InformationCircle',
     lockClosed: 'LockClosed',
@@ -85,6 +87,7 @@ export default {
     closeCircle: 'CloseCircleOutline',
     close: 'CloseOutline',
     fileTrayFull: 'FileTrayFullOutline',
+    heart: 'HeartOutline',
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
     lockClosed: 'LockClosedOutline',

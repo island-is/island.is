@@ -5,6 +5,7 @@ import {
   Repeater,
   FormNode,
   Schema,
+  FormValue,
 } from '@island.is/application/core'
 
 export type FieldDef = {
@@ -34,4 +35,7 @@ export type FormScreen =
   | MultiFieldScreen
   | RepeaterScreen
 
-export type ResolverContext = { formNode: FormNode; dataSchema: Schema }
+export type ResolverContext = {
+  formNode: FormNode
+  dataSchema: Schema
+}
