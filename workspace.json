@@ -1353,6 +1353,35 @@
         }
       }
     },
+    "application-templates-document-provider-onboarding": {
+      "root": "libs/application/templates/document-provider-onboarding",
+      "sourceRoot": "libs/application/templates/document-provider-onboarding/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/document-provider-onboarding/tsconfig.lib.json",
+              "libs/application/templates/document-provider-onboarding/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/document-provider-onboarding/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/document-provider-onboarding/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
       "sourceRoot": "libs/application/templates/driving-lessons/src",
