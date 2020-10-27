@@ -32,8 +32,9 @@ import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/share
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const [, setRestrictionCheckboxOne] = useState<boolean>()
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
@@ -127,8 +128,10 @@ export const RulingStepOne: React.FC = () => {
         judgeId: caseDraftJSON.judgeId ?? null,
         judge: caseDraftJSON.judge ?? null,
       })
+
+      setIsLoading(false)
     }
-  }, [workingCase, setWorkingCase])
+  }, [workingCase, setWorkingCase, setIsLoading])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -146,7 +149,7 @@ export const RulingStepOne: React.FC = () => {
   }, [workingCase, isStepIllegal])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={2}>
+    <PageLayout activeSection={1} activeSubSection={2} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

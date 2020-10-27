@@ -64,7 +64,7 @@ export const JudgeOverview: React.FC = () => {
     return () => {
       mounted = false
     }
-  }, [id, workingCase, setWorkingCase])
+  }, [id, workingCase, setWorkingCase, setIsLoading])
 
   return (
     <PageLayout activeSection={1} activeSubSection={0} isLoading={isLoading}>

@@ -115,7 +115,7 @@ describe('Ruling routes', () => {
       })
     })
 
-    test('should not have a selected radio button by default', () => {
+    test('should not have a selected radio button by default', async () => {
       // Arrange
       Storage.prototype.getItem = jest.fn(() => {
         return JSON.stringify({
@@ -132,9 +132,9 @@ describe('Ruling routes', () => {
 
       // Assert
       expect(
-        (getAllByRole('radio') as HTMLInputElement[]).filter(
-          (input) => input.checked,
-        ),
+        (
+          await waitFor(() => getAllByRole('radio') as HTMLInputElement[])
+        ).filter((input) => input.checked),
       ).toHaveLength(0)
     })
 

@@ -22,6 +22,7 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
@@ -76,11 +77,12 @@ export const RulingStepTwo: React.FC = () => {
         judgeId: caseDraftJSON.judgeId ?? null,
         judge: caseDraftJSON.judge ?? null,
       })
+      setIsLoading(false)
     }
-  }, [workingCase, setWorkingCase])
+  }, [workingCase, setWorkingCase, setIsLoading])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={3}>
+    <PageLayout activeSection={1} activeSubSection={3} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

@@ -28,6 +28,7 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [
     courtDocumentStartErrorMessage,
     setCourtDocumentStartErrorMessage,
@@ -53,11 +54,12 @@ export const CourtRecord: React.FC = () => {
 
     if (wc && !workingCase) {
       setWorkingCase(wc)
+      setIsLoading(false)
     }
-  }, [workingCase, setWorkingCase])
+  }, [workingCase, setWorkingCase, setIsLoading])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={1}>
+    <PageLayout activeSection={1} activeSubSection={1} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

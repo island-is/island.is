@@ -50,8 +50,9 @@ export const Confirmation: React.FC = () => {
     const wc: Case = JSON.parse(window.sessionStorage.getItem('workingCase'))
     if (wc && !workingCase) {
       setWorkingCase(wc)
+      setIsLoading(false)
     }
-  }, [workingCase, setWorkingCase])
+  }, [workingCase, setWorkingCase, setIsLoading])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -104,7 +105,7 @@ export const Confirmation: React.FC = () => {
   }
 
   return (
-    <PageLayout activeSubSection={1} activeSection={4}>
+    <PageLayout activeSubSection={1} activeSection={4} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={1}>

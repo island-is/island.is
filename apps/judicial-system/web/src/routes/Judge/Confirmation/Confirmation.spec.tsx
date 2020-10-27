@@ -1,13 +1,16 @@
 import React from 'react'
+import { createMemoryHistory } from 'history'
 import { render } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import { Router } from 'react-router-dom'
 
 describe('Confirmation route', () => {
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, () => {
     // Arrange
+    const history = createMemoryHistory()
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         id: 'test_id',
@@ -22,7 +25,9 @@ describe('Confirmation route', () => {
     // Act
     const { queryByText } = render(
       <userContext.Provider value={{ user: mockJudge }}>
-        <Confirmation />
+        <Router history={history}>
+          <Confirmation />
+        </Router>
       </userContext.Provider>,
     )
 
@@ -33,6 +38,7 @@ describe('Confirmation route', () => {
 
   test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, () => {
     // Arrange
+    const history = createMemoryHistory()
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         id: 'test_id',
@@ -47,7 +53,9 @@ describe('Confirmation route', () => {
     // Act
     const { queryByText } = render(
       <userContext.Provider value={{ user: mockJudge }}>
-        <Confirmation />
+        <Router history={history}>
+          <Confirmation />
+        </Router>
       </userContext.Provider>,
     )
 
