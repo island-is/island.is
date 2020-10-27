@@ -7,3 +7,13 @@ export interface Provider {
   memberCode: string
   subsystemCode: string
 }
+
+export namespace Provider {
+  export function toString(provider: Provider): string {
+    if (provider) {
+      return `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`
+    } else {
+      return ''
+    }
+  }
+}

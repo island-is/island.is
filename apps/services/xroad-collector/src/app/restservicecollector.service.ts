@@ -31,12 +31,21 @@ export class RestServiceCollector implements ServiceCollector {
     await this.elasticService.deleteIndex()
 
     for (const provider of providers) {
-      // For each provider get list af all REST services
-      // currently supporting those who were registered using OpenAPI
-      const services = await this.restMetadataService.getServices(provider)
+      try {
+        // For each provider get list af all REST services
+        // currently supporting those who were registered using OpenAPI
+        const services = await this.restMetadataService.getServices(provider)
 
-      // Insert into Elastic
-      await this.elasticService.bulk(services)
+        // Insert into Elastic
+        await this.elasticService.bulk(services)
+      } catch (err) {
+        logger.error(
+          `Failed to index service metadata for provider ${Provider.toString(
+            provider,
+          )}`,
+          err,
+        )
+      }
     }
   }
 }

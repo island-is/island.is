@@ -27,9 +27,7 @@ export class RestMetadataService {
    * @param provider
    */
   async getServices(provider: Provider): Promise<Array<Service>> {
-    logger.info(
-      `Getting services for ${provider.memberCode}/${provider.subsystemCode}`,
-    )
+    logger.info(`Getting services for ${Provider.toString(provider)}`)
     const services: Array<Service> = []
     const serviceMap = await this.getServiceCodes(provider)
 
@@ -76,7 +74,7 @@ export class RestMetadataService {
     }
 
     logger.info(
-      `Found ${services.length} services for ${provider.memberCode}/${provider.subsystemCode}`,
+      `Found ${services.length} services for ${Provider.toString(provider)}`,
     )
 
     return services
@@ -96,11 +94,16 @@ export class RestMetadataService {
   }
 
   /**
-   * Returns the OpenApi YAML string
+   * Returns the OpenApi YAML or JSON string from X-Road environment
    * @param xroadIdentifier
    */
   async getOpenApiString(xroadIdentifier: XroadIdentifier): Promise<string> {
     try {
+      // We have this in a try/catch as REST services can be manually
+      // registered in X-Road, meaning they won't have an OpenAPI which
+      // causes X-Road to return Internal Server Error causing exception.
+      // This can be fixed using the REST AdminAPI to check the REST type
+      // of the service before calling this.
       return await this.xrdRestMetaservice.getOpenAPI({
         xRoadInstance: xroadIdentifier.instance,
         memberClass: xroadIdentifier.memberClass,
@@ -119,50 +122,47 @@ export class RestMetadataService {
     provider: Provider,
   ): Promise<Map<string, Array<XroadIdentifier>>> {
     const serviceMap = new Map<string, Array<XroadIdentifier>>()
+    const xrdServices = await this.xrdRestMetaservice.listMethods({
+      xRoadInstance: provider.xroadInstance,
+      memberClass: provider.memberClass,
+      memberCode: provider.memberCode,
+      subsystemCode: provider.subsystemCode,
+    })
 
-    try {
-      const xrdServices = await this.xrdRestMetaservice.listMethods({
-        xRoadInstance: provider.xroadInstance,
-        memberClass: provider.memberClass,
-        memberCode: provider.memberCode,
-        subsystemCode: provider.subsystemCode,
-      })
+    logger.debug(
+      `Found ${
+        xrdServices?.service?.length
+      } service codes for ${Provider.toString(provider)}`,
+    )
 
-      logger.debug(
-        `Found ${xrdServices?.service?.length} service codes for ${provider.memberCode}/${provider.subsystemCode}`,
-      )
-
-      xrdServices?.service?.forEach((item) => {
-        // Validate the properties are provided that we need
-        if (
-          item &&
-          item.serviceCode &&
-          item.xroadInstance &&
-          item.memberCode &&
-          item.memberClass &&
-          item.subsystemCode
-        ) {
-          const serviceCode = item.serviceCode.split('-')[0]
-          const mappedItem: XroadIdentifier = {
-            instance: item.xroadInstance,
-            memberClass: item.memberClass,
-            memberCode: item.memberCode,
-            subsystemCode: item.subsystemCode,
-            serviceCode: item.serviceCode,
-          }
-
-          const map = serviceMap.get(serviceCode)
-
-          if (map) {
-            map.push(mappedItem)
-          } else {
-            serviceMap.set(serviceCode, [mappedItem])
-          }
+    xrdServices?.service?.forEach((item) => {
+      // Validate the properties are provided that we need
+      if (
+        item &&
+        item.serviceCode &&
+        item.xroadInstance &&
+        item.memberCode &&
+        item.memberClass &&
+        item.subsystemCode
+      ) {
+        const serviceCode = item.serviceCode.split('-')[0]
+        const mappedItem: XroadIdentifier = {
+          instance: item.xroadInstance,
+          memberClass: item.memberClass,
+          memberCode: item.memberCode,
+          subsystemCode: item.subsystemCode,
+          serviceCode: item.serviceCode,
         }
-      })
-    } catch (err) {
-      exceptionHandler(err)
-    }
+
+        const map = serviceMap.get(serviceCode)
+
+        if (map) {
+          map.push(mappedItem)
+        } else {
+          serviceMap.set(serviceCode, [mappedItem])
+        }
+      }
+    })
 
     return serviceMap
   }
