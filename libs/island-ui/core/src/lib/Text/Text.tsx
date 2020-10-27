@@ -85,10 +85,13 @@ export const Text = ({
       {React.Children.map<React.ReactNode, React.ReactNode>(
         children,
         (child: any) => {
-          if (child?.props?.href && child?.props?.as) {
-            // Checking to see if the child  using "href" and "as" props, which indicates it
-            // is (most likely) a next.js link since the linkRenderer breaks this functionality.
-            // TODO: Make linkRenderer handle next.js links.
+          if (
+            child?.props?.href &&
+            child?.props?.as &&
+            child?.type?.name === 'Link'
+          ) {
+            // Checking to see if the child is a Link component and using "href" and "as" props,
+            // which indicates it is a next.js link since the linkRenderer breaks this functionality
             return child
           } else if (child?.props?.href && typeof linkRenderer === 'function') {
             return linkRenderer(child.props.href, child.props.children)
