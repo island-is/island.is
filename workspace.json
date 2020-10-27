@@ -1353,6 +1353,35 @@
         }
       }
     },
+    "application-templates-document-provider-onboarding": {
+      "root": "libs/application/templates/document-provider-onboarding",
+      "sourceRoot": "libs/application/templates/document-provider-onboarding/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/document-provider-onboarding/tsconfig.lib.json",
+              "libs/application/templates/document-provider-onboarding/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/document-provider-onboarding/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/document-provider-onboarding/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-driving-lessons": {
       "root": "libs/application/templates/driving-lessons",
       "sourceRoot": "libs/application/templates/driving-lessons/src",
@@ -3750,7 +3779,24 @@
             "outputPath": "dist/apps/services/user-profile",
             "main": "apps/services/user-profile/src/main.ts",
             "tsConfig": "apps/services/user-profile/tsconfig.app.json",
-            "assets": ["apps/services/user-profile/src/assets"]
+            "assets": [
+              "apps/services/user-profile/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/services/user-profile/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/services/user-profile",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/services/user-profile",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -3818,7 +3864,7 @@
             "parallel": false,
             "outputPath": "apps/services/user-profile/src/openapi.yaml",
             "commands": [
-              "yarn build user-profile-api",
+              "yarn build services-user-profile",
               "node dist/apps/services/user-profile/main --generate-schema apps/services/user-profile/src/openapi.yaml"
             ]
           }
