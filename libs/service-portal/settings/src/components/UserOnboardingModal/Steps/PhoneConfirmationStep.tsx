@@ -7,8 +7,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
 import { PhoneConfirmForm } from '../../Forms/PhoneConfirmForm'
 
 export interface PhoneConfirmFormData {
@@ -52,7 +50,6 @@ export const PhoneConfirmationStep: FC<Props> = ({
         </GridColumn>
       </GridRow>
       <PhoneConfirmForm
-        tel={tel}
         renderBackButton={() => (
           <Button variant="ghost" onClick={onBack}>
             {formatMessage({
@@ -62,7 +59,12 @@ export const PhoneConfirmationStep: FC<Props> = ({
           </Button>
         )}
         renderSubmitButton={() => (
-          <Button variant="primary" type="submit" icon="arrowForward">
+          <Button
+            disabled={loading}
+            variant="primary"
+            type="submit"
+            icon="arrowForward"
+          >
             {formatMessage({
               id: 'service.portal:next-step',
               defaultMessage: 'Næsta skref',

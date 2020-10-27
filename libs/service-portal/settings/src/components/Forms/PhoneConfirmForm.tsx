@@ -7,14 +7,12 @@ export interface PhoneConfirmFormData {
 }
 
 interface Props {
-  tel: string
   renderBackButton?: () => JSX.Element
   renderSubmitButton?: () => JSX.Element
   onSubmit: (data: PhoneConfirmFormData) => void
 }
 
 export const PhoneConfirmForm: FC<Props> = ({
-  tel,
   renderBackButton,
   renderSubmitButton,
   onSubmit,
@@ -37,7 +35,7 @@ export const PhoneConfirmForm: FC<Props> = ({
               message: 'Eingöngu tölustafir eru leyfðir',
             },
           }}
-          defaultValue={tel}
+          defaultValue={''}
           render={({ onChange, value, name }) => (
             <Input
               label="Öryggiskóði"
