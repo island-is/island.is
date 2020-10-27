@@ -23,6 +23,7 @@ import { UserRole } from '../../utils/authenticate'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
@@ -41,7 +42,7 @@ export const DetentionRequests: React.FC = () => {
 
       if (cases && user.role === UserRole.JUDGE) {
         const judgeCases = cases.filter((c) => {
-          // Judges should see all cases excpet drafts
+          // Judges should see all cases exept drafts
           return c.state !== CaseState.DRAFT
         })
 
@@ -108,6 +109,7 @@ export const DetentionRequests: React.FC = () => {
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
+              <th>Gæsluvarðhaldstími</th>
               <th></th>
             </tr>
           </thead>
@@ -128,6 +130,14 @@ export const DetentionRequests: React.FC = () => {
                   <Tag variant={mapCaseStateToTagVariant(c.state).color} label>
                     {mapCaseStateToTagVariant(c.state).text}
                   </Tag>
+                </td>
+                <td>
+                  {c.state === CaseState.ACCEPTED
+                    ? `${formatDate(c.custodyEndDate, 'PP')} kl. ${formatDate(
+                        c.custodyEndDate,
+                        TIME_FORMAT,
+                      )}`
+                    : null}
                 </td>
                 <td>
                   <userContext.Consumer>
