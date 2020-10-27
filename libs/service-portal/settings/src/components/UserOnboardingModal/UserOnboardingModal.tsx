@@ -4,7 +4,10 @@ import {
   Modal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { useCreateUserProfile } from '@island.is/service-portal/graphql'
+import {
+  useCreateUserProfile,
+  useVerifySms,
+} from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
@@ -31,10 +34,15 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
-  const [buttonLoading, setButtonLoading] = useState<boolean>(false)
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
   const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
+  const {
+    createSmsVerification,
+    createLoading,
+    confirmSmsVerification,
+    confirmLoading,
+  } = useVerifySms(userInfo.profile.natreg)
 
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
@@ -58,7 +66,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         locale,
         mobilePhoneNumber,
       })
-      // TODO: send confirmation email
       toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
       setIsOpen(false)
     } catch (err) {
@@ -72,13 +79,11 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const handlePhoneStepSubmit = async (data: PhoneFormData) => {
     setTel(data.tel)
     try {
-      setButtonLoading(true)
-      // TODO: send sms to telephone
-      setButtonLoading(false)
-      // TODO: goto step telephone confirm
+      await createSmsVerification({
+        mobilePhoneNumber: data.tel,
+      })
       gotoStep('tel-confirm-form')
     } catch (err) {
-      setButtonLoading(false)
       toast.error(
         'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
       )
@@ -87,12 +92,13 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handlePhoneConfirmStepSubmit = async (data: PhoneConfirmFormData) => {
     try {
-      setButtonLoading(true)
-      // TODO: check data.code against database
-      setButtonLoading(false)
+      await confirmSmsVerification({
+        code: data.code,
+      })
       gotoStep('email-form')
     } catch (err) {
-      setButtonLoading(false)
+      toast.error('Rangur kóði')
+      gotoStep('tel-form')
     }
   }
 
@@ -118,7 +124,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-form' && (
         <PhoneStep
           onBack={gotoStep.bind(null, 'intro')}
-          loading={buttonLoading}
+          loading={createLoading}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
         />
@@ -126,7 +132,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-confirm-form' && (
         <PhoneConfirmationStep
           onBack={gotoStep.bind(null, 'tel-form')}
-          loading={buttonLoading}
+          loading={confirmLoading}
           tel={tel}
           onSubmit={handlePhoneConfirmStepSubmit}
         />

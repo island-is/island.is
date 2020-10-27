@@ -40,10 +40,10 @@ export const PhoneConfirmationStep: FC<Props> = ({
           </Text>
           <Text marginBottom={7}>
             {formatMessage({
-              id: 'sp.settings:profile-info-form-message',
+              id: 'sp.settings:tel-confirm-form-message',
               defaultMessage: `
-				Staðfestingarkóði hefur verið sendur á símanúmerið þitt: ${tel}. 
-				Skrifaðu kóðann inn hér að neðan.
+                Staðfestingarkóði hefur verið sendur á símanúmerið þitt: ${tel}. 
+                Skrifaðu kóðann inn hér að neðan.
               `,
             })}
           </Text>
