@@ -45,7 +45,7 @@ export const JudgeOverview: React.FC = () => {
 
     const getCurrentCase = async () => {
       const currentCase = await api.getCaseById(id)
-      window.localStorage.setItem(
+      window.sessionStorage.setItem(
         'workingCase',
         JSON.stringify(currentCase.case),
       )

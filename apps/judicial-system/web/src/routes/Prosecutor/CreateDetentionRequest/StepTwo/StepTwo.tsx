@@ -152,7 +152,7 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.localStorage.getItem('workingCase')
+    const caseDraft = window.sessionStorage.getItem('workingCase')
 
     if (caseDraft !== 'undefined' && !workingCase) {
       const caseDraftJSON = JSON.parse(caseDraft || '{}')
@@ -311,7 +311,7 @@ export const StepTwo: React.FC = () => {
                     evt.target.value,
                   )
 
-                  window.localStorage.setItem(
+                  window.sessionStorage.setItem(
                     'workingCase',
                     JSON.stringify({
                       ...workingCase,

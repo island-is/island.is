@@ -33,7 +33,7 @@ export const DetentionRequests: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
-    window.localStorage.clear()
+    window.sessionStorage.clear()
   }, [])
 
   useEffect(() => {
@@ -85,12 +85,7 @@ export const DetentionRequests: React.FC = () => {
             to={Constants.STEP_ONE_ROUTE}
             style={{ textDecoration: 'none' }}
           >
-            <Button
-              icon="plus"
-              onClick={() => window.localStorage.removeItem('workingCase')}
-            >
-              Stofna nýja kröfu
-            </Button>
+            <Button icon="plus">Stofna nýja kröfu</Button>
           </Link>
         )}
       </div>

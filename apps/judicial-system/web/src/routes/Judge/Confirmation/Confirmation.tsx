@@ -47,7 +47,7 @@ export const Confirmation: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const wc: Case = JSON.parse(window.localStorage.getItem('workingCase'))
+    const wc: Case = JSON.parse(window.sessionStorage.getItem('workingCase'))
     if (wc && !workingCase) {
       setWorkingCase(wc)
     }

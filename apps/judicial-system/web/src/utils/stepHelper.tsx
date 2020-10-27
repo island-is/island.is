@@ -25,7 +25,7 @@ export const updateState = (
   // Set the copy of the state as the state
   stateSetter(copyOfState)
 
-  window.localStorage.setItem('workingCase', JSON.stringify(copyOfState))
+  window.sessionStorage.setItem('workingCase', JSON.stringify(copyOfState))
 }
 
 /**

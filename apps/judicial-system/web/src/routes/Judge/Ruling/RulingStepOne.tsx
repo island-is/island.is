@@ -79,7 +79,7 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.localStorage.getItem('workingCase')
+    const caseDraft = window.sessionStorage.getItem('workingCase')
 
     if (caseDraft !== 'undefined' && !workingCase) {
       const caseDraftJSON = JSON.parse(caseDraft || '{}')

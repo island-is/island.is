@@ -118,10 +118,10 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
   })
 
-  test('should persist data if data is in localstorage', async () => {
+  test('should persist data if data is in sessionStorage', async () => {
     // Arrange
 
-    // Mock call to localstorage.getItem
+    // Mock call to sessionStorage.getItem
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({})
     })
@@ -184,7 +184,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  test("should display the correct arrestTime and requestedCourtDate if it's in localstorage", () => {
+  test("should display the correct arrestTime and requestedCourtDate if it's in sessionStorage", () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -214,7 +214,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     ).toEqual('12:03')
   })
 
-  test("should display nothing if arrestTime and requestedCourtDate don't have a time set in localstorage", () => {
+  test("should display nothing if arrestTime and requestedCourtDate don't have a time set in sessionStorage", () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -249,7 +249,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Mock call to api.updateCase
     fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
 
-    // Have arrestDate and requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
+    // Have arrestDate and requestedCourtDate in sessionStorage because it's hard to use the datepicker with useEvents
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         arrestDate: '2020-10-15',

@@ -14,7 +14,7 @@ describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
     // Arrange
     const history = createMemoryHistory()
 
-    // Mock localstorage methods
+    // Mock sessionStorage methods
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         id: 'test_id',

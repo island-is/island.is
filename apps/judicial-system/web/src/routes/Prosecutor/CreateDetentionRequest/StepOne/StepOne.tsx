@@ -123,7 +123,7 @@ export const StepOne: React.FC = () => {
         requestedCourtDate: workingCase.requestedCourtDate,
       })
 
-      window.localStorage.setItem(
+      window.sessionStorage.setItem(
         'workingCase',
         JSON.stringify({
           ...workingCase,
@@ -151,7 +151,7 @@ export const StepOne: React.FC = () => {
 
   // Run if id is not in url, i.e. if the user is creating a request.
   useEffect(() => {
-    const caseDraft = window.localStorage.getItem('workingCase')
+    const caseDraft = window.sessionStorage.getItem('workingCase')
 
     if (caseDraft !== 'undefined' && !workingCase && !id) {
       const caseDraftJSON = JSON.parse(caseDraft || '{}')
@@ -209,7 +209,7 @@ export const StepOne: React.FC = () => {
       const currentCase = await api.getCaseById(id)
 
       if (!workingCase) {
-        window.localStorage.setItem(
+        window.sessionStorage.setItem(
           'workingCase',
           JSON.stringify(currentCase.case),
         )

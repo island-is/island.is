@@ -19,7 +19,11 @@ describe('Create detention request, step two', () => {
     // Mock call to api.updateCase
     fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
 
+<<<<<<< HEAD
     // Have requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
+=======
+    // Have arrestDate and requestedCourtDate in sessionStorage because it's hard to use the datepicker with useEvents
+>>>>>>> Replace localstorage with session storage
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
         id: 'test_id',
@@ -121,7 +125,7 @@ describe('Create detention request, step two', () => {
     ).not.toBeDisabled()
   })
 
-  test("should display the correct requestedCustodyEndTime if it's in localstorage", () => {
+  test("should display the correct requestedCustodyEndTime if it's in sessionStorage", () => {
     // Arrange
     const history = createMemoryHistory()
 

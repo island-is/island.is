@@ -21,7 +21,7 @@ import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 
 export const RulingStepTwo: React.FC = () => {
-  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraft = window.sessionStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
 
   const [workingCase, setWorkingCase] = useState<Case>({

@@ -68,7 +68,7 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.localStorage.getItem('workingCase')
+    const caseDraft = window.sessionStorage.getItem('workingCase')
     const caseDraftJSON = JSON.parse(caseDraft)
 
     if (!workingCase) {

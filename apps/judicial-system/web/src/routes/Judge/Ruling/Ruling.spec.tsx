@@ -15,7 +15,7 @@ describe('Ruling routes', () => {
     test('should now allow users to continue unless every required field has been filled out', async () => {
       // Arrange
 
-      // Have custodyEndDate in localstorage because it's hard to use the datepicker with useEvents
+      // Have custodyEndDate in sessionstorage because it's hard to use the datepicker with useEvents
       Storage.prototype.getItem = jest.fn(() => {
         return JSON.stringify({
           custodyEndDate: '2020-10-24',
@@ -81,7 +81,7 @@ describe('Ruling routes', () => {
       test('should now allow users to continue unless every required field has been filled out', () => {
         // Arrange
 
-        // Have custodyEndDate in localstorage because it's hard to use the datepicker with useEvents
+        // Have custodyEndDate in sessionstorage because it's hard to use the datepicker with useEvents
         Storage.prototype.getItem = jest.fn(() => {
           return JSON.stringify({
             custodyEndDate: '2020-10-24',
