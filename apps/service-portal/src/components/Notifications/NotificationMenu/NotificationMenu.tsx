@@ -45,7 +45,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
             ))}
           </Box>
           <Box marginTop={4}>
-            <Link to={ServicePortalPath.SkilabodRoot} onClick={onClose}>
+            <Link to={ServicePortalPath.MessagesRoot} onClick={onClose}>
               <Button width="fluid">Sjá öll skilaboð</Button>
             </Link>
           </Box>

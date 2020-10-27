@@ -14,7 +14,7 @@ export const Messages: ServicePortalModuleComponent = () => {
       })}
       intro={defineMessage({
         id: 'sp.settings:messages-about',
-        defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir umboð á næstunni`,
+        defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir skilaboð á næstunni`,
       })}
       list={{
         title: defineMessage({
@@ -24,8 +24,7 @@ export const Messages: ServicePortalModuleComponent = () => {
         items: [
           defineMessage({
             id: 'sp.settings:messages-inc-1',
-            defaultMessage:
-              'Yfirlit og hægt verður að deila umboði á milli einstaklinga og fyrirtækja',
+            defaultMessage: ' ',
           }),
         ],
       }}
@@ -52,7 +51,7 @@ export const Messages: ServicePortalModuleComponent = () => {
         id: 'service.portal:timeline-link-title',
         defaultMessage: 'Sjá tímalínu',
       })}
-      figure="/assets/images/school.jpg"
+      figure="/assets/images/bus.jpg"
     />
   )
 }

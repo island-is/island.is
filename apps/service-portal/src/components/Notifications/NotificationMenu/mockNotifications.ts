@@ -33,7 +33,7 @@ export const notifications: NotificationsContainer = {
             'Hér kemur þú til með að fá skilaboð frá öllum helstu stofnunum Íslands.',
           link: {
             title: 'Halda áfram',
-            url: ServicePortalPath.SkilabodRoot,
+            url: ServicePortalPath.MessagesRoot,
           },
           isRead: true,
           provider: 'Island.is',
@@ -45,7 +45,7 @@ export const notifications: NotificationsContainer = {
           text: 'Dæmi um skilaboð sem koma hér inn í framtíðinni',
           link: {
             title: 'Halda áfram',
-            url: ServicePortalPath.SkilabodRoot,
+            url: ServicePortalPath.MessagesRoot,
           },
           isRead: true,
           wip: true,
