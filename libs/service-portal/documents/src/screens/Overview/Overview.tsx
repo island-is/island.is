@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import {
   Typography,
   Box,
@@ -21,18 +21,65 @@ import {
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
+import { Document } from '@island.is/api/schema'
+
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { mockDocuments } from './mock.data'
+import Fuse from 'fuse.js'
 
 const defaultCategory = { label: 'Allar Stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = '2000-01-01T00:00:00.000'
+const defaultStartDate = new Date('2000-01-01T00:00:00.000')
+const defaultEndDate = new Date()
+
+const defaultFilterValues = {
+  dateFrom: defaultStartDate,
+  dateTo: defaultEndDate,
+  activeCategory: defaultCategory,
+  searchQuery: '',
+}
+
+const defaultSearchOptions = {
+  // isCaseSensitive: false,
+  // includeScore: false,
+  // shouldSort: true,
+  // includeMatches: false,
+  // findAllMatches: false,
+  // minMatchCharLength: 1,
+  // location: 0,
+  threshold: 0.4,
+  // distance: 100,
+  // useExtendedSearch: false,
+  // ignoreLocation: false,
+  // ignoreFieldNorm: false,
+  keys: ['senderName', 'senderNatReg', 'sender', 'subject'],
+}
 
 type FilterValues = {
   dateFrom: Date
   dateTo: Date
+  activeCategory: Option
+  searchQuery: string
+}
+
+const getFilteredDocuments = (
+  documents: Document[],
+  filterValues: FilterValues,
+): Document[] => {
+  const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  if (activeCategory.value) {
+    console.log('IM HERHEHRHERH')
+    return documents.filter(
+      (document) => document.senderNatReg === activeCategory.value,
+    )
+  }
+  if (searchQuery) {
+    const fuse = new Fuse(documents, defaultSearchOptions)
+    return fuse.search(searchQuery).map((elem) => elem.item)
+  }
+  return documents
 }
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
@@ -41,66 +88,52 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [filterValue, setFilterValue] = useState<FilterValues>({
-    dateFrom: new Date(defaultStartDate),
-    dateTo: new Date(),
-  })
-  const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
-  // const { data, loading, error } = useListDocuments(
-  //   userInfo.profile.natreg,
-  //   filterValue.dateFrom,
-  //   filterValue.dateTo,
-  //   page,
-  //   pageSize,
-  //   activeCategory?.value.toString() || '',
-  // )
-  const { data, loading, error } = mockDocuments
+  useScrollTopOnUpdate([page])
 
+  const [filterValue, setFilterValue] = useState<FilterValues>(
+    defaultFilterValues,
+  )
+  const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
+  console.log(data)
+  const categories = [defaultCategory, ...data.categories]
+  const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
   const pagedDocuments = {
     from: (page - 1) * pageSize,
     to: pageSize * page,
-    totalPages: Math.ceil(data.length / pageSize),
+    totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-  console.log(data)
-  console.log(pagedDocuments)
-  const { data: cats } = useDocumentCategories()
-  useScrollTopOnUpdate([page])
 
-  const categories = [defaultCategory].concat(
-    cats?.map((x) => ({
-      label: x.name,
-      value: x.id,
-    })) || [],
+  const handleDateFromInput = useCallback(
+    (value: Date) =>
+      setFilterValue({
+        ...filterValue,
+        dateFrom: value,
+      }),
+    [],
   )
 
-  const handleExtendSearchClick = () => {
-    if (searchOpen) {
-      setSearchOpen(false)
+  const handleDateToInput = useCallback(
+    (value: Date) =>
       setFilterValue({
-        dateFrom: new Date(defaultStartDate),
-        dateTo: new Date(),
-      })
-    } else {
-      setSearchOpen(true)
-    }
-  }
+        ...filterValue,
+        dateTo: value,
+      }),
+    [],
+  )
 
-  const handleDateFromInput = (value: Date) =>
-    setFilterValue({
-      ...filterValue,
-      dateFrom: value,
-    })
+  const handlePageChange = useCallback((page: number) => setPage(page), [])
+  const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
+    setFilterValue((oldFilter) => ({
+      ...oldFilter,
+      activeCategory: newCategory as Option,
+    }))
+  }, [])
 
-  const handleDateToInput = (value: Date) =>
-    setFilterValue({
-      ...filterValue,
-      dateTo: value,
-    })
-
-  const handlePageChange = (page: number) => setPage(page)
-  const handleCategoryChange = (cat: ValueType<Option>) =>
-    setActiveCategory(cat as Option)
+  const handleSearchChange = useCallback(
+    (value: string) =>
+      setFilterValue({ ...defaultFilterValues, searchQuery: value }),
+    [],
+  )
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
@@ -128,6 +161,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Stack space={3}>
                 <Box height="full">
                   <Input
+                    onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
                     placeholder="Leitaðu af rafrænu skjali"
                   />
@@ -137,7 +171,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     name="categories"
                     defaultValue={categories[0]}
                     options={categories}
-                    value={activeCategory}
+                    value={filterValue.activeCategory}
                     onChange={handleCategoryChange}
                   />
                 </Box>
@@ -158,6 +192,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       locale="is"
                       value={filterValue.dateTo?.toString() || undefined}
                       handleChange={handleDateToInput}
+                      minDate={filterValue.dateFrom || undefined}
                     />
                   </Column>
                 </Columns>
@@ -175,7 +210,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Typography>
               </Box>
             )}
-            {!loading && !error && data?.length === 0 && (
+            {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Typography variant="h3">
                   {formatMessage({
@@ -186,12 +221,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Typography>
               </Box>
             )}
-            {data
+            {filteredDocuments
               ?.slice(pagedDocuments.from, pagedDocuments.to)
               .map((document) => (
                 <DocumentCard key={document.id} document={document} />
               ))}
-            {data && data.length > pageSize && (
+            {filteredDocuments && filteredDocuments.length > pageSize && (
               <Pagination
                 page={page}
                 totalPages={pagedDocuments.totalPages}
