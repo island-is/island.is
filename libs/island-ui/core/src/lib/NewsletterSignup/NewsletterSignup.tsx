@@ -20,6 +20,7 @@ interface Props {
   state?: State
   errorMessage?: string
   onChange: (event: React.ChangeEvent<any>) => void
+  onSubmit: (event: React.FormEvent<any>) => void
   value: string
 }
 
@@ -33,6 +34,7 @@ export const NewsletterSignup: React.FC<Props> = ({
   variant = 'white',
   state = 'default',
   onChange,
+  onSubmit,
   value,
   errorMessage,
 }) => {
@@ -63,7 +65,7 @@ export const NewsletterSignup: React.FC<Props> = ({
           paddingTop={[3, 2, 1]}
           marginLeft={[0, 0, 8]}
         >
-          <Button variant="text" icon="arrowForward">
+          <Button onClick={onSubmit} variant="text" icon="arrowForward">
             {buttonText}
           </Button>
         </Box>

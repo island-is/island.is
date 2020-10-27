@@ -149,7 +149,9 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static)
           echo "CHUNKS: '$CHUNKS'"
-          echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          fi
 
       - name: Gather unaffected docker images
         id: unaffected
@@ -162,6 +164,7 @@ jobs:
       - prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 35
+    if: needs.prepare.outputs.BUILD_CHUNKS
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -229,6 +232,7 @@ jobs:
   retag-unaffected:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
+    if: always()
     needs:
       - docker-build
       - prepare
@@ -239,6 +243,10 @@ jobs:
       UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
 
     steps:
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check docker-build success
+        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
       - uses: actions/checkout@v2
       - name: Retag unaffected Docker images
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
