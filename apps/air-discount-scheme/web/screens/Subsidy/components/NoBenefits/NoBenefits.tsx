@@ -6,7 +6,7 @@ import {
   Stack,
   IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
-import { Link } from '@island.is/air-discount-scheme-web/components'
+import * as styles from './NoBenefits.treat'
 
 interface PropTypes {
   misc: string
@@ -44,11 +44,11 @@ function NoBenefits({ misc }: PropTypes) {
           </Stack>
         </Box>
       </Box>
-      <Link href={backToInfoPageLink}>
+      <a className={styles.link} href={backToInfoPageLink}>
         <Button variant="text" leftIcon="arrowLeft">
           {backToInfoPage}
         </Button>
-      </Link>
+      </a>
     </>
   )
 }
