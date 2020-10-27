@@ -29,7 +29,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
               <Box marginBottom={3} key={index}>
                 <Stack space={1}>
                   <Box marginBottom={1} textAlign="right">
-                    <Typography variant="eyebrow" as="span" color="purple400">
+                    <Typography variant="eyebrow" as="span" color="dark300">
                       Í dag
                     </Typography>
                   </Box>
