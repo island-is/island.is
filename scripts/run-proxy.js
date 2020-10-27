@@ -7,6 +7,7 @@ const error = (errorMessage) => {
   console.error(errorMessage)
   process.exit(1)
 }
+
 const checkPresenceAWSAccessVars = () => {
   const awsCredsEnvVars = [
     'AWS_ACCESS_KEY_ID',
