@@ -61,13 +61,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
 
   return (
     <>
-      <HeadWithSocialSharing
-        title={`Viðspyrna fyrir Ísland`}
-        // description={article.description}
-        // imageUrl={article.featuredImage?.url}
-        // imageWidth={article.featuredImage?.width.toString()}
-        // imageHeight={article.featuredImage?.height.toString()}
-      />
+      <HeadWithSocialSharing title={`Viðspyrna fyrir Ísland`} />
       <ArticleLayout
         sidebar={
           <Hidden below="lg">

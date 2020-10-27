@@ -89,9 +89,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
       <HeadWithSocialSharing
         title={`${article.title} | Viðspyrna fyrir Ísland`}
         description={article.description}
-        // imageUrl={article.featuredImage?.url}
-        // imageWidth={article.featuredImage?.width.toString()}
-        // imageHeight={article.featuredImage?.height.toString()}
       />
       <ArticleLayout
         sidebar={
