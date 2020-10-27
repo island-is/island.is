@@ -21,12 +21,12 @@ import {
   GridRow,
   GridColumn,
   IconDeprecated as Icon,
+  deorphanize,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-
 const Illustration = dynamic(() => import('./illustrations/Illustration'))
 
 import * as styles from './FrontpageTabs.treat'
@@ -36,7 +36,6 @@ type TabsProps = {
   title?: string
   content?: string
   link?: string
-  animationJson?: string
 }
 
 type LinkUrls = {
@@ -152,7 +151,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   useEffect(() => {
     itemsRef.current.forEach((item) => {
-      const spans = item.querySelectorAll('span')
+      const spans = item.getElementsByClassName(styles.textItem)
 
       Array.prototype.forEach.call(spans, (span) => {
         span.classList.remove(styles.textItemVisible)
@@ -162,7 +161,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     const el = itemsRef.current[selectedIndex]
 
     if (el) {
-      const spans = el.querySelectorAll('span')
+      const spans = el.getElementsByClassName(styles.textItem)
 
       Array.prototype.forEach.call(spans, (span, index) => {
         span.classList.add(styles.textItemVisible)
@@ -209,9 +208,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                   <TabPanel
                     key={index}
                     {...tab}
-                    style={{
-                      display: 'inline-block',
-                    }}
                     tabIndex={visible ? 0 : -1}
                     className={cn(styles.tabPanel, {
                       [styles.tabPanelVisible]: visible,
@@ -227,22 +223,30 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                           <span className={styles.textItem}>{subtitle}</span>
                         </Text>
                         <Text variant="h1" as="h1" id={tabTitleId}>
-                          <span className={styles.textItem}>{title}</span>
+                          <span className={styles.textItem}>
+                            {deorphanize(title)}
+                          </span>
                         </Text>
                         <Text>
                           <span className={styles.textItem}>{content}</span>
                         </Text>
                         {linkUrls?.href ? (
-                          <Link as={linkUrls.as} href={linkUrls.href} passHref>
-                            <Button
-                              variant="text"
-                              icon="arrowRight"
-                              tabIndex={visible ? 0 : -1}
-                              aria-labelledby={tabTitleId}
+                          <span className={styles.textItem}>
+                            <Link
+                              as={linkUrls.as}
+                              href={linkUrls.href}
+                              passHref
                             >
-                              Sjá nánar
-                            </Button>
-                          </Link>
+                              <Button
+                                variant="text"
+                                icon="arrowRight"
+                                tabIndex={visible ? 0 : -1}
+                                aria-labelledby={tabTitleId}
+                              >
+                                Sjá nánar
+                              </Button>
+                            </Link>
+                          </span>
                         ) : null}
                       </Stack>
                     </Box>

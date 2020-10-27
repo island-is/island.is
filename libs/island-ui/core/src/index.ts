@@ -78,3 +78,5 @@ export * from './lib/context'
 
 // Util functions
 export * from './utils/global.treat'
+export { deorphanize } from './utils/deorphanize'
+export { hexToRgba } from './utils/hexToRgba'
