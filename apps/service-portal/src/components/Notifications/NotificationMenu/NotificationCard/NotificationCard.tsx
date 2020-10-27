@@ -1,16 +1,10 @@
 import React, { FC } from 'react'
 import { NotificationCard as Card } from '../mockNotifications'
-import {
-  Box,
-  Typography,
-  IconDeprecated as Icon,
-  Stack,
-  ButtonDeprecated as Button,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './Notificationcard.treat'
 import cn from 'classnames'
-import { ActionMenu, ActionMenuItem } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   card: Card
@@ -18,6 +12,8 @@ interface Props {
 }
 
 const NotificationCard: FC<Props> = ({ card, onClick }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <Box
       position="relative"
@@ -26,27 +22,37 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
       borderRadius="standard"
       className={cn(styles.card, {
         [styles.unread]: !card.isRead,
+        [styles.wip]: card.wip,
       })}
     >
-      <div className={styles.controlMenu}>
-        <ActionMenu>
-          <ActionMenuItem>Merkja sem lesið</ActionMenuItem>
-          <ActionMenuItem>Eyða tilkynningu</ActionMenuItem>
-        </ActionMenu>
-      </div>
+      <Text variant="eyebrow" color="purple400">
+        {card.provider}
+      </Text>
       <Stack space={1}>
-        <Box className={styles.title}>
-          <Typography variant="h4">{card.title}</Typography>
+        <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+          <Text variant="h4">{card.title}</Text>
+          {card.wip && (
+            <Tag variant="purple">
+              {formatMessage({
+                id: 'service.portal:in-progress',
+                defaultMessage: 'Í vinnslu',
+              })}
+            </Tag>
+          )}
         </Box>
-        <Typography variant="p" as="div">
-          {card.text}
-        </Typography>
-        <Box textAlign="right">
+        <Text as="div">{card.text}</Text>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginTop={2}
+        >
           <Link to={card.link.url} className={styles.link} onClick={onClick}>
-            <Button variant="text" size="small" icon="arrowRight">
+            <Button variant="text" size="small" icon="arrowForward">
               {card.link.title}
             </Button>
           </Link>
+          <Tag variant="blue">{card.type}</Tag>
         </Box>
       </Stack>
     </Box>
