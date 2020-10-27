@@ -9,6 +9,7 @@
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
     "dev-services": "nx dev-services",
+    "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",
     "codegen": "nx codegen",
     "translations": "nx translations",
@@ -58,6 +59,7 @@
     "@nestjs/sequelize": "0.1.0",
     "@nestjs/swagger": "4.5.12",
     "@nestjs/terminus": "^7.0.1",
+    "@next/bundle-analyzer": "9.5.5",
     "@opentelemetry/api": "0.8.3",
     "@opentelemetry/exporter-jaeger": "0.8.3",
     "@opentelemetry/node": "0.8.3",
@@ -166,7 +168,7 @@
     "react-alice-carousel": "^1.19.3",
     "react-animate-height": "2.0.21",
     "react-apollo": "3.1.5",
-    "react-datepicker": "^3.1.3",
+    "react-datepicker": "3.3.0",
     "react-dom": "16.13.1",
     "react-dropzone": "11.0.3",
     "react-focus-lock": "^2.4.1",
@@ -307,6 +309,7 @@
     "typescript": "3.9.7"
   },
   "resolutions": {
+    "bn.js": "5.1.3",
     "webpack": "4.44.1",
     "serialize-javascript": "4.0.0",
     "http-proxy": "1.18.1",
