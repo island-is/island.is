@@ -1,4 +1,5 @@
 import {
+  providerToString,
   Provider,
   Service,
   OpenApi,
@@ -27,7 +28,7 @@ export class RestMetadataService {
    * @param provider
    */
   async getServices(provider: Provider): Promise<Array<Service>> {
-    logger.info(`Getting services for ${Provider.toString(provider)}`)
+    logger.info(`Getting services for ${providerToString(provider)}`)
     const services: Array<Service> = []
     const serviceMap = await this.getServiceCodes(provider)
 
@@ -74,7 +75,7 @@ export class RestMetadataService {
     }
 
     logger.info(
-      `Found ${services.length} services for ${Provider.toString(provider)}`,
+      `Found ${services.length} services for ${providerToString(provider)}`,
     )
 
     return services
@@ -132,7 +133,7 @@ export class RestMetadataService {
     logger.debug(
       `Found ${
         xrdServices?.service?.length
-      } service codes for ${Provider.toString(provider)}`,
+      } service codes for ${providerToString(provider)}`,
     )
 
     xrdServices?.service?.forEach((item) => {

@@ -4,7 +4,7 @@ import { ProviderService } from '@island.is/api-catalogue/services'
 import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
-import { Provider } from '@island.is/api-catalogue/types'
+import { Provider, providerToString } from '@island.is/api-catalogue/types'
 
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
@@ -40,7 +40,7 @@ export class RestServiceCollector implements ServiceCollector {
         await this.elasticService.bulk(services)
       } catch (err) {
         logger.error(
-          `Failed to index service metadata for provider ${Provider.toString(
+          `Failed to index service metadata for provider ${providerToString(
             provider,
           )}`,
           err,

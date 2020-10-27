@@ -8,12 +8,10 @@ export interface Provider {
   subsystemCode: string
 }
 
-export namespace Provider {
-  export function toString(provider: Provider): string {
-    if (provider) {
-      return `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`
-    } else {
-      return ''
-    }
+export const providerToString = (provider: Provider): string => {
+  if (provider) {
+    return `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`
+  } else {
+    return ''
   }
 }
