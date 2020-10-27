@@ -3864,7 +3864,7 @@
             "parallel": false,
             "outputPath": "apps/services/user-profile/src/openapi.yaml",
             "commands": [
-              "yarn build user-profile-api",
+              "yarn build services-user-profile",
               "node dist/apps/services/user-profile/main --generate-schema apps/services/user-profile/src/openapi.yaml"
             ]
           }
