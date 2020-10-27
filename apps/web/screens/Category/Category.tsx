@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { intersection } from 'lodash'
+import intersection from 'lodash/intersection'
 import { theme } from '@island.is/island-ui/theme'
 import {
   Text,
