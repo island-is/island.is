@@ -32,7 +32,7 @@ const args = argv
     description: 'Port local proxy is listening on',
     default: 8080,
   })
-  .demandOption('namespace', 'Namespace the Kubernetes service is listening on')
+  .demandOption('namespace', 'Namespace the Kubernetes service is part of')
   .demandOption('service', 'Name of the Kubernetes service')
   .help().argv
 
