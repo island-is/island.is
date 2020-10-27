@@ -1,20 +1,32 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import {
-  Typography,
+  Text,
   ButtonDeprecated as Button,
   Box,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { apiUrl } from '../../api'
+import * as api from '../../api'
 import * as styles from './Login.treat'
+import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
+  const uContext = useContext(userContext)
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
   }, [])
+
+  useEffect(() => {
+    const logoutCurrentUser = async () => {
+      api.logOut()
+    }
+    if (uContext.user) {
+      logoutCurrentUser()
+    }
+  }, [uContext])
 
   return (
     <div className={styles.loginContainer}>
@@ -31,16 +43,16 @@ export const Login = () => {
       )}
       <div className={styles.titleContainer}>
         <Box>
-          <Typography as="h1" variant="h1">
+          <Text as="h1" variant="h1">
             Skráðu þig inn í Réttarvörslugátt
-          </Typography>
+          </Text>
         </Box>
       </div>
       <div className={styles.subTitleContainer}>
-        <Typography>
+        <Text>
           Notaðu rafræn skilríki til þess að skrá þig inn. Passaðu upp á að það
           sé kveikt á símanum eða hann sé ólæstur.
-        </Typography>
+        </Text>
       </div>
       <div className={styles.buttonContainer}>
         <Button

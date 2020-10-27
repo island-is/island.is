@@ -1,18 +1,19 @@
 import {
   buildDataProviderItem,
+  buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubSection,
   buildIntroductionField,
+  buildMultiField,
   buildRadioField,
+  buildSection,
   buildSelectField,
+  buildSubmitField,
+  buildSubSection,
   buildTextField,
-  Form,
   DataProviderTypes,
-  ApplicationTypes,
-  buildDateField,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -20,9 +21,9 @@ const yesOption = { value: 'yes', label: m.yesOptionLabel }
 const noOption = { value: 'no', label: m.noOptionLabel }
 
 export const DrivingLessonsApplication: Form = buildForm({
-  id: ApplicationTypes.DRIVING_LESSONS,
-  ownerId: 'TODO?',
+  id: 'DrivingLessonsApplicationDraftForm',
   name: m.formName,
+  mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'student',
@@ -219,10 +220,28 @@ export const DrivingLessonsApplication: Form = buildForm({
       id: 'confirmation',
       name: m.confirmationSection,
       children: [
-        buildIntroductionField({
-          id: 'overview',
-          name: m.overview,
-          introduction: m.overviewIntro,
+        buildMultiField({
+          id: 'submit',
+          name: 'Takk fyrir að sækja um',
+          children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              name: 'sick',
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: 'Smelltu hér til að senda inn umsókn',
+                  type: 'primary',
+                },
+              ],
+            }),
+            buildIntroductionField({
+              id: 'overview',
+              name: '',
+              introduction: m.overviewIntro,
+            }),
+          ],
         }),
         buildIntroductionField({
           id: 'final',

@@ -45,8 +45,6 @@ const remainingCaseData = {
     CaseCustodyRestrictions.MEDIA,
   ],
   caseFacts: 'Case Facts',
-  witnessAccounts: 'Witness Accounts',
-  investigationProgress: 'Investigation Progress',
   legalArguments: 'Legal Arguments',
   comments: 'Comments',
   courtCaseNumber: 'Court Case Number',
@@ -61,7 +59,9 @@ const remainingCaseData = {
   custodyEndDate: '2020-09-28T12:00:00.000Z',
   custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   accusedAppealDecision: CaseAppealDecision.APPEAL,
+  accusedAppealAnnouncement: 'Accused Appeal Announcement',
   prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+  prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
 }
 
 function getCaseData(fullCreateCaseData = false, otherCaseData = false) {
@@ -135,10 +135,6 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
     caseTwo.requestedCustodyRestrictions || null,
   )
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
-  expect(caseOne.witnessAccounts || null).toBe(caseTwo.witnessAccounts || null)
-  expect(caseOne.investigationProgress || null).toBe(
-    caseTwo.investigationProgress || null,
-  )
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toStrictEqual(
@@ -163,8 +159,14 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )
+  expect(caseOne.accusedAppealAnnouncement || null).toBe(
+    caseTwo.accusedAppealAnnouncement || null,
+  )
   expect(caseOne.prosecutorAppealDecision || null).toBe(
     caseTwo.prosecutorAppealDecision || null,
+  )
+  expect(caseOne.prosecutorAppealAnnouncement || null).toBe(
+    caseTwo.prosecutorAppealAnnouncement || null,
   )
   expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
   expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)

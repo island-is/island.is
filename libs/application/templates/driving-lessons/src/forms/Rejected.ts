@@ -1,15 +1,14 @@
 import {
-  ApplicationTypes,
   buildForm,
   buildIntroductionField,
   Form,
+  FormModes,
 } from '@island.is/application/core'
 
 export const Rejected: Form = buildForm({
-  id: ApplicationTypes.DRIVING_LESSONS,
-  ownerId: 'TODO?',
+  id: 'DrivingLessonsRejected',
   name: 'Hafnað',
-  mode: 'rejected',
+  mode: FormModes.REJECTED,
   children: [
     buildIntroductionField({
       id: 'rejected',

@@ -1,19 +1,23 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Stack,
   GridContainer,
   GridRow,
   GridColumn,
-  Box,
   Text,
+  Divider,
+  Button,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { CarDetailsBox } from '../Confirm/components'
-import { Button } from '@island.is/skilavottord-web/components'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const Completed = ({ apolloState }) => {
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
   const {
     t: { completed: t, routes },
   } = useI18n()
@@ -31,6 +35,13 @@ const Completed = ({ apolloState }) => {
     }
   }, [car])
 
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   const onClose = () => {
     router.replace(routes.myCars)
   }
@@ -38,7 +49,11 @@ const Completed = ({ apolloState }) => {
   return (
     <>
       {car && (
-        <ProcessPageLayout activeSection={2} activeCar={id.toString()}>
+        <ProcessPageLayout
+          sectionType={'citizen'}
+          activeSection={2}
+          activeCar={id.toString()}
+        >
           <Stack space={3}>
             <Text variant="h1">{t.title}</Text>
             <Stack space={4}>
@@ -66,7 +81,7 @@ const Completed = ({ apolloState }) => {
                       </GridColumn>
                     </GridRow>
                   </Stack>
-                  <Box borderTopWidth="standard" borderColor="blue200"></Box>
+                  <Divider />
                   <Stack space={1}>
                     <GridRow>
                       <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
@@ -101,8 +116,8 @@ const Completed = ({ apolloState }) => {
                   {t.info.payment} <a href="/.">{t.info.paymentLinkText}</a>.
                 </Text>
               </Stack>
-              <Button variant="normal" onClick={onClose}>
-                Close
+              <Button onClick={onClose} fluid={isMobile}>
+                {t.buttons.close}
               </Button>
             </Stack>
           </Stack>

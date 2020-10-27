@@ -8,6 +8,7 @@ import {
   Form,
   ApplicationTypes,
   FormValue,
+  FormModes,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
@@ -42,8 +43,7 @@ const dataSchema = z.object({
 })
 type SchemaFormValues = z.infer<typeof dataSchema>
 const form: Form = buildForm({
-  id: ApplicationTypes.EXAMPLE,
-  ownerId: 'Aranja',
+  id: 'ExampleForm',
   name: 'Family and pets',
   children: [
     buildSection({
@@ -58,12 +58,10 @@ const form: Form = buildForm({
             buildTextField({
               id: 'name',
               name: 'Name',
-              required: true,
             }),
             buildTextField({
               id: 'age',
               name: 'Age',
-              required: true,
             }),
           ],
         }),
@@ -82,11 +80,10 @@ const form: Form = buildForm({
       id: 'houses',
       name: 'Houses',
       children: [
-        buildTextField({ id: 'house', name: 'House', required: false }),
+        buildTextField({ id: 'house', name: 'House' }),
         buildTextField({
           id: 'garden',
           name: 'Do you have a garden?',
-          required: false,
         }),
       ],
     }),
@@ -100,7 +97,6 @@ const application: Application = {
   externalData: {},
   answers: {},
   applicant: '123123',
-  externalId: '123123123',
   state: 'draft',
   modified: new Date(),
   created: new Date(),
@@ -173,7 +169,7 @@ describe('ApplicationFormReducer', () => {
       }
       const state = {
         ...initialState,
-        form: { ...form, mode: 'review' as const },
+        form: { ...form, mode: FormModes.REVIEW },
         application: {
           ...application,
           answers,
@@ -303,9 +299,8 @@ describe('ApplicationFormReducer', () => {
       const initialState = {
         dataSchema: z.object({ text: z.string() }),
         form: buildForm({
-          id: ApplicationTypes.EXAMPLE,
+          id: 'ExampleForm',
           name: 'Test',
-          ownerId: '222',
           children: [],
         }),
         application: {

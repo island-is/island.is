@@ -44,19 +44,21 @@ import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { renderSlices } from '@island.is/island-ui/contentful'
+import {
+  renderSlices,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { RenderForm } from './RenderForm'
-import { slices } from '../queries/fragments'
 
 const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
 const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
-const mainContentIndent: SpanType = [null, null, null, '1/12']
+const mainContentIndent: SpanType = ['0', '0', '0', '1/12']
 const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
 const nestedSpanWithOffset: SpanType = ['9/9', '9/9', '9/9', '7/9']
-const nestedOffset: SpanType = [null, null, null, '1/9']
+const nestedOffset: SpanType = ['0', '0', '0', '1/9']
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -186,7 +188,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
       <GridContainer position="none">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Box marginBottom={[0, 0, 8, 15]}>
-            <Header />
+            <Header buttonColorScheme="negative" />
           </Box>
         </ColorSchemeContext.Provider>
         <GridRow>
@@ -293,7 +295,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
             {...slice}
             events={slice.events.map((event) => ({
               ...event,
-              body: event.body && renderSlices(event.body),
+              body: event.body && renderSlices(event.body as SliceType),
             }))}
           />
         </div>
@@ -418,11 +420,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                           <img
                             src={tab.image.url}
                             className={styles.tabSectionImg}
+                            alt=""
                           />
                           <Typography variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}
                           </Typography>
-                          {tab.body && renderSlices(tab.body)}
+                          {tab.body && renderSlices(tab.body as SliceType)}
                         </Box>
                       </GridColumn>
                     </GridRow>

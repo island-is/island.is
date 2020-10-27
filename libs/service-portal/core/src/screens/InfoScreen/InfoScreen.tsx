@@ -5,6 +5,8 @@ import {
   BulletList,
   GridColumn,
   GridRow,
+  Inline,
+  Tag,
   Typography,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
@@ -19,7 +21,10 @@ interface Props {
     title: MessageDescriptor
     items: MessageDescriptor[]
   }
+  externalHref?: string
+  externalLinkTitle?: MessageDescriptor
   institutionTitle: MessageDescriptor
+  institutionSubtitle: MessageDescriptor
   institutionDescription: MessageDescriptor
   institutionHref: string
   institutionLinkTitle: MessageDescriptor
@@ -30,10 +35,8 @@ export const InfoScreen: FC<Props> = ({
   title,
   intro,
   list,
-  institutionTitle,
-  institutionDescription,
-  institutionHref,
-  institutionLinkTitle,
+  externalHref,
+  externalLinkTitle,
   figure,
 }) => {
   const { formatMessage } = useLocale()
@@ -44,8 +47,16 @@ export const InfoScreen: FC<Props> = ({
         <GridRow>
           <GridColumn span={['12/12', '7/12']}>
             <Box marginTop={[2, 3, 8]} marginBottom={2}>
-              <Box marginBottom={[2, 3]}>
-                <Typography variant="h1">{formatMessage(title)}</Typography>
+              <Box display="flex" marginBottom={[2, 3]}>
+                <Inline space={1}>
+                  <Typography variant="h1">{formatMessage(title)}</Typography>
+                  <Tag variant="mint">
+                    {formatMessage({
+                      id: 'service.portal:in-progress',
+                      defaultMessage: 'Í vinnslu',
+                    })}
+                  </Tag>
+                </Inline>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
                 <Typography variant="intro">{formatMessage(intro)}</Typography>
@@ -64,40 +75,19 @@ export const InfoScreen: FC<Props> = ({
                   </BulletList>
                 </>
               )}
+              {externalHref && externalLinkTitle && (
+                <Box marginTop={[3, 4]}>
+                  <ArrowLink href={externalHref}>
+                    {formatMessage(externalLinkTitle)}
+                  </ArrowLink>
+                </Box>
+              )}
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '5/12']}>
             <img src={figure} alt={`skrautmynd fyrir ${title}`} />
           </GridColumn>
         </GridRow>
-      </Box>
-      <Box
-        className={styles.externalCTA}
-        paddingY={[6, 6, 6, 9]}
-        paddingX={[3, 4, 7, 10, 15]}
-        background="purple100"
-      >
-        <Box marginBottom={[3, 4]}>
-          <Typography variant="h2">
-            {formatMessage({
-              id: 'service.portal:institution',
-              defaultMessage: 'Stofnun',
-            })}
-          </Typography>
-        </Box>
-        <Box marginBottom={[2, 3]}>
-          <Typography variant="h3">
-            {formatMessage(institutionTitle)}
-          </Typography>
-        </Box>
-        <Box marginBottom={[2, 3]}>
-          <Typography variant="p">
-            {formatMessage(institutionDescription)}
-          </Typography>
-        </Box>
-        <ArrowLink href={institutionHref}>
-          {formatMessage(institutionLinkTitle)}
-        </ArrowLink>
       </Box>
     </>
   )

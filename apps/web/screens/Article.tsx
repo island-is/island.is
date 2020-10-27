@@ -1,16 +1,12 @@
-import React, {
-  FC,
-  useState,
-  useMemo,
-  ReactNode,
-  Fragment,
-  useEffect,
-} from 'react'
+import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import {
+  ProcessEntryLinkButton,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import {
   Box,
   Text,
@@ -31,6 +27,7 @@ import {
   Bullet,
   SidebarSubNav,
   RichText,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -146,7 +143,6 @@ const RelatedArticles: FC<{
 
 const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   content,
-  defaultText,
 }) => {
   const processEntries = content.filter((slice): slice is ProcessEntry => {
     return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
@@ -155,13 +151,22 @@ const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   // we'll only show the button if there is exactly one process entry on the page
   if (processEntries.length !== 1) return null
 
-  const { buttonText, processLink } = processEntries[0]
+  const {
+    processTitle,
+    buttonText,
+    processLink,
+    openLinkInModal,
+  } = processEntries[0]
 
   return (
     <SidebarBox>
-      <Button href={processLink} width="fluid">
-        {buttonText || defaultText}
-      </Button>
+      <ProcessEntryLinkButton
+        processTitle={processTitle}
+        buttonText={buttonText}
+        processLink={processLink}
+        openLinkInModal={openLinkInModal}
+        fluid
+      />
     </SidebarBox>
   )
 }
@@ -177,7 +182,7 @@ const SubArticleNavigation: FC<{
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
     return createSubArticleNavigation(selectedSubArticle?.body ?? [])
-  }, [selectedSubArticle])
+  }, [selectedSubArticle?.body])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
@@ -370,16 +375,16 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       title: n('categoryOverview', 'Efnisyfirlit'),
       items: contentOverviewOptions,
     },
-    {
-      title: n('relatedMaterial'),
-      items: relatedLinks,
-    },
   ]
 
+  if (relatedLinks.length) {
+    combinedMobileNavigation.push({
+      title: n('relatedMaterial'),
+      items: relatedLinks,
+    })
+  }
+
   const metaTitle = `${article.title} | Ísland.is`
-  const metaDescription =
-    article.intro ||
-    'Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
 
   const processEntries = article?.body?.length
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
@@ -391,15 +396,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   return (
     <>
-      <Head>
-        <title>{metaTitle}</title>
-        <meta name="title" property="og:title" content={metaTitle} />
-        <meta
-          name="description"
-          property="og:description"
-          content={metaDescription}
-        />
-      </Head>
+      <HeadWithSocialSharing
+        title={metaTitle}
+        description={article.intro}
+        imageUrl={article.featuredImage?.url}
+        imageWidth={article.featuredImage?.width.toString()}
+        imageHeight={article.featuredImage?.height.toString()}
+      />
       <ArticleLayout
         sidebar={
           <ArticleSidebar
@@ -414,7 +417,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <GridColumn
             offset={['0', '0', '0', '0', '1/9']}
             span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-            paddingBottom={2}
+            paddingBottom={[2, 2, 4]}
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
@@ -434,6 +437,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                       (article.group?.slug ? `#${article.group.slug}` : ''),
                   )}
                   href={makePath('ArticleCategory', '[slug]')}
+                  pureChildren
                 >
                   <Tag variant="blue">{article.group.title}</Tag>
                 </Link>
@@ -442,13 +446,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           </GridColumn>
         </GridRow>
         {!!contentOverviewOptions.length && (
-          <GridRow>
-            <GridColumn span="9/9" paddingBottom={4}>
-              <Hidden above="sm">
-                <DrawerMenu categories={combinedMobileNavigation} />
-              </Hidden>
-            </GridColumn>
-          </GridRow>
+          <Hidden above="sm">
+            <DrawerMenu categories={combinedMobileNavigation} />
+          </Hidden>
         )}
         <GridRow>
           <GridColumn
@@ -471,20 +471,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   marginY={3}
                   borderRadius="large"
                 >
-                  <Link
-                    passHref
-                    href={processEntry.processLink}
-                    underline="normal"
-                  >
-                    <Text variant="h4" as="span" color="blue400">
-                      <span>
-                        {processEntry.buttonText || n('processLinkButtonText')}
-                      </span>
-                      <Box component="span" marginLeft={2}>
-                        <Icon type="external" width="15" />
-                      </Box>
-                    </Text>
-                  </Link>
+                  <ProcessEntryLinkButton variant="text" {...processEntry} />
                 </Box>
               </Hidden>
             )}
@@ -492,8 +479,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </GridRow>
         <Box paddingTop={subArticle ? 2 : 4}>
           <RichText
-            body={(subArticle ?? article).body}
-            config={{ defaultPadding: 4 }}
+            body={(subArticle ?? article).body as SliceType[]}
+            config={{ defaultPadding: [2, 2, 4] }}
           />
         </Box>
       </ArticleLayout>

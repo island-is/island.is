@@ -1,25 +1,24 @@
 import {
   buildDividerField,
-  buildReviewField,
   buildForm,
-  buildMultiField,
-  buildSection,
   buildIntroductionField,
+  buildMultiField,
   buildRadioField,
+  buildSection,
   buildSelectField,
+  buildSubmitField,
   buildTextField,
   Form,
-  ApplicationTypes,
+  FormModes,
 } from '@island.is/application/core'
 
 const yesOption = { value: 'yes', label: 'Já' }
 const noOption = { value: 'no', label: 'Nei' }
 
 export const ReviewApplication: Form = buildForm({
-  id: ApplicationTypes.DRIVING_LESSONS,
-  ownerId: 'TODO?',
+  id: 'ReviewDrivingLessonsApplication',
   name: 'Úrvinnsla umsóknar um ökunám',
-  mode: 'review',
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'student',
@@ -172,8 +171,9 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildReviewField({
+            buildSubmitField({
               id: 'approvedByReviewer',
+              placement: 'screen',
               name: 'Samþykkirðu þessa umsókn?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },

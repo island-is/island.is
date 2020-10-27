@@ -13,13 +13,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "build-storybook"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
@@ -53,6 +47,18 @@
     "api": {
       "tags": []
     },
+    "api-catalogue-consts": {
+      "tags": []
+    },
+    "api-catalogue-elastic": {
+      "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
     "api-content-search": {
       "tags": []
     },
@@ -60,6 +66,9 @@
       "tags": []
     },
     "api-domains-cms": {
+      "tags": []
+    },
+    "api-domains-communications": {
       "tags": []
     },
     "api-domains-content-search": {
@@ -71,7 +80,16 @@
     "api-domains-file-upload": {
       "tags": []
     },
+    "api-domains-national-registry": {
+      "tags": []
+    },
     "api-domains-translations": {
+      "tags": []
+    },
+    "api-domains-user-profile": {
+      "tags": []
+    },
+    "api-mocks": {
       "tags": []
     },
     "api-schema": {
@@ -102,6 +120,9 @@
     "application-templates-driving-lessons": {
       "tags": []
     },
+    "application-templates-meta-application": {
+      "tags": []
+    },
     "application-templates-parental-leave": {
       "tags": []
     },
@@ -112,6 +133,9 @@
       "tags": []
     },
     "application-ui-shell": {
+      "tags": []
+    },
+    "auth-api-lib": {
       "tags": []
     },
     "cache": {
@@ -181,6 +205,9 @@
       "tags": []
     },
     "island-ui-theme": {
+      "tags": []
+    },
+    "island-ui-utils": {
       "tags": []
     },
     "judicial-system-api": {
@@ -260,10 +287,25 @@
     "service-portal-settings": {
       "tags": []
     },
+    "services-auth-admin-api": {
+      "tags": []
+    },
+    "services-auth-api": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
+    "services-user-profile": {
+      "tags": []
+    },
     "shared-form-fields": {
+      "tags": []
+    },
+    "shared-mocking": {
+      "tags": []
+    },
+    "shared-types": {
       "tags": []
     },
     "skilavottord-consts": {

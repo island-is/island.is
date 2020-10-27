@@ -4,12 +4,13 @@ import cn from 'classnames'
 
 import { Box } from '../Box/Box'
 import * as styles from './Button.treat'
-import { Icon, IconTypes } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
+import { Icon as IconType, Type } from '../IconRC/iconMap'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 
 type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
-type Variants =
+export type ButtonTypes =
   | {
       variant?: 'primary'
       colorScheme?: keyof typeof styles.colors.primary
@@ -39,18 +40,25 @@ export interface ButtonProps {
   size?: Exclude<keyof typeof styles.size, 'utility'>
   disabled?: boolean
   focusable?: boolean
-  icon?: IconTypes
+  fluid?: boolean
+  icon?: IconType
+  iconType?: Type
+  type?: NativeButtonProps['type']
+  lang?: string
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
   (
     {
       variant = 'primary',
       colorScheme = 'default',
       size = 'default',
       icon,
+      iconType = 'filled',
       children,
       circle,
+      type = 'button',
+      fluid,
       ...buttonProps
     },
     ref,
@@ -60,11 +68,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
+        type={type}
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
           {
             [styles.size[size]]: variant !== 'utility' && !circle,
+            [styles.fluid]: fluid,
             [styles.size.utility]: variant === 'utility',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
@@ -72,12 +82,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
               variant !== 'utility' && variant !== 'text' && !circle,
             [styles.padding.text]: variant === 'text',
             [styles.padding.utility]: variant === 'utility',
+            [styles.isEmpty]: !children,
           },
         )}
         {...buttonProps}
       >
         {children}
-        {icon && <ButtonIcon icon={icon} />}
+        {icon && <ButtonIcon icon={icon} type={iconType} />}
       </Box>
     )
   },
@@ -85,14 +96,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & Variants>(
 
 type ButtonIconProps = {
   icon: ButtonProps['icon']
+  type: ButtonProps['iconType']
 }
 
-const ButtonIcon = ({ icon }: ButtonIconProps) => (
+const ButtonIcon = ({ icon, type }: ButtonIconProps) => (
   <Icon
-    type={icon!}
-    width="none"
-    height="none"
+    icon={icon!}
+    type={type!}
     color="currentColor"
     className={styles.icon}
+    skipPlaceholderSize
   />
 )

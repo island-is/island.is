@@ -1,5 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const root = style({
   minHeight: '100vh',
@@ -56,11 +57,27 @@ export const rootReviewing = style({
   },
 })
 
-export const largeSidebarContainer = style({
-  display: 'none',
+export const shellContainer = style({
+  order: 2,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      display: 'block',
+      order: 1,
+    },
+  },
+})
+
+export const largeSidebarContainer = style({
+  order: 1,
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      ...escapeGrid(),
+
+      maxWidth: `calc(100% + ${theme.grid.gutter.mobile * 4}px)`,
+    },
+
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      order: 2,
     },
   },
 })

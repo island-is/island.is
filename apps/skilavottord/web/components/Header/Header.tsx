@@ -14,7 +14,10 @@ const mockUser = {
   name: 'Mock User',
   nationalId: '2222222222',
   mobile: 123456,
+  // role: 'citizen',
   role: 'developer',
+  // role: 'recyclingPartner',
+  // role: 'recyclingFund',
 }
 
 export const Header: FC = () => {
@@ -23,7 +26,7 @@ export const Header: FC = () => {
   const {
     activeLocale,
     locale,
-    t: { routes },
+    t: { header: t, routes },
   } = useI18n()
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
@@ -56,14 +59,15 @@ export const Header: FC = () => {
           <a>{logo}</a>
         </Link>
       )}
-      logoutText={'Log out'}
+      logoutText={t.logoutText}
       userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}
       switchLanguage={() => switchLanguage(nextLanguage)}
       userName={mockUser?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push(routes.home))
+        const homeRoute = routes.home[mockUser.role] ?? routes.home['citizen']
+        api.logout().then(() => router.push(homeRoute))
       }}
     />
   )

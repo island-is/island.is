@@ -1,6 +1,6 @@
 // TODO: Add tests
 
-type Validation =
+export type Validation =
   | 'empty'
   | 'time-format'
   | 'police-casenumber-format'
@@ -8,8 +8,12 @@ type Validation =
 
 export const validate = (value: string, validation: Validation) => {
   const v = getRegexByValidation(validation)
-  const isValid = v.regex.test(value)
-  return { isValid, errorMessage: isValid ? '' : v.errorMessage }
+  if (!value) {
+    return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
+  } else {
+    const isValid = v.regex.test(value)
+    return { isValid, errorMessage: isValid ? '' : v.errorMessage }
+  }
 }
 
 export const getRegexByValidation = (validation: Validation) => {
@@ -34,7 +38,7 @@ export const getRegexByValidation = (validation: Validation) => {
     case 'national-id':
       return {
         regex: new RegExp(
-          /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})-?(\d{3})(0|9)$/g,
+          /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})(-?(\d{3}){1}(0|9){1})?$/g,
         ),
         errorMessage: 'Ekki á réttu formi',
       }

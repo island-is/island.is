@@ -1,7 +1,14 @@
 import { ApplicationTypes } from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { IsDate, IsEnum, IsNumber, IsObject, IsString } from 'class-validator'
+import {
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsObject,
+  IsString,
+  IsArray,
+} from 'class-validator'
 
 export class ApplicationResponseDto {
   @ApiProperty()
@@ -26,13 +33,8 @@ export class ApplicationResponseDto {
 
   @ApiProperty()
   @Expose()
-  @IsString()
-  assignee!: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  externalId?: string
+  @IsArray()
+  assignees!: string[]
 
   @ApiProperty()
   @Expose()

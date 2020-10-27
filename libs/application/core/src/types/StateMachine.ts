@@ -6,25 +6,22 @@ import {
   StateSchema,
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
-import { Form } from './Form'
+import { Form, FormText } from './Form'
 import { Application } from './Application'
 
 export type ApplicationRole = 'applicant' | 'reviewer' | string
 
+export type ReadWriteValues =
+  | 'all'
+  | {
+      answers?: string[]
+      externalData?: string[]
+    }
+
 export interface RoleInState<T extends EventObject = AnyEventObject> {
   id: ApplicationRole
-  read?:
-    | 'all'
-    | {
-        answers?: string[]
-        externalData?: string[]
-      }
-  write?:
-    | 'all'
-    | {
-        answers?: string[]
-        externalData?: string[]
-      }
+  read?: ReadWriteValues
+  write?: ReadWriteValues
   formLoader?: () => Promise<Form>
   actions?: CallToAction<T>[]
 }
@@ -35,7 +32,7 @@ export interface ApplicationContext {
 
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
-  name: string
+  name: FormText
   type: 'primary' | 'subtle' | 'reject' | string
 }
 

@@ -1,22 +1,22 @@
 import {
-  ApplicationTypes,
   buildCheckboxField,
   buildDividerField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
   buildRadioField,
-  buildReviewField,
   buildSection,
+  buildSubmitField,
   buildTextField,
   Form,
+  FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
-  id: ApplicationTypes.EXAMPLE,
-  ownerId: 'DOL',
+  id: 'ExampleInReview',
   name: 'Úrvinnsla umsóknar um atvinnuleysisbætur',
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
@@ -30,34 +30,29 @@ export const ReviewApplication: Form = buildForm({
             buildTextField({
               id: 'person.name',
               name: m.name,
-              required: true,
               disabled: true,
             }),
             buildTextField({
               id: 'person.nationalId',
               name: m.nationalId,
-              required: true,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'person.age',
               name: m.age,
-              required: true,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'person.email',
               name: m.email,
-              required: false,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'person.phoneNumber',
               name: m.phoneNumber,
-              required: false,
               disabled: true,
               width: 'half',
             }),
@@ -65,7 +60,6 @@ export const ReviewApplication: Form = buildForm({
             buildRadioField({
               id: 'careerHistory',
               name: m.careerHistory,
-              required: true,
               width: 'half',
               disabled: true,
               options: [
@@ -76,7 +70,6 @@ export const ReviewApplication: Form = buildForm({
             buildCheckboxField({
               id: 'careerHistoryCompanies',
               name: m.careerHistoryCompanies,
-              required: false,
               disabled: true,
               width: 'half',
               options: [
@@ -88,11 +81,11 @@ export const ReviewApplication: Form = buildForm({
             buildTextField({
               id: 'dreamJob',
               name: m.dreamJob,
-              required: false,
               disabled: true,
             }),
-            buildReviewField({
+            buildSubmitField({
               id: 'approvedByReviewer',
+              placement: 'screen',
               name: 'Samþykkirðu þessa umsókn?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },

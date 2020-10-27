@@ -20,7 +20,6 @@ class ExampleProviderThatAlwaysSucceeds extends DataProvider {
 
 const application = {
   id: '123',
-  externalId: '141414',
   state: 'draft',
   applicant: '111111-3000',
   typeId: ApplicationTypes.EXAMPLE,

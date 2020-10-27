@@ -5,15 +5,18 @@ export enum ServicePortalPath {
   MinarSidurSilentSignInOidc = '/silent/signin-oidc',
   // Umsoknir
   UmsoknirRoot = '/umsoknir',
+  UmsoknirKynning = '/umsoknir-kynning',
   UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
   UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
   UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
   // Stillingar
   StillingarRoot = '/stillingar',
-  StillingarUmbod = '/stillingar/umbod',
+  StillingarUmbod = '/min-rettindi',
   // Fjolskyldan
-  FjolskyldanRoot = '/fjolskyldan',
-  MinarUpplysingar = '/minar-upplysingar',
+  FamilyRoot = '/fjolskyldan',
+  FamilyMember = '/fjolskyldan/:nationalId',
+  MinGognRoot = '/min-gogn',
+  UserInfo = '/min-gogn/minar-upplysingar',
   // Fjarmal
   FjarmalRoot = '/fjarmal',
   FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
@@ -30,4 +33,10 @@ export enum ServicePortalPath {
   EignirRoot = '/eignir',
   // Skilabod
   SkilabodRoot = '/skilabod',
+
+  // User Profile
+  UserProfileRoot = '/stillingar/minn-adgangur',
+  UserProfileEditPhoneNumber = '/stillingar/minn-adgangur/breyta-simanumeri',
+  UserProfileEditEmail = '/stillingar/minn-adgangur/breyta-netfangi',
+  UserProfileEditLanguage = '/stillingar/minn-adgangur/breyta-tungumali',
 }

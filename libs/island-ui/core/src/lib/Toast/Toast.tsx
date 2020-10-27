@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import {
   ToastContainer as ToastifyContainer,
   toast as toastify,
@@ -6,7 +6,7 @@ import {
 } from 'react-toastify'
 import { Box } from '../Box/Box'
 import { Icon } from '../Icon/Icon'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import * as toastStyles from './Toast.treat'
 import { toastKeyframes } from './toastKeyframes'
 
@@ -21,6 +21,7 @@ interface ToastProps {
   hideProgressBar?: boolean
   timeout?: number
   closeButton?: boolean
+  useKeyframeStyles?: boolean
 }
 
 const RenderMessage = ({
@@ -48,7 +49,7 @@ const RenderMessage = ({
         <Icon type={icons[type]} color={colors[type]} />
       </Box>
       <Box paddingLeft={2}>
-        <Typography variant="h5">{message}</Typography>
+        <Text variant="h5">{message}</Text>
       </Box>
     </Box>
   )
@@ -58,6 +59,7 @@ export const ToastContainer: React.FC<ToastProps> = ({
   hideProgressBar = false,
   timeout = 5000,
   closeButton = false,
+  useKeyframeStyles = true,
 }) => {
   return (
     <div className={toastStyles.root}>
@@ -72,7 +74,7 @@ export const ToastContainer: React.FC<ToastProps> = ({
         pauseOnHover
         transition={Slide}
       />
-      <style jsx>{toastKeyframes}</style>
+      {useKeyframeStyles && <style jsx>{toastKeyframes}</style>}
     </div>
   )
 }

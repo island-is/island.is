@@ -9,6 +9,7 @@ export interface Option {
   excludeOthers?: boolean
 }
 export type FieldWidth = 'full' | 'half'
+export type TextFieldVariant = 'text' | 'email' | 'number' | 'tel' | 'textarea'
 
 export interface BaseField extends FormItem {
   readonly id: string
@@ -16,6 +17,7 @@ export interface BaseField extends FormItem {
   readonly name: FormText
   readonly description?: FormText
   readonly children: undefined
+  disabled?: boolean
   width?: FieldWidth
   condition?: Condition
   repeaterIndex?: number
@@ -33,7 +35,7 @@ export enum FieldTypes {
   SELECT = 'SELECT',
   TEXT = 'TEXT',
   FILEUPLOAD = 'FILEUPLOAD',
-  REVIEW = 'REVIEW',
+  SUBMIT = 'SUBMIT',
   DIVIDER = 'DIVIDER',
 }
 
@@ -46,21 +48,16 @@ export enum FieldComponents {
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
-  REVIEW = 'ReviewFormField',
+  SUBMIT = 'SubmitFormField',
 }
 
-export interface Question extends BaseField {
-  required?: boolean
-  disabled?: boolean
-}
-
-export interface CheckboxField extends Question {
+export interface CheckboxField extends BaseField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
   options: Option[]
 }
 
-export interface DateField extends Question {
+export interface DateField extends BaseField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
@@ -74,7 +71,7 @@ export interface IntroductionField extends BaseField {
   readonly introduction: FormText
 }
 
-export interface RadioField extends Question {
+export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: Option[]
@@ -82,23 +79,24 @@ export interface RadioField extends Question {
   largeButtons?: boolean
 }
 
-export interface SelectField extends Question {
+export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: Option[]
   placeholder?: FormText
 }
 
-export interface TextField extends Question {
+export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText
+  variant?: TextFieldVariant
 }
 
-export interface FileUploadField extends Question {
+export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
   readonly introduction: FormText
@@ -109,10 +107,11 @@ export interface FileUploadField extends Question {
   readonly uploadAccept?: string
 }
 
-export interface ReviewField extends BaseField {
-  readonly type: FieldTypes.REVIEW
-  component: FieldComponents.REVIEW
+export interface SubmitField extends BaseField {
+  readonly type: FieldTypes.SUBMIT
+  component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
+  readonly placement: 'footer' | 'screen'
 }
 
 export interface DividerField extends BaseField {
@@ -120,7 +119,7 @@ export interface DividerField extends BaseField {
   component: FieldComponents.DIVIDER
 }
 
-export interface CustomField extends Question {
+export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
   props?: object
@@ -136,4 +135,4 @@ export type Field =
   | TextField
   | FileUploadField
   | DividerField
-  | ReviewField
+  | SubmitField

@@ -7,23 +7,20 @@ import {
   GridRow,
   GridColumn,
   Footer,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import FormStepperMobile from '../FormStepper/FormStepperMobile'
 import FormStepper from '../FormStepper/FormStepper'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
 }
 
-interface ProcessPageProps extends PageProps {
-  activeSection: number
-  activeCar: string
-}
-
 export const PageLayout: FC<PageProps> = ({ children }) => (
   <Box>
-    <Box paddingY={10}>
+    <Box paddingY={[3, 3, 10, 10]}>
       <GridContainer>
         <GridRow>
           <GridColumn
@@ -32,7 +29,6 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
           >
             <Box>{children}</Box>
           </GridColumn>
-          <GridColumn span={['0', '0', '3/12', '3/12']}></GridColumn>
         </GridRow>
       </GridContainer>
     </Box>
@@ -40,18 +36,25 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
   </Box>
 )
 
+interface ProcessPageProps extends PageProps {
+  activeSection: number
+  sectionType: string
+  activeCar?: string
+}
+
 export const ProcessPageLayout: FC<ProcessPageProps> = ({
   children,
+  sectionType = 'citizen',
   activeSection,
   activeCar,
 }) => {
   const { width } = useWindowSize()
 
   const {
-    t: { processSections: t },
+    t: { processes: t },
   } = useI18n()
 
-  const sections = t.map((section) => {
+  const sections = t[sectionType].sections.map((section) => {
     return { name: section }
   })
   const [isMobile, setIsMobile] = useState(false)
@@ -67,6 +70,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     <Box
       paddingY={[0, 0, 10, 10]}
       background={isMobile ? 'white' : 'purple100'}
+      className={styles.processContainer}
     >
       {isMobile && (
         <FormStepperMobile sections={sections} activeSection={activeSection} />
@@ -79,6 +83,7 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
               background="white"
               borderColor="white"
               borderRadius="large"
+              className={styles.processContent}
             >
               <GridColumn
                 span={['9/9', '9/9', '7/9', '7/9']}
@@ -91,6 +96,8 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
           <GridColumn span={['0', '0', '3/12', '3/12']}>
             {!isMobile && (
               <FormStepper
+                title={t[sectionType].title}
+                completedText={t[sectionType].completed}
                 sections={sections}
                 activeSection={activeSection}
                 activeCar={activeCar}
@@ -102,3 +109,52 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
     </Box>
   )
 }
+
+interface PartnerPageProps {
+  top?: ReactNode
+  bottom?: ReactNode
+  left: ReactNode
+}
+
+export const PartnerPageLayout: FC<PartnerPageProps> = ({
+  top,
+  bottom,
+  left,
+}) => (
+  <Box>
+    <ToastContainer />
+    <Box paddingY={10}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['0', '0', '3/12', '3/12']}>{left}</GridColumn>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+            {top && (
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '7/8', '7/8']}>
+                  <Box paddingBottom={4}>{top}</Box>
+                </GridColumn>
+              </GridRow>
+            )}
+            <Box>{bottom}</Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
+    <Footer />
+  </Box>
+)
+
+export const FormPageLayout: FC<PageProps> = ({ children }) => (
+  <Box>
+    <Box paddingY={10}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            {children}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
+    <Footer />
+  </Box>
+)

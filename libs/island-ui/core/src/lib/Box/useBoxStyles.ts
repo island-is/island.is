@@ -7,7 +7,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
-import * as resetStyleRefs from '../../reset/reset.treat'
+import * as resetStyleRefs from '../../treat/reset.treat'
 import * as styleRefs from './useBoxStyles.treat'
 
 export type Space = keyof typeof theme.spacing
@@ -22,13 +22,13 @@ export interface UseBoxStylesProps {
   paddingBottom?: ResponsiveSpace
   paddingLeft?: ResponsiveSpace
   paddingRight?: ResponsiveSpace
-  margin?: ResponsiveSpace
-  marginX?: ResponsiveSpace
-  marginY?: ResponsiveSpace
-  marginTop?: ResponsiveSpace
-  marginBottom?: ResponsiveSpace
-  marginLeft?: ResponsiveSpace
-  marginRight?: ResponsiveSpace
+  margin?: ResponsiveProp<Space | 'auto'>
+  marginX?: ResponsiveProp<Space | 'auto'>
+  marginY?: ResponsiveProp<Space | 'auto'>
+  marginTop?: ResponsiveProp<Space | 'auto'>
+  marginBottom?: ResponsiveProp<Space | 'auto'>
+  marginLeft?: ResponsiveProp<Space | 'auto'>
+  marginRight?: ResponsiveProp<Space | 'auto'>
   display?: ResponsiveProp<keyof typeof styleRefs.display>
   flexDirection?: ResponsiveProp<keyof typeof styleRefs.flexDirection>
   flexWrap?: keyof typeof styleRefs.flexWrap

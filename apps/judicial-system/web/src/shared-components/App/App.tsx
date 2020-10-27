@@ -9,7 +9,6 @@ import {
 } from '../../routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '../../routes/DetentionRequests'
 import { Login } from '../../routes/Login'
-import * as styles from './App.treat'
 import { User } from '../../types'
 import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
@@ -41,9 +40,20 @@ const App: React.FC = () => {
     !isLoading && (
       <userContext.Provider value={{ user: user }}>
         <BrowserRouter>
-          <Header />
-          <main className={styles.mainConainer}>
+          <Route
+            render={(props) => {
+              return <Header pathname={props.location.pathname} />
+            }}
+          ></Route>
+          <main>
             <Switch>
+              <Route
+                path={Constants.FEEDBACK_FORM_ROUTE}
+                component={() => {
+                  window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+                  return <DetentionRequests />
+                }}
+              />
               <Route path={Constants.CONFIRMATION_ROUTE}>
                 <Confirmation />
               </Route>

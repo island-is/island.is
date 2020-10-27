@@ -1,76 +1,62 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Typography,
   Box,
   Stack,
-  ButtonDeprecated as Button,
-  IconDeprecated as Icon,
-  Hidden,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import UserInfoLine from '../../components/UserInfoLine/UserInfoLine'
-// import { useNatRegGeneralLookup } from '@island.is/service-portal/graphql'
-// import UserInfoSidebars from './UserInfoSidebars'
-import * as styles from './UserInfo.treat'
+import {
+  ServicePortalModuleComponent,
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
-
-export type UserInfoSidebarType =
-  | null
-  | 'name'
-  | 'religiousOrg'
-  | 'islandInfo'
-  | 'islandAuthInfo'
-  | 'legalDomicile'
-  | 'registeredGender'
-  | 'banMarking'
+import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
-  // const [activeSidebar, setActiveSidebar] = useState<UserInfoSidebarType>(null)
-  // const { data: userNatReg } = useNatRegGeneralLookup(userInfo)
-
-  // const handleSetActiveSidebar = (value: UserInfoSidebarType) =>
-  //   setActiveSidebar(value)
+  const { data: natRegInfo } = useNationalRegistryInfo(userInfo.profile.natreg)
 
   return (
     <>
       <Box marginBottom={6}>
-        <Typography variant="h1" as="h1">
-          {formatMessage({
-            id: 'service.portal:my-info',
-            defaultMessage: 'Mínar upplýsingar',
-          })}
-        </Typography>
-      </Box>
-      <Box display="flex" alignItems="center" marginBottom={4}>
-        <Hidden below="sm">
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            marginRight={5}
-            borderRadius="circle"
-            background="purple200"
-            className={styles.avatar}
-          >
-            <Icon type="user" color="purple400" width={40} height={40} />
-          </Box>
-        </Hidden>
-        <Typography variant="h2">{userInfo.profile.name}</Typography>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+            <Stack space={2}>
+              <Typography variant="h1" as="h1">
+                {formatMessage({
+                  id: 'service.portal:user-info',
+                  defaultMessage: 'Mínar upplýsingar',
+                })}
+              </Typography>
+              <Typography variant="p" as="p">
+                {formatMessage({
+                  id: 'sp.family:user-info-description',
+                  defaultMessage:
+                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
+                })}
+              </Typography>
+            </Stack>
+          </GridColumn>
+        </GridRow>
       </Box>
       <Stack space={1}>
-        {/* <UserInfoLine
-          label="Fæðingarstaður N/A"
-          content={userNatReg?.city || ''}
-        /> */}
         <UserInfoLine
           label={defineMessage({
             id: 'service.portal:display-name',
             defaultMessage: 'Birtingarnafn',
           })}
           content={userInfo.profile.name}
-          editExternalLink="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2"
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-name',
+              defaultMessage: 'Breyta nafni',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
+          }}
         />
         <UserInfoLine
           label={defineMessage({
@@ -81,6 +67,29 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         />
         <UserInfoLine
           label={defineMessage({
+            id: 'service.portal:legal-residence',
+            defaultMessage: 'Lögheimili',
+          })}
+          content={natRegInfo?.legalResidence || '...'}
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-legal-residence',
+              defaultMessage: 'Breyta lögheimili',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+          }}
+        />
+        <UserInfoLine
+          label={defineMessage({
+            id: 'service.portal:birth-place',
+            defaultMessage: 'Fæðingarstaður',
+          })}
+          content={natRegInfo?.birthPlace || '...'}
+        />
+        <UserInfoLine
+          label={defineMessage({
             id: 'service.portal:citizenship',
             defaultMessage: 'Ríkisfang',
           })}
@@ -88,56 +97,37 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
           }
         />
-        {/* <UserInfoLine label="Hjúskaparstaða N/A" content="Þjóðskrá?" />
         <UserInfoLine
-          label="Kyn N/A"
-          content={userNatReg?.gender || ''}
-          onEdit={handleSetActiveSidebar.bind(null, 'registeredGender')}
+          label={defineMessage({
+            id: 'service.portal:gender',
+            defaultMessage: 'Kyn',
+          })}
+          content={natRegInfo?.gender || '...'}
         />
         <UserInfoLine
-          label="Trúfélag / lífsskoðunarfélag N/A"
-          content="Þjóðskrá?"
-          onEdit={handleSetActiveSidebar.bind(null, 'religiousOrg')}
+          label={defineMessage({
+            id: 'service.portal:marital-status',
+            defaultMessage: 'Hjúskaparstaða',
+          })}
+          content={natRegInfo?.maritalStatus || '...'}
         />
         <UserInfoLine
-          label="Bannmerking N/A"
-          content="Þjóðskrá?"
-          onEdit={handleSetActiveSidebar.bind(null, 'banMarking')}
+          label={defineMessage({
+            id: 'service.portal:religion',
+            defaultMessage: 'Trúfélag / lífsskoðunarfélag',
+          })}
+          content={natRegInfo?.religion || '...'}
+          editLink={{
+            external: true,
+            title: defineMessage({
+              id: 'sp.family:change-religious-org',
+              defaultMessage: 'Breyta trú-/lífsskoðunarfélagi',
+            }),
+            url:
+              'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
+          }}
         />
       </Stack>
-      <Box marginTop={6} marginBottom={3}>
-        <Typography variant="h3">Lögheimili og tengiliðsupplýsingar</Typography>
-      </Box>
-      <Stack space={1}>
-        <UserInfoLine
-          label="Heimilisfang N/A"
-          content={userNatReg?.address || ''}
-          onEdit={handleSetActiveSidebar.bind(null, 'legalDomicile')}
-        />
-        <UserInfoLine
-          label="Póstnúmer N/A"
-          content={userNatReg?.postalcode.toString() || ''}
-        />
-        <UserInfoLine
-          label="Borg N/A"
-          content={userNatReg?.city || ''}
-          onEdit={handleSetActiveSidebar.bind(null, 'legalDomicile')}
-        />
-        <UserInfoLine
-          label="Símanúmer N/A"
-          content="innskraning.island?"
-          onEdit={handleSetActiveSidebar.bind(null, 'islandInfo')}
-        />
-        <UserInfoLine
-          label="Netfang N/A"
-          content="innskraning.island?"
-          onEdit={handleSetActiveSidebar.bind(null, 'islandInfo')}
-        /> */}
-      </Stack>
-      {/* <UserInfoSidebars
-        activeSidebar={activeSidebar}
-        onClose={handleSetActiveSidebar.bind(null, null)}
-      /> */}
     </>
   )
 }

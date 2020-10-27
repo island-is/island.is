@@ -16,7 +16,6 @@ import {
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,
-  ownerId: 'DOL',
   name: 'Atvinnuleysisbætur',
   children: [
     buildSection({
@@ -35,17 +34,14 @@ const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'person.name',
               name: 'name',
-              required: true,
             }),
             buildTextField({
               id: 'person.nationalId',
               name: 'name',
-              required: true,
             }),
             buildTextField({
               id: 'person.phoneNumber',
               name: 'name',
-              required: false,
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -64,7 +60,6 @@ const ExampleForm: Form = buildForm({
         buildRadioField({
           id: 'careerHistory',
           name: 'name',
-          required: true,
           options: [
             { value: 'yes', label: 'name' },
             { value: 'no', label: 'name' },
@@ -73,7 +68,6 @@ const ExampleForm: Form = buildForm({
         buildCheckboxField({
           id: 'careerHistoryCompanies',
           name: 'name',
-          required: false,
           options: [
             { value: 'government', label: 'name' },
             { value: 'aranja', label: 'Aranja' },
@@ -83,7 +77,6 @@ const ExampleForm: Form = buildForm({
         buildTextField({
           id: 'dreamJob',
           name: 'name',
-          required: false,
         }),
       ],
     }),
@@ -124,7 +117,6 @@ describe('formatText', () => {
     attachments: {},
     created: new Date(),
     externalData: {},
-    externalId: '',
     id: '',
     modified: new Date(),
     state: '',

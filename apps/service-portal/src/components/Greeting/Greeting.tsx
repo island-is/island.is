@@ -7,17 +7,25 @@ import useAuth from '../../hooks/useAuth/useAuth'
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
+  const currentHour = new Date().getHours()
+  const isEveningGreeting = currentHour > 17 || currentHour < 4
 
   return (
     <GridRow>
       <GridColumn span={['12/12', '7/12']}>
         <Box marginTop={[2, 3, 8]} marginBottom={2}>
           <Typography variant="h1">
-            {formatMessage({
-              defaultMessage: 'Velkomin/nn aftur',
-              description: 'Welcome user',
-              id: 'service.portal:welcome-back',
-            })}
+            {isEveningGreeting
+              ? formatMessage({
+                  defaultMessage: 'Góða kvöldið,',
+                  description: 'Welcome the user during the evening',
+                  id: 'service.portal:good-evening',
+                })
+              : formatMessage({
+                  defaultMessage: 'Góðan dag,',
+                  description: 'Welcome the user during the day',
+                  id: 'service.portal:good-day',
+                })}
           </Typography>
           <Typography variant="h3" color="purple400">
             {userInfo?.profile.name}

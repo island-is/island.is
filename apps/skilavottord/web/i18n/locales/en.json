@@ -2,6 +2,24 @@
   "home": {
     "title": "Recycle your car"
   },
+  "header": {
+    "logoutText": "Log out"
+  },
+  "data": {
+    "title": "You own your data",
+    "subTitles": {
+      "info": "Information about your cars"
+    },
+    "info": "We need to collect information about your cars for you to be able to use the service",
+    "checkbox": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis morbi ullamcorper ante amet eleifend ornare eget a, aliquam. Nunc, non dui tempor, lobortis diam quis egestas. Magna tempus accumsan fusce leo nisl nunc lacinia ultrices. Facilisi orci nec ut magna varius etiam feugiat. Lobortis consequat, arcu blandit tincidunt vitae cras.",
+    "buttons": {
+      "continue": "Continue"
+    },
+    "error": {
+      "message": "We have problem with the connection to the database and cannot save your preferences, please try to re-load the page.",
+      "primaryButton": "Re-load page"
+    }
+  },
   "myCars": {
     "title": "Recycle your car",
     "subTitles": {
@@ -26,7 +44,7 @@
       "seeDetails": "See details"
     },
     "tooltip": {
-      "text": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seiced by the police. Login to see more information at",
+      "text": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seized by the police. Login to see more information at",
       "link": "https://innskranning.island.is/?id=mitt.samgongustofa.is"
     },
     "error": {
@@ -39,7 +57,7 @@
     "subTitles": {
       "confirm": "Do you want select this car for recycling?"
     },
-    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
+    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
       "continue": "Confirm with icekey"
@@ -56,7 +74,7 @@
       "nextStep": "Next step: Handover the car to recycling company",
       "companies": "Available recycling companies"
     },
-    "subInfo": "Handover the car to any of the recylcing companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will recive your payment within 2 business days.",
+    "subInfo": "Handover the car to any of the recycling companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will receive your payment within 2 business days.",
     "buttons": {
       "cancel": "Cancel recycling",
       "close": "Close"
@@ -90,15 +108,139 @@
       "close": "Close"
     }
   },
-  "processSections": ["Confirm car for recycling", "Handover car to recycle"],
+  "processes": {
+    "citizen": {
+      "title": "Recycle car",
+      "sections": ["Confirm car for recycling", "Handover car to recycle"],
+      "completed": "Completed"
+    },
+    "company": {
+      "title": "Deregister car",
+      "sections": ["Select car", "Deregister car"]
+    }
+  },
+  "deregisterOverview": {
+    "title": "Deregister car",
+    "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
+    "subtitles": {
+      "history": "History"
+    },
+    "buttons": {
+      "deregister": "Deregister car"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+  },
+  "companyInfo": {
+    "title": "Company information",
+    "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
+    "error": "Add your companies locations so that the users can find your company on iceland.is.",
+    "subtitles": {
+      "companyLocation": "Recycling company location"
+    },
+    "buttons": {
+      "add": "Add another location",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "companyInfoForm": {
+    "addTitle": "Add new location",
+    "editTitle": "Edit location",
+    "form": {
+      "title": "Adress and contact information",
+      "company": {
+        "label": "Company"
+      },
+      "visitingAddress": {
+        "label": "Visiting adress",
+        "placeholder": "Ex. Maplestreet 2"
+      },
+      "postNumber": {
+        "label": "Post number",
+        "placeholder": "Postnumber of visiting adress"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Ex. Reykjavik"
+      },
+      "website": {
+        "label": "Website (optional)",
+        "placeholder": "Ex. www.website.is"
+      },
+      "phoneNumber": {
+        "label": "Phone number (including country code)",
+        "placeholder": "Ex. +3545551900"
+      }
+    },
+    "buttons": {
+      "add": "Add location",
+      "save": "Save changes",
+      "cancel": "Cancel"
+    },
+    "success": "Company location was successfully updated."
+  },
+  "deregisterSidenav": {
+    "deregister": "Deregister car",
+    "companyInfo": "Company information"
+  },
+  "deregisterVehicle": {
+    "select": {
+      "title": "Select car",
+      "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
+      "input": {
+        "label": "Car registration number",
+        "placeholder": "ex MDX34",
+        "errors": {
+          "empty": "Please enter a car registration number",
+          "length": "Please enter 5 or 7 characters",
+          "invalidRegNumber": "Please enter registration number in a valid format"
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
+    },
+    "deregister": {
+      "title": "Deregister car",
+      "info": "Confirm car for deregistration. This process cannot be undone.",
+      "buttons": {
+        "back": "Back",
+        "confirm": "Confirm"
+      },
+      "success": "Deregistration was successful."
+    }
+  },
+  "unauthorized": {
+    "message": "You are not allowed to view this page"
+  },
   "routes": {
-    "home": "/en",
+    "home": {
+      "citizen": "/my-cars",
+      "recyclingPartner": "/deregister-vehicle",
+      "recyclingFund": "/recycled-vehicles"
+    },
+    "data": "/en/data",
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",
       "confirm": "/en/recycle-vehicle/[id]/confirm",
       "handover": "/en/recycle-vehicle/[id]/handover",
       "completed": "/en/recycle-vehicle/[id]/completed"
+    },
+    "deregisterVehicle": {
+      "baseRoute": "/en/deregister-vehicle",
+      "select": "/en/deregister-vehicle/select",
+      "deregister": "/en/deregister-vehicle/[id]"
+    },
+    "companyInfo": {
+      "baseRoute": "/en/company-info",
+      "add": "/en/company-info/edit",
+      "edit": "/en/company-info/add"
     }
   }
 }

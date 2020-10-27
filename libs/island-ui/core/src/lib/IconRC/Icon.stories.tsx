@@ -1,15 +1,18 @@
 import { theme } from '@island.is/island-ui/theme'
 import React, { useState } from 'react'
+
 import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
 import { Tabs } from '../Tabs/Tabs'
-import iconMap from './iconMap'
-import { Icon, IconPropsType } from './Icon'
+import iconMap, { Icon as IconType, Type } from './iconMap'
+import { Icon } from './Icon'
 
 const description = `
 Icons are generated from [Ionicons Designer Pack](https://ionicons.com/).
 
-When adding icons in development navigate to the \`Icon\` directory and run \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js -d icons [src-dir]\` for more options check out [SVGR options](https://react-svgr.com/docs/options/)
+When adding icons in development navigate to the \`Icon\` directory and run \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js -d icons [src-dir]\`
+
+Generating single icons \`npx @svgr/cli --title-prop --typescript --template ./iconTemplate.js --out-dir ./icons [src-icon]\` for more options check out [SVGR options](https://react-svgr.com/docs/options/)
 `
 
 export default {
@@ -35,18 +38,18 @@ export default {
 const Template = (args) => <Icon {...args} />
 
 export const Default = Template.bind({})
-Default.args = { icon: 'download' }
+Default.args = { icon: 'arrowForward' }
 
-const iconKeys = Object.keys(iconMap) as IconPropsType['type'][]
+const iconKeys = Object.keys(iconMap)
 
 const getTabs = (search) =>
-  iconKeys.map((typeKey) => {
-    const iconKeys = Object.keys(iconMap[typeKey]) as IconPropsType['icon'][]
+  iconKeys.map((typeKey: Type) => {
+    const iconKeys = Object.keys(iconMap[typeKey])
     return {
       label: typeKey,
       content: (
         <Box padding={2}>
-          {iconKeys.reduce((acc, iconKey) => {
+          {iconKeys.reduce((acc, iconKey: IconType) => {
             if (
               iconKey.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
               search === ''

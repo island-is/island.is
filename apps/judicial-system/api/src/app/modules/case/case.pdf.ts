@@ -21,6 +21,13 @@ function size(size: number): number {
   return 0.75 * size
 }
 
+function formatCourtCaseNumber(existingCase: Case): string {
+  return `Málsnúmer ${existingCase.court?.replace(
+    'Héraðsdómur',
+    'Héraðsdóms',
+  )}: ${existingCase.courtCaseNumber}`
+}
+
 function formatConclusion(existingCase: Case): string {
   return existingCase.rejecting
     ? 'Beiðni um gæsluvarðhald hafnað.'
@@ -183,26 +190,6 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
-    .text('Framburðir')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .text(existingCase.witnessAccounts, {
-      lineGap: 6,
-      paragraphGap: 10,
-    })
-    .font('Helvetica-Bold')
-    .fontSize(size(14))
-    .lineGap(8)
-    .text('Staða rannsóknar og næstu skref')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .text(existingCase.investigationProgress, {
-      lineGap: 6,
-      paragraphGap: 10,
-    })
-    .font('Helvetica-Bold')
-    .fontSize(size(14))
-    .lineGap(8)
     .text('Lagarök')
     .font('Helvetica')
     .fontSize(size(12))
@@ -240,10 +227,10 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(size(26))
     .lineGap(8)
-    .text('Krafa um gæsluvarðhald')
+    .text('Úrskurður um gæsluvarðhald')
     .font('Helvetica')
     .fontSize(size(16))
-    .text(`Málsnúmer: ${existingCase.courtCaseNumber}`)
+    .text(formatCourtCaseNumber(existingCase))
     .lineGap(40)
     .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`)
     .font('Helvetica-Bold')
@@ -362,30 +349,43 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .lineGap(6)
     .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
-
-  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
-    doc.text(existingCase.accusedAppealAnnouncement, {
+    .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'), {
       lineGap: 6,
       paragraphGap: 10,
     })
+
+  if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(size(14))
+      .lineGap(8)
+      .text('Yfirlýsing um kæru kærða')
+      .font('Helvetica')
+      .fontSize(size(12))
+      .text(existingCase.accusedAppealAnnouncement, {
+        lineGap: 6,
+        paragraphGap: 10,
+      })
+  }
+
+  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(size(14))
+      .lineGap(8)
+      .text('Yfirlýsing um kæru sækjanda')
+      .font('Helvetica')
+      .fontSize(size(12))
+      .text(existingCase.prosecutorAppealAnnouncement, {
+        lineGap: 6,
+        paragraphGap: 10,
+      })
   }
 
   doc
-    .lineGap(
-      existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
-        ? 6
-        : 16,
-    )
-    .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
-
-  if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
-    doc.text(existingCase.prosecutorAppealAnnouncement, {
-      lineGap: 6,
-      paragraphGap: 10,
-    })
-  }
-
-  doc.text(`${existingCase.judge.name}, ${existingCase.judge.title}`).end()
+    .font('Helvetica-Bold')
+    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`)
+    .end()
 
   // wait for the writing to finish
 

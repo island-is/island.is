@@ -4,11 +4,20 @@ import {
   ContactUsProps as ContactUsFormProps,
 } from '@island.is/island-ui/contentful'
 import { CONTACT_US_MUTATION } from '@island.is/web/screens/queries'
-import { useMutation } from 'react-apollo'
+import { MutationResult, useMutation } from 'react-apollo'
 
-const getState = (data, loading, error) => {
-  if (data?.contactUs?.success === true) return 'success'
-  if (data?.contactUs?.success === false) return 'error'
+import {
+  ContactUsMutation,
+  ContactUsMutationVariables,
+} from '../../graphql/schema'
+
+const getState = (
+  data: MutationResult<ContactUsMutation>['data'],
+  loading: MutationResult['loading'],
+  error: MutationResult['error'],
+) => {
+  if (data?.contactUs?.sent === true) return 'success'
+  if (data?.contactUs?.sent === false) return 'error'
   if (loading) return 'submitting'
   if (error) return 'error'
   return 'edit'
@@ -19,8 +28,10 @@ interface ContactUsProps
   extends Omit<ContactUsFormProps, 'state' | 'onSubmit'> {}
 
 export const ContactUs: FC<ContactUsProps> = (props) => {
-  const [submit, { data, loading, error }] = useMutation(CONTACT_US_MUTATION)
-
+  const [submit, { data, loading, error }] = useMutation<
+    ContactUsMutation,
+    ContactUsMutationVariables
+  >(CONTACT_US_MUTATION)
   return (
     <ContactUsForm
       {...props}

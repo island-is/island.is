@@ -4,7 +4,6 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-
 import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
@@ -14,9 +13,15 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { MappedData, SearchIndexes, SearchResponse } from '../types'
+import { MappedData, SearchIndexes } from '../types'
+import { SearchResponse } from '@island.is/shared/types'
 import { environment } from '../environments/environment'
 import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
+import {
+  DateAggregationInput,
+  dateAggregationQuery,
+  DateAggregationResponse,
+} from '../queries/dateAggregation'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -130,6 +135,15 @@ export class ElasticService {
     const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
+  }
+
+  async getDateAggregation(index: string, query: DateAggregationInput) {
+    const requestBody = dateAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, DateAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -263,4 +277,4 @@ export class ElasticService {
   }
 }
 
-// TODO: This service needs to include only generic functions anything specific to cms search should belong there
+// TODO: This service needs to include only generic functions anything specific to cms search should be in cms domain libary
