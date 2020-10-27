@@ -6,6 +6,7 @@ const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 const YARN_COMMANDS = [
   'yarn nx run application-system-api:build-schema',
   'yarn nx run services-user-profile:build-schema',
+  'yarn nx run api-catalogue-services:codegen',
   'yarn nx run api-domains-application:codegen',
   'yarn nx run api-domains-user-profile:codegen',
   'yarn nx run api:build-schema',

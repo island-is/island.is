@@ -16805,6 +16805,13 @@ open@^7.0.2, open@^7.0.3:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
 
+openapi3-ts@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/openapi3-ts/-/openapi3-ts-2.0.0.tgz#5edc238053c8e4b1133bc7c339e574db68d92d7c"
+  integrity sha512-q4p8OX/mD7qXeDKkhdLhpEz1Zh/IxPBDWmuq7f07fQJpo7exUW20sMrHfws1xzihYPktTXVV5MDOZkG/1uguEg==
+  dependencies:
+    yaml "^1.10.0"
+
 opentracing@>=0.12.1, opentracing@^0.14.4:
   version "0.14.4"
   resolved "https://registry.yarnpkg.com/opentracing/-/opentracing-0.14.4.tgz#a113408ea740da3a90fde5b3b0011a375c2e4268"

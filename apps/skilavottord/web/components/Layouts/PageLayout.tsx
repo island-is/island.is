@@ -20,7 +20,7 @@ interface PageProps {
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
   <Box>
-    <Box paddingY={10}>
+    <Box paddingY={[3, 3, 10, 10]}>
       <GridContainer>
         <GridRow>
           <GridColumn

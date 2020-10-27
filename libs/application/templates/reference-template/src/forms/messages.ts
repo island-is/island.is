@@ -13,7 +13,8 @@ export const m = defineMessages({
   },
   introIntroduction: {
     id: 'example.application:intro.introduction',
-    defaultMessage: 'Halló {name}',
+    defaultMessage:
+      '*Hello*, **{name}**! [This is a link to Google!](http://google.com)',
     description: 'Some description',
   },
   about: {

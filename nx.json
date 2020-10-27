@@ -47,6 +47,18 @@
     "api": {
       "tags": []
     },
+    "api-catalogue-consts": {
+      "tags": []
+    },
+    "api-catalogue-elastic": {
+      "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
     "api-content-search": {
       "tags": []
     },
@@ -54,6 +66,9 @@
       "tags": []
     },
     "api-domains-cms": {
+      "tags": []
+    },
+    "api-domains-communications": {
       "tags": []
     },
     "api-domains-content-search": {
@@ -291,6 +306,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-types": {
       "tags": []
     },
     "skilavottord-consts": {

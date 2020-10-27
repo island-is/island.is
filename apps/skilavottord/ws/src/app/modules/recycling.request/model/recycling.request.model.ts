@@ -30,7 +30,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   vehicleId: string
 
   @BelongsTo(() => VehicleModel)
-  vehicle: VehicleModel
+  vehicle: any
 
   @Field()
   @Column({

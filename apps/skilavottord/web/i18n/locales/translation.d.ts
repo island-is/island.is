@@ -10,6 +10,7 @@
 export interface Translation {
   home: Home
   header: Header
+  data: Data
   myCars: MyCars
   confirm: Confirm
   handover: Handover
@@ -20,6 +21,7 @@ export interface Translation {
   companyInfoForm: CompanyInfoFormPage
   deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
+  unauthorized: Unauthorized
   routes: Routes
 }
 
@@ -29,6 +31,15 @@ export interface Home {
 
 export interface Header {
   logoutText: string
+}
+
+export interface Data {
+  title: string
+  subTitles: DataSubtitles
+  info: string
+  buttons: DataButtons
+  checkbox: string
+  error: Errors
 }
 
 export interface MyCars {
@@ -84,13 +95,21 @@ export interface CancelModal {
   buttons: ProcessButtons
 }
 
+export interface DataSubtitles {
+  info: string
+}
+
+export interface DataButtons {
+  continue: string
+}
+
 export interface MyCarsSubtitles {
   pending: string
   active: string
   done: string
 }
 
-export interface MyCarsSubtitles {
+export interface MyCarsInfo {
   noCarsAvailable: string
 }
 
@@ -213,6 +232,10 @@ export interface DeregisterVehicle {
   deregister: Deregister
 }
 
+export interface Unauthorized {
+  message: string
+}
+
 export interface DeregisterSelect {
   title: string
   info: string
@@ -262,11 +285,18 @@ export interface InputField {
 }
 
 export interface Routes {
-  home: string
+  home: HomeRoutes
+  data: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
   companyInfo: CompanyInfoRoutes
+}
+
+export interface HomeRoutes {
+  citizen: string
+  recyclingPartner: string
+  recyclingFund: string
 }
 
 export interface RecycleVehicleRoutes {
@@ -438,9 +468,4 @@ function m(additional: any) {
 
 function r(name: string) {
   return { ref: name }
-}
-
-const typeMap: any = {
-  Translation: o([{ json: 'home', js: 'home', typ: r('Home') }], false),
-  Home: o([{ json: 'title', js: 'title', typ: '' }], false),
 }

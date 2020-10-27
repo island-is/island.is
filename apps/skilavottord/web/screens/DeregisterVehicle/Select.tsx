@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import {
@@ -11,12 +11,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Controller, useForm } from 'react-hook-form'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { Unauthorized } from '@island.is/skilavottord-web/components'
 
 type FormData = {
   registrationNumber: string
 }
 
 const Select: FC = () => {
+  const { user } = useContext(UserContext)
   const {
     t: {
       deregisterVehicle: { select: t },
@@ -43,6 +47,13 @@ const Select: FC = () => {
     const regular = new RegExp(/^[A-Z]{1,2}(\s|\-){0,1}([A-Z]){1}\d{2}$/gi)
     const antique = new RegExp(/^[A-Z]{1}\s{0,1}\d{5}$/gi)
     return regular.test(value) || antique.test(value)
+  }
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
+    console.log(user?.role, 'is not allowed to view this page')
+    return <Unauthorized />
   }
 
   return (
