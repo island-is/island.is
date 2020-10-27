@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+const yargs = require('yargs')
+const argv = yargs(process.argv.slice(2))
+const { execSync } = require('child_process')
+
+const error = (errorMessage) => {
+  console.error(errorMessage)
+  process.exit(1)
+}
+const args = argv
+  .option('port', {
+    description: 'Port on which the Kubernetes service is listening on',
+    default: 80,
+  })
+  .option('proxy-port', {
+    description: 'Port local proxy is listening on',
+    default: 8080,
+  })
+  .demandOption('namespace', 'Namespace the Kubernetes service is listening on')
+  .demandOption('service', 'Name of the Kubernetes service')
+  .help().argv
+
+const awsCredsEnvVars = [
+  'AWS_ACCESS_KEY_ID',
+  'AWS_SECRET_ACCESS_KEY',
+  'AWS_SESSION_TOKEN',
+]
+const valuesPresent = awsCredsEnvVars
+  .map((key) => process.env[key])
+  .filter((v) => !!v)
+if (valuesPresent.length != awsCredsEnvVars.length)
+  error(
+    'Missing AWS envronment variables\n\nYou need to login to AWS portal and get some env variables as in step 1 here - https://github.com/island-is/handbook/blob/master/dockerizing.md#troubleshooting\nThen simply re-run the script',
+  )
+console.log(`Preparing docker image for the local proxy - \uD83D\uDE48`)
+execSync(
+  `docker build -f ${__dirname}/Dockerfile.proxy -t es-proxy ${__dirname}`,
+)
+console.log(`Now running the proxy - \uD83D\uDE31`)
+execSync(
+  `docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 es-proxy`,
+  { stdio: 'inherit' },
+)
