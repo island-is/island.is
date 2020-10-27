@@ -24,6 +24,7 @@ jobs:
       CREATE_PATTERNS: ^release/,^hotfix/
     outputs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+      PRE_CHECK_OK: ${{ steps.branch-name-check.outputs.PRE_CHECK_OK }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -32,6 +33,8 @@ jobs:
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Check if we want to run workflow
+        continue-on-error: true
+        id: branch-name-check
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
@@ -48,10 +51,12 @@ jobs:
             echo "No pattern matches '$GIT_BRANCH', exiting with exit code 1"
             exit 1
           fi
+          echo "::set-output name=PRE_CHECK_OK::true"
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
 
+    if: needs.pre-checks.outputs.PRE_CHECK_OK
     needs:
       - pre-checks
 
@@ -265,8 +270,9 @@ jobs:
   retag-unaffected:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
-    if: always()
+    if: always() && needs.pre-checks.result == 'success'
     needs:
+      - pre-checks
       - docker-build
       - prepare
     env:
@@ -318,11 +324,19 @@ jobs:
 
   success:
     runs-on: ubuntu-20.04
+    if: always()
     needs:
+      - pre-checks
       - deploy
     steps:
+      - name: Check deploy success
+        run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
+        if: needs.pre-checks.result == 'success'
         run: echo "Build is successful"
+      - name: Announce skipped
+        if: needs.pre-checks.result == 'failure'
+        run: echo "Build was skipped"
 
   failure-notification:
     runs-on: ubuntu-20.04
