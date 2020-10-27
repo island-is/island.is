@@ -40,15 +40,14 @@ export class TranslationsService {
       })
       .catch(errorHandler('getNamespace'))
 
-    const withFallbacks = result?.items?.map(({ fields }) => {
-      console.log('fields', fields)
-      return mergeWith(
+    const withFallbacks = result?.items?.map(({ fields }) =>
+      mergeWith(
         {},
         locale.fallbackCode ? fields.strings[locale.fallbackCode] : {},
         fields.strings[locale.code],
         (o, s) => (isEmpty(s) ? o : s),
-      )
-    })
+      ),
+    )
 
     return withFallbacks.reduce((obj, cur) => Object.assign(obj, cur), {})
   }
