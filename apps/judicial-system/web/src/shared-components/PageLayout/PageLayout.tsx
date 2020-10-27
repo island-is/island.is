@@ -18,7 +18,7 @@ interface PageProps {
   children: ReactNode
   activeSection: number
   activeSubSection: number
-  isLoading: boolean
+  isLoading?: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({

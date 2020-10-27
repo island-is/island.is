@@ -31,7 +31,6 @@ export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [, setIsSendingNotification] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const history = useHistory()
   const uContext = useContext(userContext)
@@ -75,12 +74,10 @@ export const Overview: React.FC = () => {
     if (!workingCase) {
       setWorkingCase(caseDraftJSON)
     }
-
-    setIsLoading(false)
   }, [workingCase, setWorkingCase])
 
   return (
-    <PageLayout activeSection={0} activeSubSection={2} isLoading={isLoading}>
+    <PageLayout activeSection={0} activeSubSection={2}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

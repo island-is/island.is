@@ -42,7 +42,6 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const requestedCustodyEndTimeRef = useRef<HTMLInputElement>()
 
   const [
@@ -197,9 +196,7 @@ export const StepTwo: React.FC = () => {
         judge: caseDraftJSON.judge ?? null,
       })
     }
-
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+  }, [workingCase, setWorkingCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -222,7 +219,7 @@ export const StepTwo: React.FC = () => {
   }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
 
   return (
-    <PageLayout activeSection={0} activeSubSection={1} isLoading={isLoading}>
+    <PageLayout activeSection={0} activeSubSection={1}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

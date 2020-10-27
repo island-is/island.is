@@ -37,7 +37,7 @@ export const StepOne: React.FC = () => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const [
     policeCaseNumberErrorMessage,
@@ -152,7 +152,6 @@ export const StepOne: React.FC = () => {
 
   // Run if id is not in url, i.e. if the user is creating a request.
   useEffect(() => {
-    setIsLoading(true)
     const caseDraft = window.sessionStorage.getItem('workingCase')
 
     if (caseDraft !== 'undefined' && !workingCase && !id) {

@@ -81,7 +81,7 @@ export const RulingStepOne: React.FC = () => {
   useEffect(() => {
     const caseDraft = window.sessionStorage.getItem('workingCase')
 
-    if (caseDraft !== 'undefined' && !workingCase) {
+    if (caseDraft && caseDraft !== 'undefined' && !workingCase) {
       const caseDraftJSON = JSON.parse(caseDraft || '{}')
 
       setWorkingCase({
@@ -145,262 +145,276 @@ export const RulingStepOne: React.FC = () => {
     }
   }, [workingCase, isStepIllegal])
 
-  return workingCase ? (
+  return (
     <PageLayout activeSection={1} activeSubSection={2}>
-      <Box marginBottom={10}>
-        <Text as="h1" variant="h1">
-          Úrskurður
-        </Text>
-      </Box>
-      <Box component="section" marginBottom={7}>
-        <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-        <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
-      </Box>
-      <Box component="section" marginBottom={7}>
-        <Accordion>
-          <PoliceRequestAccordionItem workingCase={workingCase} />
-        </Accordion>
-      </Box>
-      <Box component="section" marginBottom={8}>
-        <Box marginBottom={2}>
-          <Text as="h3" variant="h3">
-            Niðurstaða úrskurðar
-          </Text>
-        </Box>
-        <Box marginBottom={2}>
-          <Input
-            data-testid="ruling"
-            name="ruling"
-            label="Niðurstaða úrskurðar"
-            placeholder="Hver er niðurstaðan að mati dómara?"
-            defaultValue={workingCase.ruling}
-            rows={16}
-            errorMessage={rulingErrorMessage}
-            hasError={rulingErrorMessage !== ''}
-            onFocus={() => setRulingErrorMessage('')}
-            onBlur={(evt) => {
-              const validateEmpty = validate(evt.target.value, 'empty')
+      {workingCase ? (
+        <>
+          <Box marginBottom={10}>
+            <Text as="h1" variant="h1">
+              Úrskurður
+            </Text>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+            </Accordion>
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Niðurstaða úrskurðar
+              </Text>
+            </Box>
+            <Box marginBottom={2}>
+              <Input
+                data-testid="ruling"
+                name="ruling"
+                label="Niðurstaða úrskurðar"
+                placeholder="Hver er niðurstaðan að mati dómara?"
+                defaultValue={workingCase.ruling}
+                rows={16}
+                errorMessage={rulingErrorMessage}
+                hasError={rulingErrorMessage !== ''}
+                onFocus={() => setRulingErrorMessage('')}
+                onBlur={(evt) => {
+                  const validateEmpty = validate(evt.target.value, 'empty')
 
-              updateState(
-                workingCase,
-                'ruling',
-                evt.target.value,
-                setWorkingCase,
-              )
+                  updateState(
+                    workingCase,
+                    'ruling',
+                    evt.target.value,
+                    setWorkingCase,
+                  )
 
-              if (
-                validateEmpty.isValid &&
-                workingCase.ruling !== evt.target.value
-              ) {
-                api.saveCase(
-                  workingCase.id,
-                  parseString('ruling', evt.target.value),
-                )
-              } else {
-                setRulingErrorMessage(validateEmpty.errorMessage)
-              }
-            }}
-            textarea
-            required
+                  if (
+                    validateEmpty.isValid &&
+                    workingCase.ruling !== evt.target.value
+                  ) {
+                    api.saveCase(
+                      workingCase.id,
+                      parseString('ruling', evt.target.value),
+                    )
+                  } else {
+                    setRulingErrorMessage(validateEmpty.errorMessage)
+                  }
+                }}
+                textarea
+                required
+              />
+            </Box>
+            <GridRow>
+              <GridColumn span="3/7">
+                <Checkbox
+                  name="rejectRequest"
+                  label="Hafna kröfu"
+                  onChange={({ target }) => {
+                    autoSave(
+                      workingCase,
+                      'rejecting',
+                      target.checked,
+                      setWorkingCase,
+                    )
+                  }}
+                  checked={workingCase.rejecting}
+                  large
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Dómkröfur
+              </Text>
+            </Box>
+            <GridRow>
+              <GridColumn span="5/8">
+                <DatePicker
+                  label="Gæsluvarðhald til"
+                  placeholderText="Veldu dagsetningu"
+                  locale="is"
+                  selected={
+                    workingCase.custodyEndDate
+                      ? new Date(workingCase.custodyEndDate)
+                      : workingCase.requestedCustodyEndDate
+                      ? new Date(workingCase.requestedCustodyEndDate)
+                      : null
+                  }
+                  handleChange={(date) => {
+                    const formattedDate = formatISO(date, {
+                      representation:
+                        workingCase.custodyEndDate?.indexOf('T') > -1
+                          ? 'complete'
+                          : 'date',
+                    })
+
+                    updateState(
+                      workingCase,
+                      'custodyEndDate',
+                      formattedDate,
+                      setWorkingCase,
+                    )
+
+                    api.saveCase(
+                      workingCase.id,
+                      parseString('custodyEndDate', formattedDate),
+                    )
+                  }}
+                  required
+                />
+              </GridColumn>
+              <GridColumn span="3/8">
+                <Input
+                  data-testid="custodyEndTime"
+                  name="custodyEndTime"
+                  label="Tímasetning"
+                  ref={custodyEndTimeRef}
+                  defaultValue={
+                    workingCase.custodyEndDate.indexOf('T') > -1
+                      ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                      : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                      ? formatDate(
+                          workingCase.requestedCustodyEndDate,
+                          TIME_FORMAT,
+                        )
+                      : null
+                  }
+                  hasError={custodyEndTimeErrorMessage !== ''}
+                  errorMessage={custodyEndTimeErrorMessage}
+                  onFocus={() => setCustodyEndTimeErrorMessage('')}
+                  onBlur={(evt) => {
+                    const validateTimeEmpty = validate(
+                      evt.target.value,
+                      'empty',
+                    )
+                    const validateTimeFormat = validate(
+                      evt.target.value,
+                      'time-format',
+                    )
+                    const custodyEndDateMinutes = parseTime(
+                      workingCase.custodyEndDate,
+                      evt.target.value,
+                    )
+
+                    updateState(
+                      workingCase,
+                      'custodyEndDate',
+                      custodyEndDateMinutes,
+                      setWorkingCase,
+                    )
+
+                    if (
+                      validateTimeEmpty.isValid &&
+                      validateTimeFormat.isValid
+                    ) {
+                      api.saveCase(
+                        workingCase.id,
+                        parseString('custodyEndDate', custodyEndDateMinutes),
+                      )
+                    } else {
+                      setCustodyEndTimeErrorMessage(
+                        validateTimeEmpty.errorMessage ||
+                          validateTimeFormat.errorMessage,
+                      )
+                    }
+                  }}
+                  required
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Takmarkanir á gæslu
+              </Text>
+            </Box>
+            <Box marginBottom={1}>
+              <GridRow>
+                {restrictions.map((restriction, index) => {
+                  return (
+                    <GridColumn span="3/7" key={index}>
+                      <Box marginBottom={3}>
+                        <Checkbox
+                          name={restriction.restriction}
+                          label={restriction.restriction}
+                          value={restriction.value}
+                          checked={
+                            workingCase.custodyRestrictions?.indexOf(
+                              restriction.value,
+                            ) > -1
+                          }
+                          tooltip={restriction.explination}
+                          onChange={({ target }) => {
+                            // Create a copy of the state
+                            const copyOfState = Object.assign(workingCase, {})
+
+                            const restrictionIsSelected =
+                              copyOfState.custodyRestrictions?.indexOf(
+                                target.value as CaseCustodyRestrictions,
+                              ) > -1
+
+                            // Toggle the checkbox on or off
+                            restriction.setCheckbox(!restrictionIsSelected)
+
+                            // If the user is checking the box, add the restriction to the state
+                            if (!restrictionIsSelected) {
+                              copyOfState.custodyRestrictions.push(
+                                target.value as CaseCustodyRestrictions,
+                              )
+                            }
+                            // If the user is unchecking the box, remove the restriction from the state
+                            else {
+                              const restrictions =
+                                copyOfState.custodyRestrictions
+                              restrictions.splice(
+                                restrictions?.indexOf(
+                                  target.value as CaseCustodyRestrictions,
+                                ),
+                                1,
+                              )
+                            }
+
+                            // Set the updated state as the state
+                            setWorkingCase(copyOfState)
+
+                            // Save case
+                            api.saveCase(
+                              workingCase.id,
+                              parseArray(
+                                'custodyRestrictions',
+                                copyOfState.custodyRestrictions,
+                              ),
+                            )
+
+                            updateState(
+                              workingCase,
+                              'custodyRestrictions',
+                              copyOfState.custodyRestrictions,
+                              setWorkingCase,
+                            )
+                          }}
+                          large
+                        />
+                      </Box>
+                    </GridColumn>
+                  )
+                })}
+              </GridRow>
+            </Box>
+          </Box>
+          <FormFooter
+            nextUrl={Constants.RULING_STEP_TWO_ROUTE}
+            nextIsDisabled={isStepIllegal}
           />
-        </Box>
-        <GridRow>
-          <GridColumn span="3/7">
-            <Checkbox
-              name="rejectRequest"
-              label="Hafna kröfu"
-              onChange={({ target }) => {
-                autoSave(
-                  workingCase,
-                  'rejecting',
-                  target.checked,
-                  setWorkingCase,
-                )
-              }}
-              checked={workingCase.rejecting}
-              large
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box component="section" marginBottom={8}>
-        <Box marginBottom={2}>
-          <Text as="h3" variant="h3">
-            Dómkröfur
-          </Text>
-        </Box>
-        <GridRow>
-          <GridColumn span="5/8">
-            <DatePicker
-              label="Gæsluvarðhald til"
-              placeholderText="Veldu dagsetningu"
-              locale="is"
-              selected={
-                workingCase.custodyEndDate
-                  ? new Date(workingCase.custodyEndDate)
-                  : workingCase.requestedCustodyEndDate
-                  ? new Date(workingCase.requestedCustodyEndDate)
-                  : null
-              }
-              handleChange={(date) => {
-                const formattedDate = formatISO(date, {
-                  representation:
-                    workingCase.custodyEndDate?.indexOf('T') > -1
-                      ? 'complete'
-                      : 'date',
-                })
-
-                updateState(
-                  workingCase,
-                  'custodyEndDate',
-                  formattedDate,
-                  setWorkingCase,
-                )
-
-                api.saveCase(
-                  workingCase.id,
-                  parseString('custodyEndDate', formattedDate),
-                )
-              }}
-              required
-            />
-          </GridColumn>
-          <GridColumn span="3/8">
-            <Input
-              data-testid="custodyEndTime"
-              name="custodyEndTime"
-              label="Tímasetning"
-              ref={custodyEndTimeRef}
-              defaultValue={
-                workingCase.custodyEndDate.indexOf('T') > -1
-                  ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                  : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
-                  ? formatDate(workingCase.requestedCustodyEndDate, TIME_FORMAT)
-                  : null
-              }
-              hasError={custodyEndTimeErrorMessage !== ''}
-              errorMessage={custodyEndTimeErrorMessage}
-              onFocus={() => setCustodyEndTimeErrorMessage('')}
-              onBlur={(evt) => {
-                const validateTimeEmpty = validate(evt.target.value, 'empty')
-                const validateTimeFormat = validate(
-                  evt.target.value,
-                  'time-format',
-                )
-                const custodyEndDateMinutes = parseTime(
-                  workingCase.custodyEndDate,
-                  evt.target.value,
-                )
-
-                updateState(
-                  workingCase,
-                  'custodyEndDate',
-                  custodyEndDateMinutes,
-                  setWorkingCase,
-                )
-
-                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                  api.saveCase(
-                    workingCase.id,
-                    parseString('custodyEndDate', custodyEndDateMinutes),
-                  )
-                } else {
-                  setCustodyEndTimeErrorMessage(
-                    validateTimeEmpty.errorMessage ||
-                      validateTimeFormat.errorMessage,
-                  )
-                }
-              }}
-              required
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box component="section" marginBottom={8}>
-        <Box marginBottom={2}>
-          <Text as="h3" variant="h3">
-            Takmarkanir á gæslu
-          </Text>
-        </Box>
-        <Box marginBottom={1}>
-          <GridRow>
-            {restrictions.map((restriction, index) => {
-              return (
-                <GridColumn span="3/7" key={index}>
-                  <Box marginBottom={3}>
-                    <Checkbox
-                      name={restriction.restriction}
-                      label={restriction.restriction}
-                      value={restriction.value}
-                      checked={
-                        workingCase.custodyRestrictions?.indexOf(
-                          restriction.value,
-                        ) > -1
-                      }
-                      tooltip={restriction.explination}
-                      onChange={({ target }) => {
-                        // Create a copy of the state
-                        const copyOfState = Object.assign(workingCase, {})
-
-                        const restrictionIsSelected =
-                          copyOfState.custodyRestrictions?.indexOf(
-                            target.value as CaseCustodyRestrictions,
-                          ) > -1
-
-                        // Toggle the checkbox on or off
-                        restriction.setCheckbox(!restrictionIsSelected)
-
-                        // If the user is checking the box, add the restriction to the state
-                        if (!restrictionIsSelected) {
-                          copyOfState.custodyRestrictions.push(
-                            target.value as CaseCustodyRestrictions,
-                          )
-                        }
-                        // If the user is unchecking the box, remove the restriction from the state
-                        else {
-                          const restrictions = copyOfState.custodyRestrictions
-                          restrictions.splice(
-                            restrictions?.indexOf(
-                              target.value as CaseCustodyRestrictions,
-                            ),
-                            1,
-                          )
-                        }
-
-                        // Set the updated state as the state
-                        setWorkingCase(copyOfState)
-
-                        // Save case
-                        api.saveCase(
-                          workingCase.id,
-                          parseArray(
-                            'custodyRestrictions',
-                            copyOfState.custodyRestrictions,
-                          ),
-                        )
-
-                        updateState(
-                          workingCase,
-                          'custodyRestrictions',
-                          copyOfState.custodyRestrictions,
-                          setWorkingCase,
-                        )
-                      }}
-                      large
-                    />
-                  </Box>
-                </GridColumn>
-              )
-            })}
-          </GridRow>
-        </Box>
-      </Box>
-      <FormFooter
-        nextUrl={Constants.RULING_STEP_TWO_ROUTE}
-        nextIsDisabled={isStepIllegal}
-      />
+        </>
+      ) : null}
     </PageLayout>
-  ) : null
+  )
 }
 
 export default RulingStepOne
