@@ -4,8 +4,11 @@ import {
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
+import { useNamespaces } from '@island.is/localization'
 
 export const Messages: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.settings')
+
   return (
     <InfoScreen
       title={defineMessage({

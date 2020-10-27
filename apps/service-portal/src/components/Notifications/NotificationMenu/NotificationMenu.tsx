@@ -6,7 +6,7 @@ import NotificationCard from './NotificationCard/NotificationCard'
 import { MenuState } from '../../../store/actions'
 import { Link } from 'react-router-dom'
 import { Menu, ServicePortalPath } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface Props {
   state: MenuState
@@ -15,6 +15,7 @@ interface Props {
 
 const NotificationMenu: FC<Props> = ({ state, onClose }) => {
   const { formatMessage } = useLocale()
+  useNamespaces('sp.settings')
 
   return (
     <Box position="relative">
@@ -22,7 +23,7 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
         <Box className={styles.menu}>
           <Text variant="h3">
             {formatMessage({
-              id: 'service.portal:message',
+              id: 'service.portal:messages',
               defaultMessage: 'Skilaboð',
             })}
           </Text>
