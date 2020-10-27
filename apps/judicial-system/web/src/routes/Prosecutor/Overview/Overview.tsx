@@ -74,8 +74,8 @@ export const Overview: React.FC = () => {
 
     if (!workingCase) {
       setWorkingCase(caseDraftJSON)
-      setIsLoading(false)
     }
+    setIsLoading(false)
   }, [workingCase, setWorkingCase, setIsLoading])
 
   return (

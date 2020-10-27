@@ -77,8 +77,8 @@ export const RulingStepTwo: React.FC = () => {
         judgeId: caseDraftJSON.judgeId ?? null,
         judge: caseDraftJSON.judge ?? null,
       })
-      setIsLoading(false)
     }
+    setIsLoading(false)
   }, [workingCase, setWorkingCase, setIsLoading])
 
   return (

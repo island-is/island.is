@@ -12,5 +12,5 @@ export const loadingWrapper = style({
   display: 'flex',
   height: 'calc(100vh - 168px)',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
 })

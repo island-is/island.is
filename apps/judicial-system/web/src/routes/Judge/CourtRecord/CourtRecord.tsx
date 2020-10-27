@@ -54,8 +54,9 @@ export const CourtRecord: React.FC = () => {
 
     if (wc && !workingCase) {
       setWorkingCase(wc)
-      setIsLoading(false)
     }
+
+    setIsLoading(false)
   }, [workingCase, setWorkingCase, setIsLoading])
 
   return (

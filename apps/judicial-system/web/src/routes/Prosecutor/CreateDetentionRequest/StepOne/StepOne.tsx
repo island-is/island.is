@@ -195,9 +195,8 @@ export const StepOne: React.FC = () => {
         judgeId: caseDraftJSON.judgeId ?? null,
         judge: caseDraftJSON.judge ?? null,
       })
-
-      setIsLoading(false)
     }
+    setIsLoading(false)
   }, [workingCase, setWorkingCase, setIsLoading, id])
 
   // Run this if id is in url, i.e. if user is opening an existing request.

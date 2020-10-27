@@ -50,8 +50,8 @@ export const Confirmation: React.FC = () => {
     const wc: Case = JSON.parse(window.sessionStorage.getItem('workingCase'))
     if (wc && !workingCase) {
       setWorkingCase(wc)
-      setIsLoading(false)
     }
+    setIsLoading(false)
   }, [workingCase, setWorkingCase, setIsLoading])
 
   useEffect(() => {
