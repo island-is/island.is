@@ -8,6 +8,7 @@ export const JUDGE_SINGLE_REQUEST_BASE_ROUTE = '/domari-krafa'
 export const COURT_DOCUMENT_ROUTE = '/domari-krafa/thingbok'
 export const RULING_STEP_ONE_ROUTE = '/domari-krafa/urskurdur'
 export const RULING_STEP_TWO_ROUTE = '/domari-krafa/urskurdarord'
+export const HEARING_ARRANGEMENTS_ROUTE = '/domari-krafa/fyrirtaka'
 export const CONFIRMATION_ROUTE = '/stadfesta'
 export const FEEDBACK_FORM_ROUTE = '/feedback-from'
 export const FEEDBACK_FORM_URL =

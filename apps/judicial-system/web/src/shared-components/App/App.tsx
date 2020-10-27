@@ -16,6 +16,7 @@ import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
 import { RulingStepOne, RulingStepTwo } from '../../routes/Judge/Ruling'
 import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
 import * as api from '../../api'
+import HearingArrangements from '../../routes/Judge/HearingArrangements/HearingArrangements'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
@@ -71,6 +72,9 @@ const App: React.FC = () => {
               </Route>
               <Route path={Constants.STEP_TWO_ROUTE}>
                 <StepTwo />
+              </Route>
+              <Route path={Constants.HEARING_ARRANGEMENTS_ROUTE}>
+                <HearingArrangements />
               </Route>
               <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
                 <JudgeOverview />
