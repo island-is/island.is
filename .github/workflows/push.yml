@@ -149,7 +149,9 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static)
           echo "CHUNKS: '$CHUNKS'"
-          echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          fi
 
       - name: Gather unaffected docker images
         id: unaffected
