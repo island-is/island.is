@@ -115,7 +115,7 @@ describe('Users', () => {
     expect(response.body.clientId).toEqual('island-is-1')
     expect(response.body.allowedScopes).toHaveLength(3)
     expect(response.body.allowedCorsOrigins).toHaveLength(0)
-    expect(response.body.redirectUris).toHaveLength(2)
+    expect(response.body.redirectUris).toHaveLength(4)
   })
 
   it(`GET /clients/island-is-2 should fail and return 404`, async () => {
