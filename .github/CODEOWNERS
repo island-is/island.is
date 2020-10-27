@@ -44,3 +44,5 @@
 /libs/infra*/                     @island-is/devops
 /libs/logging/                    @island-is/devops
 /scripts/                         @island-is/devops
+
+/libs/application/templates/document-provider-onboarding/ @island-is/advania

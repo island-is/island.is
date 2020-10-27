@@ -93,7 +93,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
               read: 'all',
-              write: 'all',
+              write: { answers: ['rejectionReason'] },
             },
             {
               id: 'applicant',
