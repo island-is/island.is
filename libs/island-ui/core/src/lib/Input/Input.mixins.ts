@@ -169,3 +169,12 @@ export const inputDisabled = {
   backgroundColor: theme.color.blue100,
   color: theme.color.dark400,
 }
+
+export const textarea = {
+  fontSize: 16,
+  ...themeUtils.responsiveStyle({
+    md: {
+      fontSize: 18,
+    },
+  }),
+}
