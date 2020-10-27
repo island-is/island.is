@@ -24,6 +24,7 @@ export interface DetentionRequest {
   created: string
   modified: string
   state: CaseState
+  custodyEndDate?: string
 }
 
 export interface Case {
