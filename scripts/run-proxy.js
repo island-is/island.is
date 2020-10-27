@@ -25,14 +25,17 @@ const checkPresenceAWSAccessVars = () => {
 
 const args = argv
   .option('port', {
-    description: 'Port on which the Kubernetes service is listening on',
+    description: 'Port number on which the Kubernetes service is listening on',
     default: 80,
   })
   .option('proxy-port', {
-    description: 'Port local proxy is listening on',
+    description: 'Port number the local proxy is listening on',
     default: 8080,
   })
-  .demandOption('namespace', 'Namespace the Kubernetes service is part of')
+  .demandOption(
+    'namespace',
+    'Name of the Kubernetes namespace the service is part of',
+  )
   .demandOption('service', 'Name of the Kubernetes service')
   .help().argv
 
