@@ -97,8 +97,8 @@ export const Footer = ({
                         <Link href={href}>
                           <Button
                             colorScheme="default"
-                            icon={isInternalLink ? 'arrowForward' : null}
-                            iconType={isInternalLink ? 'filled' : null}
+                            icon={isInternalLink ? 'arrowForward' : undefined}
+                            iconType={isInternalLink ? 'filled' : undefined}
                             size="default"
                             type="button"
                             variant="text"
