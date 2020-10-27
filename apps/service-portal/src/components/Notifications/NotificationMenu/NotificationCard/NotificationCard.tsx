@@ -1,14 +1,6 @@
 import React, { FC } from 'react'
 import { NotificationCard as Card } from '../mockNotifications'
-import {
-  Box,
-  Typography,
-  IconDeprecated as Icon,
-  Stack,
-  ButtonDeprecated as Button,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './Notificationcard.treat'
 import cn from 'classnames'
@@ -38,7 +30,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
       </Text>
       <Stack space={1}>
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-          <Typography variant="h4">{card.title}</Typography>
+          <Text variant="h4">{card.title}</Text>
           {card.wip && (
             <Tag variant="purple">
               {formatMessage({
@@ -48,9 +40,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
             </Tag>
           )}
         </Box>
-        <Typography variant="p" as="div">
-          {card.text}
-        </Typography>
+        <Text as="div">{card.text}</Text>
         <Box
           display="flex"
           justifyContent="spaceBetween"
@@ -58,7 +48,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
           marginTop={2}
         >
           <Link to={card.link.url} className={styles.link} onClick={onClick}>
-            <Button variant="text" size="small" icon="arrowRight">
+            <Button variant="text" size="small" icon="arrowForward">
               {card.link.title}
             </Button>
           </Link>
