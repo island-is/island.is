@@ -59,6 +59,14 @@ export const settingsModule: ServicePortalModule = {
         path: ServicePortalPath.UserProfileEditLanguage,
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
+      {
+        name: defineMessage({
+          id: 'service.portal:messages',
+          defaultMessage: 'Skilaboð',
+        }),
+        path: ServicePortalPath.MessagesRoot,
+        render: () => lazy(() => import('./screens/Messages/Messages')),
+      },
     ]
 
     return routes

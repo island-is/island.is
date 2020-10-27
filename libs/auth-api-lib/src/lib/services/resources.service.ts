@@ -56,10 +56,6 @@ export class ResourcesService {
   ): Promise<IdentityResource[]> {
     this.logger.debug(`Finding identity resources for scope names`, scopeNames)
 
-    if (!scopeNames) {
-      throw new BadRequestException('ScopeNames must be provided')
-    }
-
     const whereOptions: WhereOptions = {
       name: {
         [Op.in]: scopeNames,
