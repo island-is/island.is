@@ -119,7 +119,10 @@
     },
     "company": {
       "title": "Deregister car",
-      "sections": ["Velja ökutæki", "Afskrá Ökutæki"]
+      "sections": [
+        "Velja ökutæki",
+        "Afskrá Ökutæki"
+      ]
     }
   },
   "deregisterOverview": {
@@ -135,7 +138,14 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+    "table": [
+      "Reg nr",
+      "Brand",
+      "Model",
+      "Year",
+      "User",
+      "Deregistered"
+    ]
   },
   "companyInfo": {
     "title": "Company information",
@@ -218,6 +228,32 @@
       "success": "Deregistration was successful."
     }
   },
+  "recyclingFundOverview": {
+    "title": "Recycled cars",
+    "subtitles": {
+      "deregistered": "Deregistered"
+    },
+    "buttons": {
+      "export": "Export"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": [
+      "Reg nr",
+      "Brand",
+      "Model",
+      "Year",
+      "Company",
+      "Deregistered"
+    ]
+  },
+  "recyclingFundSidenav": {
+    "title": "Skilavottord",
+    "recycled": "Recycled cars",
+    "companies": "Reycling companies"
+  },
   "unauthorized": {
     "message": "You are not allowed to view this page"
   },
@@ -239,6 +275,12 @@
       "baseRoute": "/deregister-vehicle",
       "select": "/deregister-vehicle/select",
       "deregister": "/deregister-vehicle/[id]"
+    },
+    "recycledVehicles": "/recycled-vehicles",
+    "recyclingCompanies": {
+      "baseRoute": "/recycling-companies",
+      "add": "/recycling-companies/add",
+      "edit": "/recycling-companies/[company]"
     },
     "companyInfo": {
       "baseRoute": "/company-info",

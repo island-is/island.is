@@ -15,3 +15,6 @@ export {
 } from './DeregisterVehicle'
 
 /* Fund screens */
+export {
+  Overview as RecyclingFundOverview,
+} from './RecyclingFund'

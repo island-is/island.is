@@ -215,14 +215,40 @@
       "success": "Deregistration was successful."
     }
   },
+  "recyclingFundOverview": {
+    "title": "Recycled cars",
+    "subtitles": {
+      "deregistered": "Deregistered"
+    },
+    "buttons": {
+      "export": "Export"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": [
+      "Reg nr",
+      "Brand",
+      "Model",
+      "Year",
+      "Company",
+      "Deregistered"
+    ]
+  },
+  "recyclingFundSidenav": {
+    "title": "Skilavottord",
+    "recycled": "Recycled cars",
+    "companies": "Reycling companies"
+  },
   "unauthorized": {
     "message": "You are not allowed to view this page"
   },
   "routes": {
     "home": {
-      "citizen": "/my-cars",
-      "recyclingPartner": "/deregister-vehicle",
-      "recyclingFund": "/recycled-vehicles"
+      "citizen": "/en/my-cars",
+      "recyclingPartner": "/en/deregister-vehicle",
+      "recyclingFund": "/en/recycled-vehicles"
     },
     "data": "/en/data",
     "myCars": "/en/my-cars",
@@ -236,6 +262,12 @@
       "baseRoute": "/en/deregister-vehicle",
       "select": "/en/deregister-vehicle/select",
       "deregister": "/en/deregister-vehicle/[id]"
+    },
+    "recycledVehicles": "/en/recycled-vehicles",
+    "recyclingCompanies": {
+      "baseRoute": "/en/recycling-companies",
+      "add": "/en/recycling-companies/add",
+      "edit": "/en/recycling-companies/[company]"
     },
     "companyInfo": {
       "baseRoute": "/en/company-info",

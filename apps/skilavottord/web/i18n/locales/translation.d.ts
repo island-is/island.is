@@ -21,6 +21,8 @@ export interface Translation {
   companyInfoForm: CompanyInfoFormPage
   deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
+  recyclingFundOverview: RecyclingFundOverview
+  recyclingFundSidenav: RecyclingFundSidenav
   unauthorized: Unauthorized
   routes: Routes
 }
@@ -232,6 +234,14 @@ export interface DeregisterVehicle {
   deregister: Deregister
 }
 
+export interface RecyclingFundOverview {
+  title: string
+  subtitles: ReyclingFundOverviewSubTitles
+  buttons: ReyclingFundOverviewButtons
+  search: InputField
+  table: string[]
+}
+
 export interface Unauthorized {
   message: string
 }
@@ -258,6 +268,14 @@ export interface DeregisterOverviewButtons {
   deregister: string
 }
 
+export interface ReyclingFundOverviewSubTitles {
+  deregistered: string
+}
+
+export interface ReyclingFundOverviewButtons {
+  export: string
+}
+
 export interface CompanyInfoSubTitles {
   companyLocation: string
 }
@@ -278,6 +296,17 @@ export interface DeregisterButtons {
   confirm: string
 }
 
+export interface DeregisterSidenav {
+  deregister: string
+  companyInfo: string
+}
+
+export interface RecyclingFundSidenav {
+  title: string
+  recycled: string
+  companies: string
+}
+
 export interface InputField {
   label: string
   placeholder: string
@@ -290,6 +319,8 @@ export interface Routes {
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
+  recycledVehicles: string
+  recyclingCompanies: RecyclingCompaniesRoutes
   companyInfo: CompanyInfoRoutes
 }
 
@@ -313,6 +344,12 @@ export interface DeregisterVehicleRoutes {
 }
 
 export interface CompanyInfoRoutes {
+  baseRoute: string
+  add: string
+  edit: string
+}
+
+export interface RecyclingCompaniesRoutes {
   baseRoute: string
   add: string
   edit: string
