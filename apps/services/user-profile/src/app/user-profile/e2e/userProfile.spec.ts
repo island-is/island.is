@@ -1,16 +1,30 @@
 import { setup } from '../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import { EmailService, EmailServiceOptions } from '@island.is/email-service'
+import { logger } from '@island.is/logging'
+
+import { EmailVerification } from '../email-verification.model'
+import { SmsVerification } from '../sms-verification.model'
 
 let app: INestApplication
+let emailService: EmailService
 
 beforeAll(async () => {
   app = await setup()
+
+  emailService = app.get<EmailService>(EmailService)
+  jest
+    .spyOn(emailService, 'sendEmail')
+    .mockImplementation(() => Promise.resolve('user'))
 })
 
 describe('User profile API', () => {
   it(`POST /userProfile should register userProfile with no phonenumber`, async () => {
     // Act
+    const spy = jest
+      .spyOn(emailService, 'sendEmail')
+      .mockImplementation(() => Promise.resolve('user'))
     const response = await request(app.getHttpServer())
       .post('/userProfile')
       .send({
@@ -101,6 +115,7 @@ describe('User profile API', () => {
       'A user profile with nationalId 12312312313 does not exist',
     )
   })
+
   it(`PUT /userProfile should update profile`, async () => {
     //Arrange
     const profile = {
@@ -152,6 +167,73 @@ describe('User profile API', () => {
     expect(conflictResponse.body.error).toBe('Conflict')
     expect(conflictResponse.body.message).toBe(
       'A profile with nationalId - "1234567890" already exists',
+    )
+  })
+
+  it(`POST /userProfile should return error on unverified Phone Number`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456798',
+        locale: 'en',
+        email: 'email@email.is',
+      })
+      .expect(400)
+
+    // Assert
+    expect(response.body.error).toBe('Bad Request')
+    expect(response.body.message).toBe(
+      'Phone number: 123456798 is not verified',
+    )
+  })
+
+  it(`POST /userProfile creates an email verfication in Db`, async () => {
+    // Act
+    // const spy = jest.spyOn(emailService, 'sendEmail')
+    const response = await request(app.getHttpServer())
+      .post('/userProfile/')
+      .send({
+        nationalId: '1234567890',
+        locale: 'en',
+        email: 'email@email.is',
+      })
+      .expect(201)
+    // expect(spy).toHaveBeenCalled()
+    const verification = await EmailVerification.findOne({
+      where: { nationalId: response.body.nationalId },
+    })
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ nationalId: verification.nationalId }),
+    )
+    expect(response.body).toEqual(
+      expect.objectContaining({ email: verification.email }),
+    )
+  })
+
+  it(`POST /smsVerification/ creates an sms verfication in Db`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/smsVerification/')
+      .send({
+        nationalId: '123456789',
+        mobilePhoneNumber: '1111111',
+      })
+      .expect(201)
+
+    const verification = await SmsVerification.findOne({
+      where: { nationalId: response.body.nationalId },
+    })
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ nationalId: verification.nationalId }),
+    )
+    expect(response.body).toEqual(
+      expect.objectContaining({ smsCode: verification.smsCode }),
     )
   })
 })

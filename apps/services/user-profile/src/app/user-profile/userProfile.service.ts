@@ -12,10 +12,10 @@ export class UserProfileService {
     private userProfileModel: typeof UserProfile,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) { }
+  ) {}
 
   async findById(id: string): Promise<UserProfile | null> {
-    this.logger.debug(`Finding user profile by id - "${id}"`)
+    this.logger.debug(`Finding user profile by id "${id}"`)
     return this.userProfileModel.findOne({
       where: { id },
     })
@@ -26,7 +26,7 @@ export class UserProfileService {
   }
 
   async findByNationalId(nationalId: string): Promise<UserProfile | null> {
-    this.logger.debug(`Finding user profile by nationalId - "${nationalId}"`)
+    this.logger.debug(`Finding user profile by nationalId "${nationalId}"`)
     return this.userProfileModel.findOne({
       where: { nationalId },
     })

@@ -21,16 +21,16 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     allowNull: false,
   })
   id!: number
+
   @Field()
   @ForeignKey(() => VehicleModel)
   @Column({
     type: DataType.STRING,
   })
   vehicleId: string
-  //ATH
-  @Field(() => VehicleModel, { nullable: true })
-  @BelongsTo(() => VehicleModel, 'vehicleId')
-  vehicle!: VehicleModel
+
+  @BelongsTo(() => VehicleModel)
+  vehicle: any
 
   @Field()
   @Column({
