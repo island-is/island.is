@@ -76,7 +76,5 @@ export * from './lib/Tabs/Tabs'
 // Context
 export * from './lib/context'
 
-// Util functions
-export * from './utils/global.treat'
-export { deorphanize } from './utils/deorphanize'
-export { hexToRgba } from './utils/hexToRgba'
+// Treat
+export * from './treat/global.treat'

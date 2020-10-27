@@ -21,8 +21,8 @@ import {
   GridRow,
   GridColumn,
   IconDeprecated as Icon,
-  deorphanize,
 } from '@island.is/island-ui/core'
+import { deorphanize } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'

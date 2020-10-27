@@ -1,5 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const root = style({
   minHeight: '100vh',
@@ -70,8 +71,7 @@ export const largeSidebarContainer = style({
 
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      marginLeft: -theme.grid.gutter.mobile * 2,
-      marginRight: -theme.grid.gutter.mobile * 2,
+      ...escapeGrid(),
 
       maxWidth: `calc(100% + ${theme.grid.gutter.mobile * 4}px)`,
     },
