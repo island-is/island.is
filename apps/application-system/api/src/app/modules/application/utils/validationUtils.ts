@@ -20,14 +20,15 @@ export async function validateApplicationSchema(
       `No template exists for type: ${application.typeId}`,
     )
   }
-  const schemaFormValidation = validateAnswers(
-    newAnswers,
-    true,
+  const schemaFormValidationError = validateAnswers(
     applicationTemplate.dataSchema,
+    newAnswers,
+    false,
   )
 
-  if (schemaFormValidation) {
-    throw new BadRequestException(schemaFormValidation.message)
+  if (schemaFormValidationError) {
+    // TODO improve error message
+    throw new BadRequestException(`Schema validation has failed`)
   }
 }
 

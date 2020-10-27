@@ -1,2 +1,3 @@
-export * from './Vehicles'
-export * from './RecyclingPartner'
+export * from './vehicles'
+export * from './recyclingPartner'
+export * from './gdprInfo'

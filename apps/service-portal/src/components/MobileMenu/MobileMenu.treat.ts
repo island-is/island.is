@@ -24,8 +24,9 @@ export const wrapper = style({
 })
 
 export const figure = style({
-  width: '100%',
+  width: '42%',
   paddingTop: '95%',
+  margin: '0 auto',
   backgroundSize: 'contain',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: '50% 50%',
