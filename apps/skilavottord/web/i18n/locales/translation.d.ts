@@ -10,6 +10,7 @@
 export interface Translation {
   home: Home
   header: Header
+  data: Data
   myCars: MyCars
   confirm: Confirm
   handover: Handover
@@ -30,6 +31,15 @@ export interface Home {
 
 export interface Header {
   logoutText: string
+}
+
+export interface Data {
+  title: string
+  subTitles: DataSubtitles
+  info: string
+  buttons: DataButtons
+  checkbox: string
+  error: Errors
 }
 
 export interface MyCars {
@@ -85,13 +95,21 @@ export interface CancelModal {
   buttons: ProcessButtons
 }
 
+export interface DataSubtitles {
+  info: string
+}
+
+export interface DataButtons {
+  continue: string
+}
+
 export interface MyCarsSubtitles {
   pending: string
   active: string
   done: string
 }
 
-export interface MyCarsSubtitles {
+export interface MyCarsInfo {
   noCarsAvailable: string
 }
 
@@ -268,6 +286,7 @@ export interface InputField {
 
 export interface Routes {
   home: HomeRoutes
+  data: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
