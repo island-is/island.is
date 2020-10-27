@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -25,6 +25,7 @@ interface PhoneFormData {
 }
 
 export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
