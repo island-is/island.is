@@ -15,7 +15,7 @@ export class RecyclingRequestResolver {
   @Query(() => [RecyclingRequestModel])
   async getAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
-    logger.debug(
+    logger.info(
       'getAllRecyclingRequests responce:' + JSON.stringify(res, null, 2),
     )
     return res
