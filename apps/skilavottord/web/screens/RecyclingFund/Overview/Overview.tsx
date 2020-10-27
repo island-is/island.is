@@ -1,9 +1,5 @@
 import React, { FC, useContext } from 'react'
-import {
-  Box,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import CarsTable from './components/CarsTable'
@@ -18,11 +14,6 @@ const Overview: FC = () => {
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
-  const router = useRouter()
-
-  const handleDeregister = () => {
-    router.push(routes.deregisterVehicle.select)
-  }
 
   if (!user) {
     return null

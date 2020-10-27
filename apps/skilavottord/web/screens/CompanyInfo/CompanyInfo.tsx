@@ -27,18 +27,6 @@ const CompanyInfo: FC = () => {
   const {
     t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
-  const router = useRouter()
-
-  const handleAddLocation = () => {
-    router.push(routes.companyInfo.add)
-  }
-
-  const handleEditLocation = (id: number) => {
-    router.push(
-      routes.companyInfo.edit,
-      `${routes.companyInfo.baseRoute}/edit/${id}`,
-    )
-  }
 
   if (!user) {
     return null
@@ -70,31 +58,10 @@ const CompanyInfo: FC = () => {
             ) : (
               <Box>
                 {[data?.getRecyclingPartner].map((company, index) => (
-                  <CompanyListItem
-                    key={index}
-                    {...company}
-                    buttons={
-                      <Box display="flex">
-                        <Box paddingX={2}>
-                          <Button variant="ghost" colorScheme="destructive">
-                            {t.buttons.delete}
-                          </Button>
-                        </Box>
-                        <Box paddingX={2}>
-                          <Button
-                            variant="ghost"
-                            onClick={() => handleEditLocation(company.id)}
-                          >
-                            {t.buttons.edit}
-                          </Button>
-                        </Box>
-                      </Box>
-                    }
-                  />
+                  <CompanyListItem key={index} {...company} />
                 ))}
               </Box>
             )}
-            <Button onClick={handleAddLocation}>{t.buttons.add}</Button>
           </Stack>
         </Box>
       }

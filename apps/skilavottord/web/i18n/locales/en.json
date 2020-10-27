@@ -160,7 +160,7 @@
         "placeholder": "Ex. Maplestreet 2"
       },
       "postNumber": {
-        "label": "Post number",
+        "label": "Postnumber",
         "placeholder": "Postnumber of visiting adress"
       },
       "city": {
@@ -227,14 +227,7 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": [
-      "Reg nr",
-      "Brand",
-      "Model",
-      "Year",
-      "Company",
-      "Deregistered"
-    ]
+    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",

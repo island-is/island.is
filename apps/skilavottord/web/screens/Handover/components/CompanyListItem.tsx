@@ -3,10 +3,12 @@ import { Stack, Text, Box, Link } from '@island.is/island-ui/core'
 import * as styles from './CompanyListItem.treat'
 
 export interface CompanyProps {
-  companyName: string
+  companyName?: string
+  name?: string
   address: string
-  city: string
-  postnumber: string
+  city?: string
+  postnumber?: string
+  postNumber?: string
   phone: string
   website: string
   buttons?: ReactNode
@@ -14,16 +16,26 @@ export interface CompanyProps {
 
 export const CompanyListItem: FC<CompanyProps> = ({
   companyName,
+  name,
   address,
   postnumber,
+  postNumber,
   city,
   phone,
   website,
   buttons,
 }: CompanyProps) => {
+  const externalSite =
+    website.indexOf('http://') === -1 ? `https://${website}` : website
 
-  const externalSite = website.indexOf('http://') === -1 ? `https://${website}` : website
-  
+  // temporary until backend is ready
+  const addressField =
+    postnumber && city
+      ? `${address}, ${postnumber} ${city}`
+      : `${address}, ${postNumber}`
+  const nameField = companyName ?? name
+  const cityField = city ? `(${city})` : ''
+
   return (
     <Box
       display="flex"
@@ -36,8 +48,8 @@ export const CompanyListItem: FC<CompanyProps> = ({
     >
       <Box paddingBottom={[2, 2, 0, 0]}>
         <Stack space={[2, 2, 1, 1]}>
-          <Text variant="h5">{`${companyName} (${city})`}</Text>
-          <Text>{`${address}, ${postnumber} ${city}`}</Text>
+          <Text variant="h5">{`${nameField} ${cityField}`}</Text>
+          <Text>{addressField}</Text>
           <Text color="blue400">{phone}</Text>
           <Text>
             <Link href={externalSite} color="blue400" underline="small">
