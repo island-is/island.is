@@ -8,7 +8,7 @@ const inputFontSize = 24
 const mobileInputFontSize = 20
 const inputFontSizeSmall = 18
 const mobileInputFontSizeSmall = 16
-const inputBorderRadius = 5
+const inputBorderRadius = 8
 
 export const label = {
   display: 'block',

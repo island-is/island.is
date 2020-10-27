@@ -5,7 +5,7 @@ import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
 
-type InputBackgroundColor = 'white' | 'blue'
+export type InputBackgroundColor = 'white' | 'blue'
 
 interface InputComponentProps {
   name: string

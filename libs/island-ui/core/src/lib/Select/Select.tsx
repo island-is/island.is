@@ -12,17 +12,18 @@ import ReactSelect, {
   PlaceholderProps,
   InputProps,
   ControlProps,
+  CommonProps,
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
 import { Icon } from '../IconRC/Icon'
+import { InputBackgroundColor } from '../Input/Input'
 
 export type Option = {
   label: string
   value: string | number
   disabled?: boolean
 }
-
 export interface SelectProps {
   name: string
   id?: string
@@ -43,6 +44,7 @@ export interface SelectProps {
   icon?: string
   isSearchable?: boolean
   size?: 'sm' | 'md'
+  backgroundColor?: InputBackgroundColor
 }
 
 export const Select = ({
@@ -61,9 +63,13 @@ export const Select = ({
   icon = 'chevronDown',
   isSearchable = true,
   size = 'md',
+  backgroundColor = 'white',
 }: SelectProps) => {
   return (
-    <div className={cn(styles.wrapper, size)} data-testid={`select-${name}`}>
+    <div
+      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      data-testid={`select-${name}`}
+    >
       <ReactSelect
         instanceId={id}
         noOptionsMessage={() => noOptionsMessage || null}
@@ -82,6 +88,7 @@ export const Select = ({
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
         isSearchable={isSearchable}
+        size={size}
         components={{
           Control,
           Input,
@@ -110,9 +117,14 @@ const customStyles = {
 const Menu = (props: MenuProps<Option>) => (
   <components.Menu className={styles.menu} {...props} />
 )
-const Option = (props: OptionProps<Option>) => (
-  <components.Option className={styles.option} {...props} />
-)
+const Option = (props: OptionProps<Option>) => {
+  return (
+    <components.Option
+      className={cn(styles.option, styles.optionSizes[props.selectProps.size])}
+      {...props}
+    />
+  )
+}
 
 const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => (
   <components.IndicatorsContainer
@@ -131,16 +143,22 @@ const DropdownIndicator = (props: IndicatorProps<Option>) => {
     >
       <Icon
         icon={icon}
-        type="outline"
         size="large"
-        color={hasError ? 'red400' : 'blue400'}
+        color={hasError ? 'red600' : 'blue400'}
+        className={styles.icon}
       />
     </components.DropdownIndicator>
   )
 }
 
 const SingleValue = (props: SingleValueProps<Option>) => (
-  <components.SingleValue className={styles.singleValue} {...props} />
+  <components.SingleValue
+    className={cn(
+      styles.singleValue,
+      styles.singleValueSizes[props.selectProps.size],
+    )}
+    {...props}
+  />
 )
 
 const ValueContainer = (props: ValueContainerProps<Option>) => (
@@ -148,23 +166,40 @@ const ValueContainer = (props: ValueContainerProps<Option>) => (
 )
 
 const Placeholder = (props: PlaceholderProps<Option>) => (
-  <components.Placeholder className={styles.placeholder} {...props} />
+  <components.Placeholder
+    className={cn(
+      styles.placeholder,
+      styles.placeholderPadding,
+      styles.placeholderSizes[props.selectProps.size],
+    )}
+    {...props}
+  />
 )
 
-const Input = (props: InputProps) => (
-  <components.Input className={styles.input} {...props} />
+const Input = (props: InputProps & CommonProps<Option>) => (
+  <components.Input
+    className={cn(styles.input, styles.inputSize[props.selectProps.size])}
+    {...props}
+  />
 )
 
 const Control = (props: ControlProps<Option>) => {
   return (
     <components.Control
-      className={cn(styles.container, {
-        [styles.containerDisabled]: props.isDisabled,
-        [styles.hasError]: props.selectProps.hasError,
-      })}
+      className={cn(
+        styles.container,
+        styles.containerSizes[props.selectProps.size],
+        {
+          [styles.containerDisabled]: props.isDisabled,
+          [styles.hasError]: props.selectProps.hasError,
+        },
+      )}
       {...props}
     >
-      <label htmlFor={props.selectProps.name} className={styles.label}>
+      <label
+        htmlFor={props.selectProps.name}
+        className={cn(styles.label, styles.labelSizes[props.selectProps.size])}
+      >
         {props.selectProps.label}
       </label>
       {props.children}

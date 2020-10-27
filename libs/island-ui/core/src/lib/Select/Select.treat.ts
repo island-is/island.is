@@ -1,9 +1,73 @@
-import { style, globalStyle } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { style, globalStyle, styleMap } from 'treat'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
+import { merge, mixin } from 'lodash'
+
+interface LooseObject {
+  [key: string]: string | LooseObject
+}
+
+/**
+ * Media does not work under the selector key, this function moves the selector under the media key
+ * ex.
+ * wrapMedia({
+ *  '@media': {
+ *    [mediaSelector]: {
+ *      padding: 0
+ *    }
+ *  }
+ * }, '.react-select &')
+ * output:
+ * {
+ *  '@media': {
+ *    [mediaSelector]: {
+ *      selectors: {
+ *        ['.react-select &']: {
+ *          padding: 0
+ *        }
+ *      }
+ *    }
+ *  }
+ * }
+ * @param stylesObj
+ * @param selector
+ */
+const wrapMedia = (stylesObj, selector) => {
+  const keys = Object.keys(stylesObj)
+  const initialValue: LooseObject = { selectors: {} }
+  return keys.reduce((acc, key) => {
+    if (key === '@media') {
+      const mediaKeys = Object.keys(stylesObj[key])
+      const initialValue: LooseObject = {}
+      const media = mediaKeys.reduce((mediaAcc, mediaKey) => {
+        if (!mediaAcc[mediaKey]) {
+          mediaAcc[mediaKey] = {
+            selectors: {},
+          }
+        }
+        mediaAcc[mediaKey]['selectors'][selector] =
+          stylesObj['@media'][mediaKey]
+        return mediaAcc
+      }, initialValue)
+      if (!acc['@media']) {
+        acc['@media'] = media
+      } else {
+        acc['@media'] = merge(media, acc['@media'])
+      }
+    } else if (key === 'selectors' && typeof acc.selectors === 'object') {
+      acc.selectors = { ...acc.selectors, ...stylesObj.selectors }
+    } else {
+      if (!acc.selectors[selector]) {
+        acc.selectors[selector] = {}
+      }
+      acc.selectors[selector][key] = stylesObj[key]
+    }
+    return acc
+  }, initialValue)
+}
 
 export const wrapper = style({}, 'wrapper')
-
+export const wrapperColor = styleMap({ blue: {}, white: {} }, 'wrapperColor')
 export const valueContainer = style(
   {
     selectors: {
@@ -23,30 +87,34 @@ globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
   padding: 0,
 })
 
-export const placeholder = style(
-  {
-    selectors: {
-      [`${wrapper} &`]: {
-        marginLeft: 0,
-        ...inputMixins.placeholder,
-      },
+export const placeholder = style({
+  selectors: {
+    [`${wrapper} &`]: { ...inputMixins.placeholder },
+  },
+})
+export const placeholderPadding = style({
+  selectors: {
+    [`${wrapper} &`]: {
+      padding: inputMixins.input.padding,
     },
   },
-  'placeholder',
-)
-
-export const input = style(
-  {
-    ...inputMixins.input,
-    ...inputMixins.inputSizes.md,
-  },
-  'input',
-)
-
-globalStyle(`${wrapper} ${input} input`, {
-  ...inputMixins.input,
-  ...inputMixins.inputSizes.md,
+  ...wrapMedia({ '@media': inputMixins.input['@media'] }, `${wrapper} &`),
 })
+export const placeholderSizes = styleMap(inputMixins.inputSizes)
+
+export const input = style(inputMixins.input, 'input')
+export const inputSize = styleMap(
+  {
+    sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
+    md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+  },
+  'inputSizes',
+)
+
+globalStyle(`${wrapper} ${input} input`, inputMixins.input)
+globalStyle(`${wrapper} ${inputSize.sm} input`, inputMixins.inputSizes.sm)
+globalStyle(`${wrapper} ${inputSize.md} input`, inputMixins.inputSizes.md)
+
 globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
 
 export const errorMessage = style(inputMixins.errorMessage)
@@ -54,6 +122,8 @@ export const hasError = style({})
 
 export const containerDisabled = style({})
 export const container = style({}, 'container')
+export const containerSizes = styleMap(inputMixins.containerSizes)
+
 globalStyle(`${wrapper} .css-1uccc91-singleValue`, {
   color: theme.color.dark400,
 })
@@ -63,10 +133,16 @@ globalStyle(`${wrapper} .css-1g6gooi`, {
 })
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
-  ...inputMixins.containerSizes.md,
   paddingRight: 70,
   border: 0,
 })
+globalStyle(
+  `${wrapper}${wrapperColor.blue} .island-select__control${container}`,
+  {
+    background: theme.color.blue100,
+  },
+)
+
 globalStyle(
   `${wrapper} .island-select__control${container}${hasError}`,
   inputMixins.inputErrorState,
@@ -92,23 +168,43 @@ globalStyle(
   },
 )
 
-const labelTest = {
-  ...inputMixins.labelSizes.md,
+globalStyle(`${wrapper}  .island-select__menu-list`, {
+  padding: 0,
+})
+
+export const icon = style({
+  width: 24,
+  height: 24,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 32,
+      height: 32,
+    },
+  }),
+})
+export const label = style({
   ...inputMixins.label,
   selectors: {
     [`${hasError} &`]: inputMixins.labelErrorState,
   },
-}
-console.log(inputMixins.labelSizes.md)
-export const label = style(labelTest)
-console.log(label)
+})
+export const labelSizes = styleMap({
+  sm: inputMixins.labelSizes.sm,
+  md: inputMixins.labelSizes.md,
+})
 export const singleValue = style(
   {
     marginLeft: 0,
     marginRight: 0,
-    ...inputMixins.input,
-    ...inputMixins.inputSizes.md,
     paddingRight: 0,
+    ...inputMixins.input,
+  },
+  'singleValue',
+)
+export const singleValueSizes = styleMap(
+  {
+    sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
+    md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
   },
   'singleValue',
 )
@@ -124,6 +220,7 @@ export const indicatorsContainer = style(
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        transition: 'transform .2s',
       },
     },
   },
@@ -144,76 +241,74 @@ export const menu = style(
   {
     selectors: {
       [`${wrapper} &`]: {
-        marginTop: -1,
-        boxShadow: `inset 0 0 0 4px ${theme.color.mint400}`,
+        marginTop: -3,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-      },
-      [`${wrapper} &:before `]: {
-        content: '""',
-        position: 'absolute',
-        top: -4,
-        left: 0,
-        right: 0,
-        height: 4,
-        width: '100%',
-        backgroundColor: theme.color.white,
-        borderBottom: `1px solid ${theme.color.blue200}`,
+        boxShadow: 'none',
+        borderTop: `1px solid ${theme.color.blue200}`,
+        borderRight: `3px solid ${theme.color.mint400}`,
+        borderLeft: `3px solid ${theme.color.mint400}`,
+        borderBottom: `3px solid ${theme.color.mint400}`,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+        boxSizing: 'border-box',
       },
     },
   },
   'menu',
 )
-export const option = style(
-  {
-    cursor: 'pointer',
-    selectors: {
-      [`${wrapper} &`]: {
-        position: 'relative',
-        fontSize: theme.typography.baseFontSize,
-        fontWeight: theme.typography.light,
-        padding: '23px 24px',
-      },
+
+export const option = style({
+  selectors: {
+    [`${wrapper} &.island-select__option`]: {
+      cursor: 'pointer',
+      position: 'relative',
+      fontWeight: theme.typography.light,
+      padding: '23px 24px',
+      transition: 'background .2s, color .2s',
+    },
+    [`${wrapper}${wrapperColor.blue} &`]: {
+      background: theme.color.blue100,
+    },
+    [`${wrapper} .island-select__option&:not(:first-of-type)`]: {
+      borderTop: `1px solid ${theme.color.blue200}`,
     },
   },
-  'option',
-)
-
-globalStyle(`${wrapper} ${option}.island-select__option--is-focused`, {
-  backgroundColor: theme.color.blue100,
 })
 
-globalStyle(`${wrapper} ${option}.island-select__option--is-selected`, {
+export const optionSizes = styleMap({
+  sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
+  md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+})
+
+globalStyle(
+  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}`,
+  {
+    transform: 'rotateX(180deg)',
+  },
+)
+
+globalStyle(
+  `${wrapper}${wrapperColor.blue} .island-select__option--is-focused`,
+  {
+    backgroundColor: theme.color.white,
+  },
+)
+globalStyle(
+  `${wrapper}${wrapperColor.white} .island-select__option--is-focused`,
+  {
+    backgroundColor: theme.color.blue100,
+  },
+)
+
+globalStyle(`${wrapper} .island-select__option--is-selected`, {
   fontWeight: theme.typography.medium,
   color: theme.color.dark400,
 })
 
 globalStyle(
-  `${wrapper} ${option}.island-select__option--is-selected:not(.island-select__option--is-focused)`,
+  `${wrapper} .island-select__option--is-selected:not(.island-select__option--is-focused)`,
   {
     backgroundColor: theme.color.white,
-  },
-)
-
-globalStyle(`${wrapper} ${option}.island-select__option--is-focused:before`, {
-  content: '""',
-  height: 1,
-  backgroundColor: theme.color.white,
-  position: 'absolute',
-  top: -1,
-  right: 20,
-  left: 20,
-})
-
-globalStyle(
-  `${wrapper} ${option}:not(:last-of-type):not(.island-select__option--is-focused):after`,
-  {
-    content: '""',
-    height: 1,
-    backgroundColor: theme.color.blue200,
-    position: 'absolute',
-    bottom: 0,
-    right: 20,
-    left: 20,
   },
 )

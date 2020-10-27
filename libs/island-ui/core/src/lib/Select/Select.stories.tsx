@@ -15,32 +15,6 @@ export default {
   }),
 }
 
-export const TempTest = () => (
-  <div style={{ height: 600 }}>
-    <Input name="test" label="tester input" placeholder="placeholder test" />
-    <div style={{ height: 30 }} />
-    <Template
-      name="select"
-      label="tester select"
-      placeholder="placeholder test"
-      options={[
-        {
-          label: 'Valmöguleiki 1',
-          value: '0',
-        },
-        {
-          label: 'Valmöguleiki 2',
-          value: '1',
-        },
-        {
-          label: 'Valmöguleiki 3',
-          value: '2',
-        },
-      ]}
-    />
-  </div>
-)
-
 const Template = (args) => <Select {...args} />
 
 export const Default = Template.bind({})
@@ -64,3 +38,125 @@ Default.args = {
   ],
   noOptionsMessage: 'Enginn valmöguleiki',
 }
+
+export const TempTest = () => (
+  <div style={{ height: 900 }}>
+    <h1>WIP</h1>
+    <Input
+      name="test"
+      label="tester input"
+      placeholder="placeholder test"
+      size="md"
+    />
+    <div style={{ height: 30 }} />
+    <Template
+      name="select"
+      label="tester select"
+      size="md"
+      placeholder="placeholder test"
+      options={[
+        {
+          label: 'Valmöguleiki 1',
+          value: '0',
+        },
+        {
+          label: 'Valmöguleiki 2',
+          value: '1',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '3',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '4',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '5',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '6',
+        },
+      ]}
+      noOptionsMessage="Enginn valmöguleiki"
+    />
+    <div style={{ height: 30 }} />
+    <Input
+      name="test"
+      label="tester input"
+      placeholder="placeholder test"
+      size="sm"
+    />
+    <div style={{ height: 30 }} />
+    <Template
+      name="select"
+      label="tester select"
+      size="sm"
+      placeholder="placeholder test"
+      options={[
+        {
+          label: 'Valmöguleiki 1',
+          value: '0',
+        },
+        {
+          label: 'Valmöguleiki 2',
+          value: '1',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '3',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '4',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '5',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '6',
+        },
+      ]}
+      noOptionsMessage="Enginn valmöguleiki"
+    />
+    <div style={{ height: 30 }} />
+    <Template
+      name="select"
+      label="tester select"
+      size="sm"
+      placeholder="placeholder test"
+      options={[
+        {
+          label: 'Valmöguleiki 1',
+          value: '0',
+        },
+        {
+          label: 'Valmöguleiki 2',
+          value: '1',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '3',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '4',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '5',
+        },
+        {
+          label: 'Valmöguleiki 3',
+          value: '6',
+        },
+      ]}
+      noOptionsMessage="Enginn valmöguleiki"
+      backgroundColor="blue"
+    />
+  </div>
+)
