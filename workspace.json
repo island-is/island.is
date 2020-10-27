@@ -3907,6 +3907,11 @@
               "apps/services/user-profile/src/assets",
               {
                 "glob": "*",
+                "input": "apps/services/user-profile/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
                 "input": "apps/services/user-profile/seeders",
                 "output": "./seeders"
               },
