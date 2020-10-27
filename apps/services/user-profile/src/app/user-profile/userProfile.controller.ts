@@ -15,6 +15,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
+import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
@@ -166,7 +167,7 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: EmailVerification })
+  @ApiCreatedResponse({ type: ConfirmationDtoResponse })
   async confirmEmail(
     @Param('nationalId', UserProfileByNationalIdPipe)
     profile: UserProfile,
@@ -183,7 +184,7 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: EmailVerification })
+  @ApiCreatedResponse({ type: ConfirmationDtoResponse })
   async confirmSms(
     @Param('nationalId')
     nationalId: string,
@@ -193,7 +194,6 @@ export class UserProfileController {
   }
 
   @Post('smsVerification/')
-  @ApiCreatedResponse({ type: EmailVerification })
   async createSmsVerification(
     @Body() createSmsVerification: CreateSmsVerificationDto,
   ): Promise<SmsVerification | null> {

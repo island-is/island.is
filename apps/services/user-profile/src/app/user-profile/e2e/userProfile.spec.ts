@@ -1,9 +1,7 @@
 import { setup } from '../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { EmailService, EmailServiceOptions } from '@island.is/email-service'
-import { logger } from '@island.is/logging'
-
+import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../email-verification.model'
 import { SmsVerification } from '../sms-verification.model'
 
@@ -170,7 +168,7 @@ describe('User profile API', () => {
     )
   })
 
-  it(`POST /userProfile should return error on unverified Phone Number`, async () => {
+  it(`POST /userProfile should return error status on unverified Phone Number`, async () => {
     // Act
     const response = await request(app.getHttpServer())
       .post('/userProfile')

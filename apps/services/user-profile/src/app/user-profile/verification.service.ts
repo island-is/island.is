@@ -1,10 +1,5 @@
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './email-verification.model'
 import * as CryptoJS from 'crypto-js'
@@ -18,6 +13,7 @@ import { EmailService } from '@island.is/email-service'
 import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
+import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 /**
   *- Email verification procedure
     *- New User
@@ -81,7 +77,7 @@ export class VerificationService {
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
     userProfile: UserProfile,
-  ) {
+  ): Promise<ConfirmationDtoResponse> {
     const { nationalId } = userProfile
 
     const verification = await this.emailVerificationModel.findOne({
@@ -89,23 +85,22 @@ export class VerificationService {
     })
 
     if (confirmEmailDto.hash !== verification.hash) {
-      throw new NotFoundException(
-        `Email verification with hash ${confirmEmailDto.hash} does not exist`,
-      )
+      return {
+        message: `Email verification with hash ${confirmEmailDto.hash} does not exist`,
+        confirmed: false,
+      }
     }
 
-    const { numberOfAffectedRows } = await this.userProfileService.update(
-      nationalId,
-      {
-        emailVerified: true,
-      },
-    )
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
-    }
+    await this.userProfileService.update(nationalId, {
+      emailVerified: true,
+    })
+
     await this.removeEmailVerification(nationalId)
+
+    return {
+      message: 'Email confirmed',
+      confirmed: true,
+    }
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
@@ -154,13 +149,19 @@ export class VerificationService {
     return record
   }
 
-  async confirmSms(confirmSmsDto: ConfirmSmsDto, nationalId: string) {
+  async confirmSms(
+    confirmSmsDto: ConfirmSmsDto,
+    nationalId: string,
+  ): Promise<ConfirmationDtoResponse> {
     const verification = await this.smsVerificationModel.findOne({
       where: { nationalId },
     })
 
     if (confirmSmsDto.code !== verification.smsCode) {
-      throw new BadRequestException(`SMS Code is not a match`)
+      return {
+        message: 'SMS code is not a match',
+        confirmed: false,
+      }
     }
 
     await this.smsVerificationModel.update(
@@ -170,6 +171,10 @@ export class VerificationService {
         returning: true,
       },
     )
+    return {
+      message: 'SMS confirmed',
+      confirmed: true,
+    }
   }
 
   async isPhoneNumberVerified(
