@@ -11,7 +11,7 @@ const CompanyList = () => {
     return null
   }
 
-  const recyclingPartners = data?.getAllActiveRecyclingPartners
+  const recyclingPartners = data?.getAllActiveRecyclingPartners || []
   const sortedPartners = recyclingPartners.slice().sort((a, b) => {
     return a.city < b.city ? -1 : 1
   })

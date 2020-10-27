@@ -1,40 +1,23 @@
 import React, { FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
-import {
-  Box,
-  Stack,
-  Text,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { useRouter } from 'next/router'
-import { CompanyListItem } from '../Handover/components'
-import { GET_RECYCLING_PARTNER } from '@island.is/skilavottord-web/graphql/queries'
+import { CompanyListItem } from './components'
+import { GET_ALL_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { Unauthorized } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 
 const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, error, loading } = useQuery(GET_RECYCLING_PARTNER)
+  const { data, error, loading } = useQuery(GET_ALL_RECYCLING_PARTNERS)
 
   const {
     t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
-  const router = useRouter()
-
-  const handleAddLocation = () => {
-    router.push(routes.companyInfo.add)
-  }
-
-  const handleEditLocation = (id: number) => {
-    router.push(
-      routes.companyInfo.edit,
-      `${routes.companyInfo.baseRoute}/edit/${id}`,
-    )
-  }
 
   if (!user) {
     return null
@@ -42,6 +25,8 @@ const RecyclingCompanies: FC = () => {
     console.log(user?.role, 'is not allowed to view this page')
     return <Unauthorized />
   }
+
+  const recyclingPartners = data?.getAllRecyclingPartners || []
 
   return (
     <PartnerPageLayout
@@ -59,25 +44,11 @@ const RecyclingCompanies: FC = () => {
               <Text>{t.empty}</Text>
             ) : (
               <Box>
-                {[data?.getRecyclingPartner].map((company, index) => (
-                  <CompanyListItem
-                    key={index}
-                    {...company}
-                    buttons={
-                      <Box paddingX={2}>
-                        <Button
-                          variant="ghost"
-                          onClick={() => handleEditLocation(company.id)}
-                        >
-                          {t.buttons.edit}
-                        </Button>
-                      </Box>
-                    }
-                  />
+                {recyclingPartners.map((partner, index) => (
+                  <CompanyListItem key={index} {...partner} />
                 ))}
               </Box>
             )}
-            <Button onClick={handleAddLocation}>{t.buttons.add}</Button>
           </Stack>
         </Box>
       }

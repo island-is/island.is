@@ -248,7 +248,13 @@ export interface RecyclingCompanies {
   info: string
   empty: string
   subtitles: RecyclingCompaniesSubTitles
+  status: CompanyStatus
   buttons: CompanyInfoButtons
+}
+
+export interface CompanyStatus {
+  active: string
+  inactive: string
 }
 
 export interface Unauthorized {

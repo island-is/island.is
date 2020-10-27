@@ -261,6 +261,10 @@
     "subtitles": {
       "companies": "Recycling companies"
     },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
     "buttons": {
       "add": "Add recycling company",
       "edit": "Edit"

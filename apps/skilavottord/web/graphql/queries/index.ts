@@ -1,4 +1,5 @@
 export * from './vehicles'
 export * from './recyclingPartner'
 export * from './activeRecyclingPartners'
+export * from './allRecyclingPartners'
 export * from './gdprInfo'
