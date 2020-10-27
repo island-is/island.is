@@ -7,3 +7,10 @@ export const processContainer = style({
 export const processContent = style({
   minHeight: '644px',
 })
+
+export const loadingWrapper = style({
+  display: 'flex',
+  height: 'calc(100vh - 168px)',
+  alignItems: 'center',
+  justifyContent: 'center'
+})

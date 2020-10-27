@@ -5,26 +5,31 @@ import {
   GridRow,
   GridColumn,
   FormStepper,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
 import { UserRole } from '../../utils/authenticate'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
+import Loading from '../Loading/Loading'
+import * as Constants from '../../utils/constants'
 
 interface PageProps {
   children: ReactNode
   activeSection: number
   activeSubSection: number
+  isLoading: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
+  isLoading,
 }) => {
   const uContext = useContext(userContext)
 
-  return (
+  return children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
@@ -89,5 +94,19 @@ export const PageLayout: FC<PageProps> = ({
         </GridRow>
       </GridContainer>
     </Box>
+  ) : isLoading ? (
+    <Box className={styles.loadingWrapper}>
+      <Loading />
+    </Box>
+  ) : (
+    <AlertBanner
+      title="Mál fannst ekki"
+      description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+      variant="error"
+      reactLink={{
+        href: Constants.DETENTION_REQUESTS_ROUTE,
+        title: 'Fara á yfirlitssíðu',
+      }}
+    />
   )
 }
