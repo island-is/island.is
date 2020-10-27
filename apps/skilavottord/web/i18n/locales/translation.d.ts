@@ -23,6 +23,7 @@ export interface Translation {
   deregisterVehicle: DeregisterVehicle
   recyclingFundOverview: RecyclingFundOverview
   recyclingFundSidenav: RecyclingFundSidenav
+  recyclingCompanies: RecyclingCompanies
   unauthorized: Unauthorized
   routes: Routes
 }
@@ -201,7 +202,7 @@ export interface DeregisterOverview {
 export interface CompanyInfo {
   title: string
   info: string
-  error: string
+  empty: string
   subtitles: CompanyInfoSubTitles
   buttons: CompanyInfoButtons
 }
@@ -242,6 +243,14 @@ export interface RecyclingFundOverview {
   table: string[]
 }
 
+export interface RecyclingCompanies {
+  title: string
+  info: string
+  empty: string
+  subtitles: RecyclingCompaniesSubTitles
+  buttons: CompanyInfoButtons
+}
+
 export interface Unauthorized {
   message: string
 }
@@ -277,7 +286,11 @@ export interface ReyclingFundOverviewButtons {
 }
 
 export interface CompanyInfoSubTitles {
-  companyLocation: string
+  location: string
+}
+
+export interface RecyclingCompaniesSubTitles {
+  companies: string
 }
 
 export interface DeregisterOverviewButtons {

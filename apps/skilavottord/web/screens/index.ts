@@ -18,3 +18,4 @@ export {
 export {
   Overview as RecyclingFundOverview,
 } from './RecyclingFund'
+export * from './ReclingCompanies'

@@ -1,11 +1,8 @@
 import React, { FC, useContext } from 'react'
-import Link from 'next/link'
 import {
   Box,
   Stack,
   Text,
-  Breadcrumbs,
-  Button,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'

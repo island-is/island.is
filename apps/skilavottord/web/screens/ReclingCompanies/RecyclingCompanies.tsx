@@ -1,11 +1,9 @@
 import React, { FC, useContext } from 'react'
-import Link from 'next/link'
 import { useQuery } from '@apollo/client'
 import {
   Box,
   Stack,
   Text,
-  Breadcrumbs,
   Button,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -18,14 +16,12 @@ import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { Unauthorized } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 
-const CompanyInfo: FC = () => {
+const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, loading, error } = useQuery(GET_RECYCLING_PARTNER, {
-    variables: { id: 1 },
-  })
+  const { data, error, loading } = useQuery(GET_RECYCLING_PARTNER)
 
   const {
-    t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
+    t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
 
@@ -42,7 +38,7 @@ const CompanyInfo: FC = () => {
 
   if (!user) {
     return null
-  } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
+  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
     console.log(user?.role, 'is not allowed to view this page')
     return <Unauthorized />
   }
@@ -51,12 +47,6 @@ const CompanyInfo: FC = () => {
     <PartnerPageLayout
       bottom={
         <Box>
-          <Box paddingBottom={6}>
-            <Breadcrumbs>
-              <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
-              <span>{t.title}</span>
-            </Breadcrumbs>
-          </Box>
           <Stack space={4}>
             <Stack space={4}>
               <Stack space={2}>
@@ -64,7 +54,7 @@ const CompanyInfo: FC = () => {
                 <Text variant="intro">{t.info}</Text>
               </Stack>
             </Stack>
-            <Text variant="h3">{t.subtitles.location}</Text>
+            <Text variant="h3">{t.subtitles.companies}</Text>
             {error || (loading && !data) ? (
               <Text>{t.empty}</Text>
             ) : (
@@ -74,20 +64,13 @@ const CompanyInfo: FC = () => {
                     key={index}
                     {...company}
                     buttons={
-                      <Box display="flex">
-                        <Box paddingX={2}>
-                          <Button variant="ghost" colorScheme="destructive">
-                            {t.buttons.delete}
-                          </Button>
-                        </Box>
-                        <Box paddingX={2}>
-                          <Button
-                            variant="ghost"
-                            onClick={() => handleEditLocation(company.id)}
-                          >
-                            {t.buttons.edit}
-                          </Button>
-                        </Box>
+                      <Box paddingX={2}>
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleEditLocation(company.id)}
+                        >
+                          {t.buttons.edit}
+                        </Button>
                       </Box>
                     }
                   />
@@ -100,17 +83,17 @@ const CompanyInfo: FC = () => {
       }
       left={
         <Sidenav
-          title="Company name"
+          title={sidenavText.title}
           sections={[
             {
               icon: 'car',
-              title: `${sidenavText.deregister}`,
-              link: `${routes.deregisterVehicle.baseRoute}`,
+              title: `${sidenavText.recycled}`,
+              link: `${routes.recycledVehicles}`,
             },
             {
               icon: 'business',
-              title: `${sidenavText.companyInfo}`,
-              link: `${routes.companyInfo.baseRoute}`,
+              title: `${sidenavText.companies}`,
+              link: `${routes.recyclingCompanies.baseRoute}`,
             },
           ]}
           activeSection={1}
@@ -120,4 +103,4 @@ const CompanyInfo: FC = () => {
   )
 }
 
-export default CompanyInfo
+export default RecyclingCompanies
