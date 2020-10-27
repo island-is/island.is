@@ -103,7 +103,7 @@ export const constructConclusion = (workingCase: Case) => {
         <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
           {` ${formatDate(workingCase.custodyEndDate, 'PPPp')}. `}
         </Text>
-        {workingCase.custodyRestrictions.length === 0 ? (
+        {workingCase.custodyRestrictions?.length === 0 ? (
           <Text as="span" variant="intro">
             Engar takmarkanir skulu vera á gæslunni.
           </Text>
@@ -111,7 +111,7 @@ export const constructConclusion = (workingCase: Case) => {
           <Text as="span" variant="intro">
             Kærði skal sæta
             <Text as="span" color="blue400" fontWeight="semiBold">
-              {workingCase.custodyRestrictions.map(
+              {workingCase.custodyRestrictions?.map(
                 (custodyRestriction, index) => {
                   const isNextLast =
                     index === workingCase.custodyRestrictions.length - 2

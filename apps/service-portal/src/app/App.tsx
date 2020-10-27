@@ -15,6 +15,7 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
 import { GlobalModules } from '../components/GlobalModules/GlobalModules'
+import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
 
 export const App = () => {
   return (
@@ -25,35 +26,38 @@ export const App = () => {
           reducer={store.reducer}
         >
           <LocaleProvider locale={defaultLanguage} messages={{}}>
-            <Router>
-              <Switch>
-                <Route
-                  exact
-                  path={ServicePortalPath.MinarSidurSignInOidc}
-                  component={OidcSignIn}
-                />
-                <Route
-                  exact
-                  path={ServicePortalPath.MinarSidurSilentSignInOidc}
-                  component={OidcSilentSignIn}
-                />
-                <Route>
-                  <Authenticator>
-                    <Layout>
-                      <Switch>
-                        <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                          <Dashboard />
-                        </Route>
-                        <Route>
-                          <Modules />
-                        </Route>
-                      </Switch>
-                      <GlobalModules />
-                    </Layout>
-                  </Authenticator>
-                </Route>
-              </Switch>
-            </Router>
+            <div>
+              <UserProfileLocale />
+              <Router>
+                <Switch>
+                  <Route
+                    exact
+                    path={ServicePortalPath.MinarSidurSignInOidc}
+                    component={OidcSignIn}
+                  />
+                  <Route
+                    exact
+                    path={ServicePortalPath.MinarSidurSilentSignInOidc}
+                    component={OidcSilentSignIn}
+                  />
+                  <Route>
+                    <Authenticator>
+                      <Layout>
+                        <Switch>
+                          <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                            <Dashboard />
+                          </Route>
+                          <Route>
+                            <Modules />
+                          </Route>
+                        </Switch>
+                        <GlobalModules />
+                      </Layout>
+                    </Authenticator>
+                  </Route>
+                </Switch>
+              </Router>
+            </div>
           </LocaleProvider>
         </StateProvider>
       </ApolloProvider>

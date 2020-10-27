@@ -1,10 +1,9 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { escapeGrid } from '@island.is/island-ui/utils'
 
 export const root = style({
-  // Escape grid
-  marginLeft: -theme.grid.gutter.mobile * 2,
-  marginRight: -theme.grid.gutter.mobile * 2,
+  ...escapeGrid(),
 })
 
 export const container = style({

@@ -102,8 +102,6 @@ export const RulingStepOne: React.FC = () => {
         requestedCustodyRestrictions:
           caseDraftJSON.requestedCustodyRestrictions ?? [],
         caseFacts: caseDraftJSON.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.investigationProgress ?? '',
         legalArguments: caseDraftJSON.legalArguments ?? '',
         comments: caseDraftJSON.comments ?? '',
         notifications: caseDraftJSON.Notification ?? [],
@@ -245,11 +243,23 @@ export const RulingStepOne: React.FC = () => {
                   : null
               }
               handleChange={(date) => {
+                const formattedDate = formatISO(date, {
+                  representation:
+                    workingCase.custodyEndDate?.indexOf('T') > -1
+                      ? 'complete'
+                      : 'date',
+                })
+
                 updateState(
                   workingCase,
                   'custodyEndDate',
-                  formatISO(date, { representation: 'date' }),
+                  formattedDate,
                   setWorkingCase,
+                )
+
+                api.saveCase(
+                  workingCase.id,
+                  parseString('custodyEndDate', formattedDate),
                 )
               }}
               required
@@ -277,18 +287,19 @@ export const RulingStepOne: React.FC = () => {
                   evt.target.value,
                   'time-format',
                 )
-                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                  const custodyEndDateMinutes = parseTime(
-                    workingCase.custodyEndDate,
-                    evt.target.value,
-                  )
+                const custodyEndDateMinutes = parseTime(
+                  workingCase.custodyEndDate,
+                  evt.target.value,
+                )
 
-                  updateState(
-                    workingCase,
-                    'custodyEndDate',
-                    custodyEndDateMinutes,
-                    setWorkingCase,
-                  )
+                updateState(
+                  workingCase,
+                  'custodyEndDate',
+                  custodyEndDateMinutes,
+                  setWorkingCase,
+                )
+
+                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
                   api.saveCase(
                     workingCase.id,
                     parseString('custodyEndDate', custodyEndDateMinutes),
