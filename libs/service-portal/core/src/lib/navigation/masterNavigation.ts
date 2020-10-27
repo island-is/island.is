@@ -65,6 +65,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Heilsa
+      {
+        name: defineMessage({
+          id: 'service.portal:health',
+          defaultMessage: 'Heilsa',
+        }),
+        path: ServicePortalPath.HeilsaRoot,
+        icon: {
+          type: 'outline',
+          icon: 'heart',
+        },
+      },
+
       // Eignir
       {
         name: defineMessage({
