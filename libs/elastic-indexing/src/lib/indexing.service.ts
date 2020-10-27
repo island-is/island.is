@@ -60,7 +60,7 @@ export class IndexingService {
     }
 
     const indexes = await this.elasticService
-      .getIndexFromAliases(`island-${locale}`)
+      .getIndexFromAliases(SearchIndexes[locale])
       .then((response) => response.map((index) => index.index))
     // If no index were found, then default to _all
     const index = indexes[0] ?? '_all'
