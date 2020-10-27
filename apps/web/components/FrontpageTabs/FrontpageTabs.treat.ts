@@ -34,17 +34,16 @@ export const tabPanelRow = style({
 })
 
 export const tabPanel = style({
-  position: 'relative',
-  width: '100%',
   opacity: 0,
   pointerEvents: 'none',
-  transition: `opacity 300ms ease 0ms`,
+  display: 'flex',
+  position: 'absolute',
 })
 
 export const tabPanelVisible = style({
+  position: 'relative',
   opacity: 1,
   outline: 0,
-  display: 'inline-block',
   pointerEvents: 'initial',
 })
 

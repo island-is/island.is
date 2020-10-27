@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
-import { useWindowSize } from 'react-use'
+import { useWindowSize, useEvent, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Text,
   Stack,
@@ -27,8 +27,7 @@ import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-const Illustration = dynamic(() => import('./illustrations/Illustration'))
-
+import Illustration from './illustrations/Illustration'
 import * as styles from './FrontpageTabs.treat'
 
 type TabsProps = {
@@ -73,7 +72,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 }) => {
   const contentRef = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
-  const itemsRef = useRef<Array<HTMLElement | null>>([])
+  const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
   const tab = useTabState({
@@ -128,29 +127,28 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   const onResize = useCallback(() => {
     setMinHeight(0)
-
     let height = 0
 
-    itemsRef.current.forEach((x) => {
-      if (x) {
+    itemRefs.current.forEach((item) => {
+      if (item) {
         height =
           width < theme.breakpoints.md
-            ? Math.min(height, x.offsetHeight)
-            : Math.max(height, x.offsetHeight)
+            ? Math.min(height, item.offsetHeight)
+            : Math.max(height, item.offsetHeight)
       }
     })
 
     setMinHeight(height)
-  }, [itemsRef, contentRef])
+  }, [width, itemRefs])
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setTimeout(onResize, 0)
-    window.addEventListener('resize', onResize, { passive: true })
+    window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [onResize])
 
-  useEffect(() => {
-    itemsRef.current.forEach((item) => {
+  useIsomorphicLayoutEffect(() => {
+    itemRefs.current.forEach((item) => {
       const spans = item.getElementsByClassName(styles.textItem)
 
       Array.prototype.forEach.call(spans, (span) => {
@@ -158,7 +156,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       })
     })
 
-    const el = itemsRef.current[selectedIndex]
+    const el = itemRefs.current[selectedIndex]
 
     if (el) {
       const spans = el.getElementsByClassName(styles.textItem)
@@ -208,6 +206,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                   <TabPanel
                     key={index}
                     {...tab}
+                    style={{
+                      display: 'block',
+                    }}
                     tabIndex={visible ? 0 : -1}
                     className={cn(styles.tabPanel, {
                       [styles.tabPanelVisible]: visible,
@@ -215,7 +216,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                   >
                     <Box
                       paddingY={3}
-                      ref={(el) => (itemsRef.current[index] = el)}
+                      ref={(el) => (itemRefs.current[index] = el)}
                       style={{ minHeight: `${minHeight}px` }}
                     >
                       <Stack space={3}>
