@@ -79,10 +79,16 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const handlePhoneStepSubmit = async (data: PhoneFormData) => {
     setTel(data.tel)
     try {
-      await createSmsVerification({
+      const response = await createSmsVerification({
         mobilePhoneNumber: data.tel,
       })
-      gotoStep('tel-confirm-form')
+      if (response.data?.createSmsVerification?.created) {
+        gotoStep('tel-confirm-form')
+      } else {
+        toast.error(
+          'Eitthvað fór úrskeiðis, ekki tókst að senda SMS í þetta símanúmer',
+        )
+      }
     } catch (err) {
       toast.error(
         'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
@@ -92,10 +98,14 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handlePhoneConfirmStepSubmit = async (data: PhoneConfirmFormData) => {
     try {
-      await confirmSmsVerification({
+      const response = await confirmSmsVerification({
         code: data.code,
       })
-      gotoStep('email-form')
+      if (response.data?.confirmSmsVerification?.confirmed) {
+        gotoStep('email-form')
+      } else {
+        toast.error('Rangur kóði')
+      }
     } catch (err) {
       toast.error('Rangur kóði')
       gotoStep('tel-form')
