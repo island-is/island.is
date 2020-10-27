@@ -76,10 +76,6 @@ export class ResourcesService {
   async findApiScopesByNameAsync(scopeNames: string[]): Promise<ApiScope[]> {
     this.logger.debug(`Finding api scopes for scope names`, scopeNames)
 
-    if (!scopeNames) {
-      throw new BadRequestException('ScopeNames must be provided')
-    }
-
     const whereOptions: WhereOptions = {
       name: {
         [Op.in]: scopeNames,
@@ -101,10 +97,6 @@ export class ResourcesService {
       apiResourceNames,
     )
 
-    if (!apiResourceNames) {
-      throw new BadRequestException('ApiResourceNames must be provided')
-    }
-
     const whereOptions: WhereOptions = {
       name: {
         [Op.in]: apiResourceNames,
@@ -125,10 +117,6 @@ export class ResourcesService {
       `Finding api resources for resource scope names`,
       apiResourceScopeNames,
     )
-
-    if (!apiResourceScopeNames) {
-      throw new BadRequestException('ApiResourceNames must be provided')
-    }
 
     const scopesWhereOptions: WhereOptions = {
       scopeName: {
