@@ -84,9 +84,9 @@ const MobileToolbar: FC<{}> = () => {
           title="Rafræn skjöl"
         />
       </Link>
-      <Link to={ServicePortalPath.UmsoknirRoot} onClick={handleLinkClick}>
+      <Link to={ServicePortalPath.UmsoknirKynning} onClick={handleLinkClick}>
         <MenuItem
-          active={pathname === ServicePortalPath.UmsoknirRoot}
+          active={pathname === ServicePortalPath.UmsoknirKynning}
           icon={{
             type: 'outline',
             icon: 'fileTrayFull',

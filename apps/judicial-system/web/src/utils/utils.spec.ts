@@ -87,6 +87,21 @@ ipsum`
       // Assert
       expect(d).toEqual('2020-10-24T13:37:00Z')
     })
+
+    test('should return the date given a valid date and an invalid time', () => {
+      // Arrange
+      const date = '2020-10-24T12:25:00Z'
+      const time = '99:00'
+      const time2 = ''
+
+      // Act
+      const d = parseTime(date, time)
+      const dd = parseTime(date, time2)
+
+      // Assert
+      expect(d).toEqual('2020-10-24')
+      expect(dd).toEqual('2020-10-24')
+    })
   })
 })
 
@@ -105,10 +120,60 @@ describe('Validation', () => {
     })
   })
 
+  describe('Validate time format', () => {
+    test('should fail if not in correct form', () => {
+      // Arrange
+      const time = '99:00'
+
+      // Act
+      const r = validate(time, 'time-format')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+  })
+
   describe('Validate national id format', () => {
     test('should fail if not in correct form', () => {
       // Arrange
       const nid = '999999-9999'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+
+    test('should be valid given just the first six digits', () => {
+      // Arrange
+      const nid = '010101'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+      expect(r.errorMessage).toEqual('')
+    })
+
+    test('should not be valid given an invalid day', () => {
+      // Arrange
+      const nid = '991201'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+
+    test('should not be valid given an invalid month', () => {
+      // Arrange
+      const nid = '019901'
 
       // Act
       const r = validate(nid, 'national-id')

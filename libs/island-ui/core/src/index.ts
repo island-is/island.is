@@ -6,22 +6,27 @@ export * from './lib/Toast/Toast'
 // Components
 export * from './lib/AsyncSearch/AsyncSearch'
 export * from './lib/Logo/Logo'
+export * from './lib/LoadingIcon/LoadingIcon'
 export * from './lib/Page/Page'
 export * from './lib/BulletList/BulletList'
 export * from './lib/VideoIframe/VideoIframe'
 export * from './lib/Tooltip/Tooltip'
-export * from './lib/LinkCard/LinkCard'
 export * from './lib/Tag/Tag'
 export * from './lib/ProgressMeter/ProgressMeter'
 export * from './lib/SkeletonLoader/SkeletonLoader'
 export * from './lib/Blockquote/Blockquote'
-export * from './lib/ProfileCard/ProfileCard'
 export * from './lib/Accordion/Accordion'
 export * from './lib/Accordion/AccordionItem/AccordionItem'
 export * from './lib/NewsletterSignup/NewsletterSignup'
 export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
+
+// Cards
+export * from './lib/LinkCard/LinkCard'
+export { ProfileCard } from './lib/ProfileCard/ProfileCard'
+export { ActionCard } from './lib/ActionCard/ActionCard'
+export { TopicCard } from './lib/TopicCard/TopicCard'
 
 // Core
 export { Button as ButtonDeprecated } from './lib/ButtonDeprecated/Button'
@@ -71,5 +76,5 @@ export * from './lib/Tabs/Tabs'
 // Context
 export * from './lib/context'
 
-// Util functions
-export * from './utils/global.treat'
+// Treat
+export * from './treat/global.treat'

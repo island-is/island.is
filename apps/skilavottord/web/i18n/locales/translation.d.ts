@@ -1,6 +1,6 @@
 // To parse this data:
 //
-//   import { Convert, Translation } from "./file";
+//   import { Convert, Translation } from ./file;
 //
 //   const translation = Convert.toTranslation(json);
 //
@@ -9,19 +9,37 @@
 
 export interface Translation {
   home: Home
+  header: Header
+  data: Data
   myCars: MyCars
   confirm: Confirm
   handover: Handover
   completed: Completed
   processes: Processes
-  companyOverview: CompanyOverview
-  companySidenav: CompanySidenav
+  deregisterOverview: DeregisterOverview
+  companyInfo: CompanyInfo
+  companyInfoForm: CompanyInfoFormPage
+  deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
+  unauthorized: Unauthorized
   routes: Routes
 }
 
 export interface Home {
   title: string
+}
+
+export interface Header {
+  logoutText: string
+}
+
+export interface Data {
+  title: string
+  subTitles: DataSubtitles
+  info: string
+  buttons: DataButtons
+  checkbox: string
+  error: Errors
 }
 
 export interface MyCars {
@@ -68,6 +86,7 @@ export interface Processes {
 export interface ProcessSections {
   title: string
   sections: string[]
+  completed: string
 }
 
 export interface CancelModal {
@@ -76,13 +95,21 @@ export interface CancelModal {
   buttons: ProcessButtons
 }
 
+export interface DataSubtitles {
+  info: string
+}
+
+export interface DataButtons {
+  continue: string
+}
+
 export interface MyCarsSubtitles {
   pending: string
   active: string
   done: string
 }
 
-export interface MyCarsSubtitles {
+export interface MyCarsInfo {
   noCarsAvailable: string
 }
 
@@ -159,16 +186,43 @@ export interface Errors {
   secondaryButton: string
 }
 
-export interface CompanyOverview {
+export interface DeregisterOverview {
   title: string
   info: string
-  subtitles: CompanyOverviewSubTitles
-  buttons: CompanyOverviewButtons
+  subtitles: DeregisterOverviewSubTitles
+  buttons: DeregisterOverviewButtons
   search: InputField
   table: string[]
+  success: string
 }
 
-export interface CompanySidenav {
+export interface CompanyInfo {
+  title: string
+  info: string
+  error: string
+  subtitles: CompanyInfoSubTitles
+  buttons: CompanyInfoButtons
+}
+
+export interface CompanyInfoFormPage {
+  addTitle: string
+  editTitle: string
+  form: CompanyInfoForm
+  buttons: CompanyInfoFormButtons
+  success: string
+}
+
+export interface CompanyInfoForm {
+  title: string
+  company: InputField
+  visitingAddress: InputField
+  postNumber: InputField
+  city: InputField
+  website: InputField
+  phoneNumber: InputField
+}
+
+export interface deregisterSidenav {
   deregister: string
   companyInfo: string
 }
@@ -176,6 +230,10 @@ export interface CompanySidenav {
 export interface DeregisterVehicle {
   select: DeregisterSelect
   deregister: Deregister
+}
+
+export interface Unauthorized {
+  message: string
 }
 
 export interface DeregisterSelect {
@@ -189,14 +247,25 @@ export interface Deregister {
   title: string
   info: string
   buttons: DeregisterButtons
+  success: string
 }
 
-export interface CompanyOverviewSubTitles {
+export interface DeregisterOverviewSubTitles {
   history: string
 }
 
-export interface CompanyOverviewButtons {
+export interface DeregisterOverviewButtons {
   deregister: string
+}
+
+export interface CompanyInfoSubTitles {
+  companyLocation: string
+}
+
+export interface DeregisterOverviewButtons {
+  add: string
+  delete: string
+  edit: string
 }
 
 export interface DeregisterSelectButtons {
@@ -212,13 +281,22 @@ export interface DeregisterButtons {
 export interface InputField {
   label: string
   placeholder: string
+  errors: InputErrors
 }
 
 export interface Routes {
-  home: string
+  home: HomeRoutes
+  data: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
+  companyInfo: CompanyInfoRoutes
+}
+
+export interface HomeRoutes {
+  citizen: string
+  recyclingPartner: string
+  recyclingFund: string
 }
 
 export interface RecycleVehicleRoutes {
@@ -232,6 +310,12 @@ export interface DeregisterVehicleRoutes {
   baseRoute: string
   select: string
   deregister: string
+}
+
+export interface CompanyInfoRoutes {
+  baseRoute: string
+  add: string
+  edit: string
 }
 
 // Converts JSON strings to/from your types
@@ -384,9 +468,4 @@ function m(additional: any) {
 
 function r(name: string) {
   return { ref: name }
-}
-
-const typeMap: any = {
-  Translation: o([{ json: 'home', js: 'home', typ: r('Home') }], false),
-  Home: o([{ json: 'title', js: 'title', typ: '' }], false),
 }

@@ -1,11 +1,22 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { Box, Button, Hidden, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Hidden,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { CarDetailsBox } from '../Confirm/components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { Unauthorized } from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
 
 const Confirm: FC = () => {
+  const { user } = useContext(UserContext)
   const {
     t: {
       deregisterVehicle: { deregister: t },
@@ -26,11 +37,18 @@ const Confirm: FC = () => {
   }
 
   const handleConfirm = () => {
-    router.replace(routes.baseRoute)
+    router.replace(routes.baseRoute).then(() => toast.success(t.success))
   }
 
   const handleBack = () => {
     router.replace(routes.select)
+  }
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
+    console.log(user?.role, 'is not allowed to view this page')
+    return <Unauthorized />
   }
 
   return (

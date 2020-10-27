@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useState, useEffect, useContext } from 'react'
+import React, { FC, useState, useContext } from 'react'
 import {
   Logo,
   Columns,
   Column,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   Hidden,
   ResponsiveSpace,
   GridContainer,
@@ -13,6 +13,7 @@ import {
   GridRow,
   ColorSchemeContext,
   FocusableBox,
+  ButtonTypes,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { SearchInput } from '../'
@@ -22,11 +23,15 @@ import ComboButton from './ComboButton'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
+  buttonColorScheme?: ButtonTypes['colorScheme']
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
+export const Header: FC<HeaderProps> = ({
+  showSearchInHeader = true,
+  buttonColorScheme = 'default',
+}) => {
   const { activeLocale, t } = useI18n()
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [sideMenuSearchFocus, setSideMenuSearchFocus] = useState(false)
@@ -130,20 +135,28 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     marginLeft={marginLeft}
                     borderRadius="large"
                   >
-                    <Button variant="menu" leftIcon="user" tabIndex={-1}>
+                    <Button
+                      colorScheme={buttonColorScheme}
+                      variant="utility"
+                      icon="person"
+                    >
                       {t.login}
                     </Button>
                   </FocusableBox>
                 </Hidden>
                 <Box marginLeft={marginLeft}>
-                  <LanguageToggler hideWhenMobile />
+                  <LanguageToggler
+                    buttonColorScheme={buttonColorScheme}
+                    hideWhenMobile
+                  />
                 </Box>
                 <Hidden below="md">
                   <Box marginLeft={marginLeft} position="relative">
                     <Button
-                      variant="menu"
+                      colorScheme={buttonColorScheme}
+                      variant="utility"
                       onClick={() => setSideMenuOpen(true)}
-                      leftIcon="burger"
+                      icon="menu"
                       aria-haspopup="true"
                       aria-controls="sideMenu"
                       id="sideMenuToggle"

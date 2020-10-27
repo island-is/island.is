@@ -153,8 +153,3 @@ export const plusIconXActive = style({
 export const plusIconY = style({
   fill: 'currentColor',
 })
-
-export const visibleContent = style({
-  // Offset text content by the wrap size + 1 unit of spacing
-  paddingRight: iconWrapSizes.default + theme.spacing[1],
-})

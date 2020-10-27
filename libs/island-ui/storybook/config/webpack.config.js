@@ -5,12 +5,13 @@ const TreatPlugin = require('treat/webpack-plugin')
 module.exports = async ({ config }) => {
   config.plugins.push(new TreatPlugin())
   config.resolve.extensions.push('.tsx', '.ts')
+  config.devtool = false
 
   config.module.rules.push(
     {
       test: /\.(ts|tsx)$/,
       exclude: [
-        path.resolve(__dirname, '../node_modules/'),
+        path.resolve(__dirname, '../../../../node_modules'),
         path.resolve(__dirname, '../../core/src/lib/IconRC/icons'),
       ],
       use: [
@@ -24,7 +25,7 @@ module.exports = async ({ config }) => {
     },
     {
       test: /\.stories\.(ts|tsx)$/,
-      exclude: path.resolve(__dirname, '../node_modules/'),
+      exclude: path.resolve(__dirname, '../../../../node_modules'),
       use: [
         {
           // needed for docs addon
@@ -40,6 +41,7 @@ module.exports = async ({ config }) => {
     alias: {
       ...config.resolve.alias,
       '@island.is/island-ui/theme': path.resolve(__dirname, '../../theme/src'),
+      '@island.is/island-ui/utils': path.resolve(__dirname, '../../utils/src'),
     },
   }
 

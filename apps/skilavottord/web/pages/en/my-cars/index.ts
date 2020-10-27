@@ -3,4 +3,4 @@ import { withLocale } from '@island.is/skilavottord-web/i18n'
 import { Overview } from '@island.is/skilavottord-web/screens/Overview'
 import { withAuth } from '@island.is/skilavottord-web/auth'
 
-export default withAuth(withLocale('en')(Overview as Screen))
+export default withAuth(withLocale('en')(Overview as Screen), 'citizen')

@@ -24,6 +24,7 @@ export interface DetentionRequest {
   created: string
   modified: string
   state: CaseState
+  custodyEndDate?: string
 }
 
 export interface Case {
@@ -43,8 +44,6 @@ export interface Case {
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
   caseFacts?: string
-  witnessAccounts?: string
-  investigationProgress?: string
   legalArguments?: string
   comments?: string
   notifications?: Notification[]
@@ -91,6 +90,10 @@ export interface CreateCaseRequest {
   policeCaseNumber: string
   accusedNationalId: string
   court: string
+  accusedName?: string
+  accusedAddress?: string
+  arrestDate?: string
+  requestedCourtDate?: string
 }
 
 export interface User {
