@@ -147,6 +147,7 @@ export const RenderForm: React.FC<{
         variant="blue"
         buttonText={submitButtonText}
         onChange={formik.handleChange}
+        onSubmit={formik.handleSubmit}
         value={formik.values.email}
         errorMessage={formatMessage(status.message)}
         state={status.type || 'default'}
