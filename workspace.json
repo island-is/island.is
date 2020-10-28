@@ -1123,7 +1123,8 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": ["apps/application-system/api/src/assets"]
+            "assets": ["apps/application-system/api/src/assets"],
+            "webpackConfig": "apps/application-system/api/webpack.config.js"
           },
           "configurations": {
             "production": {
