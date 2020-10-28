@@ -232,10 +232,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .lineGap(30)
     .text(`LÖKE málsnr. ${existingCase.policeCaseNumber}`, { align: 'center' })
     .text(
-      `Þinghald hófst þann frá kl. ${formatDate(
-        existingCase.courtStartTime,
-        'PPPp',
-      )}`,
+      `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}`,
       {
         lineGap: 6,
         paragraphGap: 14,
@@ -452,10 +449,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .lineGap(10)
     .text(' ')
     .text(
-      `Þinghaldi lauk þann frá kl. ${formatDate(
-        existingCase.courtEndTime,
-        'PPPp',
-      )}`,
+      `Þinghaldi lauk þann ${formatDate(existingCase.courtEndTime, 'PPPp')}`,
     )
     .end()
 
