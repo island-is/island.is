@@ -28,7 +28,7 @@ export class GdprResolver {
   @Query(() => [GdprModel])
   async getAllGdprs(): Promise<GdprModel[]> {
     const res = this.gdprService.findAll()
-    this.logger.debug('getAllGdrps responce:' + JSON.stringify(res, null, 2))
+    this.logger.info('getAllGdrps responce:' + JSON.stringify(res, null, 2))
     return res
   }
 }
