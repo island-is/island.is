@@ -1,23 +1,48 @@
 import React from 'react'
 import { ServiceDetail as ServiceDetails } from '../../components'
-import { ApiService } from '@island.is/api/schema'
-import { GridContainer } from '@island.is/island-ui/core'
+import { Query, QueryGetApiServiceByIdArgs } from '@island.is/api/schema'
+import { GridContainer, LoadingIcon } from '@island.is/island-ui/core'
 import { Page } from '../../services/contentful.types'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
+import { useQuery } from 'react-apollo'
+import { GET_API_SERVICE_QUERY } from '../Queries'
 
 export interface ServiceDetailProps {
-  service: ApiService
+  serviceId: string
   filterStrings: Page
 }
 
-export function ServiceDetail({ service, filterStrings }: ServiceDetailProps) {
+export function ServiceDetail({
+  serviceId,
+  filterStrings,
+}: ServiceDetailProps) {
+  // prettier-ignore
+  const { data, loading, error } = useQuery<Query, QueryGetApiServiceByIdArgs>(GET_API_SERVICE_QUERY, {
+    variables: {
+      input: {
+        id: serviceId,
+      },
+    },
+  })
+
   return (
     <GridContainer>
-      {service?.name == null ? (
-        <div className={cn(styles.errorContainer)}>Þjónusta fannst ekki</div>
-      ) : (
-        <ServiceDetails service={service} strings={filterStrings.strings} />
+      {loading && (
+        <div className={cn(styles.messageContainer)}>
+          <LoadingIcon animate color="blue400" size={32} />
+        </div>
+      )}
+
+      {error && (
+        <div className={cn(styles.messageContainer)}>Þjónusta fannst ekki</div>
+      )}
+
+      {data?.getApiServiceById?.name && (
+        <ServiceDetails
+          service={data.getApiServiceById}
+          strings={filterStrings.strings}
+        />
       )}
     </GridContainer>
   )
