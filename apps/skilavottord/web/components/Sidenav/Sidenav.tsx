@@ -22,7 +22,7 @@ interface SidenavProps {
 
 type SidenavIcon = 'car' | 'business'
 
-const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
+export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
   <Box background="purple100" padding={4} borderRadius="large">
     <Stack space={3}>
       <Text variant="h4">{title}</Text>

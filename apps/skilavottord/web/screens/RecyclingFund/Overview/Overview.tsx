@@ -1,9 +1,8 @@
 import React, { FC, useContext } from 'react'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import CarsTable from './components/CarsTable'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
+import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
@@ -22,20 +21,7 @@ const Overview: FC = () => {
 
   return (
     <PartnerPageLayout
-      top={
-        <Box>
-          <Stack space={6}>
-            <Stack space={4}>
-              <Stack space={2}>
-                <Text variant="h1">{t.title}</Text>
-              </Stack>
-            </Stack>
-            <Text variant="h3">{t.subtitles.deregistered}</Text>
-          </Stack>
-        </Box>
-      }
-      bottom={<CarsTable />}
-      left={
+      side={
         <Sidenav
           title={sidenavText.title}
           sections={[
@@ -53,7 +39,13 @@ const Overview: FC = () => {
           activeSection={0}
         />
       }
-    />
+    >
+      <Stack space={4}>
+        <Text variant="h1">{t.title}</Text>
+        <Text variant="h3">{t.subtitles.deregistered}</Text>
+        <CarsTable titles={t.table} />
+      </Stack>
+    </PartnerPageLayout>
   )
 }
 
