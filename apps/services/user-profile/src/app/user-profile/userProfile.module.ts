@@ -4,28 +4,11 @@ import { BullModule as NestBullModule } from '@nestjs/bull'
 import { UserProfileController } from './userProfile.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
-import { UploadProcessor } from './upload.processor'
 import { FileStorageService } from '@island.is/file-storage'
 
-let BullModule: DynamicModule
-
-if (process.env.INIT_SCHEMA === 'true') {
-  BullModule = NestBullModule.registerQueueAsync()
-} else {
-  BullModule = NestBullModule.registerQueueAsync({
-    name: 'upload',
-    useFactory: () => ({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
-  })
-}
-
 @Module({
-  imports: [SequelizeModule.forFeature([UserProfile]), BullModule],
+  imports: [SequelizeModule.forFeature([UserProfile])],
   controllers: [UserProfileController],
-  providers: [UserProfileService, UploadProcessor, FileStorageService],
+  providers: [UserProfileService, FileStorageService],
 })
 export class UserProfileModule {}
