@@ -199,6 +199,7 @@ jobs:
 
   docker-build:
     needs:
+      - pre-checks
       - prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 35
@@ -297,6 +298,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - retag-unaffected
+      - pre-checks
       - prepare
     env:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
