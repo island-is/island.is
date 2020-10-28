@@ -6,7 +6,6 @@ import {
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import {
-  TIME_FORMAT,
   capitalize,
   formatDate,
   formatLawsBroken,
@@ -18,14 +17,14 @@ import { environment } from '../../../environments'
 import { Case } from './models'
 
 function size(size: number): number {
-  return 0.75 * size
+  return size
 }
 
 function formatCourtCaseNumber(existingCase: Case): string {
   return `Málsnúmer ${existingCase.court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',
-  )}: ${existingCase.courtCaseNumber}`
+  )} ${existingCase.courtCaseNumber}`
 }
 
 function formatConclusion(existingCase: Case): string {
@@ -36,37 +35,44 @@ function formatConclusion(existingCase: Case): string {
       } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
         existingCase.custodyEndDate,
         'PPPp',
-      )}. ${
-        existingCase.custodyRestrictions?.length > 0
-          ? `Kærði skal sæta ${existingCase.custodyRestrictions.map(
-              (custodyRestriction, index) => {
-                const isNextLast =
-                  index === existingCase.custodyRestrictions.length - 2
-                const isLast =
-                  index === existingCase.custodyRestrictions.length - 1
-                const isOnly = existingCase.custodyRestrictions.length === 1
-
-                return custodyRestriction === CaseCustodyRestrictions.ISOLATION
-                  ? `einangrun${
-                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
-                    }`
-                  : custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
-                  ? `bréfa, og símabanni${
-                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
-                    }`
-                  : custodyRestriction === CaseCustodyRestrictions.MEDIA
-                  ? `fjölmiðlabanni${
-                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
-                    }`
-                  : custodyRestriction === CaseCustodyRestrictions.VISITAION
-                  ? `fjölmiðlabanni${
-                      isLast ? '' : isNextLast && !isOnly ? ' og' : ', '
-                    }`
-                  : ''
-              },
-            )}á meðan á gæsluvarðhaldinu stendur.`
-          : 'Engar takmarkanir skulu vera á gæslunni.'
+      )}.${
+        existingCase.custodyRestrictions?.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        )
+          ? ' Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
+          : ''
       }`
+}
+
+function formatRestrictions(existingCase: Case): string {
+  const restrictions = existingCase.custodyRestrictions?.filter(
+    (custodyRestriction) =>
+      custodyRestriction !== CaseCustodyRestrictions.ISOLATION,
+  )
+
+  return `Sækjandi tekur fram að ${
+    restrictions?.length > 0
+      ? `kærði skuli sæta ${restrictions.map((custodyRestriction, index) => {
+          const isNextLast = index === restrictions.length - 2
+          const isLast = index === restrictions.length - 1
+          const isOnly = restrictions.length === 1
+
+          return custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
+            ? `bréfa, og símabanni${
+                isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+              }`
+            : custodyRestriction === CaseCustodyRestrictions.MEDIA
+            ? `fjölmiðlabanni${
+                isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+              }`
+            : custodyRestriction === CaseCustodyRestrictions.VISITAION
+            ? `heimsóknarbanni${
+                isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+              }`
+            : ''
+        })}á meðan á gæsluvarðhaldinu stendur.`
+      : 'gæsluvarðhaldið sé án takmarkana.'
+  }`
 }
 
 function formatAppeal(appealDecision: CaseAppealDecision, stakeholder: string) {
@@ -88,6 +94,12 @@ export function writeFile(fileName: string, documentContent: string) {
 export async function generateRequestPdf(existingCase: Case): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
+    margins: {
+      top: 40,
+      bottom: 40,
+      left: 50,
+      right: 50,
+    },
   })
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
@@ -200,44 +212,35 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
 export async function generateRulingPdf(existingCase: Case): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
+    margins: {
+      top: 40,
+      bottom: 40,
+      left: 50,
+      right: 50,
+    },
   })
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
     .font('Helvetica-Bold')
     .fontSize(size(26))
     .lineGap(8)
-    .text('Úrskurður um gæsluvarðhald')
+    .text('Þingbók', { align: 'center' })
     .font('Helvetica')
-    .fontSize(size(16))
-    .text(formatCourtCaseNumber(existingCase))
-    .lineGap(40)
-    .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`)
-    .font('Helvetica-Bold')
     .fontSize(size(18))
-    .lineGap(8)
-    .text('Þingbók')
-    .font('Helvetica')
+    .text(formatCourtCaseNumber(existingCase), { align: 'center' })
     .fontSize(size(12))
-    .lineGap(16)
+    .lineGap(30)
+    .text(`LÖKE málsnr. ${existingCase.policeCaseNumber}`, { align: 'center' })
     .text(
-      `Þinghald frá kl. ${formatDate(
+      `Þinghald hófst þann frá kl. ${formatDate(
         existingCase.courtStartTime,
-        TIME_FORMAT,
-      )} til kl. ${formatDate(
-        existingCase.courtEndTime,
-        TIME_FORMAT,
-      )} ${formatDate(existingCase.courtStartTime, 'PPP')}.`,
+        'PPPp',
+      )}`,
+      {
+        lineGap: 6,
+        paragraphGap: 14,
+      },
     )
-    .font('Helvetica-Bold')
-    .fontSize(size(14))
-    .lineGap(8)
-    .text('Krafa lögreglu')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .text(existingCase.policeDemands, {
-      lineGap: 6,
-      paragraphGap: 10,
-    })
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
@@ -247,17 +250,30 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .text(existingCase.courtAttendees, {
       lineGap: 6,
     })
-    .lineGap(0)
+    .lineGap(4)
     .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(size(14))
+    .lineGap(8)
+    .text('Krafa lögreglu')
+    .font('Helvetica')
+    .fontSize(size(12))
+    .text(existingCase.policeDemands, {
+      lineGap: 6,
+      paragraphGap: 14,
+    })
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
     .text('Dómskjöl')
     .font('Helvetica')
     .fontSize(size(12))
-    .lineGap(16)
     .text(
       'Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.',
+      {
+        lineGap: 6,
+        paragraphGap: 14,
+      },
     )
     .font('Helvetica-Bold')
     .fontSize(size(14))
@@ -269,7 +285,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       'Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
       {
         lineGap: 6,
-        paragraphGap: 10,
+        paragraphGap: 14,
       },
     )
     .font('Helvetica-Bold')
@@ -280,7 +296,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(size(12))
     .text(existingCase.accusedPlea, {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 14,
     })
     .font('Helvetica-Bold')
     .fontSize(size(14))
@@ -290,33 +306,76 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(size(12))
     .text(existingCase.litigationPresentations, {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 14,
+    })
+    .lineGap(40)
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(size(26))
+    .lineGap(16)
+    .text('Úrskurður', { align: 'center' })
+    .fontSize(size(14))
+    .lineGap(8)
+    .text('Krafa lögreglu')
+    .font('Helvetica')
+    .fontSize(size(12))
+    .text(existingCase.policeDemands, {
+      lineGap: 6,
+      paragraphGap: 14,
     })
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
-    .text('Úrskurður')
+    .text('Málsatvik')
+    .font('Helvetica')
+    .fontSize(size(12))
+    .text(existingCase.caseFacts, {
+      lineGap: 6,
+      paragraphGap: 14,
+    })
+    .font('Helvetica-Bold')
+    .fontSize(size(14))
+    .lineGap(8)
+    .text('Lagarök')
+    .font('Helvetica')
+    .fontSize(size(12))
+    .text(existingCase.legalArguments, {
+      lineGap: 6,
+      paragraphGap: 14,
+    })
+    .font('Helvetica-Bold')
+    .fontSize(size(14))
+    .lineGap(8)
+    .text('Niðurstaða')
     .font('Helvetica')
     .fontSize(size(12))
     .text(existingCase.ruling, {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 14,
     })
+    .lineGap(40)
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
-    .text('Úrskurðarorð')
+    .text('Úrskurðarorð', { align: 'center' })
     .font('Helvetica')
     .fontSize(size(12))
     .text(formatConclusion(existingCase), {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 14,
     })
+    .font('Helvetica-Bold')
+    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`, {
+      align: 'center',
+      paragraphGap: 14,
+    })
+    .font('Helvetica')
     .text(
       'Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða, verjanda hans, túlki og aðstoðarsaksóknara.',
       {
         lineGap: 6,
-        paragraphGap: 10,
+        paragraphGap: 14,
       },
     )
     .font('Helvetica-Bold')
@@ -326,7 +385,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .font('Helvetica')
     .fontSize(size(12))
     .text(
-      'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa. Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+      'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
       {
         lineGap: 6,
         paragraphGap: 4,
@@ -337,7 +396,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'), {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 14,
     })
 
   if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
@@ -350,7 +409,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .fontSize(size(12))
       .text(existingCase.accusedAppealAnnouncement, {
         lineGap: 6,
-        paragraphGap: 10,
+        paragraphGap: 14,
       })
   }
 
@@ -364,13 +423,40 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .fontSize(size(12))
       .text(existingCase.prosecutorAppealAnnouncement, {
         lineGap: 6,
-        paragraphGap: 10,
+        paragraphGap: 14,
       })
   }
 
+  if (!existingCase.rejecting) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(size(14))
+      .lineGap(8)
+      .text('Tilhögun gæsluvarðhalds')
+      .font('Helvetica')
+      .fontSize(size(12))
+      .text(formatRestrictions(existingCase), {
+        lineGap: 6,
+        paragraphGap: 14,
+      })
+      .text(
+        'Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
+        {
+          lineGap: 6,
+          paragraphGap: 14,
+        },
+      )
+  }
+
   doc
-    .font('Helvetica-Bold')
-    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`)
+    .lineGap(10)
+    .text(' ')
+    .text(
+      `Þinghaldi lauk þann frá kl. ${formatDate(
+        existingCase.courtEndTime,
+        'PPPp',
+      )}`,
+    )
     .end()
 
   // wait for the writing to finish
