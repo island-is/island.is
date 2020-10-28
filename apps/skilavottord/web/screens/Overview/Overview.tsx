@@ -10,10 +10,7 @@ import { useRouter } from 'next/router'
 import { MockCar } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import {
-  Unauthorized,
-  InlineError,
-} from '@island.is/skilavottord-web/components'
+import { NotFound, InlineError } from '@island.is/skilavottord-web/components'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -54,8 +51,7 @@ const Overview: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (

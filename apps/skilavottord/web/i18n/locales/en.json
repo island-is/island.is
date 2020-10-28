@@ -111,12 +111,18 @@
   "processes": {
     "citizen": {
       "title": "Recycle car",
-      "sections": ["Confirm car for recycling", "Handover car to recycle"],
+      "sections": [
+        "Confirm car for recycling",
+        "Handover car to recycle"
+      ],
       "completed": "Completed"
     },
     "company": {
       "title": "Deregister car",
-      "sections": ["Select car", "Deregister car"]
+      "sections": [
+        "Select car",
+        "Deregister car"
+      ]
     }
   },
   "deregisterOverview": {
@@ -132,7 +138,14 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+    "table": [
+      "Reg nr",
+      "Brand",
+      "Model",
+      "Year",
+      "User",
+      "Deregistered"
+    ]
   },
   "companyInfo": {
     "title": "Company information",
@@ -227,7 +240,14 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
+    "table": [
+      "Reg nr",
+      "Brand",
+      "Model",
+      "Year",
+      "Company",
+      "Deregistered"
+    ]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",
@@ -250,8 +270,10 @@
       "edit": "Edit"
     }
   },
-  "unauthorized": {
-    "message": "You are not allowed to view this page"
+  "notFound": {
+    "title": "Resource could not be found",
+    "content": "Something went wrong, please try again",
+    "button": "Back"
   },
   "routes": {
     "home": {
