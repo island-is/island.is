@@ -57,10 +57,10 @@ export function DocumentDTOFromJSONTyped(
     return json
   }
   return {
-    fileType: !exists(json, 'fileType') ? undefined : json['fileType'],
-    content: !exists(json, 'content') ? undefined : json['content'],
-    htmlContent: !exists(json, 'htmlContent') ? undefined : json['htmlContent'],
-    url: !exists(json, 'url') ? undefined : json['url'],
+    fileType: !exists(json, 'fileType') ? '' : json['fileType'],
+    content: !exists(json, 'content') ? '' : json['content'],
+    htmlContent: !exists(json, 'htmlContent') ? '' : json['htmlContent'],
+    url: !exists(json, 'url') ? '' : json['url'],
   }
 }
 
