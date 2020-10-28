@@ -250,8 +250,17 @@
       "edit": "Edit"
     }
   },
-  "unauthorized": {
-    "message": "You are not allowed to view this page"
+  "notFound": {
+    "title": "Resource could not be found",
+    "content": "Something went wrong, please try again",
+    "button": "Back"
+  },
+  "errorBoundary": {
+    "title": "An error occurred",
+    "contents": [
+      "Something went wrong.",
+      "Please <a href='https://island.is/um-island-is/hafa-samband/'>contact</a> for further help"
+    ]
   },
   "routes": {
     "home": {
