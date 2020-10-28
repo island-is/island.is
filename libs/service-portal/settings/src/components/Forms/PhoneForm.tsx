@@ -10,7 +10,7 @@ export interface PhoneFormData {
 interface PhoneConfirmationFormData {
   code: string
 }
-export interface PhoneFormInternalStep {
+export interface PhoneFormInternalState {
   step: 'phone' | 'confirmation'
   tel: string
 }
@@ -20,7 +20,7 @@ interface Props {
   natReg: string
   renderBackButton?: () => JSX.Element
   renderSubmitButton?: () => JSX.Element
-  onInternalStateChange?: (step: PhoneFormInternalStep) => void
+  onInternalStateChange?: (state: PhoneFormInternalState) => void
   onSubmit: (data: PhoneFormData) => void
 }
 
@@ -34,7 +34,7 @@ export const PhoneForm: FC<Props> = ({
 }) => {
   const { handleSubmit, control, errors, reset } = useForm()
   const { createSmsVerification, confirmSmsVerification } = useVerifySms(natReg)
-  const [internalState, setInternalState] = useState<PhoneFormInternalStep>({
+  const [internalState, setInternalState] = useState<PhoneFormInternalState>({
     tel,
     step: 'phone',
   })

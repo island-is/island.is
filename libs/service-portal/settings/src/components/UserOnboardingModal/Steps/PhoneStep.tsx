@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import {
   PhoneForm,
   PhoneFormData,
-  PhoneFormInternalStep,
+  PhoneFormInternalState,
 } from '../../Forms/PhoneForm'
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
   const { formatMessage } = useLocale()
-  const [formState, setFormState] = useState<PhoneFormInternalStep>({
+  const [formState, setFormState] = useState<PhoneFormInternalState>({
     tel,
     step: 'phone',
   })

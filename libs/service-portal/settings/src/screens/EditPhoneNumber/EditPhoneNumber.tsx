@@ -18,7 +18,10 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
-import { PhoneForm } from '../../components/Forms/PhoneForm'
+import {
+  PhoneForm,
+  PhoneFormInternalState,
+} from '../../components/Forms/PhoneForm'
 
 interface PhoneFormData {
   tel: string
@@ -26,6 +29,10 @@ interface PhoneFormData {
 
 export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   const [tel, setTel] = useState('')
+  const [formState, setFormState] = useState<PhoneFormInternalState>({
+    step: 'phone',
+    tel: '',
+  })
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
@@ -36,8 +43,10 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
 
   useEffect(() => {
     if (!userProfile) return
-    if (userProfile.mobilePhoneNumber.length > 0)
+    if (userProfile.mobilePhoneNumber.length > 0) {
       setTel(userProfile.mobilePhoneNumber)
+      setFormState({ step: 'phone', tel: userProfile.mobilePhoneNumber })
+    }
   }, [userProfile])
 
   const submitFormData = async (formData: PhoneFormData) => {
@@ -92,6 +101,8 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <PhoneForm
         tel={tel}
+        natReg={userInfo.profile.natreg}
+        onInternalStateChange={(state) => setFormState(state)}
         renderBackButton={() => (
           <Link to={ServicePortalPath.UserProfileRoot}>
             <Button variant="ghost">
@@ -104,10 +115,15 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         )}
         renderSubmitButton={() => (
           <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage({
-              id: 'sp.settings:save-changes',
-              defaultMessage: 'Vista breytingar',
-            })}
+            {formState.step === 'phone'
+              ? formatMessage({
+                  id: 'sp.settings:confirm-code',
+                  defaultMessage: 'Senda staðfestingarkóða',
+                })
+              : formatMessage({
+                  id: 'sp.settings:save-changes',
+                  defaultMessage: 'Vista breytingar',
+                })}
           </Button>
         )}
         onSubmit={handleSubmit}
@@ -116,7 +132,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
         <Box marginTop={[5, 7, 15]}>
           {status === 'success' && (
             <AlertMessage
-              type="success"
+              type="info"
               title="Nýtt símanúmer hefur verið vistað"
               message="Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland"
             />
