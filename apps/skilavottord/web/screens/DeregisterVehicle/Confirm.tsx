@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import {
   Box,
@@ -11,8 +11,12 @@ import {
 import { CarDetailsBox } from '../Confirm/components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const Confirm: FC = () => {
+  const { user } = useContext(UserContext)
   const {
     t: {
       deregisterVehicle: { deregister: t },
@@ -38,6 +42,12 @@ const Confirm: FC = () => {
 
   const handleBack = () => {
     router.replace(routes.select)
+  }
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
+    return <NotFound />
   }
 
   return (

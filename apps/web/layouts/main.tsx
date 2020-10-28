@@ -46,7 +46,8 @@ export interface LayoutProps {
   hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
-  footerUpperMenu?: FooterLinkProps[]
+  footerUpperInfo?: FooterLinkProps[]
+  footerUpperContact?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
@@ -81,7 +82,8 @@ const Layout: NextComponentType<
   hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
-  footerUpperMenu,
+  footerUpperInfo,
+  footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
@@ -207,7 +209,8 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Footer
-            topLinks={footerUpperMenu}
+            topLinks={footerUpperInfo}
+            topLinksContact={footerUpperContact}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
             bottomLinksTitle={t.siteExternalTitle}
@@ -282,7 +285,8 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     categories,
     topMenuCustomLinks,
     alertBanner,
-    upperMenu,
+    upperMenuInfo,
+    upperMenuContact,
     lowerMenu,
     middleMenu,
     tagsMenu,
@@ -318,7 +322,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer upper', lang },
+          input: { name: 'Footer upper info', lang },
+        },
+      })
+      .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetMenuQuery, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer upper contact', lang },
         },
       })
       .then((res) => res.data.getMenu),
@@ -371,7 +383,11 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       }),
     ),
     alertBannerContent: alertBanner,
-    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
+    footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerUpperContact: (upperMenuContact.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),

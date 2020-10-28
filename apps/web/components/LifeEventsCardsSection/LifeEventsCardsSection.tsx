@@ -26,9 +26,9 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
-  const renderLifeEventCard = (lifeEvent, i) => (
+  const renderLifeEventCard = (lifeEvent, key) => (
     <Card
-      key={i}
+      key={key}
       title={lifeEvent.title}
       description={lifeEvent.intro}
       href={makePath('lifeEvent', '[slug]')}
@@ -40,14 +40,14 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   const renderDesktopView = (lifeEvents) =>
     lifeEvents
       .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
-      .map((lifeEvent, i) => (
+      .map((lifeEvent, index) => (
         <GridColumn
-          key={i}
+          key={index}
           hiddenBelow="md"
           span={['12/12', '6/12', '6/12', '6/12', '4/12']}
           paddingBottom={3}
         >
-          {renderLifeEventCard(lifeEvent, i)}
+          {renderLifeEventCard(lifeEvent, index)}
         </GridColumn>
       ))
 

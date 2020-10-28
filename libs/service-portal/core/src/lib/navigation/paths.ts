@@ -13,7 +13,8 @@ export enum ServicePortalPath {
   StillingarRoot = '/stillingar',
   StillingarUmbod = '/min-rettindi',
   // Fjolskyldan
-  FjolskyldanRoot = '/fjolskyldan',
+  FamilyRoot = '/fjolskyldan',
+  FamilyMember = '/fjolskyldan/:nationalId',
   MinGognRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   // Fjarmal
@@ -31,7 +32,7 @@ export enum ServicePortalPath {
   // Eignir
   EignirRoot = '/eignir',
   // Skilabod
-  SkilabodRoot = '/skilabod',
+  MessagesRoot = '/skilabod',
 
   // User Profile
   UserProfileRoot = '/stillingar/minn-adgangur',

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -8,8 +8,12 @@ import * as styles from './Handover.treat'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import CompanyList from './components/CompanyList'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const Handover: FC = () => {
+  const { user } = useContext(UserContext)
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -34,6 +38,12 @@ const Handover: FC = () => {
 
   const onCancel = () => {
     setModal(true)
+  }
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
+    return <NotFound />
   }
 
   return (

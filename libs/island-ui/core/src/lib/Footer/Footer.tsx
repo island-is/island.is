@@ -2,6 +2,7 @@
 import React from 'react'
 import chunk from 'lodash/chunk'
 
+import { Divider } from '../Divider/Divider'
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'
@@ -15,6 +16,7 @@ import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { Link } from '../Link/Link'
 
 import * as styles from './Footer.treat'
+import { Button } from '../Button/Button'
 
 export interface FooterLinkProps {
   title: string
@@ -24,6 +26,7 @@ export interface FooterLinkProps {
 
 interface FooterProps {
   topLinks?: FooterLinkProps[]
+  topLinksContact?: FooterLinkProps[]
   bottomLinks?: FooterLinkProps[]
   middleLinks?: FooterLinkProps[]
   tagLinks?: FooterLinkProps[]
@@ -39,7 +42,8 @@ interface FooterProps {
 }
 
 export const Footer = ({
-  topLinks = defaultTopLinks,
+  topLinks = defaultTopLinksInfo,
+  topLinksContact = defaultTopLinksContact,
   bottomLinks = defaultBottomLinks,
   middleLinks = defaultBottomLinks,
   tagLinks = defaultBottomLinks,
@@ -65,7 +69,7 @@ export const Footer = ({
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '3/12']}
-              paddingBottom={[4, 4, 0]}
+              paddingBottom={[4, 2, 0, 0]}
               className={styles.withDecorator}
             >
               <Box paddingRight={[0, 0, 1]}>
@@ -75,7 +79,8 @@ export const Footer = ({
                     <Text
                       key={index}
                       variant="intro"
-                      paddingBottom={isLast ? 5 : 2}
+                      paddingBottom={isLast ? 4 : 2}
+                      color={'blue600'}
                     >
                       <Link href={href} color="blue600" underline="normal">
                         {title}
@@ -83,44 +88,70 @@ export const Footer = ({
                     </Text>
                   )
                 })}
-                {!hideLanguageSwith && (
-                  <Box paddingBottom={2}>
+                <Box display="flex" flexDirection={'column'} paddingBottom={4}>
+                  {topLinksContact.map(({ title, href }, index) => {
+                    const isLast = index + 1 === topLinksContact.length
+                    const isInternalLink = href.indexOf('/') === 0
+                    return (
+                      <Box marginBottom={isLast ? 0 : 3}>
+                        <Link href={href}>
+                          <Button
+                            colorScheme="default"
+                            icon={isInternalLink ? 'arrowForward' : undefined}
+                            iconType={isInternalLink ? 'filled' : undefined}
+                            size="default"
+                            type="button"
+                            variant="text"
+                          >
+                            {title}
+                          </Button>
+                        </Link>
+                      </Box>
+                    )
+                  })}
+                </Box>
+                <Divider />
+                <Box
+                  paddingTop={4}
+                  display="flex"
+                  flexDirection="row"
+                  flexWrap="wrap"
+                >
+                  {!hideLanguageSwith && (
+                    <Box marginRight={3}>
+                      <Inline space={1} alignY="center">
+                        <Icon
+                          height="15"
+                          width="15"
+                          type="globe"
+                          color="blue400"
+                        />
+                        <Text variant="h5" color="blue600" fontWeight="light">
+                          <Link
+                            href={languageSwitchLink.href}
+                            onClick={languageSwitchOnClick}
+                          >
+                            {languageSwitchLink.title}
+                          </Link>
+                        </Text>
+                      </Inline>
+                    </Box>
+                  )}
+                  <Box>
                     <Inline space={1} alignY="center">
                       <Icon
                         height="15"
                         width="15"
-                        type="globe"
+                        type="facebook"
                         color="blue400"
                       />
-                      <Text variant="h5" fontWeight="light">
-                        <Link
-                          color="blue400"
-                          href={languageSwitchLink.href}
-                          onClick={languageSwitchOnClick}
-                        >
-                          {languageSwitchLink.title}
+                      <Text variant="h5" color="blue600" fontWeight="light">
+                        <Link href="https://www.facebook.com/islandid">
+                          Facebook
                         </Link>
                       </Text>
                     </Inline>
                   </Box>
-                )}
-                <Box paddingBottom={2}>
-                  <Inline space={1} alignY="center">
-                    <Icon
-                      height="15"
-                      width="15"
-                      type="facebook"
-                      color="blue400"
-                    />
-                    <Text variant="h5" fontWeight="light">
-                      <Link
-                        color="blue400"
-                        href="https://www.facebook.com/islandid"
-                      >
-                        Facebook
-                      </Link>
-                    </Text>
-                  </Inline>
                 </Box>
               </Box>
             </GridColumn>
@@ -140,7 +171,12 @@ export const Footer = ({
                   <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
                     {middleLinks.map(({ title, href }, index) => {
                       return (
-                        <Text key={index} variant="h5" fontWeight="light">
+                        <Text
+                          key={index}
+                          variant="h5"
+                          color="blue600"
+                          fontWeight="light"
+                        >
                           <Link href={href} color="blue400" underline="normal">
                             {title}
                           </Link>
@@ -212,7 +248,7 @@ export const Footer = ({
   )
 }
 
-const defaultTopLinks = [
+const defaultTopLinksInfo = [
   {
     title: 'Um Stafrænt Ísland',
     href: 'https://stafraent.island.is/',
@@ -222,8 +258,19 @@ const defaultTopLinks = [
     href: '/stofnanir',
   },
   {
+    title: 'Vörur og þjónusta Ísland.is',
+    href: 'https://island.is/flokkur/vorur-og-thjonusta-island-is',
+  },
+]
+
+const defaultTopLinksContact = [
+  {
     title: 'Hafa samband',
-    href: 'https://island.is/um-island-is/hafa-samband/',
+    href: '/um-island-is/hafa-samband',
+  },
+  {
+    title: 'Sími: 426 5500',
+    href: 'tel: +3544265500',
   },
 ]
 
@@ -234,39 +281,39 @@ const defaultLanguageSwitchLink = {
 
 const defaultBottomLinks = [
   {
-    href: 'https://minarsidur.island.is/',
     title: 'Mínar síður',
+    href: 'https://minarsidur.island.is/',
   },
   {
-    href: 'https://www.heilsuvera.is/',
     title: 'Heilsuvera',
+    href: 'https://www.heilsuvera.is/',
   },
   {
-    href: 'https://opinbernyskopun.island.is/',
     title: 'Opinber nýsköpun',
+    href: 'https://opinbernyskopun.island.is/',
   },
   {
-    href: 'https://samradsgatt.island.is/',
     title: 'Samráðsgátt',
+    href: 'https://samradsgatt.island.is/',
   },
   {
-    href: 'https://island.is/mannanofn/',
     title: 'Mannanöfn',
+    href: 'https://island.is/mannanofn/',
   },
   {
-    href: 'http://vefur.island.is/undirskriftalistar',
     title: 'Undirskriftarlistar',
+    href: 'http://vefur.island.is/undirskriftalistar',
   },
   {
-    href: 'https://island.is/um-island-is/algengar-spurningar/',
     title: 'Algengar spurningar',
+    href: 'https://island.is/um-island-is/algengar-spurningar/',
   },
   {
-    href: 'http://www.opnirreikningar.is/',
     title: 'Opnir reikningar ríkisins',
+    href: 'http://www.opnirreikningar.is/',
   },
   {
-    href: 'https://tekjusagan.is/',
     title: 'Tekjusagan',
+    href: 'https://tekjusagan.is/',
   },
 ]

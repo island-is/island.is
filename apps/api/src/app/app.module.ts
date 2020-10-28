@@ -7,11 +7,13 @@ import { CmsModule } from '@island.is/api/domains/cms'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
+import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
+import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -54,6 +56,8 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
     }),
+    CommunicationsModule,
+    ApiCatalogueModule,
   ],
 })
 export class AppModule {}

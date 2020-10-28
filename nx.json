@@ -56,13 +56,38 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
+    "api-catalogue-consts": {
+      "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
+    },
+    "api-catalogue-elastic": {
+      "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
     "api-content-search": {
+      "tags": []
+    },
+    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
       "tags": []
     },
     "api-domains-cms": {
+      "tags": []
+    },
+    "api-domains-communications": {
       "tags": []
     },
     "api-domains-content-search": {
@@ -109,6 +134,9 @@
       "implicitDependencies": ["application-system-form"]
     },
     "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-document-provider-onboarding": {
       "tags": []
     },
     "application-templates-driving-lessons": {
@@ -293,10 +321,16 @@
     "services-user-profile": {
       "tags": []
     },
+    "services-xroad-collector": {
+      "tags": ["api-catalogue-services"]
+    },
     "shared-form-fields": {
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-types": {
       "tags": []
     },
     "skilavottord-consts": {

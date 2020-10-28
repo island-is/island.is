@@ -42,6 +42,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             }),
             path: ServicePortalPath.UserInfo,
           },
+          {
+            name: defineMessage({
+              id: 'service.portal:family',
+              defaultMessage: 'Fjölskyldan',
+            }),
+            path: ServicePortalPath.FamilyRoot,
+          },
         ],
       },
 
@@ -55,6 +62,19 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'cellular',
+        },
+      },
+
+      // Heilsa
+      {
+        name: defineMessage({
+          id: 'service.portal:health',
+          defaultMessage: 'Heilsa',
+        }),
+        path: ServicePortalPath.HeilsaRoot,
+        icon: {
+          type: 'outline',
+          icon: 'heart',
         },
       },
 

@@ -14,7 +14,10 @@ const mockUser = {
   name: 'Mock User',
   nationalId: '2222222222',
   mobile: 123456,
+  // role: 'citizen',
   role: 'developer',
+  // role: 'recyclingPartner',
+  // role: 'recyclingFund',
 }
 
 export const Header: FC = () => {
@@ -49,10 +52,12 @@ export const Header: FC = () => {
     setUser(mockUser)
   }, [mockUser, setUser])
 
+  const homeRoute = routes.home[mockUser.role] ?? routes.home['citizen']
+
   return (
     <IslandUIHeader
       logoRender={(logo) => (
-        <Link href={activeLocale === 'is' ? '/' : '/en'}>
+        <Link href={homeRoute}>
           <a>{logo}</a>
         </Link>
       )}
@@ -63,7 +68,7 @@ export const Header: FC = () => {
       userName={mockUser?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push(routes.home))
+        api.logout().then(() => router.push(homeRoute))
       }}
     />
   )

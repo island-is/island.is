@@ -215,15 +215,32 @@ function convertRepeaterToScreens(
 ): FormScreen[] {
   const { id, children, repetitions } = repeater
   const newScreens: FormScreen[] = []
+  function recursiveMap(field: FormLeaf, fn: (l: FormLeaf) => FormLeaf): any {
+    if (Array.isArray(field.children)) {
+      return (field.children as FormLeaf[]).map((c) => recursiveMap(c, fn))
+    }
+    return fn(field)
+  }
   for (let i = 0; i < repetitions; i++) {
     children.forEach((field, index) => {
+      let grandChildren = field.children
+      let fieldId = field.id
+      if (Array.isArray(field.children)) {
+        grandChildren = recursiveMap(field, (c) => ({
+          ...c,
+          id: `${id}[${i}].${c.id}`,
+        }))
+      } else {
+        fieldId = `${id}[${i}].${field.id}`
+      }
       newScreens.push(
         ...convertLeafToScreens(
           {
             ...field,
-            id: `${id}[${i}].${field.id}`,
+            children: grandChildren,
+            id: fieldId,
             repeaterIndex: index + children.length * i,
-          },
+          } as FormLeaf,
           answers,
           isParentNavigable,
         ),

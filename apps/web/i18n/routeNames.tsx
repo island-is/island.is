@@ -16,6 +16,8 @@ export const routes = {
     lifeEvent: 'lifsvidburdur',
     LifeEventPage: 'lifsvidburdur',
     lifeEventPage: 'lifsvidburdur',
+    adgerdir: 'covid-adgerdir',
+    adgerdirNews: 'covid-adgerdir/frettir',
   },
   en: {
     article: '',
@@ -32,6 +34,7 @@ export const routes = {
     lifeEvent: 'life-event',
     LifeEventPage: 'life-event',
     lifeEventPage: 'life-event',
+    adgerdirNews: 'covid-operations/news',
   },
 }
 
@@ -47,6 +50,8 @@ export type PathTypes =
   | 'lifeEvent'
   | 'LifeEventPage'
   | 'lifeEventPage'
+  | 'adgerdir'
+  | 'adgerdirNews'
 
 export const routeNames = (locale: Locale = defaultLanguage) => {
   const makePath = (type?: PathTypes, subfix?: string) => {
