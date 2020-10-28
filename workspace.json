@@ -3666,16 +3666,6 @@
             "cwd": "libs/auth-api-lib"
           }
         },
-        "migrate_remove": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "sequelize db:seed:undo:all",
-              "sequelize db:migrate:undo:all"
-            ],
-            "cwd": "libs/auth-api-lib"
-          }
-        },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

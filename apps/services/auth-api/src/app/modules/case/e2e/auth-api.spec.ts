@@ -1,6 +1,6 @@
 import { GrantDto } from './../../../../../../../../libs/auth-api-lib/src/lib/entities/dto/grant-dto'
 import { UserIdentityDto } from './../../../../../../../../libs/auth-api-lib/src/lib/entities/dto/user-identity.dto'
-import { setup, removeSetup } from '../../../../../test/setup'
+import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
@@ -8,10 +8,6 @@ let app: INestApplication
 
 beforeAll(async () => {
   app = await setup()
-})
-
-afterAll(async () => {
-  await removeSetup()
 })
 
 const userIdentity: UserIdentityDto = {
