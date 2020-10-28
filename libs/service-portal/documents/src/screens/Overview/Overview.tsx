@@ -28,6 +28,7 @@ import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import Fuse from 'fuse.js'
 import { startOfTomorrow, isWithinInterval } from 'date-fns/esm'
+import { isAfter } from 'date-fns'
 
 const defaultCategory = { label: 'Allar Stofnanir', value: '' }
 const pageSize = 6
@@ -105,13 +106,16 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-  console.log(filterValue)
   const handleDateFromInput = useCallback(
     (value: Date) =>
-      setFilterValue((oldState) => ({
-        ...oldState,
-        dateFrom: value,
-      })),
+      setFilterValue((oldState) => {
+        const { dateTo } = oldState
+        return {
+          ...oldState,
+          dateTo: isAfter(value, dateTo) ? value : dateTo,
+          dateFrom: value,
+        }
+      }),
     [],
   )
 
@@ -166,7 +170,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <Input
                     onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
-                    placeholder="Leitaðu af rafrænu skjali"
+                    placeholder={formatMessage({
+                      id: 'sp.documents:search:placeholder',
+                      defaultMessage: 'Leitaðu af rafrænu skjali',
+                    })}
                   />
                 </Box>
                 <Box>
@@ -181,19 +188,31 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <Columns space={2} collapseBelow="sm">
                   <Column width="6/12">
                     <DatePicker
-                      label="Frá"
-                      placeholderText="Veldu dagsetningu"
+                      label={formatMessage({
+                        id: 'sp.documents:datepicker.dateFrom.label',
+                        defaultMessage: 'Frá',
+                      })}
+                      placeholderText={formatMessage({
+                        id: 'sp.documents:datepicker.dateFrom.placeholder',
+                        defaultMessage: 'Veldu dagsetningu',
+                      })}
                       locale="is"
-                      value={filterValue.dateFrom?.toString() || undefined}
+                      value={filterValue.dateFrom?.toString()}
                       handleChange={handleDateFromInput}
                     />
                   </Column>
                   <Column width="6/12">
                     <DatePicker
-                      label="Til"
-                      placeholderText="Veldu dagsetningu"
+                      label={formatMessage({
+                        id: 'sp.documents:datepicker.dateTo.label',
+                        defaultMessage: 'Til',
+                      })}
+                      placeholderText={formatMessage({
+                        id: 'sp.documents:datepicker.dateTo.placeholder',
+                        defaultMessage: 'Veldu dagsetningu',
+                      })}
                       locale="is"
-                      value={filterValue.dateTo?.toString() || undefined}
+                      value={filterValue.dateTo?.toString()}
                       handleChange={handleDateToInput}
                       minDate={filterValue.dateFrom || undefined}
                     />
