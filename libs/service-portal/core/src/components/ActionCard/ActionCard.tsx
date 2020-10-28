@@ -1,12 +1,11 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Typography,
   Stack,
-  Inline,
   Columns,
   Column,
   Button,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import { format } from 'date-fns/esm'
@@ -33,27 +32,27 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
       <Columns alignY="center" space={3}>
         <Column>
           <Stack space={1}>
-            <Typography variant="eyebrow" color="purple400">
+            <Text variant="eyebrow" color="purple400">
               {label}
-            </Typography>
-            <Typography variant="h3">{title}</Typography>
+            </Text>
+            <Text variant="h3">{title}</Text>
           </Stack>
         </Column>
         <Column width="content">
           <Stack space={1}>
-            <Inline space={1} alignY="center">
-              <Typography variant="pSmall" color="dark300">
+            <Box justifyContent="flexEnd" display="flex">
+              <Text variant="small" as="span" color="dark400">
                 {format(date, 'dd.MM.yyyy')}
-              </Typography>
-            </Inline>
+              </Text>
+            </Box>
             <Button
-              icon="chevronForward"
+              icon="arrowForward"
               colorScheme="default"
               iconType="filled"
               onBlur={function noRefCheck() {}}
               onClick={cta.onClick}
               onFocus={function noRefCheck() {}}
-              size="default"
+              size="small"
               type="button"
               variant="text"
             >
