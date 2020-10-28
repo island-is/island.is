@@ -12,14 +12,14 @@ export class GdprService {
   ) {}
 
   async findByNationalId(nationalId: string): Promise<GdprModel> {
-    this.logger.debug(`Finding gdpr for nationalId - "${nationalId}"`)
+    this.logger.info(`Finding gdpr for nationalId - "${nationalId}"`)
     return this.gdprModel.findOne({
       where: { nationalId },
     })
   }
 
   createGdpr(nationalId: string, gdprStatus: string) {
-    this.logger.debug(
+    this.logger.info(
       `Insert gdpr nationalId:${nationalId} gdprStatus: ${gdprStatus}`,
     )
     const newGdpr: GdprModel = new GdprModel()
