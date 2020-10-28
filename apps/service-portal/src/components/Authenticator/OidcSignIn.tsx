@@ -18,6 +18,7 @@ export const OidcSignIn: FC = () => {
           payload: user,
         })
 
+        localStorage.setItem('token', user.access_token)
         history.push(typeof user.state === 'string' ? user.state : '/')
       })
       .catch(function (error) {

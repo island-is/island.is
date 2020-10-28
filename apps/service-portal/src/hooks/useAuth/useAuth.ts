@@ -16,6 +16,7 @@ const useAuth = () => {
         type: ActionType.SetUserFulfilled,
         payload: user,
       })
+      localStorage.setItem('token', user.access_token)
     } catch (exception) {
       userManager.signinRedirect({
         state: window.location.pathname,

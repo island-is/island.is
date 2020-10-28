@@ -33,7 +33,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 
 const authLink = setContext((_, { headers }) => {
-  const token = 'mock_token'
+  const token = localStorage.getItem('token')
+
   return {
     headers: {
       ...headers,
