@@ -46,10 +46,6 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   return app
 }
 
-export const removeSetup = async() => {
-  execSync('yarn nx run services-auth-api:migrate_remove')
-}
-
 beforeEach(() => truncate())
 
 afterAll(async () => {
