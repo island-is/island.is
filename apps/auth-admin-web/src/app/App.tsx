@@ -1,4 +1,5 @@
 import React from 'react'
+import { Box, Typography } from '@island.is/island-ui/core'
 
 import './App.scss'
 
@@ -6,6 +7,7 @@ import { ReactComponent as Logo } from './logo.svg'
 import star from './star.svg'
 
 import { Route, Link } from 'react-router-dom'
+import Clients from './clients/clients'
 
 export const App = () => {
   /*
@@ -134,7 +136,7 @@ nx affected:e2e
         render={() => (
           <div>
             This is the generated root route.{' '}
-            <Link to="/page-2">Click here for page 2.</Link>
+            <Link to="/page-3">Click here for page 2.</Link>
           </div>
         )}
       />
@@ -148,7 +150,9 @@ nx affected:e2e
         )}
       />
       {/* END: routes */}
+      <Clients />
     </div>
+     
   )
 }
 
