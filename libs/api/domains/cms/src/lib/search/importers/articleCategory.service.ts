@@ -40,7 +40,9 @@ export class ArticleCategorySyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import article category', error)
+          logger.warn('Failed to import article category', {
+            error: error.message,
+          })
           return false
         }
       })

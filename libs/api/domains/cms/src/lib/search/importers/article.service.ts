@@ -77,7 +77,7 @@ export class ArticleSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import article', error)
+          logger.warn('Failed to import article', { error: error.message })
           return false
         }
       })

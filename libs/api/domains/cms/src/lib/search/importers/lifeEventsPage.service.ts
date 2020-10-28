@@ -40,7 +40,9 @@ export class LifeEventsPageSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import life event page', error)
+          logger.warn('Failed to import life event page', {
+            error: error.message,
+          })
           return false
         }
       })

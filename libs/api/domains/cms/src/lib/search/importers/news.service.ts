@@ -43,7 +43,7 @@ export class NewsSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import news', error)
+          logger.warn('Failed to import news', { error: error.message })
           return false
         }
       })

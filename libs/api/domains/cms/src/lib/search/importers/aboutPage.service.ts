@@ -43,7 +43,7 @@ export class AboutPageSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import about page', error)
+          logger.warn('Failed to import about page', { error: error.message })
           return false
         }
       })
