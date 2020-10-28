@@ -12,7 +12,6 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
-import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -72,8 +71,6 @@ export class CmsElasticsearchService {
     } else {
       dateQuery = {}
     }
-
-    logger.info('TAG!', { tag })
 
     let tagQuery
     if (tag) {
