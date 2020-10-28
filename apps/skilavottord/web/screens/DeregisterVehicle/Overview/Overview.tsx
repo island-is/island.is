@@ -9,8 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import CarsTable from './components/CarsTable'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
+import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
 import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
@@ -55,7 +54,7 @@ const Overview: FC = () => {
           </Stack>
         </Box>
       }
-      bottom={<CarsTable />}
+      bottom={<CarsTable titles={t.table} />}
       left={
         <Sidenav
           title="Company name"
