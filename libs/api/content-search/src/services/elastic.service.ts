@@ -13,7 +13,8 @@ import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { MappedData, SearchIndexes, SearchResponse } from '../types'
+import { MappedData, SearchIndexes } from '../types'
+import { SearchResponse } from '@island.is/shared/types'
 import { environment } from '../environments/environment'
 import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
 import {

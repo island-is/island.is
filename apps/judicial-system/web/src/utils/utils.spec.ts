@@ -146,6 +146,42 @@ describe('Validation', () => {
       expect(r.isValid).toEqual(false)
       expect(r.errorMessage).toEqual('Ekki á réttu formi')
     })
+
+    test('should be valid given just the first six digits', () => {
+      // Arrange
+      const nid = '010101'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(true)
+      expect(r.errorMessage).toEqual('')
+    })
+
+    test('should not be valid given an invalid day', () => {
+      // Arrange
+      const nid = '991201'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
+
+    test('should not be valid given an invalid month', () => {
+      // Arrange
+      const nid = '019901'
+
+      // Act
+      const r = validate(nid, 'national-id')
+
+      // Assert
+      expect(r.isValid).toEqual(false)
+      expect(r.errorMessage).toEqual('Ekki á réttu formi')
+    })
   })
 })
 

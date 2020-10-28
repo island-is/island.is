@@ -28,11 +28,29 @@
       "@island.is/air-discount-scheme/types": [
         "libs/air-discount-scheme/types/src/index.ts"
       ],
+      "@island.is/api-catalogue/consts": [
+        "libs/api-catalogue/consts/src/index.ts"
+      ],
+      "@island.is/api-catalogue/elastic": [
+        "libs/api-catalogue/elastic/src/index.ts"
+      ],
+      "@island.is/api-catalogue/services": [
+        "libs/api-catalogue/services/src/index.ts"
+      ],
+      "@island.is/api-catalogue/types": [
+        "libs/api-catalogue/types/src/index.ts"
+      ],
       "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
+      "@island.is/api/domains/api-catalogue": [
+        "libs/api/domains/api-catalogue/src/index.ts"
+      ],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
       "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
+      "@island.is/api/domains/communications": [
+        "libs/api/domains/communications/src/index.ts"
+      ],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
@@ -44,6 +62,9 @@
       ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
+      ],
+      "@island.is/api/domains/national-registry": [
+        "libs/api/domains/national-registry/src/index.ts"
       ],
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
@@ -62,6 +83,9 @@
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
+      ],
+      "@island.is/application/templates/document-provider-onboarding": [
+        "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
       "@island.is/application/templates/driving-lessons": [
         "libs/application/templates/driving-lessons/src/index.ts"
@@ -104,6 +128,7 @@
       ],
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
+      "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
       "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
@@ -156,6 +181,7 @@
       ],
       "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
       "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
       "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"

@@ -5,12 +5,13 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import * as styles from './UserProfile.treat'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { UserInfoLine } from '@island.is/service-portal/core'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
 

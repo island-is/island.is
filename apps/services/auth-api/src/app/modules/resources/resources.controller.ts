@@ -17,6 +17,7 @@ import {
   IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
+// Try comment to trigger deployment
 // TODO: Add guards after getting communications to work properly with IDS4
 // @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
@@ -27,7 +28,12 @@ export class ResourcesController {
   /** Get Identity resources by scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('identity-resources')
-  @ApiQuery({ name: 'scopeNames', required: false })
+  @ApiQuery({
+    name: 'scopeNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
   async FindIdentityResourcesByScopeName(
     @Query(
@@ -46,7 +52,12 @@ export class ResourcesController {
   /** Gets API scopes by scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('api-scopes')
-  @ApiQuery({ name: 'scopeNames', required: false })
+  @ApiQuery({
+    name: 'scopeNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
   @ApiOkResponse({ type: ApiScope, isArray: true })
   async FindApiScopesByNameAsync(
     @Query(
@@ -65,8 +76,18 @@ export class ResourcesController {
   /** Gets api resources by resources names or scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('api-resources')
-  @ApiQuery({ name: 'apiResourceNames', required: false })
-  @ApiQuery({ name: 'apiScopeNames', required: false })
+  @ApiQuery({
+    name: 'apiResourceNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
+  @ApiQuery({
+    name: 'apiScopeNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
   @ApiOkResponse({ type: ApiResource, isArray: true })
   async FindApiResourcesByNameAsync(
     @Query(

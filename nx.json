@@ -47,13 +47,38 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
+    "api-catalogue-consts": {
+      "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
+    },
+    "api-catalogue-elastic": {
+      "tags": []
+    },
+    "api-catalogue-services": {
+      "tags": []
+    },
+    "api-catalogue-types": {
+      "tags": []
+    },
     "api-content-search": {
+      "tags": []
+    },
+    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
       "tags": []
     },
     "api-domains-cms": {
+      "tags": []
+    },
+    "api-domains-communications": {
       "tags": []
     },
     "api-domains-content-search": {
@@ -63,6 +88,9 @@
       "tags": []
     },
     "api-domains-file-upload": {
+      "tags": []
+    },
+    "api-domains-national-registry": {
       "tags": []
     },
     "api-domains-translations": {
@@ -97,6 +125,9 @@
       "implicitDependencies": ["application-system-form"]
     },
     "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-document-provider-onboarding": {
       "tags": []
     },
     "application-templates-driving-lessons": {
@@ -187,6 +218,9 @@
       "tags": []
     },
     "island-ui-theme": {
+      "tags": []
+    },
+    "island-ui-utils": {
       "tags": []
     },
     "judicial-system-api": {
@@ -282,6 +316,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-types": {
       "tags": []
     },
     "skilavottord-consts": {

@@ -13,7 +13,8 @@ export enum ServicePortalPath {
   StillingarRoot = '/stillingar',
   StillingarUmbod = '/min-rettindi',
   // Fjolskyldan
-  FjolskyldanRoot = '/fjolskyldan',
+  FamilyRoot = '/fjolskyldan',
+  FamilyMember = '/fjolskyldan/:nationalId',
   MinGognRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   // Fjarmal
@@ -31,11 +32,11 @@ export enum ServicePortalPath {
   // Eignir
   EignirRoot = '/eignir',
   // Skilabod
-  SkilabodRoot = '/skilabod',
+  MessagesRoot = '/skilabod',
 
   // User Profile
-  UserProfileRoot = '/minn-adgangur',
-  UserProfileEditPhoneNumber = '/minar-upplysingar/breyta-simanumeri',
-  UserProfileEditEmail = '/minar-upplysingar/breyta-netfangi',
-  UserProfileEditLanguage = '/minar-upplysingar/breyta-tungumali',
+  UserProfileRoot = '/stillingar/minn-adgangur',
+  UserProfileEditPhoneNumber = '/stillingar/minn-adgangur/breyta-simanumeri',
+  UserProfileEditEmail = '/stillingar/minn-adgangur/breyta-netfangi',
+  UserProfileEditLanguage = '/stillingar/minn-adgangur/breyta-tungumali',
 }
