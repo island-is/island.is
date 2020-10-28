@@ -15,11 +15,7 @@ import {
 import { Case } from '../../../../types'
 import * as api from '../../../../api'
 import { validate, Validation } from '../../../../utils/validate'
-import {
-  updateState,
-  autoSave,
-  isNextDisabled,
-} from '../../../../utils/stepHelper'
+import { isNextDisabled } from '../../../../utils/stepHelper'
 import { isValid, parseISO, formatISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../../shared-components/FormFooter'
@@ -243,8 +239,14 @@ export const StepOne: React.FC = () => {
                     evt.target.value,
                     'police-casenumber-format',
                   )
+
+                  setWorkingCase({
+                    ...workingCase,
+                    policeCaseNumber: evt.target.value,
+                  })
+
                   if (validateField.isValid && validateFieldFormat.isValid) {
-                    if (workingCase.id) {
+                    if (workingCase.id !== '') {
                       api.saveCase(
                         workingCase.id,
                         parseString('policeCaseNumber', evt.target.value),
@@ -282,24 +284,25 @@ export const StepOne: React.FC = () => {
                 hasError={nationalIdErrorMessage !== ''}
                 onBlur={(evt) => {
                   if (workingCase.accusedNationalId !== evt.target.value) {
-                    updateState(
-                      workingCase,
-                      'accusedNationalId',
-                      evt.target.value.replace('-', ''),
-                      setWorkingCase,
-                    )
-
                     const validateField = validate(evt.target.value, 'empty')
                     const validateFieldFormat = validate(
                       evt.target.value,
                       'national-id',
                     )
 
+                    setWorkingCase({
+                      ...workingCase,
+                      accusedNationalId: evt.target.value,
+                    })
+
                     if (validateField.isValid && validateFieldFormat.isValid) {
                       if (workingCase.id !== '') {
                         api.saveCase(
                           workingCase.id,
-                          parseString('accusedNationalId', evt.target.value),
+                          parseString(
+                            'accusedNationalId',
+                            evt.target.value.replace('-', ''),
+                          ),
                         )
                       } else {
                         createCaseIfPossible()
@@ -327,14 +330,12 @@ export const StepOne: React.FC = () => {
                 hasError={accusedNameErrorMessage !== ''}
                 onBlur={(evt) => {
                   if (workingCase.accusedName !== evt.target.value) {
-                    updateState(
-                      workingCase,
-                      'accusedName',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-
                     const validateField = validate(evt.target.value, 'empty')
+
+                    setWorkingCase({
+                      ...workingCase,
+                      accusedName: evt.target.value,
+                    })
 
                     if (validateField.isValid) {
                       api.saveCase(
@@ -361,14 +362,12 @@ export const StepOne: React.FC = () => {
                 hasError={accusedAddressErrorMessage !== ''}
                 onBlur={(evt) => {
                   if (workingCase.accusedAddress !== evt.target.value) {
-                    updateState(
-                      workingCase,
-                      'accusedAddress',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-
                     const validateField = validate(evt.target.value, 'empty')
+
+                    setWorkingCase({
+                      ...workingCase,
+                      accusedAddress: evt.target.value,
+                    })
 
                     if (validateField.isValid) {
                       api.saveCase(
@@ -406,7 +405,8 @@ export const StepOne: React.FC = () => {
               }}
               options={courts}
               onChange={({ label }: Option) => {
-                autoSave(workingCase, 'court', label, setWorkingCase)
+                setWorkingCase({ ...workingCase, court: label })
+                api.saveCase(workingCase.id, parseString('court', label))
               }}
             />
           </Box>
@@ -437,12 +437,10 @@ export const StepOne: React.FC = () => {
                           : 'date',
                     })
 
-                    updateState(
-                      workingCase,
-                      'arrestDate',
-                      formattedDate,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      arrestDate: formattedDate,
+                    })
 
                     api.saveCase(
                       workingCase.id,
@@ -487,12 +485,10 @@ export const StepOne: React.FC = () => {
                       evt.target.value,
                     )
 
-                    updateState(
-                      workingCase,
-                      'arrestDate',
-                      arrestDateMinutes,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      arrestDate: arrestDateMinutes,
+                    })
 
                     if (
                       validateTimeEmpty.isValid &&
@@ -541,12 +537,10 @@ export const StepOne: React.FC = () => {
                           : 'date',
                     })
 
-                    updateState(
-                      workingCase,
-                      'requestedCourtDate',
-                      formattedDate,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      requestedCourtDate: formattedDate,
+                    })
 
                     api.saveCase(
                       workingCase.id,
@@ -585,12 +579,10 @@ export const StepOne: React.FC = () => {
                       'time-format',
                     )
 
-                    updateState(
-                      workingCase,
-                      'requestedCourtDate',
-                      requestedCourtDateMinutes,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      requestedCourtDate: requestedCourtDateMinutes,
+                    })
 
                     if (
                       validateTimeEmpty.isValid &&

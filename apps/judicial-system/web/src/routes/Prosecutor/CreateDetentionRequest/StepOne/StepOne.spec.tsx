@@ -17,6 +17,7 @@ import { userContext } from '../../../../utils/userContext'
 import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
+import { method } from 'lodash'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -93,6 +94,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     fetchMock.mock(
       '/api/case/test_id',
       {
+        id: 'test_id',
         arrestDate: '2020-09-16T19:51:28.224Z',
         requestedCourtDate: '2020-09-16T19:51:28.224Z',
       },
@@ -131,39 +133,45 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         'Jon Harring',
       )
       userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       await userEvent.type(
         getByTestId('accusedAddress') as HTMLInputElement,
         'Harringvej 2',
       )
       userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       expect(
-        (
-          await waitFor(
-            () => getByTestId('continueButton') as HTMLButtonElement,
-          )
-        ).disabled,
-      ).toBe(false)
+        await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+      ).toBeDisabled()
     })
   })
+})
 
+describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
   test('should save case if accused name is entered first and then police case number and accused national id', async () => {
     // Arrange
     const spy = jest.spyOn(api, 'createCase')
-    const history = createMemoryHistory()
+    fetchMock.mock(
+      '/api/case',
+      {
+        policeCaseNumber: 'string',
+        accusedNationalId: 'string',
+        accusedName: 'string',
+        accusedAddress: 'string',
+        court: 'string',
+        arrestDate: '2020-10-28T20:50:42.571Z',
+        requestedCourtDate: '2020-10-28T20:50:42.571Z',
+      },
+      { method: 'post' },
+    )
 
     // Act
     const { getByTestId } = render(
       <userContext.Provider value={{ user: mockProsecutor }}>
-        <MemoryRouter initialEntries={['/krafa/test_id']}>
-          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+        <MemoryRouter initialEntries={['/krafa']}>
+          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
             <StepOne />
           </Route>
         </MemoryRouter>

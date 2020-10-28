@@ -16,11 +16,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
-import {
-  updateState,
-  autoSave,
-  isNextDisabled,
-} from '../../../../utils/stepHelper'
+import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
   validate,
   Validation,

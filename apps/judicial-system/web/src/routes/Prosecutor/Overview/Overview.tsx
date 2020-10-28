@@ -32,6 +32,7 @@ export const Overview: React.FC = () => {
   const [, setIsSendingNotification] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { id } = useParams<{ id: string }>()
   const history = useHistory()
   const uContext = useContext(userContext)
 
@@ -68,14 +69,19 @@ export const Overview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.sessionStorage.getItem('workingCase')
-    const caseDraftJSON = JSON.parse(caseDraft)
+    const getCurrentCase = async () => {
+      setIsLoading(true)
 
-    if (!workingCase) {
-      setWorkingCase(caseDraftJSON)
+      if (!workingCase) {
+        const currentCase = await api.getCaseById(id)
+        setWorkingCase(currentCase.case)
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+    if (id) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   return (
     <PageLayout activeSection={0} activeSubSection={2} isLoading={isLoading}>
