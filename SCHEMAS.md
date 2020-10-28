@@ -95,7 +95,7 @@ Add the following script to the `workspace.json`'s project.
   "builder": "@nrwl/workspace:run-commands",
   "options": {
     "outputPath": "PATH/gen/fetch",
-    "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o PATH/gen/fetch -i PATH/openapi.yaml"
+    "command": "yarn openapi-generator -o PATH/gen/fetch -i PATH/openapi.yaml"
   }
 }
 ```
@@ -131,7 +131,7 @@ Then you can add it to the `workspace.json`
 
 ### Client (schemas/codegen)
 
-Last kind is the client side consuming an `api.graphql` file.
+Last kind is the client-side consuming an `api.graphql` file.
 
 Create an `codegen.yml` file in your project
 
@@ -157,6 +157,8 @@ Finally, you need to add it inside your `workspace.json`
   }
 }
 ```
+
+> You should use one of the following name for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
 
 ## Generating schema and client types
 

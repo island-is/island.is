@@ -703,8 +703,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
-              "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
+              "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
+              "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
             ]
           }
         }
@@ -826,7 +826,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
-            "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
           }
         }
       }
@@ -947,7 +947,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/documents/gen/fetch",
-            "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api/domains/documents/gen/fetch -i libs/api/domains/documents/skjalabirting-test.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/documents/gen/fetch -i libs/api/domains/documents/skjalabirting-test.yaml"
           }
         }
       }
@@ -1070,7 +1070,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/user-profile/gen/fetch",
-            "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
           }
         }
       }

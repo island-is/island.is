@@ -18,10 +18,10 @@
           "lint",
           "test",
           "e2e",
-          "build-open-api",
-          "openapi-generator",
-          "build-schema",
-          "codegen"
+          "schemas/build-open-api",
+          "schemas/openapi-generator",
+          "schemas/build-schema",
+          "schemas/codegen"
         ]
       }
     }
