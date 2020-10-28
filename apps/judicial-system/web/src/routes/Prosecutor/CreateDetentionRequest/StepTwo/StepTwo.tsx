@@ -38,12 +38,14 @@ import {
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { useParams } from 'react-router-dom'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const requestedCustodyEndTimeRef = useRef<HTMLInputElement>()
+  const { id } = useParams<{ id: string }>()
 
   const [
     requestedCustodyEndDateErrorMessage,
@@ -696,7 +698,7 @@ export const StepTwo: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
-            nextUrl={Constants.STEP_THREE_ROUTE}
+            nextUrl={`${Constants.STEP_THREE_ROUTE}/${id}`}
             nextIsDisabled={
               isStepIllegal || workingCase.custodyProvisions.length === 0
             }

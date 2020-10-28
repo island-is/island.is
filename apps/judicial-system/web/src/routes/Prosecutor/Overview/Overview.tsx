@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
@@ -32,7 +32,6 @@ export const Overview: React.FC = () => {
   const [, setIsSendingNotification] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
   const history = useHistory()
   const uContext = useContext(userContext)
 
@@ -269,7 +268,6 @@ export const Overview: React.FC = () => {
             </Text>
           </Box>
           <FormFooter
-            nextUrl="/"
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
             onNextButtonClick={() => {
               const didSendNotification = handleNextButtonClick()

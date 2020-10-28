@@ -19,10 +19,12 @@ import {
 } from '../../../utils/stepHelper'
 import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { useParams } from 'react-router-dom'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { id } = useParams<{ id: string }>()
 
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
@@ -379,7 +381,7 @@ export const RulingStepTwo: React.FC = () => {
             </Text>
           </Box>
           <FormFooter
-            nextUrl={Constants.CONFIRMATION_ROUTE}
+            nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
             nextIsDisabled={
               !workingCase.accusedAppealDecision ||
               !workingCase.prosecutorAppealDecision

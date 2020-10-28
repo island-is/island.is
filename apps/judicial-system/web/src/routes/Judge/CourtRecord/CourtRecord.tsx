@@ -25,6 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { useParams } from 'react-router-dom'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useWorkingCase()
@@ -44,6 +45,7 @@ export const CourtRecord: React.FC = () => {
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
+  const { id } = useParams<{ id: string }>()
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -362,7 +364,7 @@ export const CourtRecord: React.FC = () => {
             />
           </Box>
           <FormFooter
-            nextUrl={Constants.RULING_STEP_ONE_ROUTE}
+            nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               {
                 value: formatDate(workingCase?.courtStartTime, TIME_FORMAT),

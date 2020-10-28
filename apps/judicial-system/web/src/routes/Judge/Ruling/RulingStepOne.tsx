@@ -29,6 +29,7 @@ import {
 import { formatISO } from 'date-fns'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
+import { useParams } from 'react-router-dom'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -44,6 +45,8 @@ export const RulingStepOne: React.FC = () => {
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
   )
+  const { id } = useParams<{ id: string }>()
+
   const restrictions = [
     {
       restriction: 'B - Einangrun',
@@ -410,7 +413,7 @@ export const RulingStepOne: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
-            nextUrl={Constants.RULING_STEP_TWO_ROUTE}
+            nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
           />
         </>

@@ -38,6 +38,7 @@ export const StepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [caseId, setCaseId] = useState('')
 
   const [
     policeCaseNumberErrorMessage,
@@ -124,6 +125,8 @@ export const StepOne: React.FC = () => {
         requestedCourtDate: workingCase.requestedCourtDate,
       })
 
+      setCaseId(caseId)
+
       window.sessionStorage.setItem(
         'workingCase',
         JSON.stringify({
@@ -203,6 +206,7 @@ export const StepOne: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
+      setCaseId(id)
       const currentCase = await api.getCaseById(id)
 
       if (!workingCase) {
@@ -673,7 +677,6 @@ export const StepOne: React.FC = () => {
             </GridRow>
           </Box>
           <FormFooter
-            nextUrl={Constants.STEP_TWO_ROUTE}
             onNextButtonClick={() => setModalVisible(true)}
             nextIsDisabled={isStepIllegal}
           />
@@ -685,13 +688,13 @@ export const StepOne: React.FC = () => {
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
-                history.push(Constants.STEP_TWO_ROUTE)
+                history.push(`${Constants.STEP_TWO_ROUTE}/${caseId ?? id}`)
               }
               handlePrimaryButtonClick={async () => {
                 setIsSendingNotification(true)
                 await api.sendNotification(workingCase.id)
                 setIsSendingNotification(false)
-                history.push(Constants.STEP_TWO_ROUTE)
+                history.push(`${Constants.STEP_TWO_ROUTE}/${caseId ?? id}`)
               }}
               isPrimaryButtonLoading={isSendingNotification}
             />
