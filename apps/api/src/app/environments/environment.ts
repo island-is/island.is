@@ -12,6 +12,7 @@ export default {
   identityServer: {
     baseUrl: 'https://siidentityserverweb20200805020732.azurewebsites.net',
     audience: '',
-    jwksUri: 'https://siidentityserverweb20200805020732.azurewebsites.net/.well-known/openid-configuration/jwks'
-  }
+    jwksUri:
+      'https://siidentityserverweb20200805020732.azurewebsites.net/.well-known/openid-configuration/jwks',
+  },
 }

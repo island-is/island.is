@@ -12,6 +12,6 @@ export default {
   identityServer: {
     baseUrl: process.env.IDENTITY_SERVER_BASE_URL,
     audience: '',
-    jwksUri: `${process.env.IDENTITY_SERVER_BASE_URL}/.well-known/openid-configuration/jwks`
-  }
+    jwksUri: `${process.env.IDENTITY_SERVER_BASE_URL}/.well-known/openid-configuration/jwks`,
+  },
 }

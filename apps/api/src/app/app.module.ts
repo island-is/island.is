@@ -62,9 +62,8 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     AuthModule.register({
       audience: environment.identityServer.audience,
       issuer: environment.identityServer.baseUrl,
-      jwksUri:
-        `${environment.identityServer.baseUrl}`,
+      jwksUri: `${environment.identityServer.jwksUri}`,
     }),
   ],
 })
-export class AppModule { }
+export class AppModule {}
