@@ -10,4 +10,4 @@ import { FileStorageService } from '@island.is/file-storage'
   controllers: [UserProfileController],
   providers: [UserProfileService, FileStorageService],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}
