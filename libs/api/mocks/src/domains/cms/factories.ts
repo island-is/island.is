@@ -159,7 +159,6 @@ export const frontPageSlider = factory<FrontpageSlider>({
   subtitle: () => faker.lorem.sentence(),
   link: null,
   content: () => faker.lorem.paragraph(),
-  animationJson: null,
 })
 
 export const featured = factory<Featured>({
