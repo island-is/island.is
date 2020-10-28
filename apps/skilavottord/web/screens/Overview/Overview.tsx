@@ -24,11 +24,13 @@ const Overview: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
+
+  const nationalId = user?.nationalId ?? ''
   const { data, loading, error } = useQuery(GET_VEHICLES, {
-    variables: { nationalId: user?.nationalId },
+    variables: { nationalId },
   })
 
-  const { cars } = data?.getVehiclesForNationalId || {}
+  const { cars } = data?.getVehiclesForNationalId || []
 
   const onRecycleCar = (id: string) => {
     router
