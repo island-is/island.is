@@ -188,7 +188,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     })}
                   />
                 </Box>
-                <Columns space={2} collapseBelow="sm">
+                <Columns space={2} collapseBelow="md">
                   <Column width="6/12">
                     <DatePicker
                       label={formatMessage({
