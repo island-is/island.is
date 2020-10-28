@@ -97,7 +97,7 @@ export class ResourcesController {
   @ApiOkResponse({ type: IdentityResource })
   async updateIdentityResource(
     @Body() identityResource: IdentityResourcesDTO,
-    @Param('name') namne: string,
+    @Param('name') name: string,
   ): Promise<IdentityResource> {
     if (!name) {
       throw new BadRequestException('Name must be provided')

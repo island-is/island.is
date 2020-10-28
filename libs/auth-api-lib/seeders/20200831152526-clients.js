@@ -134,7 +134,7 @@ module.exports = {
         allow_remember_consent: true,
         client_claims_prefix: 'apex_auth_client_',
         protocol_type: 'oidc',
-      }
+      },
     ]
 
     const scopes = [
@@ -178,7 +178,7 @@ module.exports = {
         client_id: 'island-is-client-cred-1',
         scope_name: 'api',
       },
-      
+
       {
         client_id: 'apex-auth_client',
         scope_name: 'openid',
@@ -220,7 +220,8 @@ module.exports = {
       },
       {
         client_id: 'apex-auth_client',
-        redirect_uri: 'https://10.0.0.5/ords/apex_authentication.callback/signin-oidc',
+        redirect_uri:
+          'https://10.0.0.5/ords/apex_authentication.callback/signin-oidc',
       },
       {
         client_id: 'apex-auth_client',

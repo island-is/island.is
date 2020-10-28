@@ -17,7 +17,9 @@ export class UserIdentitiesService {
   ) {}
 
   /** Creates a new User Identity */
-  async create(userIdentity: UserIdentityDto): Promise<UserIdentity | undefined> {
+  async create(
+    userIdentity: UserIdentityDto,
+  ): Promise<UserIdentity | undefined> {
     this.logger.debug(
       `Creating user identity with subjectId - ${userIdentity.subjectId}`,
     )

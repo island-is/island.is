@@ -1,6 +1,5 @@
 import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
-import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { execSync } from 'child_process'

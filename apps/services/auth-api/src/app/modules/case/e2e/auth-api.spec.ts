@@ -1,5 +1,5 @@
-import { GrantDto } from './../../../../../../../../libs/auth-api-lib/src/lib/entities/dto/grant-dto'
-import { UserIdentityDto } from './../../../../../../../../libs/auth-api-lib/src/lib/entities/dto/user-identity.dto'
+import { GrantDto } from '@island.is/auth-api-lib'
+import { UserIdentityDto } from '@island.is/auth-api-lib'
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
@@ -170,7 +170,7 @@ describe('Users', () => {
       )
       .expect(200)
 
-    expect(response.text).toEqual("1")
+    expect(response.text).toEqual('1')
   })
 
   it('POST /grants should register a grant', async () => {
@@ -187,37 +187,31 @@ describe('Users', () => {
   it(`GET /grants/12345 should return a valid object`, async () => {
     // Act
     const response = await request(app.getHttpServer())
-      .get(
-        '/grants/12345',
-      )
+      .get('/grants/12345')
       .expect(200)
 
-      expect(response.body.key).toEqual('12345')
+    expect(response.body.key).toEqual('12345')
   })
 
   it(`GET /grants/12344 should return a 404 status`, async () => {
     // Act
     const response = await request(app.getHttpServer())
-      .get(
-        '/grants/12344',
-      )
+      .get('/grants/12344')
       .expect(404)
 
-      expect(response.body).toMatchObject({
-        statusCode: 404,
-        message: "This particular grant doesn't exist",
-        error: 'Not Found',
-      })
+    expect(response.body).toMatchObject({
+      statusCode: 404,
+      message: "This particular grant doesn't exist",
+      error: 'Not Found',
+    })
   })
 
   it(`DELETE /grants/12345 should delete one item`, async () => {
     // Act
     const response = await request(app.getHttpServer())
-      .delete(
-        '/grants/12345',
-      )
+      .delete('/grants/12345')
       .expect(200)
 
-    expect(response.text).toEqual("1")
+    expect(response.text).toEqual('1')
   })
 })

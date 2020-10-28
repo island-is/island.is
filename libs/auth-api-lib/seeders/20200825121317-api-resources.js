@@ -23,7 +23,7 @@ module.exports = {
         display_name: 'api resource',
         enabled: true,
         show_in_discovery_document: true,
-      }
+      },
     ]
 
     const userClaims = [

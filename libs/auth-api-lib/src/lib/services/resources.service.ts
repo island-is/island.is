@@ -29,7 +29,9 @@ export class ResourcesService {
   ) {}
 
   /** Gets Identity resource by name */
-  async getIdentityResourceByName(name: string): Promise<IdentityResource | null> {
+  async getIdentityResourceByName(
+    name: string,
+  ): Promise<IdentityResource | null> {
     this.logger.debug('Getting data about identity resource with name: ', name)
 
     if (!name) {
