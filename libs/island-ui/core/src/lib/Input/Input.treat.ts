@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
 
 export const containerDisabled = style({})
@@ -12,6 +12,8 @@ export const container = style({
     [`&${containerDisabled}`]: mixins.containerDisabled,
   },
 })
+
+export const containerSizes = styleMap(mixins.containerSizes)
 
 export const containerBackgrounds = styleMap({
   white: {
@@ -28,6 +30,8 @@ export const input = style({
   ':focus': mixins.inputFocus,
   ':disabled': mixins.inputDisabled,
 })
+
+export const inputSize = styleMap(mixins.inputSizes)
 
 // To handle styling auto-fill states
 export const inputBackground = styleMap({
@@ -65,14 +69,29 @@ export const label = style({
   },
 })
 
+export const labelSizes = styleMap(mixins.labelSizes)
+
 export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
 
 export const isRequiredStar = style({
-  color: theme.color.red400,
+  color: theme.color.red600,
 })
 
 export const hasFocus = style({
   selectors: {
     [`&${container}`]: mixins.containerFocus,
   },
+})
+
+export const icon = style({
+  width: 24,
+  height: 24,
+  color: theme.color.red600,
+  marginBottom: -3,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 32,
+      height: 32,
+    },
+  }),
 })
