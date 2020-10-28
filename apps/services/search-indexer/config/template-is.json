@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 10,
+  "version": 11,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -124,6 +124,9 @@
         "type": "text",
         "index": false,
         "store": true
+      },
+      "pagerank": {
+        "type": "rank_feature"
       },
       "dateCreated": {
         "type": "date"

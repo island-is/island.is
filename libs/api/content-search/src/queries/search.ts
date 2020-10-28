@@ -57,13 +57,25 @@ export const searchQuery = ({
   const should = []
   const must = []
   // eslint-disable-next-line @typescript-eslint/camelcase
-  let minimum_should_match = 1
+  let minimum_should_match = 0
 
   should.push({
     // eslint-disable-next-line @typescript-eslint/camelcase
+    rank_feature: {
+      field: 'pagerank',
+      boost: 1,
+      log: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        scaling_factor: 4
+      }
+    }
+  })
+
+  must.push({
+    // eslint-disable-next-line @typescript-eslint/camelcase
     simple_query_string: {
       query: queryString,
-      fields: ['title.stemmed^15', 'title.compound', 'content.stemmed^5'],
+      fields: ['title.stemmed', 'title.compound', 'content.stemmed'],
       // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -74,7 +86,7 @@ export const searchQuery = ({
   // if we have types restrict the query to those types
   if (types?.length) {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    minimum_should_match++ // now we have to match at least one type and the search query
+    minimum_should_match++ // now we have to match at least one type
 
     types.forEach((type) => {
       const [value, boost = 1] = type.split('^')
