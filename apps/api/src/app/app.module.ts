@@ -50,7 +50,8 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     AuthModule.register({
       audience: '',
       issuer: 'https://siidentityserverweb20200805020732.azurewebsites.net',
-      jwksUri: 'https://siidentityserverweb20200805020732.azurewebsites.net/.well-known/openid-configuration/jwks',
+      jwksUri:
+        'https://siidentityserverweb20200805020732.azurewebsites.net/.well-known/openid-configuration/jwks',
     }),
     NationalRegistryModule.register({
       baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
@@ -66,4 +67,4 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     ApiCatalogueModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

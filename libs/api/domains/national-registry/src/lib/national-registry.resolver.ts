@@ -8,7 +8,7 @@ import { IdsAuthGuard, ScopesGuard, CurrentUser } from '@island.is/auth-api-lib'
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class NationalRegistryResolver {
-  constructor(private nationalRegistryService: NationalRegistryService) { }
+  constructor(private nationalRegistryService: NationalRegistryService) {}
 
   @Query(() => MyInfo, { nullable: true })
   getMyInfo(@CurrentUser() user: any): Promise<MyInfo | null> {

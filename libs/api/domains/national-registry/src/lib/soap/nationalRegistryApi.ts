@@ -33,7 +33,6 @@ export class NationalRegistryApi {
     this.client = soapClient
     this.clientUser = clientUser
     this.clientPassword = clientPassword
-
   }
 
   public async getMyInfo(nationalId: string): Promise<MyInfo | null> {
@@ -184,7 +183,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewRegistryDto | null> {
     return await new Promise((resolve, _reject) => {
-      if (!this.client) throw new InternalServerErrorException('Client not initialized')
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewThjodskra(
         {
           ':SortColumn': 1,
@@ -221,7 +221,8 @@ export class NationalRegistryApi {
     houseCode: string,
   ): Promise<GetViewHomeDto | null> {
     return await new Promise((resolve, _reject) => {
-      if (!this.client) throw new InternalServerErrorException('Client not initialized')
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewHusaskra(
         {
           ':SortColumn': 1,
@@ -258,7 +259,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewReligionDto | null> {
     return await new Promise((resolve, _reject) => {
-      if (!this.client) throw new InternalServerErrorException('Client not initialized')
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewKennitalaOgTrufelag(
         {
           ':SortColumn': 1,
@@ -295,7 +297,8 @@ export class NationalRegistryApi {
     municipalCode: string,
   ): Promise<GetViewMunicipalityDto | null> {
     return await new Promise((resolve, _reject) => {
-      if (!this.client) throw new InternalServerErrorException('Client not initialized')
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewSveitarfelag(
         {
           ':SortColumn': 1,
@@ -332,7 +335,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewFamilyDto | null> {
     return await new Promise((resolve, _reject) => {
-      if (!this.client) throw new InternalServerErrorException('Client not initialized')
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewFjolskyldan(
         {
           ':SortColumn': 1,
@@ -369,7 +373,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewBanmarkingDto | null> {
     return await new Promise((resolve, _reject) => {
-      if (!this.client) throw new InternalServerErrorException('Client not initialized')
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewKennitalaOgBannmerking(
         {
           ':SortColumn': 1,
