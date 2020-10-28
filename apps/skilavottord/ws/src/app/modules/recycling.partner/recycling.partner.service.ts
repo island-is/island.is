@@ -13,7 +13,7 @@ export class RecyclingPartnerService {
   ) {}
 
   async findByPartnerId(companyId: string): Promise<RecyclingPartnerModel> {
-    this.logger.debug(`Finding recycling partner by companyId - "${companyId}"`)
+    this.logger.info(`Finding recycling partner by companyId - "${companyId}"`)
     return this.recyclingPartnerModel.findOne({
       where: { companyId },
     })
@@ -21,7 +21,7 @@ export class RecyclingPartnerService {
 
   async findAll(): Promise<RecyclingPartnerModel[]> {
     const res = await this.recyclingPartnerModel.findAll()
-    this.logger.debug(
+    this.logger.info(
       'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
     )
     return res
@@ -31,7 +31,7 @@ export class RecyclingPartnerService {
     const res = await this.recyclingPartnerModel.findAll({
       where: { active: true },
     })
-    this.logger.debug(
+    this.logger.info(
       'findAll-recyclingPartners result:' + JSON.stringify(res, null, 2),
     )
     return res
@@ -40,7 +40,7 @@ export class RecyclingPartnerService {
   async createRecyclingPartner(
     recyclingPartner: RecyclingPartnerModel,
   ): Promise<boolean> {
-    this.logger.debug(
+    this.logger.info(
       'Creating recycling partner:' + JSON.stringify(recyclingPartner, null, 2),
     )
     await recyclingPartner.save()

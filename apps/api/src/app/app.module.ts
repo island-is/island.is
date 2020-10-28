@@ -14,6 +14,7 @@ import { NationalRegistryModule } from '@island.is/api/domains/national-registry
 import { AuthModule } from '@island.is/auth-api-lib'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
+import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -62,6 +63,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
         environment.userProfile.userProfileServiceBasePath,
     }),
     CommunicationsModule,
+    ApiCatalogueModule,
   ],
 })
 export class AppModule { }

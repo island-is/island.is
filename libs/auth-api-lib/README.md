@@ -43,6 +43,8 @@ and individual protected methods with `@Scopes`:
 
 If no `@Scopes` are applied to a method, then no access control is enforced for that method.
 
+Information about the logged in user can be obtained by adding `@Req() request` as an input parameter to a controller method, and accessing `request.user`.
+
 ### Using in GraphQL resolver
 
 Decorate the resolver with `@UseGuards`:
@@ -62,3 +64,5 @@ and individual protected methods with `@Scopes`:
 ```
 
 If no `@Scopes` are applied to a method, then no access control is enforced for that method.
+
+Information about the logged in user can be obtained by adding `@CurrentUser() user` as an input parameter to a resolver method.
