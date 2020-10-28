@@ -20,20 +20,21 @@ export class ElasticService {
     this.client = this.createEsClient()
   }
 
+  /**
+   * Tries to delete the index.
+   * If the index does not exists it does nothing.
+   */
   async deleteIndex() {
     logger.info('Deleting index', this.indexName)
 
-    try {
-      const { body } = await this.client.indices.exists({
-        index: this.indexName,
-      })
-      if (body) {
-        await this.client.indices.delete({ index: this.indexName })
-      } else {
-        logger.info('No index to delete', this.indexName)
-      }
-    } catch (error) {
-      logger.error('Error in deleting index', error)
+    const { body } = await this.client.indices.exists({
+      index: this.indexName,
+    })
+    if (body) {
+      await this.client.indices.delete({ index: this.indexName })
+      logger.info(`Index ${this.indexName} deleted`)
+    } else {
+      logger.info('No index to delete', this.indexName)
     }
   }
 
@@ -51,7 +52,10 @@ export class ElasticService {
     }
   }
 
-  async bulk(services: Array<Service>) {
+  /**
+   * Accepts array of Services to bulk insert into elastic search.
+   */
+  async bulk(services: Array<Service>): Promise<void> {
     logger.info('Bulk insert', services)
 
     if (services.length) {
@@ -65,14 +69,11 @@ export class ElasticService {
         })
         bulk.push(service)
       })
-      try {
-        return await this.client.bulk({
-          body: bulk,
-          index: this.indexName,
-        })
-      } catch (error) {
-        logger.error('Error in bulk import', error)
-      }
+
+      await this.client.bulk({
+        body: bulk,
+        index: this.indexName,
+      })
     }
 
     logger.debug('nothing to bulk insert')

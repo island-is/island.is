@@ -74,7 +74,7 @@ describe('communicationsService', () => {
       )
     })
 
-    it('should normalize throw errors', async () => {
+    it('should normalize thrown errors', async () => {
       jest.spyOn(emailService, 'sendEmail').mockImplementation(() => {
         throw new Error('Some unexpected error')
       })

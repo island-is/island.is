@@ -127,7 +127,7 @@ export const borderRadius = {
 
 export const borderColor = styleMap(
   mapToStyleProperty(theme.border.color, 'borderColor'),
-  'borderRadius',
+  'borderColor',
 )
 
 export const borderWidth = styleMap(

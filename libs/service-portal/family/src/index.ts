@@ -39,3 +39,5 @@ export const familyModule: ServicePortalModule = {
     },
   ],
 }
+
+export * from './components/FamilyMemberCard/FamilyMemberCard'

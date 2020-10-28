@@ -3,8 +3,9 @@ import cn from 'classnames'
 import * as styles from './Input.treat'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
+import { Icon } from '../IconRC/Icon'
 
-type InputBackgroundColor = 'white' | 'blue'
+export type InputBackgroundColor = 'white' | 'blue'
 
 interface InputComponentProps {
   name: string
@@ -16,6 +17,7 @@ interface InputComponentProps {
   required?: boolean
   placeholder?: string
   autoFocus?: boolean
+  size?: keyof typeof styles.inputSize
   onFocus?: (
     event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
@@ -61,9 +63,10 @@ function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
 }
 
 const InputHOC = forwardRef(
-  (props: InputComponentProps, ref: React.Ref<HTMLInputElement>) => (
-    <input ref={ref} {...props} />
-  ),
+  (
+    props: Omit<InputComponentProps, 'size'>,
+    ref: React.Ref<HTMLInputElement>,
+  ) => <input ref={ref} {...props} />,
 )
 const TextareaHOC = forwardRef(
   (props: InputComponentProps, ref: React.Ref<HTMLTextAreaElement>) => (
@@ -93,6 +96,7 @@ export const Input = forwardRef(
       onBlur,
       textarea,
       type,
+      size = 'md',
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -109,10 +113,13 @@ export const Input = forwardRef(
 
     return (
       <div>
-        <div
+        <Box
+          display="flex"
+          alignItems="center"
           className={cn(
             styles.container,
             styles.containerBackgrounds[backgroundColor],
+            styles.containerSizes[size],
             {
               [styles.hasError]: hasError,
               [styles.hasFocus]: hasFocus,
@@ -126,52 +133,58 @@ export const Input = forwardRef(
             }
           }}
         >
-          <label
-            htmlFor={id}
-            className={cn(styles.label, {
-              [styles.labelDisabledEmptyInput]: disabled && !value,
-            })}
-          >
-            {label}
-            {required && <span className={styles.isRequiredStar}> *</span>}
-            {tooltip && (
-              <Box marginLeft={1} display="inlineBlock">
-                <Tooltip text={tooltip} />
-              </Box>
-            )}
-          </label>
-          <InputComponent
-            className={cn(
-              styles.input,
-              styles.inputBackground[backgroundColor],
-              {
-                [styles.textarea]: textarea,
-              },
-            )}
-            id={id}
-            disabled={disabled}
-            name={name}
-            ref={mergedRefs}
-            placeholder={placeholder}
-            value={value}
-            defaultValue={defaultValue}
-            onFocus={(e) => {
-              setHasFocus(true)
-              if (onFocus) {
-                onFocus(e)
-              }
-            }}
-            onBlur={(e) => {
-              setHasFocus(false)
-              if (onBlur) {
-                onBlur(e)
-              }
-            }}
-            type={type}
-            {...ariaError}
-            {...inputProps}
-          />
-        </div>
+          <Box flexGrow={1}>
+            <label
+              htmlFor={id}
+              className={cn(styles.label, styles.labelSizes[size], {
+                [styles.labelDisabledEmptyInput]: disabled && !value,
+              })}
+            >
+              {label}
+              {required && <span className={styles.isRequiredStar}> *</span>}
+              {tooltip && (
+                <Box marginLeft={1} display="inlineBlock">
+                  <Tooltip text={tooltip} />
+                </Box>
+              )}
+            </label>
+            <InputComponent
+              className={cn(
+                styles.input,
+                styles.inputBackground[backgroundColor],
+                styles.inputSize[size],
+                {
+                  [styles.textarea]: textarea,
+                },
+              )}
+              id={id}
+              disabled={disabled}
+              name={name}
+              ref={mergedRefs}
+              placeholder={placeholder}
+              value={value}
+              defaultValue={defaultValue}
+              onFocus={(e) => {
+                setHasFocus(true)
+                if (onFocus) {
+                  onFocus(e)
+                }
+              }}
+              onBlur={(e) => {
+                setHasFocus(false)
+                if (onBlur) {
+                  onBlur(e)
+                }
+              }}
+              type={type}
+              {...ariaError}
+              {...inputProps}
+            />
+          </Box>
+          {hasError && (
+            <Icon icon="warning" skipPlaceholderSize className={styles.icon} />
+          )}
+        </Box>
         {hasError && errorMessage && (
           <div className={styles.errorMessage} id={id}>
             {errorMessage}

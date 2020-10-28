@@ -41,16 +41,16 @@ export const imageShow = style({
 export const thumbnail = style({
   background: 'no-repeat none center center',
   backgroundSize: 'cover',
+  bottom: 0,
   filter: 'blur(10px)',
-  transition: 'opacity .5s',
+  left: 0,
   opacity: 1,
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  transition: 'opacity .5s',
 })
 
 export const thumbnailHide = style({
   opacity: 0,
-  position: 'absolute',
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0,
 })
