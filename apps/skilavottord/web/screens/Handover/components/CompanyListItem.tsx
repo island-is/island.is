@@ -1,26 +1,40 @@
 import React, { FC, ReactNode } from 'react'
-import { Stack, Typography, Box, Link } from '@island.is/island-ui/core'
+import { Stack, Text, Box, Link } from '@island.is/island-ui/core'
 import * as styles from './CompanyListItem.treat'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 export interface CompanyProps {
-  name: string
+  companyName?: string
+  name?: string
   address: string
+  city?: string
+  postnumber?: string
+  postNumber?: string
   phone: string
   website: string
   buttons?: ReactNode
 }
 
 export const CompanyListItem: FC<CompanyProps> = ({
+  companyName,
   name,
   address,
+  postnumber,
+  postNumber,
+  city,
   phone,
   website,
   buttons,
 }: CompanyProps) => {
-  const {
-    t: { handover: t },
-  } = useI18n()
+  const externalSite =
+    website.indexOf('http://') === -1 ? `https://${website}` : website
+
+  // temporary until backend is ready
+  const addressField =
+    postnumber && city
+      ? `${address}, ${postnumber} ${city}`
+      : `${address}, ${postNumber}`
+  const nameField = companyName ?? name
+  const cityField = city ? `(${city})` : ''
 
   return (
     <Box
@@ -34,16 +48,14 @@ export const CompanyListItem: FC<CompanyProps> = ({
     >
       <Box paddingBottom={[2, 2, 0, 0]}>
         <Stack space={[2, 2, 1, 1]}>
-          <Typography variant="h5">{name}</Typography>
-          <Typography variant="p">{address}</Typography>
-          <Typography variant="p" color="blue400">
-            {phone}
-          </Typography>
-          <Typography variant="p">
-            <Link href={website} color="blue400">
+          <Text variant="h5">{`${nameField} ${cityField}`}</Text>
+          <Text>{addressField}</Text>
+          <Text color="blue400">{phone}</Text>
+          <Text>
+            <Link href={externalSite} color="blue400" underline="small">
               {website}
             </Link>
-          </Typography>
+          </Text>
         </Stack>
       </Box>
       {buttons}
