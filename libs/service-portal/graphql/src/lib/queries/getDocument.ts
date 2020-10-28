@@ -5,6 +5,7 @@ export const GET_DOCUMENT = gql`
     getDocument(input: $input) {
       content
       url
+      fileType
     }
   }
 `
