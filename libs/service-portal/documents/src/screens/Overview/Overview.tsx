@@ -182,6 +182,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     options={categories}
                     value={filterValue.activeCategory}
                     onChange={handleCategoryChange}
+                    label={formatMessage({
+                      id: 'sp.documents:institutionLabel',
+                      defaultMessage: 'Stofnun',
+                    })}
                   />
                 </Box>
                 <Columns space={2} collapseBelow="sm">
@@ -189,7 +193,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     <DatePicker
                       label={formatMessage({
                         id: 'sp.documents:datepicker.dateFrom.label',
-                        defaultMessage: 'Frá',
+                        defaultMessage: 'Dagsetning frá',
                       })}
                       placeholderText={formatMessage({
                         id: 'sp.documents:datepicker.dateFrom.placeholder',
@@ -205,7 +209,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     <DatePicker
                       label={formatMessage({
                         id: 'sp.documents:datepicker.dateTo.label',
-                        defaultMessage: 'Til',
+                        defaultMessage: 'Dagsetning til',
                       })}
                       placeholderText={formatMessage({
                         id: 'sp.documents:datepicker.dateTo.placeholder',
