@@ -18,6 +18,7 @@ import cn from 'classnames'
 import * as styles from './Select.treat'
 import { Icon } from '../IconRC/Icon'
 import { InputBackgroundColor } from '../Input/Input'
+import { Box } from '../Box/Box'
 
 export type Option = {
   label: string
@@ -45,6 +46,7 @@ export interface SelectProps {
   isSearchable?: boolean
   size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
+  required?: boolean
 }
 
 export const Select = ({
@@ -64,6 +66,7 @@ export const Select = ({
   isSearchable = true,
   size = 'md',
   backgroundColor = 'white',
+  required,
 }: SelectProps) => {
   return (
     <div
@@ -89,6 +92,7 @@ export const Select = ({
         hasError={hasError}
         isSearchable={isSearchable}
         size={size}
+        required={required}
         components={{
           Control,
           Input,
@@ -207,6 +211,9 @@ const Control = (props: ControlProps<Option>) => {
         className={cn(styles.label, styles.labelSizes[size!])}
       >
         {props.selectProps.label}
+        {props.selectProps.required && (
+          <span className={styles.isRequiredStar}> *</span>
+        )}
       </label>
       {props.children}
     </components.Control>
