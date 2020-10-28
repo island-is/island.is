@@ -6,26 +6,22 @@ import {
   Inline,
   Columns,
   Column,
-  Link,
   Button,
 } from '@island.is/island-ui/core'
-import ActionMenu from '../ActionMenu/ActionMenu'
 import * as styles from './ActionCard.treat'
 import { format } from 'date-fns/esm'
 
 interface Props {
   label: string
   title: string
-  text?: string
   date: Date
-  url?: string
-  external?: boolean
-  actionMenuRender?: () => JSX.Element
-  buttonRender?: () => JSX.Element
-  onDownload?: () => void
+  cta: {
+    label: string
+    onClick: () => void
+  }
 }
 
-export const ActionCard: FC<Props> = ({ label, title, date, onDownload }) => {
+export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
   return (
     <Box
       className={styles.wrapper}
@@ -51,17 +47,17 @@ export const ActionCard: FC<Props> = ({ label, title, date, onDownload }) => {
               </Typography>
             </Inline>
             <Button
+              icon="chevronForward"
               colorScheme="default"
-              icon="download"
               iconType="filled"
               onBlur={function noRefCheck() {}}
-              onClick={onDownload}
+              onClick={cta.onClick}
               onFocus={function noRefCheck() {}}
               size="default"
               type="button"
               variant="text"
             >
-              Sækja pdf
+              {cta.label}
             </Button>
           </Stack>
         </Column>
