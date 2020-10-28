@@ -27,7 +27,7 @@ export class Document {
     doc.id = docInfo.id
     doc.opened = docInfo.opened
     doc.senderName = docInfo.senderName
-    doc.subject = docInfo.subject + docInfo
+    doc.subject = docInfo.subject
     doc.senderNatReg = docInfo.senderKennitala
 
     return doc
