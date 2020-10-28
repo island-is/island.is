@@ -11,11 +11,9 @@ import {
   Option,
   DatePicker,
   Input,
+  Text,
 } from '@island.is/island-ui/core'
-import {
-  useListDocuments,
-  useDocumentCategories,
-} from '@island.is/service-portal/graphql'
+import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollTopOnUpdate,
   ServicePortalModuleComponent,
@@ -28,12 +26,12 @@ import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import Fuse from 'fuse.js'
 import { startOfTomorrow, isWithinInterval } from 'date-fns/esm'
-import { isAfter } from 'date-fns'
+import { isAfter, subYears } from 'date-fns'
+import { isEqual } from 'lodash'
 
 const defaultCategory = { label: 'Allar Stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = new Date('1970-01-01T00:00:00.000')
-// note: default end date is tomorrow
+const defaultStartDate = subYears(new Date(), 20)
 const defaultEndDate = startOfTomorrow()
 
 const defaultFilterValues = {
@@ -44,18 +42,7 @@ const defaultFilterValues = {
 }
 
 const defaultSearchOptions = {
-  // isCaseSensitive: false,
-  // includeScore: false,
-  // shouldSort: true,
-  // includeMatches: false,
-  // findAllMatches: false,
-  // minMatchCharLength: 1,
-  // location: 0,
-  threshold: 0.4,
-  // distance: 100,
-  // useExtendedSearch: false,
-  // ignoreLocation: false,
-  // ignoreFieldNorm: false,
+  threshold: 0.3,
   keys: ['senderName', 'senderNatReg', 'sender', 'subject'],
 }
 
@@ -72,15 +59,19 @@ const getFilteredDocuments = (
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
   let filteredDocuments = documents.filter((document) =>
-    isWithinInterval(new Date(document.date), { start: dateFrom, end: dateTo }),
+    isWithinInterval(new Date(document.date), {
+      start: dateFrom,
+      end: dateTo,
+    }),
   )
+
   if (activeCategory.value) {
     filteredDocuments = filteredDocuments.filter(
       (document) => document.senderNatReg === activeCategory.value,
     )
   }
   if (searchQuery) {
-    const fuse = new Fuse(documents, defaultSearchOptions)
+    const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
     return fuse.search(searchQuery).map((elem) => elem.item)
   }
   return filteredDocuments
@@ -112,7 +103,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         const { dateTo } = oldState
         return {
           ...oldState,
-          dateTo: isAfter(value, dateTo) ? value : dateTo,
+          dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
           dateFrom: value,
         }
       }),
@@ -142,24 +133,31 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     [],
   )
 
+  const handleClearFilters = useCallback(() => {
+    setFilterValue({ ...defaultFilterValues })
+    setPage(1)
+  }, [])
+
+  const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
+
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
-        <Typography variant="h1" as="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.documents:title',
             defaultMessage: 'Rafræn skjöl',
           })}
-        </Typography>
+        </Text>
         <Columns collapseBelow="sm">
           <Column width="7/12">
-            <Typography variant="intro">
+            <Text variant="intro">
               {formatMessage({
                 id: 'sp.documents:intro',
                 defaultMessage:
                   'Hér munt þú geta fundið öll þau skjöl sem eru send til þín frá stofnunum ríkisins',
               })}
-            </Typography>
+            </Text>
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
@@ -168,6 +166,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Stack space={3}>
                 <Box height="full">
                   <Input
+                    value={filterValue.searchQuery}
                     onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
                     placeholder={formatMessage({
@@ -197,7 +196,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         defaultMessage: 'Veldu dagsetningu',
                       })}
                       locale="is"
-                      value={filterValue.dateFrom?.toString()}
+                      selected={filterValue.dateFrom}
+                      value={filterValue?.dateFrom?.toString() || ''}
                       handleChange={handleDateFromInput}
                     />
                   </Column>
@@ -212,12 +212,35 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         defaultMessage: 'Veldu dagsetningu',
                       })}
                       locale="is"
-                      value={filterValue.dateTo?.toString()}
+                      selected={filterValue.dateTo}
+                      value={filterValue?.dateTo?.toString() || ''}
                       handleChange={handleDateToInput}
                       minDate={filterValue.dateFrom || undefined}
                     />
                   </Column>
                 </Columns>
+                <Box marginTop="gutter">
+                  {hasActiveFilters() && (
+                    <Columns space={3}>
+                      <Column>
+                        <Text variant="h3">
+                          {`${filteredDocuments.length} ${formatMessage({
+                            id: 'sp.documents:documentsFound',
+                            defaultMessage: 'skjöl fundust',
+                          })}`}
+                        </Text>
+                      </Column>
+                      <Column width="content">
+                        <Button variant="text" onClick={handleClearFilters}>
+                          {formatMessage({
+                            id: 'sp.documents:clearFilters',
+                            defaultMessage: 'Hreinsa filter',
+                          })}
+                        </Button>
+                      </Column>
+                    </Columns>
+                  )}
+                </Box>
               </Stack>
             </div>
             {loading && <ActionCardLoader repeat={3} />}
