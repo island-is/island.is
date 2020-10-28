@@ -5,7 +5,6 @@ import {
 } from '@apollo/client'
 import getConfig from 'next/config'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
-import fetch from 'isomorphic-unfetch'
 import possibleTypes from './fragmentTypes.json'
 import { defaultLanguage, Locale } from '../i18n/I18n'
 
@@ -15,12 +14,6 @@ const isBrowser: boolean = process.browser
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 let currentClientLocale = defaultLanguage
-
-// Polyfill fetch() on the server (used by @apollo/client)
-if (!isBrowser) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(global as any).fetch = fetch
-}
 
 function create(initialState?: any) {
   // handle server vs client side calls
