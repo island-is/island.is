@@ -1,12 +1,5 @@
 import React from 'react'
 import * as Sentry from '@sentry/node'
-
-import ErrorScreen from '../screens/Error/Error'
-import { getLocaleFromPath } from '../i18n/withLocale'
-import Layout, { LayoutProps } from '../layouts/main'
-import I18n, { Locale } from '../i18n/I18n'
-import { withApollo } from '../graphql/withApollo'
-
 import {
   Article,
   LifeEventPage,
@@ -15,7 +8,14 @@ import {
   QueryGetUrlArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_URL_QUERY } from '@island.is/web/screens/queries'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { ApolloClient } from '@apollo/client/core'
+import { NormalizedCacheObject } from '@apollo/client/cache'
+
+import ErrorScreen from '../screens/Error/Error'
+import { getLocaleFromPath } from '../i18n/withLocale'
+import Layout, { LayoutProps } from '../layouts/main'
+import I18n, { Locale } from '../i18n/I18n'
+import { withApollo } from '../graphql/withApollo'
 import routeNames, { PathTypes } from '../i18n/routeNames'
 
 type ErrorPageProps = {

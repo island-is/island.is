@@ -1,7 +1,7 @@
 import React, { FC, useContext } from 'react'
 import { useRouter } from 'next/router'
 import findKey from 'lodash/findKey'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
 import { Button, ButtonTypes, Hidden, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames, { PathTypes, routes } from '@island.is/web/i18n/routeNames'

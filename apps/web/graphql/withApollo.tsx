@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
-import { ApolloProvider } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client/react'
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
 import initApollo from './client'
 

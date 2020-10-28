@@ -1,8 +1,5 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  NormalizedCacheObject,
-} from '@apollo/client'
+import { ApolloClient } from '@apollo/client/core'
+import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
 import getConfig from 'next/config'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import possibleTypes from './fragmentTypes.json'

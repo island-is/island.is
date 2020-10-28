@@ -11,7 +11,7 @@ import React, {
 import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
 import {
   GET_SEARCH_RESULTS_QUERY,
   GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,

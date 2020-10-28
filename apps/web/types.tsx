@@ -1,4 +1,5 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { ApolloClient } from '@apollo/client/core'
+import { NormalizedCacheObject } from '@apollo/client/cache'
 import { NextComponentType } from 'next'
 import { NextPageContext } from 'next/dist/next-server/lib/utils'
 

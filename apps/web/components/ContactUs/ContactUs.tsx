@@ -4,7 +4,7 @@ import {
   ContactUsProps as ContactUsFormProps,
 } from '@island.is/island-ui/contentful'
 import { CONTACT_US_MUTATION } from '@island.is/web/screens/queries'
-import { MutationResult, useMutation } from '@apollo/client'
+import { MutationResult, useMutation } from '@apollo/client/react'
 
 import {
   ContactUsMutation,
