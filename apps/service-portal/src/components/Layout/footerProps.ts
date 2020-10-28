@@ -10,6 +10,16 @@ export const getFooterProps = (data: ServicePortalFooterContent) => ({
       title: link.text,
       href: convertUrl(link.url),
     })) || [],
+  topLinksContact: [
+    {
+      title: 'Hafa samband',
+      href: 'https://island.is/um-island-is/hafa-samband',
+    },
+    {
+      title: 'Sími: 426 5500',
+      href: 'tel: +3544265500',
+    },
+  ],
   showMiddleLinks: true,
   middleLinksTitle: 'Þjónustuflokkar',
   middleLinks:
