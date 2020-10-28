@@ -15,8 +15,6 @@ import {
   InlineError,
 } from '@island.is/skilavottord-web/components'
 
-const nationalId = '2222222222'
-
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
   const {
@@ -30,7 +28,7 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
   const { data, loading, error } = useQuery(GET_VEHICLES, {
-    variables: { nationalId },
+    variables: { nationalId: user?.nationalId },
   })
 
   const { cars } = data?.getVehiclesForNationalId || {}
