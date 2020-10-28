@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { ThemeOrAny } from 'treat/theme'
 import { ThemedStyle, Style } from 'treat/lib/types/types'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
   '@media': {
@@ -27,6 +27,15 @@ export const tabContainer = style({
 
 export const tabPanelWrapper = style({
   position: 'relative',
+
+  ...themeUtils.responsiveStyle({
+    md: {
+      minHeight: 300,
+    },
+    lg: {
+      minHeight: 350,
+    },
+  }),
 })
 
 export const tabPanelRow = style({
@@ -34,17 +43,16 @@ export const tabPanelRow = style({
 })
 
 export const tabPanel = style({
-  position: 'relative',
-  width: '100%',
   opacity: 0,
   pointerEvents: 'none',
-  transition: `opacity 300ms ease 0ms`,
+  display: 'flex',
+  position: 'absolute',
 })
 
 export const tabPanelVisible = style({
+  position: 'relative',
   opacity: 1,
   outline: 0,
-  display: 'inline-block',
   pointerEvents: 'initial',
 })
 

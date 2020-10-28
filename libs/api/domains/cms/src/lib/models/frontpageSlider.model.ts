@@ -15,9 +15,6 @@ export class FrontpageSlider {
 
   @Field({ nullable: true })
   link?: string
-
-  @Field({ nullable: true })
-  animationJson?: string
 }
 
 export const mapFrontpageSlider = ({
@@ -27,7 +24,4 @@ export const mapFrontpageSlider = ({
   subtitle: fields.subtitle ?? '',
   content: fields.content ?? '',
   link: fields.link ? JSON.stringify(fields.link) : '',
-  animationJson: fields.animationJson
-    ? JSON.stringify(fields.animationJson)
-    : '',
 })

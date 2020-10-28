@@ -7,10 +7,11 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
-import bodymovin from 'lottie-web'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
+import { useWindowSize, useEvent, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Text,
   Stack,
@@ -20,14 +21,13 @@ import {
   GridRow,
   GridColumn,
   IconDeprecated as Icon,
-  deorphanize,
 } from '@island.is/island-ui/core'
+import { deorphanize } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/web/i18n/I18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
 import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
-
+import Illustration from './illustrations/Illustration'
 import * as styles from './FrontpageTabs.treat'
 
 type TabsProps = {
@@ -71,66 +71,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   searchContent,
 }) => {
   const contentRef = useRef(null)
-  const [animationData, setAnimationData] = useState([])
-  const animationContainerRefs = useRef<Array<HTMLElement | null>>([])
-  const [animations, setAnimations] = useState([])
-  const animationDataLoaded = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
-  const itemsRef = useRef<Array<HTMLElement | null>>([])
+  const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
   })
+
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale as Locale)
   const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (!animationDataLoaded.current) {
-      const data = tabs.map((x) =>
-        x.animationJson ? JSON.parse(x.animationJson) : null,
-      )
-      setAnimationData(data)
-      animationDataLoaded.current = true
-    }
-  }, [tabs, animationDataLoaded])
-
-  useEffect(() => {
-    if (animationContainerRefs.current?.length) {
-      const newAnimations = []
-
-      animationContainerRefs.current.forEach((x, i) => {
-        newAnimations.push(
-          bodymovin.loadAnimation({
-            container: x,
-            loop: true,
-            autoplay: false,
-            animationData: animationData[i],
-          }),
-        )
-      })
-
-      setAnimations(newAnimations)
-    }
-  }, [animationData, animationContainerRefs])
-
-  const onResize = useCallback(() => {
-    setMinHeight(0)
-
-    let height = 0
-
-    itemsRef.current.forEach((x) => {
-      if (x) {
-        height =
-          width < theme.breakpoints.md
-            ? Math.min(height, x.offsetHeight)
-            : Math.max(height, x.offsetHeight)
-      }
-    })
-
-    setMinHeight(height)
-  }, [itemsRef, contentRef])
 
   const nextSlide = useCallback(() => {
     tab.next()
@@ -141,49 +92,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [tab])
 
   useEffect(() => {
-    setTimeout(onResize, 0)
-    window.addEventListener('resize', onResize, { passive: true })
-    return () => window.removeEventListener('resize', onResize)
-  }, [onResize])
-
-  useEffect(() => {
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
     setSelectedIndex(newSelectedIndex)
   }, [tab])
-
-  useEffect(() => {
-    if (animations.length) {
-      animations.forEach((x, i) => {
-        if (typeof animations[i] === 'object') {
-          if (i === selectedIndex) {
-            animations[i].play()
-          } else {
-            animations[i].stop()
-          }
-        }
-      })
-    }
-
-    itemsRef.current.forEach((x) => {
-      const spans = x.querySelectorAll('span')
-
-      Array.prototype.forEach.call(spans, (span) => {
-        span.classList.remove(styles.textItemVisible)
-      })
-    })
-
-    const el = itemsRef.current[selectedIndex]
-
-    if (el) {
-      const spans = el.getElementsByClassName(styles.textItem)
-
-      Array.prototype.forEach.call(spans, (span, index) => {
-        span.classList.add(styles.textItemVisible)
-        const ms = index * 100
-        span.style.transitionDelay = `${ms}ms`
-      })
-    }
-  }, [selectedIndex, animations])
 
   const goTo = (direction: string) => {
     switch (direction) {
@@ -214,6 +125,50 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     }
   }
 
+  const onResize = useCallback(() => {
+    setMinHeight(0)
+    let height = 0
+
+    itemRefs.current.forEach((item) => {
+      if (item) {
+        height =
+          width < theme.breakpoints.md
+            ? Math.min(height, item.offsetHeight)
+            : Math.max(height, item.offsetHeight)
+      }
+    })
+
+    setMinHeight(height)
+  }, [width, itemRefs])
+
+  useIsomorphicLayoutEffect(() => {
+    setTimeout(onResize, 0)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [onResize])
+
+  useIsomorphicLayoutEffect(() => {
+    itemRefs.current.forEach((item) => {
+      const spans = item.getElementsByClassName(styles.textItem)
+
+      Array.prototype.forEach.call(spans, (span) => {
+        span.classList.remove(styles.textItemVisible)
+      })
+    })
+
+    const el = itemRefs.current[selectedIndex]
+
+    if (el) {
+      const spans = el.getElementsByClassName(styles.textItem)
+
+      Array.prototype.forEach.call(spans, (span, index) => {
+        span.classList.add(styles.textItemVisible)
+        const ms = index * 100
+        span.style.transitionDelay = `${ms}ms`
+      })
+    }
+  }, [selectedIndex])
+
   return (
     <GridContainer>
       <GridRow className={styles.tabPanelRow}>
@@ -223,47 +178,46 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           position="static"
         >
           <Box ref={contentRef}>
-            <Box>
-              <TabList
-                {...tab}
-                aria-label="Flettiborði"
-                className={styles.tabWrapper}
-              >
-                {tabs.map(({ title = '' }, index) => {
-                  return (
-                    <Tab
-                      key={index}
-                      {...tab}
-                      className={cn(styles.tabContainer)}
-                    >
-                      <TabBullet selected={selectedIndex === index} />
-                      <span className={styles.srOnly}>{title}</span>
-                    </Tab>
-                  )
-                })}
-              </TabList>
-              <Box className={styles.tabPanelWrapper}>
-                {tabs.map(({ title, subtitle, content, link }, index) => {
-                  const linkUrls = generateUrls(link)
+            <TabList
+              {...tab}
+              aria-label="Flettiborði"
+              className={styles.tabWrapper}
+            >
+              {tabs.map(({ title = '' }, index) => {
+                return (
+                  <Tab key={index} {...tab} className={cn(styles.tabContainer)}>
+                    <TabBullet selected={selectedIndex === index} />
+                    <span className={styles.srOnly}>{title}</span>
+                  </Tab>
+                )
+              })}
+            </TabList>
+            <Box className={styles.tabPanelWrapper}>
+              {tabs.map(({ title, subtitle, content, link }, index) => {
+                const linkUrls = generateUrls(link)
 
-                  const currentIndex = tab.items.findIndex(
-                    (x) => x.id === tab.currentId,
-                  )
+                const currentIndex = tab.items.findIndex(
+                  (x) => x.id === tab.currentId,
+                )
 
-                  const visible = currentIndex === index
-                  const isTabletOrMobile = width < theme.breakpoints.lg
-                  const tabTitleId = 'frontpageTabTitle' + index
-                  return (
-                    <TabPanel
-                      key={index}
-                      {...tab}
-                      style={{
-                        display: 'inline-block',
-                      }}
-                      tabIndex={visible ? 0 : -1}
-                      className={cn(styles.tabPanel, {
-                        [styles.tabPanelVisible]: visible,
-                      })}
+                const visible = currentIndex === index
+                const tabTitleId = 'frontpageTabTitle' + index
+                return (
+                  <TabPanel
+                    key={index}
+                    {...tab}
+                    style={{
+                      display: 'block',
+                    }}
+                    tabIndex={visible ? 0 : -1}
+                    className={cn(styles.tabPanel, {
+                      [styles.tabPanelVisible]: visible,
+                    })}
+                  >
+                    <Box
+                      paddingY={3}
+                      ref={(el) => (itemRefs.current[index] = el)}
+                      style={{ minHeight: `${minHeight}px` }}
                     >
                       <Stack space={3}>
                         <Text variant="eyebrow" as="p" color="purple400">
@@ -354,20 +308,14 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12']}>
-          {animationData.map((_, index) => {
-            const visible = index === selectedIndex
-
-            return (
-              <div
-                key={index}
-                ref={(el) => (animationContainerRefs.current[index] = el)}
-                className={cn(styles.animationContainer, {
-                  [styles.animationContainerHidden]: !visible,
-                })}
-                aria-hidden="true"
-              />
-            )
-          })}
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            height="full"
+          >
+            <Illustration illustrationIndex={selectedIndex} />
+          </Box>
         </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />
       </GridRow>

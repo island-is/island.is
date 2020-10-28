@@ -171,7 +171,7 @@ export interface IArticleFields {
   userStories?: Document | undefined
 
   /** Featured image */
-  featuredImage: Asset
+  featuredImage?: Asset | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -2127,7 +2127,7 @@ export interface IVidspyrnaFeaturedNewsFields {
   title?: string | undefined
 
   /** featured */
-  featured: IVidspyrnaNews[]
+  featured: INews[]
 }
 
 export interface IVidspyrnaFeaturedNews
