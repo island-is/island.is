@@ -46,7 +46,8 @@ export interface LayoutProps {
   hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
-  footerUpperMenu?: FooterLinkProps[]
+  footerUpperInfo?: FooterLinkProps[]
+  footerUpperContact?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
@@ -81,7 +82,8 @@ const Layout: NextComponentType<
   hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
-  footerUpperMenu,
+  footerUpperInfo,
+  footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
@@ -132,6 +134,7 @@ const Layout: NextComponentType<
   ]
 
   const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+
   return (
     <GlobalContextProvider namespace={namespace}>
       <Page>
@@ -159,7 +162,10 @@ const Layout: NextComponentType<
           <meta property="og:title" content={n('title')} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://island.is/" />
-          <meta property="og:image" content="/island-fb-1200x630.png" />
+          <meta
+            property="og:image"
+            content="https://island.is/island-fb-1200x630.png"
+          />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta
@@ -203,7 +209,8 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Footer
-            topLinks={footerUpperMenu}
+            topLinks={footerUpperInfo}
+            topLinksContact={footerUpperContact}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
             bottomLinksTitle={t.siteExternalTitle}
@@ -278,7 +285,8 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     categories,
     topMenuCustomLinks,
     alertBanner,
-    upperMenu,
+    upperMenuInfo,
+    upperMenuContact,
     lowerMenu,
     middleMenu,
     tagsMenu,
@@ -314,7 +322,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer upper', lang },
+          input: { name: 'Footer upper info', lang },
+        },
+      })
+      .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetMenuQuery, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer upper contact', lang },
         },
       })
       .then((res) => res.data.getMenu),
@@ -367,7 +383,11 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       }),
     ),
     alertBannerContent: alertBanner,
-    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
+    footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerUpperContact: (upperMenuContact.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),

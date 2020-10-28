@@ -5,16 +5,18 @@ import {
   buildIntroductionField,
   buildMultiField,
   buildRadioField,
-  buildReviewField,
   buildSection,
+  buildSubmitField,
   buildTextField,
   Form,
+  FormModes,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'ExampleInReview',
   name: 'Úrvinnsla umsóknar um atvinnuleysisbætur',
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
@@ -81,8 +83,9 @@ export const ReviewApplication: Form = buildForm({
               name: m.dreamJob,
               disabled: true,
             }),
-            buildReviewField({
+            buildSubmitField({
               id: 'approvedByReviewer',
+              placement: 'screen',
               name: 'Samþykkirðu þessa umsókn?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },

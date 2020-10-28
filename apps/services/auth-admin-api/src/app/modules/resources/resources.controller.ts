@@ -8,6 +8,7 @@ import {
   Param,
   Put,
   Delete,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -92,22 +93,30 @@ export class ResourcesController {
     return await this.resourcesService.createIdentityResource(identityResource)
   }
 
-  @Put('identity-resource/:id')
+  @Put('identity-resource/:name')
   @ApiOkResponse({ type: IdentityResource })
   async updateIdentityResource(
     @Body() identityResource: IdentityResourcesDTO,
-    @Param('id') id: string,
+    @Param('name') namne: string,
   ): Promise<IdentityResource> {
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
     return await this.resourcesService.updateIdentityResource(
       identityResource,
-      id,
+      name,
     )
   }
 
   @Delete('identity-resource/:id')
   @ApiOkResponse()
-  async deleteIdentityResource(@Param('id') id: string): Promise<number> {
-    return await this.resourcesService.deleteIdentityResource(id)
+  async deleteIdentityResource(@Param('name') name: string): Promise<number> {
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.resourcesService.deleteIdentityResource(name)
   }
 
   @Post('api-scope')
@@ -116,18 +125,26 @@ export class ResourcesController {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
-  @Put('api-scope/:id')
+  @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
   async updateApiScope(
     @Body() apiScope: ApiScopesDTO,
-    @Param('id') id: string,
+    @Param('name') name: string,
   ): Promise<ApiScope> {
-    return await this.resourcesService.updateApiScope(apiScope, id)
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.resourcesService.updateApiScope(apiScope, name)
   }
 
   @Delete('api-scope/:id')
   @ApiOkResponse()
-  async deleteApiScope(@Param('id') id: string): Promise<number> {
-    return await this.resourcesService.deleteApiScope(id)
+  async deleteApiScope(@Param('name') name: string): Promise<number> {
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.resourcesService.deleteApiScope(name)
   }
 }

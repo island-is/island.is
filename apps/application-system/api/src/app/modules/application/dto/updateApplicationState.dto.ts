@@ -11,4 +11,9 @@ export class UpdateApplicationStateDto {
   @IsObject()
   @ApiPropertyOptional()
   readonly answers?: object
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly message?: string
 }

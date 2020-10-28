@@ -7,7 +7,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
-import * as resetStyleRefs from '../../reset/reset.treat'
+import * as resetStyleRefs from '../../treat/reset.treat'
 import * as styleRefs from './useBoxStyles.treat'
 
 export type Space = keyof typeof theme.spacing

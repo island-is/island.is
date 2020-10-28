@@ -50,6 +50,8 @@ import {
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 
+import * as styles from './Search.treat'
+
 const PERPAGE = 10
 
 type SearchQueryFilters = {
@@ -101,7 +103,7 @@ const Search: Screen<CategoryProps> = ({
     )
     setSidebarCategories(newTagCountResults)
     setGrandTotalSearchResultCount(countTags.total)
-  }, [])
+  }, [countTags])
 
   const getLabels = (item) => {
     const labels = []
@@ -248,32 +250,19 @@ const Search: Screen<CategoryProps> = ({
         sidebar={
           <Stack space={3}>
             <Sidebar title={n('sidebarHeader')}>
-              <div
-                style={{
-                  position: 'relative',
-                }}
-              >
+              <Box width="full" position="relative" paddingTop={2}>
                 {totalSearchResults > 0 && (
                   <>
-                    <div
-                      style={{
-                        right: 40,
-                        position: 'absolute',
-                        left: '0',
-                        top: '12px',
-                        zIndex: 10, // to accommodate for being absolute
-                      }}
-                    >
-                      <Filter
-                        truncate
-                        selected={!filters.category && !filters.showNews}
-                        onClick={() => onRemoveFilters()}
-                        text={`${n(
-                          'allCategories',
-                          'Allir flokkar',
-                        )} (${grandTotalSearchResultCount})`}
-                      />
-                    </div>
+                    <Filter
+                      truncate
+                      selected={!filters.category && !filters.showNews}
+                      onClick={() => onRemoveFilters()}
+                      text={`${n(
+                        'allCategories',
+                        'Allir flokkar',
+                      )} (${grandTotalSearchResultCount})`}
+                      className={styles.allCategoriesLink}
+                    />
                     <SidebarAccordion
                       id="sidebar_accordion_categories"
                       label={''}
@@ -300,7 +289,7 @@ const Search: Screen<CategoryProps> = ({
                     </SidebarAccordion>
                   </>
                 )}
-              </div>
+              </Box>
             </Sidebar>
             {totalNews > 0 && (
               <Sidebar bullet="none" title={n('oterCategories')}>

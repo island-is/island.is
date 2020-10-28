@@ -5,6 +5,21 @@
   "header": {
     "logoutText": "Útskrá"
   },
+  "data": {
+    "title": "You own your data",
+    "subTitles": {
+      "info": "Information about your cars"
+    },
+    "info": "We need to collect information about your cars for you to be able to use the service",
+    "checkbox": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis morbi ullamcorper ante amet eleifend ornare eget a, aliquam. Nunc, non dui tempor, lobortis diam quis egestas. Magna tempus accumsan fusce leo nisl nunc lacinia ultrices. Facilisi orci nec ut magna varius etiam feugiat. Lobortis consequat, arcu blandit tincidunt vitae cras.",
+    "buttons": {
+      "continue": "Continue"
+    },
+    "error": {
+      "message": "We have problem with the connection to the database and cannot save your preferences, please try to re-load the page.",
+      "primaryButton": "Endurhlaða síðu"
+    }
+  },
   "myCars": {
     "title": "Úrvinnsla ökutækis",
     "subTitles": {
@@ -107,7 +122,7 @@
       "sections": ["Velja ökutæki", "Afskrá Ökutæki"]
     }
   },
-  "companyOverview": {
+  "deregisterOverview": {
     "title": "Deregister car",
     "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
     "subtitles": {
@@ -125,8 +140,9 @@
   "companyInfo": {
     "title": "Company information",
     "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
+    "empty": "Add your companies locations so that the users can find your company on iceland.is.",
     "subtitles": {
-      "companyLocation": "Recycling company location"
+      "location": "Recycling company location"
     },
     "buttons": {
       "add": "Add another location",
@@ -167,9 +183,10 @@
       "add": "Add location",
       "save": "Save changes",
       "cancel": "Cancel"
-    }
+    },
+    "success": "Company location was successfully updated."
   },
-  "companySidenav": {
+  "deregisterSidenav": {
     "deregister": "Deregister car",
     "companyInfo": "Company information"
   },
@@ -179,7 +196,12 @@
       "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
       "input": {
         "label": "Car registration number",
-        "placeholder": "ex MD2341"
+        "placeholder": "ex MDX34",
+        "errors": {
+          "empty": "Please enter a car registration number",
+          "length": "Please enter 5 or 7 characters",
+          "invalidRegNumber": "Please enter registration number in a valid format"
+        }
       },
       "buttons": {
         "cancel": "Cancel",
@@ -192,11 +214,55 @@
       "buttons": {
         "back": "Back",
         "confirm": "Confirm"
-      }
+      },
+      "success": "Deregistration was successful."
     }
   },
+  "recyclingFundOverview": {
+    "title": "Recycled cars",
+    "subtitles": {
+      "deregistered": "Deregistered"
+    },
+    "buttons": {
+      "export": "Export"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
+  },
+  "recyclingFundSidenav": {
+    "title": "Skilavottord",
+    "recycled": "Recycled cars",
+    "companies": "Reycling companies"
+  },
+  "recyclingCompanies": {
+    "title": "Recycling companies",
+    "info": "The company information will help your customers contact you when using the digital car recycling service.",
+    "empty": "There is no recycling comapany added yet",
+    "subtitles": {
+      "companies": "Recycling companies"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "buttons": {
+      "add": "Add recycling company",
+      "edit": "Edit"
+    }
+  },
+  "unauthorized": {
+    "message": "You are not allowed to view this page"
+  },
   "routes": {
-    "home": "/grein/endurvinna-oekutaeki",
+    "home": {
+      "citizen": "/my-cars",
+      "recyclingPartner": "/deregister-vehicle",
+      "recyclingFund": "/recycled-vehicles"
+    },
+    "data": "/data",
     "myCars": "/my-cars",
     "recycleVehicle": {
       "baseRoute": "/recycle-vehicle",
@@ -208,6 +274,12 @@
       "baseRoute": "/deregister-vehicle",
       "select": "/deregister-vehicle/select",
       "deregister": "/deregister-vehicle/[id]"
+    },
+    "recycledVehicles": "/recycled-vehicles",
+    "recyclingCompanies": {
+      "baseRoute": "/recycling-companies",
+      "add": "/recycling-companies/add",
+      "edit": "/recycling-companies/[company]"
     },
     "companyInfo": {
       "baseRoute": "/company-info",

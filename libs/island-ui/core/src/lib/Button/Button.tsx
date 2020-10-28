@@ -44,6 +44,7 @@ export interface ButtonProps {
   icon?: IconType
   iconType?: Type
   type?: NativeButtonProps['type']
+  lang?: string
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -67,7 +68,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
-        type={type}
+        type="submit"
+        role="button"
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],

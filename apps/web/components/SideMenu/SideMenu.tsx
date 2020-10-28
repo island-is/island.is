@@ -229,7 +229,6 @@ export const SideMenu: FC<Props> = ({
                   aria-labelledby={`tab-${index}`}
                   role="tabpanel"
                   className={styles.content}
-                  aria-hidden={activeTab !== index}
                   hidden={activeTab !== index}
                 >
                   <div className={styles.linksContent}>

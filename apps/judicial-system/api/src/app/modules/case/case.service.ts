@@ -227,7 +227,7 @@ export class CaseService {
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
         existingCase.judge.mobileNumber,
-        'Undirrita dóm',
+        'Undirrita dóm - Öryggistala',
         existingCase.judge.name,
         'Ísland',
         'ruling.pdf',
@@ -260,7 +260,7 @@ export class CaseService {
         documentToken,
       )
 
-      this.sendRulingAsSignedPdf(existingCase, signedPdf)
+      await this.sendRulingAsSignedPdf(existingCase, signedPdf)
     }
 
     return existingCase

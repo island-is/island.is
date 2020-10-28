@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Op, WhereOptions } from 'sequelize'
@@ -28,22 +28,29 @@ export class ResourcesService {
     private logger: Logger,
   ) {}
 
-  async getIdentityResourceById(id: string): Promise<IdentityResource> {
-    this.logger.debug('Getting data about identity resource with id: ', id)
+  /** Gets Identity resource by name */
+  async getIdentityResourceByName(name: string): Promise<IdentityResource> {
+    this.logger.debug('Getting data about identity resource with name: ', name)
 
-    return this.identityResourceModel.findOne({
-      where: { id: id },
-    })
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return this.identityResourceModel.findByPk(name)
   }
 
-  async getApiScopeById(id: string): Promise<ApiScope> {
-    this.logger.debug('Getting data about api scope with id: ', id)
+  /** Gets API scope by name */
+  async getApiScopeByName(name: string): Promise<ApiScope> {
+    this.logger.debug('Getting data about api scope with name: ', name)
 
-    return this.apiScopeModel.findOne({
-      where: { id: id },
-    })
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return this.apiScopeModel.findByPk(name)
   }
 
+  /** Get identity resources by scope names */
   async findIdentityResourcesByScopeName(
     scopeNames: string[],
   ): Promise<IdentityResource[]> {
@@ -61,6 +68,7 @@ export class ResourcesService {
     })
   }
 
+  /** Gets Api scopes by scope names  */
   async findApiScopesByNameAsync(scopeNames: string[]): Promise<ApiScope[]> {
     this.logger.debug(`Finding api scopes for scope names`, scopeNames)
 
@@ -76,6 +84,7 @@ export class ResourcesService {
     })
   }
 
+  /** Gets api resources by api resource names  */
   async findApiResourcesByNameAsync(
     apiResourceNames: string[],
   ): Promise<ApiResource[]> {
@@ -96,6 +105,7 @@ export class ResourcesService {
     })
   }
 
+  /** Get Api resources by scope names */
   async findApiResourcesByScopeNameAsync(
     apiResourceScopeNames: string[],
   ): Promise<ApiResource[]> {
@@ -125,6 +135,7 @@ export class ResourcesService {
     })
   }
 
+  /** Creates a new identity resource */
   async createIdentityResource(
     identityResource: IdentityResourcesDTO,
   ): Promise<IdentityResource> {
@@ -133,43 +144,67 @@ export class ResourcesService {
     return await this.identityResourceModel.create({ ...identityResource })
   }
 
+  /** Updates an existing Identity resource */
   async updateIdentityResource(
     identityResource: IdentityResourcesDTO,
-    id: string,
+    name: string,
   ): Promise<IdentityResource> {
-    this.logger.debug('Updating identity resource with id: ', id)
+    this.logger.debug('Updating identity resource with name: ', name)
+
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
 
     await this.identityResourceModel.update(
       { ...identityResource },
-      { where: { id: id } },
+      { where: { name: name } },
     )
 
-    return await this.getIdentityResourceById(id)
+    return await this.getIdentityResourceByName(name)
   }
 
-  async deleteIdentityResource(id: string): Promise<number> {
-    this.logger.debug('Removing identity resource with id: ', id)
+  /** Deletes an identity resource by name */
+  async deleteIdentityResource(name: string): Promise<number> {
+    this.logger.debug('Removing identity resource with name: ', name)
 
-    return await this.identityResourceModel.destroy({ where: { id: id } })
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.identityResourceModel.destroy({ where: { name: name } })
   }
 
+  /** Creates a new Api Scope */
   async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
 
     return await this.apiScopeModel.create({ ...apiScope })
   }
 
-  async updateApiScope(apiScope: ApiScopesDTO, id: string): Promise<ApiScope> {
-    this.logger.debug('Updating api scope with id: ', id)
+  /** Updates an existing API scope */
+  async updateApiScope(
+    apiScope: ApiScopesDTO,
+    name: string,
+  ): Promise<ApiScope> {
+    this.logger.debug('Updating api scope with name: ', name)
 
-    await this.apiScopeModel.update({ ...apiScope }, { where: { id: id } })
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
 
-    return this.getApiScopeById(id)
+    await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
+
+    return this.getApiScopeByName(name)
   }
 
-  async deleteApiScope(id: string): Promise<number> {
-    this.logger.debug('Deleting api scope with id: ', id)
+  /** Deletes an API scope */
+  async deleteApiScope(name: string): Promise<number> {
+    this.logger.debug('Deleting api scope with name: ', name)
 
-    return await this.apiScopeModel.destroy({ where: { id: id } })
+    if (!name) {
+      throw new BadRequestException('Name must be provided')
+    }
+
+    return await this.apiScopeModel.destroy({ where: { name: name } })
   }
 }

@@ -45,3 +45,23 @@ export const Error = () => (
     />
   </ContentBlock>
 )
+
+export const Warning = () => (
+  <ContentBlock>
+    <AlertMessage
+      type="warning"
+      title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
+      message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+    />
+  </ContentBlock>
+)
+
+export const Success = () => (
+  <ContentBlock>
+    <AlertMessage
+      type="success"
+      title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
+      message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+    />
+  </ContentBlock>
+)

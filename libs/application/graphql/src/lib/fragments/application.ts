@@ -12,5 +12,7 @@ export const ApplicationFragment = gql`
     typeId
     answers
     externalData
+    progress
+    name
   }
 `

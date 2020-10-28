@@ -1,33 +1,25 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import CompanyListItem from './CompanyListItem'
+import { useQuery } from '@apollo/client'
+import { GET_ALL_ACTIVE_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 
 const CompanyList = () => {
-  const companies = [
-    {
-      name: 'Company 1',
-      address: 'Address',
-      phone: '01234',
-      website: 'http://www.some-company.is',
-    },
-    {
-      name: 'Company 2',
-      address: 'Address',
-      phone: '01234',
-      website: 'http://www.some-company.is',
-    },
-    {
-      name: 'Company 3',
-      address: 'Address',
-      phone: '01234',
-      website: 'http://www.some-company.is',
-    },
-  ]
+  const { data, error, loading } = useQuery(GET_ALL_ACTIVE_RECYCLING_PARTNERS)
+
+  if (error || (loading && !data)) {
+    return null
+  }
+
+  const recyclingPartners = data?.getAllActiveRecyclingPartners || []
+  const sortedPartners = recyclingPartners.slice().sort((a, b) => {
+    return a.city < b.city ? -1 : 1
+  })
 
   return (
     <Box>
-      {companies.map((company, index) => (
-        <CompanyListItem key={index} {...company} />
+      {sortedPartners.map((partner, index) => (
+        <CompanyListItem key={index} {...partner} />
       ))}
     </Box>
   )

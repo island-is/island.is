@@ -8,6 +8,7 @@ import {
   Form,
   ApplicationTypes,
   FormValue,
+  FormModes,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
@@ -168,7 +169,7 @@ describe('ApplicationFormReducer', () => {
       }
       const state = {
         ...initialState,
-        form: { ...form, mode: 'review' as const },
+        form: { ...form, mode: FormModes.REVIEW },
         application: {
           ...application,
           answers,

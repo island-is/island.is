@@ -7,7 +7,6 @@ import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { GrantsModule } from './modules/grants/grants.module'
 import { AuthModule } from '@island.is/auth-api-lib'
-import { GrantTypesModule } from './modules/grant-types/grant-types.module'
 
 @Module({
   imports: [
@@ -23,7 +22,6 @@ import { GrantTypesModule } from './modules/grant-types/grant-types.module'
     ClientsModule,
     ResourcesModule,
     GrantsModule,
-    GrantTypesModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),

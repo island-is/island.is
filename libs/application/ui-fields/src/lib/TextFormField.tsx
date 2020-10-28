@@ -50,6 +50,8 @@ const TextFormField: FC<Props> = ({
               clearErrors(id)
             }
           }}
+          textarea={field.variant === 'textarea'}
+          type={field.variant !== 'textarea' ? field.variant : 'text'}
         />
       </Box>
     </div>

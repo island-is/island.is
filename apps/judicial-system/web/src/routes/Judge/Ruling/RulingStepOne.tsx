@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Box,
   Checkbox,
   DatePicker,
@@ -27,6 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatISO } from 'date-fns'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -100,8 +102,6 @@ export const RulingStepOne: React.FC = () => {
         requestedCustodyRestrictions:
           caseDraftJSON.requestedCustodyRestrictions ?? [],
         caseFacts: caseDraftJSON.caseFacts ?? '',
-        witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-        investigationProgress: caseDraftJSON.investigationProgress ?? '',
         legalArguments: caseDraftJSON.legalArguments ?? '',
         comments: caseDraftJSON.comments ?? '',
         notifications: caseDraftJSON.Notification ?? [],
@@ -156,6 +156,11 @@ export const RulingStepOne: React.FC = () => {
         <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
         <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
       </Box>
+      <Box component="section" marginBottom={7}>
+        <Accordion>
+          <PoliceRequestAccordionItem workingCase={workingCase} />
+        </Accordion>
+      </Box>
       <Box component="section" marginBottom={8}>
         <Box marginBottom={2}>
           <Text as="h3" variant="h3">
@@ -169,7 +174,7 @@ export const RulingStepOne: React.FC = () => {
             label="Niðurstaða úrskurðar"
             placeholder="Hver er niðurstaðan að mati dómara?"
             defaultValue={workingCase.ruling}
-            rows={12}
+            rows={16}
             errorMessage={rulingErrorMessage}
             hasError={rulingErrorMessage !== ''}
             onFocus={() => setRulingErrorMessage('')}
@@ -238,11 +243,23 @@ export const RulingStepOne: React.FC = () => {
                   : null
               }
               handleChange={(date) => {
+                const formattedDate = formatISO(date, {
+                  representation:
+                    workingCase.custodyEndDate?.indexOf('T') > -1
+                      ? 'complete'
+                      : 'date',
+                })
+
                 updateState(
                   workingCase,
                   'custodyEndDate',
-                  formatISO(date, { representation: 'date' }),
+                  formattedDate,
                   setWorkingCase,
+                )
+
+                api.saveCase(
+                  workingCase.id,
+                  parseString('custodyEndDate', formattedDate),
                 )
               }}
               required
@@ -270,18 +287,19 @@ export const RulingStepOne: React.FC = () => {
                   evt.target.value,
                   'time-format',
                 )
-                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                  const custodyEndDateMinutes = parseTime(
-                    workingCase.custodyEndDate,
-                    evt.target.value,
-                  )
+                const custodyEndDateMinutes = parseTime(
+                  workingCase.custodyEndDate,
+                  evt.target.value,
+                )
 
-                  updateState(
-                    workingCase,
-                    'custodyEndDate',
-                    custodyEndDateMinutes,
-                    setWorkingCase,
-                  )
+                updateState(
+                  workingCase,
+                  'custodyEndDate',
+                  custodyEndDateMinutes,
+                  setWorkingCase,
+                )
+
+                if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
                   api.saveCase(
                     workingCase.id,
                     parseString('custodyEndDate', custodyEndDateMinutes),

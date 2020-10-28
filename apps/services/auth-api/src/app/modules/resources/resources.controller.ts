@@ -4,6 +4,7 @@ import {
   Query,
   UseGuards,
   ParseArrayPipe,
+  BadRequestException,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger'
 import {
@@ -16,15 +17,23 @@ import {
   IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+// Try comment to trigger deployment
+// TODO: Add guards after getting communications to work properly with IDS4
+// @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
+  /** Get Identity resources by scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('identity-resources')
-  @ApiQuery({ name: 'scopeNames', required: false })
+  @ApiQuery({
+    name: 'scopeNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
   async FindIdentityResourcesByScopeName(
     @Query(
@@ -40,9 +49,15 @@ export class ResourcesController {
     return identityResources
   }
 
+  /** Gets API scopes by scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('api-scopes')
-  @ApiQuery({ name: 'scopeNames', required: false })
+  @ApiQuery({
+    name: 'scopeNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
   @ApiOkResponse({ type: ApiScope, isArray: true })
   async FindApiScopesByNameAsync(
     @Query(
@@ -58,10 +73,21 @@ export class ResourcesController {
     return apiScopes
   }
 
+  /** Gets api resources by resources names or scope names */
   @Scopes('@identityserver.api/authentication')
   @Get('api-resources')
-  @ApiQuery({ name: 'apiResourceNames', required: false })
-  @ApiQuery({ name: 'apiScopeNames', required: false })
+  @ApiQuery({
+    name: 'apiResourceNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
+  @ApiQuery({
+    name: 'apiScopeNames',
+    type: String,
+    required: false,
+    allowEmptyValue: true,
+  })
   @ApiOkResponse({ type: ApiResource, isArray: true })
   async FindApiResourcesByNameAsync(
     @Query(
@@ -76,7 +102,7 @@ export class ResourcesController {
     apiScopeNames: string[],
   ): Promise<ApiResource[]> {
     if (apiResourceNames && apiScopeNames) {
-      throw new Error(
+      throw new BadRequestException(
         'Specifying both apiResourceNames and apiScopeNames is not supported.',
       )
     }

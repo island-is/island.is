@@ -71,6 +71,7 @@ export class EmailService {
       }
     } catch (e) {
       this.logger.error(`Fatal error when sending email: ${e}`, e)
+      throw e
     }
 
     return messageId

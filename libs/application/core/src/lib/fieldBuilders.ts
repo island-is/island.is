@@ -11,9 +11,10 @@ import {
   IntroductionField,
   Option,
   RadioField,
-  ReviewField,
+  SubmitField,
   SelectField,
   TextField,
+  TextFieldVariant,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '..'
@@ -186,6 +187,7 @@ export function buildTextField(data: {
   description?: FormText
   disabled?: boolean
   width?: FieldWidth
+  variant?: TextFieldVariant
 }): TextField {
   const {
     condition,
@@ -194,6 +196,7 @@ export function buildTextField(data: {
     description,
     disabled = false,
     width = 'full',
+    variant = 'text',
   } = data
   return {
     children: undefined,
@@ -203,6 +206,7 @@ export function buildTextField(data: {
     id,
     name,
     description,
+    variant,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -280,18 +284,20 @@ export function buildDividerField(data: { name: string }): DividerField {
   }
 }
 
-export function buildReviewField(data: {
+export function buildSubmitField(data: {
   id: string
-  name: string
+  name: FormText
+  placement?: 'footer' | 'screen'
   actions: CallToAction[]
-}): ReviewField {
-  const { id, name, actions } = data
+}): SubmitField {
+  const { id, placement = 'footer', name, actions } = data
   return {
     children: undefined,
     id,
     name,
     actions,
-    type: FieldTypes.REVIEW,
-    component: FieldComponents.REVIEW,
+    placement,
+    type: FieldTypes.SUBMIT,
+    component: FieldComponents.SUBMIT,
   }
 }

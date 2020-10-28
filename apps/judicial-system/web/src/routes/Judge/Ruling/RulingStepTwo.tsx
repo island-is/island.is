@@ -42,8 +42,6 @@ export const RulingStepTwo: React.FC = () => {
     requestedCustodyRestrictions:
       caseDraftJSON.requestedCustodyRestrictions ?? [],
     caseFacts: caseDraftJSON.caseFacts ?? '',
-    witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
-    investigationProgress: caseDraftJSON.investigationProgress ?? '',
     legalArguments: caseDraftJSON.legalArguments ?? '',
     comments: caseDraftJSON.comments ?? '',
     notifications: caseDraftJSON.Notification ?? [],
@@ -238,13 +236,8 @@ export const RulingStepTwo: React.FC = () => {
               )
             }}
             textarea
+            rows={7}
           />
-        </Box>
-        <Box marginBottom={3}>
-          <Text variant="h4" fontWeight="light">
-            Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að
-            framkvæmd gæsluvarðhaldsins undir dómara.
-          </Text>
         </Box>
         <Box marginBottom={2}>
           <Text as="h4" variant="h4">
@@ -348,25 +341,32 @@ export const RulingStepTwo: React.FC = () => {
             </GridColumn>
           </GridRow>
         </Box>
-        <Input
-          name="prosecutorAppealAnnouncement"
-          data-testid="prosecutorAppealAnnouncement"
-          label="Yfirlýsing um kæru sækjanda"
-          defaultValue={workingCase.prosecutorAppealAnnouncement}
-          disabled={
-            workingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL
-          }
-          placeholder="Í hvaða skyni er kært?"
-          onBlur={(evt) => {
-            autoSave(
-              workingCase,
-              'prosecutorAppealAnnouncement',
-              evt.target.value,
-              setWorkingCase,
-            )
-          }}
-          textarea
-        />
+        <Box marginBottom={1}>
+          <Input
+            name="prosecutorAppealAnnouncement"
+            data-testid="prosecutorAppealAnnouncement"
+            label="Yfirlýsing um kæru sækjanda"
+            defaultValue={workingCase.prosecutorAppealAnnouncement}
+            disabled={
+              workingCase.prosecutorAppealDecision !== CaseAppealDecision.APPEAL
+            }
+            placeholder="Í hvaða skyni er kært?"
+            onBlur={(evt) => {
+              autoSave(
+                workingCase,
+                'prosecutorAppealAnnouncement',
+                evt.target.value,
+                setWorkingCase,
+              )
+            }}
+            textarea
+            rows={7}
+          />
+        </Box>
+        <Text variant="h4" fontWeight="light">
+          Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að
+          framkvæmd gæsluvarðhaldsins undir dómara.
+        </Text>
       </Box>
       <FormFooter
         nextUrl={Constants.CONFIRMATION_ROUTE}

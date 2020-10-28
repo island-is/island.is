@@ -52,7 +52,7 @@ export const InfoScreen: FC<Props> = ({
                   <Typography variant="h1">{formatMessage(title)}</Typography>
                   <Tag variant="mint">
                     {formatMessage({
-                      id: 'service-portal:in-progress',
+                      id: 'service.portal:in-progress',
                       defaultMessage: 'Í vinnslu',
                     })}
                   </Tag>
