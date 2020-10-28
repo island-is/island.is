@@ -6,6 +6,7 @@ import {
   Text,
   Breadcrumbs,
   Button,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -34,30 +35,9 @@ const Overview: FC = () => {
 
   return (
     <PartnerPageLayout
-      top={
-        <Box>
-          <Box paddingBottom={6}>
-            <Breadcrumbs>
-              <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
-              <span>{t.title}</span>
-            </Breadcrumbs>
-          </Box>
-          <Stack space={6}>
-            <Stack space={4}>
-              <Stack space={2}>
-                <Text variant="h1">{t.title}</Text>
-                <Text variant="intro">{t.info}</Text>
-              </Stack>
-              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
-            </Stack>
-            <Text variant="h3">{t.subtitles.history}</Text>
-          </Stack>
-        </Box>
-      }
-      bottom={<CarsTable titles={t.table} />}
-      left={
+      side={
         <Sidenav
-          title="Company name"
+          title={user.name}
           sections={[
             {
               icon: 'car',
@@ -73,7 +53,29 @@ const Overview: FC = () => {
           activeSection={0}
         />
       }
-    />
+    >
+      <Stack space={6}>
+        <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
+          <Stack space={4}>
+            <Breadcrumbs>
+              <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
+              <span>{t.title}</span>
+            </Breadcrumbs>
+            <Stack space={2}>
+              <Text variant="h1">{t.title}</Text>
+              <Text variant="intro">{t.info}</Text>
+            </Stack>
+            <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+          </Stack>
+        </GridColumn>
+        <Box marginX={1}>
+          <Stack space={4}>
+            <Text variant="h3">{t.subtitles.history}</Text>
+            <CarsTable titles={t.table} />
+          </Stack>
+        </Box>
+      </Stack>
+    </PartnerPageLayout>
   )
 }
 

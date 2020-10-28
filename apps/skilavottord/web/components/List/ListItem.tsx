@@ -19,7 +19,6 @@ export const ListItem: FC<CompanyProps> = ({
   content,
   buttons,
 }: CompanyProps) => {
-
   const createLink = (link) => {
     return link.indexOf('http://') === -1 ? `https://${link}` : link
   }
@@ -38,9 +37,16 @@ export const ListItem: FC<CompanyProps> = ({
         <Stack space={[2, 2, 1, 1]}>
           <Text variant="h5">{title}</Text>
           {content.map((row, key) => (
-            <Text key={key} color={row.isHighlighted ? 'blue400' : 'currentColor'}>
+            <Text
+              key={key}
+              color={row.isHighlighted ? 'blue400' : 'currentColor'}
+            >
               {row.href ? (
-                <Link href={createLink(row.href)} color="blue400" underline="small">
+                <Link
+                  href={createLink(row.href)}
+                  color="blue400"
+                  underline="small"
+                >
                   {row.text}
                 </Link>
               ) : (

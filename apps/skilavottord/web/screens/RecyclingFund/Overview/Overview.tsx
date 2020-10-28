@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
@@ -21,16 +21,7 @@ const Overview: FC = () => {
 
   return (
     <PartnerPageLayout
-      top={
-        <Box>
-          <Stack space={3}>
-            <Text variant="h1">{t.title}</Text>
-            <Text variant="h3">{t.subtitles.deregistered}</Text>
-          </Stack>
-        </Box>
-      }
-      bottom={<CarsTable titles={t.table} />}
-      left={
+      side={
         <Sidenav
           title={sidenavText.title}
           sections={[
@@ -48,7 +39,13 @@ const Overview: FC = () => {
           activeSection={0}
         />
       }
-    />
+    >
+      <Stack space={4}>
+        <Text variant="h1">{t.title}</Text>
+        <Text variant="h3">{t.subtitles.deregistered}</Text>
+        <CarsTable titles={t.table} />
+      </Stack>
+    </PartnerPageLayout>
   )
 }
 
