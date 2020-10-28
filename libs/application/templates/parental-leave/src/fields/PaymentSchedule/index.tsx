@@ -5,6 +5,8 @@ import { Box } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
+import { m } from '../../lib/messages'
+
 import Table from '../components/Table'
 
 interface Payment {
@@ -14,6 +16,7 @@ interface Payment {
   amount: number
 }
 
+// TODO: This will come from the formValue
 const payments: Payment[] = [
   {
     date: '2020-12-01T00:00:00.000Z',
@@ -78,14 +81,14 @@ const payments: Payment[] = [
 const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
-const PaymentSchedule: FC<FieldBaseProps> = ({ error, field, application }) => {
+const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
   const { formatMessage } = useLocale()
 
   const formatedPayments = payments.map((payment) => {
     const paymentDate = new Date(payment.date)
     return {
-      year: paymentDate.getFullYear(),
+      year: format(paymentDate, 'yyyy'),
       month: format(paymentDate, 'MMMM'),
       tax: formatIsk(payment.tax),
       pensionContribution: formatIsk(payment.pensionContribution),
@@ -97,27 +100,31 @@ const PaymentSchedule: FC<FieldBaseProps> = ({ error, field, application }) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Year',
+        Header: formatText(m.salaryLabelYear, application, formatMessage),
         accessor: 'year', // accessor is the "key" in the data
       } as const,
       {
-        Header: 'Month',
+        Header: formatText(m.salaryLabelMonth, application, formatMessage),
         accessor: 'month',
       } as const,
       {
-        Header: 'Pension Fund',
+        Header: formatText(
+          m.salaryLabelPensionFund,
+          application,
+          formatMessage,
+        ),
         accessor: 'pensionContribution',
       } as const,
       {
-        Header: 'Tax',
+        Header: formatText(m.salaryLabelTax, application, formatMessage),
         accessor: 'tax',
       } as const,
       {
-        Header: 'Paid Amount',
+        Header: formatText(m.salaryLabelPaidAmount, application, formatMessage),
         accessor: 'amount',
       } as const,
     ],
-    [],
+    [application, formatMessage],
   )
 
   return (
@@ -129,7 +136,21 @@ const PaymentSchedule: FC<FieldBaseProps> = ({ error, field, application }) => {
       )}
 
       <Box marginY={3}>
-        <Table columns={columns} data={data} truncate />
+        <Table
+          columns={columns}
+          data={data}
+          truncate
+          showMoreLabel={formatText(
+            m.salaryLabelShowMore,
+            application,
+            formatMessage,
+          )}
+          showLessLabel={formatText(
+            m.salaryLabelShowLess,
+            application,
+            formatMessage,
+          )}
+        />
       </Box>
     </Box>
   )

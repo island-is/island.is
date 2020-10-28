@@ -104,13 +104,16 @@ const Table = <T extends object>(
   }
 
   return (
-    // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined'
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined' ?
     <table {...getTableProps()} className={styles.table}>
       <thead className={styles.header}>
         {headerGroups.map((headerGroup) => (
+          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
           // @ts-ignore - Same as above
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
+              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
               // @ts-ignore - Same as above
               <th {...column.getHeaderProps()}>
                 <Text variant="h5">{column.render('Header')}</Text>
@@ -119,6 +122,7 @@ const Table = <T extends object>(
           </tr>
         ))}
       </thead>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-ignore */}
       {/* @ts-ignore - Same as above */}
       <tbody {...getTableBodyProps()}>
         {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||

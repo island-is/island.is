@@ -1,6 +1,5 @@
 import { style, globalStyle } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-import { flexShrink } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
 
 export const header = style({
   background: theme.color.blue100,
