@@ -41,7 +41,7 @@ export class RecyclingPartnerResolver {
     rp.website = website
     rp.phone = phone
     rp.active = active
-    logger.debug('create new recyclingPartner...' + JSON.stringify(rp, null, 2))
+    logger.info('create new recyclingPartner...' + JSON.stringify(rp, null, 2))
     await this.recyclingPartnerService.createRecyclingPartner(rp)
     return true
   }
