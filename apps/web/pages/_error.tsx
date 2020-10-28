@@ -1,5 +1,4 @@
 import React from 'react'
-import { NextPageContext } from 'next'
 import * as Sentry from '@sentry/node'
 
 import ErrorScreen from '../screens/Error/Error'
