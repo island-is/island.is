@@ -1,12 +1,12 @@
 import React, { FC, useContext } from 'react'
 import { useQuery } from '@apollo/client'
-import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { CompanyListItem } from './components'
 import { GET_ALL_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 
@@ -43,7 +43,20 @@ const RecyclingCompanies: FC = () => {
             ) : (
               <Box>
                 {recyclingPartners.map((partner, index) => (
-                  <CompanyListItem key={index} {...partner} />
+                  <ListItem
+                    key={index}
+                    title={partner.companyName}
+                    content={[
+                      {
+                        text: `${partner.companyId}`,
+                      },
+                      {
+                        text: partner.isActive
+                          ? t.status.active
+                          : t.status.inactive,
+                      },
+                    ]}
+                  />
                 ))}
               </Box>
             )}
