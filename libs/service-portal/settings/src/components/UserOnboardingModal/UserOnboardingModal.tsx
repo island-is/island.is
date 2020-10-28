@@ -11,15 +11,13 @@ import {
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
+import { PhoneConfirmFormData } from '../Forms/PhoneConfirmForm'
 import { PhoneFormData } from '../Forms/PhoneForm'
 import { EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
 import { LanguageStep } from './Steps/LanguageStep'
-import {
-  PhoneConfirmationStep,
-  PhoneConfirmFormData,
-} from './Steps/PhoneConfirmationStep'
 import { PhoneStep } from './Steps/PhoneStep'
+import { PhoneConfirmationStep } from './Steps/PhoneConfirmationStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 
 type OnboardingStep =

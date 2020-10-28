@@ -1,17 +1,10 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { PhoneConfirmForm } from '../../Forms/PhoneConfirmForm'
-
-export interface PhoneConfirmFormData {
-  code: string
-}
+import {
+  PhoneConfirmForm,
+  PhoneConfirmFormData,
+} from '../../Forms/PhoneConfirmForm'
 
 interface Props {
   tel: string
