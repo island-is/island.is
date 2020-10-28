@@ -1,6 +1,7 @@
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { userManager } from '../../utils/userManager'
+import { setClientAuthToken } from '@island.is/service-portal/graphql'
 
 const useAuth = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStore()
@@ -16,7 +17,7 @@ const useAuth = () => {
         type: ActionType.SetUserFulfilled,
         payload: user,
       })
-      localStorage.setItem('token', user.access_token)
+      setClientAuthToken(user.access_token)
     } catch (exception) {
       userManager.signinRedirect({
         state: window.location.pathname,

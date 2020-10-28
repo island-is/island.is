@@ -4,6 +4,7 @@ import { userManager } from '../../utils/userManager'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
+import { setClientAuthToken } from '@island.is/service-portal/graphql'
 
 export const OidcSignIn: FC = () => {
   const history = useHistory()
@@ -18,7 +19,7 @@ export const OidcSignIn: FC = () => {
           payload: user,
         })
 
-        localStorage.setItem('token', user.access_token)
+        setClientAuthToken(user.access_token)
         history.push(typeof user.state === 'string' ? user.state : '/')
       })
       .catch(function (error) {
