@@ -4,8 +4,8 @@ import { FormPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import CompanyInfoForm from './components/CompanyInfoForm'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const AddCompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
@@ -16,8 +16,7 @@ const AddCompanyInfo: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (

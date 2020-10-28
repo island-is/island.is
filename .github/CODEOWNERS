@@ -50,3 +50,4 @@
 /libs/api-catalogue/                                      @island-is/advania
 
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
+/apps/services/xroad-collector                            @island-is/advania

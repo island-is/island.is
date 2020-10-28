@@ -4,10 +4,9 @@ import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import CarsTable from './components/CarsTable'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -18,8 +17,7 @@ const Overview: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('recycledVehicles', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (

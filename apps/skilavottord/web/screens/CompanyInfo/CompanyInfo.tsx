@@ -1,22 +1,15 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@apollo/client'
-import {
-  Box,
-  Stack,
-  Text,
-  Breadcrumbs,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text, Breadcrumbs } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { useRouter } from 'next/router'
 import { CompanyListItem } from '../Handover/components'
 import { GET_RECYCLING_PARTNER } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
@@ -31,8 +24,7 @@ const CompanyInfo: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (
