@@ -9,5 +9,15 @@ export default {
     audience: 'localhost:4200',
     jwtSecret: 'securesecret',
   },
+  samgongustofa: {
+    soapUrl: process.env.SAMGONGUSTOFA_SOAP_URL,
+    soapUsername: process.env.SAMGONGUSTOFA_SOAP_USER,
+    soapPassword: process.env.SAMGONGUSTOFA_SOAP_PASS,
+    restAuthUrl: process.env.SAMGONGUSTOFA_REST_AUTH_URL,
+    restDeRegUrl: process.env.SAMGONGUSTOFA_REST_DEREG_URL,
+    restUsername: process.env.SAMGONGUSTOFA_REST_USER,
+    restPassword: process.env.SAMGONGUSTOFA_REST_PASS,
+    restReportingStation: process.env.SAMGONGUSTOFA_REST_REPORTING_STATION,
+  },
   backendUrl: 'http://localhost:3333',
 }
