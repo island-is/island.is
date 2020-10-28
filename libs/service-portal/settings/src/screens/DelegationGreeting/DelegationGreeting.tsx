@@ -1,6 +1,6 @@
 import React from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
   GridColumn,
@@ -15,6 +15,7 @@ import { mockDelegationList } from './mockDelegationList'
 import * as styles from './DelegationGreeting.treat'
 
 export const DelegationGreeting: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
 
   return (

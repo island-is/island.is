@@ -47,8 +47,15 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
     "api-catalogue-consts": {
       "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
     },
     "api-catalogue-elastic": {
       "tags": []
@@ -60,6 +67,9 @@
       "tags": []
     },
     "api-content-search": {
+      "tags": []
+    },
+    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
@@ -301,6 +311,9 @@
     },
     "services-user-profile": {
       "tags": []
+    },
+    "services-xroad-collector": {
+      "tags": ["api-catalogue-services"]
     },
     "shared-form-fields": {
       "tags": []

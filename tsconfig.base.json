@@ -41,6 +41,9 @@
         "libs/api-catalogue/types/src/index.ts"
       ],
       "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
+      "@island.is/api/domains/api-catalogue": [
+        "libs/api/domains/api-catalogue/src/index.ts"
+      ],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],

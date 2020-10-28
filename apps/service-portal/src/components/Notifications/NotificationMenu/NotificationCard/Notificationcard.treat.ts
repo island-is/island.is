@@ -12,6 +12,11 @@ export const unread = style({
   backgroundColor: theme.color.blue100,
 })
 
+export const wip = style({
+  opacity: 0.5,
+  pointerEvents: 'none',
+})
+
 export const controlMenu = style({
   position: 'absolute',
   top: theme.spacing['2'],
@@ -22,8 +27,4 @@ export const link = style({
   ':hover': {
     textDecoration: 'none',
   },
-})
-
-export const title = style({
-  maxWidth: '80%',
 })

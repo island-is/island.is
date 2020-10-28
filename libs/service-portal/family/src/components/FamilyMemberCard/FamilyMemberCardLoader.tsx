@@ -11,8 +11,8 @@ export const FamilyMemberCardLoader: FC = () => {
       border="standard"
       borderRadius="large"
     >
-      <Box marginRight={[2, 4]} borderRadius="circle" overflow="hidden">
-        <SkeletonLoader width={76} height={76} />
+      <Box marginRight={[2, 4]}>
+        <SkeletonLoader width={76} height={76} borderRadius="circle" />
       </Box>
       <div>
         <SkeletonLoader width={150} height={32} />

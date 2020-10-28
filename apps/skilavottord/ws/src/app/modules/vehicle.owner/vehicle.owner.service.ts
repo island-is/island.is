@@ -26,7 +26,7 @@ export class VehicleOwnerService {
   }
 
   async findByNationalId(nationalId: string): Promise<VehicleOwnerModel> {
-    this.logger.debug(`Finding vehicle owner by vehicleId - "${nationalId}"`)
+    this.logger.info(`Finding vehicle owner by vehicleId - "${nationalId}"`)
     return this.vehicleOwnerModel.findOne({
       where: { nationalId },
       include: [
