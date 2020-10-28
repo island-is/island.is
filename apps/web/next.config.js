@@ -1,6 +1,8 @@
+const path = require('path')
 const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 // These modules need to be transpiled for IE11 support. This is not ideal,
 // we should aim to drop IE11 support, or only use dependencies that have
@@ -31,6 +33,30 @@ module.exports = withTreat(
               openAnalyzer: true,
             }),
           )
+
+          config.plugins.push(
+            new DuplicatesPlugin({
+              emitErrors: false,
+              verbose: true,
+            }),
+          )
+        }
+
+        const modules = path.resolve(__dirname, '../..', 'node_modules')
+
+        config.resolve.alias = {
+          ...(config.resolve.alias || {}),
+          '@babel/runtime': path.resolve(modules, '@babel/runtime'),
+          'bn.js': path.resolve(modules, 'bn.js'),
+          'date-fns': path.resolve(modules, 'date-fns'),
+          'es-abstract': path.resolve(modules, 'es-abstract'),
+          'escape-string-regexp': path.resolve(modules, 'escape-string-regexp'),
+          'readable-stream': path.resolve(modules, 'readable-stream'),
+          'react-popper': path.resolve(modules, 'react-popper'),
+          inherits: path.resolve(modules, 'inherits'),
+          'graphql-tag': path.resolve(modules, 'graphql-tag'),
+          'safe-buffer': path.resolve(modules, 'safe-buffer'),
+          scheduler: path.resolve(modules, 'scheduler'),
         }
 
         return config
