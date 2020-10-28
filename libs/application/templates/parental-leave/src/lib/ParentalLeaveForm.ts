@@ -26,16 +26,6 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'theApplicant',
       name: m.applicantSection,
       children: [
-        buildCustomField(
-          {
-            id: 'paymentPlan',
-            name: 'Here is your current payment plan',
-            description:
-              'Payments amount to 80% of the average of your total wages during the last 6 monhts before the birth of the child.',
-            component: 'PaymentSchedule',
-          },
-          {},
-        ),
         buildExternalDataProvider({
           name: m.introductionProvider,
           id: 'approveExternalData',
