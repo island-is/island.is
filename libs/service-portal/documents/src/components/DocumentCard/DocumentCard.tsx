@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { ActionCard } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
 import { useLazyDocumentDetail } from '@island.is/service-portal/graphql'
@@ -38,10 +38,15 @@ interface Props {
 const DocumentCard: FC<Props> = ({ document }) => {
   const fileName = `${document.subject}.pdf`
   const { formatMessage } = useLocale()
-
   const { fetchDocument, loading, data, error } = useLazyDocumentDetail(
     document.id,
   )
+
+  useEffect(() => {
+    if (data) {
+      handleOnFetch()
+    }
+  }, [data])
 
   const handleOnFetch = () => {
     if (data?.fileType === 'pdf' && data?.content) {
@@ -69,10 +74,6 @@ const DocumentCard: FC<Props> = ({ document }) => {
     if (!data) {
       fetchDocument()
     }
-    handleOnFetch()
-  }
-
-  if (data || error) {
     handleOnFetch()
   }
 
