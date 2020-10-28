@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
-import _ from 'lodash'
+import flatten from 'lodash/flatten'
 import { AwsEsPackage } from './aws'
 
 // Analyzers name must not exceed 20 in length and must satisfy this pattern [a-z][a-z0-9\\-]+
@@ -61,7 +61,7 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
     })
   })
 
-  const allDictionaryResponses = await Promise.all(_.flatten(dictionaries))
+  const allDictionaryResponses = await Promise.all(flatten(dictionaries))
   return allDictionaryResponses.filter(
     (response): response is Dictionary => response !== false,
   )
@@ -76,5 +76,5 @@ export const getFakeEsPackages = (): AwsEsPackage[] => {
       locale,
     }))
   })
-  return _.flatten(fakePackages)
+  return flatten(fakePackages)
 }
