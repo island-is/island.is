@@ -19,6 +19,12 @@ export class AboutPageSyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAboutPage(entry)
+
+          // we consider about page that dont have a title to be empty
+          if (!mapped.title) {
+            throw new Error('Trying to import empty about page entry')
+          }
+
           const type = 'webAboutPage'
           return {
             _id: mapped.id,
@@ -37,7 +43,7 @@ export class AboutPageSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.error('Failed to import about page', error)
+          logger.warn('Failed to import about page', error)
           return false
         }
       })
