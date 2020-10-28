@@ -42,12 +42,6 @@ Default.args = {
 export const TempTest = () => (
   <div style={{ height: 900 }}>
     <h1>WIP</h1>
-    <Input
-      name="test"
-      label="tester input"
-      placeholder="placeholder test"
-      size="md"
-    />
     <div style={{ height: 30 }} />
     <Template
       name="select"
@@ -81,13 +75,6 @@ export const TempTest = () => (
         },
       ]}
       noOptionsMessage="Enginn valmöguleiki"
-    />
-    <div style={{ height: 30 }} />
-    <Input
-      name="test"
-      label="tester input"
-      placeholder="placeholder test"
-      size="sm"
     />
     <div style={{ height: 30 }} />
     <Template

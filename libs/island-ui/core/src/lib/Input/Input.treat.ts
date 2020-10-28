@@ -86,14 +86,12 @@ export const hasFocus = style({
 export const icon = style({
   width: 24,
   height: 24,
-  marginRight: 8,
   color: theme.color.red600,
   marginBottom: -3,
   ...themeUtils.responsiveStyle({
     md: {
       width: 32,
       height: 32,
-      marginRight: 16,
     },
   }),
 })
