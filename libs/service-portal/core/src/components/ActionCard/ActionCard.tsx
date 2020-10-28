@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import ActionMenu from '../ActionMenu/ActionMenu'
 import * as styles from './ActionCard.treat'
+import { format } from 'date-fns/esm'
 
 interface Props {
   label: string
@@ -45,10 +46,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, onDownload }) => {
         <Column width="content">
           <Stack space={1}>
             <Inline space={1} alignY="center">
-              <Typography
-                variant="pSmall"
-                color="dark300"
-              >{`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`}</Typography>
+              <Typography variant="pSmall" color="dark300">
+                {format(date, 'dd.MM.yyyy')}
+              </Typography>
             </Inline>
             <Button
               colorScheme="default"
