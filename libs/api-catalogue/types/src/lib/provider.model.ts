@@ -7,3 +7,11 @@ export interface Provider {
   memberCode: string
   subsystemCode: string
 }
+
+export const providerToString = (provider: Provider): string => {
+  if (provider) {
+    return `${provider.xroadInstance}/${provider.memberClass}/${provider.memberCode}/${provider.subsystemCode}`
+  } else {
+    return ''
+  }
+}
