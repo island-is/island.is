@@ -82,7 +82,7 @@ export const DetentionRequests: React.FC = () => {
         {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
         {!isJudge && (
           <Link
-            to={Constants.STEP_ONE_ROUTE}
+            to={Constants.SINGLE_REQUEST_BASE_ROUTE}
             style={{ textDecoration: 'none' }}
           >
             <Button icon="plus">Stofna nýja kröfu</Button>

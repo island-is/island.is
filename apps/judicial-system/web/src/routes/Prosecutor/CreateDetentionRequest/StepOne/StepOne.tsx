@@ -32,13 +32,13 @@ import {
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { CaseState } from '@island.is/judicial-system/types'
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [caseId, setCaseId] = useState('')
 
   const [
     policeCaseNumberErrorMessage,
@@ -125,20 +125,7 @@ export const StepOne: React.FC = () => {
         requestedCourtDate: workingCase.requestedCourtDate,
       })
 
-      setCaseId(caseId)
-
-      window.sessionStorage.setItem(
-        'workingCase',
-        JSON.stringify({
-          ...workingCase,
-          id: caseId,
-          accusedNationalId: accusedNationalIdRef.current.value.replace(
-            '-',
-            '',
-          ),
-          policeCaseNumber: policeCaseNumberRef.current.value,
-        }),
-      )
+      history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${caseId}`)
 
       setWorkingCase({
         ...workingCase,
@@ -153,75 +140,35 @@ export const StepOne: React.FC = () => {
     document.title = 'Grunnupplýsingar - Réttarvörslugátt'
   }, [])
 
-  // Run if id is not in url, i.e. if the user is creating a request.
-  useEffect(() => {
-    const caseDraft = window.sessionStorage.getItem('workingCase')
-
-    if (caseDraft !== 'undefined' && !workingCase && !id) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
-        prosecutorId: caseDraftJSON.prosecutorId ?? null,
-        prosecutor: caseDraftJSON.prosecutor ?? null,
-        judgeId: caseDraftJSON.judgeId ?? null,
-        judge: caseDraftJSON.judge ?? null,
-      })
-    }
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading, id])
-
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      setCaseId(id)
-      const currentCase = await api.getCaseById(id)
 
       if (!workingCase) {
-        window.sessionStorage.setItem(
-          'workingCase',
-          JSON.stringify(currentCase.case),
-        )
-
+        const currentCase = await api.getCaseById(id)
         setWorkingCase(currentCase.case)
-        setIsLoading(false)
       }
+      setIsLoading(false)
     }
-
     if (id) {
       getCurrentCase()
+    } else {
+      if (!workingCase) {
+        setWorkingCase({
+          id: '',
+          created: '',
+          modified: '',
+          state: CaseState.DRAFT,
+          policeCaseNumber: '',
+          accusedNationalId: '',
+          accusedName: '',
+          accusedAddress: '',
+          court: 'Héraðsdómur Reykjavíkur',
+          arrestDate: null,
+          requestedCourtDate: null,
+        })
+      }
     }
   }, [id, workingCase, setWorkingCase, setIsLoading])
 
@@ -285,26 +232,19 @@ export const StepOne: React.FC = () => {
               name="policeCaseNumber"
               label="Slá inn LÖKE málsnúmer"
               placeholder="007-2020-X"
-              defaultValue={workingCase.policeCaseNumber}
+              defaultValue={workingCase?.policeCaseNumber}
               ref={policeCaseNumberRef}
               errorMessage={policeCaseNumberErrorMessage}
               hasError={policeCaseNumberErrorMessage !== ''}
               onBlur={(evt) => {
                 if (workingCase.policeCaseNumber !== evt.target.value) {
-                  updateState(
-                    workingCase,
-                    'policeCaseNumber',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
-
                   const validateField = validate(evt.target.value, 'empty')
                   const validateFieldFormat = validate(
                     evt.target.value,
                     'police-casenumber-format',
                   )
                   if (validateField.isValid && validateFieldFormat.isValid) {
-                    if (workingCase.id !== '') {
+                    if (workingCase.id) {
                       api.saveCase(
                         workingCase.id,
                         parseString('policeCaseNumber', evt.target.value),
@@ -688,13 +628,17 @@ export const StepOne: React.FC = () => {
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
-                history.push(`${Constants.STEP_TWO_ROUTE}/${caseId ?? id}`)
+                history.push(
+                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                )
               }
               handlePrimaryButtonClick={async () => {
                 setIsSendingNotification(true)
                 await api.sendNotification(workingCase.id)
                 setIsSendingNotification(false)
-                history.push(`${Constants.STEP_TWO_ROUTE}/${caseId ?? id}`)
+                history.push(
+                  `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,
+                )
               }}
               isPrimaryButtonLoading={isSendingNotification}
             />

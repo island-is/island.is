@@ -15,7 +15,7 @@ interface Props {
 
 const FormFooter: React.FC<Props> = (props: Props) => {
   const history = useHistory()
-  console.log(props.nextUrl)
+
   return (
     <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
       <Button

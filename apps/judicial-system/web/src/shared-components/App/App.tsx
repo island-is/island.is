@@ -75,10 +75,7 @@ const App: React.FC = () => {
               <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
                 <JudgeOverview />
               </Route>
-              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-                <StepOne />
-              </Route>
-              <Route path={Constants.STEP_ONE_ROUTE}>
+              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
                 <StepOne />
               </Route>
               <Route path={Constants.DETENTION_REQUESTS_ROUTE}>

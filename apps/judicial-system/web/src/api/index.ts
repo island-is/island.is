@@ -50,6 +50,7 @@ export const getCaseById: (
 
     if (response.ok) {
       const theCase: Case = await response.json()
+
       return {
         httpStatusCode: response.status,
         case: theCase,

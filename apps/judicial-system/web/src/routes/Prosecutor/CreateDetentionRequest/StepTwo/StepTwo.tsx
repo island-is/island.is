@@ -155,53 +155,19 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.sessionStorage.getItem('workingCase')
+    const getCurrentCase = async () => {
+      setIsLoading(true)
 
-    if (caseDraft && caseDraft !== 'undefined' && !workingCase) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorId: caseDraftJSON.prosecutorId ?? null,
-        prosecutor: caseDraftJSON.prosecutor ?? null,
-        judgeId: caseDraftJSON.judgeId ?? null,
-        judge: caseDraftJSON.judge ?? null,
-      })
+      if (!workingCase) {
+        const currentCase = await api.getCaseById(id)
+        setWorkingCase(currentCase.case)
+      }
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+    if (id) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -244,9 +210,9 @@ export const StepTwo: React.FC = () => {
                   label="Gæsluvarðhald til"
                   placeholderText="Veldu dagsetningu"
                   selected={
-                    workingCase?.requestedCustodyEndDate
+                    workingCase.requestedCustodyEndDate
                       ? parseISO(
-                          workingCase?.requestedCustodyEndDate.toString(),
+                          workingCase.requestedCustodyEndDate?.toString(),
                         )
                       : null
                   }
@@ -261,16 +227,13 @@ export const StepTwo: React.FC = () => {
                           ? 'complete'
                           : 'date',
                     })
-
-                    updateState(
-                      workingCase,
-                      'requestedCustodyEndDate',
-                      formattedDate,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      requestedCustodyEndDate: formattedDate,
+                    })
 
                     api.saveCase(
-                      workingCase.id,
+                      id,
                       JSON.parse(`{
                           "requestedCustodyEndDate": "${formattedDate}",
                           "custodyEndDate": "${formattedDate}"
@@ -298,9 +261,9 @@ export const StepTwo: React.FC = () => {
                   placeholder="Settu inn tíma"
                   ref={requestedCustodyEndTimeRef}
                   defaultValue={
-                    workingCase?.requestedCustodyEndDate?.indexOf('T') > -1
+                    workingCase.requestedCustodyEndDate?.indexOf('T') > -1
                       ? formatDate(
-                          workingCase?.requestedCustodyEndDate,
+                          workingCase.requestedCustodyEndDate,
                           TIME_FORMAT,
                         )
                       : null
@@ -320,15 +283,6 @@ export const StepTwo: React.FC = () => {
                     const requestedCustodyEndDateMinutes = parseTime(
                       workingCase.requestedCustodyEndDate,
                       evt.target.value,
-                    )
-
-                    window.sessionStorage.setItem(
-                      'workingCase',
-                      JSON.stringify({
-                        ...workingCase,
-                        requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                        custodyEndDate: requestedCustodyEndDateMinutes,
-                      }),
                     )
 
                     setWorkingCase({
@@ -376,12 +330,7 @@ export const StepTwo: React.FC = () => {
               errorMessage={lawsBrokenErrorMessage}
               hasError={lawsBrokenErrorMessage !== ''}
               onBlur={(evt) => {
-                updateState(
-                  workingCase,
-                  'lawsBroken',
-                  evt.target.value,
-                  setWorkingCase,
-                )
+                setWorkingCase({ ...workingCase, lawsBroken: evt.target.value })
 
                 const validateField = validate(evt.target.value, 'empty')
                 if (validateField.isValid) {
@@ -419,7 +368,7 @@ export const StepTwo: React.FC = () => {
                           label={provision.brokenLaw}
                           value={provision.value}
                           checked={
-                            workingCase.custodyProvisions.indexOf(
+                            workingCase.custodyProvisions?.indexOf(
                               provision.value,
                             ) > -1
                           }
@@ -429,7 +378,7 @@ export const StepTwo: React.FC = () => {
                             const copyOfState = Object.assign(workingCase, {})
 
                             const provisionIsSelected =
-                              copyOfState.custodyProvisions.indexOf(
+                              copyOfState.custodyProvisions?.indexOf(
                                 target.value as CaseCustodyProvisions,
                               ) > -1
 
@@ -438,6 +387,10 @@ export const StepTwo: React.FC = () => {
 
                             // If the user is checking the box, add the broken law to the state
                             if (!provisionIsSelected) {
+                              if (copyOfState.custodyProvisions === null) {
+                                copyOfState.custodyProvisions = []
+                              }
+
                               copyOfState.custodyProvisions.push(
                                 target.value as CaseCustodyProvisions,
                               )
@@ -447,7 +400,7 @@ export const StepTwo: React.FC = () => {
                               const provisions = copyOfState.custodyProvisions
 
                               provisions.splice(
-                                provisions.indexOf(
+                                provisions?.indexOf(
                                   target.value as CaseCustodyProvisions,
                                 ),
                                 1,
@@ -464,13 +417,6 @@ export const StepTwo: React.FC = () => {
                                 'custodyProvisions',
                                 copyOfState.custodyProvisions,
                               ),
-                            )
-
-                            updateState(
-                              workingCase,
-                              'custodyProvisions',
-                              copyOfState.custodyProvisions,
-                              setWorkingCase,
                             )
                           }}
                           large
@@ -501,7 +447,7 @@ export const StepTwo: React.FC = () => {
                         label={restriction.restriction}
                         value={restriction.value}
                         checked={
-                          workingCase.custodyRestrictions.indexOf(
+                          workingCase.custodyRestrictions?.indexOf(
                             restriction.value,
                           ) > -1
                         }
@@ -511,7 +457,7 @@ export const StepTwo: React.FC = () => {
                           const copyOfState = Object.assign(workingCase, {})
 
                           const restrictionIsSelected =
-                            copyOfState.requestedCustodyRestrictions.indexOf(
+                            copyOfState.requestedCustodyRestrictions?.indexOf(
                               target.value as CaseCustodyRestrictions,
                             ) > -1
 
@@ -520,6 +466,15 @@ export const StepTwo: React.FC = () => {
 
                           // If the user is checking the box, add the restriction to the state
                           if (!restrictionIsSelected) {
+                            if (
+                              copyOfState.requestedCustodyRestrictions === null
+                            ) {
+                              copyOfState.requestedCustodyRestrictions = []
+                            }
+
+                            if (copyOfState.custodyRestrictions === null) {
+                              copyOfState.custodyRestrictions = []
+                            }
                             // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
                             copyOfState.requestedCustodyRestrictions.push(
                               target.value as CaseCustodyRestrictions,
@@ -572,19 +527,13 @@ export const StepTwo: React.FC = () => {
                             ),
                           )
 
-                          updateState(
-                            workingCase,
-                            'requestedCustodyRestrictions',
-                            copyOfState.requestedCustodyRestrictions,
-                            setWorkingCase,
-                          )
-
-                          updateState(
-                            workingCase,
-                            'custodyRestrictions',
-                            copyOfState.custodyRestrictions,
-                            setWorkingCase,
-                          )
+                          setWorkingCase({
+                            ...workingCase,
+                            requestedCustodyRestrictions:
+                              copyOfState.requestedCustodyRestrictions,
+                            custodyRestrictions:
+                              copyOfState.custodyRestrictions,
+                          })
                         }}
                         large
                       />
@@ -610,12 +559,10 @@ export const StepTwo: React.FC = () => {
                 hasError={caseFactsErrorMessage !== ''}
                 defaultValue={workingCase?.caseFacts}
                 onBlur={(evt) => {
-                  updateState(
-                    workingCase,
-                    'caseFacts',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    caseFacts: evt.target.value,
+                  })
 
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
@@ -643,12 +590,10 @@ export const StepTwo: React.FC = () => {
                 errorMessage={legalArgumentsErrorMessage}
                 hasError={legalArgumentsErrorMessage !== ''}
                 onBlur={(evt) => {
-                  updateState(
-                    workingCase,
-                    'legalArguments',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    legalArguments: evt.target.value,
+                  })
 
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
@@ -684,11 +629,14 @@ export const StepTwo: React.FC = () => {
                   placeholder="Er eitthvað sem þú vilt koma á framfæri við dómara sem tengist kröfunni eða ástandi sakbornings?"
                   defaultValue={workingCase?.comments}
                   onBlur={(evt) => {
-                    autoSave(
-                      workingCase,
-                      'comments',
-                      evt.target.value,
-                      setWorkingCase,
+                    setWorkingCase({
+                      ...workingCase,
+                      comments: evt.target.value,
+                    })
+
+                    api.saveCase(
+                      workingCase.id,
+                      parseString('comments', evt.target.value),
                     )
                   }}
                   textarea
