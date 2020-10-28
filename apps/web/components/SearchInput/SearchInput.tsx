@@ -25,7 +25,6 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
-import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
 import {
   GetSearchResultsQuery,
@@ -39,6 +38,8 @@ import {
   AboutPage,
   News,
 } from '@island.is/web/graphql/schema'
+
+import * as styles from './SearchInput.treat'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
