@@ -68,7 +68,7 @@ const Table = <T extends object>(
   }> = ({ label, onClick, style }) => {
     return (
       <tr>
-        <td colSpan={columns.length} style={style}>
+        <td colSpan={columns.length} style={{ textAlign: 'left', ...style }}>
           <Box display="inlineBlock" cursor="pointer" onClick={onClick}>
             <Text color="blue400" variant="small">
               {label}
@@ -93,7 +93,11 @@ const Table = <T extends object>(
         {isExpanded && restRows && restRows.map((row) => renderRow(row))}
         {renderRow(lastRow)}
         {isExpanded && (
-          <ButtonRow label={showLessLabel} onClick={() => setExpanded(false)} />
+          <ButtonRow
+            label={showLessLabel}
+            onClick={() => setExpanded(false)}
+            style={{ borderBottom: 'none' }}
+          />
         )}
       </>
     )
@@ -107,6 +111,7 @@ const Table = <T extends object>(
           // @ts-ignore - Same as above
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
+              // @ts-ignore - Same as above
               <th {...column.getHeaderProps()}>
                 <Text variant="h5">{column.render('Header')}</Text>
               </th>
