@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ComponentType } from 'react'
 import ReactSelect, {
   components,
   ValueType,
@@ -12,7 +12,7 @@ import ReactSelect, {
   PlaceholderProps,
   InputProps,
   ControlProps,
-  CommonProps,
+  Props,
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
@@ -118,9 +118,10 @@ const Menu = (props: MenuProps<Option>) => (
   <components.Menu className={styles.menu} {...props} />
 )
 const Option = (props: OptionProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
   return (
     <components.Option
-      className={cn(styles.option, styles.optionSizes[props.selectProps.size])}
+      className={cn(styles.option, styles.optionSizes[size!])}
       {...props}
     />
   )
@@ -151,54 +152,59 @@ const DropdownIndicator = (props: IndicatorProps<Option>) => {
   )
 }
 
-const SingleValue = (props: SingleValueProps<Option>) => (
-  <components.SingleValue
-    className={cn(
-      styles.singleValue,
-      styles.singleValueSizes[props.selectProps.size],
-    )}
-    {...props}
-  />
-)
+const SingleValue = (props: SingleValueProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
+  return (
+    <components.SingleValue
+      className={cn(styles.singleValue, styles.singleValueSizes[size!])}
+      {...props}
+    />
+  )
+}
 
 const ValueContainer = (props: ValueContainerProps<Option>) => (
   <components.ValueContainer className={styles.valueContainer} {...props} />
 )
 
-const Placeholder = (props: PlaceholderProps<Option>) => (
-  <components.Placeholder
-    className={cn(
-      styles.placeholder,
-      styles.placeholderPadding,
-      styles.placeholderSizes[props.selectProps.size],
-    )}
-    {...props}
-  />
-)
+const Placeholder = (props: PlaceholderProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
+  return (
+    <components.Placeholder
+      className={cn(
+        styles.placeholder,
+        styles.placeholderPadding,
+        styles.placeholderSizes[size!],
+      )}
+      {...props}
+    />
+  )
+}
 
-const Input = (props: InputProps & CommonProps<Option>) => (
-  <components.Input
-    className={cn(styles.input, styles.inputSize[props.selectProps.size])}
-    {...props}
-  />
-)
+const Input: ComponentType<InputProps> = (
+  props: InputProps & { selectProps?: Props<Option> },
+) => {
+  const size = (props?.selectProps?.size || 'md') as SelectProps['size']
+  return (
+    <components.Input
+      className={cn(styles.input, styles.inputSize[size!])}
+      {...props}
+    />
+  )
+}
 
 const Control = (props: ControlProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
   return (
     <components.Control
-      className={cn(
-        styles.container,
-        styles.containerSizes[props.selectProps.size],
-        {
-          [styles.containerDisabled]: props.isDisabled,
-          [styles.hasError]: props.selectProps.hasError,
-        },
-      )}
+      className={cn(styles.container, styles.containerSizes[size!], {
+        [styles.containerDisabled]: props.isDisabled,
+        [styles.hasError]: props.selectProps.hasError,
+      })}
       {...props}
     >
       <label
         htmlFor={props.selectProps.name}
-        className={cn(styles.label, styles.labelSizes[props.selectProps.size])}
+        className={cn(styles.label, styles.labelSizes[size!])}
       >
         {props.selectProps.label}
       </label>

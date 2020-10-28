@@ -1,11 +1,8 @@
-import { style, globalStyle, styleMap } from 'treat'
+import { style, globalStyle, styleMap, Style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
-import { merge, mixin } from 'lodash'
-
-interface LooseObject {
-  [key: string]: string | LooseObject
-}
+import { merge } from 'lodash'
+import { StyleWithSelectors } from 'treat/lib/types/types'
 
 /**
  * Media does not work under the selector key, this function moves the selector under the media key
@@ -32,21 +29,25 @@ interface LooseObject {
  * @param stylesObj
  * @param selector
  */
-const wrapMedia = (stylesObj, selector) => {
-  const keys = Object.keys(stylesObj)
-  const initialValue: LooseObject = { selectors: {} }
+const wrapMedia = (stylesObj: Style = {}, selector: string): Style => {
+  const keys = Object.keys(stylesObj) as (keyof typeof stylesObj)[]
+  const initialValue: Style = { selectors: {} }
   return keys.reduce((acc, key) => {
     if (key === '@media') {
-      const mediaKeys = Object.keys(stylesObj[key])
-      const initialValue: LooseObject = {}
-      const media = mediaKeys.reduce((mediaAcc, mediaKey) => {
+      const mediaObj: {
+        [query: string]: StyleWithSelectors
+      } = stylesObj['@media'] || {}
+      const mediaKeys = Object.keys(mediaObj)
+      const initialValue: {
+        [query: string]: StyleWithSelectors
+      } = {}
+      const media = mediaKeys.reduce((mediaAcc = {}, mediaKey) => {
         if (!mediaAcc[mediaKey]) {
           mediaAcc[mediaKey] = {
             selectors: {},
           }
         }
-        mediaAcc[mediaKey]['selectors'][selector] =
-          stylesObj['@media'][mediaKey]
+        mediaAcc[mediaKey].selectors![selector] = mediaObj[mediaKey]
         return mediaAcc
       }, initialValue)
       if (!acc['@media']) {
@@ -57,10 +58,10 @@ const wrapMedia = (stylesObj, selector) => {
     } else if (key === 'selectors' && typeof acc.selectors === 'object') {
       acc.selectors = { ...acc.selectors, ...stylesObj.selectors }
     } else {
-      if (!acc.selectors[selector]) {
-        acc.selectors[selector] = {}
+      acc.selectors![selector] = {
+        ...acc.selectors![selector],
+        [key]: stylesObj[key],
       }
-      acc.selectors[selector][key] = stylesObj[key]
     }
     return acc
   }, initialValue)
