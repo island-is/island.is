@@ -45,4 +45,8 @@
 /libs/logging/                                            @island-is/devops
 /scripts/                                                 @island-is/devops
 
+/libs/auth-api-libs                                       @island.is/fuglar
+/apps/services/auth-api                                   @island.is/fuglar
+/apps/services/auth-admin-api                             @island.is/fuglar
+
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
