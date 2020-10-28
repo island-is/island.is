@@ -27,11 +27,9 @@ export const tabContainer = style({
 
 export const tabPanelWrapper = style({
   position: 'relative',
+  minHeight: 300,
 
   ...themeUtils.responsiveStyle({
-    md: {
-      minHeight: 300,
-    },
     lg: {
       minHeight: 350,
     },
