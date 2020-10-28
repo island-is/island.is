@@ -1,5 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-FROM node:12.16.2-alpine3.11 as deps
+FROM node:12.19.0-alpine3.11 as deps
 
 RUN apk add -U git
 
