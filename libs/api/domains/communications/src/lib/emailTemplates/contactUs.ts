@@ -1,6 +1,7 @@
 import { dedent } from 'ts-dedent'
 import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from '../dto/contactUs.input'
+import { environment } from '../environments/environment'
 
 export const getTemplate = (input: ContactUsInput): SendMailOptions => ({
   from: {
@@ -14,7 +15,7 @@ export const getTemplate = (input: ContactUsInput): SendMailOptions => ({
   to: [
     {
       name: 'Island.is þjónustuborð',
-      address: 'island@island.is',
+      address: environment.emailOptions.contactUsDestination,
     },
   ],
   subject: `Contact us: ${input.name}`,
