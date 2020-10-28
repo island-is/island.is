@@ -171,9 +171,14 @@ module.exports = {
         scope_name: 'offline_access',
       },
       {
+        client_id: 'island-is-1',
+        scope_name: 'api_resource.scope',
+      },
+      {
         client_id: 'island-is-client-cred-1',
         scope_name: 'api',
       },
+      
       {
         client_id: 'apex-auth_client',
         scope_name: 'openid',

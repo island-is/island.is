@@ -18,11 +18,21 @@ module.exports = {
         enabled: true,
         show_in_discovery_document: true,
       },
+      {
+        name: 'api_resource',
+        display_name: 'api resource',
+        enabled: true,
+        show_in_discovery_document: true,
+      }
     ]
 
     const userClaims = [
       {
         api_resource_name: apiResources[1].name,
+        claim_name: 'natreg',
+      },
+      {
+        api_resource_name: apiResources[2].name,
         claim_name: 'natreg',
       },
     ]
@@ -35,6 +45,10 @@ module.exports = {
       {
         api_resource_name: apiResources[1].name,
         scope_name: 'postman_resource.scope',
+      },
+      {
+        api_resource_name: apiResources[2].name,
+        scope_name: 'api_resource.scope',
       },
     ]
 

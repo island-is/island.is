@@ -29,6 +29,14 @@ module.exports = {
         enabled: true,
         show_in_discovery_document: true,
       },
+      {
+        name: 'api_resource.scope',
+        display_name: 'api_resource.scope',
+        required: false,
+        emphasize: false,
+        enabled: true,
+        show_in_discovery_document: true,
+      },
     ]
 
     return queryInterface.bulkInsert('api_scope', scopes, {})

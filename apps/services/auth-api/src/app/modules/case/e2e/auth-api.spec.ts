@@ -113,7 +113,7 @@ describe('Users', () => {
       .expect(200)
 
     expect(response.body.clientId).toEqual('island-is-1')
-    expect(response.body.allowedScopes).toHaveLength(3)
+    expect(response.body.allowedScopes).toHaveLength(4)
     expect(response.body.allowedCorsOrigins).toHaveLength(0)
     expect(response.body.redirectUris).toHaveLength(4)
   })
