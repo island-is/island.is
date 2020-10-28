@@ -27,17 +27,18 @@ module.exports = withTreat(
 
         if (process.env.ANALYZE === 'true') {
           config.plugins.push(
-            new BundleAnalyzerPlugin({
-              analyzerMode: 'server',
-              analyzerPort: isServer ? 8888 : 8889,
-              openAnalyzer: true,
+            new DuplicatesPlugin({
+              emitErrors: false,
+              verbose: true,
             }),
           )
 
           config.plugins.push(
-            new DuplicatesPlugin({
-              emitErrors: false,
-              verbose: true,
+            new BundleAnalyzerPlugin({
+              analyzerMode: 'static',
+              reportFilename: isServer
+                ? '../analyze/server.html'
+                : './analyze/client.html',
             }),
           )
         }
