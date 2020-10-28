@@ -1,25 +1,43 @@
 import React, { FC } from 'react'
+import { toast } from '@island.is/island-ui/core'
 import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   PhoneConfirmForm,
   PhoneConfirmFormData,
-} from '../../Forms/PhoneConfirmForm'
+} from '../../Forms/PhoneConfirmationForm'
+import { useVerifySms } from '@island.is/service-portal/graphql'
 
 interface Props {
   tel: string
-  loading: boolean
+  natReg: string
   onBack: () => void
-  onSubmit: (data: PhoneConfirmFormData) => void
+  onSubmit: () => void
 }
 
 export const PhoneConfirmationStep: FC<Props> = ({
   onBack,
   onSubmit,
   tel,
-  loading,
+  natReg,
 }) => {
   const { formatMessage } = useLocale()
+  const { confirmSmsVerification, confirmLoading } = useVerifySms(natReg)
+
+  const confirmSms = async (data: PhoneConfirmFormData) => {
+    try {
+      const response = await confirmSmsVerification({
+        code: data.code,
+      })
+      if (response.data?.confirmSmsVerification?.confirmed) {
+        onSubmit()
+      } else {
+        toast.error('Rangur kóði')
+      }
+    } catch (err) {
+      toast.error('Rangur kóði')
+    }
+  }
 
   return (
     <>
@@ -53,7 +71,7 @@ export const PhoneConfirmationStep: FC<Props> = ({
         )}
         renderSubmitButton={() => (
           <Button
-            disabled={loading}
+            disabled={confirmLoading}
             variant="primary"
             type="submit"
             icon="arrowForward"
@@ -64,7 +82,7 @@ export const PhoneConfirmationStep: FC<Props> = ({
             })}
           </Button>
         )}
-        onSubmit={onSubmit}
+        onSubmit={confirmSms}
       />
     </>
   )

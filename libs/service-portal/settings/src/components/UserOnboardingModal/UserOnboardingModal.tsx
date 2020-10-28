@@ -4,14 +4,10 @@ import {
   Modal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import {
-  useCreateUserProfile,
-  useVerifySms,
-} from '@island.is/service-portal/graphql'
+import { useCreateUserProfile } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
-import { PhoneConfirmFormData } from '../Forms/PhoneConfirmForm'
 import { PhoneFormData } from '../Forms/PhoneForm'
 import { EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
@@ -35,12 +31,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
   const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
-  const {
-    createSmsVerification,
-    createLoading,
-    confirmSmsVerification,
-    confirmLoading,
-  } = useVerifySms(userInfo.profile.natreg)
 
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
@@ -74,40 +64,13 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
     }
   }
 
-  const handlePhoneStepSubmit = async (data: PhoneFormData) => {
+  const handlePhoneStepSubmit = (data: PhoneFormData) => {
     setTel(data.tel)
-    try {
-      const response = await createSmsVerification({
-        mobilePhoneNumber: data.tel,
-      })
-      if (response.data?.createSmsVerification?.created) {
-        gotoStep('tel-confirm-form')
-      } else {
-        toast.error(
-          'Eitthvað fór úrskeiðis, ekki tókst að senda SMS í þetta símanúmer',
-        )
-      }
-    } catch (err) {
-      toast.error(
-        'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
-      )
-    }
+    gotoStep('tel-confirm-form')
   }
 
-  const handlePhoneConfirmStepSubmit = async (data: PhoneConfirmFormData) => {
-    try {
-      const response = await confirmSmsVerification({
-        code: data.code,
-      })
-      if (response.data?.confirmSmsVerification?.confirmed) {
-        gotoStep('email-form')
-      } else {
-        toast.error('Rangur kóði')
-      }
-    } catch (err) {
-      toast.error('Rangur kóði')
-      gotoStep('tel-form')
-    }
+  const handlePhoneConfirmStepSubmit = () => {
+    gotoStep('email-form')
   }
 
   const handleEmailStepSubmit = (data: EmailFormData) => {
@@ -132,7 +95,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-form' && (
         <PhoneStep
           onBack={gotoStep.bind(null, 'intro')}
-          loading={createLoading}
+          natReg={userInfo.profile.natreg}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
         />
@@ -140,7 +103,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-confirm-form' && (
         <PhoneConfirmationStep
           onBack={gotoStep.bind(null, 'tel-form')}
-          loading={confirmLoading}
+          natReg={userInfo.profile.natreg}
           tel={tel}
           onSubmit={handlePhoneConfirmStepSubmit}
         />
