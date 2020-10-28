@@ -119,10 +119,7 @@
     },
     "company": {
       "title": "Deregister car",
-      "sections": [
-        "Velja ökutæki",
-        "Afskrá Ökutæki"
-      ]
+      "sections": ["Velja ökutæki", "Afskrá Ökutæki"]
     }
   },
   "deregisterOverview": {
@@ -138,14 +135,7 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": [
-      "Reg nr",
-      "Brand",
-      "Model",
-      "Year",
-      "User",
-      "Deregistered"
-    ]
+    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
   },
   "companyInfo": {
     "title": "Company information",
@@ -240,14 +230,7 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": [
-      "Reg nr",
-      "Brand",
-      "Model",
-      "Year",
-      "Company",
-      "Deregistered"
-    ]
+    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",
@@ -271,9 +254,16 @@
     }
   },
   "notFound": {
-    "title": "Resource could not be found",
-    "content": "Something went wrong, please try again",
-    "button": "Back"
+    "title": "Umbeðin slóð fannst ekki",
+    "content": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
+    "button": "Til baka"
+  },
+  "errorBoundary": {
+    "title": "Villa kom upp",
+    "contents": [
+      "Eitthvað hefur farið úrskeiðis.",
+      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+    ]
   },
   "routes": {
     "home": {

@@ -25,6 +25,7 @@ export interface Translation {
   recyclingFundSidenav: RecyclingFundSidenav
   recyclingCompanies: RecyclingCompanies
   notFound: NotFound
+  errorBoundary: ErrorBoundary
   routes: Routes
 }
 
@@ -261,6 +262,11 @@ export interface NotFound {
   title: string
   content: string
   button: string
+}
+
+export interface ErrorBoundary {
+  title: string
+  contents: string[]
 }
 
 export interface DeregisterSelect {
