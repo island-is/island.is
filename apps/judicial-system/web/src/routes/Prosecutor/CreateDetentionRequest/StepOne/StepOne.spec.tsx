@@ -100,6 +100,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
       },
       { method: 'get', overwriteRoutes: true },
     )
+
     // Act and Assert
     const { getByTestId } = render(
       <userContext.Provider value={{ user: mockProsecutor }}>
@@ -140,11 +141,10 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         'Harringvej 2',
       )
       userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       expect(
         await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
-      ).toBeDisabled()
+      ).not.toBeDisabled()
     })
   })
 })
