@@ -148,21 +148,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [onResize])
 
   useIsomorphicLayoutEffect(() => {
-    itemRefs.current.forEach((item) => {
-      const spans = item.getElementsByClassName(styles.textItem)
-
-      Array.prototype.forEach.call(spans, (span) => {
-        span.classList.remove(styles.textItemVisible)
-      })
-    })
-
     const el = itemRefs.current[selectedIndex]
 
     if (el) {
       const spans = el.getElementsByClassName(styles.textItem)
 
       Array.prototype.forEach.call(spans, (span, index) => {
-        span.classList.add(styles.textItemVisible)
         const ms = index * 100
         span.style.transitionDelay = `${ms}ms`
       })
@@ -196,8 +187,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               {tabs.map(({ title, subtitle, content, link }, index) => {
                 const linkUrls = generateUrls(link)
 
-                const currentIndex = tab.items.findIndex(
-                  (x) => x.id === tab.currentId,
+                // If none are found (during SSR) findIndex returns -1. We want 0 instead.
+                const currentIndex = Math.max(
+                  tab.items.findIndex((x) => x.id === tab.currentId),
+                  0,
                 )
 
                 const visible = currentIndex === index
@@ -220,19 +213,33 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                       style={{ minHeight: `${minHeight}px` }}
                     >
                       <Stack space={3}>
-                        <Text variant="eyebrow" as="p" color="purple400">
+                        <Text variant="eyebrow" color="purple400">
                           <span className={styles.textItem}>{subtitle}</span>
                         </Text>
                         <Text variant="h1" as="h1" id={tabTitleId}>
-                          <span className={styles.textItem}>
+                          <span
+                            className={cn(styles.textItem, {
+                              [styles.textItemVisible]: visible,
+                            })}
+                          >
                             {deorphanize(title)}
                           </span>
                         </Text>
                         <Text>
-                          <span className={styles.textItem}>{content}</span>
+                          <span
+                            className={cn(styles.textItem, {
+                              [styles.textItemVisible]: visible,
+                            })}
+                          >
+                            {content}
+                          </span>
                         </Text>
                         {linkUrls?.href ? (
-                          <span className={styles.textItem}>
+                          <span
+                            className={cn(styles.textItem, {
+                              [styles.textItemVisible]: visible,
+                            })}
+                          >
                             <Link
                               as={linkUrls.as}
                               href={linkUrls.href}
