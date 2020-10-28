@@ -1,9 +1,11 @@
-import React, { FC } from 'react'
-import { toast } from '@island.is/island-ui/core'
+import React, { FC, useState } from 'react'
 import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { PhoneForm, PhoneFormData } from '../../Forms/PhoneForm'
-import { useVerifySms } from '@island.is/service-portal/graphql'
+import {
+  PhoneForm,
+  PhoneFormData,
+  PhoneFormInternalStep,
+} from '../../Forms/PhoneForm'
 
 interface Props {
   tel: string
@@ -14,50 +16,63 @@ interface Props {
 
 export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
   const { formatMessage } = useLocale()
-  const { createSmsVerification, createLoading } = useVerifySms(natReg)
+  const [formState, setFormState] = useState<PhoneFormInternalStep>({
+    tel,
+    step: 'phone',
+  })
 
-  const sendSmsVerificationCode = async (data: PhoneFormData) => {
-    try {
-      const response = await createSmsVerification({
-        mobilePhoneNumber: data.tel,
-      })
-      if (response.data?.createSmsVerification?.created) {
-        onSubmit(data)
-      } else {
-        toast.error(
-          'Eitthvað fór úrskeiðis, ekki tókst að senda SMS í þetta símanúmer',
-        )
-      }
-    } catch (err) {
-      toast.error(
-        'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
-      )
-    }
-  }
+  const phoneInputHeaderText = (
+    <>
+      <Text variant="h1" marginBottom={3}>
+        {formatMessage({
+          id: 'service.portal:tel-number',
+          defaultMessage: 'Símanúmer',
+        })}
+      </Text>
+      <Text marginBottom={7}>
+        {formatMessage({
+          id: 'sp.settings:profile-info-form-message',
+          defaultMessage: `
+                Vinsamlegast gerðu breytingar á þessum upplýsingum
+                ef þörf krefur.
+              `,
+        })}
+      </Text>
+    </>
+  )
+  const codeConfirmationHeaderText = (
+    <>
+      <Text variant="h1" marginBottom={3}>
+        {formatMessage({
+          id: 'service.portal:tel-confirm-code',
+          defaultMessage: 'Staðfestingakóði',
+        })}
+      </Text>
+      <Text marginBottom={7}>
+        {formatMessage({
+          id: 'sp.settings:tel-confirm-form-message',
+          defaultMessage: `
+                Staðfestingarkóði hefur verið sendur á símanúmerið þitt: ${formState.tel}. 
+                Skrifaðu kóðann inn hér að neðan.
+              `,
+        })}
+      </Text>
+    </>
+  )
 
   return (
     <>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '4/7']}>
-          <Text variant="h1" marginBottom={3}>
-            {formatMessage({
-              id: 'service.portal:tel-number',
-              defaultMessage: 'Símanúmer',
-            })}
-          </Text>
-          <Text marginBottom={7}>
-            {formatMessage({
-              id: 'sp.settings:profile-info-form-message',
-              defaultMessage: `
-                Vinsamlegast gerðu breytingar á þessum upplýsingum
-                ef þörf krefur.
-              `,
-            })}
-          </Text>
+          {formState.step === 'phone'
+            ? phoneInputHeaderText
+            : codeConfirmationHeaderText}
         </GridColumn>
       </GridRow>
       <PhoneForm
         tel={tel}
+        natReg={natReg}
+        onInternalStateChange={(change) => setFormState(change)}
         renderBackButton={() => (
           <Button variant="ghost" onClick={onBack}>
             {formatMessage({
@@ -67,14 +82,19 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
           </Button>
         )}
         renderSubmitButton={() => (
-          <Button disabled={createLoading} variant="primary" type="submit">
-            {formatMessage({
-              id: 'service.portal:next-step',
-              defaultMessage: 'Senda staðfestingakóða',
-            })}
+          <Button variant="primary" type="submit" icon="arrowForward">
+            {formState.step === 'phone'
+              ? formatMessage({
+                  id: 'service.portal:confirm-code',
+                  defaultMessage: 'Senda staðfestingarkóða',
+                })
+              : formatMessage({
+                  id: 'service.portal:next-step',
+                  defaultMessage: 'Næsta skref',
+                })}
           </Button>
         )}
-        onSubmit={sendSmsVerificationCode}
+        onSubmit={onSubmit}
       />
     </>
   )

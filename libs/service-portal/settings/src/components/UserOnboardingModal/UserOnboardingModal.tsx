@@ -13,13 +13,11 @@ import { EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
 import { LanguageStep } from './Steps/LanguageStep'
 import { PhoneStep } from './Steps/PhoneStep'
-import { PhoneConfirmationStep } from './Steps/PhoneConfirmationStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 
 type OnboardingStep =
   | 'intro'
   | 'tel-form'
-  | 'tel-confirm-form'
   | 'email-form'
   | 'language-form'
   | 'submit-form'
@@ -66,10 +64,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handlePhoneStepSubmit = (data: PhoneFormData) => {
     setTel(data.tel)
-    gotoStep('tel-confirm-form')
-  }
-
-  const handlePhoneConfirmStepSubmit = () => {
     gotoStep('email-form')
   }
 
@@ -98,14 +92,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
           natReg={userInfo.profile.natreg}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
-        />
-      )}
-      {step === 'tel-confirm-form' && (
-        <PhoneConfirmationStep
-          onBack={gotoStep.bind(null, 'tel-form')}
-          natReg={userInfo.profile.natreg}
-          tel={tel}
-          onSubmit={handlePhoneConfirmStepSubmit}
         />
       )}
       {step === 'email-form' && (
