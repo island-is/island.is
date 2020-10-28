@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react'
-import capitalize from 'lodash/capitalize'
+import React from 'react'
+import { transform, capitalize } from 'lodash'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '../types'
@@ -21,6 +21,7 @@ import {
   Option,
   Link,
   GridColumn,
+  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -50,7 +51,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTagId: string
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -61,7 +62,7 @@ const NewsList: Screen<NewsListProps> = ({
   selectedYear,
   selectedMonth,
   selectedPage,
-  selectedTag,
+  selectedTagId,
   namespace,
 }) => {
   const Router = useRouter()
@@ -101,7 +102,7 @@ const NewsList: Screen<NewsListProps> = ({
   ]
 
   const makeHref = (y: number | string, m?: number | string) => {
-    const params = { y, m, tag: selectedTag }
+    const params = { y, m, tag: selectedTagId }
     const query = Object.entries(params).reduce((queryObject, [key, value]) => {
       if (value) {
         queryObject[key] = value
@@ -114,6 +115,28 @@ const NewsList: Screen<NewsListProps> = ({
       query,
     }
   }
+
+  // Fish the selected tag name from existing news items
+  // instead of making a request for all tags
+  const selectedTag =
+    newsList.length &&
+    selectedTagId &&
+    transform(
+      newsList,
+      (tag, item) => {
+        const found = item.genericTags.find((t) => t.id === selectedTagId)
+
+        if (found) {
+          tag.id = found.id
+          tag.title = found.title
+          // exit early since we have what we need
+          return false
+        }
+
+        return true
+      },
+      { id: '', title: '' },
+    )
 
   const sidebar = (
     <Stack space={3}>
@@ -171,6 +194,11 @@ const NewsList: Screen<NewsListProps> = ({
             <Link href={makePath('news')}>
               {n('newsTitle', 'Fréttir og tilkynningar')}
             </Link>
+            {!!selectedTag && (
+              <Tag variant="blue" label>
+                {selectedTag.title}
+              </Tag>
+            )}
           </Breadcrumbs>
           {selectedYear && (
             <Hidden below="lg">
@@ -179,7 +207,6 @@ const NewsList: Screen<NewsListProps> = ({
               </Text>
             </Hidden>
           )}
-
           <GridColumn hiddenAbove="sm" paddingBottom={1}>
             <Select
               label={yearString}
@@ -335,7 +362,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: tag,
+    selectedTagId: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

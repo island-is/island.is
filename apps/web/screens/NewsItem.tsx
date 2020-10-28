@@ -10,7 +10,6 @@ import {
   Stack,
   GridContainer,
   Tag,
-  Inline,
 } from '@island.is/island-ui/core'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
@@ -87,17 +86,25 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                   span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                 >
                   <Breadcrumbs>
-                    <Link href={makePath()}>Ísland.is</Link>
-                    <Link href={makePath('news')}>
+                    <Link href={makePath()} as={makePath()}>
+                      Ísland.is
+                    </Link>
+                    <Link href={makePath('news')} as={makePath('news')}>
                       {t.newsAndAnnouncements}
                     </Link>
                     {!!newsItem.genericTags.length &&
                       newsItem.genericTags.map(({ id, title }, index) => {
                         return (
-                          <Link href={makePath('news', `?tag=${id}`)}>
-                            <Tag key={index} variant="blue" label>
-                              {title}
-                            </Tag>
+                          <Link
+                            key={index}
+                            href={{
+                              pathname: makePath('news'),
+                              query: { tag: id },
+                            }}
+                            as={makePath('news', `?tag=${id}`)}
+                            pureChildren
+                          >
+                            <Tag variant="blue">{title}</Tag>
                           </Link>
                         )
                       })}
