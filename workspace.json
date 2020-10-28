@@ -4021,6 +4021,67 @@
         "docker-express": {}
       }
     },
+    "services-xroad-collector": {
+      "root": "apps/services/xroad-collector",
+      "sourceRoot": "apps/services/xroad-collector/src",
+      "projectType": "application",
+      "prefix": "services-xroad-collector",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/xroad-collector",
+            "main": "apps/services/xroad-collector/src/main.ts",
+            "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
+            "assets": ["apps/services/xroad-collector/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/xroad-collector/src/environments/environment.ts",
+                  "with": "apps/services/xroad-collector/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-xroad-collector:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/services/xroad-collector/.eslintrc",
+            "tsConfig": [
+              "apps/services/xroad-collector/tsconfig.app.json",
+              "apps/services/xroad-collector/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/services/xroad-collector/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/xroad-collector/jest.config.js",
+            "tsConfig": "apps/services/xroad-collector/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
+      }
+    },
     "shared-form-fields": {
       "root": "libs/shared/form-fields",
       "sourceRoot": "libs/shared/form-fields/src",
