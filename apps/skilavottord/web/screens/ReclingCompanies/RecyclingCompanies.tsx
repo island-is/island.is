@@ -1,50 +1,37 @@
 import React, { FC, useContext } from 'react'
-import Link from 'next/link'
 import { useQuery } from '@apollo/client'
-import {
-  Box,
-  Stack,
-  Text,
-  Breadcrumbs,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
 import { useRouter } from 'next/router'
-import { CompanyListItem } from '../Handover/components'
-import { GET_RECYCLING_PARTNER } from '@island.is/skilavottord-web/graphql/queries'
+import { CompanyListItem } from './components'
+import { GET_ALL_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { Unauthorized } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 
-const CompanyInfo: FC = () => {
+const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, loading, error } = useQuery(GET_RECYCLING_PARTNER, {
-    variables: { id: 1 },
-  })
+  const { data, error, loading } = useQuery(GET_ALL_RECYCLING_PARTNERS)
 
   const {
-    t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
+    t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
 
   if (!user) {
     return null
-  } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
+  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
     console.log(user?.role, 'is not allowed to view this page')
     return <Unauthorized />
   }
+
+  const recyclingPartners = data?.getAllRecyclingPartners || []
 
   return (
     <PartnerPageLayout
       bottom={
         <Box>
-          <Box paddingBottom={6}>
-            <Breadcrumbs>
-              <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
-              <span>{t.title}</span>
-            </Breadcrumbs>
-          </Box>
           <Stack space={4}>
             <Stack space={4}>
               <Stack space={2}>
@@ -52,13 +39,13 @@ const CompanyInfo: FC = () => {
                 <Text variant="intro">{t.info}</Text>
               </Stack>
             </Stack>
-            <Text variant="h3">{t.subtitles.location}</Text>
+            <Text variant="h3">{t.subtitles.companies}</Text>
             {error || (loading && !data) ? (
               <Text>{t.empty}</Text>
             ) : (
               <Box>
-                {[data?.getRecyclingPartner].map((company, index) => (
-                  <CompanyListItem key={index} {...company} />
+                {recyclingPartners.map((partner, index) => (
+                  <CompanyListItem key={index} {...partner} />
                 ))}
               </Box>
             )}
@@ -67,17 +54,17 @@ const CompanyInfo: FC = () => {
       }
       left={
         <Sidenav
-          title="Company name"
+          title={sidenavText.title}
           sections={[
             {
               icon: 'car',
-              title: `${sidenavText.deregister}`,
-              link: `${routes.deregisterVehicle.baseRoute}`,
+              title: `${sidenavText.recycled}`,
+              link: `${routes.recycledVehicles}`,
             },
             {
               icon: 'business',
-              title: `${sidenavText.companyInfo}`,
-              link: `${routes.companyInfo.baseRoute}`,
+              title: `${sidenavText.companies}`,
+              link: `${routes.recyclingCompanies.baseRoute}`,
             },
           ]}
           activeSection={1}
@@ -87,4 +74,4 @@ const CompanyInfo: FC = () => {
   )
 }
 
-export default CompanyInfo
+export default RecyclingCompanies

@@ -26,7 +26,7 @@ export class VehicleOwnerResolver {
     @Args('nationalId') nationalId: string,
   ): Promise<VehicleOwnerModel> {
     const res = await this.vehicleOwnerService.findByNationalId(nationalId)
-    this.logger.debug(
+    this.logger.info(
       'getVehicleOwnersByNationaId responce:' + JSON.stringify(res, null, 2),
     )
     return res

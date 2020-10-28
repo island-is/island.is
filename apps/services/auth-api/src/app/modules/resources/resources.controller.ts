@@ -17,6 +17,7 @@ import {
   IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
+// Try comment to trigger deployment
 // TODO: Add guards after getting communications to work properly with IDS4
 // @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
