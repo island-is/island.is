@@ -26,13 +26,14 @@ import { Document } from '@island.is/api/schema'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { mockDocuments } from './mock.data'
 import Fuse from 'fuse.js'
+import { startOfTomorrow, isWithinInterval } from 'date-fns/esm'
 
 const defaultCategory = { label: 'Allar Stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = new Date('2000-01-01T00:00:00.000')
-const defaultEndDate = new Date()
+const defaultStartDate = new Date('1970-01-01T00:00:00.000')
+// note: default end date is tomorrow
+const defaultEndDate = startOfTomorrow()
 
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
@@ -69,9 +70,11 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  let filteredDocuments = documents.filter((document) =>
+    isWithinInterval(new Date(document.date), { start: dateFrom, end: dateTo }),
+  )
   if (activeCategory.value) {
-    console.log('IM HERHEHRHERH')
-    return documents.filter(
+    filteredDocuments = filteredDocuments.filter(
       (document) => document.senderNatReg === activeCategory.value,
     )
   }
@@ -79,7 +82,7 @@ const getFilteredDocuments = (
     const fuse = new Fuse(documents, defaultSearchOptions)
     return fuse.search(searchQuery).map((elem) => elem.item)
   }
-  return documents
+  return filteredDocuments
 }
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
@@ -94,7 +97,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     defaultFilterValues,
   )
   const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
-  console.log(data)
+
   const categories = [defaultCategory, ...data.categories]
   const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
   const pagedDocuments = {
@@ -102,22 +105,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-
+  console.log(filterValue)
   const handleDateFromInput = useCallback(
     (value: Date) =>
-      setFilterValue({
-        ...filterValue,
+      setFilterValue((oldState) => ({
+        ...oldState,
         dateFrom: value,
-      }),
+      })),
     [],
   )
 
   const handleDateToInput = useCallback(
     (value: Date) =>
-      setFilterValue({
-        ...filterValue,
+      setFilterValue((oldState) => ({
+        ...oldState,
         dateTo: value,
-      }),
+      })),
     [],
   )
 
@@ -179,7 +182,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <Column width="6/12">
                     <DatePicker
                       label="Frá"
-                      placeholderText="23.05.20"
+                      placeholderText="Veldu dagsetningu"
                       locale="is"
                       value={filterValue.dateFrom?.toString() || undefined}
                       handleChange={handleDateFromInput}
@@ -188,7 +191,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <Column width="6/12">
                     <DatePicker
                       label="Til"
-                      placeholderText="23.05.20"
+                      placeholderText="Veldu dagsetningu"
                       locale="is"
                       value={filterValue.dateTo?.toString() || undefined}
                       handleChange={handleDateToInput}
