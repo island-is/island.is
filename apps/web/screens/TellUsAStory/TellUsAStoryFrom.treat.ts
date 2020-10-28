@@ -1,7 +1,8 @@
 import { style } from 'treat'
 
 export const topImage = style({
-  marginBottom: '-150px',
+  marginTop: 'auto',
+  marginBottom: '-8%',
   width: '100%',
 })
 
