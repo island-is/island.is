@@ -212,7 +212,7 @@ export class AuthController {
     if (RoleForUser.includes('RecyclingCompany')) {
       returnUrlComp = '/deregister-vehicle'
     } else if (RoleForUser.includes('RecyclingFund')) {
-      returnUrlComp = '/list-vehicles'
+      returnUrlComp = '/recycled-vehicles'
     } else {
       return '/error'
     }
