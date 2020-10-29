@@ -65,7 +65,7 @@ import { Homepage } from './models/homepage.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
-import { GetTellUsAStoryInput } from './dto/gettellUsAStory.input'
+import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
 import { TellUsAStory } from './models/tellUsAStory.model'
 
 const { cacheTime } = environment
