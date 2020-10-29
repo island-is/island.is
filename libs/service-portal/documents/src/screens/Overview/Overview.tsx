@@ -25,8 +25,7 @@ import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import Fuse from 'fuse.js'
-import { startOfTomorrow, isWithinInterval } from 'date-fns/esm'
-import { isAfter, subYears } from 'date-fns'
+import { isAfter, subYears, startOfTomorrow, isWithinInterval } from 'date-fns'
 import { isEqual } from 'lodash'
 
 const defaultCategory = { label: 'Allar Stofnanir', value: '' }

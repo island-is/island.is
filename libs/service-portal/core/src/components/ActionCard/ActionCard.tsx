@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
-import { format } from 'date-fns/esm'
+import { format } from 'date-fns'
 
 interface Props {
   label: string
