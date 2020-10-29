@@ -60,7 +60,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
     if (error && !loading) {
       toast.error(
         formatMessage({
-          id: 'sp.documents:documentCard.errorLoadingDocument',
+          id: 'sp.documents:documentCard-error-singleDocument',
           defaultMessage: 'Ekki tókst að sækja skjal',
         }),
       )
@@ -86,7 +86,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       cta={{
         onClick: handleOnClick,
         label: formatMessage({
-          id: 'sp.documents:documentCard.ctaLabel',
+          id: 'sp.documents:documentCard-ctaLabel',
           defaultMessage: 'Sækja skjal',
         }),
       }}

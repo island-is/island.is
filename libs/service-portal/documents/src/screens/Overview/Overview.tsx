@@ -169,7 +169,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     onChange={(ev) => handleSearchChange(ev.target.value)}
                     name="rafraen-skjol-leit"
                     placeholder={formatMessage({
-                      id: 'sp.documents:search:placeholder',
+                      id: 'sp.documents:search-placeholder',
                       defaultMessage: 'Leitaðu af rafrænu skjali',
                     })}
                   />
@@ -182,7 +182,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     value={filterValue.activeCategory}
                     onChange={handleCategoryChange}
                     label={formatMessage({
-                      id: 'sp.documents:institutionLabel',
+                      id: 'sp.documents:institution-label',
                       defaultMessage: 'Stofnun',
                     })}
                   />
@@ -191,11 +191,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <Column width="6/12">
                     <DatePicker
                       label={formatMessage({
-                        id: 'sp.documents:datepicker.dateFrom.label',
+                        id: 'sp.documents:datepicker-dateFrom-label',
                         defaultMessage: 'Dagsetning frá',
                       })}
                       placeholderText={formatMessage({
-                        id: 'sp.documents:datepicker.dateFrom.placeholder',
+                        id: 'sp.documents:datepicker-dateFrom-placeholder',
                         defaultMessage: 'Veldu dagsetningu',
                       })}
                       locale="is"
@@ -207,11 +207,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <Column width="6/12">
                     <DatePicker
                       label={formatMessage({
-                        id: 'sp.documents:datepicker.dateTo.label',
+                        id: 'sp.documents:datepicker-dateTo-label',
                         defaultMessage: 'Dagsetning til',
                       })}
                       placeholderText={formatMessage({
-                        id: 'sp.documents:datepicker.dateTo.placeholder',
+                        id: 'sp.documents:datepicker-dateTo-placeholder',
                         defaultMessage: 'Veldu dagsetningu',
                       })}
                       locale="is"
@@ -228,7 +228,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <Column>
                         <Text variant="h3">
                           {`${filteredDocuments.length} ${formatMessage({
-                            id: 'sp.documents:documentsFound',
+                            id: 'sp.documents:found',
                             defaultMessage: 'skjöl fundust',
                           })}`}
                         </Text>
@@ -236,7 +236,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <Column width="content">
                         <Button variant="text" onClick={handleClearFilters}>
                           {formatMessage({
-                            id: 'sp.documents:clearFilters',
+                            id: 'sp.documents:clear-filters',
                             defaultMessage: 'Hreinsa filter',
                           })}
                         </Button>
