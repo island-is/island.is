@@ -12,7 +12,6 @@ import {
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import * as styles from './InfoScreen.treat'
 
 interface Props {
   title: MessageDescriptor

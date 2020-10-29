@@ -19,7 +19,7 @@ export class DocumentDetails {
     const doc = new DocumentDetails()
     doc.content = dto.content
     doc.fileType = dto.fileType
-    doc.fileType = dto.fileType
+    doc.html = dto.htmlContent
     doc.url = dto.url
     return doc
   }

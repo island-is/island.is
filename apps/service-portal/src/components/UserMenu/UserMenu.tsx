@@ -2,7 +2,7 @@ import React, { FC, useState, useRef } from 'react'
 import { useStore } from '../../store/stateProvider'
 import {
   Box,
-  ButtonDeprecated as Button,
+  Button,
   Hidden,
   Icon,
   Stack,
@@ -29,22 +29,19 @@ const UserMenu: FC<{}> = () => {
     <Box display="flex" position="relative" height="full" ref={ref}>
       <Hidden below="md">
         <Button
-          variant="menu"
-          width="fluid"
-          href=""
+          variant="utility"
           onClick={setIsOpen.bind(null, !isOpen)}
-          leftIcon="user"
-          icon="cheveron"
+          icon="chevronDown"
         >
           {userInfo?.profile.name}
         </Button>
       </Hidden>
       <Hidden above="sm">
         <Button
-          variant="menu"
+          variant="utility"
           onClick={setIsOpen.bind(null, !isOpen)}
-          size="small"
-          icon="user"
+          icon="person"
+          iconType="outline"
         />
       </Hidden>
       {userInfo && (
@@ -98,7 +95,7 @@ const UserMenu: FC<{}> = () => {
                 </Stack>
               </Box>
               <Box marginTop={3}>
-                <Button width="fluid" onClick={handleLogoutClick}>
+                <Button onClick={handleLogoutClick}>
                   {formatMessage({
                     id: 'global:logout',
                     defaultMessage: 'Útskráning',
