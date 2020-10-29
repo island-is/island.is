@@ -47,7 +47,7 @@ export class GrantsService {
   }
 
   /** Gets a grant by it's key */
-  async getAsync(key: string): Promise<Grant> {
+  async getAsync(key: string): Promise<Grant | null> {
     this.logger.debug(`Finding grant with key - "${key}"`)
 
     if (!key) {

@@ -2,7 +2,8 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "allowJs": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "strictPropertyInitialization": false //TODO: Perhaps needs to be removed
   },
   "include": []
 }
