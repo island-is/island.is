@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Stack, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -34,7 +34,33 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:email',
             defaultMessage: 'Netfang',
           })}
-          content={userProfile?.email || ''}
+          content={
+            userProfile?.email ? (
+              <Box display="flex">
+                <span>{userProfile.email}</span>
+                <Box marginLeft={1}>
+                  {userProfile.emailVerified ? (
+                    <Icon
+                      type="filled"
+                      size="small"
+                      icon="checkmarkCircle"
+                      color="mint300"
+                    />
+                  ) : (
+                    <Tooltip
+                      text={formatMessage({
+                        id: 'sp.settings:email-not-verified-message',
+                        defaultMessage:
+                          'Þetta netfang hefur ekki verið staðfest',
+                      })}
+                    />
+                  )}
+                </Box>
+              </Box>
+            ) : (
+              ''
+            )
+          }
           editLink={{
             url: ServicePortalPath.UserProfileEditEmail,
             title: defineMessage({
@@ -48,7 +74,33 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:tel',
             defaultMessage: 'Símanúmer',
           })}
-          content={userProfile?.mobilePhoneNumber || ''}
+          content={
+            userProfile?.mobilePhoneNumber ? (
+              <Box display="flex">
+                <span>{userProfile.mobilePhoneNumber}</span>
+                <Box marginLeft={1}>
+                  {userProfile.mobilePhoneNumberVerified ? (
+                    <Icon
+                      type="filled"
+                      size="small"
+                      icon="checkmarkCircle"
+                      color="mint300"
+                    />
+                  ) : (
+                    <Tooltip
+                      text={formatMessage({
+                        id: 'sp.settings:phone-not-verified-message',
+                        defaultMessage:
+                          'Þetta símanúmer hefur ekki verið staðfest',
+                      })}
+                    />
+                  )}
+                </Box>
+              </Box>
+            ) : (
+              ''
+            )
+          }
           editLink={{
             url: ServicePortalPath.UserProfileEditPhoneNumber,
             title: defineMessage({

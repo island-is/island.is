@@ -7,6 +7,8 @@ export const USER_PROFILE = gql`
       mobilePhoneNumber
       locale
       email
+      emailVerified
+      mobilePhoneNumberVerified
     }
   }
 `
