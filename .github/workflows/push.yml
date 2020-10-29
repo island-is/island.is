@@ -10,21 +10,61 @@ on:
       - '**/*.md'
     tags:
       - docker-build-*
-  workflow_dispatch: {}
+  workflow_dispatch:
+  create:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
 jobs:
+  pre-checks:
+    name: Check if job should run
+    runs-on: ubuntu-20.04
+    env:
+      CREATE_PATTERNS: ^release/,^hotfix/
+    outputs:
+      GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+      PRE_CHECK_OK: ${{ steps.branch-name-check.outputs.PRE_CHECK_OK }}
+    steps:
+      - name: Get git branch
+        id: git-branch
+        run: |
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+      - name: Check if we want to run workflow
+        continue-on-error: true
+        id: branch-name-check
+        run: |
+          echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
+            echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
+
+            for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
+            do
+                echo "Checking branch against pattern '$pattern'"
+                if [[ "$GIT_BRANCH" =~ $pattern ]]; then
+                  echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
+                  exit 0
+                fi
+            done
+            echo "No pattern matches '$GIT_BRANCH', exiting with exit code 1"
+            exit 1
+          fi
+          echo "::set-output name=PRE_CHECK_OK::true"
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 30
 
+    if: needs.pre-checks.outputs.PRE_CHECK_OK
+    needs:
+      - pre-checks
+
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
 
     outputs:
-      GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
@@ -39,7 +79,6 @@ jobs:
       - name: Git refs
         id: git_refs
         run: |
-          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           if [[ ! -z "$GITHUB_BASE_REF" ]]
           then
            # a PR
@@ -49,7 +88,6 @@ jobs:
            GIT_BASE_BRANCH=master
           fi
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
@@ -149,7 +187,9 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static)
           echo "CHUNKS: '$CHUNKS'"
-          echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
+          fi
 
       - name: Gather unaffected docker images
         id: unaffected
@@ -159,12 +199,14 @@ jobs:
 
   docker-build:
     needs:
+      - pre-checks
       - prepare
     runs-on: ubuntu-20.04
     timeout-minutes: 35
+    if: needs.prepare.outputs.BUILD_CHUNKS
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: true
     strategy:
@@ -229,16 +271,22 @@ jobs:
   retag-unaffected:
     runs-on: ubuntu-20.04
     timeout-minutes: 5
+    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
+      - pre-checks
       - docker-build
       - prepare
     env:
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
       UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
 
     steps:
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check docker-build success
+        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
       - uses: actions/checkout@v2
       - name: Retag unaffected Docker images
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
@@ -250,9 +298,10 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - retag-unaffected
+      - pre-checks
       - prepare
     env:
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
     strategy:
       matrix:
@@ -277,11 +326,19 @@ jobs:
 
   success:
     runs-on: ubuntu-20.04
+    if: always()
     needs:
+      - pre-checks
       - deploy
     steps:
+      - name: Check deploy success
+        run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
+        if: needs.pre-checks.result == 'success'
         run: echo "Build is successful"
+      - name: Announce skipped
+        if: needs.pre-checks.result == 'failure'
+        run: echo "Build was skipped"
 
   failure-notification:
     runs-on: ubuntu-20.04

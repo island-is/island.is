@@ -1,22 +1,7 @@
 import { style } from 'treat'
 import { ThemeOrAny } from 'treat/theme'
 import { ThemedStyle, Style } from 'treat/lib/types/types'
-import { theme } from '@island.is/island-ui/theme'
-
-export const animationContainer = style({
-  position: 'absolute',
-  display: 'inline-block',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  opacity: 1,
-  transition: `opacity 400ms ease`,
-})
-
-export const animationContainerHidden = style({
-  opacity: 0,
-})
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
   '@media': {
@@ -42,6 +27,13 @@ export const tabContainer = style({
 
 export const tabPanelWrapper = style({
   position: 'relative',
+  minHeight: 300,
+
+  ...themeUtils.responsiveStyle({
+    lg: {
+      minHeight: 350,
+    },
+  }),
 })
 
 export const tabPanelRow = style({
@@ -49,36 +41,30 @@ export const tabPanelRow = style({
 })
 
 export const tabPanel = style({
-  position: 'absolute',
-  width: '100%',
-  top: 0,
-  left: 0,
-  right: 0,
   opacity: 0,
   pointerEvents: 'none',
-  transition: `opacity 300ms ease 0ms`,
+  display: 'flex',
+  position: 'absolute',
 })
 
 export const tabPanelVisible = style({
+  position: 'relative',
   opacity: 1,
   outline: 0,
-  position: 'relative',
-  display: 'inline-block',
-  width: '100%',
   pointerEvents: 'initial',
-  transition: `opacity 600ms ease 300ms`,
 })
 
 export const textItem = style({
   position: 'relative',
   display: 'inline-block',
-  transform: `translateX(-25%)`,
-  transition: `all 600ms ease`,
+  opacity: 0,
+  transition: `opacity 1000ms, transform 800ms`,
+  transform: 'translateX(-20px)',
 })
 
 export const textItemVisible = style({
   opacity: 1,
-  transform: `translateY(0)`,
+  transform: 'translateX(0)',
 })
 
 export const tabBullet = style({

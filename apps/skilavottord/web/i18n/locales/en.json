@@ -5,6 +5,21 @@
   "header": {
     "logoutText": "Log out"
   },
+  "data": {
+    "title": "You own your data",
+    "subTitles": {
+      "info": "Information about your cars"
+    },
+    "info": "We need to collect information about your cars for you to be able to use the service",
+    "checkbox": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis morbi ullamcorper ante amet eleifend ornare eget a, aliquam. Nunc, non dui tempor, lobortis diam quis egestas. Magna tempus accumsan fusce leo nisl nunc lacinia ultrices. Facilisi orci nec ut magna varius etiam feugiat. Lobortis consequat, arcu blandit tincidunt vitae cras.",
+    "buttons": {
+      "continue": "Continue"
+    },
+    "error": {
+      "message": "We have problem with the connection to the database and cannot save your preferences, please try to re-load the page.",
+      "primaryButton": "Re-load page"
+    }
+  },
   "myCars": {
     "title": "Recycle your car",
     "subTitles": {
@@ -122,9 +137,9 @@
   "companyInfo": {
     "title": "Company information",
     "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
-    "error": "Add your companies locations so that the users can find your company on iceland.is.",
+    "empty": "Add your companies locations so that the users can find your company on iceland.is.",
     "subtitles": {
-      "companyLocation": "Recycling company location"
+      "location": "Recycling company location"
     },
     "buttons": {
       "add": "Add another location",
@@ -145,7 +160,7 @@
         "placeholder": "Ex. Maplestreet 2"
       },
       "postNumber": {
-        "label": "Post number",
+        "label": "Postnumber",
         "placeholder": "Postnumber of visiting adress"
       },
       "city": {
@@ -200,15 +215,60 @@
       "success": "Deregistration was successful."
     }
   },
-  "unauthorized": {
-    "message": "You are not allowed to view this page"
+  "recyclingFundOverview": {
+    "title": "Recycled cars",
+    "subtitles": {
+      "deregistered": "Deregistered"
+    },
+    "buttons": {
+      "export": "Export"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
+  },
+  "recyclingFundSidenav": {
+    "title": "Skilavottord",
+    "recycled": "Recycled cars",
+    "companies": "Reycling companies"
+  },
+  "recyclingCompanies": {
+    "title": "Recycling companies",
+    "info": "The company information will help your customers contact you when using the digital car recycling service.",
+    "empty": "There is no recycling comapany added yet",
+    "subtitles": {
+      "companies": "Recycling companies"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "buttons": {
+      "add": "Add recycling company",
+      "edit": "Edit"
+    }
+  },
+  "notFound": {
+    "title": "Resource could not be found",
+    "content": "Something went wrong, please try again",
+    "button": "Back"
+  },
+  "errorBoundary": {
+    "title": "An error occurred",
+    "contents": [
+      "Something went wrong.",
+      "Please <a href='https://island.is/um-island-is/hafa-samband/'>contact</a> for further help"
+    ]
   },
   "routes": {
     "home": {
-      "citizen": "/my-cars",
-      "recyclingPartner": "/deregister-vehicle",
-      "recyclingFund": "/recycled-vehicles"
+      "citizen": "/en/my-cars",
+      "recyclingPartner": "/en/deregister-vehicle",
+      "recyclingFund": "/en/recycled-vehicles"
     },
+    "data": "/en/data",
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",
@@ -220,6 +280,12 @@
       "baseRoute": "/en/deregister-vehicle",
       "select": "/en/deregister-vehicle/select",
       "deregister": "/en/deregister-vehicle/[id]"
+    },
+    "recycledVehicles": "/en/recycled-vehicles",
+    "recyclingCompanies": {
+      "baseRoute": "/en/recycling-companies",
+      "add": "/en/recycling-companies/add",
+      "edit": "/en/recycling-companies/[company]"
     },
     "companyInfo": {
       "baseRoute": "/en/company-info",

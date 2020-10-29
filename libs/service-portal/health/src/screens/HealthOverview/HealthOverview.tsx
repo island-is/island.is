@@ -40,6 +40,11 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
           }),
         ],
       }}
+      externalHref="https://www.heilsuvera.is/"
+      externalLinkTitle={defineMessage({
+        id: 'sp.health:goto-heilsuvera',
+        defaultMessage: 'Fara á heilsuveru',
+      })}
       institutionTitle={defineMessage({
         id: 'service.portal:digital-iceland',
         defaultMessage: 'Stafrænt Ísland',

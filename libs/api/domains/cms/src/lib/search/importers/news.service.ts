@@ -19,6 +19,12 @@ export class NewsSyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapNews(entry)
+
+          // we consider news that dont have a title to be empty
+          if (!mapped.title) {
+            throw new Error('Trying to import empty news entry')
+          }
+
           const type = 'webNews'
           return {
             _id: mapped.id,
@@ -37,7 +43,7 @@ export class NewsSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.error('Failed to import news', error)
+          logger.warn('Failed to import news', { error: error.message })
           return false
         }
       })

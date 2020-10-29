@@ -1,24 +1,53 @@
 import React, { FC } from 'react'
-
-import {
-  Box,
-  IconDeprecated as Icon,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 
 export interface InlineErrorProps {
+  title: string
   message: string
+  primaryButton: Button
+  secondaryButton?: Button
+}
+
+interface Button {
+  text: string
+  action: () => void
 }
 
 export const InlineError: FC<InlineErrorProps> = ({
+  title,
   message,
-}: InlineErrorProps) => (
-  <Box display="flex">
-    <Box flexShrink={0} paddingRight={2}>
-      <Icon type="alert" color="red400" />
+  primaryButton,
+  secondaryButton,
+}: InlineErrorProps) => {
+  return (
+    <Box paddingBottom={10}>
+      <Stack space={4}>
+        <Stack space={[3, 3, 2, 2]}>
+          <Text variant="h3">{title}</Text>
+          <Box display="flex">
+            <Box flexShrink={0} paddingRight={2}>
+              <Icon icon="warning" color="red400" size="large" />
+            </Box>
+            <Text>{message}</Text>
+          </Box>
+        </Stack>
+        {secondaryButton && (
+          <Button
+            variant="ghost"
+            colorScheme="destructive"
+            onClick={secondaryButton.action}
+          >
+            {secondaryButton.text}
+          </Button>
+        )}
+        <Button
+          variant={secondaryButton ? 'primary' : 'ghost'}
+          onClick={primaryButton.action}
+        >
+          {primaryButton.text}
+        </Button>
+      </Stack>
     </Box>
-    <Typography>{message}</Typography>
-  </Box>
-)
-
+  )
+}
 export default InlineError

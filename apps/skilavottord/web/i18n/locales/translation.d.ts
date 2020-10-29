@@ -10,6 +10,7 @@
 export interface Translation {
   home: Home
   header: Header
+  data: Data
   myCars: MyCars
   confirm: Confirm
   handover: Handover
@@ -20,7 +21,11 @@ export interface Translation {
   companyInfoForm: CompanyInfoFormPage
   deregisterSidenav: DeregisterSidenav
   deregisterVehicle: DeregisterVehicle
-  unauthorized: Unauthorized
+  recyclingFundOverview: RecyclingFundOverview
+  recyclingFundSidenav: RecyclingFundSidenav
+  recyclingCompanies: RecyclingCompanies
+  notFound: NotFound
+  errorBoundary: ErrorBoundary
   routes: Routes
 }
 
@@ -30,6 +35,15 @@ export interface Home {
 
 export interface Header {
   logoutText: string
+}
+
+export interface Data {
+  title: string
+  subTitles: DataSubtitles
+  info: string
+  buttons: DataButtons
+  checkbox: string
+  error: Errors
 }
 
 export interface MyCars {
@@ -85,13 +99,21 @@ export interface CancelModal {
   buttons: ProcessButtons
 }
 
+export interface DataSubtitles {
+  info: string
+}
+
+export interface DataButtons {
+  continue: string
+}
+
 export interface MyCarsSubtitles {
   pending: string
   active: string
   done: string
 }
 
-export interface MyCarsSubtitles {
+export interface MyCarsInfo {
   noCarsAvailable: string
 }
 
@@ -181,7 +203,7 @@ export interface DeregisterOverview {
 export interface CompanyInfo {
   title: string
   info: string
-  error: string
+  empty: string
   subtitles: CompanyInfoSubTitles
   buttons: CompanyInfoButtons
 }
@@ -214,8 +236,37 @@ export interface DeregisterVehicle {
   deregister: Deregister
 }
 
-export interface Unauthorized {
-  message: string
+export interface RecyclingFundOverview {
+  title: string
+  subtitles: ReyclingFundOverviewSubTitles
+  buttons: ReyclingFundOverviewButtons
+  search: InputField
+  table: string[]
+}
+
+export interface RecyclingCompanies {
+  title: string
+  info: string
+  empty: string
+  subtitles: RecyclingCompaniesSubTitles
+  status: CompanyStatus
+  buttons: CompanyInfoButtons
+}
+
+export interface CompanyStatus {
+  active: string
+  inactive: string
+}
+
+export interface NotFound {
+  title: string
+  content: string
+  button: string
+}
+
+export interface ErrorBoundary {
+  title: string
+  contents: string[]
 }
 
 export interface DeregisterSelect {
@@ -240,8 +291,20 @@ export interface DeregisterOverviewButtons {
   deregister: string
 }
 
+export interface ReyclingFundOverviewSubTitles {
+  deregistered: string
+}
+
+export interface ReyclingFundOverviewButtons {
+  export: string
+}
+
 export interface CompanyInfoSubTitles {
-  companyLocation: string
+  location: string
+}
+
+export interface RecyclingCompaniesSubTitles {
+  companies: string
 }
 
 export interface DeregisterOverviewButtons {
@@ -260,6 +323,17 @@ export interface DeregisterButtons {
   confirm: string
 }
 
+export interface DeregisterSidenav {
+  deregister: string
+  companyInfo: string
+}
+
+export interface RecyclingFundSidenav {
+  title: string
+  recycled: string
+  companies: string
+}
+
 export interface InputField {
   label: string
   placeholder: string
@@ -268,9 +342,12 @@ export interface InputField {
 
 export interface Routes {
   home: HomeRoutes
+  data: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes
+  recycledVehicles: string
+  recyclingCompanies: RecyclingCompaniesRoutes
   companyInfo: CompanyInfoRoutes
 }
 
@@ -294,6 +371,12 @@ export interface DeregisterVehicleRoutes {
 }
 
 export interface CompanyInfoRoutes {
+  baseRoute: string
+  add: string
+  edit: string
+}
+
+export interface RecyclingCompaniesRoutes {
   baseRoute: string
   add: string
   edit: string

@@ -1,8 +1,8 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
-import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
+import { Box, Stack, Text, Breadcrumbs } from '@island.is/island-ui/core'
 import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { ActionCard, ProgressCard, Error } from './components'
+import { ActionCard, ProgressCard } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
 import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
@@ -10,9 +10,7 @@ import { useRouter } from 'next/router'
 import { MockCar } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
-
-const nationalId = '2222222222'
+import { NotFound, InlineError } from '@island.is/skilavottord-web/components'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -26,11 +24,13 @@ const Overview: FC = () => {
     },
   } = useI18n()
   const router = useRouter()
+
+  const nationalId = user?.nationalId ?? ''
   const { data, loading, error } = useQuery(GET_VEHICLES, {
     variables: { nationalId },
   })
 
-  const { cars } = data?.getVehiclesForNationalId || {}
+  const { cars } = data?.getVehiclesForNationalId || []
 
   const onRecycleCar = (id: string) => {
     router
@@ -53,28 +53,38 @@ const Overview: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (
     <PageLayout>
-      <Box paddingBottom={6}>
+      <Box paddingBottom={[3, 3, 6, 6]}>
         <Breadcrumbs>
           <Link href={homeRoute}>Ísland.is</Link>
           <span>{t.title}</span>
         </Breadcrumbs>
       </Box>
       <Box paddingBottom={4}>
-        <Typography variant="h1">{t.title}</Typography>
+        <Text variant="h1">{t.title}</Text>
       </Box>
       {error || (loading && !data) ? (
-        <Box>{error && <Error />}</Box>
+        <Box>
+          {error && (
+            <InlineError
+              title={t.subTitles.active}
+              message={t.error.message}
+              primaryButton={{
+                text: t.error.primaryButton,
+                action: () => router.reload(),
+              }}
+            />
+          )}
+        </Box>
       ) : (
         <Box>
           <Box paddingBottom={10}>
             <Stack space={[2, 2]}>
-              <Typography variant="h3">{t.subTitles.pending}</Typography>
+              <Text variant="h3">{t.subTitles.pending}</Text>
               {cars.map((car: MockCar) => (
                 <ProgressCard
                   key={car.permno}
@@ -86,7 +96,7 @@ const Overview: FC = () => {
           </Box>
           <Box paddingBottom={10}>
             <Stack space={[2, 2]}>
-              <Typography variant="h3">{t.subTitles.active}</Typography>
+              <Text variant="h3">{t.subTitles.active}</Text>
               {cars.length > 0 ? (
                 cars.map((car: MockCar) => (
                   <ActionCard
@@ -96,13 +106,13 @@ const Overview: FC = () => {
                   />
                 ))
               ) : (
-                <Typography variant="p">{t.info.noCarsAvailable}</Typography>
+                <Text>{t.info.noCarsAvailable}</Text>
               )}
             </Stack>
           </Box>
           <Box paddingBottom={10}>
             <Stack space={[2, 2]}>
-              <Typography variant="h3">{t.subTitles.done}</Typography>
+              <Text variant="h3">{t.subTitles.done}</Text>
               {cars.map((car: MockCar) => (
                 <ProgressCard
                   key={car.permno}
