@@ -1,12 +1,18 @@
 import { toast } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useVerifySms } from '@island.is/service-portal/graphql'
 import React, { FC, useEffect, useState } from 'react'
-import { MessageDescriptor } from 'react-intl'
+import { defineMessage, MessageDescriptor } from 'react-intl'
 import {
   ConfirmationStep,
   PhoneConfirmationFormData,
 } from './Steps/ConfirmationStep'
 import { FormStep, PhoneFormData } from './Steps/FormStep'
+import {
+  codeErrorMessage,
+  smsErrorMessage,
+  wrongCodeErrorMessage,
+} from './utils'
 
 export type PhoneFormInternalStep = 'form' | 'confirmation'
 
@@ -27,6 +33,7 @@ export const PhoneForm: FC<Props> = ({
   onInternalStepChange,
   onSubmit,
 }) => {
+  const { formatMessage } = useLocale()
   const {
     createSmsVerification,
     confirmSmsVerification,
@@ -53,14 +60,10 @@ export const PhoneForm: FC<Props> = ({
         gotoStep('confirmation')
         setTelInternal(data.tel)
       } else {
-        toast.error(
-          'Eitthvað fór úrskeiðis, ekki tókst að senda SMS í þetta símanúmer',
-        )
+        toast.error(formatMessage(smsErrorMessage))
       }
     } catch (err) {
-      toast.error(
-        'Eitthvað fór úrskeiðis, ekki tókst að senda SMS í þetta símanúmer',
-      )
+      toast.error(formatMessage(smsErrorMessage))
     }
   }
 
@@ -76,10 +79,10 @@ export const PhoneForm: FC<Props> = ({
           tel: data.tel,
         })
       } else {
-        toast.error('Eitthvað fór úrskeiðis, kóði var ekki réttur')
+        toast.error(formatMessage(wrongCodeErrorMessage))
       }
     } catch (err) {
-      toast.error('Eitthvað fór úrskeiðis, ekki tókst að staðfesta kóða')
+      toast.error(formatMessage(codeErrorMessage))
     }
   }
 
