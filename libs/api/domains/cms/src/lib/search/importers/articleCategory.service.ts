@@ -22,6 +22,12 @@ export class ArticleCategorySyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapArticleCategory(entry)
+
+          // we consider article categories that dont have a title to be empty
+          if (!mapped.title) {
+            throw new Error('Trying to import empty article category entry')
+          }
+
           const type = 'webArticleCategory'
           return {
             _id: mapped.slug,
@@ -34,7 +40,9 @@ export class ArticleCategorySyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.error('Failed to import article category', error)
+          logger.warn('Failed to import article category', {
+            error: error.message,
+          })
           return false
         }
       })

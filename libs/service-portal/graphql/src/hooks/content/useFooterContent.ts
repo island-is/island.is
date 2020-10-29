@@ -16,6 +16,7 @@ export type ServicePortalFooterContent = {
   lower: Menu | null
   middle: Menu | null
   tags: Menu | null
+  upperContact: Menu | null
 }
 
 export const useFooterContent = (
@@ -37,11 +38,16 @@ export const useFooterContent = (
     GET_MENU,
     getVariables('Footer tags', locale),
   )
+  const { data: upperContact } = useQuery<Query, QueryGetMenuArgs>(
+    GET_MENU,
+    getVariables('Footer upper contact', locale),
+  )
 
   return {
     upper: upper?.getMenu || null,
     lower: lower?.getMenu || null,
     middle: middle?.getMenu || null,
     tags: tags?.getMenu || null,
+    upperContact: upperContact?.getMenu || null,
   }
 }
