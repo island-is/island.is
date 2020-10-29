@@ -17,6 +17,7 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
 
   return (
     <Box
+      position="relative"
       className={styles.card}
       background="white"
       border="standard"
@@ -24,6 +25,11 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
       paddingY={3}
       paddingX={4}
     >
+      {disabled && (
+        <Box position="absolute" className={styles.tag}>
+          <Tag variant="blue">Væntanlegt</Tag>
+        </Box>
+      )}
       <div
         className={cn({
           [styles.disabled]: disabled,
