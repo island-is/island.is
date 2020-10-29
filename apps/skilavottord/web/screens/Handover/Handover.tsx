@@ -10,7 +10,7 @@ import CompanyList from './components/CompanyList'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -43,8 +43,7 @@ const Handover: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (

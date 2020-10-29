@@ -253,8 +253,17 @@
       "edit": "Edit"
     }
   },
-  "unauthorized": {
-    "message": "You are not allowed to view this page"
+  "notFound": {
+    "title": "Umbeðin slóð fannst ekki",
+    "content": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
+    "button": "Til baka"
+  },
+  "errorBoundary": {
+    "title": "Villa kom upp",
+    "contents": [
+      "Eitthvað hefur farið úrskeiðis.",
+      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+    ]
   },
   "routes": {
     "home": {
