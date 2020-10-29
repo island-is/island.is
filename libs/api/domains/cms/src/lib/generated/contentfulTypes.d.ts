@@ -171,7 +171,7 @@ export interface IArticleFields {
   userStories?: Document | undefined
 
   /** Featured image */
-  featuredImage?: Asset | undefined
+  featuredImage: Asset
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1881,124 +1881,6 @@ export interface ITeamMember extends Entry<ITeamMemberFields> {
   }
 }
 
-export interface ITellUsAStoryFields {
-  /** Intro Title */
-  introTitle: string
-
-  /** Intro Description */
-  introDescription: Document
-
-  /** Intro Image */
-  introImage?: Asset | undefined
-
-  /** First Section Title */
-  firstSectionTitle: string
-
-  /** Organization Label */
-  organizationLabel: string
-
-  /** Organization Placeholder */
-  organizationPlaceholder: string
-
-  /** Organization Input Error Message */
-  organizationInputErrorMessage: string
-
-  /** Date of Story Label */
-  dateOfStoryLabel: string
-
-  /** Date of Story Placeholder */
-  dateOfStoryPlaceholder: string
-
-  /** Date of Story Input Error Message */
-  dateOfStoryInputErrorMessage: string
-
-  /** Second Section Title */
-  secondSectionTitle: string
-
-  /** Subject Label */
-  subjectLabel: string
-
-  /** Subject Placeholder */
-  subjectPlaceholder: string
-
-  /** Subject Input Error Message */
-  subjectInputErrorMessage?: string | undefined
-
-  /** Message Label */
-  messageLabel: string
-
-  /** Message Placeholder */
-  messagePlaceholder: string
-
-  /** Message Input Error Message */
-  messageInputErrorMessage: string
-
-  /** Third Section Title */
-  thirdSectionTitle: string
-
-  /** Instructions Description */
-  instructionsDescription: Document
-
-  /** Instructions Image */
-  instructionsImage: Asset
-
-  /** Information Title */
-  informationTitle: string
-
-  /** Name Label */
-  nameLabel: string
-
-  /** Name Placeholder */
-  namePlaceholder: string
-
-  /** Name Input Error Message */
-  nameInputErrorMessage: string
-
-  /** Email Label */
-  emailLabel: string
-
-  /** Email Placeholder */
-  emailPlaceholder: string
-
-  /** Email Input Error Message */
-  emailInputErrorMessage: string
-
-  /** Publication Allowed Label */
-  publicationAllowedLabel: string
-
-  /** Submit Button Title */
-  submitButtonTitle: string
-
-  /** Success Message Title */
-  SuccessMessageTitle: string
-
-  /** Success Message */
-  successMessage: Document
-
-  /** Error Message Title */
-  errorMessageTitle: string
-
-  /** Error Message */
-  errorMessage: Document
-}
-
-export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'tellUsAStory'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -2242,7 +2124,7 @@ export interface IVidspyrnaFeaturedNewsFields {
   title?: string | undefined
 
   /** featured */
-  featured: INews[]
+  featured: IVidspyrnaNews[]
 }
 
 export interface IVidspyrnaFeaturedNews
@@ -2482,7 +2364,6 @@ export type CONTENT_TYPE =
   | 'tabSection'
   | 'teamList'
   | 'teamMember'
-  | 'tellUsAStory'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
