@@ -1,4 +1,4 @@
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
