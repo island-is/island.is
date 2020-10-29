@@ -26,10 +26,62 @@ export const ReviewApplication: Form = buildForm({
           id: 'overview',
           name: 'Umsókn um að gerast skjalaveitandi:',
           children: [
-            buildDividerField({ name: 'Umsækjandi' }),
+            buildDividerField({ name: 'Upplýsingar um stofnun' }),
             buildTextField({
               id: 'applicant.name',
-              name: 'Nafn umsækjanda',
+              name: m.applicantName,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'applicant.email',
+              name: m.applicantEmail,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'applicant.phoneNumber',
+              name: m.applicantPhoneNumber,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'applicant.address',
+              name: m.applicantAddress,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'applicant.zipCode',
+              name: m.applicantZipCode,
+              disabled: true,
+            }),
+            buildDividerField({ name: 'Upplýsingar um ábyrgðarmann' }),
+            buildTextField({
+              id: 'administrativeContact.name',
+              name: m.administrativeContactName,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'administrativeContact.email',
+              name: m.administrativeContactEmail,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'administrativeContact.phoneNumber',
+              name: m.administrativeContactPhoneNumber,
+              disabled: true,
+            }),
+            buildDividerField({ name: 'Tæknilegur tengiliður' }),
+            buildTextField({
+              id: 'technicalContact.name',
+              name: m.technicalContactName,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'technicalContact.email',
+              name: m.technicalContactEmail,
+              disabled: true,
+            }),
+            buildTextField({
+              id: 'technicalContact.phoneNumber',
+              name: m.technicalContactPhoneNumber,
               disabled: true,
             }),
             buildSubmitField({
@@ -39,10 +91,11 @@ export const ReviewApplication: Form = buildForm({
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
+                //Add "ófullnægjandi" here
               ],
             }),
             buildTextField({
-              id: 'rejectionReason', // this is not working atm, probably since it's on the last page
+              id: 'rejectionReason',
               name: 'Ástæða höfnunar',
               condition: {
                 questionId: 'approvedByReviewer',

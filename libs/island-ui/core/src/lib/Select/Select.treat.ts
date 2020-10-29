@@ -313,3 +313,7 @@ globalStyle(
     backgroundColor: theme.color.white,
   },
 )
+
+export const isRequiredStar = style({
+  color: theme.color.red600,
+})
