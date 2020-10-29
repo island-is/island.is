@@ -4,22 +4,6 @@ import { IsString, IsDate, IsNumber } from 'class-validator'
 @InputType()
 export class ListDocumentsInput {
   @Field()
-  @IsDate()
-  dateFrom: Date
-
-  @Field()
-  @IsDate()
-  dateTo: Date
-
-  @Field()
   @IsString()
-  category: string
-
-  @Field()
-  @IsNumber()
-  page: number
-
-  @Field()
-  @IsNumber()
-  pageSize: number
+  natReg: string
 }

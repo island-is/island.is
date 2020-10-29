@@ -15,20 +15,12 @@ import { Link } from 'react-router-dom'
 import DocumentCard from '../components/DocumentCard/DocumentCard'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const pageSize = 2
-const dateFrom = new Date('2000-01-01T00:00:00.000')
-const dateTo = new Date()
+const maxDocuments = 2
 
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useListDocuments(
-    userInfo.profile.natreg,
-    dateFrom,
-    dateTo,
-    1,
-    pageSize,
-  )
+  const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
 
   return (
     <>
@@ -45,7 +37,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
             </Typography>
           </Box>
         )}
-        {!loading && !error && data?.length === 0 && (
+        {!loading && !error && data?.documents.length === 0 && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
             <Typography variant="h3">
               {formatMessage({
@@ -56,7 +48,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
             </Typography>
           </Box>
         )}
-        {data?.map((document) => (
+        {data?.documents?.slice(0, maxDocuments).map((document) => (
           <DocumentCard key={document.id} document={document} />
         ))}
       </Stack>
