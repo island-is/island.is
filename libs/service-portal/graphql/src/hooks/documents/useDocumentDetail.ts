@@ -1,6 +1,10 @@
 import { GET_DOCUMENT } from '../../lib/queries/getDocument'
-import { useQuery } from '@apollo/client'
-import { Query, QueryGetDocumentArgs } from '@island.is/api/schema'
+import { useQuery, useLazyQuery } from '@apollo/client'
+import {
+  Query,
+  QueryGetDocumentArgs,
+  DocumentDetails,
+} from '@island.is/api/schema'
 
 export const useDocumentDetail = (id: string) => {
   const { data, loading, error } = useQuery<Query, QueryGetDocumentArgs>(
@@ -18,5 +22,27 @@ export const useDocumentDetail = (id: string) => {
     data: data?.getDocument || null,
     loading,
     error,
+  }
+}
+
+export const useLazyDocumentDetail = (
+  id: string,
+): {
+  fetchDocument: () => void
+  loading: boolean
+  error: any
+  data?: Pick<DocumentDetails, 'content' | 'fileType' | 'url'>
+} => {
+  const [getSingleDocument, { loading, data, error }] = useLazyQuery(
+    GET_DOCUMENT,
+  )
+  const fetchDocument = () => {
+    getSingleDocument({ variables: { input: { id } } })
+  }
+  return {
+    fetchDocument,
+    loading,
+    error: error,
+    data: data?.getDocument || undefined,
   }
 }

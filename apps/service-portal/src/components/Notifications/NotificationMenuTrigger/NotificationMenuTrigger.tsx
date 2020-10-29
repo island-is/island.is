@@ -1,10 +1,5 @@
 import React, { FC, useRef } from 'react'
-import * as styles from './NotificationMenuTrigger.treat'
-import {
-  ButtonDeprecated as Button,
-  Box,
-  IconDeprecated as Icon,
-} from '@island.is/island-ui/core'
+import { ButtonDeprecated as Button, Box } from '@island.is/island-ui/core'
 import { useStore } from '../../../store/stateProvider'
 import { ActionType, MenuState } from '../../../store/actions'
 import NotificationMenu from '../NotificationMenu/NotificationMenu'
@@ -29,7 +24,6 @@ const NotificationMenuTrigger: FC<{}> = () => {
 
   return (
     <Box position="relative" display="flex" ref={ref}>
-      <span className={styles.notificationCount}>1</span>
       <Button variant="menu" onClick={handleClick} icon="lock" />
       <NotificationMenu
         state={notificationMenuState}

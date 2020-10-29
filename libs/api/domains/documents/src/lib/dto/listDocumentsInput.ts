@@ -6,24 +6,4 @@ export class ListDocumentsInput {
   @Field()
   @IsString()
   natReg: string
-
-  @Field()
-  @IsDate()
-  dateFrom: Date
-
-  @Field()
-  @IsDate()
-  dateTo: Date
-
-  @Field()
-  @IsString()
-  category: string
-
-  @Field()
-  @IsNumber()
-  page: number
-
-  @Field()
-  @IsNumber()
-  pageSize: number
 }
