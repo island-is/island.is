@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { Document, Query, QueryListDocumentsArgs } from '@island.is/api/schema'
+import { Document, Query } from '@island.is/api/schema'
 import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
 import { uniqBy } from 'lodash'
 
@@ -13,16 +13,7 @@ interface UseListDocumentsProps {
 }
 
 export const useListDocuments = (natReg: string): UseListDocumentsProps => {
-  const { data, loading, error } = useQuery<Query, QueryListDocumentsArgs>(
-    LIST_DOCUMENTS,
-    {
-      variables: {
-        input: {
-          natReg,
-        },
-      },
-    },
-  )
+  const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS)
 
   const documents = data?.listDocuments || []
 
