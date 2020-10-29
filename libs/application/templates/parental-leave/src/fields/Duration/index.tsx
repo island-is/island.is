@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import Slider from '../components/Slider'
 
@@ -9,16 +9,14 @@ import * as styles from './Duration.treat'
 import { theme } from '@island.is/island-ui/theme'
 
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
-  const { id, description } = field
+  const { id } = field
   const { clearErrors } = useFormContext()
-  const { formatMessage } = useLocale()
-
+  const { answers } = application
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  const monthsToUse = (application.answers.usage as number) || 1
+  const monthsToUse = (answers.usage as number) || 1
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const [percent, setPercent] = useState<number>(100)
   const minMonths = 1
@@ -34,11 +32,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
 
   return (
     <Box>
-      {description && (
-        <FieldDescription
-          description={formatText(description, application, formatMessage)}
-        />
-      )}
+      <FieldDescription description="Some people choose to take the full leave all at once, but others like to spread it over a longer period which might in turn affect the payments. Please confirm your choice below by dragging the lever:" />
       <Box
         background="blue100"
         paddingTop={3}
