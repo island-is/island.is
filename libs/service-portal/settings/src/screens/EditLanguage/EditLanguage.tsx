@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import { Locale, useLocale } from '@island.is/localization'
+import { Locale, useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -25,6 +25,7 @@ import {
 } from '../../components/Forms/LanguageForm'
 
 export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(

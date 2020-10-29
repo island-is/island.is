@@ -440,7 +440,7 @@ export const ParentalLeaveForm: Form = buildForm({
             name: 'Here is your current payment plan',
             description:
               'Payments amount to 80% of the average of your total wages during the last 6 monhts before the birth of the child. TODO add the table',
-            component: 'PaymentPlan',
+            component: 'PaymentSchedule',
           },
           {},
         ),

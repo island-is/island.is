@@ -23,7 +23,7 @@ export class ClientsService {
   ) {}
 
   /** Gets a client by it's id */
-  async findClientById(id: string): Promise<Client> {
+  async findClientById(id: string): Promise<Client | null> {
     this.logger.debug(`Finding client for id - "${id}"`)
 
     if (!id) {
@@ -53,7 +53,7 @@ export class ClientsService {
   }
 
   /** Updates an existing client */
-  async update(client: ClientUpdateDTO, id: string): Promise<Client> {
+  async update(client: ClientUpdateDTO, id: string): Promise<Client | null> {
     this.logger.debug('Updating client with id: ', id)
 
     if (!id) {

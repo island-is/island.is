@@ -5,7 +5,7 @@ import {
   Text,
   Typography,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useNationalRegistryFamilyInfo } from '@island.is/service-portal/graphql'
 import React from 'react'
@@ -13,12 +13,13 @@ import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMember
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 
 const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const {
     data: natRegFamilyInfo,
     loading,
     error,
-  } = useNationalRegistryFamilyInfo(userInfo.profile.natreg)
+  } = useNationalRegistryFamilyInfo()
 
   return (
     <>

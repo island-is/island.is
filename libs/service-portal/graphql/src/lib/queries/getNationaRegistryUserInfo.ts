@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const NATIONAL_REGISTRY_INFO = gql`
-  query GetMyInfo($input: GetMyInfoInput!) {
-    getMyInfo(input: $input) {
+  query GetMyInfo {
+    getMyInfo {
       fullName
       gender
       legalResidence

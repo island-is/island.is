@@ -10,7 +10,6 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   }
 
   if (graphQLErrors) {
-    console.log(graphQLErrors)
     graphQLErrors.forEach((err) => {
       switch (err.extensions.code) {
         case 'UNAUTHENTICATED':
