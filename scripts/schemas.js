@@ -4,7 +4,7 @@ const { promisify } = require('util')
 
 /**
  * We need to create this file manually with a dummy content because
- * the api needs it to build and generate the first schema file.
+ * the api needs it to build and generate the first schema file
  */
 const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
 
