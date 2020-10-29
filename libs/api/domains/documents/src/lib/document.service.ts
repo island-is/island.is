@@ -46,7 +46,7 @@ export class DocumentService {
       const body = await this.customersApi.customersListDocuments({
         kennitala: input.natReg,
       })
-      return body.messages.reduce(function(
+      return body.messages.reduce(function (
         result: Document[],
         documentMessage: DocumentInfoDTO,
       ) {
@@ -66,7 +66,7 @@ export class DocumentService {
       const body = await this.customersApi.customersCategories({
         kennitala: natReg,
       })
-      return body.categories.reduce(function(
+      return body.categories.reduce(function (
         result: DocumentCategory[],
         category: CategoryDTO,
       ) {
