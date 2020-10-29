@@ -8,14 +8,16 @@ import {
   ArrowLink,
 } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-
-import { AllSlicesImageFragment as Image } from '../../graphql/schema'
-import * as styles from './AboutLatestNews.treat'
-import NewsCard from '../NewsCard/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import {
+  AllSlicesImageFragment as Image,
+  GetNamespaceQuery,
+} from '@island.is/web/graphql/schema'
+
+import * as styles from './AboutLatestNews.treat'
+import NewsCard from '../NewsCard/NewsCard'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
