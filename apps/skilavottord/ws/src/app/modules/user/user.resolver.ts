@@ -7,7 +7,7 @@ console.log(' --- user.resolver starting')
 export class UserResolver {
   constructor(private authService: AuthService) {}
 
-  //@Authorize({ throwOnUnAuthorized: false })
+  @Authorize({ throwOnUnAuthorized: false })
  // @Query(() => User, { nullable: true })
   @Query(() => User, { nullable: true })
   user(@CurrentUser() user: AuthUser): User {
@@ -15,9 +15,28 @@ export class UserResolver {
       console.log("----------------------User ekki til -----------------------")
       return null
     }
+
+    /*const notari : User= {
+      name: 'Gormur Þengilsson',
+      nationalId: '2222222222',
+      mobile: '123456',
+      // role: 'citizen',
+      role: 'developer',
+      // role: 'recyclingPartner',
+      // role: 'recyclingFund',
+    }
+    //let notandi: User
+    /*const not: User = {
+      nationalId: '1501933119',
+      name: 'Gormur Þengilsson',
+      mobile: '',   
+    }*/
+    
     console.log("----------------------User er til-----------------------")
     console.log(user)
     return user as User
+    //return not as User
+    //return notari 
   }
   //@Authorize({ throwOnUnAuthorized: false })
   //@ResolveField('role')

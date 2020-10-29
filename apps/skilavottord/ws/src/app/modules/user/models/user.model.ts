@@ -10,4 +10,5 @@ export class User {
 
   @Field({ nullable: true })
   mobile?: string
+
 }

@@ -6,10 +6,10 @@ export const CurrentUser = createParamDecorator(
 
   (data, {​​​​​​ args: [_1, _2, {​​​​​​ req }​​​​​​] }​​​​​​): AuthUser => {​​​​​​
 
-    console.log('..............Gaur')
+    /*console.log('..............Gaur')
 
     console.dir(req)
-
+    req.user = 'Gaur'*/
     return req.user
 
   }​​​​​​,
