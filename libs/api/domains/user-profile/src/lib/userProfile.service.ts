@@ -26,24 +26,33 @@ export class UserProfileService {
       .catch(handleError)
   }
 
-  async createUser(input: CreateUserProfileInput): Promise<UserProfile> {
-    const { ...createUserProfileDto } = input
+  async createUser(
+    input: CreateUserProfileInput,
+    nationalId: string,
+  ): Promise<UserProfile> {
+    const { ...createUserProfileDto } = { nationalId, ...input }
+
     return await this.userProfileApi
       .userProfileControllerCreate({ createUserProfileDto })
       .catch(handleError)
   }
 
-  async updateUser(input: UpdateUserProfileInput): Promise<UserProfile> {
-    const { nationalId, ...updateUserProfileDto } = input
+  async updateUser(
+    input: UpdateUserProfileInput,
+    nationalId: string,
+  ): Promise<UserProfile> {
+    const { ...updateUserProfileDto } = { nationalId, ...input }
+
     return await this.userProfileApi
-      .userProfileControllerUpdate({ nationalId, updateUserProfileDto })
+      .userProfileControllerUpdate({ updateUserProfileDto })
       .catch(handleError)
   }
 
   async createSmsVerification(
     input: CreateSmsVerificationInput,
+    nationalId: string,
   ): Promise<void> {
-    const createSmsVerificationDto = { ...input }
+    const createSmsVerificationDto = { nationalId, ...input }
     await this.userProfileApi
       .userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
       .catch(handleError)
@@ -51,8 +60,9 @@ export class UserProfileService {
 
   async confirmSms(
     input: ConfirmSmsVerificationInput,
+    nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
-    const { nationalId, ...confirmSmsDto } = input
+    const { ...confirmSmsDto } = input
     return await this.userProfileApi
       .userProfileControllerConfirmSms({ nationalId, confirmSmsDto })
       .catch(handleError)
@@ -60,8 +70,9 @@ export class UserProfileService {
 
   async confirmEmail(
     input: ConfirmEmailVerificationInput,
+    nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
-    const { nationalId, ...confirmEmailDto } = input
+    const { ...confirmEmailDto } = input
     return await this.userProfileApi
       .userProfileControllerConfirmEmail({ nationalId, confirmEmailDto })
       .catch(handleError)
