@@ -17,7 +17,7 @@ yarn nx run api:contentful-types
 When creating a new content type in [contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types), you can run a script that will generate models based on the content type's JSON from contentful.
 
 ```bash
-yarn nx run api:content type --id=contentTypeId
+yarn nx run api:contentType --id=contentTypeId
 ```
 
 The script take 3 arguments:
