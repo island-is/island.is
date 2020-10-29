@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Document } from './models/document.model'
-import { CustomersApi, CategoryDTO, DocumentInfoDTO } from '../../gen/fetch/'
+import {
+  CustomersApi,
+  CategoryDTO,
+  DocumentInfoDTO,
+  DocumentDTO,
+} from '../../gen/fetch/'
 import { ListDocumentsInput } from './dto/listDocumentsInput'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
@@ -15,11 +20,19 @@ export class DocumentService {
     documentId: string,
   ): Promise<DocumentDetails> {
     try {
-      const documentDTO = await this.customersApi.customersDocument({
+      const rawDocumentDTO = await this.customersApi.customersDocument({
         kennitala: natReg,
         messageId: documentId,
         authenticationType: 'LOW',
       })
+
+      const documentDTO: DocumentDTO = {
+        ...rawDocumentDTO,
+        fileType: rawDocumentDTO.fileType || '',
+        content: rawDocumentDTO.content || '',
+        htmlContent: rawDocumentDTO.htmlContent || '',
+        url: rawDocumentDTO.url || '',
+      }
 
       return DocumentDetails.fromDocumentDTO(documentDTO)
     } catch (exception) {
@@ -33,7 +46,7 @@ export class DocumentService {
       const body = await this.customersApi.customersListDocuments({
         kennitala: input.natReg,
       })
-      return body.messages.reduce(function (
+      return body.messages.reduce(function(
         result: Document[],
         documentMessage: DocumentInfoDTO,
       ) {
@@ -53,7 +66,7 @@ export class DocumentService {
       const body = await this.customersApi.customersCategories({
         kennitala: natReg,
       })
-      return body.categories.reduce(function (
+      return body.categories.reduce(function(
         result: DocumentCategory[],
         category: CategoryDTO,
       ) {
