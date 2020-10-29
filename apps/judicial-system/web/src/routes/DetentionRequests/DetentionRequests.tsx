@@ -33,7 +33,6 @@ export const DetentionRequests: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
-    window.sessionStorage.clear()
   }, [])
 
   useEffect(() => {

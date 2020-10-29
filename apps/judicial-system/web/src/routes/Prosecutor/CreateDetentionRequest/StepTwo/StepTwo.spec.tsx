@@ -1,8 +1,7 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
 import { act, render, waitFor } from '@testing-library/react'
 import StepTwo from './StepTwo'
-import { MemoryRouter, Route, Router } from 'react-router-dom'
+import { MemoryRouter, Route } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
@@ -15,7 +14,6 @@ import * as Constants from '../../../../utils/constants'
 describe('Create detention request, step two', () => {
   test('should now allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const history = createMemoryHistory()
 
     // Mock call to api.updateCase
     fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
@@ -133,8 +131,6 @@ describe('Create detention request, step two', () => {
 
   test('should display the correct requestedCustodyEndTime from api', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
     fetchMock.mock(
       '/api/case/test_id',
       {

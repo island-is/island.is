@@ -8,7 +8,6 @@ import {
   ConfirmSignatureResponse,
   RequestSignatureResponse,
 } from '../../../types'
-import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import {
   constructConclusion,
   getAppealDecitionText,
@@ -30,7 +29,7 @@ import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/share
 import * as style from './Confirmation.treat'
 
 export const Confirmation: React.FC = () => {
-  const [workingCase, setWorkingCase] = useWorkingCase()
+  const [workingCase, setWorkingCase] = useState<Case>(null)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [signatureResponse, setSignatureResponse] = useState<
     RequestSignatureResponse

@@ -12,11 +12,7 @@ import { Case } from '../../../types'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { parseString } from '../../../utils/formatters'
-import {
-  autoSave,
-  constructConclusion,
-  updateState,
-} from '../../../utils/stepHelper'
+import { constructConclusion } from '../../../utils/stepHelper'
 import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'

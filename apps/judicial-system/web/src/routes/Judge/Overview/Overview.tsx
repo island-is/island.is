@@ -13,7 +13,7 @@ import {
   laws,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isNextDisabled, updateState } from '../../../utils/stepHelper'
+import { isNextDisabled } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'

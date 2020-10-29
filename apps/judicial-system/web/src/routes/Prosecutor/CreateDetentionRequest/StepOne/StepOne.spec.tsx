@@ -1,15 +1,8 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
-import {
-  render,
-  act,
-  waitFor,
-  fireEvent,
-  queryByRole,
-} from '@testing-library/react'
+import { render, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StepOne from './StepOne'
-import { Route, Router, MemoryRouter } from 'react-router-dom'
+import { Route, MemoryRouter } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
 import * as api from '../../../../api'
@@ -17,7 +10,6 @@ import { userContext } from '../../../../utils/userContext'
 import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
-import { method } from 'lodash'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {

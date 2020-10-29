@@ -1,11 +1,10 @@
 import React from 'react'
-import { createMemoryHistory } from 'history'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MemoryRouter, Route, Router } from 'react-router-dom'
+import { MemoryRouter, Route } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../utils/constants'
 
@@ -77,12 +76,10 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(() => screen.queryByText('accusedAppealAnnouncement test')),
+      await waitFor(() => queryByText('accusedAppealAnnouncement test')),
     ).toBeTruthy()
     expect(
-      await waitFor(() =>
-        screen.queryByText('prosecutorAppealAnnouncement test'),
-      ),
+      await waitFor(() => queryByText('prosecutorAppealAnnouncement test')),
     ).toBeTruthy()
   })
 })

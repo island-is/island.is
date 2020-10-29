@@ -16,11 +16,7 @@ import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { parseArray, parseString, parseTime } from '../../../utils/formatters'
-import {
-  autoSave,
-  isNextDisabled,
-  updateState,
-} from '../../../utils/stepHelper'
+import { isNextDisabled } from '../../../utils/stepHelper'
 import * as api from '../../../api'
 import {
   validate,
