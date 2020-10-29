@@ -43,7 +43,11 @@ export const FormStep: FC<Props> = ({
             },
             minLength: {
               value: 7,
-              message: 'Símanúmer þarf að vera minnst 7 tölustafir á lengd',
+              message: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+            },
+            maxLength: {
+              value: 7,
+              message: 'Símanúmer þarf að vera 7 tölustafir á lengd',
             },
             pattern: {
               value: /^\d+$/,

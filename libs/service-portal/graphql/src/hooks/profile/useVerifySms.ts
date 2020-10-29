@@ -16,7 +16,7 @@ export type ConfirmSmsVerificationData = {
   code: string
 }
 
-export const useVerifySms = (natReg: string) => {
+export const useVerifySms = () => {
   const [
     createSmsVerificationMutation,
     { loading: createLoading, error: createError },
@@ -26,11 +26,6 @@ export const useVerifySms = (natReg: string) => {
       refetchQueries: [
         {
           query: USER_PROFILE,
-          variables: {
-            input: {
-              nationalId: natReg,
-            },
-          },
         },
       ],
     },
@@ -44,11 +39,6 @@ export const useVerifySms = (natReg: string) => {
       refetchQueries: [
         {
           query: USER_PROFILE,
-          variables: {
-            input: {
-              nationalId: natReg,
-            },
-          },
         },
       ],
     },
@@ -58,7 +48,6 @@ export const useVerifySms = (natReg: string) => {
     return createSmsVerificationMutation({
       variables: {
         input: {
-          nationalId: natReg,
           mobilePhoneNumber: data.mobilePhoneNumber,
         },
       },
@@ -69,7 +58,6 @@ export const useVerifySms = (natReg: string) => {
     return confirmSmsVerificationMutation({
       variables: {
         input: {
-          nationalId: natReg,
           code: data.code,
         },
       },

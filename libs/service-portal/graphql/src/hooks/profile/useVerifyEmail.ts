@@ -10,7 +10,7 @@ export type ConfirmEmailVerificationData = {
   hash: string
 }
 
-export const useVerifyEmail = (natReg: string) => {
+export const useVerifyEmail = () => {
   const [confirmEmailVerificationMutation, { loading, error }] = useMutation<
     Mutation,
     MutationConfirmEmailVerificationArgs
@@ -18,11 +18,6 @@ export const useVerifyEmail = (natReg: string) => {
     refetchQueries: [
       {
         query: USER_PROFILE,
-        variables: {
-          input: {
-            nationalId: natReg,
-          },
-        },
       },
     ],
   })
@@ -31,7 +26,6 @@ export const useVerifyEmail = (natReg: string) => {
     return confirmEmailVerificationMutation({
       variables: {
         input: {
-          nationalId: natReg,
           hash: data.hash,
         },
       },

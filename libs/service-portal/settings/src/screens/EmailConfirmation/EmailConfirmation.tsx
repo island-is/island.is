@@ -5,15 +5,13 @@ import { useVerifyEmail } from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-const EmailConfirmation: ServicePortalModuleComponent = ({ userInfo }) => {
+const EmailConfirmation: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { hash }: { hash: string } = useParams()
   const [confirmationState, setConfirmationState] = useState<
     'passive' | 'success' | 'error'
   >('passive')
-  const { confirmEmailVerification, loading, error } = useVerifyEmail(
-    userInfo.profile.natreg,
-  )
+  const { confirmEmailVerification, loading, error } = useVerifyEmail()
 
   const confirmEmail = async (hash: string) => {
     try {

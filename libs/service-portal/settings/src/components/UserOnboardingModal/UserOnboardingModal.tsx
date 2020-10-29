@@ -28,7 +28,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
-  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
+  const { createUserProfile } = useCreateUserProfile()
 
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
@@ -63,7 +63,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const handlePhoneStepSubmit = (data: PhoneFormData) => {
-    console.log('phone step submit', data)
     setTel(data.tel)
     gotoStep('email-form')
   }

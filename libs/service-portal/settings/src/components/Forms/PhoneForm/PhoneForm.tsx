@@ -2,7 +2,7 @@ import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useVerifySms } from '@island.is/service-portal/graphql'
 import React, { FC, useEffect, useState } from 'react'
-import { defineMessage, MessageDescriptor } from 'react-intl'
+import { MessageDescriptor } from 'react-intl'
 import {
   ConfirmationStep,
   PhoneConfirmationFormData,
@@ -27,7 +27,6 @@ interface Props {
 
 export const PhoneForm: FC<Props> = ({
   tel,
-  natReg,
   renderBackButton,
   submitButtonText,
   onInternalStepChange,
@@ -39,7 +38,7 @@ export const PhoneForm: FC<Props> = ({
     confirmSmsVerification,
     createLoading,
     confirmLoading,
-  } = useVerifySms(natReg)
+  } = useVerifySms()
   const [step, setStep] = useState<PhoneFormInternalStep>('form')
   const [telInternal, setTelInternal] = useState<string>(tel)
 
