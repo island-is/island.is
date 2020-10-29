@@ -71,7 +71,7 @@ const getFilteredDocuments = (
   }
   if (searchQuery) {
     const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-    return fuse.search(searchQuery).map((elem) => elem.item)
+    return fuse.search(searchQuery).map((elem) => elem)
   }
   return filteredDocuments
 }
