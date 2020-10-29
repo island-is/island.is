@@ -101,11 +101,6 @@ export const CourtRecord: React.FC = () => {
                       'time-format',
                     )
 
-                    setWorkingCase({
-                      ...workingCase,
-                      courtStartTime: evt.target.value,
-                    })
-
                     if (
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
@@ -114,6 +109,12 @@ export const CourtRecord: React.FC = () => {
                         new Date().toString(),
                         evt.target.value,
                       )
+
+                      setWorkingCase({
+                        ...workingCase,
+                        courtStartTime: courtStartTimeMinutes,
+                      })
+
                       if (
                         courtStartTimeMinutes !== workingCase.courtStartTime
                       ) {
@@ -156,7 +157,7 @@ export const CourtRecord: React.FC = () => {
 
                     setWorkingCase({
                       ...workingCase,
-                      courtEndTime: evt.target.value,
+                      courtEndTime: courtEndTimeMinutes,
                     })
 
                     if (courtEndTimeMinutes !== workingCase.courtEndTime) {
