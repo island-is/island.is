@@ -5,9 +5,13 @@ import {
   Inline,
   BLOCKS,
   INLINES,
+  MARKS,
 } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
+import {
+  documentToReactComponents,
+  RenderMark,
+} from '@contentful/rich-text-react-renderer'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
@@ -208,19 +212,31 @@ export const defaultRenderNode: Readonly<RenderNode> = {
   },
 }
 
+export const defaultRenderMark: Readonly<RenderMark> = {
+  [MARKS.BOLD]: (text: ReactNode) => <strong>{text}</strong>,
+  [MARKS.ITALIC]: (text: ReactNode) => <em>{text}</em>,
+  // should text be underlinable inside contentful rich text? it is at the moment
+  // it is not provided by <Text> and we don't want the default <u> element
+  [MARKS.UNDERLINE]: (text: ReactNode) => (
+    <span style={{ textDecoration: 'underline' }}>{text}</span>
+  ),
+}
+
 export const renderHtml = (
   document: Document,
   {
     renderNode = defaultRenderNode,
+    renderMark = defaultRenderMark,
     className,
   }: {
     renderNode?: RenderNode
+    renderMark?: RenderMark
     className?: string
   } = {},
 ): ReactNode => {
   return (
     <StaticHtml className={className}>
-      {documentToReactComponents(document, { renderNode })}
+      {documentToReactComponents(document, { renderMark, renderNode })}
     </StaticHtml>
   )
 }
