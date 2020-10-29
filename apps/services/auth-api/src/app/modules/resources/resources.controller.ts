@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Query,
-  UseGuards,
   ParseArrayPipe,
   BadRequestException,
 } from '@nestjs/common'
@@ -13,8 +12,6 @@ import {
   ApiScope,
   ApiResource,
   Scopes,
-  ScopesGuard,
-  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 
 // Try comment to trigger deployment

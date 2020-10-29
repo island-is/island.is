@@ -58,7 +58,7 @@ export class ClientsController {
   async update(
     @Body() client: ClientUpdateDTO,
     @Param('id') id: string,
-  ): Promise<Client> {
+  ): Promise<Client | null> {
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }

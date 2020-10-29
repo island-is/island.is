@@ -5,15 +5,12 @@ import {
   NotFoundException,
   Param,
   Post,
-  UseGuards,
 } from '@nestjs/common'
 import {
   UserIdentity,
   UserIdentitiesService,
   UserIdentityDto,
-  ScopesGuard,
   Scopes,
-  IdsAuthGuard,
 } from '@island.is/auth-api-lib'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -28,7 +25,9 @@ export class UserIdentitiesController {
   @Scopes('@identityserver.api/authentication')
   @Post()
   @ApiCreatedResponse({ type: UserIdentity })
-  async create(@Body() userIdentity: UserIdentityDto): Promise<UserIdentity> {
+  async create(
+    @Body() userIdentity: UserIdentityDto,
+  ): Promise<UserIdentity | undefined> {
     return await this.userIdentityService.create(userIdentity)
   }
 
