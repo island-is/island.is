@@ -7,20 +7,20 @@ import { SamgongustofaService } from './models/samgongustofa.service'
 export class SamgongustofaResolver {
   constructor(
     @Inject(SamgongustofaService)
-    private SamgongustofaService: SamgongustofaService,
+    private samgongustofaService: SamgongustofaService,
   ) {}
 
   @Query(() => [VehicleInformation])
   async SkilavottordgetVehicleInformation(
     @Args('nationalId') nid: string,
   ): Promise<Array<VehicleInformation>> {
-    return this.SamgongustofaService.getVehicleInformation(nid)
+    return this.samgongustofaService.getVehicleInformation(nid)
   }
 
   @Query(() => DeRegisterVehicle)
   async SkilavottorddeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
   ): Promise<DeRegisterVehicle> {
-    return this.SamgongustofaService.deRegisterVehicle(nid)
+    return this.samgongustofaService.deRegisterVehicle(nid)
   }
 }

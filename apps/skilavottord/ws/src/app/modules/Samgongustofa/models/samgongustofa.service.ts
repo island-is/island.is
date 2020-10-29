@@ -10,12 +10,14 @@ export class SamgongustofaService {
   vehicleInformationList: VehicleInformation[]
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private httpService: HttpService
+    private httpService: HttpService,
   ) {}
 
   async getVehicleInformation(nationalId: string) {
     try {
-      this.logger.info(`---- Starting getVehicleInformation call on ${nationalId} ----`)
+      this.logger.info(
+        `---- Starting getVehicleInformation call on ${nationalId} ----`,
+      )
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
       const parser = new xml2js.Parser()
@@ -50,7 +52,9 @@ export class SamgongustofaService {
         this.logger.error(allCarsResponse.statusText)
         return []
       }
-      this.logger.info('allVehiclesForPersidno Soap request successed and start parsing xml to json')
+      this.logger.info(
+        'allVehiclesForPersidno Soap request successed and start parsing xml to json',
+      )
 
       const loggerReplacement = this.logger
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
@@ -64,7 +68,11 @@ export class SamgongustofaService {
               'soapenv:Fault',
             )
           ) {
-            loggerReplacement.error(allCarsResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0]);
+            loggerReplacement.error(
+              allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
+                'soapenv:Fault'
+              ][0]['faultstring'][0],
+            )
             return []
           }
           // parse xml to Json Result
@@ -77,9 +85,24 @@ export class SamgongustofaService {
             .then(function (allCars) {
               let vehicleArr: VehicleInformation[]
               vehicleArr = []
+              // TODO: will be fixed
+              vehicleArr.push(
+                new VehicleInformation(
+                  'HX111',
+                  'black',
+                  'Nissan',
+                  '01.01.2020',
+                  true,
+                  true,
+                  'inUse',
+                ),
+              )
+              vehicleArr = []
               allCars['persidnolookup']['vehicleList'][0]['vehicle'].forEach(
                 (car) => {
-                  loggerReplacement.info(`getting information for ${car['permno'][0]}`)
+                  loggerReplacement.info(
+                    `getting information for ${car['permno'][0]}`,
+                  )
                   let carIsRecyclable = true
                   let carStatus = 'inUse'
                   // If vehicle status is 'Afskráð' then the vehicle is 'deregistered'
@@ -117,7 +140,7 @@ export class SamgongustofaService {
           loggerReplacement.error(err)
           return []
         })
-      
+
       this.logger.info('Finished extracting all vehicles')
       // TODO: connect to database and get 'pending' status
       const newVehicleArr = this.vehicleInformationList
@@ -126,7 +149,9 @@ export class SamgongustofaService {
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
       for (let i = 0; i < newVehicleArr.length; i++) {
         const carObj = newVehicleArr[i]
-        this.logger.info(`Starting extracting details information on ${carObj['permno']}`)
+        this.logger.info(
+          `Starting extracting details information on ${carObj['permno']}`,
+        )
         if (carObj['status'] == 'inUse') {
           // Vehicle information
           // Vehicle information's Soap body
@@ -156,7 +181,9 @@ export class SamgongustofaService {
             i = newVehicleArr.length
           }
           // parse xml to Json all Soap
-          this.logger.info(`Finished basicVehicleInformation Soap request and starting parsing xml to json on ${carObj['permno']}`)
+          this.logger.info(
+            `Finished basicVehicleInformation Soap request and starting parsing xml to json on ${carObj['permno']}`,
+          )
           this.vehicleInformationList[i] = await parser
             .parseStringPromise(
               basicInforesponse.data.replace(/(\t\n|\t|\n)/gm, ''),
@@ -169,7 +196,11 @@ export class SamgongustofaService {
                   'soapenv:Fault',
                 )
               ) {
-                loggerReplacement.error(basicResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0]);
+                loggerReplacement.error(
+                  basicResult['soapenv:Envelope']['soapenv:Body'][0][
+                    'soapenv:Fault'
+                  ][0]['faultstring'][0],
+                )
                 isRequestSuccess = false
                 i = newVehicleArr.length
               }
@@ -206,11 +237,13 @@ export class SamgongustofaService {
             })
         }
       }
-      if(!isRequestSuccess){
+      if (!isRequestSuccess) {
         return []
       }
 
-      this.logger.info(`---- Finished getVehicleInformation call on ${nationalId} ----`)
+      this.logger.info(
+        `---- Finished getVehicleInformation call on ${nationalId} ----`,
+      )
       return this.vehicleInformationList
     } catch (err) {
       this.logger.error(err)
@@ -221,7 +254,9 @@ export class SamgongustofaService {
   async deRegisterVehicle(vehiclePermno: string) {
     // Get jToken
     try {
-      this.logger.info(`---- Starting deRegisterVehicle call on ${vehiclePermno} ----`)
+      this.logger.info(
+        `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
+      )
       const {
         restAuthUrl,
         restDeRegUrl,
@@ -245,14 +280,16 @@ export class SamgongustofaService {
         .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
         .toPromise()
 
-      if (authRes.status > 299 || authRes.status < 200){
+      if (authRes.status > 299 || authRes.status < 200) {
         this.logger.error(authRes.statusText)
         return new DeRegisterVehicle(false)
       }
       // DeRegisterd vehicle
       const jToken = authRes.data['jwtToken']
 
-      this.logger.info('Finished Authentication request and starting deRegister request')
+      this.logger.info(
+        'Finished Authentication request and starting deRegister request',
+      )
       const dateNow = new Date()
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
@@ -283,7 +320,9 @@ export class SamgongustofaService {
         .toPromise()
 
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
-        this.logger.info(`---- Finished deRegisterVehicle call on ${vehiclePermno} ----`)
+        this.logger.info(
+          `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
+        )
         return new DeRegisterVehicle(true)
       } else {
         this.logger.info(deRegRes.statusText)
