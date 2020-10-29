@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ComponentType } from 'react'
 import ReactSelect, {
   components,
   ValueType,
@@ -12,17 +12,19 @@ import ReactSelect, {
   PlaceholderProps,
   InputProps,
   ControlProps,
+  Props,
 } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
 import { Icon } from '../IconRC/Icon'
+import { InputBackgroundColor } from '../Input/Input'
+import { Box } from '../Box/Box'
 
 export type Option = {
   label: string
   value: string | number
   disabled?: boolean
 }
-
 export interface SelectProps {
   name: string
   id?: string
@@ -42,6 +44,9 @@ export interface SelectProps {
   defaultValue?: Option
   icon?: string
   isSearchable?: boolean
+  size?: 'sm' | 'md'
+  backgroundColor?: InputBackgroundColor
+  required?: boolean
 }
 
 export const Select = ({
@@ -59,9 +64,15 @@ export const Select = ({
   defaultValue,
   icon = 'chevronDown',
   isSearchable = true,
+  size = 'md',
+  backgroundColor = 'white',
+  required,
 }: SelectProps) => {
   return (
-    <div className={styles.wrapper} data-testid={`select-${name}`}>
+    <div
+      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      data-testid={`select-${name}`}
+    >
       <ReactSelect
         instanceId={id}
         noOptionsMessage={() => noOptionsMessage || null}
@@ -80,6 +91,8 @@ export const Select = ({
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
         isSearchable={isSearchable}
+        size={size}
+        required={required}
         components={{
           Control,
           Input,
@@ -108,9 +121,15 @@ const customStyles = {
 const Menu = (props: MenuProps<Option>) => (
   <components.Menu className={styles.menu} {...props} />
 )
-const Option = (props: OptionProps<Option>) => (
-  <components.Option className={styles.option} {...props} />
-)
+const Option = (props: OptionProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
+  return (
+    <components.Option
+      className={cn(styles.option, styles.optionSizes[size!])}
+      {...props}
+    />
+  )
+}
 
 const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => (
   <components.IndicatorsContainer
@@ -129,41 +148,72 @@ const DropdownIndicator = (props: IndicatorProps<Option>) => {
     >
       <Icon
         icon={icon}
-        type="outline"
         size="large"
-        color={hasError ? 'red400' : 'blue400'}
+        color={hasError ? 'red600' : 'blue400'}
+        className={styles.icon}
       />
     </components.DropdownIndicator>
   )
 }
 
-const SingleValue = (props: SingleValueProps<Option>) => (
-  <components.SingleValue className={styles.singleValue} {...props} />
-)
+const SingleValue = (props: SingleValueProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
+  return (
+    <components.SingleValue
+      className={cn(styles.singleValue, styles.singleValueSizes[size!])}
+      {...props}
+    />
+  )
+}
 
 const ValueContainer = (props: ValueContainerProps<Option>) => (
   <components.ValueContainer className={styles.valueContainer} {...props} />
 )
 
-const Placeholder = (props: PlaceholderProps<Option>) => (
-  <components.Placeholder className={styles.placeholder} {...props} />
-)
+const Placeholder = (props: PlaceholderProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
+  return (
+    <components.Placeholder
+      className={cn(
+        styles.placeholder,
+        styles.placeholderPadding,
+        styles.placeholderSizes[size!],
+      )}
+      {...props}
+    />
+  )
+}
 
-const Input = (props: InputProps) => (
-  <components.Input className={styles.input} {...props} />
-)
+const Input: ComponentType<InputProps> = (
+  props: InputProps & { selectProps?: Props<Option> },
+) => {
+  const size = (props?.selectProps?.size || 'md') as SelectProps['size']
+  return (
+    <components.Input
+      className={cn(styles.input, styles.inputSize[size!])}
+      {...props}
+    />
+  )
+}
 
 const Control = (props: ControlProps<Option>) => {
+  const size: SelectProps['size'] = props.selectProps.size || 'md'
   return (
     <components.Control
-      className={cn(styles.container, {
+      className={cn(styles.container, styles.containerSizes[size!], {
         [styles.containerDisabled]: props.isDisabled,
         [styles.hasError]: props.selectProps.hasError,
       })}
       {...props}
     >
-      <label htmlFor={props.selectProps.name} className={styles.label}>
+      <label
+        htmlFor={props.selectProps.name}
+        className={cn(styles.label, styles.labelSizes[size!])}
+      >
         {props.selectProps.label}
+        {props.selectProps.required && (
+          <span className={styles.isRequiredStar}> *</span>
+        )}
       </label>
       {props.children}
     </components.Control>

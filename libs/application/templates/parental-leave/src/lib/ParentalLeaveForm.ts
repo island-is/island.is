@@ -330,7 +330,7 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'startDate',
+          id: 'endDate',
           condition: (formValue) =>
             formValue.confirmLeaveDuration === 'specificDate',
           name: 'Please pick the end date',
@@ -388,17 +388,30 @@ export const ParentalLeaveForm: Form = buildForm({
                 'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
               placeholder: 'Pick the start date',
             }),
-            buildCustomField(
-              {
-                id: 'endDate',
-                name: m.duration,
-                description: m.durationDescription,
-                component: 'ParentalLeaveDuration',
-              },
-              {
-                showTimeline: true,
-              },
-            ),
+            buildMultiField({
+              id: 'endDate',
+              name: 'Please pick the end date',
+              description:
+                'You can choose to end the parental leave no later than 18 months after the date of birth.',
+              children: [
+                buildDateField({
+                  id: 'endDate',
+                  name: 'End date',
+                  placeholder: 'Pick the end date',
+                }),
+              ],
+            }),
+            // buildCustomField(
+            //   {
+            //     id: 'endDate',
+            //     name: m.duration,
+            //     description: m.durationDescription,
+            //     component: 'ParentalLeaveDuration',
+            //   },
+            //   {
+            //     showTimeline: true,
+            //   },
+            // ),
             buildMultiField({
               id: 'ratio',
               name: 'What percent off will you take for this period?',
@@ -427,7 +440,7 @@ export const ParentalLeaveForm: Form = buildForm({
             name: 'Here is your current payment plan',
             description:
               'Payments amount to 80% of the average of your total wages during the last 6 monhts before the birth of the child. TODO add the table',
-            component: 'PaymentPlan',
+            component: 'PaymentSchedule',
           },
           {},
         ),

@@ -67,21 +67,20 @@ export interface Repeater extends FormItem {
   // Repeaters always have custom representation
   component: string
   children: FormLeaf[]
-  repetitions: number
-  repeaterIndex?: number
+  isPartOfRepeater?: boolean
 }
 
 export interface MultiField extends FormItem {
   type: FormItemTypes.MULTI_FIELD
   children: Field[]
-  repeaterIndex?: number
+  isPartOfRepeater?: boolean
   readonly description?: FormText
 }
 
 export interface ExternalDataProvider extends FormItem {
   readonly type: FormItemTypes.EXTERNAL_DATA_PROVIDER
   readonly children: undefined
-  repeaterIndex?: number
+  isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
 }
 
@@ -106,4 +105,5 @@ export type RepeaterProps = {
   expandRepeater: () => void
   error?: string
   repeater: Repeater
+  removeRepeaterItem: (index: number) => void
 }

@@ -476,7 +476,13 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/api/src/app/environments/environment.ts",
+                  "with": "apps/api/src/app/environments/environment.prod.ts"
+                }
+              ]
             }
           }
         },
@@ -1247,7 +1253,8 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": ["apps/application-system/api/src/assets"]
+            "assets": ["apps/application-system/api/src/assets"],
+            "webpackConfig": "apps/application-system/api/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -4016,6 +4023,67 @@
           "options": {
             "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/services/user-profile/"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "services-xroad-collector": {
+      "root": "apps/services/xroad-collector",
+      "sourceRoot": "apps/services/xroad-collector/src",
+      "projectType": "application",
+      "prefix": "services-xroad-collector",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/xroad-collector",
+            "main": "apps/services/xroad-collector/src/main.ts",
+            "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
+            "assets": ["apps/services/xroad-collector/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/xroad-collector/src/environments/environment.ts",
+                  "with": "apps/services/xroad-collector/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-xroad-collector:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/services/xroad-collector/.eslintrc",
+            "tsConfig": [
+              "apps/services/xroad-collector/tsconfig.app.json",
+              "apps/services/xroad-collector/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/services/xroad-collector/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/xroad-collector/jest.config.js",
+            "tsConfig": "apps/services/xroad-collector/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         },
         "docker-express": {}

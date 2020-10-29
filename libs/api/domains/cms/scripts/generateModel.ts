@@ -1,5 +1,5 @@
 import { ContentType, Field } from 'contentful'
-import { upperFirst } from 'lodash'
+import upperFirst from 'lodash/upperFirst'
 
 import {
   getLinkContentTypes,

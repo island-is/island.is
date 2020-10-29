@@ -42,7 +42,7 @@ export class GrantDto {
   @ApiProperty({
     example: 'description',
   })
-  readonly description: string
+  readonly description: string | null
 
   @IsDateString()
   @ApiProperty()
@@ -58,7 +58,7 @@ export class GrantDto {
   @IsOptional()
   @IsDateString()
   @ApiProperty()
-  readonly consumedTime: Date
+  readonly consumedTime: Date | null
 
   @IsString()
   @IsNotEmpty()
