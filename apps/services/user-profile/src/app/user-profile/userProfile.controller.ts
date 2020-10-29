@@ -104,6 +104,11 @@ export class UserProfileController {
     @Body() userProfileToUpdate: UpdateUserProfileDto,
   ): Promise<UserProfile> {
     const { nationalId } = profile
+    userProfileToUpdate = {
+      ...userProfileToUpdate,
+      emailVerified: profile.emailVerified,
+      mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
+    }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
       const { mobilePhoneNumber } = userProfileToUpdate

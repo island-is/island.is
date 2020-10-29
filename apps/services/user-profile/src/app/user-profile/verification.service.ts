@@ -85,6 +85,13 @@ export class VerificationService {
       where: { nationalId },
     })
 
+    if (!verification) {
+      return {
+        message: `Email verification does not exist for this user`,
+        confirmed: false,
+      }
+    }
+
     if (confirmEmailDto.hash !== verification.hash) {
       return {
         message: `Email verification with hash ${confirmEmailDto.hash} does not exist`,
@@ -157,6 +164,13 @@ export class VerificationService {
     const verification = await this.smsVerificationModel.findOne({
       where: { nationalId },
     })
+
+    if (!verification) {
+      return {
+        message: `Sms verification does not exist for this user`,
+        confirmed: false,
+      }
+    }
 
     if (confirmSmsDto.code !== verification.smsCode) {
       return {
