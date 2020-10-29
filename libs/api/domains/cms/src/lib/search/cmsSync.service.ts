@@ -1,6 +1,6 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import _ from 'lodash'
+import flatten from 'lodash/flatten'
 import {
   SearchIndexes,
   SyncOptions,
@@ -61,7 +61,7 @@ export class CmsSyncService {
     )
 
     return {
-      add: _.flatten(importableData),
+      add: flatten(importableData),
       remove: deletedItems,
       postSyncOptions: {
         elasticIndex,

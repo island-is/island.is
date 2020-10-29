@@ -21,6 +21,12 @@ export class LifeEventsPageSyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapLifeEventPage(entry)
+
+          // we consider life events that dont have a title to be empty
+          if (!mapped.title) {
+            throw new Error('Trying to import empty life event entry')
+          }
+
           const type = 'webLifeEventPage'
           return {
             _id: mapped.id,
@@ -34,7 +40,9 @@ export class LifeEventsPageSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.error('Failed to import life event page', error)
+          logger.warn('Failed to import life event page', {
+            error: error.message,
+          })
           return false
         }
       })

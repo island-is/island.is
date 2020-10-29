@@ -1,12 +1,5 @@
 import React, { FC } from 'react'
-
-import {
-  Box,
-  Button,
-  IconDeprecated as Icon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 
 export interface InlineErrorProps {
   title: string
@@ -33,7 +26,7 @@ export const InlineError: FC<InlineErrorProps> = ({
           <Text variant="h3">{title}</Text>
           <Box display="flex">
             <Box flexShrink={0} paddingRight={2}>
-              <Icon type="alert" color="red400" />
+              <Icon icon="warning" color="red400" size="large" />
             </Box>
             <Text>{message}</Text>
           </Box>

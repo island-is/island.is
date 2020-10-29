@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react'
 import { Box, Pagination, Stack } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Table,
   Head,
@@ -8,24 +7,24 @@ import {
   HeadData,
   Data,
   Body,
-} from '@island.is/skilavottord-web/components/Table/Table'
+} from '@island.is/skilavottord-web/components'
 
-const CarsTable: FC = () => {
+interface TableProps {
+  titles: string[]
+}
+
+export const CarsTable: FC<TableProps> = ({ titles }) => {
   const [page, setPage] = useState(1)
   const totalPages = 47
-
-  const {
-    t: { recyclingFundOverview: t },
-  } = useI18n()
 
   return (
     <Stack space={5}>
       <Table>
         <Head>
           <Row>
-            {t.table.map((name, index) => (
+            {titles.map((title, index) => (
               <HeadData key={index} textVariant="small">
-                {name}
+                {title}
               </HeadData>
             ))}
           </Row>

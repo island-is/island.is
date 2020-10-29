@@ -35,6 +35,12 @@ export class ArticleSyncService {
             : []
 
           mapped = mapArticle(entry)
+
+          // we consider article that dont have a title to be empty
+          if (!mapped.title) {
+            throw new Error('Trying to import empty article entry')
+          }
+
           const type = 'webArticle'
           return {
             _id: mapped.id,
@@ -72,7 +78,7 @@ export class ArticleSyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.error('Failed to import article', error)
+          logger.warn('Failed to import article', { error: error.message })
           return false
         }
       })

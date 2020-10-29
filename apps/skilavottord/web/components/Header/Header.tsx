@@ -9,6 +9,8 @@ import { UserContext } from '@island.is/skilavottord-web/context'
 import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
+import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 
 const mockUser = {
   name: 'Mock User',
@@ -20,6 +22,16 @@ const mockUser = {
   // role: 'recyclingFund',
 }
 
+export const UserQuery = gql`
+  query UserQuery {
+    user {
+      name
+      nationalId
+      mobile
+    }
+  }
+`
+
 export const Header: FC = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
@@ -28,6 +40,9 @@ export const Header: FC = () => {
     locale,
     t: { header: t, routes },
   } = useI18n()
+
+  const { data } = useQuery(UserQuery)
+  const user = data?.user || mockUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
 
@@ -49,24 +64,25 @@ export const Header: FC = () => {
   }
 
   useEffect(() => {
-    setUser(mockUser)
-  }, [mockUser, setUser])
+    setUser(user)
+  }, [user, setUser])
+
+  const homeRoute = routes.home[user?.role] ?? routes.home['citizen']
 
   return (
     <IslandUIHeader
       logoRender={(logo) => (
-        <Link href={activeLocale === 'is' ? '/' : '/en'}>
+        <Link href={homeRoute}>
           <a>{logo}</a>
         </Link>
       )}
       logoutText={t.logoutText}
-      userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
+      userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}
       switchLanguage={() => switchLanguage(nextLanguage)}
-      userName={mockUser?.name ?? ''}
+      userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        const homeRoute = routes.home[mockUser.role] ?? routes.home['citizen']
         api.logout().then(() => router.push(homeRoute))
       }}
     />
