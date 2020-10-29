@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { throttle, debounce } from 'lodash'
+import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce'
 import { useEvent } from 'react-use'
 
 const guessVisibleSection = (

@@ -15,6 +15,7 @@ export type Icon =
   | 'chevronForward'
   | 'closeCircle'
   | 'close'
+  | 'documents'
   | 'fileTrayFull'
   | 'heart'
   | 'home'
@@ -51,6 +52,7 @@ export default {
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
+    documents: 'Documents',
     fileTrayFull: 'FileTrayFull',
     heart: 'Heart',
     home: 'Home',
@@ -86,6 +88,7 @@ export default {
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',
     close: 'CloseOutline',
+    documents: 'DocumentsOutline',
     fileTrayFull: 'FileTrayFullOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
