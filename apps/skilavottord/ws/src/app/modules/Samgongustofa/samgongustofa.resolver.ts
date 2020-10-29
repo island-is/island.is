@@ -1,28 +1,26 @@
+import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { VehicleInformation, DeRegisterVehicle } from './models'
 import { SamgongustofaService } from './models/samgongustofa.service'
 
 @Resolver(() => VehicleInformation)
 export class SamgongustofaResolver {
-  SamgongustofaService: SamgongustofaService
-
-  constructor() {
-    this.SamgongustofaService = new SamgongustofaService()
-  }
+  constructor(
+    @Inject(SamgongustofaService)
+    private SamgongustofaService: SamgongustofaService,
+  ) {}
 
   @Query(() => [VehicleInformation])
-  async getVehicleInformation(
+  async SkilavottordgetVehicleInformation(
     @Args('nationalId') nid: string,
   ): Promise<Array<VehicleInformation>> {
-    //async getVehicleInformation(@Args('nationalId') nid: string): Promise<VehicleInformation> {
-    // return this.VehicleInformationService.getVehicleInformation(nid);
-    return await this.SamgongustofaService.getVehicleInformation(nid)
+    return this.SamgongustofaService.getVehicleInformation(nid)
   }
 
   @Query(() => DeRegisterVehicle)
-  async deRegisterVehicle(
+  async SkilavottorddeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
   ): Promise<DeRegisterVehicle> {
-    return await this.SamgongustofaService.deRegisterVehicle(nid)
+    return this.SamgongustofaService.deRegisterVehicle(nid)
   }
 }

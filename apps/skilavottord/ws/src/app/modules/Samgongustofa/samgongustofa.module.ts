@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common'
-
-import { SamgongustofaResolver } from './samgongustofa.resolver'
+import { Module, HttpModule } from '@nestjs/common'
+import { SamgongustofaService } from './models/samgongustofa.service'
+import { SamgongustofaResolver} from './samgongustofa.resolver'
 
 @Module({
-  providers: [SamgongustofaResolver],
+  imports: [HttpModule],
+  providers: [SamgongustofaResolver, SamgongustofaService],
 })
 export class SamgongustofaModule {}
