@@ -1,27 +1,42 @@
 import { setup } from '../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+import { EmailService } from '@island.is/email-service'
+import { EmailVerification } from '../email-verification.model'
+import { SmsVerification } from '../sms-verification.model'
+import { SmsService } from '@island.is/nova-sms'
 
 let app: INestApplication
+let emailService: EmailService
+let smsService: SmsService
 
 beforeAll(async () => {
   app = await setup()
+
+  emailService = app.get<EmailService>(EmailService)
+  jest
+    .spyOn(emailService, 'sendEmail')
+    .mockImplementation(() => Promise.resolve(''))
+
+  smsService = app.get<SmsService>(SmsService)
+  jest.spyOn(smsService, 'sendSms').mockImplementation()
 })
 
 describe('User profile API', () => {
-  it(`POST /userProfile should register userProfile`, async () => {
+  it(`POST /userProfile should register userProfile with no phonenumber`, async () => {
     // Act
+    const spy = jest
+      .spyOn(emailService, 'sendEmail')
+      .mockImplementation(() => Promise.resolve('user'))
     const response = await request(app.getHttpServer())
       .post('/userProfile')
       .send({
         nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
         locale: 'en',
-        email: 'email@email.is',
+        email: 'email@example.com',
       })
       .expect(201)
-
-    // Assert
+    expect(spy).toHaveBeenCalled()
     expect(response.body.id).toBeTruthy()
   })
 
@@ -61,7 +76,6 @@ describe('User profile API', () => {
     //Arrange
     const profile = {
       nationalId: '1234567890',
-      mobilePhoneNumber: '123456799',
       locale: 'en',
       email: 'email@email.is',
     }
@@ -79,9 +93,6 @@ describe('User profile API', () => {
     )
     expect(getResponse.body).toEqual(
       expect.objectContaining({ locale: profile.locale }),
-    )
-    expect(getResponse.body).toEqual(
-      expect.objectContaining({ mobilePhoneNumber: profile.mobilePhoneNumber }),
     )
     expect(getResponse.body).toEqual(
       expect.objectContaining({ email: profile.email }),
@@ -107,18 +118,15 @@ describe('User profile API', () => {
       'A user profile with nationalId 12312312313 does not exist',
     )
   })
+
   it(`PUT /userProfile should update profile`, async () => {
     //Arrange
     const profile = {
       nationalId: '1234567890',
-      mobilePhoneNumber: '123456799',
       locale: 'en',
-      email: 'email@email.is',
     }
     const updatedProfile = {
-      mobilePhoneNumber: '987654331',
       locale: 'is',
-      email: 'email@email.is',
     }
 
     // Act
@@ -136,14 +144,6 @@ describe('User profile API', () => {
     expect(updateResponse.body).toEqual(
       expect.objectContaining({ locale: updatedProfile.locale }),
     )
-    expect(updateResponse.body).toEqual(
-      expect.objectContaining({
-        mobilePhoneNumber: updatedProfile.mobilePhoneNumber,
-      }),
-    )
-    expect(updateResponse.body).toEqual(
-      expect.objectContaining({ email: updatedProfile.email }),
-    )
   })
 
   it(`POST /userProfile should return conflict on existing nationalId`, async () => {
@@ -152,7 +152,6 @@ describe('User profile API', () => {
       .post('/userProfile')
       .send({
         nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
         locale: 'en',
         email: 'email@email.is',
       })
@@ -162,7 +161,6 @@ describe('User profile API', () => {
       .post('/userProfile')
       .send({
         nationalId: '1234567890',
-        mobilePhoneNumber: '123456799',
         locale: 'en',
         email: 'email@email.is',
       })
@@ -172,6 +170,74 @@ describe('User profile API', () => {
     expect(conflictResponse.body.error).toBe('Conflict')
     expect(conflictResponse.body.message).toBe(
       'A profile with nationalId - "1234567890" already exists',
+    )
+  })
+
+  it(`POST /userProfile should return error status on unverified Phone Number`, async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .post('/userProfile')
+      .send({
+        nationalId: '1234567890',
+        mobilePhoneNumber: '123456798',
+        locale: 'en',
+        email: 'email@email.is',
+      })
+      .expect(400)
+
+    // Assert
+    expect(response.body.error).toBe('Bad Request')
+    expect(response.body.message).toBe(
+      'Phone number: 123456798 is not verified',
+    )
+  })
+
+  it(`POST /userProfile creates an email verfication in Db`, async () => {
+    // Act
+    const spy = jest.spyOn(emailService, 'sendEmail')
+    const response = await request(app.getHttpServer())
+      .post('/userProfile/')
+      .send({
+        nationalId: '1234567890',
+        locale: 'en',
+        email: 'email@email.is',
+      })
+      .expect(201)
+    expect(spy).toHaveBeenCalled()
+    const verification = await EmailVerification.findOne({
+      where: { nationalId: response.body.nationalId },
+    })
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ nationalId: verification.nationalId }),
+    )
+    expect(response.body).toEqual(
+      expect.objectContaining({ email: verification.email }),
+    )
+  })
+
+  it(`POST /smsVerification/ creates an sms verfication in Db`, async () => {
+    // Act
+    const spy = jest.spyOn(smsService, 'sendSms')
+    const response = await request(app.getHttpServer())
+      .post('/smsVerification/')
+      .send({
+        nationalId: '123456789',
+        mobilePhoneNumber: '1111111',
+      })
+      .expect(201)
+    expect(spy).toHaveBeenCalled()
+    const verification = await SmsVerification.findOne({
+      where: { nationalId: response.body.nationalId },
+    })
+
+    // Assert
+    expect(response.body).toEqual(
+      expect.objectContaining({ nationalId: verification.nationalId }),
+    )
+    expect(response.body).toEqual(
+      expect.objectContaining({ smsCode: verification.smsCode }),
     )
   })
 })

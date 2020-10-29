@@ -7,10 +7,9 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { Locale } from './types/localeTypes'
 
 @Table({
-  tableName: 'user_profile',
+  tableName: 'email_verification',
   timestamps: true,
   indexes: [
     {
@@ -18,7 +17,7 @@ import { Locale } from './types/localeTypes'
     },
   ],
 })
-export class UserProfile extends Model<UserProfile> {
+export class EmailVerification extends Model<EmailVerification> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -48,38 +47,11 @@ export class UserProfile extends Model<UserProfile> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  mobilePhoneNumber?: string
-
-  @Column({
-    type: DataType.ENUM('en', 'is'),
-  })
-  @ApiProperty({
-    description: 'User selected locale',
-    enum: Locale,
-  })
-  locale?: Locale
+  hash!: string
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  email?: string
-
-  @Column({
-    type: DataType.BOOLEAN,
-  })
-  @ApiProperty()
-  emailVerified?: boolean
-
-  @Column({
-    type: DataType.BOOLEAN,
-  })
-  @ApiProperty()
-  mobilePhoneNumberVerified?: boolean
-
-  @Column({
-    type: DataType.STRING,
-  })
-  @ApiProperty()
-  profileImageUrl?: string
+  email!: string
 }
