@@ -34,7 +34,7 @@ export class UserProfileController {
   constructor(
     private userProfileService: UserProfileService,
     private verificationService: VerificationService,
-  ) {}
+  ) { }
 
   @Get('userProfile/:nationalId')
   @ApiParam({
@@ -189,8 +189,8 @@ export class UserProfileController {
     @Param('nationalId')
     nationalId: string,
     @Body() confirmSmsDto: ConfirmSmsDto,
-  ): Promise<void> {
-    await this.verificationService.confirmSms(confirmSmsDto, nationalId)
+  ): Promise<ConfirmationDtoResponse> {
+    return await this.verificationService.confirmSms(confirmSmsDto, nationalId)
   }
 
   @Post('smsVerification/')
