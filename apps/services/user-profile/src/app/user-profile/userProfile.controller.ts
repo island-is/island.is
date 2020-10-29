@@ -172,8 +172,8 @@ export class UserProfileController {
     @Param('nationalId', UserProfileByNationalIdPipe)
     profile: UserProfile,
     @Body() confirmEmailDto: ConfirmEmailDto,
-  ): Promise<void> {
-    await this.verificationService.confirmEmail(confirmEmailDto, profile)
+  ): Promise<ConfirmationDtoResponse> {
+    return await this.verificationService.confirmEmail(confirmEmailDto, profile)
   }
 
   @Post('confirmSms/:nationalId')
