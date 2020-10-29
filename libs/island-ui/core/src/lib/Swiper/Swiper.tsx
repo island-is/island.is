@@ -4,8 +4,10 @@ import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Swiper.treat'
 
+const FALLBACK_WIDTH = 316
+
 export const Swiper: FC = ({ children }) => {
-  const [width, setWidth] = useState<number>(0)
+  const [width, setWidth] = useState<number>(FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
 
   const onResize = useCallback(() => {

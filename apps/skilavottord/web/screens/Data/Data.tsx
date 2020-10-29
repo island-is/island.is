@@ -36,8 +36,9 @@ const Data = () => {
     setIsMobile(false)
   }, [width])
 
+  const nationalId = user?.nationalId ?? ''
   const { data, loading } = useQuery(GET_GDPR_INFO, {
-    variables: { nationalId: user?.nationalId },
+    variables: { nationalId },
   })
 
   const [setGDPRInfo, { error: mutationError }] = useMutation(SET_GDPR_INFO, {

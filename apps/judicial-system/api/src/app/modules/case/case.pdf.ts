@@ -114,27 +114,6 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
-    .text('Tími handtöku')
-    .font('Helvetica')
-    .fontSize(size(12))
-    .lineGap(16)
-    .text(`${capitalize(formatDate(existingCase.arrestDate, 'PPPPp'))}.`)
-
-  if (existingCase.requestedCourtDate) {
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(size(14))
-      .lineGap(8)
-      .text('Ósk um fyrirtökudag og tíma')
-      .font('Helvetica')
-      .fontSize(size(12))
-      .lineGap(16)
-      .text(
-        `${capitalize(formatDate(existingCase.requestedCourtDate, 'PPPPp'))}.`,
-      )
-  }
-
-  doc
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)
@@ -333,6 +312,13 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       lineGap: 6,
       paragraphGap: 10,
     })
+    .text(
+      'Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða, verjanda hans, túlki og aðstoðarsaksóknara.',
+      {
+        lineGap: 6,
+        paragraphGap: 10,
+      },
+    )
     .font('Helvetica-Bold')
     .fontSize(size(14))
     .lineGap(8)

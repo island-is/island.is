@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -21,6 +21,7 @@ import React, { useEffect, useState } from 'react'
 import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
 
 export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
   const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
