@@ -9,12 +9,13 @@ import {
   Swiper,
   Hidden,
 } from '@island.is/island-ui/core'
-import { NewsCard } from '../NewsCard'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
+
+import { NewsCard } from '../NewsCard'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.

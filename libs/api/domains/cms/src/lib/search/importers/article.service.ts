@@ -34,12 +34,13 @@ export class ArticleSyncService {
               ) as IArticle[])
             : []
 
+          mapped = mapArticle(entry)
+
           // we consider article that dont have a title to be empty
           if (!mapped.title) {
             throw new Error('Trying to import empty article entry')
           }
 
-          mapped = mapArticle(entry)
           const type = 'webArticle'
           return {
             _id: mapped.id,

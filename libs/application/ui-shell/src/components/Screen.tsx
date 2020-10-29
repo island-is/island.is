@@ -145,6 +145,19 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
+                onRemoveRepeaterItem={async (newRepeaterItems) => {
+                  const newData = await updateApplication({
+                    variables: {
+                      input: {
+                        id: applicationId,
+                        answers: { [screen.id]: newRepeaterItems },
+                      },
+                    },
+                  })
+                  if (!newData.errors) {
+                    answerQuestions(newData.data.updateApplication.answers)
+                  }
+                }}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField

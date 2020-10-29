@@ -15,7 +15,7 @@ import { Client } from './client.model'
   tableName: 'client_post_logout_redirect_uri',
   indexes: [
     {
-      fields: ['client_id', 'redirectUri'],
+      fields: ['client_id', 'redirect_uri'],
     },
   ],
 })

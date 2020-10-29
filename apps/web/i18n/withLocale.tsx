@@ -1,8 +1,8 @@
 import React from 'react'
 import I18n, { Locale, isLocale, defaultLanguage } from './I18n'
 import { NextPage, NextPageContext, NextComponentType } from 'next'
-import ApolloClient from 'apollo-client'
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { ApolloClient } from '@apollo/client/core'
+import { NormalizedCacheObject } from '@apollo/client/cache'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
 
