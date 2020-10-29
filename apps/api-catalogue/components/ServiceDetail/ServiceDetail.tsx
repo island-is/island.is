@@ -109,10 +109,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
                   {
                     strings.find(
                       (s) =>
-                        s.id ===
-                        `catalog-filter-pricing-${PricingCategory[
-                          item
-                        ].toLowerCase()}`,
+                        s.id === `catalog-filter-pricing-${item.toLowerCase()}`,
                     ).text
                   }
                 </div>
@@ -127,10 +124,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
                   {
                     strings.find(
                       (s) =>
-                        s.id ===
-                        `catalog-filter-data-${DataCategory[
-                          item
-                        ].toLowerCase()}`,
+                        s.id === `catalog-filter-data-${item.toLowerCase()}`,
                     ).text
                   }
                 </div>
@@ -142,7 +136,12 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
             <div className={cn([styles.category])}>
               {service.type?.map((item, index) => (
                 <div className={cn(styles.categoryItem)} key={index}>
-                  {TypeCategory[item]}
+                  {
+                    strings.find(
+                      (s) =>
+                        s.id === `catalog-filter-type-${item.toLowerCase()}`,
+                    ).text
+                  }
                 </div>
               ))}
             </div>
@@ -154,7 +153,12 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
             <div className={cn([styles.category])}>
               {service.access?.map((item, index) => (
                 <div className={cn(styles.categoryItem)} key={index}>
-                  {AccessCategory[item]}
+                  {
+                    strings.find(
+                      (s) =>
+                        s.id === `catalog-filter-access-${item.toLowerCase()}`,
+                    ).text
+                  }
                 </div>
               ))}
             </div>

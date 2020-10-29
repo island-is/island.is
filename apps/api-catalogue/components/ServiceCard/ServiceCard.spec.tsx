@@ -2,18 +2,18 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { ServiceCard } from '.'
 
-import {
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-  AccessCategory,
-} from '../../const/TestConst'
+// import {
+//   PricingCategory,
+//   DataCategory,
+//   TypeCategory,
+//   AccessCategory,
+// } from '../../const/TestConst'
 
 import {
-  AccessCategory as AccessCategoryDisplay,
-  PricingCategory as PricingCategoryDisplay,
-  TypeCategory as TypeCategoryDisplay,
-  DataCategory as DataCategoryDisplay,
+  AccessCategory,
+  PricingCategory,
+  TypeCategory,
+  DataCategory,
 } from '@island.is/api-catalogue/consts'
 
 import { ContentfulString } from '../../services/contentful.types'
@@ -24,10 +24,10 @@ describe(' ServiceCard ', () => {
     owner: 'Þjóðskrá',
     name: 'Fasteignaskrá',
     description: 'OK',
-    pricing: [PricingCategory.Free, PricingCategory.Paid],
-    data: [DataCategory.Public],
-    type: [TypeCategory.Rest],
-    access: [AccessCategory.Xroad],
+    pricing: [PricingCategory.FREE, PricingCategory.PAID],
+    data: [DataCategory.PUBLIC],
+    type: [TypeCategory.REST],
+    access: [AccessCategory.XROAD],
     xroadIdentifier: [
       {
         instance: 'TestInstance',
@@ -46,15 +46,15 @@ describe(' ServiceCard ', () => {
     { id: 'catalog-filter-data-health', text: 'Heilsa' },
     { id: 'catalog-filter-data-official', text: 'Opinber' },
     { id: 'catalog-filter-data-personal', text: 'Persónugreinanleg' },
-    { id: 'catalog-filter-data-public', text: DataCategoryDisplay.PUBLIC },
+    { id: 'catalog-filter-data-public', text: 'Almenn' },
     { id: 'catalog-filter-pricing', text: 'Verð' },
-    { id: 'catalog-filter-pricing-free', text: PricingCategoryDisplay.FREE },
-    { id: 'catalog-filter-pricing-paid', text: PricingCategoryDisplay.PAID },
+    { id: 'catalog-filter-pricing-free', text: 'Gjaldfrjáls' },
+    { id: 'catalog-filter-pricing-paid', text: 'Gjaldskyld' },
     { id: 'catalog-filter-type', text: 'Tegund' },
     { id: 'catalog-filter-type-graphql', text: 'GraphQL' },
-    { id: 'catalog-filter-type-react', text: TypeCategoryDisplay.REST },
+    { id: 'catalog-filter-type-rest', text: 'REST' },
     { id: 'catalog-filter-type-soap', text: 'SOAP' },
-    { id: 'catalog-filter-access-xroad', text: AccessCategoryDisplay.XROAD },
+    { id: 'catalog-filter-access-xroad', text: 'X-Road' },
     { id: 'catalog-filter-access-apigw', text: 'API GW' },
     { id: 'catalog-filter-search', text: 'Leita' },
   ]
@@ -85,26 +85,49 @@ describe(' ServiceCard ', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterStrings} />,
       )
-      expect(getByText(PricingCategoryDisplay.FREE)).toBeTruthy()
-      expect(getByText(PricingCategoryDisplay.PAID)).toBeTruthy()
+      expect(
+        getByText(
+          filterStrings.find((s) => s.id === 'catalog-filter-pricing-free')
+            .text,
+        ),
+      ).toBeTruthy()
+      expect(
+        getByText(
+          filterStrings.find((s) => s.id === 'catalog-filter-pricing-paid')
+            .text,
+        ),
+      ).toBeTruthy()
     })
     it('should contain all categories values', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterStrings} />,
       )
-      expect(getByText(DataCategoryDisplay.PUBLIC)).toBeTruthy()
+      expect(
+        getByText(
+          filterStrings.find((s) => s.id === 'catalog-filter-data-public').text,
+        ),
+      ).toBeTruthy()
     })
     it('should contain all types values', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterStrings} />,
       )
-      expect(getByText(TypeCategoryDisplay.REST)).toBeTruthy()
+      expect(
+        getByText(
+          filterStrings.find((s) => s.id === 'catalog-filter-type-rest').text,
+        ),
+      ).toBeTruthy()
     })
     it('should contain all Access values', () => {
       const { getByText } = render(
         <ServiceCard service={service} strings={filterStrings} />,
       )
-      expect(getByText(AccessCategoryDisplay.XROAD)).toBeTruthy()
+      expect(
+        getByText(
+          filterStrings.find((s) => s.id === 'catalog-filter-access-xroad')
+            .text,
+        ),
+      ).toBeTruthy()
     })
   })
 })

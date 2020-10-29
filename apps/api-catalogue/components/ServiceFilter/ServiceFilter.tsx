@@ -147,7 +147,7 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
         >
           <CategoryCheckBox
             label={
-              props.strings.find((s) => s.id === 'catalog-filter-type-react')
+              props.strings.find((s) => s.id === 'catalog-filter-type-rest')
                 .text
             }
             name="type"
