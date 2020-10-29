@@ -19,6 +19,7 @@ import {
   Blockquote,
   Box,
   ResponsiveSpace,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
 import EmbeddedVideo, {
@@ -137,10 +138,18 @@ export const defaultRenderComponent = (
       return <AssetLink {...slice} />
 
     case 'ProcessEntry':
-      return <ProcessEntry {...slice} />
+      return (
+        <Hidden print={true}>
+          <ProcessEntry {...slice} />
+        </Hidden>
+      )
 
     case 'EmbeddedVideo':
-      return <EmbeddedVideo {...slice} />
+      return (
+        <Hidden print={true}>
+          <EmbeddedVideo {...slice} />
+        </Hidden>
+      )
 
     case 'SectionWithImage':
       return <SectionWithImage {...slice} />
