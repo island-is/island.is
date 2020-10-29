@@ -11,14 +11,14 @@ export class SamgongustofaResolver {
   ) {}
 
   @Query(() => [VehicleInformation])
-  async SkilavottordgetVehicleInformation(
+  async SkilavottordVehicleInformation(
     @Args('nationalId') nid: string,
   ): Promise<Array<VehicleInformation>> {
     return this.samgongustofaService.getVehicleInformation(nid)
   }
 
   @Query(() => DeRegisterVehicle)
-  async SkilavottorddeRegisterVehicle(
+  async SkilavottordDeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
   ): Promise<DeRegisterVehicle> {
     return this.samgongustofaService.deRegisterVehicle(nid)

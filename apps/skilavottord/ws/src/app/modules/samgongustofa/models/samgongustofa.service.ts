@@ -44,7 +44,6 @@ export class SamgongustofaService {
       }
 
       this.logger.info('Start allVehiclesForPersidno Soap request.')
-      this.httpService = new HttpService()
       const allCarsResponse = await this.httpService
         .post(soapUrl, xmlAllCarsBodyStr, { headers: headersRequest })
         .toPromise()
@@ -275,7 +274,6 @@ export class SamgongustofaService {
         'Content-Type': 'application/json',
       }
 
-      this.httpService = new HttpService()
       const authRes = await this.httpService
         .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
         .toPromise()
@@ -314,7 +312,6 @@ export class SamgongustofaService {
         Authorization: 'Bearer ' + jToken,
       }
 
-      this.httpService = new HttpService()
       const deRegRes = await this.httpService
         .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
         .toPromise()
