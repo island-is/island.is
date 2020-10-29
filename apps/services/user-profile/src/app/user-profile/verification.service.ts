@@ -53,18 +53,16 @@ export class VerificationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   async createEmailVerification(
     nationalId: string,
     email: string,
   ): Promise<EmailVerification | null> {
     const hash = CryptoJS.MD5(nationalId + email)
-
     const hashString = hash.toString(CryptoJS.enc.Hex)
-    const verification = { ...{ nationalId, email }, hash: hashString }
 
-    const [record] = await this.emailVerificationModel.upsert(verification, {
+    const [record] = await this.emailVerificationModel.upsert({ nationalId, email, hash: hashString }, {
       returning: true,
     })
     if (record) {
@@ -111,13 +109,13 @@ export class VerificationService {
       },
       to: [
         {
-          name: '', // Get this from AuthToken
+          name: '',
           address: verification.email,
         },
       ],
       subject: `Staðfestingarpóstur`,
       html: `Opnaðu þennann hlekk til þess að staðfesta netfangið ${verification.email}
-      <a href="${environment.email.currentBaseUrl}/emailConfirm?hash=${verification.hash}" target="_blank"/>Stafesta </>`,
+      <a href="${environment.email.currentBaseUrl}/emailConfirm?hash=${verification.hash}" target="_blank"/>Staðfesta</>`,
     })
   }
 

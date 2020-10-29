@@ -4,9 +4,11 @@ import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../email-verification.model'
 import { SmsVerification } from '../sms-verification.model'
+import { SmsService } from '@island.is/nova-sms'
 
 let app: INestApplication
 let emailService: EmailService
+let smsService: SmsService
 
 beforeAll(async () => {
   app = await setup()
@@ -14,7 +16,12 @@ beforeAll(async () => {
   emailService = app.get<EmailService>(EmailService)
   jest
     .spyOn(emailService, 'sendEmail')
-    .mockImplementation(() => Promise.resolve('user'))
+    .mockImplementation(() => Promise.resolve(''))
+
+  smsService = app.get<SmsService>(SmsService)
+  jest
+    .spyOn(smsService, 'sendSms')
+    .mockImplementation()
 })
 
 describe('User profile API', () => {
@@ -28,10 +35,10 @@ describe('User profile API', () => {
       .send({
         nationalId: '1234567890',
         locale: 'en',
-        email: 'email@email.is',
+        email: 'email@example.com',
       })
       .expect(201)
-
+    expect(spy).toHaveBeenCalled()
     expect(response.body.id).toBeTruthy()
   })
 
@@ -189,7 +196,7 @@ describe('User profile API', () => {
 
   it(`POST /userProfile creates an email verfication in Db`, async () => {
     // Act
-    // const spy = jest.spyOn(emailService, 'sendEmail')
+    const spy = jest.spyOn(emailService, 'sendEmail')
     const response = await request(app.getHttpServer())
       .post('/userProfile/')
       .send({
@@ -198,7 +205,7 @@ describe('User profile API', () => {
         email: 'email@email.is',
       })
       .expect(201)
-    // expect(spy).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalled()
     const verification = await EmailVerification.findOne({
       where: { nationalId: response.body.nationalId },
     })
@@ -214,6 +221,7 @@ describe('User profile API', () => {
 
   it(`POST /smsVerification/ creates an sms verfication in Db`, async () => {
     // Act
+    const spy = jest.spyOn(smsService, 'sendSms')
     const response = await request(app.getHttpServer())
       .post('/smsVerification/')
       .send({
@@ -221,7 +229,7 @@ describe('User profile API', () => {
         mobilePhoneNumber: '1111111',
       })
       .expect(201)
-
+    expect(spy).toHaveBeenCalled()
     const verification = await SmsVerification.findOne({
       where: { nationalId: response.body.nationalId },
     })

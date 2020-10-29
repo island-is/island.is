@@ -32,9 +32,13 @@ module.exports = {
         queryInterface.removeColumn('user_profile', 'email_verified', {
           transaction: t,
         }),
-        queryInterface.removeColumn('user_profile', 'sms_verified', {
-          transaction: t,
-        }),
+        queryInterface.removeColumn(
+          'user_profile',
+          'mobile_phone_number_verified',
+          {
+            transaction: t,
+          },
+        ),
       ]),
     )
   },
