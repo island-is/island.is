@@ -55,7 +55,7 @@ export class UserProfile extends Model<UserProfile> {
   })
   @ApiProperty({
     description: 'User selected locale',
-    enum: Locale
+    enum: Locale,
   })
   locale?: Locale
 

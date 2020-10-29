@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { ConfirmationDtoResponse, CreateUserProfileDto, UpdateUserProfileDto, UserProfileApi, UserProfileControllerCreateRequest, UserProfileControllerUpdateRequest } from '../../gen/fetch'
+import {
+  ConfirmationDtoResponse,
+  CreateUserProfileDto,
+  UpdateUserProfileDto,
+  UserProfileApi,
+  UserProfileControllerCreateRequest,
+  UserProfileControllerUpdateRequest,
+} from '../../gen/fetch'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -17,7 +24,7 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(private userProfileApi: UserProfileApi) { }
+  constructor(private userProfileApi: UserProfileApi) {}
 
   async getUser(nationalId: string): Promise<UserProfile> {
     return await this.userProfileApi
@@ -34,10 +41,10 @@ export class UserProfileService {
       //temporary as schemas where not working properly
       locale: input.locale as string,
       mobilePhoneNumber: input.mobilePhoneNumber,
-      email: input.email
+      email: input.email,
     }
     const request: UserProfileControllerCreateRequest = {
-      createUserProfileDto: createUserDto
+      createUserProfileDto: createUserDto,
     }
     return await this.userProfileApi
       .userProfileControllerCreate(request)
@@ -52,11 +59,11 @@ export class UserProfileService {
       //temporary as schemas where not working properly
       locale: input.locale as string,
       mobilePhoneNumber: input.mobilePhoneNumber,
-      email: input.email
+      email: input.email,
     }
     const request: UserProfileControllerUpdateRequest = {
       nationalId: nationalId,
-      updateUserProfileDto: updateUserDto
+      updateUserProfileDto: updateUserDto,
     }
     return await this.userProfileApi
       .userProfileControllerUpdate(request)
