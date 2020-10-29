@@ -32,7 +32,7 @@ export class UserProfileService {
     const createUserDto: CreateUserProfileDto = {
       nationalId: nationalId,
       //temporary as schemas where not working properly
-      locale: input.locale as unknown as object,
+      locale: input.locale as string,
       mobilePhoneNumber: input.mobilePhoneNumber,
       email: input.email
     }
@@ -50,7 +50,7 @@ export class UserProfileService {
   ): Promise<UserProfile> {
     const updateUserDto: UpdateUserProfileDto = {
       //temporary as schemas where not working properly
-      locale: input.locale as unknown as object,
+      locale: input.locale as string,
       mobilePhoneNumber: input.mobilePhoneNumber,
       email: input.email
     }
