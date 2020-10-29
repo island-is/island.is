@@ -23,13 +23,13 @@ import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
 export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: userProfile } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
   const { formatMessage } = useLocale()
-  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
-  const { updateUserProfile } = useUpdateUserProfile(userInfo.profile.natreg)
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
     if (!userProfile) return

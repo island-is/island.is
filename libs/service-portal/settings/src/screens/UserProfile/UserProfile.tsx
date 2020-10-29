@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Icon, Stack, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Icon, Stack, Tag, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -13,7 +13,7 @@ import { FamilyMemberCard } from '@island.is/service-portal/family'
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: userProfile } = useUserProfile()
 
   return (
     <>
@@ -36,24 +36,23 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={
             userProfile?.email ? (
-              <Box display="flex">
+              <Box display="flex" alignItems="center">
                 <span>{userProfile.email}</span>
-                <Box marginLeft={1}>
+                <Box marginLeft={2}>
                   {userProfile.emailVerified ? (
-                    <Icon
-                      type="filled"
-                      size="small"
-                      icon="checkmarkCircle"
-                      color="mint300"
-                    />
-                  ) : (
-                    <Tooltip
-                      text={formatMessage({
-                        id: 'sp.settings:email-not-verified-message',
-                        defaultMessage:
-                          'Þetta netfang hefur ekki verið staðfest',
+                    <Tag variant="darkerMint">
+                      {formatMessage({
+                        id: 'sp.settings:verified',
+                        defaultMessage: 'Staðfest',
                       })}
-                    />
+                    </Tag>
+                  ) : (
+                    <Tag variant="red">
+                      {formatMessage({
+                        id: 'sp.settings:not-verified',
+                        defaultMessage: 'Óstaðfest',
+                      })}
+                    </Tag>
                   )}
                 </Box>
               </Box>
@@ -76,24 +75,23 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={
             userProfile?.mobilePhoneNumber ? (
-              <Box display="flex">
+              <Box display="flex" alignItems="center">
                 <span>{userProfile.mobilePhoneNumber}</span>
-                <Box marginLeft={1}>
+                <Box marginLeft={2}>
                   {userProfile.mobilePhoneNumberVerified ? (
-                    <Icon
-                      type="filled"
-                      size="small"
-                      icon="checkmarkCircle"
-                      color="mint300"
-                    />
-                  ) : (
-                    <Tooltip
-                      text={formatMessage({
-                        id: 'sp.settings:phone-not-verified-message',
-                        defaultMessage:
-                          'Þetta símanúmer hefur ekki verið staðfest',
+                    <Tag variant="darkerMint">
+                      {formatMessage({
+                        id: 'sp.settings:verified',
+                        defaultMessage: 'Staðfest',
                       })}
-                    />
+                    </Tag>
+                  ) : (
+                    <Tag variant="red">
+                      {formatMessage({
+                        id: 'sp.settings:not-verified',
+                        defaultMessage: 'Óstaðfest',
+                      })}
+                    </Tag>
                   )}
                 </Box>
               </Box>
