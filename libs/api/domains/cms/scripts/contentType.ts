@@ -1,7 +1,7 @@
 import { ContentType, FieldValidation } from 'contentful'
 import { createClient } from 'contentful-management'
 import { Environment } from 'contentful-management/dist/typings/entities/environment'
-import { flattenDeep } from 'lodash'
+import flattenDeep from 'lodash/flatMapDeep'
 import { logger } from '@island.is/logging'
 
 import { execShellCommand } from './execShellCommand'

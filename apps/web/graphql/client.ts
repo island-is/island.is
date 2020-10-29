@@ -1,13 +1,8 @@
-import {
-  InMemoryCache,
-  NormalizedCacheObject,
-  IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory'
-import { ApolloClient } from 'apollo-client'
+import { ApolloClient } from '@apollo/client/core'
+import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
 import getConfig from 'next/config'
-import { BatchHttpLink } from 'apollo-link-batch-http'
-import fetch from 'isomorphic-unfetch'
-import introspectionQueryResultData from './fragmentTypes.json'
+import { BatchHttpLink } from '@apollo/client/link/batch-http'
+import possibleTypes from './fragmentTypes.json'
 import { defaultLanguage, Locale } from '../i18n/I18n'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
@@ -16,12 +11,6 @@ const isBrowser: boolean = process.browser
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 let currentClientLocale = defaultLanguage
-
-// Polyfill fetch() on the server (used by apollo-client)
-if (!isBrowser) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(global as any).fetch = fetch
-}
 
 function create(initialState?: any) {
   // handle server vs client side calls
@@ -44,11 +33,7 @@ function create(initialState?: any) {
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: httpLink,
-    cache: new InMemoryCache({
-      fragmentMatcher: new IntrospectionFragmentMatcher({
-        introspectionQueryResultData,
-      }),
-    }).restore(initialState || {}),
+    cache: new InMemoryCache(possibleTypes).restore(initialState || {}),
   })
 }
 

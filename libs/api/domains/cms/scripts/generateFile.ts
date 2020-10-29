@@ -1,5 +1,5 @@
 import { ContentType } from 'contentful'
-import { upperFirst } from 'lodash'
+import upperFirst from 'lodash/upperFirst'
 import { writeFileSync, existsSync } from 'fs'
 
 import { getModel } from './generateModel'
