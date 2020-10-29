@@ -27,7 +27,7 @@ const NotificationMenuTrigger: FC<{}> = () => {
       <Button
         variant="utility"
         onClick={handleClick}
-        icon="lockClosed"
+        icon="notifications"
         iconType="outline"
       />
       <NotificationMenu
