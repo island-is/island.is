@@ -18,7 +18,7 @@ import { VerificationService } from './verification.service'
       EmailVerification,
       SmsVerification,
       UserProfile,
-    ])
+    ]),
   ],
   controllers: [UserProfileController],
   providers: [
@@ -45,4 +45,4 @@ import { VerificationService } from './verification.service'
   ],
   exports: [UserProfileService],
 })
-export class UserProfileModule { }
+export class UserProfileModule {}

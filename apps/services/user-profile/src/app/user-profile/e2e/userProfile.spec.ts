@@ -19,9 +19,7 @@ beforeAll(async () => {
     .mockImplementation(() => Promise.resolve(''))
 
   smsService = app.get<SmsService>(SmsService)
-  jest
-    .spyOn(smsService, 'sendSms')
-    .mockImplementation()
+  jest.spyOn(smsService, 'sendSms').mockImplementation()
 })
 
 describe('User profile API', () => {
