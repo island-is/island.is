@@ -148,11 +148,14 @@ export function findSubSectionIndexForScreen(
   }
   return -1
 }
-const overwriteMerge = (
+const overwriteArrayMerge = (
   destinationArray: unknown[],
   sourceArray: unknown[],
 ) => {
-  if (typeof sourceArray[sourceArray.length - 1] !== 'object') {
+  if (
+    typeof sourceArray[sourceArray.length - 1] !== 'object' ||
+    sourceArray.length < destinationArray.length // an element was removed
+  ) {
     return sourceArray
   }
   const result = []
@@ -162,7 +165,7 @@ const overwriteMerge = (
     i++
   ) {
     result[i] = merge(sourceArray[i] ?? {}, destinationArray[i] ?? {}, {
-      arrayMerge: overwriteMerge,
+      arrayMerge: overwriteArrayMerge,
     })
   }
 
@@ -174,7 +177,7 @@ export function mergeAnswers(
   newAnswers: object,
 ): FormValue {
   return merge(currentAnswers, newAnswers, {
-    arrayMerge: overwriteMerge,
+    arrayMerge: overwriteArrayMerge,
   })
 }
 type MessageFormatter = (descriptor: StaticText, values?: any) => string

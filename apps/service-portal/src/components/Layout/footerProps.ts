@@ -10,6 +10,11 @@ export const getFooterProps = (data: ServicePortalFooterContent) => ({
       title: link.text,
       href: convertUrl(link.url),
     })) || [],
+  topLinksContact:
+    data.upperContact?.links.map((link) => ({
+      title: link.text,
+      href: convertUrl(link.url),
+    })) || [],
   showMiddleLinks: true,
   middleLinksTitle: 'Þjónustuflokkar',
   middleLinks:

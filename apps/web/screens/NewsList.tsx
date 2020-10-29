@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { groupBy, range, capitalize } from 'lodash'
+import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '../types'

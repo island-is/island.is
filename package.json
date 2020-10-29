@@ -9,6 +9,7 @@
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
     "dev-services": "nx dev-services",
+    "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",
     "codegen": "nx codegen",
     "translations": "nx translations",
@@ -280,6 +281,7 @@
     "@typescript-eslint/eslint-plugin": "2.19.2",
     "@typescript-eslint/parser": "2.19.2",
     "@zeit/next-source-maps": "^0.0.3",
+    "babel-jest": "26.2.2",
     "babel-loader": "8.0.6",
     "cross-env": "7.0.2",
     "cross-spawn": "^7.0.3",
@@ -294,6 +296,7 @@
     "eslint-plugin-react": "7.20.0",
     "eslint-plugin-react-hooks": "4.0.4",
     "fetch-mock": "^9.10.7",
+    "inspectpack": "4.5.2",
     "jest": "26.2.2",
     "jest-mock-extended": "^1.0.10",
     "jest-transform-stub": "2.0.0",
@@ -307,7 +310,7 @@
     "ts-jest": "26.1.4",
     "ts-node": "9.0.0",
     "typescript": "3.9.7",
-    "babel-jest": "26.2.2"
+    "webpack-bundle-analyzer": "3.9.0"
   },
   "resolutions": {
     "webpack": "4.44.1",

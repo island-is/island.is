@@ -19,7 +19,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     data: natRegFamilyInfo,
     loading,
     error,
-  } = useNationalRegistryFamilyInfo(userInfo.profile.natreg)
+  } = useNationalRegistryFamilyInfo()
 
   return (
     <>

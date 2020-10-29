@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { isObject } from 'lodash'
+import isObject from 'lodash/isObject'
 import { theme } from '@island.is/island-ui/theme'
 import * as CSS from 'csstype'
 
