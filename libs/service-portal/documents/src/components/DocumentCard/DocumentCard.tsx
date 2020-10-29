@@ -73,8 +73,9 @@ const DocumentCard: FC<Props> = ({ document }) => {
     }
     if (!data) {
       fetchDocument()
+    } else {
+      handleOnFetch()
     }
-    handleOnFetch()
   }
 
   return (
