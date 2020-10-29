@@ -17,7 +17,7 @@ import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data: natRegInfo } = useNationalRegistryInfo(userInfo.profile.natreg)
+  const { data: natRegInfo } = useNationalRegistryInfo()
 
   return (
     <>

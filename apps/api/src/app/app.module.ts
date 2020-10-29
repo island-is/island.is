@@ -11,6 +11,7 @@ import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { AuthModule } from '@island.is/auth-api-lib'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
@@ -58,6 +59,11 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     }),
     CommunicationsModule,
     ApiCatalogueModule,
+    AuthModule.register({
+      audience: environment.identityServer.audience,
+      issuer: environment.identityServer.baseUrl,
+      jwksUri: `${environment.identityServer.jwksUri}`,
+    }),
   ],
 })
 export class AppModule {}
