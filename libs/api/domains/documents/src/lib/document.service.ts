@@ -8,7 +8,7 @@ import { DocumentCategory } from './models/documentCategory.model'
 
 @Injectable()
 export class DocumentService {
-  constructor(private customersApi: CustomersApi) { }
+  constructor(private customersApi: CustomersApi) {}
 
   async findByDocumentId(
     natReg: string,
@@ -41,7 +41,7 @@ export class DocumentService {
           result.push(Document.fromDocumentInfo(documentMessage))
         return result
       },
-        [])
+      [])
     } catch (exception) {
       logger.error(exception)
       return []
@@ -60,7 +60,7 @@ export class DocumentService {
         if (category) result.push(DocumentCategory.fromCategoryDTO(category))
         return result
       },
-        [])
+      [])
     } catch (exception) {
       logger.error(exception)
       return []
