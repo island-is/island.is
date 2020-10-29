@@ -20,7 +20,7 @@ export interface BaseField extends FormItem {
   disabled?: boolean
   width?: FieldWidth
   condition?: Condition
-  repeaterIndex?: number
+  isPartOfRepeater?: boolean
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }

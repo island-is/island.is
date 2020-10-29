@@ -1,12 +1,10 @@
 import {
   calculateProgress,
   convertFormToScreens,
-  expandRepeater,
   findCurrentScreen,
   getNavigableSectionsInForm,
 } from './reducerUtils'
 import {
-  ApplicationTypes,
   buildForm,
   buildIntroductionField,
   buildMultiField,
@@ -14,8 +12,6 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
-  Form,
-  Repeater,
 } from '@island.is/application/core'
 import { FormScreen, RepeaterScreen } from '../types'
 
@@ -80,10 +76,10 @@ describe('reducerUtils', () => {
       const screens: FormScreen[] = [
         introScreen,
         textScreen,
-        { ...textScreen, repeaterIndex: 0 },
-        { ...textScreen, repeaterIndex: 0 },
-        { ...textScreen, repeaterIndex: 0 },
-        { ...textScreen, repeaterIndex: 0 },
+        { ...textScreen, isPartOfRepeater: true },
+        { ...textScreen, isPartOfRepeater: true },
+        { ...textScreen, isPartOfRepeater: true },
+        { ...textScreen, isPartOfRepeater: true },
         textScreen,
         textScreen,
       ]
@@ -91,65 +87,7 @@ describe('reducerUtils', () => {
       expect(calculateProgress(6, screens)).toBe(50)
     })
   })
-  describe('expand repeater', () => {
-    const repeater = buildRepeater({
-      id: 'person',
-      name: 'Family Member',
-      component: 'SomeComponent',
-      children: [
-        buildTextField({
-          id: 'name',
-          name: 'Name',
-        }),
-        buildTextField({
-          id: 'age',
-          name: 'Age',
-        }),
-      ],
-    })
-    const randomField = buildTextField({
-      id: 'familyName',
-      name: 'What is the family name?',
-    })
-    it('should increment the number of repetitions for the repeater in the form', () => {
-      const form = buildForm({
-        id: 'ExampleForm',
-        children: [repeater, randomField],
-        name: 'what a name',
-      })
-      const screens: FormScreen[] = convertFormToScreens(form, {})
-      const newForm = expandRepeater(0, form, screens)
-      expect((form.children[0] as Repeater).repetitions).toBe(0)
-      expect((newForm?.children[0] as Repeater).repetitions).toBe(1)
-    })
 
-    it('should increment repetitions and add more screens when expanding an already expanded repeater', () => {
-      const form = buildForm({
-        id: 'ExampleForm',
-        children: [repeater, randomField],
-        name: 'what a name',
-      })
-      const screens: FormScreen[] = convertFormToScreens(form, {})
-      const newForm = expandRepeater(0, form, screens) as Form
-      const newerForm = expandRepeater(
-        0,
-        newForm,
-        convertFormToScreens(newForm, {}),
-      )
-      expect((newerForm?.children[0] as Repeater).repetitions).toBe(2)
-    })
-
-    it('should return undefined if the desired index is not representing a repeater', () => {
-      const form = buildForm({
-        id: 'ExampleForm',
-        children: [repeater, randomField],
-        name: 'what a name',
-      })
-      const screens: FormScreen[] = convertFormToScreens(form, {})
-      const newForm = expandRepeater(1, form, screens)
-      expect(newForm).toBeUndefined()
-    })
-  })
   describe('find current screen', () => {
     const buildIntroScreen = (id: string, isNavigable = true) => ({
       ...buildIntroductionField({
@@ -410,20 +348,6 @@ describe('reducerUtils', () => {
         const screens = convertFormToScreens(form, {})
         expect(screens.length).toBe(1)
         expect(screens[0]).toEqual({ ...repeater, isNavigable: true })
-      })
-      it('should expand a repeater to as many screens as children * repetitions', () => {
-        const form = buildForm({
-          id: 'ExampleForm',
-          name: 'asdf',
-          children: [{ ...repeater, repetitions: 3 }],
-        })
-        const screens = convertFormToScreens(form, {})
-        expect(screens.length).toBe(7)
-        expect(screens[0]).toEqual({
-          ...repeater,
-          repetitions: 3,
-          isNavigable: true,
-        })
       })
     })
   })

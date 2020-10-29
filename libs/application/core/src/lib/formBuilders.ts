@@ -45,7 +45,7 @@ export function buildRepeater(data: {
   name: MessageDescriptor | string
   children: FormLeaf[]
 }): Repeater {
-  return { ...data, type: FormItemTypes.REPEATER, repetitions: 0 }
+  return { ...data, type: FormItemTypes.REPEATER }
 }
 
 export function buildSection(data: {
@@ -74,7 +74,7 @@ export function buildExternalDataProvider(data: {
 }): ExternalDataProvider {
   return {
     ...data,
-    repeaterIndex: undefined,
+    isPartOfRepeater: false,
     children: undefined,
     type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
   }
