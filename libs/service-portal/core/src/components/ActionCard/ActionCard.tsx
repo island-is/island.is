@@ -49,9 +49,7 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
               icon="arrowForward"
               colorScheme="default"
               iconType="filled"
-              onBlur={function noRefCheck() {}}
               onClick={cta.onClick}
-              onFocus={function noRefCheck() {}}
               size="small"
               type="button"
               variant="text"
