@@ -18,9 +18,6 @@ const TARGETS = [
   'schemas/codegen', // Output clients schemas (*.d.ts) based on codegen.yml
 ]
 
-const nx = (target) =>
-  `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6`
-
 const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))
 
@@ -33,8 +30,9 @@ const main = async () => {
     console.log(`--> Running command for ${target}\n`)
 
     try {
-      const cmd = nx(target)
-      const { stdout, stderr } = await promisify(exec)(cmd)
+      const { stdout, stderr } = await promisify(exec)(
+        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6`,
+      )
 
       console.log(stdout)
 

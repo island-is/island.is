@@ -1092,9 +1092,6 @@ export interface INewsFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
 
-  /** Type */
-  type?: ('News item' | 'Project story')[] | undefined
-
   /** Title */
   title: string
 
