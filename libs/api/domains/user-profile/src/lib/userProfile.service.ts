@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { UserProfileApi } from '../../gen/fetch'
-import { UserProfile } from './userProfile.model'
+import { ConfirmationDtoResponse, CreateUserProfileDto, UpdateUserProfileDto, UserProfileApi, UserProfileControllerCreateRequest, UserProfileControllerUpdateRequest } from '../../gen/fetch'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
-import { ConfirmationDtoResponse } from '../../gen/fetch/models/ConfirmationDtoResponse'
+import { UserProfile } from './userProfile.model'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -18,7 +17,7 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(private userProfileApi: UserProfileApi) {}
+  constructor(private userProfileApi: UserProfileApi) { }
 
   async getUser(nationalId: string): Promise<UserProfile> {
     return await this.userProfileApi
@@ -30,10 +29,18 @@ export class UserProfileService {
     input: CreateUserProfileInput,
     nationalId: string,
   ): Promise<UserProfile> {
-    const { ...createUserProfileDto } = { nationalId, ...input }
-
+    const createUserDto: CreateUserProfileDto = {
+      nationalId: nationalId,
+      //temporary as schemas where not working properly
+      locale: input.locale as unknown as object,
+      mobilePhoneNumber: input.mobilePhoneNumber,
+      email: input.email
+    }
+    const request: UserProfileControllerCreateRequest = {
+      createUserProfileDto: createUserDto
+    }
     return await this.userProfileApi
-      .userProfileControllerCreate({ createUserProfileDto })
+      .userProfileControllerCreate(request)
       .catch(handleError)
   }
 
@@ -41,10 +48,18 @@ export class UserProfileService {
     input: UpdateUserProfileInput,
     nationalId: string,
   ): Promise<UserProfile> {
-    const { ...updateUserProfileDto } = { nationalId, ...input }
-
+    const updateUserDto: UpdateUserProfileDto = {
+      //temporary as schemas where not working properly
+      locale: input.locale as unknown as object,
+      mobilePhoneNumber: input.mobilePhoneNumber,
+      email: input.email
+    }
+    const request: UserProfileControllerUpdateRequest = {
+      nationalId: nationalId,
+      updateUserProfileDto: updateUserDto
+    }
     return await this.userProfileApi
-      .userProfileControllerUpdate({ updateUserProfileDto })
+      .userProfileControllerUpdate(request)
       .catch(handleError)
   }
 

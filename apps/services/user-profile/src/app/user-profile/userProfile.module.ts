@@ -45,4 +45,4 @@ import { VerificationService } from './verification.service'
   ],
   exports: [UserProfileService],
 })
-export class UserProfileModule {}
+export class UserProfileModule { }
