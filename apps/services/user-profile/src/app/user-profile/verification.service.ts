@@ -53,7 +53,7 @@ export class VerificationService {
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   async createEmailVerification(
     nationalId: string,
@@ -62,9 +62,12 @@ export class VerificationService {
     const hash = CryptoJS.MD5(nationalId + email)
     const hashString = hash.toString(CryptoJS.enc.Hex)
 
-    const [record] = await this.emailVerificationModel.upsert({ nationalId, email, hash: hashString }, {
-      returning: true,
-    })
+    const [record] = await this.emailVerificationModel.upsert(
+      { nationalId, email, hash: hashString },
+      {
+        returning: true,
+      },
+    )
     if (record) {
       this.sendConfirmationEmail(record)
     }
