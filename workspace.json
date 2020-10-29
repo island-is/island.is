@@ -3991,13 +3991,18 @@
         "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "apps/services/user-profile/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/services/user-profile/src/openapi.yaml",
             "commands": [
-              {
-                "command": "yarn build services-user-profile"
-              },
-              {
-                "command": "node dist/apps/services/user-profile/main --generate-schema apps/services/user-profile/src/openapi.yaml"
-              }
+              "yarn build reference-backend",
+              "node dist/apps/services/user-profile/main --generate-schema apps/services/user-profile/src/openapi.yaml"
             ]
           }
         },
