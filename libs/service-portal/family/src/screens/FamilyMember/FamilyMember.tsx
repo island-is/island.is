@@ -15,12 +15,12 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
-const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
+const FamilyMember: ServicePortalModuleComponent = () => {
   const {
     data: natRegFamilyInfo,
     loading,
     error,
-  } = useNationalRegistryFamilyInfo(userInfo.profile.natreg)
+  } = useNationalRegistryFamilyInfo()
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =

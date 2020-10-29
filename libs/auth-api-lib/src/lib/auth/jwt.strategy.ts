@@ -3,6 +3,8 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
 import { passportJwtSecret } from 'jwks-rsa'
 import { Config } from './auth.module'
+import { JwtPayload } from './jwt.payload'
+import { User } from './user'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -22,7 +24,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(payload: unknown) {
-    return payload
+  async validate(payload: JwtPayload): Promise<User> {
+    return {
+      nationalId: payload.nationalId ?? payload.natreg,
+      scope: payload.scope,
+    }
   }
 }

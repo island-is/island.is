@@ -151,7 +151,7 @@ export const safelyMapSlices = (data) => {
   try {
     return mapSlice(data)
   } catch (error) {
-    logger.error('Failed to map slice', error)
+    logger.warn('Failed to map slice', { error: error.message })
     return null
   }
 }
