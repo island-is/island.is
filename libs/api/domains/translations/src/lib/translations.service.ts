@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { ContentfulRepository } from '@island.is/api/domains/cms'
-import { isEmpty, mergeWith } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
+import mergeWith from 'lodash/mergeWith'
 
 export interface TranslationsDict {
   [key: string]: string
