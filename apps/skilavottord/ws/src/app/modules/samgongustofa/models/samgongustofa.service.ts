@@ -169,9 +169,7 @@ export class SamgongustofaService {
             </soapenv:Body>
           </soapenv:Envelope>`
 
-          const httpService1 = new HttpService()
-
-          const basicInforesponse = await httpService1
+          const basicInforesponse = await this.httpService
             .post(soapUrl, xmlBasicInfoBodyStr, { headers: headersRequest })
             .toPromise()
           if (basicInforesponse.status != 200) {
