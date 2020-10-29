@@ -13,6 +13,8 @@ import {
   GridColumn,
   Hidden,
   Option,
+  ToastContainer,
+  toast,
 } from '@island.is/island-ui/core'
 import * as styles from './TellUsAStoryFrom.treat'
 import { Image } from '@island.is/api/schema'
@@ -66,19 +68,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
   const errorMessage = 'Þennan reit þarf að fylla út'
 
   useEffect(() => {
-    if (state === 'success')
-      reset({
-        organization: {
-          label: '',
-          value: '',
-        },
-        dateOfStory: '',
-        subject: '',
-        message: '',
-        name: '',
-        email: '',
-        publicationAllowed: false,
-      })
+    if (state === 'error') {
+      toast.error('Eitthvað fór úrskeiðis')
+    }
   }, [state])
 
   return (
@@ -86,7 +78,12 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
       <Box paddingX={[0, 0, 3, 8]} paddingBottom={8}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '7/12']}>
-            <Text as="h1" variant="h1" lineHeight={'lg'} paddingBottom={[2, 3, 4]}> 
+            <Text
+              as="h1"
+              variant="h1"
+              lineHeight={'lg'}
+              paddingBottom={[2, 3, 4]}
+            >
               {'Segðu okkur þína sögu'}
             </Text>
             <Text paddingBottom={2}>
@@ -103,11 +100,13 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
           <GridColumn
             span={[null, null, '5/12', '4/12']}
             offset={[null, null, '1/12', '1/12']}
-            className={styles.topImage}
+            className={styles.infoImageWrapper}
           >
-            <Hidden below="md">
+            <Box className={styles.infoImage}>
+              <Hidden below="md">
                 <BackgroundImage ratio="1:1" image={topImage} />
-            </Hidden>
+              </Hidden>
+            </Box>
           </GridColumn>
         </GridRow>
       </Box>
@@ -125,25 +124,25 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 <GridColumn span={['10/10', '10/10', '10/10', '5/10']}>
                   <Controller
                     name="organization"
-                    control={control}
                     defaultValue={{
                       label: '',
                       value: '',
                     }}
+                    control={control}
                     rules={{ required: true }}
                     render={({ onChange }) => (
                       <Select
-                        label="Stofnun"
                         name="organization"
-                        disabled={state === 'submitting'}
-                        hasError={errors.organization}
-                        errorMessage={errors.organization ? errorMessage : null}
+                        label="Stofnun"
                         placeholder="Veldu stofnun sem leitað var til"
                         options={[
                           { label: 'Stofnun 1', value: 'Stofnun 1' },
                           { label: 'Stofnun 2', value: 'Stofnun 2' },
                           { label: 'Stofnun 3', value: 'Stofnun 3' },
                         ]}
+                        errorMessage={errors.organization ? errorMessage : null}
+                        hasError={errors.organization}
+                        disabled={state === 'submitting'}
                         onChange={({ value }: Option) => {
                           onChange(value)
                         }}
@@ -157,8 +156,8 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 >
                   <Controller
                     name="dateOfStory"
-                    control={control}
                     defaultValue={false}
+                    control={control}
                     rules={{ required: true }}
                     render={({ onChange, value }) => (
                       <DatePicker
@@ -166,10 +165,10 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                         placeholderText="Hvenær var þetta?"
                         locale="is"
                         selected={value}
-                        disabled={state === 'submitting'}
                         required
-                        hasError={errors.dateOfStory}
                         errorMessage={errors.dateOfStory ? errorMessage : null}
+                        hasError={errors.dateOfStory}
+                        disabled={state === 'submitting'}
                         handleChange={onChange}
                       />
                     )}
@@ -187,25 +186,25 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     <GridColumn span={'12/12'}>
                       <Stack space={3}>
                         <Input
-                          label="Fyrirsögn"
                           name="subject"
-                          disabled={state === 'submitting'}
-                          defaultValue=""
+                          label="Fyrirsögn"
                           placeholder="Titillinn á sögunni"
+                          defaultValue=""
+                          disabled={state === 'submitting'}
                           ref={register({
                             required: false,
                           })}
                         />
                         <Input
-                          label="Sagan"
                           name="message"
-                          defaultValue=""
-                          disabled={state === 'submitting'}
-                          rows={8}
+                          label="Sagan"
                           placeholder="[spurning um að hafa eitthvað leiðandi/leiðbeinandi hérna sem hjálpar fólki að ramma inn söguna ]"
+                          defaultValue=""
                           textarea
+                          rows={8}
                           required
                           errorMessage={errors.message?.message}
+                          disabled={state === 'submitting'}
                           ref={register({
                             required: errorMessage,
                           })}
@@ -222,14 +221,13 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 >
                   <GridRow>
                     <GridColumn
-                      span={['5/12', '4/12', '5/12', '5/12', '12/12']}
+                      span={['5/12', '4/12', '5/12', '12/12', '12/12']}
                       className={styles.alignSelfCenter}
+                      paddingBottom={2}
                     >
-                        <Box className={styles.contentImage}>
-                        {' '}
+                      <Box className={styles.contentImage}>
                         <BackgroundImage ratio="1:1" image={contentImage} />
                       </Box>
-
                     </GridColumn>
                     <GridColumn
                       span={['7/12', '8/12', '7/12', '12/12', '12/12']}
@@ -263,16 +261,16 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   paddingBottom={3}
                 >
                   <Input
-                    label="Fullt nafn"
                     name="name"
-                    defaultValue=""
-                    disabled={state === 'submitting'}
-                    required
+                    label="Fullt nafn"
                     placeholder="Nafnið þitt"
+                    defaultValue=""
+                    required
+                    errorMessage={errors.name?.message}
+                    disabled={state === 'submitting'}
                     ref={register({
                       required: errorMessage,
                     })}
-                    errorMessage={errors.name?.message}
                   />
                 </GridColumn>
 
@@ -281,13 +279,13 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   paddingBottom={3}
                 >
                   <Input
-                    label="Netfang"
                     name="email"
+                    label="Netfang"
+                    placeholder="Svo við getum haft samband"
                     defaultValue=""
-                    disabled={state === 'submitting'}
                     required
                     errorMessage={errors.email?.message}
-                    placeholder="Svo við getum haft samband"
+                    disabled={state === 'submitting'}
                     ref={register({
                       required: errorMessage,
                       pattern: {
@@ -301,15 +299,15 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
 
               <Controller
                 name="publicationAllowed"
-                control={control}
                 defaultValue={false}
+                control={control}
                 rules={{ required: false }}
                 render={(props) => (
                   <Checkbox
-                    onChange={(e) => props.onChange(e.target.checked)}
+                    label="Ég gef leyfi fyrir notkun sögunnar (nafnlaust) til að kynna lausnir, bæta þjónustu og til birtingar á Ísland.is"
                     checked={props.value}
                     disabled={state === 'submitting'}
-                    label="Ég gef leyfi fyrir notkun sögunnar (nafnlaust) til að kynna lausnir, bæta þjónustu og til birtingar á Ísland.is"
+                    onChange={(e) => props.onChange(e.target.checked)}
                   />
                 )}
               />
@@ -322,7 +320,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
           </form>
         ) : (
           <Box paddingTop={[2, 4, 6, 12]} paddingBottom={[3, 6, 8, 20]}>
-            <Text variant="h2" as="h2" color="blue400" paddingBottom={2}>
+            <Text variant="h2" as="h2" paddingBottom={2}>
               {'Takk fyrir að senda okkur sögu'}
             </Text>
             <Text paddingBottom={3}>
@@ -333,6 +331,11 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
           </Box>
         )}
       </Box>
+      <ToastContainer
+        hideProgressBar={true}
+        closeButton={true}
+        useKeyframeStyles={false}
+      />
     </GridContainer>
   )
 }
