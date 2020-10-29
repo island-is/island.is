@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const topImage = style({
   marginTop: 'auto',
@@ -17,4 +18,19 @@ export const alignSelfCenter = style({
 
 export const justifyContentFlexEnd = style({
   justifyContent: 'flex-end',
+})
+
+export const infoImageWrapper = style({
+  position: 'relative',
+})
+export const infoImage = style({
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: 0,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      transform: 'translate(0%, 50%)',
+    },
+  },
 })

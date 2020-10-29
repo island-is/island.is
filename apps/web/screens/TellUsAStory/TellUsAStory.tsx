@@ -9,25 +9,24 @@ import {
   TellUsAStoryMutationVariables,
 } from '../../graphql/schema'
 
-
 const getState = (
-    data: MutationResult<TellUsAStoryMutation>['data'],
-    loading: MutationResult['loading'],
-    error: MutationResult['error'],
-  ) => {
-    if (data?.tellUsAStory?.sent === true) return 'success'
-    if (data?.tellUsAStory?.sent === false) return 'error'
-    if (loading) return 'submitting'
-    if (error) return 'error'
-    return 'edit'
-  }
+  data: MutationResult<TellUsAStoryMutation>['data'],
+  loading: MutationResult['loading'],
+  error: MutationResult['error'],
+) => {
+  if (data?.tellUsAStory?.sent === true) return 'success'
+  if (data?.tellUsAStory?.sent === false) return 'error'
+  if (loading) return 'submitting'
+  if (error) return 'error'
+  return 'edit'
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface TellUsAStoryProps
   extends Omit<TellUsAStoryFormProps, 'state' | 'onSubmit'> {}
 
 export const TellUsAStory: FC<TellUsAStoryProps> = (props) => {
-    const [submit, { data, loading, error }] = useMutation<
+  const [submit, { data, loading, error }] = useMutation<
     TellUsAStoryMutation,
     TellUsAStoryMutationVariables
   >(TELL_US_A_STORY_MUTATION)
@@ -36,7 +35,6 @@ export const TellUsAStory: FC<TellUsAStoryProps> = (props) => {
       {...props}
       state={getState(data, loading, error)}
       onSubmit={async (formState) => {
-          console.log(formState)
         await submit({ variables: { input: formState } })
       }}
     />
