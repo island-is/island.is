@@ -15,6 +15,7 @@ generates:
       - fragment-matcher
     config:
       module: commonjs
+      apolloClientVersion: 3
 hooks:
   afterAllFileWrite:
     - prettier --write

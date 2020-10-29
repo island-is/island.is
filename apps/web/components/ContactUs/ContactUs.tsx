@@ -4,12 +4,11 @@ import {
   ContactUsProps as ContactUsFormProps,
 } from '@island.is/island-ui/contentful'
 import { CONTACT_US_MUTATION } from '@island.is/web/screens/queries'
-import { MutationResult, useMutation } from 'react-apollo'
-
+import { MutationResult, useMutation } from '@apollo/client/react'
 import {
   ContactUsMutation,
   ContactUsMutationVariables,
-} from '../../graphql/schema'
+} from '@island.is/web/graphql/schema'
 
 const getState = (
   data: MutationResult<ContactUsMutation>['data'],

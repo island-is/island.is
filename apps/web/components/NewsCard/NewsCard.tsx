@@ -1,8 +1,8 @@
 import React from 'react'
 import { Text, Link, Box, ArrowLink } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { Image } from '@island.is/web/graphql/schema'
 
-import { Image } from '../../graphql/schema'
 import * as styles from './NewsCard.treat'
 
 interface NewsCardProps {

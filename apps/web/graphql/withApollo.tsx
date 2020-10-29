@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
-import { ApolloProvider } from 'react-apollo'
+import { ApolloProvider } from '@apollo/client/react'
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
 import initApollo from './client'
 
