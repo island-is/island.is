@@ -68,7 +68,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
-        type="submit"
+        type={type}
         role="button"
         className={cn(
           styles.variants[variant],
