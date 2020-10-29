@@ -67,6 +67,15 @@ export const settingsModule: ServicePortalModule = {
         path: ServicePortalPath.MessagesRoot,
         render: () => lazy(() => import('./screens/Messages/Messages')),
       },
+      {
+        name: defineMessage({
+          id: 'sp.settings:email-confirmation',
+          defaultMessage: 'Staðfesta netfang',
+        }),
+        path: ServicePortalPath.UserProfileEmailConfirmation,
+        render: () =>
+          lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
+      },
     ]
 
     return routes

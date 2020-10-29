@@ -112,9 +112,9 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
         <Box marginTop={[5, 7, 15]}>
           {status === 'success' && (
             <AlertMessage
-              type="success"
+              type="info"
               title="Nýtt netfang hefur verið vistað"
-              message="Þú hefur vistað nýtt netfang hjá Stafrænt Ísland"
+              message="Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig"
             />
           )}
           {status === 'error' && (

@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom'
 
 interface Props {
   label: MessageDescriptor | string
-  content?: string
+  content?: string | JSX.Element
   editLink?: {
     external?: boolean
     url: string
