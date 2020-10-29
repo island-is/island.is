@@ -24,7 +24,8 @@ export interface Translation {
   recyclingFundOverview: RecyclingFundOverview
   recyclingFundSidenav: RecyclingFundSidenav
   recyclingCompanies: RecyclingCompanies
-  unauthorized: Unauthorized
+  notFound: NotFound
+  errorBoundary: ErrorBoundary
   routes: Routes
 }
 
@@ -257,8 +258,15 @@ export interface CompanyStatus {
   inactive: string
 }
 
-export interface Unauthorized {
-  message: string
+export interface NotFound {
+  title: string
+  content: string
+  button: string
+}
+
+export interface ErrorBoundary {
+  title: string
+  contents: string[]
 }
 
 export interface DeregisterSelect {

@@ -49,7 +49,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         className={styles.image}
         role="img"
         aria-label={image.title}
-        style={{ backgroundImage: `url(${image.url}?fm=webp&q=80)` }}
+        style={{ backgroundImage: `url(${image.url}?fm=webp&w=640&q=80)` }}
       />
       <Box
         className={styles.content}
