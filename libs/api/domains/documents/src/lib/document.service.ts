@@ -6,7 +6,6 @@ import {
   DocumentInfoDTO,
   DocumentDTO,
 } from '../../gen/fetch/'
-import { ListDocumentsInput } from './dto/listDocumentsInput'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
@@ -42,12 +41,11 @@ export class DocumentService {
   }
 
   async listDocuments(
-    input: ListDocumentsInput,
     nationalId: string,
   ): Promise<Document[]> {
     try {
+
       const body = await this.customersApi.customersListDocuments({
-        ...input,
         kennitala: nationalId,
       });
 

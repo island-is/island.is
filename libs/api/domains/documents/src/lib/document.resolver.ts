@@ -2,7 +2,6 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { DocumentService } from './document.service'
 import { Document } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
-import { ListDocumentsInput } from './dto/listDocumentsInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
 import {
@@ -32,11 +31,8 @@ export class DocumentResolver {
   }
 
   @Query(() => [Document], { nullable: true })
-  listDocuments(
-    @Args('input') input: ListDocumentsInput,
-    @CurrentUser() user: User,
-  ): Promise<Document[]> {
-    return this.documentService.listDocuments(input, user.nationalId)
+  listDocuments(@CurrentUser() user: User): Promise<Document[]> {
+    return this.documentService.listDocuments(user.nationalId)
   }
 
   @Query(() => [DocumentCategory], { nullable: true })
