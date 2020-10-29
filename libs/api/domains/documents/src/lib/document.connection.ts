@@ -18,19 +18,17 @@ export class DocumentOauthConnection {
     }
 
     logger.debug('Fetching token for Document Service')
-
     try {
       const postData = {
-        clientId,
+        client_id: clientId,
         scope: `${basePath}/.default`,
-        clientSecret,
+        client_secret: clientSecret,
         grant_type: 'client_credentials',
       }
       axios.defaults.headers.post['Content-Type'] =
         'application/x-www-form-urlencoded'
 
       const result = await axios.post(tokenUrl, qs.stringify(postData))
-      logger.debug(result.data)
       return result.data.access_token
     } catch (exception) {
       logger.error('Token fetch failed with , ', exception)
