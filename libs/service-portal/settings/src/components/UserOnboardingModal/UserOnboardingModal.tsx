@@ -8,7 +8,7 @@ import { useCreateUserProfile } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
-import { PhoneFormData } from '../Forms/PhoneForm'
+import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
 import { EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
 import { LanguageStep } from './Steps/LanguageStep'
@@ -63,6 +63,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const handlePhoneStepSubmit = (data: PhoneFormData) => {
+    console.log('phone step submit', data)
     setTel(data.tel)
     gotoStep('email-form')
   }
