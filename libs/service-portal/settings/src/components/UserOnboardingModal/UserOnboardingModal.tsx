@@ -63,6 +63,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const handlePhoneStepSubmit = (data: PhoneFormData) => {
+    console.log('phone step submit', data)
     setTel(data.tel)
     gotoStep('email-form')
   }

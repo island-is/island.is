@@ -19,6 +19,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
 import { PhoneForm } from '../../components/Forms/PhoneForm/PhoneForm'
+import { defineMessage } from 'react-intl'
 
 interface PhoneFormData {
   tel: string
@@ -104,21 +105,17 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
             </Button>
           </Link>
         )}
-        renderSubmitButton={() => (
-          <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage({
-              id: 'sp.settings:save-changes',
-              defaultMessage: 'Vista breytingar',
-            })}
-          </Button>
-        )}
+        submitButtonText={defineMessage({
+          id: 'sp.settings:save-changes',
+          defaultMessage: 'Vista breytingar',
+        })}
         onSubmit={handleSubmit}
       />
       {status !== 'passive' && (
         <Box marginTop={[5, 7, 15]}>
           {status === 'success' && (
             <AlertMessage
-              type="info"
+              type="success"
               title="Nýtt símanúmer hefur verið vistað"
               message="Þú hefur vistað nýtt símanúmer hjá Stafrænt Ísland"
             />

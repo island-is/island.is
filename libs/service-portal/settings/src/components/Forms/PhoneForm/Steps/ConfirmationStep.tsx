@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
 
 export interface PhoneConfirmationFormData {
   code: string
@@ -11,18 +12,27 @@ export interface PhoneConfirmationFormData {
 interface Props {
   tel: string
   onSubmit: (data: PhoneConfirmationFormData) => void
-  renderSubmitButton?: () => JSX.Element
+  submitButtonText?: string | MessageDescriptor
   onBack: () => void
+  loading: boolean
 }
 
 export const ConfirmationStep: FC<Props> = ({
   tel,
   onSubmit,
-  renderSubmitButton,
+  submitButtonText,
   onBack,
+  loading,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const { handleSubmit, control, errors, reset } = useForm()
+
+  useEffect(() => {
+    if (tel.length > 0)
+      reset({
+        tel,
+      })
+  }, [tel])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -65,7 +75,21 @@ export const ConfirmationStep: FC<Props> = ({
             defaultMessage: 'Til baka',
           })}
         </Button>
-        {renderSubmitButton && renderSubmitButton()}
+        <Button
+          type="submit"
+          variant="primary"
+          icon="arrowForward"
+          disabled={loading}
+        >
+          {formatMessage(
+            submitButtonText
+              ? submitButtonText
+              : {
+                  id: 'sp.settings:save-changes',
+                  defaultMessage: 'Vista breytingar',
+                },
+          )}
+        </Button>
       </Box>
     </form>
   )

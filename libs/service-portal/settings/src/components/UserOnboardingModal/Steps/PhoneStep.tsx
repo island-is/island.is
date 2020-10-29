@@ -6,6 +6,7 @@ import {
   PhoneFormInternalStep,
 } from '../../Forms/PhoneForm/PhoneForm'
 import { PhoneFormData } from '../../Forms/PhoneForm/Steps/FormStep'
+import { defineMessage } from 'react-intl'
 
 interface Props {
   tel: string
@@ -67,14 +68,10 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
             })}
           </Button>
         )}
-        renderSubmitButton={() => (
-          <Button variant="primary" type="submit" icon="arrowForward">
-            {formatMessage({
-              id: 'service.portal:next-step',
-              defaultMessage: 'Næsta skref',
-            })}
-          </Button>
-        )}
+        submitButtonText={defineMessage({
+          id: 'service.portal:next-step',
+          defaultMessage: 'Næsta skref',
+        })}
         onSubmit={onSubmit}
       />
     </>

@@ -11,9 +11,15 @@ interface Props {
   tel: string
   onSubmit: (data: PhoneFormData) => void
   renderBackButton?: () => JSX.Element
+  loading: boolean
 }
 
-export const FormStep: FC<Props> = ({ tel, onSubmit, renderBackButton }) => {
+export const FormStep: FC<Props> = ({
+  tel,
+  onSubmit,
+  renderBackButton,
+  loading,
+}) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors, reset } = useForm()
 
@@ -60,7 +66,12 @@ export const FormStep: FC<Props> = ({ tel, onSubmit, renderBackButton }) => {
       </Box>
       <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
         {renderBackButton && renderBackButton()}
-        <Button variant="primary" type="submit" icon="arrowForward">
+        <Button
+          variant="primary"
+          type="submit"
+          icon="arrowForward"
+          disabled={loading}
+        >
           {formatMessage({
             id: 'service.portal:confirm-code',
             defaultMessage: 'Senda staðfestingarkóða',

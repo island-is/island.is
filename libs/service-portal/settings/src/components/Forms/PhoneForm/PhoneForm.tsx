@@ -1,6 +1,7 @@
 import { toast } from '@island.is/island-ui/core'
 import { useVerifySms } from '@island.is/service-portal/graphql'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { MessageDescriptor } from 'react-intl'
 import {
   ConfirmationStep,
   PhoneConfirmationFormData,
@@ -13,7 +14,7 @@ interface Props {
   tel: string
   natReg: string
   renderBackButton?: () => JSX.Element
-  renderSubmitButton?: () => JSX.Element
+  submitButtonText?: string | MessageDescriptor
   onInternalStepChange?: (step: PhoneFormInternalStep) => void
   onSubmit: (data: PhoneFormData) => void
 }
@@ -22,7 +23,7 @@ export const PhoneForm: FC<Props> = ({
   tel,
   natReg,
   renderBackButton,
-  renderSubmitButton,
+  submitButtonText,
   onInternalStepChange,
   onSubmit,
 }) => {
@@ -33,6 +34,9 @@ export const PhoneForm: FC<Props> = ({
     confirmLoading,
   } = useVerifySms(natReg)
   const [step, setStep] = useState<PhoneFormInternalStep>('form')
+  const [telInternal, setTelInternal] = useState<string>(tel)
+
+  useEffect(() => setTelInternal(tel), [tel])
 
   const gotoStep = (step: PhoneFormInternalStep) => {
     setStep(step)
@@ -45,9 +49,10 @@ export const PhoneForm: FC<Props> = ({
         mobilePhoneNumber: data.tel,
       })
 
-      if (response.data?.createSmsVerification?.created)
+      if (response.data?.createSmsVerification?.created) {
         gotoStep('confirmation')
-      else {
+        setTelInternal(data.tel)
+      } else {
         toast.error(
           'Eitthvað fór úrskeiðis, ekki tókst að senda SMS í þetta símanúmer',
         )
@@ -85,14 +90,16 @@ export const PhoneForm: FC<Props> = ({
           tel={tel}
           renderBackButton={renderBackButton}
           onSubmit={handleFormStepSubmit}
+          loading={createLoading}
         />
       )}
       {step === 'confirmation' && (
         <ConfirmationStep
-          tel={tel}
-          renderSubmitButton={renderSubmitButton}
+          tel={telInternal}
+          submitButtonText={submitButtonText}
           onSubmit={handleConfirmationStepSubmit}
           onBack={gotoStep.bind(null, 'form')}
+          loading={confirmLoading}
         />
       )}
     </>
