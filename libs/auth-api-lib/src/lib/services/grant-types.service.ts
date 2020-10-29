@@ -13,7 +13,7 @@ export class GrantTypeService {
   ) {}
 
   /** Get's a grant type by name */
-  async getGrantType(name: string): Promise<GrantType> {
+  async getGrantType(name: string): Promise<GrantType | null> {
     this.logger.debug(`Finding grant type for name - "${name}"`)
 
     if (!name) {

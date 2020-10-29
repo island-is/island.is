@@ -14,47 +14,47 @@ export class IdentityResourcesDTO {
   @ApiProperty({
     example: true,
   })
-  enabled: boolean
+  readonly enabled: boolean
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_name',
   })
-  name: string
+  readonly name: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_display_name',
   })
-  displayName: string
+  readonly displayName: string
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
     example: 'set_description',
   })
-  description: string
+  readonly description: string
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: true,
   })
-  showInDiscoveryDocument: boolean
+  readonly showInDiscoveryDocument: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  required: boolean
+  readonly required: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
     example: false,
   })
-  emphasize: boolean
+  readonly emphasize: boolean
 }

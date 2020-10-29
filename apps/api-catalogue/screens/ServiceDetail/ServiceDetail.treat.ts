@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const errorContainer = style({
+export const messageContainer = style({
   height: '50vh',
   display: 'flex',
   flexDirection: 'column',
