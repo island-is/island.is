@@ -38,10 +38,10 @@ export const FamilyMemberCard: FC<Props> = ({
           flexShrink={0}
           marginRight={[2, 4]}
           borderRadius="circle"
-          background="purple200"
+          background="blue100"
           className={styles.avatar}
         >
-          <Text variant="h2" color="purple400">
+          <Text variant="h2" color="blue400">
             {getNameAbbreviation(title)}
           </Text>
         </Box>

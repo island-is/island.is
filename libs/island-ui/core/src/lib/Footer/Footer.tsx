@@ -93,7 +93,7 @@ export const Footer = ({
                     const isLast = index + 1 === topLinksContact.length
                     const isInternalLink = href.indexOf('/') === 0
                     return (
-                      <Box marginBottom={isLast ? 0 : 3}>
+                      <Box marginBottom={isLast ? 0 : 3} key={index}>
                         <Link href={href}>
                           <Button
                             colorScheme="default"
