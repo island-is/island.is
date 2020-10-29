@@ -1,17 +1,18 @@
 import {
   FormItemTypes,
-  FormValue,
   FormModes,
+  FormValue,
+  getValueViaPath,
   mergeAnswers,
 } from '@island.is/application/core'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertFormToScreens,
-  expandRepeater,
   findCurrentScreen,
   getNavigableSectionsInForm,
   moveToScreen,
 } from './reducerUtils'
+import { FormScreen } from '@island.is/application/ui-shell'
 
 export function initializeReducer(
   state: ApplicationUIState,
@@ -61,52 +62,82 @@ const answerAndGoNextScreen = (
       Math.min(newState.activeScreen + 1, newState.screens.length)
     ]
   if (currentScreen.type === FormItemTypes.REPEATER) {
-    if (!currentScreen.repetitions) {
-      return moveToScreen(newState, newState.activeScreen + 1, true)
-    }
+    const repeatedItems = (newState.application.answers[currentScreen.id] ??
+      []) as unknown[]
     return moveToScreen(
       newState,
       newState.activeScreen +
-        currentScreen.repetitions * currentScreen.children.length +
+        repeatedItems.length * currentScreen.children.length +
         1,
       true,
     )
   }
-  if (
-    currentScreen.repeaterIndex !== undefined &&
-    currentScreen.repeaterIndex >= 0 &&
-    nextScreen.repeaterIndex === undefined
-  ) {
+  if (currentScreen.isPartOfRepeater && !nextScreen.isPartOfRepeater) {
     // go back to the initial repeater screen
     return moveToScreen(
       newState,
-      newState.activeScreen - currentScreen.repeaterIndex - 1,
+      findNearestRepeater(newState.activeScreen, newState.screens),
       true,
     )
   }
   return moveToScreen(newState, newState.activeScreen + 1, true)
 }
 
+function expandRepeater(state: ApplicationUIState): ApplicationUIState {
+  const { activeScreen, form, screens, application } = state
+  const repeater = screens[activeScreen]
+  if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
+    return state
+  }
+  const { answers } = application
+  const repeaterValues = getValueViaPath(
+    answers ?? {},
+    repeater.id,
+    [],
+  ) as unknown[]
+
+  // we add an empty object to the repeater array to ensure that new screens will be added
+  const newAnswers = mergeAnswers(answers, {
+    [repeater.id]: [...repeaterValues, {}],
+  })
+  return moveToScreen(
+    {
+      ...state,
+      screens: convertFormToScreens(form, newAnswers),
+    },
+    state.activeScreen + repeaterValues.length * repeater.children.length + 1,
+    true,
+  )
+}
+
+function findNearestRepeater(
+  activeScreen: number,
+  screens: FormScreen[],
+): number {
+  let repeaterIndex = activeScreen - 1
+  for (repeaterIndex; repeaterIndex >= 0; repeaterIndex--) {
+    if (screens[repeaterIndex].type === FormItemTypes.REPEATER) {
+      break
+    }
+  }
+  return repeaterIndex
+}
+
 export const ApplicationReducer = (
   state: ApplicationUIState,
   action: Action,
 ): ApplicationUIState => {
-  const currentScreen = state.screens[state.activeScreen]
   const prevScreen = state.screens[Math.max(state.activeScreen - 1, 0)]
 
   switch (action.type) {
     case ActionTypes.ANSWER_AND_GO_NEXT_SCREEN:
       return answerAndGoNextScreen(state, action.payload)
     case ActionTypes.PREV_SCREEN:
-      if (
-        prevScreen.repeaterIndex !== undefined &&
-        prevScreen.repeaterIndex >= 0 &&
-        currentScreen.repeaterIndex === undefined
-      ) {
+      if (prevScreen.isPartOfRepeater) {
         // go to the repeater index screen, TODO nested repeaters
         return moveToScreen(
           state,
-          state.activeScreen - prevScreen.repeaterIndex - 1,
+          findNearestRepeater(state.activeScreen, state.screens),
           false,
         )
       }
@@ -114,29 +145,7 @@ export const ApplicationReducer = (
     case ActionTypes.ANSWER:
       return addNewAnswersToState(state, action.payload)
     case ActionTypes.EXPAND_REPEATER:
-      // eslint-disable-next-line no-case-declarations
-      const newForm = expandRepeater(
-        state.activeScreen,
-        state.form,
-        state.screens,
-      )
-      if (!newForm) {
-        // the current screen is not a repeater
-        return state
-      }
-      return moveToScreen(
-        {
-          ...state,
-          form: newForm,
-          screens: convertFormToScreens(newForm, state.application.answers),
-        },
-        state.activeScreen +
-          (currentScreen.type === FormItemTypes.REPEATER
-            ? currentScreen.repetitions * currentScreen.children.length
-            : 0) +
-          1,
-        true,
-      )
+      return expandRepeater(state)
     case ActionTypes.ADD_EXTERNAL_DATA:
       return {
         ...state,

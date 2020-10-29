@@ -9,6 +9,7 @@ import {
   ApplicationTypes,
   FormValue,
   FormModes,
+  FormItemTypes,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
@@ -141,10 +142,10 @@ describe('ApplicationFormReducer', () => {
           answers,
         },
       }
-      const initializedState = initializeReducer(stateWhichViolatesOneCondition)
-      expect(initializedState.screens[0].isNavigable).toBe(true)
-      expect(initializedState.screens[1].isNavigable).toBe(false)
-      expect(initializedState.application.answers).toEqual(answers)
+      const newState = initializeReducer(stateWhichViolatesOneCondition)
+      expect(newState.screens[0].isNavigable).toBe(true)
+      expect(newState.screens[3].isNavigable).toBe(false)
+      expect(newState.application.answers).toEqual(answers)
     })
     it('should go to the screen where the last answer belongs to the screen before', () => {
       const answers = {
@@ -159,7 +160,7 @@ describe('ApplicationFormReducer', () => {
         },
       }
       const initializedState = initializeReducer(state)
-      expect(initializedState.activeScreen).toBe(2)
+      expect(initializedState.activeScreen).toBe(4)
       expect(initializedState.activeSection).toBe(1)
     })
     it('should go to the first screen although there are answers, if and only if the current form is in review mode', () => {
@@ -209,15 +210,19 @@ describe('ApplicationFormReducer', () => {
       expect(updatedState.activeScreen).toBe(3)
     })
     it('should jump over all screens that already belong to the repeater, if the current screen is a repeater', () => {
-      const expandAction = { type: ActionTypes.EXPAND_REPEATER }
       const updatedState = {
-        ...ApplicationReducer(
-          {
-            ...ApplicationReducer(initializedState, expandAction),
-            activeScreen: 0,
+        ...initializeReducer({
+          ...initialState,
+          application: {
+            ...initialState.application,
+            answers: {
+              person: [
+                { name: 'a', age: 22 },
+                { name: 'b', age: 33 },
+              ],
+            },
           },
-          expandAction,
-        ),
+        }),
         activeScreen: 0,
       }
       expect(updatedState.activeScreen).toBe(0)
@@ -226,15 +231,19 @@ describe('ApplicationFormReducer', () => {
       expect(finalState.activeScreen).toBe(5)
     })
     it('should return back to the repeater screen when reaching the end of the screens belonging to the repeater', () => {
-      const expandAction = { type: ActionTypes.EXPAND_REPEATER }
       const updatedState = {
-        ...ApplicationReducer(
-          {
-            ...ApplicationReducer(initializedState, expandAction),
-            activeScreen: 0,
+        ...initializeReducer({
+          ...initialState,
+          application: {
+            ...initialState.application,
+            answers: {
+              person: [
+                { name: 'a', age: 22 },
+                { name: 'b', age: 33 },
+              ],
+            },
           },
-          expandAction,
-        ),
+        }),
         activeScreen: 4,
       }
       expect(updatedState.activeScreen).toBe(4)
@@ -264,6 +273,26 @@ describe('ApplicationFormReducer', () => {
       const updatedState = ApplicationReducer(initializedState, action)
       expect(updatedState.activeScreen).toBe(0)
     })
+    it('should go to the repeater screen when going back in the midst of a repeater flow', () => {
+      const state = initializeReducer({
+        ...initialState,
+        application: {
+          ...initialState.application,
+          answers: {
+            person: [{ name: 'a', age: 22 }, { name: 'b' }],
+          },
+        },
+        activeScreen: 5,
+      })
+      expect(state.screens[state.activeScreen].id).toBe('person[1].age')
+
+      const updatedState = ApplicationReducer(state, action)
+      expect(updatedState.activeScreen).toBe(0)
+      expect(updatedState.screens[updatedState.activeScreen].id).toBe('person')
+      expect(updatedState.screens[updatedState.activeScreen].type).toBe(
+        FormItemTypes.REPEATER,
+      )
+    })
   })
   describe('answer', () => {
     const type = ActionTypes.ANSWER
@@ -292,8 +321,9 @@ describe('ApplicationFormReducer', () => {
         },
       })
       expect(updatedState.screens[0].isNavigable).toBeTruthy()
-      expect(updatedState.screens[1].isNavigable).toBeFalsy()
+      expect(updatedState.screens[1].isNavigable).toBeTruthy()
       expect(updatedState.screens[2].isNavigable).toBeTruthy()
+      expect(updatedState.screens[3].isNavigable).toBeFalsy()
     })
     it('should use the newest value of an array and not merge the previous value', () => {
       const initialState = {
@@ -342,23 +372,37 @@ describe('ApplicationFormReducer', () => {
     it('should add new screens directly after the repeater when expanding a given repeater for the first time', () => {
       const updatedState = ApplicationReducer(initializedState, action)
       expect(updatedState.screens.length).toBe(6)
-      expect(updatedState.screens[1].repeaterIndex).toBe(0)
+      expect(updatedState.screens[1].isPartOfRepeater).toBe(true)
       expect(updatedState.screens[1].id).toBe('person[0].name')
-      expect(updatedState.screens[2].repeaterIndex).toBe(1)
+      expect(updatedState.screens[2].isPartOfRepeater).toBe(true)
       expect(updatedState.screens[2].id).toBe('person[0].age')
       expect(updatedState.screens[3].id).toBe('familyName')
+      expect(updatedState.screens[3].isPartOfRepeater).toBeFalsy()
     })
     it('should add new screens after the already added screens when expanding the repeater for the nth time', () => {
       const updatedState = ApplicationReducer(
-        { ...ApplicationReducer(initializedState, action), activeScreen: 0 },
+        initializeReducer({
+          ...initialState,
+          application: {
+            ...initialState.application,
+            answers: {
+              person: [
+                { name: 'a', age: 22 },
+                { name: 'b', age: 33 },
+              ],
+            },
+          },
+          activeScreen: 0,
+        }),
         action,
       )
 
       expect(updatedState.screens.length).toBe(8)
-      expect(updatedState.screens[1].repeaterIndex).toBe(0)
-      expect(updatedState.screens[2].repeaterIndex).toBe(1)
-      expect(updatedState.screens[3].repeaterIndex).toBe(2)
-      expect(updatedState.screens[4].repeaterIndex).toBe(3)
+      expect(updatedState.screens[1].isPartOfRepeater).toBe(true)
+      expect(updatedState.screens[2].isPartOfRepeater).toBe(true)
+      expect(updatedState.screens[3].isPartOfRepeater).toBe(true)
+      expect(updatedState.screens[4].isPartOfRepeater).toBe(true)
+      expect(updatedState.screens[5].isPartOfRepeater).toBeFalsy()
       expect(updatedState.screens[1].id).toBe('person[0].name')
       expect(updatedState.screens[2].id).toBe('person[0].age')
       expect(updatedState.screens[3].id).toBe('person[1].name')
@@ -369,7 +413,14 @@ describe('ApplicationFormReducer', () => {
       let updatedState = ApplicationReducer(initializedState, action)
       expect(updatedState.activeScreen).toBe(1)
       updatedState = ApplicationReducer(
-        { ...updatedState, activeScreen: 0 },
+        {
+          ...updatedState,
+          application: {
+            ...updatedState.application,
+            answers: { person: [{ name: 'a', age: 22 }] },
+          },
+          activeScreen: 0,
+        },
         action,
       )
       expect(updatedState.activeScreen).toBe(3)

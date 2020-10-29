@@ -201,7 +201,6 @@ export const right = style({
 })
 
 export const monthContainer = style({
-  textTransform: 'capitalize',
   display: 'flex',
   justifyContent: 'end',
   flexDirection: 'row',
@@ -240,6 +239,7 @@ export const eventsContainer = style({
 
 export const leftLabel = style({
   color: theme.color.blue300,
+  textTransform: 'capitalize',
 })
 
 export const arrowButton = style({
