@@ -11,12 +11,12 @@ export class DocumentService {
   constructor(private customersApi: CustomersApi) {}
 
   async findByDocumentId(
-    natReg: string,
+    nationalId: string,
     documentId: string,
   ): Promise<DocumentDetails> {
     try {
       const documentDTO = await this.customersApi.customersDocument({
-        kennitala: natReg,
+        kennitala: nationalId,
         messageId: documentId,
         authenticationType: 'LOW',
       })
@@ -28,16 +28,16 @@ export class DocumentService {
     }
   }
 
-  async listDocuments(input: ListDocumentsInput): Promise<Document[]> {
+  async listDocuments(
+    input: ListDocumentsInput,
+    nationalId: string,
+  ): Promise<Document[]> {
     try {
       const body = await this.customersApi.customersListDocuments({
-        kennitala: input.natReg,
-        dateFrom: input.dateFrom,
-        dateTo: input.dateTo,
-        categoryId: input.category,
-        page: input.page,
-        pageSize: input.pageSize,
+        ...input,
+        kennitala: nationalId,
       })
+
       return body.messages.reduce(function (
         result: Document[],
         documentMessage: DocumentInfoDTO,

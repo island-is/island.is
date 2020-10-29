@@ -4,12 +4,13 @@ import qs from 'qs'
 import { logger } from '@island.is/logging'
 
 export class DocumentOauthConnection {
-  static async fetchToken(): Promise<string> {
-    const client_id = process.env.POSTHOLF_CLIENTID
-    const client_secret = process.env.POSTHOLF_CLIENT_SECRET
-    const token_url = process.env.POSTHOLF_TOKEN_URL
-
-    if (!client_id || !client_secret || !token_url) {
+  static async fetchToken(
+    clientId: string,
+    clientSecret: string,
+    tokenUrl: string,
+    basePath: string,
+  ): Promise<string> {
+    if (!clientId || !clientSecret || !tokenUrl) {
       logger.info(
         'No credentials provided to fetchToken for DocumentOauthConnection',
       )
@@ -20,16 +21,15 @@ export class DocumentOauthConnection {
 
     try {
       const postData = {
-        client_id,
-        scope:
-          'https://test-skjalabirting-island-is.azurewebsites.net/.default',
-        client_secret,
+        clientId,
+        scope: `${basePath}/.default`,
+        clientSecret,
         grant_type: 'client_credentials',
       }
       axios.defaults.headers.post['Content-Type'] =
         'application/x-www-form-urlencoded'
 
-      const result = await axios.post(token_url, qs.stringify(postData))
+      const result = await axios.post(tokenUrl, qs.stringify(postData))
       logger.debug(result.data)
       return result.data.access_token
     } catch (exception) {

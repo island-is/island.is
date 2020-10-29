@@ -5,7 +5,15 @@ import { GetDocumentInput } from './dto/getDocumentInput'
 import { ListDocumentsInput } from './dto/listDocumentsInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User,
+} from '@island.is/auth-api-lib'
+import { UseGuards } from '@nestjs/common'
 
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DocumentResolver {
   constructor(private documentService: DocumentService) {}
@@ -13,10 +21,10 @@ export class DocumentResolver {
   @Query(() => DocumentDetails, { nullable: true })
   async getDocument(
     @Args('input') input: GetDocumentInput,
+    @CurrentUser() user: User,
   ): Promise<DocumentDetails> {
-    const kennitala = '2606862759' // Pending proper authentication
     const result = await this.documentService.findByDocumentId(
-      kennitala,
+      user.nationalId,
       input.id,
     )
 
@@ -24,14 +32,17 @@ export class DocumentResolver {
   }
 
   @Query(() => [Document], { nullable: true })
-  listDocuments(@Args('input') input: ListDocumentsInput): Promise<Document[]> {
-    input.natReg = '2606862759' // Pending proper authentication
-    return this.documentService.listDocuments(input)
+  listDocuments(
+    @Args('input') input: ListDocumentsInput,
+    @CurrentUser() user: User,
+  ): Promise<Document[]> {
+    return this.documentService.listDocuments(input, user.nationalId)
   }
 
   @Query(() => [DocumentCategory], { nullable: true })
-  getDocumentCategories(): Promise<DocumentCategory[]> {
-    const natReg = '2606862759' // Pending proper authentication
-    return this.documentService.getCategories(natReg)
+  getDocumentCategories(
+    @CurrentUser() user: User,
+  ): Promise<DocumentCategory[]> {
+    return this.documentService.getCategories(user.nationalId)
   }
 }
