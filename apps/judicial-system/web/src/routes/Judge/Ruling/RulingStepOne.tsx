@@ -83,57 +83,19 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.sessionStorage.getItem('workingCase')
+    const getCurrentCase = async () => {
+      setIsLoading(true)
 
-    if (caseDraft && caseDraft !== 'undefined' && !workingCase) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        rejecting: caseDraftJSON.rejecting ?? false,
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
-        accusedAppealAnnouncement:
-          caseDraftJSON.accusedAppealAnnouncement ?? '',
-        prosecutorAppealAnnouncement:
-          caseDraftJSON.prosecutorAppealAnnouncement ?? '',
-        prosecutorId: caseDraftJSON.prosecutorId ?? null,
-        prosecutor: caseDraftJSON.prosecutor ?? null,
-        judgeId: caseDraftJSON.judgeId ?? null,
-        judge: caseDraftJSON.judge ?? null,
-      })
+      if (!workingCase) {
+        const currentCase = await api.getCaseById(id)
+        setWorkingCase(currentCase.case)
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+    if (id) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -188,12 +150,7 @@ export const RulingStepOne: React.FC = () => {
                 onBlur={(evt) => {
                   const validateEmpty = validate(evt.target.value, 'empty')
 
-                  updateState(
-                    workingCase,
-                    'ruling',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
+                  setWorkingCase({ ...workingCase, ruling: evt.target.value })
 
                   if (
                     validateEmpty.isValid &&
@@ -217,11 +174,13 @@ export const RulingStepOne: React.FC = () => {
                   name="rejectRequest"
                   label="Hafna kröfu"
                   onChange={({ target }) => {
-                    autoSave(
-                      workingCase,
-                      'rejecting',
-                      target.checked,
-                      setWorkingCase,
+                    setWorkingCase({
+                      ...workingCase,
+                      rejecting: target.checked,
+                    })
+                    api.saveCase(
+                      workingCase.id,
+                      parseString('rejecting', target.checked),
                     )
                   }}
                   checked={workingCase.rejecting}
@@ -257,12 +216,10 @@ export const RulingStepOne: React.FC = () => {
                           : 'date',
                     })
 
-                    updateState(
-                      workingCase,
-                      'custodyEndDate',
-                      formattedDate,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      custodyEndDate: formattedDate,
+                    })
 
                     api.saveCase(
                       workingCase.id,
@@ -279,7 +236,7 @@ export const RulingStepOne: React.FC = () => {
                   label="Tímasetning"
                   ref={custodyEndTimeRef}
                   defaultValue={
-                    workingCase.custodyEndDate.indexOf('T') > -1
+                    workingCase.custodyEndDate?.indexOf('T') > -1
                       ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
                       : workingCase.requestedCustodyEndDate?.indexOf('T') > -1
                       ? formatDate(
@@ -305,12 +262,10 @@ export const RulingStepOne: React.FC = () => {
                       evt.target.value,
                     )
 
-                    updateState(
-                      workingCase,
-                      'custodyEndDate',
-                      custodyEndDateMinutes,
-                      setWorkingCase,
-                    )
+                    setWorkingCase({
+                      ...workingCase,
+                      custodyEndDate: custodyEndDateMinutes,
+                    })
 
                     if (
                       validateTimeEmpty.isValid &&
@@ -368,6 +323,10 @@ export const RulingStepOne: React.FC = () => {
 
                             // If the user is checking the box, add the restriction to the state
                             if (!restrictionIsSelected) {
+                              if (copyOfState.custodyRestrictions === null) {
+                                copyOfState.custodyRestrictions = []
+                              }
+
                               copyOfState.custodyRestrictions.push(
                                 target.value as CaseCustodyRestrictions,
                               )
@@ -384,8 +343,11 @@ export const RulingStepOne: React.FC = () => {
                               )
                             }
 
-                            // Set the updated state as the state
-                            setWorkingCase(copyOfState)
+                            setWorkingCase({
+                              ...workingCase,
+                              custodyRestrictions:
+                                copyOfState.custodyRestrictions,
+                            })
 
                             // Save case
                             api.saveCase(
@@ -394,13 +356,6 @@ export const RulingStepOne: React.FC = () => {
                                 'custodyRestrictions',
                                 copyOfState.custodyRestrictions,
                               ),
-                            )
-
-                            updateState(
-                              workingCase,
-                              'custodyRestrictions',
-                              copyOfState.custodyRestrictions,
-                              setWorkingCase,
                             )
                           }}
                           large

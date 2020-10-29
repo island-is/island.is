@@ -9,12 +9,7 @@ import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { Case } from '../../../types'
-import useWorkingCase from '../../../utils/hooks/useWorkingCase'
-import {
-  autoSave,
-  isNextDisabled,
-  updateState,
-} from '../../../utils/stepHelper'
+import { isNextDisabled } from '../../../utils/stepHelper'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -28,7 +23,7 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 import { useParams } from 'react-router-dom'
 
 export const CourtRecord: React.FC = () => {
-  const [workingCase, setWorkingCase] = useWorkingCase()
+  const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [
     courtDocumentStartErrorMessage,
@@ -52,14 +47,19 @@ export const CourtRecord: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const wc: Case = JSON.parse(window.sessionStorage.getItem('workingCase'))
+    const getCurrentCase = async () => {
+      setIsLoading(true)
 
-    if (wc && !workingCase) {
-      setWorkingCase(wc)
+      if (!workingCase) {
+        const currentCase = await api.getCaseById(id)
+        setWorkingCase(currentCase.case)
+      }
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+    if (id) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   return (
     <PageLayout activeSection={1} activeSubSection={1} isLoading={isLoading}>
@@ -101,6 +101,11 @@ export const CourtRecord: React.FC = () => {
                       'time-format',
                     )
 
+                    setWorkingCase({
+                      ...workingCase,
+                      courtStartTime: evt.target.value,
+                    })
+
                     if (
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
@@ -112,21 +117,12 @@ export const CourtRecord: React.FC = () => {
                       if (
                         courtStartTimeMinutes !== workingCase.courtStartTime
                       ) {
-                        autoSave(
-                          workingCase,
-                          'courtStartTime',
-                          courtStartTimeMinutes,
-                          setWorkingCase,
+                        api.saveCase(
+                          workingCase.id,
+                          parseString('courtStartTime', courtStartTimeMinutes),
                         )
                       }
                     } else {
-                      updateState(
-                        workingCase,
-                        'courtStartTime',
-                        evt.target.value,
-                        setWorkingCase,
-                      )
-
                       setCourtDocumentStartErrorMessage(
                         validateTimeEmpty.errorMessage ||
                           validateTimeFormat.errorMessage,
@@ -157,22 +153,19 @@ export const CourtRecord: React.FC = () => {
                       new Date().toString(),
                       evt.target.value,
                     )
+
+                    setWorkingCase({
+                      ...workingCase,
+                      courtEndTime: evt.target.value,
+                    })
+
                     if (courtEndTimeMinutes !== workingCase.courtEndTime) {
-                      autoSave(
-                        workingCase,
-                        'courtEndTime',
-                        courtEndTimeMinutes,
-                        setWorkingCase,
+                      api.saveCase(
+                        workingCase.id,
+                        parseString('courtEndTime', courtEndTimeMinutes),
                       )
                     }
                   } else {
-                    updateState(
-                      workingCase,
-                      'courtEndTime',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-
                     setCourtDocumentEndErrorMessage(
                       validateTimeEmpty.errorMessage ||
                         validateTimeFormat.errorMessage,
@@ -193,13 +186,12 @@ export const CourtRecord: React.FC = () => {
                 defaultValue={workingCase?.courtAttendees}
                 placeholder="Skrifa hér..."
                 onBlur={(evt) => {
-                  updateState(
-                    workingCase,
-                    'courtAttendees',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
                   const validateEmpty = validate(evt.target.value, 'empty')
+
+                  setWorkingCase({
+                    ...workingCase,
+                    courtAttendees: evt.target.value,
+                  })
 
                   if (
                     validateEmpty.isValid &&
@@ -228,13 +220,11 @@ export const CourtRecord: React.FC = () => {
               defaultValue={workingCase?.policeDemands}
               placeholder="Hvað hafði ákæruvaldið að segja?"
               onBlur={(evt) => {
-                updateState(
-                  workingCase,
-                  'policeDemands',
-                  evt.target.value,
-                  setWorkingCase,
-                )
                 const validateEmpty = validate(evt.target.value, 'empty')
+                setWorkingCase({
+                  ...workingCase,
+                  policeDemands: evt.target.value,
+                })
 
                 if (
                   validateEmpty.isValid &&
@@ -294,13 +284,11 @@ export const CourtRecord: React.FC = () => {
               defaultValue={workingCase.accusedPlea}
               placeholder="Hvað hafði kærði að segja um kröfuna? Mótmælti eða samþykkti?"
               onBlur={(evt) => {
-                updateState(
-                  workingCase,
-                  'accusedPlea',
-                  evt.target.value,
-                  setWorkingCase,
-                )
                 const validateEmpty = validate(evt.target.value, 'empty')
+                setWorkingCase({
+                  ...workingCase,
+                  accusedPlea: evt.target.value,
+                })
 
                 if (
                   validateEmpty.isValid &&
@@ -335,13 +323,11 @@ export const CourtRecord: React.FC = () => {
               defaultValue={workingCase.litigationPresentations}
               placeholder="Almennar málflutningsræður skráðar hér..."
               onBlur={(evt) => {
-                updateState(
-                  workingCase,
-                  'litigationPresentations',
-                  evt.target.value,
-                  setWorkingCase,
-                )
                 const validateEmpty = validate(evt.target.value, 'empty')
+                setWorkingCase({
+                  ...workingCase,
+                  litigationPresentations: evt.target.value,
+                })
 
                 if (
                   validateEmpty.isValid &&

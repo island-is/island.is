@@ -31,57 +31,19 @@ export const RulingStepTwo: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const caseDraft = window.sessionStorage.getItem('workingCase')
+    const getCurrentCase = async () => {
+      setIsLoading(true)
 
-    if (caseDraft && caseDraft !== 'undefined' && !workingCase) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        rejecting: caseDraftJSON.rejecting ?? false,
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
-        accusedAppealAnnouncement:
-          caseDraftJSON.accusedAppealAnnouncement ?? '',
-        prosecutorAppealAnnouncement:
-          caseDraftJSON.prosecutorAppealAnnouncement ?? '',
-        prosecutorId: caseDraftJSON.prosecutorId ?? null,
-        prosecutor: caseDraftJSON.prosecutor ?? null,
-        judgeId: caseDraftJSON.judgeId ?? null,
-        judge: caseDraftJSON.judge ?? null,
-      })
+      if (!workingCase) {
+        const currentCase = await api.getCaseById(id)
+        setWorkingCase(currentCase.case)
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+    if (id) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   return (
     <PageLayout activeSection={1} activeSubSection={3} isLoading={isLoading}>
@@ -146,12 +108,11 @@ export const RulingStepTwo: React.FC = () => {
                         CaseAppealDecision.APPEAL
                       }
                       onChange={() => {
-                        updateState(
-                          workingCase,
-                          'accusedAppealDecision',
-                          CaseAppealDecision.APPEAL,
-                          setWorkingCase,
-                        )
+                        setWorkingCase({
+                          ...workingCase,
+                          accusedAppealDecision: CaseAppealDecision.APPEAL,
+                        })
+
                         api.saveCase(
                           workingCase.id,
                           parseString(
@@ -174,12 +135,10 @@ export const RulingStepTwo: React.FC = () => {
                         CaseAppealDecision.ACCEPT
                       }
                       onChange={() => {
-                        updateState(
-                          workingCase,
-                          'accusedAppealDecision',
-                          CaseAppealDecision.ACCEPT,
-                          setWorkingCase,
-                        )
+                        setWorkingCase({
+                          ...workingCase,
+                          accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                        })
 
                         api.saveCase(
                           workingCase.id,
@@ -207,12 +166,10 @@ export const RulingStepTwo: React.FC = () => {
                         CaseAppealDecision.POSTPONE
                       }
                       onChange={() => {
-                        updateState(
-                          workingCase,
-                          'accusedAppealDecision',
-                          CaseAppealDecision.POSTPONE,
-                          setWorkingCase,
-                        )
+                        setWorkingCase({
+                          ...workingCase,
+                          accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                        })
 
                         api.saveCase(
                           workingCase.id,
@@ -238,11 +195,14 @@ export const RulingStepTwo: React.FC = () => {
                 }
                 placeholder="Í hvaða skyni er kært?"
                 onBlur={(evt) => {
-                  autoSave(
-                    workingCase,
-                    'accusedAppealAnnouncement',
-                    evt.target.value,
-                    setWorkingCase,
+                  setWorkingCase({
+                    ...workingCase,
+                    accusedAppealAnnouncement: evt.target.value,
+                  })
+
+                  api.saveCase(
+                    workingCase.id,
+                    parseString('accusedAppealAnnouncement', evt.target.value),
                   )
                 }}
                 textarea
@@ -270,12 +230,10 @@ export const RulingStepTwo: React.FC = () => {
                       CaseAppealDecision.APPEAL
                     }
                     onChange={() => {
-                      updateState(
-                        workingCase,
-                        'prosecutorAppealDecision',
-                        CaseAppealDecision.APPEAL,
-                        setWorkingCase,
-                      )
+                      setWorkingCase({
+                        ...workingCase,
+                        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                      })
 
                       api.saveCase(
                         workingCase.id,
@@ -299,12 +257,10 @@ export const RulingStepTwo: React.FC = () => {
                       CaseAppealDecision.ACCEPT
                     }
                     onChange={() => {
-                      updateState(
-                        workingCase,
-                        'prosecutorAppealDecision',
-                        CaseAppealDecision.ACCEPT,
-                        setWorkingCase,
-                      )
+                      setWorkingCase({
+                        ...workingCase,
+                        prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                      })
 
                       api.saveCase(
                         workingCase.id,
@@ -332,12 +288,10 @@ export const RulingStepTwo: React.FC = () => {
                       CaseAppealDecision.POSTPONE
                     }
                     onChange={() => {
-                      updateState(
-                        workingCase,
-                        'prosecutorAppealDecision',
-                        CaseAppealDecision.POSTPONE,
-                        setWorkingCase,
-                      )
+                      setWorkingCase({
+                        ...workingCase,
+                        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+                      })
 
                       api.saveCase(
                         workingCase.id,
@@ -364,11 +318,17 @@ export const RulingStepTwo: React.FC = () => {
                 }
                 placeholder="Í hvaða skyni er kært?"
                 onBlur={(evt) => {
-                  autoSave(
-                    workingCase,
-                    'prosecutorAppealAnnouncement',
-                    evt.target.value,
-                    setWorkingCase,
+                  setWorkingCase({
+                    ...workingCase,
+                    prosecutorAppealAnnouncement: evt.target.value,
+                  })
+
+                  api.saveCase(
+                    workingCase.id,
+                    parseString(
+                      'prosecutorAppealAnnouncement',
+                      evt.target.value,
+                    ),
                   )
                 }}
                 textarea

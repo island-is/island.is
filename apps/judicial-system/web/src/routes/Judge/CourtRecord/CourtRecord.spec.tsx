@@ -1,28 +1,27 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
-import { act, render } from '@testing-library/react'
-import { Router } from 'react-router-dom'
+import { act, render, waitFor } from '@testing-library/react'
+import { MemoryRouter, Route } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import * as Constants from '../../../utils/constants'
 import CourtRecord from './CourtRecord'
 import userEvent from '@testing-library/user-event'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/extend-expect'
 
 describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
   test('should now allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Mock sessionStorage methods
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
+    fetchMock.mock(
+      '/api/case/test_id',
+      {
         id: 'test_id',
         courtStartTime: '2020-10-24T13:37:00Z',
         courtEndTime: '2020-10-24T13:40:00Z',
-      })
-    })
-    Storage.prototype.setItem = jest.fn()
+      },
+      { method: 'get' },
+    )
 
     // Mock call to api.updateCase
     fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
@@ -30,40 +29,38 @@ describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
     // Act
     const { getByTestId } = render(
       <userContext.Provider value={{ user: mockJudge }}>
-        <Router history={history}>
-          <CourtRecord />
-        </Router>
+        <MemoryRouter
+          initialEntries={[`${Constants.COURT_DOCUMENT_ROUTE}/test_id`]}
+        >
+          <Route path={`${Constants.COURT_DOCUMENT_ROUTE}/:id`}>
+            <CourtRecord />
+          </Route>
+        </MemoryRouter>
       </userContext.Provider>,
     )
 
     // Assert
     await act(async () => {
       userEvent.type(
-        getByTestId('courtAttendees') as HTMLInputElement,
+        await waitFor(() => getByTestId('courtAttendees') as HTMLInputElement),
         'Jon Hnerring, Pol Ulov',
       )
       userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       await userEvent.type(
         getByTestId('policeDemands') as HTMLInputElement,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nec lapathi suavitatem acupenseri Galloni Laelius anteponebat, sed suavitatem ipsam neglegebat; Duo Reges: constructio interrete. Nam his libris eum malo quam reliquo ornatu villae delectari. Quod cum dixissent, ille contra. At enim hic etiam dolore. Vide ne ista sint Manliana vestra aut maiora etiam, si imperes quod facere non possim. Ita ne hoc quidem modo paria peccata sunt. Non autem hoc: igitur ne illud quidem. Quare conare, quaeso. Nam si propter voluptatem, quae est ista laus, quae possit e macello peti? ',
       )
       userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       await userEvent.type(
         getByTestId('accusedPlea') as HTMLInputElement,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Iam id ipsum absurdum, maximum malum neglegi. Sed ne, dum huic obsequor, vobis molestus sim. Quae dici eadem de ceteris virtutibus possunt, quarum omnium fundamenta vos in voluptate tamquam in aqua ponitis. Hanc ergo intuens debet institutum illud quasi signum absolvere. Duo Reges: constructio interrete. Quorum sine causa fieri nihil putandum est. Antiquorum autem sententiam Antiochus noster mihi videtur persequi diligentissime, quam eandem Aristoteli fuisse et Polemonis docet. Atque ab his initiis profecti omnium virtutum et originem et progressionem persecuti sunt. Nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; Cur deinde Metrodori liberos commendas?',
       )
       userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       await userEvent.type(
         getByTestId('litigationPresentations') as HTMLInputElement,
@@ -71,8 +68,8 @@ describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
       )
       userEvent.tab()
       expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(false)
+        getByTestId('continueButton') as HTMLButtonElement,
+      ).not.toBeDisabled()
     })
   })
 })

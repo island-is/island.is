@@ -24,7 +24,7 @@ import {
 } from '@island.is/judicial-system/types'
 import * as api from '../../../api'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import * as style from './Confirmation.treat'
@@ -41,18 +41,26 @@ export const Confirmation: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const uContext = useContext(userContext)
   const history = useHistory()
+  const { id } = useParams<{ id: string }>()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    const wc: Case = JSON.parse(window.sessionStorage.getItem('workingCase'))
-    if (wc && !workingCase) {
-      setWorkingCase(wc)
+    const getCurrentCase = async () => {
+      setIsLoading(true)
+
+      if (!workingCase) {
+        const currentCase = await api.getCaseById(id)
+        setWorkingCase(currentCase.case)
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [workingCase, setWorkingCase, setIsLoading])
+    if (id) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   useEffect(() => {
     if (!modalVisible) {

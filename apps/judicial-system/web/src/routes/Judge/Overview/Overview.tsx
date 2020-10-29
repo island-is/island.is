@@ -18,7 +18,6 @@ import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
-import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
@@ -26,6 +25,7 @@ import { userContext } from '@island.is/judicial-system-web/src/utils/userContex
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
+import { Case } from '@island.is/judicial-system-web/src/types'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -33,7 +33,7 @@ export const JudgeOverview: React.FC = () => {
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
-  const [workingCase, setWorkingCase] = useWorkingCase()
+  const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const uContext = useContext(userContext)
 
@@ -45,16 +45,11 @@ export const JudgeOverview: React.FC = () => {
     let mounted = true
 
     const getCurrentCase = async () => {
-      const currentCase = await api.getCaseById(id)
-      window.sessionStorage.setItem(
-        'workingCase',
-        JSON.stringify(currentCase.case),
-      )
-
       if (mounted && !workingCase) {
+        const currentCase = await api.getCaseById(id)
         setWorkingCase(currentCase.case)
-        setIsLoading(false)
       }
+      setIsLoading(false)
     }
 
     if (id) {
@@ -87,16 +82,14 @@ export const JudgeOverview: React.FC = () => {
                 name="courtCaseNumber"
                 label="Slá inn málsnúmer"
                 placeholder="R-X/ÁÁÁÁ"
-                defaultValue={workingCase?.courtCaseNumber}
+                defaultValue={workingCase.courtCaseNumber}
                 errorMessage={courtCaseNumberErrorMessage}
                 hasError={courtCaseNumberErrorMessage !== ''}
                 onBlur={(evt) => {
-                  updateState(
-                    workingCase,
-                    'courtCaseNumber',
-                    evt.target.value,
-                    setWorkingCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    courtCaseNumber: evt.target.value,
+                  })
 
                   const validateField = validate(evt.target.value, 'empty')
 
@@ -117,7 +110,7 @@ export const JudgeOverview: React.FC = () => {
               <Text
                 variant="small"
                 fontWeight="semiBold"
-              >{`LÖKE málsnr. ${workingCase?.policeCaseNumber}`}</Text>
+              >{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
             </Box>
           </Box>
           <Box component="section" marginBottom={5}>
@@ -127,7 +120,7 @@ export const JudgeOverview: React.FC = () => {
               </Text>
             </Box>
             <Text variant="h3">
-              {formatNationalId(workingCase?.accusedNationalId)}
+              {formatNationalId(workingCase.accusedNationalId)}
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
@@ -136,7 +129,7 @@ export const JudgeOverview: React.FC = () => {
                 Fullt nafn
               </Text>
             </Box>
-            <Text variant="h3">{workingCase?.accusedName}</Text>
+            <Text variant="h3">{workingCase.accusedName}</Text>
           </Box>
           <Box component="section" marginBottom={5}>
             <Box marginBottom={1}>
@@ -144,7 +137,7 @@ export const JudgeOverview: React.FC = () => {
                 Lögheimili/dvalarstaður
               </Text>
             </Box>
-            <Text variant="h3">{workingCase?.accusedAddress}</Text>
+            <Text variant="h3">{workingCase.accusedAddress}</Text>
           </Box>
           <Box component="section" marginBottom={5}>
             <Box marginBottom={1}>
@@ -152,7 +145,7 @@ export const JudgeOverview: React.FC = () => {
                 Dómstóll
               </Text>
             </Box>
-            <Text variant="h3">{workingCase?.court}</Text>
+            <Text variant="h3">{workingCase.court}</Text>
           </Box>
           <Box component="section" marginBottom={5}>
             <Box marginBottom={1}>
@@ -163,8 +156,8 @@ export const JudgeOverview: React.FC = () => {
             <Text variant="h3">
               {workingCase?.arrestDate &&
                 `${capitalize(
-                  formatDate(workingCase?.arrestDate, 'PPPP'),
-                )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
+                  formatDate(workingCase.arrestDate, 'PPPP'),
+                )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
@@ -175,7 +168,7 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {`${capitalize(
-                formatDate(workingCase?.requestedCourtDate, 'PPPP'),
+                formatDate(workingCase.requestedCourtDate, 'PPPP'),
               )} kl. ${formatDate(
                 workingCase?.requestedCourtDate,
                 TIME_FORMAT,
@@ -190,7 +183,7 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {workingCase?.prosecutor
-                ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
+                ? `${workingCase.prosecutor.name}, ${workingCase.prosecutor.title}`
                 : `${uContext?.user?.name}, ${uContext?.user?.title}`}
             </Text>
           </Box>
@@ -205,9 +198,9 @@ export const JudgeOverview: React.FC = () => {
                 <Text>
                   Gæsluvarðhald til
                   <strong>
-                    {workingCase?.requestedCustodyEndDate &&
+                    {workingCase.requestedCustodyEndDate &&
                       ` ${formatDate(
-                        workingCase?.requestedCustodyEndDate,
+                        workingCase.requestedCustodyEndDate,
                         'PPP',
                       )} kl. ${formatDate(
                         workingCase.requestedCustodyEndDate,
@@ -240,7 +233,7 @@ export const JudgeOverview: React.FC = () => {
                       Lagaákvæði sem krafan er byggð á
                     </Text>
                   </Box>
-                  {workingCase?.custodyProvisions.map(
+                  {workingCase.custodyProvisions?.map(
                     (custodyProvision: CaseCustodyProvisions, index) => {
                       return (
                         <div key={index}>
@@ -269,7 +262,7 @@ export const JudgeOverview: React.FC = () => {
                 startExpanded
                 labelVariant="h3"
               >
-                {workingCase?.caseFacts && (
+                {workingCase.caseFacts && (
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
                       <Text variant="h5">Málsatvik rakin</Text>
@@ -281,7 +274,7 @@ export const JudgeOverview: React.FC = () => {
                     </Text>
                   </Box>
                 )}
-                {workingCase?.legalArguments && (
+                {workingCase.legalArguments && (
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
                       <Text variant="h5">Lagarök</Text>
