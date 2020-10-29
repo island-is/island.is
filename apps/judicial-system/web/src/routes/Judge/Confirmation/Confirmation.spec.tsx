@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
@@ -25,7 +25,7 @@ describe('Confirmation route', () => {
     )
 
     // Act
-    const { getByText } = render(
+    const { queryByText } = render(
       <userContext.Provider value={{ user: mockJudge }}>
         <MemoryRouter
           initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
@@ -39,10 +39,12 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(() => getByText('accusedAppealAnnouncement test')),
+      await waitFor(() => screen.queryByText('accusedAppealAnnouncement test')),
     ).toBeNull()
     expect(
-      await waitFor(() => getByText('prosecutorAppealAnnouncement test')),
+      await waitFor(() =>
+        screen.queryByText('prosecutorAppealAnnouncement test'),
+      ),
     ).toBeNull()
   })
 
@@ -62,7 +64,7 @@ describe('Confirmation route', () => {
     )
 
     // Act
-    const { queryByText } = render(
+    const { getByText } = render(
       <userContext.Provider value={{ user: mockJudge }}>
         <MemoryRouter
           initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
@@ -76,10 +78,10 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(() => queryByText('accusedAppealAnnouncement test')),
+      await waitFor(() => getByText('accusedAppealAnnouncement test')),
     ).toBeTruthy()
     expect(
-      await waitFor(() => queryByText('prosecutorAppealAnnouncement test')),
+      await waitFor(() => getByText('prosecutorAppealAnnouncement test')),
     ).toBeTruthy()
   })
 })
