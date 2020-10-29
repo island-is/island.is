@@ -5,6 +5,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
 
@@ -87,7 +88,9 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
           <Box>{children}</Box>
         </GridColumn>
         <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
-          <Sticky>{sidebar}</Sticky>
+          <Hidden print={true}>
+            <Sticky>{sidebar}</Sticky>
+          </Hidden>
         </GridColumn>
       </GridRow>
     </Box>
