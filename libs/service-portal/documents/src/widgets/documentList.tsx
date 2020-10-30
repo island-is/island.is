@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Typography,
-  Box,
-  Stack,
-  ButtonDeprecated as Button,
-} from '@island.is/island-ui/core'
+import { Typography, Box, Stack, Button } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
@@ -52,9 +47,9 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
           <DocumentCard key={document.id} document={document} />
         ))}
       </Stack>
-      <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+      <Box display="flex" justifyContent="flexEnd" marginTop={[4, 8]}>
         <Link to={ServicePortalPath.RafraenSkjolRoot}>
-          <Button variant="text" icon="arrowRight">
+          <Button variant="primary">
             {formatMessage({
               id: 'sp.documents:goto-documents',
               defaultMessage: 'Fara í rafræn skjöl',
