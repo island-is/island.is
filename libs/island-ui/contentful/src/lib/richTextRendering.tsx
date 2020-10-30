@@ -106,7 +106,11 @@ export interface PaddingConfig {
 }
 
 export interface RenderConfig {
-  renderComponent: (slice: Slice, config: RenderConfig) => ReactNode
+  renderComponent: (
+    slice: Slice,
+    locale: string,
+    config: RenderConfig,
+  ) => ReactNode
   renderPadding: (top: Slice, bottom: Slice, config: RenderConfig) => ReactNode
   renderNode: RenderNode
   htmlClassName?: string
@@ -116,6 +120,7 @@ export interface RenderConfig {
 
 export const defaultRenderComponent = (
   slice: Slice,
+  locale: string,
   { renderNode, htmlClassName }: RenderConfig,
 ): ReactNode => {
   switch (slice.__typename) {
@@ -140,7 +145,7 @@ export const defaultRenderComponent = (
     case 'ProcessEntry':
       return (
         <Hidden print={true}>
-          <ProcessEntry {...slice} />
+          <ProcessEntry {...slice} locale={locale} />
         </Hidden>
       )
 
@@ -265,6 +270,7 @@ export const DefaultRenderConfig: RenderConfig = {
 
 export const renderSlices = (
   slices: Slice | Slice[],
+  locale?: string,
   optionalConfig?: Partial<RenderConfig>,
 ): ReactNode => {
   const config: RenderConfig = {
@@ -281,7 +287,7 @@ export const renderSlices = (
   }
 
   const components = slices.map((slice, index) => {
-    const comp = config.renderComponent(slice, config)
+    const comp = config.renderComponent(slice, locale, config)
     if (!comp) {
       return null
     }

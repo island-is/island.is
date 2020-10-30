@@ -483,6 +483,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <RichText
             body={(subArticle ?? article).body as SliceType[]}
             config={{ defaultPadding: [2, 2, 4] }}
+            locale={activeLocale}
           />
         </Box>
       </ArticleLayout>

@@ -11,7 +11,6 @@ import {
   ButtonTypes,
 } from '@island.is/island-ui/core'
 import IframeModal from '../IframeModal/IframeModal'
-import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './ProcessEntry.treat'
 
@@ -38,6 +37,7 @@ export interface ProcessEntryProps {
   openLinkInModal?: boolean
   type: string
   buttonText: string
+  locale?: string
 }
 
 export const ProcessEntryLinkButton: FC<
@@ -73,10 +73,9 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   openLinkInModal,
   type,
   buttonText,
+  locale = 'is',
 }) => {
-  const { activeLocale } = useI18n()
-
-  const translatedLabel = Titles[type][activeLocale]
+  const translatedLabel = Titles[type][locale]
   return (
     <>
       <Box width="full" background="blue100" borderRadius="large">

@@ -22,12 +22,16 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'Location',
 ]
 
-const renderComponent = (slice: SliceType, config: RenderConfig) => {
+const renderComponent = (
+  slice: SliceType,
+  locale: string,
+  config: RenderConfig,
+) => {
   let children: ReactNode =
     slice.__typename === 'ContactUs' ? (
       <ContactUs {...slice} />
     ) : (
-      defaultRenderComponent(slice, config)
+      defaultRenderComponent(slice, locale, config)
     )
 
   if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
@@ -57,8 +61,9 @@ const renderComponent = (slice: SliceType, config: RenderConfig) => {
 
 export const RichText: FC<{
   body: SliceType[]
+  locale?: string
   config?: Partial<RenderConfig>
-}> = memo(({ body, config = {} }) => {
+}> = memo(({ body, locale, config = {} }) => {
   return (
     <LinkContext.Provider
       value={{
@@ -74,7 +79,7 @@ export const RichText: FC<{
         ),
       }}
     >
-      {renderSlices(body, { renderComponent, ...config })}
+      {renderSlices(body, locale, { renderComponent, ...config })}
     </LinkContext.Provider>
   )
 })
