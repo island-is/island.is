@@ -64,7 +64,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:natreg',
             defaultMessage: 'Kennitala',
           })}
-          content={userInfo.profile.natreg}
+          content={userInfo.profile.nationalId}
         />
         <UserInfoLine
           label={defineMessage({
