@@ -18,7 +18,8 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import React, { useEffect, useState } from 'react'
-import { PhoneForm } from '../../components/Forms/PhoneForm'
+import { PhoneForm } from '../../components/Forms/PhoneForm/PhoneForm'
+import { defineMessage } from 'react-intl'
 
 interface PhoneFormData {
   tel: string
@@ -27,13 +28,13 @@ interface PhoneFormData {
 export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const [tel, setTel] = useState('')
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: userProfile } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
   const { formatMessage } = useLocale()
-  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
-  const { updateUserProfile } = useUpdateUserProfile(userInfo.profile.natreg)
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
     if (!userProfile) return
@@ -93,6 +94,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <PhoneForm
         tel={tel}
+        natReg={userInfo.profile.natreg}
         renderBackButton={() => (
           <Link to={ServicePortalPath.UserProfileRoot}>
             <Button variant="ghost">
@@ -103,14 +105,10 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
             </Button>
           </Link>
         )}
-        renderSubmitButton={() => (
-          <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage({
-              id: 'sp.settings:save-changes',
-              defaultMessage: 'Vista breytingar',
-            })}
-          </Button>
-        )}
+        submitButtonText={defineMessage({
+          id: 'sp.settings:save-changes',
+          defaultMessage: 'Vista breytingar',
+        })}
         onSubmit={handleSubmit}
       />
       {status !== 'passive' && (

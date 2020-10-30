@@ -29,6 +29,7 @@ export class Document {
     doc.senderName = docInfo.senderName
     doc.subject = docInfo.subject
     doc.senderNatReg = docInfo.senderKennitala
+
     return doc
   }
 }
