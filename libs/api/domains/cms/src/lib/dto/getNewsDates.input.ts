@@ -12,4 +12,9 @@ export class GetNewsDatesInput {
   @IsEnum(['asc', 'desc'])
   @IsOptional()
   order?: 'asc' | 'desc' = 'desc'
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  tag?: string
 }

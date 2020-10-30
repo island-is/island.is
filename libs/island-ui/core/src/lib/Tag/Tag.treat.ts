@@ -66,6 +66,19 @@ export const variants = styleMap({
     color: theme.color.roseTinted400,
     backgroundColor: theme.color.roseTinted100,
   },
+  blueberry: {
+    color: theme.color.blueberry400,
+    backgroundColor: theme.color.blueberry100,
+    ':focus': {
+      backgroundColor: theme.color.blueberry400,
+      color: theme.color.blueberry100,
+    },
+    ':hover': {
+      textDecoration: 'none',
+      backgroundColor: theme.color.blueberry400,
+      color: theme.color.blueberry100,
+    },
+  },
   label: {},
 })
 
@@ -92,6 +105,9 @@ export const bordered = style({
     [`&${variants.darkerMint}`]: {
       borderColor: theme.color.mint300,
     },
+    [`&${variants.blueberry}`]: {
+      borderColor: theme.color.blueberry200,
+    },
   },
 })
 
@@ -104,6 +120,10 @@ export const active = style({
     [`&${variants.blue}`]: {
       backgroundColor: theme.color.white,
       color: theme.color.blue400,
+    },
+    [`&${variants.blueberry}`]: {
+      backgroundColor: theme.color.white,
+      color: theme.color.blueberry400,
     },
   },
 })

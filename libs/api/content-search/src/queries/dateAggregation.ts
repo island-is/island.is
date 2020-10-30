@@ -1,10 +1,12 @@
-import { dateResolution } from '../types'
+import { dateResolution, elasticTagField } from '../types'
+import { tagQuery } from './tagQuery'
 
 export interface DateAggregationInput {
   types: string[]
   field?: string
   resolution?: dateResolution
   order?: 'desc' | 'asc'
+  tags?: elasticTagField[]
 }
 
 type aggregationResult = {
@@ -24,6 +26,7 @@ export const dateAggregationQuery = ({
   field = 'dateCreated',
   resolution = 'month',
   order = 'desc',
+  tags = [],
 }: DateAggregationInput) => {
   const intervalMap = {
     year: {
@@ -43,14 +46,24 @@ export const dateAggregationQuery = ({
       format: 'y-M-d',
     },
   }
+  const tagFilters = []
+  if (tags.length) {
+    tags.forEach((tag) => {
+      tagFilters.push(tagQuery(tag))
+    })
+  }
+
   const query = {
     query: {
       bool: {
-        filter: {
-          terms: {
-            type: types,
+        filter: [
+          {
+            terms: {
+              type: types,
+            },
           },
-        },
+          ...tagFilters,
+        ],
       },
     },
     aggs: {
