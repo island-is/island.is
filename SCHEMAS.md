@@ -6,7 +6,7 @@ We are ignoring all the auto-generated files from the repository to avoid noises
 
 We are only tracking file that are coming from an external source, e.g. contentfulTypes.d.ts that depends on contentful to be generated. The same goes for an openapi.yaml file that comes from an external service.
 
-When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types and open api schemas. The output is cached using nx to avoid re-generating all files again if no changes have been detected. In this case it will around ~5sec to run again.
+When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types and open api schemas. The output is cached using nx to avoid re-generating all files again when no changes have been detected. It can go down up to ~5sec to run again.
 
 We have 4 different types of scripts that can be added inside `workspace.json` to generate schemas and types.
 
