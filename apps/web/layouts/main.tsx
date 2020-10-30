@@ -178,6 +178,8 @@ const Layout: NextComponentType<
           <link rel="manifest" href="/site.webmanifest" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
+          <meta name="description" content={n('description')} />
+
           <meta property="og:title" content={n('title')} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content={fullUrl} />
@@ -187,11 +189,7 @@ const Layout: NextComponentType<
           />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta
-            name="description"
-            property="og:description"
-            content={n('description')}
-          />
+          <meta property="og:description" content={n('description')} />
           <title>{n('title')}</title>
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
