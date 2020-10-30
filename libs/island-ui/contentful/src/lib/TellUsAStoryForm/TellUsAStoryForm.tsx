@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 import {
   Text,
   Box,
@@ -16,32 +17,13 @@ import {
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
+import { Document } from '@contentful/rich-text-types'
+import BackgroundImage from '../BackgroundImage/BackgroundImage'
+import Content from '../Content/Content'
+import RichText from '../RichText/RichText'
+import { renderHtml, Slice } from '../richTextRendering'
+
 import * as styles from './TellUsAStoryFrom.treat'
-import { Image } from '@island.is/api/schema'
-import { BackgroundImage } from '@island.is/web/components'
-import { useForm, Controller } from 'react-hook-form'
-
-const topImage: Image = {
-  typename: 'Image',
-  id: 'id1',
-  url:
-    'https://images.ctfassets.net/8k0h54kbe6bj/3lNpEzR0oURCX7tYIQjJTa/835f6bc23172615d221e6a6e3a135284/man_with_stroller.png',
-  title: 'topImg',
-  contentType: 'image',
-  width: 432,
-  height: 445,
-}
-
-const contentImage: Image = {
-  typename: 'Image',
-  id: 'id2',
-  url:
-    'https://images.ctfassets.net/8k0h54kbe6bj/3lNpEzR0oURCX7tYIQjJTa/835f6bc23172615d221e6a6e3a135284/man_with_stroller.png',
-  title: 'contentImage',
-  contentType: 'image',
-  width: 185,
-  height: 220,
-}
 
 export interface TellUsAStoryFormState {
   organization: string
@@ -55,17 +37,54 @@ export interface TellUsAStoryFormState {
 type FormState = 'edit' | 'submitting' | 'error' | 'success'
 
 export interface TellUsAStoryFormProps {
+  introTitle: string
+  introImage?: { url: string; title: string }
+  introDescription?: { [key: string]: any }
+  firstSectionTitle: string
+  organizationLabel: string
+  organizationPlaceholder: string
+  organizationInputErrorMessage: string
+  dateOfStoryLabel: string
+  dateOfStoryPlaceholder: string
+  dateOfStoryInputErrorMessage: string
+  secondSectionTitle: string
+  subjectLabel: string
+  subjectPlaceholder: string
+  subjectInputErrorMessage?: string
+  messageLabel: string
+  messagePlaceholder: string
+  messageInputErrorMessage: string
+  thirdSectionTitle: string
+  instructionsImage: { url: string; title: string }
+  informationTitle: string
+  nameLabel: string
+  namePlaceholder: string
+  nameInputErrorMessage: string
+  emailLabel: string
+  emailPlaceholder: string
+  emailInputErrorMessage: string
+  publicationAllowedLabel: string
+  submitButtonTitle: string
+  SuccessMessageTitle?: string
+  errorMessageTitle?: string
   state: FormState
+  showIntro?: boolean
   onSubmit: (formState: TellUsAStoryFormState) => Promise<void>
 }
 
 export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
+  introTitle,
+  introImage,
+  introDescription,
+  instructionsImage,
+  showIntro = true,
   state = 'edit',
   onSubmit,
 }) => {
   const methods = useForm()
   const { handleSubmit, register, control, errors, reset } = methods
-  const errorMessage = 'Þennan reit þarf að fylla út'
+
+  const errorMessage = 'Villa!'
 
   useEffect(() => {
     if (state === 'error') {
@@ -74,44 +93,44 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
   }, [state])
 
   return (
-    <GridContainer>
-      <Box paddingX={[0, 0, 3, 8]} paddingBottom={8}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12', '7/12']}>
-            <Text
-              as="h1"
-              variant="h1"
-              lineHeight={'lg'}
-              paddingBottom={[2, 3, 4]}
+    <>
+      {!!showIntro && (
+        <Box paddingBottom={8}>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '0', '1/9']}
+              span={['12/12', '12/12', '12/12', '7/12']}
+              paddingBottom={[2, 2, 4]}
             >
-              {'Segðu okkur þína sögu'}
-            </Text>
-            <Text paddingBottom={2}>
-              {
-                'Við vinnum að því að auðvelda aðgengi að þjónustu hins opinbera með stafrænum lausnum. Í dag getur fólk þurft að [keyra á milli með pappíra o.s.frv., bara smá inngangur].'
-              }
-            </Text>
-            <Text>
-              {
-                'Hefur þú þurft að sækja um fæðingarorlof, endurnýja vegabréfið eða opna veitingastað? Segðu okkur frá því hvernig var að sækja þjónustu hins opinbera á gamla mátann.'
-              }
-            </Text>
-          </GridColumn>
-          <GridColumn
-            span={[null, null, '5/12', '4/12']}
-            offset={[null, null, '1/12', '1/12']}
-            className={styles.infoImageWrapper}
-          >
-            <Box className={styles.infoImage}>
-              <Hidden below="md">
-                <BackgroundImage ratio="1:1" image={topImage} />
-              </Hidden>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </Box>
-
-      <Box padding={[3, 3, 8]} background={'blue100'}>
+              <Text as="h1" variant="h1" lineHeight={'lg'}>
+                {introTitle}
+              </Text>
+              {introDescription && (
+                <Box>{renderHtml(introDescription.document)}</Box>
+              )}
+            </GridColumn>
+            {!!introImage && (
+              <GridColumn
+                hiddenBelow="lg"
+                span={['0', '0', '0', '3/12']}
+                className={styles.infoImageWrapper}
+              >
+                <Box
+                  className={styles.infoImage}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  height="full"
+                  width="full"
+                >
+                  <BackgroundImage ratio="1:1" image={introImage} />
+                </Box>
+              </GridColumn>
+            )}
+          </GridRow>
+        </Box>
+      )}
+      <Box padding={[3, 3, 8]} borderRadius="large" background="blue100">
         {state !== 'success' ? (
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack space={5}>
@@ -121,7 +140,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                     {'Hvar og hvenær?'}
                   </Text>
                 </GridColumn>
-                <GridColumn span={['10/10', '10/10', '10/10', '5/10']}>
+                <GridColumn span={['10/10', '10/10', '10/10', '10/10', '5/10']}>
                   <Controller
                     name="organization"
                     defaultValue={{
@@ -151,8 +170,8 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   />
                 </GridColumn>
                 <GridColumn
-                  span={['10/10', '10/10', '10/10', '5/10']}
-                  paddingTop={[3, 3, 3, 0]}
+                  span={['10/10', '10/10', '10/10', '10/10', '5/10']}
+                  paddingTop={[3, 3, 3, 3, 0]}
                 >
                   <Controller
                     name="dateOfStory"
@@ -220,15 +239,20 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   paddingBottom={3}
                 >
                   <GridRow>
-                    <GridColumn
-                      span={['5/12', '4/12', '5/12', '12/12', '12/12']}
-                      className={styles.alignSelfCenter}
-                      paddingBottom={2}
-                    >
-                      <Box className={styles.contentImage}>
-                        <BackgroundImage ratio="1:1" image={contentImage} />
-                      </Box>
-                    </GridColumn>
+                    {!!instructionsImage && (
+                      <GridColumn
+                        span={['5/12', '4/12', '5/12', '12/12', '12/12']}
+                        className={styles.alignSelfCenter}
+                        paddingBottom={2}
+                      >
+                        <Box className={styles.contentImage}>
+                          <BackgroundImage
+                            ratio="1:1"
+                            image={instructionsImage}
+                          />
+                        </Box>
+                      </GridColumn>
+                    )}
                     <GridColumn
                       span={['7/12', '8/12', '7/12', '12/12', '12/12']}
                       className={styles.alignSelfCenter}
@@ -257,7 +281,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   </Text>
                 </GridColumn>
                 <GridColumn
-                  span={['12/12', '12/12', '12/12', '6/12']}
+                  span={['12/12', '12/12', '12/12', '12/12', '6/12']}
                   paddingBottom={3}
                 >
                   <Input
@@ -275,7 +299,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 </GridColumn>
 
                 <GridColumn
-                  span={['12/12', '12/12', '12/12', '6/12']}
+                  span={['12/12', '12/12', '12/12', '12/12', '6/12']}
                   paddingBottom={3}
                 >
                   <Input
@@ -336,6 +360,8 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
         closeButton={true}
         useKeyframeStyles={false}
       />
-    </GridContainer>
+    </>
   )
 }
+
+export default TellUsAStoryForm

@@ -6,6 +6,9 @@ import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class TellUsAStory {
+  @Field()
+  typename: string
+
   @Field(() => ID)
   id: string
 
@@ -113,6 +116,7 @@ export const mapTellUsAStory = ({
   fields,
   sys,
 }: ITellUsAStory): TellUsAStory => ({
+  typename: 'TellUsAStory',
   id: sys.id,
   introTitle: fields.introTitle ?? '',
   introDescription:

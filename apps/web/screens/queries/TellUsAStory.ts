@@ -7,3 +7,53 @@ export const TELL_US_A_STORY_MUTATION = gql`
     }
   }
 `
+export const GET_TELL_US_A_STORY_DATA = gql`
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
+
+  query GetTellUsAStory($input: GetTellUsAStoryInput!) {
+    getTellUsAStory(input: $input) {
+      typename
+      id
+      introTitle
+      introImage {
+        title
+        url
+      }
+      introDescription {
+        ...HtmlFields
+      }
+      firstSectionTitle
+      organizationLabel
+      organizationPlaceholder
+      organizationInputErrorMessage
+      dateOfStoryLabel
+      dateOfStoryPlaceholder
+      dateOfStoryInputErrorMessage
+      secondSectionTitle
+      subjectLabel
+      subjectPlaceholder
+      subjectInputErrorMessage
+      messageLabel
+      messagePlaceholder
+      messageInputErrorMessage
+      thirdSectionTitle
+      instructionsImage {
+        title
+        url
+      }
+      informationTitle
+      nameLabel
+      namePlaceholder
+      nameInputErrorMessage
+      emailLabel
+      emailPlaceholder
+      emailInputErrorMessage
+      publicationAllowedLabel
+      submitButtonTitle
+    }
+  }
+`

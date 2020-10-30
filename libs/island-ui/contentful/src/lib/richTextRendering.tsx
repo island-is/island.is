@@ -38,6 +38,10 @@ import {
 import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
 import { Location, LocationProps } from './Location/Location'
+import {
+  TellUsAStoryForm,
+  TellUsAStoryFormProps,
+} from './TellUsAStoryForm/TellUsAStoryForm'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
@@ -64,6 +68,10 @@ type ContactUsSlice = { __typename: 'ContactUs'; id: string } & Omit<
   ContactUsProps,
   'state' | 'onSubmit'
 >
+type TellUsAStorySlice = { __typename: 'TellUsAStory'; id: string } & Omit<
+  TellUsAStoryFormProps,
+  'state' | 'onSubmit'
+>
 type SectionWithImageSlice = {
   __typename: 'SectionWithImage'
   id: string
@@ -80,6 +88,7 @@ export type Slice =
   | TeamListSlice
   | ContactUsSlice
   | LocationSlice
+  | TellUsAStorySlice
   | SectionWithImageSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
