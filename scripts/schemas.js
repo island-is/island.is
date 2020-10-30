@@ -3,6 +3,11 @@ const { exec } = require('child_process')
 const { promisify } = require('util')
 
 /**
+ * Because get-files-touched-by.sh cannot get files from nx cache
+ */
+const skipCache = process.argv && process.argv[2] === '--skip-cache'
+
+/**
  * We need to create this file manually with a dummy content because
  * the api needs it to build and generate the first schema file
  */
@@ -31,7 +36,9 @@ const main = async () => {
 
     try {
       const { stdout, stderr } = await promisify(exec)(
-        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6`,
+        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 ${
+          skipCache ? '--skip-nx-cache' : ''
+        }`,
       )
 
       console.log(stdout)
