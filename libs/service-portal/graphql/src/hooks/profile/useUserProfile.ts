@@ -1,18 +1,9 @@
 import { useQuery } from '@apollo/client'
-import { Query, QueryGetUserProfileArgs } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'
 
-export const useUserProfile = (natReg: string) => {
-  const { data, loading, error } = useQuery<Query, QueryGetUserProfileArgs>(
-    USER_PROFILE,
-    {
-      variables: {
-        input: {
-          nationalId: natReg,
-        },
-      },
-    },
-  )
+export const useUserProfile = () => {
+  const { data, loading, error } = useQuery<Query>(USER_PROFILE)
 
   return {
     data: data?.getUserProfile || null,

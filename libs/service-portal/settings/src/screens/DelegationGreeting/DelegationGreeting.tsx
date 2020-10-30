@@ -53,7 +53,15 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={2}>
         {mockDelegationList.map((item) => (
-          <Box border="standard" borderRadius="large" key={item.id}>
+          <Box
+            position="relative"
+            border="standard"
+            borderRadius="large"
+            key={item.id}
+          >
+            <Box position="absolute" className={styles.wipTag}>
+              <Tag variant="blue">Væntanlegt</Tag>
+            </Box>
             <div className={styles.cardBlurWrapper}>
               <Box paddingY={3} paddingX={4}>
                 <Box
@@ -65,7 +73,6 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
                   <Text variant="eyebrow" color="purple400">
                     {item.provider}
                   </Text>
-                  <Text variant="small">{item.date}</Text>
                 </Box>
                 <Box
                   display="flex"

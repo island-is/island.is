@@ -69,10 +69,13 @@ const getFilteredDocuments = (
       (document) => document.senderNatReg === activeCategory.value,
     )
   }
-  if (searchQuery) {
-    const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-    return fuse.search(searchQuery).map((elem) => elem.item)
-  }
+
+  // TODO: Fix type errors
+  // if (searchQuery) {
+  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
+  //   return fuse.search(searchQuery).map((elem) => elem)
+  // }
+
   return filteredDocuments
 }
 
