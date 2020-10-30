@@ -6,7 +6,7 @@ module.exports = {
     database: 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
-    seederStorage: 'sequelize',
+    seederStorage: "sequelize",
   },
   test: {
     username: 'test_db',
@@ -14,7 +14,7 @@ module.exports = {
     database: 'test_db',
     host: process.env.DB_HOST,
     dialect: 'postgres',
-    seederStorage: 'sequelize',
+    seederStorage: "sequelize",
   },
   production: {
     username: process.env.DB_USER,
@@ -22,6 +22,6 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: 'postgres',
-    seederStorage: 'sequelize',
+    seederStorage: "sequelize",
   },
 }
