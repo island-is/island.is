@@ -97,7 +97,9 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
               height
             }
             date
-            content
+            content {
+              __typename
+            }
           }
         }
       }

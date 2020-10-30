@@ -9,14 +9,14 @@ import {
   Stack,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
-import { AdgerdirNews } from '@island.is/api/schema'
+import { News } from '@island.is/api/schema'
 import { Heading, BackgroundImage } from '@island.is/adgerdir/components'
 
 import * as styles from './FeaturedNews.treat'
 import Link from 'next/link'
 
 interface FeaturedNewsProps {
-  items: Array<AdgerdirNews>
+  items: Array<News>
 }
 
 export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
