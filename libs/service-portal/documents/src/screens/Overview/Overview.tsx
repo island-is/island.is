@@ -24,7 +24,6 @@ import { Document } from '@island.is/api/schema'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import Fuse from 'fuse.js'
 import { isAfter, subYears, startOfTomorrow, isWithinInterval } from 'date-fns'
 import { isEqual } from 'lodash'
 
@@ -32,6 +31,11 @@ const defaultCategory = { label: 'Allar Stofnanir', value: '' }
 const pageSize = 6
 const defaultStartDate = subYears(new Date(), 20)
 const defaultEndDate = startOfTomorrow()
+
+// type FuseItem = {
+//   item: Document
+//   refIndex: number
+// }
 
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
@@ -69,10 +73,21 @@ const getFilteredDocuments = (
       (document) => document.senderNatReg === activeCategory.value,
     )
   }
+
+  // if (searchQuery) {
+  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
+  //   return fuse.search(searchQuery).map((elem) => {
+  //     // const fuseItem = (elem as unknown) as FuseItem
+  //     // return fuseItem.item
+  //     return elem.item
+  //   })
+  // }
   if (searchQuery) {
-    const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-    return fuse.search(searchQuery).map((elem) => elem.item)
+    return filteredDocuments.filter((x) =>
+      x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
   }
+
   return filteredDocuments
 }
 

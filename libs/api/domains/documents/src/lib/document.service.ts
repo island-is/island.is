@@ -6,7 +6,6 @@ import {
   DocumentInfoDTO,
   DocumentDTO,
 } from '../../gen/fetch/'
-import { ListDocumentsInput } from './dto/listDocumentsInput'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
@@ -16,12 +15,12 @@ export class DocumentService {
   constructor(private customersApi: CustomersApi) {}
 
   async findByDocumentId(
-    natReg: string,
+    nationalId: string,
     documentId: string,
   ): Promise<DocumentDetails> {
     try {
       const rawDocumentDTO = await this.customersApi.customersDocument({
-        kennitala: natReg,
+        kennitala: nationalId,
         messageId: documentId,
         authenticationType: 'LOW',
       })
@@ -41,12 +40,13 @@ export class DocumentService {
     }
   }
 
-  async listDocuments(input: ListDocumentsInput): Promise<Document[]> {
+  async listDocuments(nationalId: string): Promise<Document[]> {
     try {
       const body = await this.customersApi.customersListDocuments({
-        kennitala: input.natReg,
+        kennitala: nationalId,
       })
-      return body.messages.reduce(function (
+
+      return (body?.messages || []).reduce(function (
         result: Document[],
         documentMessage: DocumentInfoDTO,
       ) {
@@ -66,7 +66,7 @@ export class DocumentService {
       const body = await this.customersApi.customersCategories({
         kennitala: natReg,
       })
-      return body.categories.reduce(function (
+      return (body?.categories || []).reduce(function (
         result: DocumentCategory[],
         category: CategoryDTO,
       ) {
