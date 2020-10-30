@@ -86,6 +86,26 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly courtDate: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly courtRoom: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderName: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defenderEmail: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly courtStartTime: Date
 
   @IsOptional()
