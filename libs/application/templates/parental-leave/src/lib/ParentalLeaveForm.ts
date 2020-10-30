@@ -513,8 +513,8 @@ export const ParentalLeaveForm: Form = buildForm({
         buildCustomField(
           {
             id: 'confirmationScreen',
-            name: 'Review Screen....TODO',
-            component: 'Confirmation',
+            name: 'Final review of your application',
+            component: 'Review',
           },
           {},
         ),
