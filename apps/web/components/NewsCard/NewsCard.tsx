@@ -1,9 +1,22 @@
 import React from 'react'
-import { Text, Link, Box, ArrowLink } from '@island.is/island-ui/core'
+import {
+  Text,
+  Link,
+  Box,
+  ArrowLink,
+  TagProps,
+  Tag,
+  Inline,
+} from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
 
 import * as styles from './NewsCard.treat'
+
+type TagsProps = {
+  tagProps?: Omit<TagProps, 'children'>
+  title: string
+}
 
 interface NewsCardProps {
   title: string
@@ -17,6 +30,7 @@ interface NewsCardProps {
   date?: string
   imagePosition?: 'top' | 'right'
   titleAs?: 'h2' | 'h3' | 'h4'
+  tags?: Array<TagsProps>
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
@@ -29,6 +43,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   as,
   date,
   titleAs = 'h3',
+  tags = [],
 }) => {
   const { format } = useDateUtils()
   return (
@@ -70,6 +85,19 @@ const NewsCard: React.FC<NewsCardProps> = ({
         <Text variant="h3" as={titleAs} paddingBottom={1}>
           {title}
         </Text>
+        {!!tags.length && (
+          <Box paddingTop={2} paddingBottom={3}>
+            <Inline space={2}>
+              {tags.map(({ title }, index) => {
+                return (
+                  <Tag key={index} variant="blue" label>
+                    {title}
+                  </Tag>
+                )
+              })}
+            </Inline>
+          </Box>
+        )}
         <Text paddingBottom={3}>{introduction}</Text>
         <div className={styles.readMore}>
           <ArrowLink>{readMoreText}</ArrowLink>
