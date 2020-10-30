@@ -20,8 +20,10 @@ import {
   autoSave,
   isNextDisabled,
 } from '../../../../utils/stepHelper'
-import { isValid, parseISO, formatISO } from 'date-fns'
-import { isNull } from 'lodash'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
+import formatISO from 'date-fns/formatISO'
+import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'

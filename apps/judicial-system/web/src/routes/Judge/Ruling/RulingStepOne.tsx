@@ -26,7 +26,7 @@ import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatISO } from 'date-fns'
+import formatISO from 'date-fns/formatISO'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 

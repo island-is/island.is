@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { useQuery, useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
-import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import * as Yup from 'yup'
 
 import {

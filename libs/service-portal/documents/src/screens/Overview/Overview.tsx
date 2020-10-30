@@ -20,12 +20,14 @@ import {
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Document } from '@island.is/api/schema'
-
-import DocumentCard from '../../components/DocumentCard/DocumentCard'
-import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { isAfter, subYears, startOfTomorrow, isWithinInterval } from 'date-fns'
-import { isEqual } from 'lodash'
+import isAfter from 'date-fns/isAfter'
+import subYears from 'date-fns/subYears'
+import startOfTomorrow from 'date-fns/startOfTomorrow'
+import isWithinInterval from 'date-fns/isWithinInterval'
+import isEqual from 'lodash/isEqual'
+import { ValueType } from 'react-select'
+import DocumentCard from '../../components/DocumentCard/DocumentCard'
 
 const defaultCategory = { label: 'Allar Stofnanir', value: '' }
 const pageSize = 6
