@@ -8,7 +8,7 @@ import { useCreateUserProfile } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
 import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
-import { PhoneFormData } from '../Forms/PhoneForm'
+import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
 import { EmailStep } from './Steps/EmailStep'
 import { IntroStep } from './Steps/IntroStep'
 import { LanguageStep } from './Steps/LanguageStep'
@@ -28,7 +28,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
-  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
+  const { createUserProfile } = useCreateUserProfile()
 
   const handleCloseModal = () => {
     toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
@@ -52,7 +52,6 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
         locale,
         mobilePhoneNumber,
       })
-
       toast.success('Notendaupplýsingar þínar hafa verið uppfærðar')
       setIsOpen(false)
     } catch (err) {
@@ -90,6 +89,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-form' && (
         <PhoneStep
           onBack={gotoStep.bind(null, 'intro')}
+          natReg={userInfo.profile.natreg}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
         />

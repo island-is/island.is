@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Document } from './models/document.model'
-import { CustomersApi, CategoryDTO, DocumentInfoDTO } from '../../gen/fetch/'
-import { ListDocumentsInput } from './dto/listDocumentsInput'
+import {
+  CustomersApi,
+  CategoryDTO,
+  DocumentInfoDTO,
+  DocumentDTO,
+} from '../../gen/fetch/'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
@@ -11,15 +15,23 @@ export class DocumentService {
   constructor(private customersApi: CustomersApi) {}
 
   async findByDocumentId(
-    natReg: string,
+    nationalId: string,
     documentId: string,
   ): Promise<DocumentDetails> {
     try {
-      const documentDTO = await this.customersApi.customersDocument({
-        kennitala: natReg,
+      const rawDocumentDTO = await this.customersApi.customersDocument({
+        kennitala: nationalId,
         messageId: documentId,
         authenticationType: 'LOW',
       })
+
+      const documentDTO: DocumentDTO = {
+        ...rawDocumentDTO,
+        fileType: rawDocumentDTO.fileType || '',
+        content: rawDocumentDTO.content || '',
+        htmlContent: rawDocumentDTO.htmlContent || '',
+        url: rawDocumentDTO.url || '',
+      }
 
       return DocumentDetails.fromDocumentDTO(documentDTO)
     } catch (exception) {
@@ -28,17 +40,13 @@ export class DocumentService {
     }
   }
 
-  async listDocuments(input: ListDocumentsInput): Promise<Document[]> {
+  async listDocuments(nationalId: string): Promise<Document[]> {
     try {
       const body = await this.customersApi.customersListDocuments({
-        kennitala: input.natReg,
-        dateFrom: input.dateFrom,
-        dateTo: input.dateTo,
-        categoryId: input.category,
-        page: input.page,
-        pageSize: input.pageSize,
+        kennitala: nationalId,
       })
-      return body.messages.reduce(function (
+
+      return (body?.messages || []).reduce(function (
         result: Document[],
         documentMessage: DocumentInfoDTO,
       ) {
@@ -58,7 +66,7 @@ export class DocumentService {
       const body = await this.customersApi.customersCategories({
         kennitala: natReg,
       })
-      return body.categories.reduce(function (
+      return (body?.categories || []).reduce(function (
         result: DocumentCategory[],
         category: CategoryDTO,
       ) {

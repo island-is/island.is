@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Stack, Tag, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -13,7 +13,7 @@ import { FamilyMemberCard } from '@island.is/service-portal/family'
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: userProfile } = useUserProfile()
 
   return (
     <>
@@ -34,7 +34,32 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:email',
             defaultMessage: 'Netfang',
           })}
-          content={userProfile?.email || ''}
+          content={
+            userProfile?.email ? (
+              <Box display="flex" alignItems="center">
+                <span>{userProfile.email}</span>
+                <Box marginLeft={2}>
+                  {userProfile.emailVerified ? (
+                    <Tag variant="darkerMint">
+                      {formatMessage({
+                        id: 'sp.settings:verified',
+                        defaultMessage: 'Staðfest',
+                      })}
+                    </Tag>
+                  ) : (
+                    <Tag variant="red">
+                      {formatMessage({
+                        id: 'sp.settings:not-verified',
+                        defaultMessage: 'Óstaðfest',
+                      })}
+                    </Tag>
+                  )}
+                </Box>
+              </Box>
+            ) : (
+              ''
+            )
+          }
           editLink={{
             url: ServicePortalPath.UserProfileEditEmail,
             title: defineMessage({
@@ -48,7 +73,32 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:tel',
             defaultMessage: 'Símanúmer',
           })}
-          content={userProfile?.mobilePhoneNumber || ''}
+          content={
+            userProfile?.mobilePhoneNumber ? (
+              <Box display="flex" alignItems="center">
+                <span>{userProfile.mobilePhoneNumber}</span>
+                <Box marginLeft={2}>
+                  {userProfile.mobilePhoneNumberVerified ? (
+                    <Tag variant="darkerMint">
+                      {formatMessage({
+                        id: 'sp.settings:verified',
+                        defaultMessage: 'Staðfest',
+                      })}
+                    </Tag>
+                  ) : (
+                    <Tag variant="red">
+                      {formatMessage({
+                        id: 'sp.settings:not-verified',
+                        defaultMessage: 'Óstaðfest',
+                      })}
+                    </Tag>
+                  )}
+                </Box>
+              </Box>
+            ) : (
+              ''
+            )
+          }
           editLink={{
             url: ServicePortalPath.UserProfileEditPhoneNumber,
             title: defineMessage({

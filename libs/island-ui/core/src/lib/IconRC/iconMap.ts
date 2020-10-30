@@ -23,6 +23,7 @@ export type Icon =
   | 'lockClosed'
   | 'logOut'
   | 'menu'
+  | 'notifications'
   | 'open'
   | 'people'
   | 'person'
@@ -60,6 +61,7 @@ export default {
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
     menu: 'Menu',
+    notifications: 'Notifications',
     open: 'Open',
     people: 'People',
     person: 'Person',
@@ -96,6 +98,7 @@ export default {
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
     menu: 'MenuOutline',
+    notifications: 'NotificationsOutline',
     open: 'OpenOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',

@@ -1,6 +1,7 @@
-import { Box, Input } from '@island.is/island-ui/core'
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
+import { Box, Button, Input } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 export interface PhoneFormData {
   tel: string
@@ -8,17 +9,18 @@ export interface PhoneFormData {
 
 interface Props {
   tel: string
-  renderBackButton?: () => JSX.Element
-  renderSubmitButton?: () => JSX.Element
   onSubmit: (data: PhoneFormData) => void
+  renderBackButton?: () => JSX.Element
+  loading: boolean
 }
 
-export const PhoneForm: FC<Props> = ({
+export const FormStep: FC<Props> = ({
   tel,
-  renderBackButton,
-  renderSubmitButton,
   onSubmit,
+  renderBackButton,
+  loading,
 }) => {
+  const { formatMessage } = useLocale()
   const { handleSubmit, control, errors, reset } = useForm()
 
   useEffect(() => {
@@ -41,7 +43,11 @@ export const PhoneForm: FC<Props> = ({
             },
             minLength: {
               value: 7,
-              message: 'Símanúmer þarf að vera minnst 7 tölustafir á lengd',
+              message: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+            },
+            maxLength: {
+              value: 7,
+              message: 'Símanúmer þarf að vera 7 tölustafir á lengd',
             },
             pattern: {
               value: /^\d+$/,
@@ -52,6 +58,7 @@ export const PhoneForm: FC<Props> = ({
           render={({ onChange, value, name }) => (
             <Input
               label="Símanúmer"
+              placeholder="Símanúmer"
               name={name}
               value={value}
               hasError={errors.tel}
@@ -61,12 +68,20 @@ export const PhoneForm: FC<Props> = ({
           )}
         />
       </Box>
-      {(renderBackButton || renderSubmitButton) && (
-        <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
-          {renderBackButton && renderBackButton()}
-          {renderSubmitButton && renderSubmitButton()}
-        </Box>
-      )}
+      <Box display="flex" justifyContent="spaceBetween" marginTop={4}>
+        {renderBackButton && renderBackButton()}
+        <Button
+          variant="primary"
+          type="submit"
+          icon="arrowForward"
+          disabled={loading}
+        >
+          {formatMessage({
+            id: 'service.portal:confirm-code',
+            defaultMessage: 'Senda staðfestingarkóða',
+          })}
+        </Button>
+      </Box>
     </form>
   )
 }
