@@ -23,8 +23,7 @@ import { UserRole } from '../../utils/authenticate'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { insertAt } from '../../utils/formatters'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
@@ -34,7 +33,6 @@ export const DetentionRequests: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
-    window.localStorage.clear()
   }, [])
 
   useEffect(() => {
@@ -83,15 +81,10 @@ export const DetentionRequests: React.FC = () => {
         {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
         {!isJudge && (
           <Link
-            to={Constants.STEP_ONE_ROUTE}
+            to={Constants.SINGLE_REQUEST_BASE_ROUTE}
             style={{ textDecoration: 'none' }}
           >
-            <Button
-              icon="plus"
-              onClick={() => window.localStorage.removeItem('workingCase')}
-            >
-              Stofna nýja kröfu
-            </Button>
+            <Button icon="plus">Stofna nýja kröfu</Button>
           </Link>
         )}
       </div>
@@ -110,7 +103,7 @@ export const DetentionRequests: React.FC = () => {
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
-              <th>Gæsluvarðhald til</th>
+              <th>Gæsluvarðhaldstími</th>
               <th></th>
             </tr>
           </thead>
@@ -123,10 +116,7 @@ export const DetentionRequests: React.FC = () => {
               >
                 <td>{c.policeCaseNumber || '-'}</td>
                 <td>{c.accusedName || '-'}</td>
-                <td>
-                  {insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
-                    '-'}
-                </td>
+                <td>{c.accusedNationalId || '-'}</td>
                 <td>
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
@@ -137,7 +127,10 @@ export const DetentionRequests: React.FC = () => {
                 </td>
                 <td>
                   {c.state === CaseState.ACCEPTED
-                    ? formatDate(c.custodyEndDate, 'PP')
+                    ? `${formatDate(c.custodyEndDate, 'PP')} kl. ${formatDate(
+                        c.custodyEndDate,
+                        TIME_FORMAT,
+                      )}`
                     : null}
                 </td>
                 <td>
@@ -149,10 +142,7 @@ export const DetentionRequests: React.FC = () => {
                             ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                             : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         }
-                        style={{
-                          textDecoration: 'none',
-                          whiteSpace: 'nowrap',
-                        }}
+                        style={{ textDecoration: 'none' }}
                       >
                         <Button icon="arrowRight" variant="text">
                           Opna kröfu

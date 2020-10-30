@@ -65,7 +65,3 @@ export const parseTime = (date: string, time: string) => {
     return date.indexOf('T') > -1 ? date.substring(0, date.indexOf('T')) : date
   }
 }
-
-// Credit: https://stackoverflow.com/a/53060314
-export const insertAt = (str: string, sub: string, pos: number) =>
-  `${str.slice(0, pos)}${sub}${str.slice(pos)}`

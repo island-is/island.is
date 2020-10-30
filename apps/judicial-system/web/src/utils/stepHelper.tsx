@@ -1,7 +1,5 @@
 import React from 'react'
 import { AppealDecitionRole, Case, RequiredField } from '../types'
-import * as api from '../api'
-import { parseString } from './formatters'
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -9,56 +7,6 @@ import {
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
-
-export const updateState = (
-  state: Case,
-  fieldToUpdate: string,
-  fieldValue: string | string[] | Date | boolean,
-  stateSetter: (state: Case) => void,
-) => {
-  // Create a copy of the state
-  const copyOfState = Object.assign({}, state)
-
-  // Update the copy of the state
-  copyOfState[fieldToUpdate] = fieldValue
-
-  // Set the copy of the state as the state
-  stateSetter(copyOfState)
-
-  window.localStorage.setItem('workingCase', JSON.stringify(copyOfState))
-}
-
-/**
- * @deprecated
- *
- * @param state current working case
- * @param caseField field to update
- * @param caseFieldValue value to update
- * @param stateSetter method to set working case
- */
-export const autoSave = async (
-  state: Case,
-  caseField: string,
-  caseFieldValue: string | Date | boolean,
-  stateSetter: (state: Case) => void,
-) => {
-  console.warn('Calling AutoSave() is discuraged. Will be removed shortly.')
-  // Only save if the field has changes and the case exists
-  if (state[caseField] !== caseFieldValue && state.id !== '') {
-    // Parse the property change
-    const propertyChange = parseString(caseField, caseFieldValue)
-
-    // Save the case
-    const response = await api.saveCase(state.id, propertyChange)
-
-    if (response === 200) {
-      // Update the working case
-      updateState(state, caseField, caseFieldValue, stateSetter)
-    } else {
-      // TODO: Do something when autosave fails
-    }
-  }
-}
 
 export const getAppealDecitionText = (
   role: AppealDecitionRole,

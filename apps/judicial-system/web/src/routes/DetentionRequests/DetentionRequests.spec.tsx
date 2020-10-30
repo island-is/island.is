@@ -174,9 +174,9 @@ describe('Detention requests route', () => {
       </userContext.Provider>,
     )
 
-    await waitFor(() => queryByText('1. nóv. 2020'))
+    await waitFor(() => queryByText('1. nóv. 2020 kl. 12:31'))
 
-    expect(queryByText('1. nóv. 2020')).toBeTruthy()
+    expect(queryByText('1. nóv. 2020 kl. 12:31')).toBeTruthy()
 
     fetchMock.restore()
   })

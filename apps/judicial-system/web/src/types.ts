@@ -48,10 +48,6 @@ export interface Case {
   comments?: string
   notifications?: Notification[]
   courtCaseNumber?: string
-  courtDate?: string
-  courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string

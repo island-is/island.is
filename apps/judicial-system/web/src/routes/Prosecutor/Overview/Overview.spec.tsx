@@ -5,40 +5,33 @@ import * as Constants from '../../../utils/constants'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { mockProsecutor } from '../../../utils/mocks'
+import fetchMock from 'fetch-mock'
+import { MemoryRouter, Route } from 'react-router-dom'
 
 describe(`${Constants.STEP_THREE_ROUTE}`, () => {
   test('should display the approprieate custody provisions', async () => {
     // Arrange
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        id: 'b5041539-27c0-426a-961d-0f268fe45165',
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        state: 'DRAFT',
-        court: 'string',
-        comments: 'string',
-        policeCaseNumber: 'string',
-        accusedNationalId: 'string',
-        accusedName: 'string',
-        accusedAddress: 'string',
-        arrestDate: '2020-09-16T19:51:28.224Z',
-        requestedCourtDate: '2020-09-16T19:51:28.224Z',
-        requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
-        lawsBroken: 'string',
+    fetchMock.mock(
+      '/api/case/test_id',
+      {
+        id: 'test_id',
         custodyProvisions: [
           CaseCustodyProvisions._95_1_A,
           CaseCustodyProvisions._95_1_C,
         ],
-        requestedCustodyRestrictions: ['ISOLATION', 'MEDIA'],
-        caseFacts: 'string',
-        legalArguments: 'string',
-      })
-    })
-
+      },
+      { method: 'get' },
+    )
     // Act
     const { getByText } = render(
       <userContext.Provider value={{ user: mockProsecutor }}>
-        <Overview />
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id`]}
+        >
+          <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
+            <Overview />
+          </Route>
+        </MemoryRouter>
       </userContext.Provider>,
     )
 

@@ -1,5 +1,4 @@
 import {
-  insertAt,
   parseArray,
   parseString,
   parseTime,
@@ -102,20 +101,6 @@ ipsum`
       // Assert
       expect(d).toEqual('2020-10-24')
       expect(dd).toEqual('2020-10-24')
-    })
-  })
-
-  describe('insertAt()', () => {
-    test('should insert a string at a certain position into another string', () => {
-      // Arrange
-      const str = 'Lorem ipsum dolum kara'
-      const insertion = ' lara'
-
-      // Act
-      const result = insertAt(str, insertion, 5)
-
-      // Assert
-      expect(result).toEqual('Lorem lara ipsum dolum kara')
     })
   })
 })

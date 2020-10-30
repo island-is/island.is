@@ -10,7 +10,7 @@ describe('Header', () => {
   test('should direct users to detention requests route when user click the logo', () => {
     // Arrange
     const history = createMemoryHistory()
-    history.push(Constants.STEP_ONE_ROUTE)
+    history.push(Constants.SINGLE_REQUEST_BASE_ROUTE)
     const { getByTestId } = render(
       <Router history={history}>
         <Header pathname={Constants.DETENTION_REQUESTS_ROUTE} />
@@ -19,7 +19,9 @@ describe('Header', () => {
     const logo = getByTestId('link-to-home')
 
     // Act
-    expect(history.location.pathname).toEqual(Constants.STEP_ONE_ROUTE)
+    expect(history.location.pathname).toEqual(
+      Constants.SINGLE_REQUEST_BASE_ROUTE,
+    )
     userEvent.click(logo)
 
     // Assert
