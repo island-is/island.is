@@ -24,7 +24,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={'https://' + imageUrl} />
+    <meta property="og:image" content={'https:' + imageUrl} />
     <meta property="og:image:width" content={imageWidth} />
     <meta property="og:image:height" content={imageHeight} />
 
@@ -32,7 +32,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
     <meta property="twitter:url" content="https://island.is/" />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={'https://' + imageUrl} />
+    <meta property="twitter:image" content={'https:' + imageUrl} />
     {children}
   </Head>
 )
