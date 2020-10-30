@@ -586,7 +586,8 @@ export const StepTwo: React.FC = () => {
         <Box component="section" marginBottom={7}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Greinargerð um málsatvik og lagarök
+              Greinargerð um málsatvik og lagarök{' '}
+              <Tooltip text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá í fyrsta dálki ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref. Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram í seinni dálki." />
             </Text>
           </Box>
           <Box marginBottom={3}>

@@ -8,20 +8,24 @@ import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
 } from '../queries/autocomplete'
-import { searchQuery } from '../queries/search'
+import { SearchInput, searchQuery } from '../queries/search'
 import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
-import { MappedData, SearchIndexes } from '../types'
+import { MappedData, SearchIndexes, TagAggregationResponse } from '../types'
 import { SearchResponse } from '@island.is/shared/types'
 import { environment } from '../environments/environment'
-import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
+import { WebSearchAutocompleteInput } from '../dto'
 import {
   DateAggregationInput,
   dateAggregationQuery,
   DateAggregationResponse,
 } from '../queries/dateAggregation'
+import {
+  TagAggregationInput,
+  tagAggregationQuery,
+} from '../queries/tagAggregation'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -140,6 +144,15 @@ export class ElasticService {
     return data.body
   }
 
+  async getTagAggregation(index: string, query: TagAggregationInput) {
+    const requestBody = tagAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, TagAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
+  }
+
   async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
@@ -149,7 +162,7 @@ export class ElasticService {
     return data.body
   }
 
-  async search(index: SearchIndexes, query: SearcherInput) {
+  async search(index: SearchIndexes, query: SearchInput) {
     const { queryString, size, page, types, tags, countTag } = query
 
     const requestBody = searchQuery({
@@ -161,10 +174,10 @@ export class ElasticService {
       countTag,
     })
 
-    return this.findByQuery<SearchResponse<MappedData>, typeof requestBody>(
-      index,
-      requestBody,
-    )
+    return this.findByQuery<
+      SearchResponse<MappedData, TagAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
   }
 
   async fetchAutocompleteTerm(
@@ -276,5 +289,3 @@ export class ElasticService {
     logger.error(message, merge(context, errorCtx))
   }
 }
-
-// TODO: This service needs to include only generic functions anything specific to cms search should be in cms domain libary

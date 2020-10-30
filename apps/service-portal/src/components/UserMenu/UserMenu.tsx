@@ -6,10 +6,15 @@ import {
   Hidden,
   Icon,
   Stack,
+  Text,
   Typography,
 } from '@island.is/island-ui/core'
 import { useClickAway } from 'react-use'
-import { Menu, ServicePortalPath } from '@island.is/service-portal/core'
+import {
+  getNameAbbreviation,
+  Menu,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import useAuth from '../../hooks/useAuth/useAuth'
 import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.treat'
@@ -53,10 +58,14 @@ const UserMenu: FC<{}> = () => {
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
-                  background="blue200"
+                  background="blue100"
+                  borderRadius="circle"
+                  marginRight={3}
                   className={styles.avatar}
                 >
-                  <Icon type="outline" icon="person" size="large" />
+                  <Text variant="h3" color="blue400">
+                    {getNameAbbreviation(userInfo?.profile.name || '')}
+                  </Text>
                 </Box>
                 <Box marginRight={4}>
                   <Typography variant="h4">{userInfo?.profile.name}</Typography>
@@ -94,8 +103,8 @@ const UserMenu: FC<{}> = () => {
                   </NavItem>
                 </Stack>
               </Box>
-              <Box marginTop={3}>
-                <Button onClick={handleLogoutClick}>
+              <Box marginTop={6}>
+                <Button onClick={handleLogoutClick} fluid>
                   {formatMessage({
                     id: 'global:logout',
                     defaultMessage: 'Útskráning',
