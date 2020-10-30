@@ -22,7 +22,7 @@ export default {
   fjarsysla: {
     restUrl: process.env.FJARSYSLA_REST_URL,
     restUsername: process.env.FJARSYSLA_REST_USER,
-    restPassword: process.env.FJARSYSLA_REST_PASS
+    restPassword: process.env.FJARSYSLA_REST_PASS,
   },
   backendUrl: 'http://localhost:3333',
 }

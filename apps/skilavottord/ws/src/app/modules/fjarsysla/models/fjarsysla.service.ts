@@ -8,10 +8,13 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 export class FjarsyslaService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private httpService: HttpService
+    private httpService: HttpService,
   ) {}
 
   async getFjarsysluRest(nationalId: string, permno: string) {
+    function fjarsyslaReturn(bool: boolean) {
+      return new Fjarsysla(bool)
+    }
     try {
       this.logger.info(
         `---- Starting FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
@@ -20,38 +23,36 @@ export class FjarsyslaService {
       const { restUrl, restUsername, restPassword } = environment.fjarsysla
 
       const data = JSON.stringify({
-        "fastnr": permno,
-        "kennitala": nationalId,
-        "tilvisun": "//ToDo: what is tilvisun",      
+        fastnr: permno,
+        kennitala: nationalId,
+        tilvisun: '//ToDo: what is tilvisun',
       })
-      
+
       const headersRequest = {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${Base64.encode(
-          `${restUsername}:${restPassword}`
-         )}`
+        Authorization: `Basic ${Base64.encode(
+          `${restUsername}:${restPassword}`,
+        )}`,
       }
-      const response = await this.httpService.post(restUrl , data, { headers: headersRequest }).toPromise()
-      if(!response){
+      const response = await this.httpService
+        .post(restUrl, data, { headers: headersRequest })
+        .toPromise()
+      if (!response) {
         this.logger.error('API call is not success')
         return fjarsyslaReturn(false)
       }
-      if(response.status < 300 && response.status > 199){
-        this.logger.info(`---- Finished FjarsyslaRest request on ${nationalId} with number ${permno} ----`)
+      if (response.status < 300 && response.status > 199) {
+        this.logger.info(
+          `---- Finished FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
+        )
         return fjarsyslaReturn(true)
-      }
-      else{
+      } else {
         this.logger.error(response.statusText)
         return fjarsyslaReturn(false)
       }
-  
     } catch (err) {
       this.logger.error(err)
       return fjarsyslaReturn(false)
-    }
-    
-    function fjarsyslaReturn(bool: boolean){
-      return new Fjarsysla(bool);
     }
   }
 }
