@@ -34,7 +34,14 @@ export class UserResolver {
     
     console.log("----------------------User er til-----------------------")
     console.log(user)
-    return user as User
+    let gauruser = new User()
+    gauruser.name = user.name
+    gauruser.nationalId = user.nationalId
+    gauruser.role = 'developer'
+    gauruser.mobile = null
+    console.log(gauruser)
+
+    return gauruser 
     //return not as User
     //return notari 
   }
