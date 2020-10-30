@@ -10,14 +10,16 @@ export default {
     jwtSecret: 'securesecret',
   },
   samgongustofa: {
-    soapUrl: process.env.SAMGONGUSTOFA_SOAP_URL,
-    soapUsername: process.env.SAMGONGUSTOFA_SOAP_USER,
-    soapPassword: process.env.SAMGONGUSTOFA_SOAP_PASS,
-    restAuthUrl: process.env.SAMGONGUSTOFA_REST_AUTH_URL,
-    restDeRegUrl: process.env.SAMGONGUSTOFA_REST_DEREG_URL,
-    restUsername: process.env.SAMGONGUSTOFA_REST_USER,
-    restPassword: process.env.SAMGONGUSTOFA_REST_PASS,
-    restReportingStation: process.env.SAMGONGUSTOFA_REST_REPORTING_STATION,
+    soapUrl:
+      'https://test-xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS',
+    soapUsername: 'DeloitteTest',
+    soapPassword: 'MajoneS55',
+    restAuthUrl:
+      'https://test-api.samgongustofa.is/vehicle/registrations/authenticate',
+    restDeRegUrl: 'https://test-api.samgongustofa.is/vehicle/registrations',
+    restUsername: 'deloitte.afskra',
+    restPassword: 'SkoppaogSkritla',
+    restReportingStation: '1',
   },
   fjarsysla: {
     restUrl: process.env.FJARSYSLA_REST_URL,

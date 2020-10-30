@@ -11,9 +11,9 @@ export class FjarsyslaResolver {
   ) {}
 
   @Query(() => Fjarsysla)
-  async SkilavottordFjarsysluRest(
+  async skilavottordFjarsyslaSkilagjald(
     @Args('nationalId') nid: string,
-    @Args('permno') permno: string,
+    @Args('vehiclePermno') permno: string,
   ): Promise<Fjarsysla> {
     return this.fjarsyslaService.getFjarsysluRest(nid, permno)
   }
