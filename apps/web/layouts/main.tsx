@@ -38,6 +38,22 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
 
+const absoluteUrl = (req, setLocalhost) => {
+  let protocol = 'https:'
+  let host = req
+    ? req.headers['x-forwarded-host'] || req.headers['host']
+    : window.location.host
+  if (host.indexOf('localhost') > -1) {
+    if (setLocalhost) host = setLocalhost
+    protocol = 'http:'
+  }
+  return {
+    protocol: protocol,
+    host: host,
+    origin: protocol + '//' + host,
+  }
+}
+
 export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
@@ -53,6 +69,7 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  respOrigin
 }
 
 if (environment.sentryDsn) {
@@ -89,12 +106,14 @@ const Layout: NextComponentType<
   footerTagsMenu,
   namespace,
   alertBannerContent,
+  respOrigin,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
+  const fullUrl = `${respOrigin}${asPath}`
 
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
@@ -161,7 +180,7 @@ const Layout: NextComponentType<
           <meta name="theme-color" content="#ffffff" />
           <meta property="og:title" content={n('title')} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://island.is/" />
+          <meta property="og:url" content={fullUrl} />
           <meta
             property="og:image"
             content="https://island.is/island-fb-1200x630.png"
@@ -278,9 +297,11 @@ const Layout: NextComponentType<
   )
 }
 
-Layout.getInitialProps = async ({ apolloClient, locale }) => {
+Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
+  const { origin } = absoluteUrl(req, 'localhost:4200')
+  const respOrigin = `${origin}`
   const [
     categories,
     topMenuCustomLinks,
@@ -404,6 +425,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       href: url,
     })),
     namespace,
+    respOrigin,
   }
 }
 
