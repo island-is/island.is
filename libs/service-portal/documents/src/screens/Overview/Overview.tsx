@@ -33,6 +33,11 @@ const pageSize = 6
 const defaultStartDate = subYears(new Date(), 20)
 const defaultEndDate = startOfTomorrow()
 
+type FuseItem = {
+  item: Document
+  refIndex: number
+}
+
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
   dateTo: defaultEndDate,
@@ -70,11 +75,14 @@ const getFilteredDocuments = (
     )
   }
 
-  // TODO: Fix type errors
-  // if (searchQuery) {
-  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
-  //   return fuse.search(searchQuery).map((elem) => elem)
-  // }
+  if (searchQuery) {
+    const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
+    return fuse.search(searchQuery).map((elem) => {
+      // const fuseItem = (elem as unknown) as FuseItem
+      // return fuseItem.item
+      return elem.item
+    })
+  }
 
   return filteredDocuments
 }

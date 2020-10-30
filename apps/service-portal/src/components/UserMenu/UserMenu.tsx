@@ -94,8 +94,8 @@ const UserMenu: FC<{}> = () => {
                   </NavItem>
                 </Stack>
               </Box>
-              <Box marginTop={3}>
-                <Button onClick={handleLogoutClick}>
+              <Box marginTop={6}>
+                <Button onClick={handleLogoutClick} fluid>
                   {formatMessage({
                     id: 'global:logout',
                     defaultMessage: 'Útskráning',
