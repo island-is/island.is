@@ -4,6 +4,7 @@ const { promisify } = require('util')
 
 /**
  * Because get-files-touched-by.sh cannot get files from nx cache
+ * we skip the cache on PR and Push pipelines
  */
 const skipCache = process.argv && process.argv[2] === '--skip-cache'
 
