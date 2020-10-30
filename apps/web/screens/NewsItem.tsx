@@ -15,7 +15,10 @@ import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { GET_SINGLE_NEWS_ITEM_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_SINGLE_NEWS_ITEM_QUERY,
+} from '@island.is/web/screens/queries'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -23,19 +26,24 @@ import {
   ContentLanguage,
   GetSingleNewsItemQuery,
   QueryGetSingleNewsArgs,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
 import { RichText } from '../components/RichText/RichText'
 import { SidebarBox, Sticky, HeadWithSocialSharing } from '../components'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
-const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
+const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   useContentfulId(newsItem?.id)
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
+  const n = useNamespace(namespace)
 
   const metaTitle = `${newsItem.title} | Ísland.is`
 
@@ -45,7 +53,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
         {Boolean(newsItem.author) && (
           <Stack space={1}>
             <Text variant="eyebrow" as="p" color="blue400">
-              {t.author ?? 'Höfundur'}
+              {n('author', 'Höfundur')}
             </Text>
             <Text variant="h5" as="p">
               {newsItem.author.name}
@@ -55,7 +63,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
         {Boolean(newsItem.date) && (
           <Stack space={1}>
             <Text variant="eyebrow" as="p" color="blue400">
-              {t.publishDate ?? 'Birt'}
+              {n('published', 'Birt')}
             </Text>
             <Text variant="h5" as="p">
               {format(new Date(newsItem.date), 'do MMMM yyyy')}
@@ -121,7 +129,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                     {Boolean(newsItem.author) && (
                       <Stack space={1}>
                         <Text variant="eyebrow" as="p" color="blue400">
-                          {t.author ?? 'Höfundur'}
+                          {n('author', 'Höfundur')}
                         </Text>
                         <Text variant="h5" as="p">
                           {newsItem.author.name}
@@ -131,7 +139,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                     {Boolean(newsItem.date) && (
                       <Stack space={1}>
                         <Text variant="eyebrow" as="p" color="blue400">
-                          {t.publishDate ?? 'Birt'}
+                          {n('published', 'Birt')}
                         </Text>
                         <Text variant="h5" as="p">
                           {format(new Date(newsItem.date), 'do MMMM yyyy')}
@@ -150,24 +158,42 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
 }
 
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getSingleNews: newsItem },
-  } = await apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
-    query: GET_SINGLE_NEWS_ITEM_QUERY,
-    variables: {
-      input: {
-        slug: query.slug as string,
-        lang: locale as ContentLanguage,
-      },
+  const [
+    {
+      data: { getSingleNews: newsItem },
     },
-  })
 
-  if (!newsItem) {
-    throw new CustomNextError(404, 'NewsItem not found')
-  }
+    namespace,
+  ] = await Promise.all([
+    apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
+      query: GET_SINGLE_NEWS_ITEM_QUERY,
+      variables: {
+        input: {
+          slug: query.slug as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            namespace: 'Newspages',
+          },
+        },
+      })
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(variables.data.getNamespace.fields)
+      }),
+  ])
 
   return {
     newsItem,
+    namespace,
   }
 }
 
