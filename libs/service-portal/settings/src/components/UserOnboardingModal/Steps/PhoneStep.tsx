@@ -1,40 +1,65 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { Button, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { PhoneForm, PhoneFormData } from '../../Forms/PhoneForm'
+import {
+  PhoneForm,
+  PhoneFormInternalStep,
+} from '../../Forms/PhoneForm/PhoneForm'
+import { PhoneFormData } from '../../Forms/PhoneForm/Steps/FormStep'
+import { defineMessage } from 'react-intl'
 
 interface Props {
   tel: string
+  natReg: string
   onBack: () => void
   onSubmit: (data: PhoneFormData) => void
 }
 
-export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel }) => {
+export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
   const { formatMessage } = useLocale()
+  const [step, setStep] = useState<PhoneFormInternalStep>('form')
+
+  const handleFormInternalStepChange = (value: PhoneFormInternalStep) =>
+    setStep(value)
 
   return (
     <>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '4/7']}>
           <Text variant="h1" marginBottom={3}>
-            {formatMessage({
-              id: 'service.portal:tel-number',
-              defaultMessage: 'Símanúmer',
-            })}
+            {step === 'form'
+              ? formatMessage({
+                  id: 'service.portal:tel-number',
+                  defaultMessage: 'Símanúmer',
+                })
+              : formatMessage({
+                  id: 'service.portal:tel-confirm-code',
+                  defaultMessage: 'Staðfestingarkóði',
+                })}
           </Text>
           <Text marginBottom={7}>
-            {formatMessage({
-              id: 'sp.settings:profile-info-form-message',
-              defaultMessage: `
-                Vinsamlegast gerðu breytingar á þessum upplýsingum
-                ef þörf krefur.
-              `,
-            })}
+            {step === 'form'
+              ? formatMessage({
+                  id: 'sp.settings:profile-info-form-message',
+                  defaultMessage: `
+                  Vinsamlegast gerðu breytingar á þessum upplýsingum
+                  ef þörf krefur.
+                `,
+                })
+              : formatMessage({
+                  id: 'sp.settings:tel-confirm-form-message',
+                  defaultMessage: `
+                  Staðfestingarkóði hefur verið sendur á símanúmerið þitt.
+                  Skrifaðu kóðann inn hér að neðan.
+                `,
+                })}
           </Text>
         </GridColumn>
       </GridRow>
       <PhoneForm
         tel={tel}
+        natReg={natReg}
+        onInternalStepChange={handleFormInternalStepChange}
         renderBackButton={() => (
           <Button variant="ghost" onClick={onBack}>
             {formatMessage({
@@ -43,14 +68,10 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel }) => {
             })}
           </Button>
         )}
-        renderSubmitButton={() => (
-          <Button variant="primary" type="submit" icon="arrowForward">
-            {formatMessage({
-              id: 'service.portal:next-step',
-              defaultMessage: 'Næsta skref',
-            })}
-          </Button>
-        )}
+        submitButtonText={defineMessage({
+          id: 'service.portal:next-step',
+          defaultMessage: 'Næsta skref',
+        })}
         onSubmit={onSubmit}
       />
     </>
