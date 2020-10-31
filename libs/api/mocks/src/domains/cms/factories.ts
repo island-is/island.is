@@ -152,6 +152,7 @@ export const news = factory<News>({
   image: () => image(),
   content: () => slice.list(3),
   author: () => author(),
+  genericTags: () => [],
 })
 
 export const frontPageSlider = factory<FrontpageSlider>({
