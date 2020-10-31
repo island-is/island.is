@@ -12,17 +12,19 @@ export class RecyclingPartnerResolver {
   ) {}
 
   @Query(() => [RecyclingPartnerModel])
-  async getAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+  async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return await this.recyclingPartnerService.findAll()
   }
 
   @Query(() => [RecyclingPartnerModel])
-  async getAllActiveRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+  async skilavottordAllActiveRecyclingPartners(): Promise<
+    RecyclingPartnerModel[]
+  > {
     return await this.recyclingPartnerService.findActive()
   }
 
   @Mutation((returns) => Boolean)
-  async setRecyclingPartner(
+  async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,
     @Args('companyName') companyName: string,
     @Args('address') address: string,
