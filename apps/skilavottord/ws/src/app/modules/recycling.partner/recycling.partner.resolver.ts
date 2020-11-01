@@ -53,7 +53,7 @@ export class RecyclingPartnerResolver {
     @Args('companyId') nationalId: string,
   ) {
     logger.info('deactivate recycling-partner:' + nationalId)
-    RecyclingPartnerModel.findOne({ where: { company_id: nationalId } }).then(
+    RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
       (rp) => {
         rp.active = false
         return rp.save()
@@ -67,7 +67,7 @@ export class RecyclingPartnerResolver {
     @Args('companyId') nationalId: string,
   ) {
     logger.info('activate recycling-partner:' + nationalId)
-    RecyclingPartnerModel.findOne({ where: { company_id: nationalId } }).then(
+    RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
       (rp) => {
         rp.active = true
         return rp.save()
