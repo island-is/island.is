@@ -28,11 +28,9 @@ export type VerifiedUser = {
 
 export type Role =
   | 'developer'
-  | 'admin'
-  | 'tester'
-  | 'user'
-  | 'RecyclingCompany'
-  | 'RecyclingFund'
+  | 'citizen'
+  | 'recyclingCompany'
+  | 'recyclingFund'
 
 export type Credentials = {
   user: AuthUser
