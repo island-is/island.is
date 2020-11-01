@@ -20,7 +20,7 @@ export class UserResolver {
       return null
     }
     this.logger.info(`  - User exists`)
-    let currUser = new User()
+    const currUser = new User()
   
     currUser.nationalId = user.nationalId
     currUser.name = user.name  
