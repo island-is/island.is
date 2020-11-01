@@ -10,7 +10,7 @@ import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
 
 const mockUser = {
   name: 'Mock User',
@@ -22,16 +22,6 @@ const mockUser = {
   // role: 'recyclingFund',
 }
 
-export const UserQuery = gql`
-  query UserQuery {
-    user {
-      name
-      nationalId
-      mobile
-    }
-  }
-`
-
 export const Header: FC = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
@@ -41,7 +31,7 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data } = useQuery(UserQuery)
+  const { data } = useQuery(GET_USER)
   const user = data?.user || mockUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
