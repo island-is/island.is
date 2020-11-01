@@ -9,8 +9,7 @@ import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
 import { MockCar } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound, InlineError } from '@island.is/skilavottord-web/components'
+import { InlineError } from '@island.is/skilavottord-web/components'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -48,12 +47,6 @@ const Overview: FC = () => {
     router
       .push(routes.completed, `${routes.baseRoute}/${id}/completed`)
       .then(() => window.scrollTo(0, 0))
-  }
-
-  if (!user) {
-    return null
-  } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
-    return <NotFound />
   }
 
   return (
