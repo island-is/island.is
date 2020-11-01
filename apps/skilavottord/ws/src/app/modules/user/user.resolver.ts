@@ -2,59 +2,45 @@ import { Query, Resolver, Args, ResolveField } from '@nestjs/graphql'
 import { User } from './models'
 import { UserService } from './models/user.service'
 import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
+import { Role } from '../auth/auth.types'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject} from '@nestjs/common'
+
 console.log(' --- user.resolver starting')
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, @Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   @Authorize({ throwOnUnAuthorized: false })
- // @Query(() => User, { nullable: true })
   @Query(() => User, { nullable: true })
   user(@CurrentUser() user: AuthUser): User {
+    this.logger.info(`--- skilavottordUser starting ---`)
     if (!user) {
-      console.log("----------------------User ekki til -----------------------")
+      this.logger.info(`  - User does not exist`)
       return null
     }
+    this.logger.info(`  - User exists`)
+    let currUser = new User()
+  
+    currUser.nationalId = user.nationalId
+    currUser.name = user.name  
+    currUser.mobile = user.mobile
+      
+    const authService = new AuthService()
 
-    /*const notari : User= {
-      name: 'Gormur Þengilsson',
-      nationalId: '2222222222',
-      mobile: '123456',
-      // role: 'citizen',
-      role: 'developer',
-      // role: 'recyclingPartner',
-      // role: 'recyclingFund',
+    const RoleUser: AuthUser = {
+      nationalId: user.nationalId,
+      mobile: user.mobile,
+      name: user.name,
     }
-    //let notandi: User
-    /*const not: User = {
-      nationalId: '1501933119',
-      name: 'Gormur Þengilsson',
-      mobile: '',   
-    }*/
-    
-    console.log("----------------------User er til-----------------------")
-    console.log(user)
-    let gauruser = new User()
-    gauruser.name = user.name
-    gauruser.nationalId = user.nationalId
-    gauruser.role = 'developer'
-    gauruser.mobile = null
-    console.log(gauruser)
 
-    return gauruser 
-    //return not as User
-    //return notari 
+    let RoleForUser: Role = 'citizen'   // citizen is the deault role
+    RoleForUser = authService.getRole(RoleUser)
+
+    currUser.role = RoleForUser
+    this.logger.info(`  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role}`)
+    this.logger.info(`--- skilavottordUser ending ---`)
+
+    return currUser 
   }
-  //@Authorize({ throwOnUnAuthorized: false })
-  //@ResolveField('role')
-  //resolveRole(@CurrentUser() user: AuthUser): string {
-  //  return this.authService.getRole(user)
- // }
-  //  @Authorize({ throwOnUnAuthorized: false })
-  //query b {getUserByNationalId(nationalId: "2222222222"){name, mobile}}
-  //@Query(() => User)
-  //getUserByNationalId(@Args('nationalId') nid: string): User {
-    //console.log(' --- user.resolver getUserBynationalId starting')
-    //return this.userService.getUserBynationalId(nid)
-  //}
 }
