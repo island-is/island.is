@@ -28,7 +28,6 @@ const RECYCLINGFUND = [
   '0305695639', // Ása Hauksdóttir
 ]
 
-
 @Injectable()
 export class AuthService {
   getRole(user: AuthUser): Role {

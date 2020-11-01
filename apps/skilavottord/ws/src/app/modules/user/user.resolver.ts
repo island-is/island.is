@@ -4,12 +4,15 @@ import { UserService } from './models/user.service'
 import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 import { Role } from '../auth/auth.types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject} from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 
 console.log(' --- user.resolver starting')
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private authService: AuthService, @Inject(LOGGER_PROVIDER) private logger: Logger) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
 
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
@@ -21,11 +24,11 @@ export class UserResolver {
     }
     this.logger.info(`  - User exists`)
     const currUser = new User()
-  
+
     currUser.nationalId = user.nationalId
-    currUser.name = user.name  
+    currUser.name = user.name
     currUser.mobile = user.mobile
-      
+
     const authService = new AuthService()
 
     const RoleUser: AuthUser = {
@@ -34,13 +37,15 @@ export class UserResolver {
       name: user.name,
     }
 
-    let RoleForUser: Role = 'citizen'   // citizen is the deault role
+    let RoleForUser: Role = 'citizen' // citizen is the deault role
     RoleForUser = authService.getRole(RoleUser)
 
     currUser.role = RoleForUser
-    this.logger.info(`  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role}`)
+    this.logger.info(
+      `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role}`,
+    )
     this.logger.info(`--- skilavottordUser ending ---`)
 
-    return currUser 
+    return currUser
   }
 }

@@ -1,10 +1,23 @@
-import { Body, Controller, Get, Inject, Post, Query, Req, Res} from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import * as kennitala from 'kennitala'
 import IslandisLogin from 'islandis-login'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { CSRF_COOKIE_NAME, ACCESS_TOKEN_COOKIE_NAME, SSN_IS_NOT_A_PERSON } from '@island.is/skilavottord/consts'
+import {
+  CSRF_COOKIE_NAME,
+  ACCESS_TOKEN_COOKIE_NAME,
+  SSN_IS_NOT_A_PERSON,
+} from '@island.is/skilavottord/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
@@ -100,7 +113,9 @@ export class AuthController {
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
 
-    this.logger.info(`  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`)
+    this.logger.info(
+      `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
+    )
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
@@ -122,7 +137,7 @@ export class AuthController {
   }
 
   @Post('/company/callback')
-   async callback2(@Body('token') token, @Res() res) {
+  async callback2(@Body('token') token, @Res() res) {
     this.logger.info('--- /company/callback starting ---')
     let verifyResult: VerifyResult
     try {
@@ -164,7 +179,9 @@ export class AuthController {
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
 
-    this.logger.info(`  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`)
+    this.logger.info(
+      `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
+    )
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
@@ -176,7 +193,7 @@ export class AuthController {
       mobile: user.mobile,
       name: user.fullname,
     }
-    
+
     let RoleForUser: Role = 'citizen'
     RoleForUser = authService.getRole(RoleUser)
 
