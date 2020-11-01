@@ -25,9 +25,17 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         [styles.wip]: card.wip,
       })}
     >
-      <Text variant="eyebrow" color="purple400">
-        {card.provider}
-      </Text>
+      <Box
+        display="flex"
+        alignItems="flexEnd"
+        justifyContent="spaceBetween"
+        marginBottom={2}
+      >
+        <Text variant="eyebrow" color="purple400">
+          {card.provider}
+        </Text>
+        <Tag variant="blue">{card.type}</Tag>
+      </Box>
       <Stack space={1}>
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
           <Text variant="h4">{card.title}</Text>
@@ -43,7 +51,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         <Text as="div">{card.text}</Text>
         <Box
           display="flex"
-          justifyContent="spaceBetween"
+          justifyContent="flexStart"
           alignItems="center"
           marginTop={2}
         >
@@ -52,7 +60,6 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
               {card.link.title}
             </Button>
           </Link>
-          <Tag variant="blue">{card.type}</Tag>
         </Box>
       </Stack>
     </Box>

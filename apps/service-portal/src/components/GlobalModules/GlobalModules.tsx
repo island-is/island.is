@@ -17,7 +17,7 @@ const GlobalComponent: FC<{
 
   if (Component)
     return (
-      <Suspense fallback={<div>loading</div>}>
+      <Suspense fallback={null}>
         <Component userInfo={userInfo} client={client} {...component.props} />
       </Suspense>
     )

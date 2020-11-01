@@ -44,7 +44,12 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     CmsModule,
     ApplicationModule,
     FileUploadModule,
-    DocumentModule,
+    DocumentModule.register({
+      basePath: environment.documentService.basePath,
+      clientId: environment.documentService.clientId,
+      clientSecret: environment.documentService.clientSecret,
+      tokenUrl: environment.documentService.tokenUrl,
+    }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({

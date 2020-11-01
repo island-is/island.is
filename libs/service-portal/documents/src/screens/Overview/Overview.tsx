@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import {
   Typography,
   Box,
@@ -10,29 +10,85 @@ import {
   Pagination,
   Option,
   DatePicker,
+  Input,
+  Text,
 } from '@island.is/island-ui/core'
-import {
-  useListDocuments,
-  useDocumentCategories,
-} from '@island.is/service-portal/graphql'
+import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollTopOnUpdate,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
-import AnimateHeight from 'react-animate-height'
-import * as styles from './Overview.treat'
+import { Document } from '@island.is/api/schema'
+
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { isAfter, subYears, startOfTomorrow, isWithinInterval } from 'date-fns'
+import { isEqual } from 'lodash'
 
-const defaultCategory = { label: 'Allir flokkar', value: '' }
-const pageSize = 4
-const defaultStartDate = '2000-01-01T00:00:00.000'
+const defaultCategory = { label: 'Allar Stofnanir', value: '' }
+const pageSize = 6
+const defaultStartDate = subYears(new Date(), 20)
+const defaultEndDate = startOfTomorrow()
+
+// type FuseItem = {
+//   item: Document
+//   refIndex: number
+// }
+
+const defaultFilterValues = {
+  dateFrom: defaultStartDate,
+  dateTo: defaultEndDate,
+  activeCategory: defaultCategory,
+  searchQuery: '',
+}
+
+const defaultSearchOptions = {
+  threshold: 0.3,
+  keys: ['senderName', 'senderNatReg', 'sender', 'subject'],
+}
 
 type FilterValues = {
   dateFrom: Date
   dateTo: Date
+  activeCategory: Option
+  searchQuery: string
+}
+
+const getFilteredDocuments = (
+  documents: Document[],
+  filterValues: FilterValues,
+): Document[] => {
+  const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  let filteredDocuments = documents.filter((document) =>
+    isWithinInterval(new Date(document.date), {
+      start: dateFrom,
+      end: dateTo,
+    }),
+  )
+
+  if (activeCategory.value) {
+    filteredDocuments = filteredDocuments.filter(
+      (document) => document.senderNatReg === activeCategory.value,
+    )
+  }
+
+  // if (searchQuery) {
+  //   const fuse = new Fuse(filteredDocuments, defaultSearchOptions)
+  //   return fuse.search(searchQuery).map((elem) => {
+  //     // const fuseItem = (elem as unknown) as FuseItem
+  //     // return fuseItem.item
+  //     return elem.item
+  //   })
+  // }
+  if (searchQuery) {
+    return filteredDocuments.filter((x) =>
+      x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+  }
+
+  return filteredDocuments
 }
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
@@ -41,141 +97,169 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [filterValue, setFilterValue] = useState<FilterValues>({
-    dateFrom: new Date(defaultStartDate),
-    dateTo: new Date(),
-  })
-  const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
-  const { data, loading, error } = useListDocuments(
-    userInfo.profile.natreg,
-    filterValue.dateFrom,
-    filterValue.dateTo,
-    page,
-    pageSize,
-    activeCategory?.value.toString() || '',
-  )
-  const { data: cats } = useDocumentCategories()
   useScrollTopOnUpdate([page])
 
-  const categories = [defaultCategory].concat(
-    cats?.map((x) => ({
-      label: x.name,
-      value: x.id,
-    })) || [],
+  const [filterValue, setFilterValue] = useState<FilterValues>(
+    defaultFilterValues,
+  )
+  const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
+
+  const categories = [defaultCategory, ...data.categories]
+  const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
+  const pagedDocuments = {
+    from: (page - 1) * pageSize,
+    to: pageSize * page,
+    totalPages: Math.ceil(filteredDocuments.length / pageSize),
+  }
+  const handleDateFromInput = useCallback(
+    (value: Date) =>
+      setFilterValue((oldState) => {
+        const { dateTo } = oldState
+        return {
+          ...oldState,
+          dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
+          dateFrom: value,
+        }
+      }),
+    [],
   )
 
-  const handleExtendSearchClick = () => {
-    if (searchOpen) {
-      setSearchOpen(false)
-      setFilterValue({
-        dateFrom: new Date(defaultStartDate),
-        dateTo: new Date(),
-      })
-    } else {
-      setSearchOpen(true)
-    }
-  }
+  const handleDateToInput = useCallback(
+    (value: Date) =>
+      setFilterValue((oldState) => ({
+        ...oldState,
+        dateTo: value,
+      })),
+    [],
+  )
 
-  const handleDateFromInput = (value: Date) =>
-    setFilterValue({
-      ...filterValue,
-      dateFrom: value,
-    })
+  const handlePageChange = useCallback((page: number) => setPage(page), [])
+  const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
+    setFilterValue((oldFilter) => ({
+      ...oldFilter,
+      activeCategory: newCategory as Option,
+    }))
+  }, [])
 
-  const handleDateToInput = (value: Date) =>
-    setFilterValue({
-      ...filterValue,
-      dateTo: value,
-    })
+  const handleSearchChange = useCallback(
+    (value: string) =>
+      setFilterValue({ ...defaultFilterValues, searchQuery: value }),
+    [],
+  )
 
-  const handlePageChange = (page: number) => setPage(page)
-  const handleCategoryChange = (cat: ValueType<Option>) =>
-    setActiveCategory(cat as Option)
+  const handleClearFilters = useCallback(() => {
+    setFilterValue({ ...defaultFilterValues })
+    setPage(1)
+  }, [])
+
+  const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
-        <Typography variant="h1" as="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'sp.documents:title',
             defaultMessage: 'Rafræn skjöl',
           })}
-        </Typography>
+        </Text>
         <Columns collapseBelow="sm">
           <Column width="7/12">
-            <Typography variant="intro">
+            <Text variant="intro">
               {formatMessage({
                 id: 'sp.documents:intro',
                 defaultMessage:
                   'Hér munt þú geta fundið öll þau skjöl sem eru send til þín frá stofnunum ríkisins',
               })}
-            </Typography>
+            </Text>
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <Stack space={2}>
             <div>
-              <Columns align="right" space={1} collapseBelow="sm">
-                <div className={styles.selectWrapper}>
+              <Stack space={3}>
+                <Box height="full">
+                  <Input
+                    value={filterValue.searchQuery}
+                    onChange={(ev) => handleSearchChange(ev.target.value)}
+                    name="rafraen-skjol-leit"
+                    placeholder={formatMessage({
+                      id: 'sp.documents:search-placeholder',
+                      defaultMessage: 'Leitaðu af rafrænu skjali',
+                    })}
+                  />
+                </Box>
+                <Box>
                   <Select
                     name="categories"
                     defaultValue={categories[0]}
                     options={categories}
-                    value={activeCategory}
+                    value={filterValue.activeCategory}
                     onChange={handleCategoryChange}
+                    label={formatMessage({
+                      id: 'sp.documents:institution-label',
+                      defaultMessage: 'Stofnun',
+                    })}
                   />
-                </div>
-                <Column width="content">
-                  <Button
-                    variant="ghost"
-                    icon={searchOpen ? 'close' : 'plus'}
-                    onClick={handleExtendSearchClick}
-                  >
-                    {searchOpen
-                      ? formatMessage({
-                          id: 'sp.documents:close-filters',
-                          defaultMessage: 'Loka ítarleit',
-                        })
-                      : formatMessage({
-                          id: 'sp.documents:filters',
-                          defaultMessage: 'Ítarleit',
-                        })}
-                  </Button>
-                </Column>
-              </Columns>
-              <AnimateHeight height={searchOpen ? 'auto' : 0}>
-                <Box
-                  background="blue100"
-                  paddingY={3}
-                  paddingX={4}
-                  borderRadius="large"
-                  marginTop={2}
-                >
-                  <Stack space={2}>
-                    <Columns space={2} collapseBelow="sm">
-                      <Column width="1/2">
-                        <DatePicker
-                          label="Frá"
-                          placeholderText="Veldu dagsetningu"
-                          locale="is"
-                          value={filterValue.dateFrom?.toString() || undefined}
-                          handleChange={handleDateFromInput}
-                        />
+                </Box>
+                <Columns space={2} collapseBelow="md">
+                  <Column width="6/12">
+                    <DatePicker
+                      label={formatMessage({
+                        id: 'sp.documents:datepicker-dateFrom-label',
+                        defaultMessage: 'Dagsetning frá',
+                      })}
+                      placeholderText={formatMessage({
+                        id: 'sp.documents:datepicker-dateFrom-placeholder',
+                        defaultMessage: 'Veldu dagsetningu',
+                      })}
+                      locale="is"
+                      selected={filterValue.dateFrom}
+                      value={filterValue?.dateFrom?.toString() || ''}
+                      handleChange={handleDateFromInput}
+                    />
+                  </Column>
+                  <Column width="6/12">
+                    <DatePicker
+                      label={formatMessage({
+                        id: 'sp.documents:datepicker-dateTo-label',
+                        defaultMessage: 'Dagsetning til',
+                      })}
+                      placeholderText={formatMessage({
+                        id: 'sp.documents:datepicker-dateTo-placeholder',
+                        defaultMessage: 'Veldu dagsetningu',
+                      })}
+                      locale="is"
+                      selected={filterValue.dateTo}
+                      value={filterValue?.dateTo?.toString() || ''}
+                      handleChange={handleDateToInput}
+                      minDate={filterValue.dateFrom || undefined}
+                    />
+                  </Column>
+                </Columns>
+                <Box marginTop="gutter">
+                  {hasActiveFilters() && (
+                    <Columns space={3}>
+                      <Column>
+                        <Text variant="h3">
+                          {`${filteredDocuments.length} ${formatMessage({
+                            id: 'sp.documents:found',
+                            defaultMessage: 'skjöl fundust',
+                          })}`}
+                        </Text>
                       </Column>
-                      <Column width="1/2">
-                        <DatePicker
-                          label="Til"
-                          placeholderText="Veldu dagsetningu"
-                          locale="is"
-                          value={filterValue.dateTo?.toString() || undefined}
-                          handleChange={handleDateToInput}
-                        />
+                      <Column width="content">
+                        <Button variant="text" onClick={handleClearFilters}>
+                          {formatMessage({
+                            id: 'sp.documents:clear-filters',
+                            defaultMessage: 'Hreinsa filter',
+                          })}
+                        </Button>
                       </Column>
                     </Columns>
-                  </Stack>
+                  )}
                 </Box>
-              </AnimateHeight>
+              </Stack>
             </div>
             {loading && <ActionCardLoader repeat={3} />}
             {error && (
@@ -189,7 +273,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Typography>
               </Box>
             )}
-            {!loading && !error && data?.length === 0 && (
+            {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Typography variant="h3">
                   {formatMessage({
@@ -200,13 +284,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Typography>
               </Box>
             )}
-            {data?.map((document) => (
-              <DocumentCard key={document.id} document={document} />
-            ))}
-            {data && data.length > pageSize && (
+            {filteredDocuments
+              ?.slice(pagedDocuments.from, pagedDocuments.to)
+              .map((document) => (
+                <DocumentCard key={document.id} document={document} />
+              ))}
+            {filteredDocuments && filteredDocuments.length > pageSize && (
               <Pagination
                 page={page}
-                totalPages={data?.length === pageSize ? page + 1 : page}
+                totalPages={pagedDocuments.totalPages}
                 renderLink={(page, className, children) => (
                   <button
                     className={className}

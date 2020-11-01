@@ -2,8 +2,8 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
-export class GetUserProfileInput {
-  @Field()
+export class ConfirmSmsVerificationInput {
+  @Field(() => String)
   @IsString()
-  nationalId!: string
+  code!: string
 }
