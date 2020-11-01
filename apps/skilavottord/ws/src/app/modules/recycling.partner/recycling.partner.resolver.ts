@@ -47,4 +47,32 @@ export class RecyclingPartnerResolver {
     await this.recyclingPartnerService.createRecyclingPartner(rp)
     return true
   }
+
+  @Mutation((returns) => String)
+  async skilavottordDeactivateRecycllingPartner(
+    @Args('companyId') nationalId: string,
+  ) {
+    logger.info('deactivate recycling-partner:' + nationalId)
+    RecyclingPartnerModel.findOne({ where: { company_id: nationalId } }).then(
+      (rp) => {
+        rp.active = false
+        return rp.save()
+      },
+    )
+    return nationalId
+  }
+
+  @Mutation((returns) => String)
+  async skilavottordActivateRecycllingPartner(
+    @Args('companyId') nationalId: string,
+  ) {
+    logger.info('activate recycling-partner:' + nationalId)
+    RecyclingPartnerModel.findOne({ where: { company_id: nationalId } }).then(
+      (rp) => {
+        rp.active = true
+        return rp.save()
+      },
+    )
+    return nationalId
+  }
 }
