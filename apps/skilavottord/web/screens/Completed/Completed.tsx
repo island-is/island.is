@@ -25,7 +25,7 @@ const Completed = ({ apolloState }) => {
   const router = useRouter()
   const { id } = router.query
 
-  const car = apolloState[`Car:${id}`]
+  const car = apolloState[`VehicleInformation:${id}`]
 
   useEffect(() => {
     if (!car) {

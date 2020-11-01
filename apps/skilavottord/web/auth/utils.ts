@@ -27,6 +27,8 @@ export const isAuthenticated = (ctx: CookieContext) => {
 }
 
 export const hasPermission = (page: Page, role: Role) => {
+  if (!role) return false
+
   if (role === 'admin' || role === 'developer') return true
 
   const permittedRoutes = {

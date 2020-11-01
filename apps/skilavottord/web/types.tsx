@@ -3,14 +3,14 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { NextComponentType } from 'next'
 import { NextPageContext } from 'next/dist/next-server/lib/utils'
 
-export interface MockCar {
+export interface Car {
   permno: string
   type: string
-  newregdate: string
   color: string
-  recyclable: boolean
-  status?: string
-  isCoOwned?: boolean
+  firstRegDate: string
+  isRecyclable: boolean
+  hasCoOwner: boolean
+  status: string
 }
 
 export interface MockRecyclingPartner {
@@ -26,10 +26,10 @@ export interface MockRecyclingPartner {
 
 export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
 
-export interface MockUser {
+export interface User {
   name: string
   nationalId: string
-  mobile: number
+  mobile: string
   role: string
 }
 

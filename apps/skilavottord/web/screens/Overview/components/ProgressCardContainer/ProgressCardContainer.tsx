@@ -1,14 +1,13 @@
 import React, { FC } from 'react'
 import { Stack, Text } from '@island.is/island-ui/core'
-import { MockCar, RecycleActionTypes } from '@island.is/skilavottord-web/types'
+import { Car, RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { ProgressCard } from '../ProgressCard/ProgressCard'
 
 interface Props {
   title: string
-  cars: MockCar[]
+  cars: Car[]
   actionType: RecycleActionTypes
   onContinue: (permno: string, actionType: RecycleActionTypes) => void
-  status: string // MOCK
 }
 
 export const ProgressCardContainer: FC<Props> = ({
@@ -16,15 +15,14 @@ export const ProgressCardContainer: FC<Props> = ({
   cars,
   actionType,
   onContinue,
-  status,
 }) => {
   return (
     <Stack space={2}>
       <Text variant="h3">{title}</Text>
-      {cars.map((car: MockCar) => (
+      {cars.map((car: Car) => (
         <ProgressCard
           key={car.permno}
-          car={{ ...car, status }}
+          car={car}
           onClick={() => onContinue(car.permno, actionType)}
         />
       ))}

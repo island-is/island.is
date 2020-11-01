@@ -24,7 +24,7 @@ const RecyclingCompanies: FC = () => {
     return <NotFound />
   }
 
-  const recyclingPartners = data?.getAllRecyclingPartners || []
+  const recyclingPartners = data?.skilavottordAllRecyclingPartners || []
 
   return (
     <PartnerPageLayout

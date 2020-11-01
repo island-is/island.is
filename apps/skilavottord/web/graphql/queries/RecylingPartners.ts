@@ -15,8 +15,8 @@ export const GET_RECYCLING_PARTNER_BY_ID = gql`
 `
 
 export const GET_ALL_RECYCLING_PARTNERS = gql`
-  query getAllRecyclingPartners {
-    getAllRecyclingPartners {
+  query skilavottordAllRecyclingPartners {
+    skilavottordAllRecyclingPartners {
       companyId
       companyName
       address
@@ -32,8 +32,8 @@ export const GET_ALL_RECYCLING_PARTNERS = gql`
 `
 
 export const GET_ALL_ACTIVE_RECYCLING_PARTNERS = gql`
-  query getAllActiveRecyclingPartners {
-    getAllActiveRecyclingPartners {
+  query skilavottordAllActiveRecyclingPartners {
+    skilavottordAllActiveRecyclingPartners {
       companyId
       companyName
       address

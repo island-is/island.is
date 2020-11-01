@@ -12,16 +12,6 @@ import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapp
 import { useQuery } from '@apollo/client'
 import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
 
-const mockUser = {
-  name: 'Mock User',
-  nationalId: '2222222222',
-  mobile: 123456,
-  // role: 'citizen',
-  role: 'developer',
-  // role: 'recyclingPartner',
-  // role: 'recyclingFund',
-}
-
 export const Header: FC = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
@@ -32,7 +22,7 @@ export const Header: FC = () => {
   } = useI18n()
 
   const { data } = useQuery(GET_USER)
-  const user = data?.user || mockUser
+  const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
 

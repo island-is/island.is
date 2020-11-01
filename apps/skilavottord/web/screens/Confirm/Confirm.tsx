@@ -27,7 +27,7 @@ const Confirm = ({ apolloState }) => {
   const router = useRouter()
   const { id } = router.query
 
-  const car = apolloState[`Car:${id}`]
+  const car = apolloState[`VehicleInformation:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -88,7 +88,7 @@ const Confirm = ({ apolloState }) => {
                     setCheckbox(target.checked)
                   }}
                   checked={checkbox}
-                  disabled={!car.recyclable}
+                  disabled={!car.isRecyclable}
                 />
               </Box>
             </Stack>
