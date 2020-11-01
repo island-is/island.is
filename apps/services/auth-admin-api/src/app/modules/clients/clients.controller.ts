@@ -1,35 +1,40 @@
 import {
+  Client,
+  ClientDTO,
+  ClientsService,
+  ClientUpdateDTO,
+} from '@island.is/auth-api-lib'
+import {
+  BadRequestException,
+  Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
-  UseGuards,
   Post,
-  Body,
   Put,
-  Delete,
-  BadRequestException,
 } from '@nestjs/common'
 import {
+  ApiCreatedResponse,
+  ApiOAuth2,
   ApiOkResponse,
   ApiTags,
-  ApiOAuth2,
-  ApiCreatedResponse,
 } from '@nestjs/swagger'
-import {
-  Client,
-  ClientsService,
-  ClientDTO,
-  ClientUpdateDTO,
-} from '@island.is/auth-api-lib'
-import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
+
+  @Get()
+  //@ApiOkResponse({ type: Client[] })
+  async findAll(): Promise<Client[]> {
+    const clients = await this.clientsService.findAll()
+    return clients
+  }
 
   @Get(':id')
   @ApiOkResponse({ type: Client })
