@@ -10,7 +10,7 @@
 export interface Translation {
   home: Home
   header: Header
-  data: Data
+  gdpr: GDPR
   myCars: MyCars
   confirm: Confirm
   handover: Handover
@@ -37,7 +37,7 @@ export interface Header {
   logoutText: string
 }
 
-export interface Data {
+export interface GDPR {
   title: string
   subTitles: DataSubtitles
   info: string
@@ -342,7 +342,6 @@ export interface InputField {
 
 export interface Routes {
   home: HomeRoutes
-  data: string
   myCars: string
   recycleVehicle: RecycleVehicleRoutes
   deregisterVehicle: DeregisterVehicleRoutes

@@ -5,18 +5,18 @@
   "header": {
     "logoutText": "Útskrá"
   },
-  "data": {
-    "title": "You own your data",
+  "gdpr": {
+    "title": "Þín gögn",
     "subTitles": {
-      "info": "Information about your cars"
+      "info": "Upplýsingar um þínar bifreiðir"
     },
-    "info": "We need to collect information about your cars for you to be able to use the service",
-    "checkbox": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis morbi ullamcorper ante amet eleifend ornare eget a, aliquam. Nunc, non dui tempor, lobortis diam quis egestas. Magna tempus accumsan fusce leo nisl nunc lacinia ultrices. Facilisi orci nec ut magna varius etiam feugiat. Lobortis consequat, arcu blandit tincidunt vitae cras.",
+    "info": "Við þurfum frekari upplýsingar um þína bíla, áður en þú getur notað þjónustuna.",
+    "checkbox": "Ég samþykki að nota megi ofangreindar upplýsingar, sem og þær upplýsingar sem koma fram við förgun á bifreiðinni.",
     "buttons": {
-      "continue": "Continue"
+      "continue": "Halda áfram"
     },
     "error": {
-      "message": "We have problem with the connection to the database and cannot save your preferences, please try to re-load the page.",
+      "message": "Ekki tókst að tengjast gagnagrunni til að vista stillingarnar. Vinsamlegast endurhladdu síðunni.",
       "primaryButton": "Endurhlaða síðu"
     }
   },
@@ -123,134 +123,148 @@
     }
   },
   "deregisterOverview": {
-    "title": "Deregister car",
-    "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
+    "title": "Afskrá bifreið",
+    "info": "Ferli fer í gang þar sem bíllinn verður afskráður og greiðsla til eiganda mun fara af stað. Einnig mun förgun á bílnum fara af stað.",
     "subtitles": {
       "history": "History"
     },
     "buttons": {
-      "deregister": "Deregister car"
+      "deregister": "Afskrá bifreið"
     },
     "search": {
-      "label": "Search for reg nr",
-      "placeholder": "Search for reg nr"
+      "label": "Leita af skráningarnúmeri",
+      "placeholder": "Leita af skráningarnúmeri"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+    "table": [
+      "Skráningar nr.",
+      "Tegund",
+      "Undirtegund",
+      "Ár",
+      "Notandi",
+      "Afskráð"
+    ]
   },
   "companyInfo": {
-    "title": "Company information",
-    "info": "The company information will help your customers find and contact you when using the digital car recycling service on island.is.",
-    "empty": "Add your companies locations so that the users can find your company on iceland.is.",
+    "title": "Upplýsingar fyrirtækis",
+    "info": "Þessar upplýsingar hjálpa viðskiptavinum að hafa samband við ykkur þegar hann nýtir sér stafræna endurvinnslu á bíl á island.is.",
+    "empty": "Bættu við staðsetningu fyrirtækisins til að auðvelda viðskiptavinum að finna þig á island.is.",
     "subtitles": {
       "location": "Recycling company location"
     },
     "buttons": {
-      "add": "Add another location",
-      "edit": "Edit",
-      "delete": "Delete"
+      "add": "Bæta við staðsetningu",
+      "edit": "Breyta",
+      "delete": "Fjarlæga"
     }
   },
   "companyInfoForm": {
-    "addTitle": "Add new location",
-    "editTitle": "Edit location",
+    "addTitle": "Bæta við staðsetningu",
+    "editTitle": "Breyta staðsetningu",
     "form": {
-      "title": "Adress and contact information",
+      "title": "Heimilisfang og tengiliður",
       "company": {
-        "label": "Company"
+        "label": "Fyrirtæki"
       },
       "visitingAddress": {
-        "label": "Visiting adress",
-        "placeholder": "Ex. Maplestreet 2"
+        "label": "Heimilisfang heimsækjanda",
+        "placeholder": "T.d. Smáratorg 4"
       },
       "postNumber": {
-        "label": "Post number",
-        "placeholder": "Postnumber of visiting adress"
+        "label": "Póstnúmer",
+        "placeholder": "Póstnúmer heimsækjanda"
       },
       "city": {
-        "label": "City",
-        "placeholder": "Ex. Reykjavik"
+        "label": "Borg",
+        "placeholder": "T.d. Reykjavík"
       },
       "website": {
-        "label": "Website (optional)",
-        "placeholder": "Ex. www.website.is"
+        "label": "Vefsíða",
+        "placeholder": "T.d. www.vefsida.is"
       },
       "phoneNumber": {
-        "label": "Phone number (including country code)",
-        "placeholder": "Ex. +3545551900"
+        "label": "Sími",
+        "placeholder": "T.d. +3545551900"
       }
     },
     "buttons": {
-      "add": "Add location",
-      "save": "Save changes",
-      "cancel": "Cancel"
+      "add": "Bæta við staðsetningu",
+      "save": "Vista breytingar",
+      "cancel": "Hætta"
     },
-    "success": "Company location was successfully updated."
+    "success": "Staðsetning var uppfærð."
   },
   "deregisterSidenav": {
-    "deregister": "Deregister car",
-    "companyInfo": "Company information"
+    "deregister": "Afskrá bíl",
+    "companyInfo": "Upplýsingar fyrirtækis"
   },
   "deregisterVehicle": {
     "select": {
-      "title": "Select car",
-      "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
+      "title": "Velja bíl",
+      "info": "Skráðu bílnúmerið á bílnum sem á að afskrá. Einungis bílar sem staðfestir eru af eiganda á island.is er hægt að afskrá.",
       "input": {
-        "label": "Car registration number",
-        "placeholder": "ex MDX34",
+        "label": "Skráningarnúmer",
+        "placeholder": "t.d. MXE30",
         "errors": {
-          "empty": "Please enter a car registration number",
-          "length": "Please enter 5 or 7 characters",
-          "invalidRegNumber": "Please enter registration number in a valid format"
+          "empty": "Vinsamlegast skráðu skráningarnúmer",
+          "length": "Vinsamlegast skráðu 5-7 stafi.",
+          "invalidRegNumber": "Vinsamlegast skráðu skráningarnúmer á leyfilegu formi."
         }
       },
       "buttons": {
-        "cancel": "Cancel",
-        "continue": "Continue"
+        "cancel": "Hætta",
+        "continue": "Halda áfram"
       }
     },
     "deregister": {
-      "title": "Deregister car",
-      "info": "Confirm car for deregistration. This process cannot be undone.",
+      "title": "Afskrá bíl",
+      "info": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
       "buttons": {
-        "back": "Back",
-        "confirm": "Confirm"
+        "back": "Til baka",
+        "confirm": "Staðfesta"
       },
-      "success": "Deregistration was successful."
+      "success": "Afskráning tókst."
     }
   },
   "recyclingFundOverview": {
-    "title": "Recycled cars",
+    "title": "Endurunnir bílar",
     "subtitles": {
-      "deregistered": "Deregistered"
+      "deregistered": "Afskráðir bílar"
     },
     "buttons": {
       "export": "Export"
     },
     "search": {
-      "label": "Search for reg nr",
+      "label": "Leita að skráningarnúmeri",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
+    "table": [
+      "Skráningar nr.",
+      "Tegund",
+      "Undirtegund",
+      "Ár",
+      "Fyrirtæki",
+      "Afskráð"
+    ]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",
-    "recycled": "Recycled cars",
-    "companies": "Reycling companies"
+    "recycled": "Endurunnir bílar",
+    "companies": "Endurvinnslu fyrirtæki"
   },
   "recyclingCompanies": {
-    "title": "Recycling companies",
-    "info": "The company information will help your customers contact you when using the digital car recycling service.",
-    "empty": "There is no recycling comapany added yet",
+    "title": "Endurvinnslu fyrirtæki",
+    "info": "Upplýsingar fyrirtækis hjálpa viðskiptavinum við að hafa samband þegar þeir nota stafrænu bíla endurvinnsluna.",
+    "empty": "Engin endurvinnslu fyrirtæki fundust",
     "subtitles": {
-      "companies": "Recycling companies"
+      "companies": "Endurvinnslu fyrirtæki"
     },
     "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Virkt",
+      "inactive": "Óvirkt"
     },
     "buttons": {
-      "add": "Add recycling company",
-      "edit": "Edit"
+      "add": "Bæta við endurvinnslu fyrirtæki",
+      "edit": "Breyta"
     }
   },
   "notFound": {
@@ -271,7 +285,6 @@
       "recyclingPartner": "/deregister-vehicle",
       "recyclingFund": "/recycled-vehicles"
     },
-    "data": "/data",
     "myCars": "/my-cars",
     "recycleVehicle": {
       "baseRoute": "/recycle-vehicle",
