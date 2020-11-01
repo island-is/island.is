@@ -5,7 +5,6 @@ import { withApollo } from '@island.is/skilavottord-web/graphql/withApollo'
 import { withAuth } from '@island.is/skilavottord-web/auth'
 import { withGDPR } from '@island.is/skilavottord-web/components'
 
-
 export default withApollo(
-  withAuth(withLocale('is')(withGDPR((Handover as Screen))), 'citizen'),
+  withAuth(withLocale('is')(withGDPR(Handover as Screen)), 'citizen'),
 )
