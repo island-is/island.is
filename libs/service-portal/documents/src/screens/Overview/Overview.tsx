@@ -29,7 +29,7 @@ import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 
-const defaultCategory = { label: 'Allar Stofnanir', value: '' }
+const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
 const defaultStartDate = subYears(new Date(), 20)
 const defaultEndDate = startOfTomorrow()

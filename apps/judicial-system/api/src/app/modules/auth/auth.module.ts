@@ -3,7 +3,7 @@ import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 
 import { environment } from '../../../environments'
-import { UserModule } from '../user'
+import { BackendAPI } from '../../../services'
 import { AuthService } from './auth.service'
 import { AuthController } from './auth.controller'
 import { JwtStrategy } from './jwt.strategy'
@@ -24,10 +24,10 @@ const ONE_HOUR = 3600
         expiresIn: ONE_HOUR,
       },
     }),
-    UserModule,
   ],
   controllers: [AuthController],
   providers: [
+    BackendAPI,
     AuthService,
     JwtStrategy,
     {
