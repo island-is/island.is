@@ -4,3 +4,7 @@ div.filterX [aria-controls$='_category'] {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+div.filterX [id$='_category'] {
+  padding-top: 0px;
+}
