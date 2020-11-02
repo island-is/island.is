@@ -7,6 +7,7 @@ import {
   Footer,
   AlertBanner,
   AlertBannerVariants,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
@@ -218,30 +219,34 @@ const Layout: NextComponentType<
             menuTabs,
           }}
         >
-          <FixedNav />
-          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          <Hidden print={true}>
+            <FixedNav />
+            {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          </Hidden>
           <div id="main-content">
             {wrapContent ? <Box width="full">{children}</Box> : children}
           </div>
         </MenuTabsContext.Provider>
         {showFooter && (
-          <Footer
-            topLinks={footerUpperInfo}
-            topLinksContact={footerUpperContact}
-            bottomLinks={footerLowerMenu}
-            middleLinks={footerMiddleMenu}
-            bottomLinksTitle={t.siteExternalTitle}
-            tagLinks={footerTagsMenu}
-            middleLinksTitle={String(namespace.footerMiddleLabel)}
-            tagLinksTitle={String(namespace.footerRightLabel)}
-            languageSwitchLink={{
-              title: activeLocale === 'en' ? 'Íslenska' : 'English',
-              href: activeLocale === 'en' ? '/' : '/en',
-            }}
-            showMiddleLinks
-            showTagLinks
-            hasDrawerMenu
-          />
+          <Hidden print={true}>
+            <Footer
+              topLinks={footerUpperInfo}
+              topLinksContact={footerUpperContact}
+              bottomLinks={footerLowerMenu}
+              middleLinks={footerMiddleMenu}
+              bottomLinksTitle={t.siteExternalTitle}
+              tagLinks={footerTagsMenu}
+              middleLinksTitle={String(namespace.footerMiddleLabel)}
+              tagLinksTitle={String(namespace.footerRightLabel)}
+              languageSwitchLink={{
+                title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                href: activeLocale === 'en' ? '/' : '/en',
+              }}
+              showMiddleLinks
+              showTagLinks
+              hasDrawerMenu
+            />
+          </Hidden>
         )}
         <style jsx global>{`
           @font-face {

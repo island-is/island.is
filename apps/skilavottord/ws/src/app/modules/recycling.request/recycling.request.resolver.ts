@@ -13,7 +13,7 @@ export class RecyclingRequestResolver {
   ) {}
 
   @Query(() => [RecyclingRequestModel])
-  async getAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
+  async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
     logger.info(
       'getAllRecyclingRequests responce:' + JSON.stringify(res, null, 2),
