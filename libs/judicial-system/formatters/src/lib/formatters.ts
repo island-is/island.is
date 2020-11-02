@@ -93,8 +93,8 @@ export const formatCustodyRestrictions = (
 ) => {
   return restrictions && restrictions.length > 0
     ? restrictions
-      .map((restriction) => getRestrictionByValue(restriction))
-      .toString()
-      .replace(',', ', ')
+        .map((restriction) => getRestrictionByValue(restriction))
+        .toString()
+        .replace(',', ', ')
     : 'Lausagæsla'
 }
