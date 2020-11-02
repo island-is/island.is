@@ -2,15 +2,12 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildSubSection,
   buildIntroductionField,
   buildTextField,
   Form,
   ApplicationTypes,
   FormModes,
   buildSubmitField,
-  buildCheckboxField,
-  buildFileUploadField,
   buildCustomField
   
 } from '@island.is/application/core'
