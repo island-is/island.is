@@ -377,7 +377,7 @@ export const Confirmation: React.FC = () => {
           {/* If the ruling has already been confirmed, then the judge has been set. */}
           {workingCase?.judge
             ? `${workingCase?.judge.name}, ${workingCase?.judge.title}`
-            : `${user?.name}, ${user?.title}`}
+            : `${user?.name} ${user?.title}`}
         </Text>
       </Box>
       <FormFooter
