@@ -3,13 +3,13 @@ import { Role, AuthUser } from './auth.types'
 
 const DEVELOPERS = [
   /* Deloitte */
-  '1903795829', // Örvar
+  '2310765229', // Vésteinn Viðarsson
+  '2811638099', // Tómas Árni Jónsson
+  '0101302129', // Gervimaður Noregur
 ]
 
 const RECYCLINGCOMPANY = [
   /* Deloitte og DI test */
-  '2310765229', // Vésteinn Viðarsson
-  '2811638099', // Tómas Árni Jónsson
   '0905665129', // Friðbjörn Hólm Ólafsson
   /* Vaka */
   '0706765599', // Sigríður Björk Þórisdóttir
@@ -18,7 +18,6 @@ const RECYCLINGCOMPANY = [
 
 const RECYCLINGFUND = [
   /* Deloitte test */
-  '0101302129', // Gervimaður Noregur
   '1505664449', // Rúnar Sigurður Guðlaugsson
   '0301665909', // Sigurgeir Guðmundsson
   '2311862559', //   Quan Dong
