@@ -43,7 +43,7 @@ const WidgetError: FC<Props> = ({ name }) => {
         {formatMessage(name)},
         {formatMessage({
           id: 'service.portal:something-went-wrong',
-          defaultMessage: 'eitthvað fór úrskeiðis',
+          defaultMessage: ' eitthvað fór úrskeiðis',
         })}
       </Typography>
     </Box>
