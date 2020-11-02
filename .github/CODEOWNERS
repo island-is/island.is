@@ -51,3 +51,5 @@
 
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
 /apps/services/xroad-collector                            @island-is/advania
+
+/apps/skilavottord/                                       @island-is/deloitte
