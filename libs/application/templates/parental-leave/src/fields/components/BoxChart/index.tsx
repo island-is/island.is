@@ -58,7 +58,7 @@ const BoxChart = ({
         </Text>
       )}
       <Box
-        className={styles.TrackGrid}
+        className={styles.BoxGrid}
         marginTop={1}
         style={{ gridTemplateColumns: `repeat(${boxes}, 1fr)` }}
       >
