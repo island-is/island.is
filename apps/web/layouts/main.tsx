@@ -212,7 +212,6 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {' '}
             <Footer
               topLinks={footerUpperInfo}
               topLinksContact={footerUpperContact}
