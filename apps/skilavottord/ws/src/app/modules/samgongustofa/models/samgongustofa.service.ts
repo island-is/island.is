@@ -71,7 +71,11 @@ export class SamgongustofaService {
                 'soapenv:Fault'
               ][0]['faultstring'][0],
             )
-            throw new Error(allCarsResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0])
+            throw new Error(
+              allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
+                'soapenv:Fault'
+              ][0]['faultstring'][0],
+            )
           }
           // parse xml to Json Result
           return parser
@@ -130,13 +134,17 @@ export class SamgongustofaService {
               return vehicleArr
             })
             .catch(function (err) {
-              loggerReplacement.error(`Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`)
-              throw new Error("Getting Error while parsing xml to json...")
+              loggerReplacement.error(
+                `Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`,
+              )
+              throw new Error('Getting Error while parsing xml to json...')
             })
         })
         .catch(function (err) {
-          loggerReplacement.error(`Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`)
-          throw new Error("Getting Error while parsing xml to json...")
+          loggerReplacement.error(
+            `Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`,
+          )
+          throw new Error('Getting Error while parsing xml to json...')
         })
 
       this.logger.info('Finished extracting all vehicles')
@@ -190,8 +198,16 @@ export class SamgongustofaService {
                   'soapenv:Fault',
                 )
               ) {
-                loggerReplacement.error(basicResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0])
-                throw new Error(basicResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0])
+                loggerReplacement.error(
+                  basicResult['soapenv:Envelope']['soapenv:Body'][0][
+                    'soapenv:Fault'
+                  ][0]['faultstring'][0],
+                )
+                throw new Error(
+                  basicResult['soapenv:Envelope']['soapenv:Body'][0][
+                    'soapenv:Fault'
+                  ][0]['faultstring'][0],
+                )
               }
               // parse xml to Json Result
               return parser
@@ -214,13 +230,17 @@ export class SamgongustofaService {
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {
-                  loggerReplacement.error(`Getting error while parsing xml to json on basicVehicleInformation request: ${err}`)
-                  throw new Error("Getting Error while parsing xml to json...")
+                  loggerReplacement.error(
+                    `Getting error while parsing xml to json on basicVehicleInformation request: ${err}`,
+                  )
+                  throw new Error('Getting Error while parsing xml to json...')
                 })
             })
             .catch(function (err) {
-              loggerReplacement.error(`Getting error while parsing xml to json on basicVehicleInformation request: ${err}`)
-              throw new Error("Getting Error while parsing xml to json...")
+              loggerReplacement.error(
+                `Getting error while parsing xml to json on basicVehicleInformation request: ${err}`,
+              )
+              throw new Error('Getting Error while parsing xml to json...')
             })
         }
       }
@@ -230,8 +250,10 @@ export class SamgongustofaService {
       )
       return this.vehicleInformationList
     } catch (err) {
-      this.logger.error(`Failed on getting vehicles information from Samgongustofa: ${err}`)
-      throw new Error("Failed on getting vehicles information...")
+      this.logger.error(
+        `Failed on getting vehicles information from Samgongustofa: ${err}`,
+      )
+      throw new Error('Failed on getting vehicles information...')
     }
   }
 
@@ -310,7 +332,9 @@ export class SamgongustofaService {
         throw new Error(deRegRes.statusText)
       }
     } catch (err) {
-      this.logger.error(`Failed on deregistered vehicle ${vehiclePermno} with: ${err}`)
+      this.logger.error(
+        `Failed on deregistered vehicle ${vehiclePermno} with: ${err}`,
+      )
       throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
     }
   }

@@ -49,8 +49,10 @@ export class FjarsyslaService {
         throw new Error(response.statusText)
       }
     } catch (err) {
-      this.logger.error(`Failed on FjarsyslaRest request on ${nationalId} with number ${permno} with: ${err}`)
-      throw new Error("Failed on FjarsyslaRest request...")
+      this.logger.error(
+        `Failed on FjarsyslaRest request on ${nationalId} with number ${permno} with: ${err}`,
+      )
+      throw new Error('Failed on FjarsyslaRest request...')
     }
   }
 }
