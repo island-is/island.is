@@ -46,9 +46,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
               </Text>
             </Box>
             <Button
-              icon="arrowForward"
+              icon="download"
               colorScheme="default"
-              iconType="filled"
+              iconType="outline"
               onClick={cta.onClick}
               size="small"
               type="button"

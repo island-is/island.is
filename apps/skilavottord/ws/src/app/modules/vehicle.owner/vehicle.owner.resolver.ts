@@ -13,7 +13,7 @@ export class VehicleOwnerResolver {
   ) {}
 
   @Query(() => [VehicleOwnerModel])
-  async getAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
+  async skilavottordAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
     const res = await this.vehicleOwnerService.findAll()
     this.logger.debug(
       'getAllVehicleOwners responce:' + JSON.stringify(res, null, 2),
@@ -22,7 +22,7 @@ export class VehicleOwnerResolver {
   }
 
   @Query(() => VehicleOwnerModel)
-  async getVehiclesByNationalId(
+  async skilavottordVehicles(
     @Args('nationalId') nationalId: string,
   ): Promise<VehicleOwnerModel> {
     const res = await this.vehicleOwnerService.findByNationalId(nationalId)
