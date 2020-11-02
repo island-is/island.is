@@ -2,8 +2,9 @@ import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
+import isCircular from 'is-circular'
 
-import { IArticle } from '../../generated/contentfulTypes'
+import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 
 import { createTerms, extractStringsFromObject } from './utils'
@@ -12,12 +13,15 @@ import { createTerms, extractStringsFromObject } from './utils'
 export class ArticleSyncService {
   processSyncData(entries: Entry<any>[]): IArticle[] {
     // only process articles that we consider not to be empty and dont have circular structures
-    return entries.reduce<IArticle[]>((processedEntries: IArticle[], entry) => {
-      // only process articles that we consider not to be empty
-      if (entry.sys.contentType.sys.id === 'article' && !!entry.fields.title) {
-        // remove potential circular reference in relatred articles
-        if (entry.fields?.relatedArticles?.length) {
-          const relatedArticles = entry.fields.relatedArticles.map(
+    return entries.reduce<IArticle[]>(
+      (processedEntries: IArticle[], entry: IArticle) => {
+        // only process articles that we consider not to be empty
+        if (
+          entry.sys.contentType.sys.id === 'article' &&
+          !!entry.fields.title
+        ) {
+          // remove nested related articles from releated articles
+          const relatedArticles = (entry.fields.relatedArticles ?? []).map(
             ({
               sys,
               fields: { relatedArticles, ...prunedRelatedArticlesFields },
@@ -26,17 +30,25 @@ export class ArticleSyncService {
               fields: prunedRelatedArticlesFields,
             }),
           )
-          // we overwrite related articles for this entry
-          processedEntries.push({
+
+          // relatedArticles can include nested articles that point back to this entry
+          const processedEntry = {
             ...entry,
-            fields: { ...entry.fields, relatedArticles },
-          } as IArticle)
-        } else {
-          processedEntries.push(entry as IArticle)
+            fields: {
+              ...entry.fields,
+              relatedArticles: (relatedArticles.length
+                ? relatedArticles
+                : undefined) as IArticleFields['relatedArticles'],
+            },
+          }
+          if (!isCircular(processedEntry)) {
+            processedEntries.push(processedEntry)
+          }
         }
-      }
-      return processedEntries
-    }, [])
+        return processedEntries
+      },
+      [],
+    )
   }
 
   doMapping(entries: IArticle[]): MappedData[] {
