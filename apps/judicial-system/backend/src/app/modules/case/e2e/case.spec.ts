@@ -1,3 +1,5 @@
+import 'date-fns/isValid'
+
 import * as request from 'supertest'
 
 import { INestApplication } from '@nestjs/common'
