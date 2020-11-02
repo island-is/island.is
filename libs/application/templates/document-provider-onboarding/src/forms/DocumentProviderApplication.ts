@@ -11,6 +11,8 @@ import {
   buildSubmitField,
   buildCheckboxField,
   buildFileUploadField,
+  buildCustomField
+  
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -23,14 +25,14 @@ export const DocumentProviderOnboarding: Form = buildForm({
       id: 'terms and conditions agreement',
       name: m.termsSection,
       children: [
-        buildCheckboxField({
-          id: 'Skilmálar',
-          name: m.termsAgreement,
-          options: [
-            { value: 'Agree1', label: m.userAgreementOptionLabel },
-            { value: 'Agree2', label: m.safetyAgreementOptionLabel },
-          ],
-        }),
+        buildCustomField(
+          {
+            id: 'termsOfAgreement',
+            name: 'Skilmálar',
+            component: 'TermsOfAgreement',
+          },
+          {},
+        ),
       ],
     }),
     buildSection({
