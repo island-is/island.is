@@ -5,7 +5,9 @@ import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.treat'
 import { Icon, IconTypes } from '../Icon/Icon'
 import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Link } from '../Link/Link'
+import { Link as ReactRouterLink } from 'react-router-dom'
 
 export type AlertBannerVariants =
   | 'error'
@@ -68,6 +70,10 @@ export interface AlertBannerProps {
     href: string
     title: string
   }
+  reactLink?: {
+    href: string
+    title: string
+  }
   /**
    * Fires when banner gets dismissed, usefull for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
    */
@@ -80,6 +86,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
   title,
   description,
   link,
+  reactLink,
   onDismiss,
 }) => {
   const [dismissed, setDismissed] = useState(false)
@@ -127,6 +134,13 @@ export const AlertBanner: FC<AlertBannerProps> = ({
           <Typography links variant="p">
             <Link href={link.href}>{link.title}</Link>
           </Typography>
+        )}
+        {reactLink && (
+          <Text color="blue400">
+            <ReactRouterLink to={reactLink.href}>
+              {reactLink.title}
+            </ReactRouterLink>
+          </Text>
         )}
       </Box>
       {dismissable && (
