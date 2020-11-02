@@ -8,8 +8,8 @@ import {
 } from '@island.is/island-ui/core'
 import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
-import { UserRole } from '../../utils/authenticate'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
+import { UserRole } from '@island.is/judicial-system/types'
 
 interface PageProps {
   children: ReactNode

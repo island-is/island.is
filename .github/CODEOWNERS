@@ -31,6 +31,8 @@
 
 /*/service-portal*/                                       @island-is/sendiradid
 /libs/api/domains/documents/                              @island-is/sendiradid
+/libs/api/domains/national-registry/                      @island-is/sendiradid
+/apps/services/user-profile/                              @island-is/sendiradid
 
 /apps/services/search-indexer/                            @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/content-search/                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja

@@ -16,7 +16,7 @@ export class UserResolver {
 
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
-  user(@CurrentUser() user: AuthUser): User {
+  skilavottordUser(@CurrentUser() user: AuthUser): User {
     this.logger.info(`--- skilavottordUser starting ---`)
     if (!user) {
       this.logger.info(`  - User does not exist`)

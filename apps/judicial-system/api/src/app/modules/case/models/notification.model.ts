@@ -1,58 +1,24 @@
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import {
-  Column,
-  CreatedAt,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from 'sequelize-typescript'
+  Notification as TNotification,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 
-import { ApiProperty } from '@nestjs/swagger'
+@ObjectType()
+export class Notification implements TNotification {
+  @Field(() => ID)
+  readonly id: string
 
-import { Case } from './case.model'
-import { NotificationType } from './notification.types'
+  @Field()
+  created: string
 
-@Table({
-  tableName: 'notification',
-  timestamps: false,
-})
-export class Notification extends Model<Notification> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
-
-  @CreatedAt
-  @Column({
-    type: DataType.DATE,
-  })
-  @ApiProperty()
-  created: Date
-
-  @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Field()
   caseId: string
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(NotificationType),
-  })
-  @ApiProperty({ enum: NotificationType })
+  @Field(() => String)
   type: NotificationType
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Field()
   message: string
 }

@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { groupBy, range, capitalize } from 'lodash'
+import groupBy from 'lodash/groupBy'
+import range from 'lodash/range'
+import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '@island.is/adgerdir/types'

@@ -2,51 +2,47 @@ import { createMemoryHistory } from 'history'
 import React from 'react'
 import { render, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import StepOne from './StepOne'
+import StepOne, { CreateCaseMutation } from './StepOne'
 import { Route, Router, MemoryRouter } from 'react-router-dom'
-import fetchMock from 'fetch-mock'
 import * as Constants from '../../../../utils/constants'
-import * as api from '../../../../api'
 import { userContext } from '../../../../utils/userContext'
-import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCaseQueries,
+  mockProsecutorUserContext,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
     // Arrange
 
-    fetchMock.mock(
-      '/api/case/test_id',
-      { accusedName: 'Jon Harring', accusedAddress: 'Harringvej 2' },
-      { method: 'get' },
-    )
-
     // Act
-    await act(async () => {
-      const { getByTestId } = render(
-        <userContext.Provider value={{ user: mockProsecutor }}>
+    const { getByTestId } = render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter initialEntries={['/krafa/test_id']}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </MemoryRouter>
-        </userContext.Provider>,
-      )
+        </userContext.Provider>
+      </MockedProvider>,
+    )
 
-      // Assert
-      expect(
-        await waitFor(
-          () => (getByTestId('accusedName') as HTMLInputElement).value,
-        ),
-      ).toEqual('Jon Harring')
+    // Assert
+    expect(
+      await waitFor(
+        () => (getByTestId('accusedName') as HTMLInputElement).value,
+      ),
+    ).toEqual('Jon Harring')
 
-      expect(
-        await waitFor(
-          () => (getByTestId('accusedAddress') as HTMLInputElement).value,
-        ),
-      ).toEqual('Harringvej 2')
-    })
+    expect(
+      await waitFor(
+        () => (getByTestId('accusedAddress') as HTMLInputElement).value,
+      ),
+    ).toEqual('Harringvej 2')
   })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
@@ -55,7 +51,6 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
-        id: 'b5041539-27c0-426a-961d-0f268fe45165',
         policeCaseNumber: '010-1991-191',
         accusedNationalId: '1111111110',
         accusedName: 'string',
@@ -67,11 +62,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert
@@ -88,11 +85,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     })
 
     const { getByTestId, queryAllByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Act
@@ -126,9 +125,6 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
       return JSON.stringify({})
     })
 
-    // Mock call to api.createCase
-    fetchMock.mock('/api/case', { id: 'test_id' }, { method: 'post' })
-
     // Mock reload function
     const reloadFn = () => {
       window.location.reload(true)
@@ -147,11 +143,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
     const policeCaseNumber = getByTestId(
       /policeCaseNumber/i,
@@ -190,7 +188,6 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
-        id: 'test_id',
         arrestDate: '2020-10-24T13:37:00Z',
         requestedCourtDate: '2020-11-02T12:03:00Z',
       })
@@ -198,11 +195,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert
@@ -220,7 +219,6 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     Storage.prototype.getItem = jest.fn(() => {
       return JSON.stringify({
-        id: 'test_id',
         arrestDate: '2020-10-24',
         requestedCourtDate: '2020-11-02',
       })
@@ -228,11 +226,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert
@@ -242,12 +242,9 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     ).toEqual('')
   })
 
-  test('should now allow users to continue unless every required field has been filled out', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const history = createMemoryHistory()
-
-    // Mock call to api.updateCase
-    fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
 
     // Have arrestDate and requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
     Storage.prototype.getItem = jest.fn(() => {
@@ -262,11 +259,36 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act and Assert
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider
+        mocks={[].concat(mockCaseQueries).concat([
+          {
+            request: {
+              query: CreateCaseMutation,
+              variables: {
+                input: {
+                  policeCaseNumber: '000-0000-0010',
+                  accusedNationalId: '1112902539',
+                  court: 'Héraðsdómur Reykjavíkur',
+                  accusedName: 'Jon Harring',
+                  accusedAddress: '',
+                  arrestDate: '2020-10-15',
+                  requestedCourtDate: '2020-10-16',
+                },
+              },
+            },
+            result: {
+              data: {},
+            },
+          },
+        ])}
+        addTypename={false}
+      >
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     await act(async () => {
@@ -328,7 +350,6 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
   test('should save case if accused name is entered first and then police case number and accused national id', async () => {
     // Arrange
-    const spy = jest.spyOn(api, 'createCase')
     const history = createMemoryHistory()
     Storage.prototype.setItem = jest.fn()
 
@@ -339,13 +360,43 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
       })
     })
 
+    let createCalled = false
+
     // Act
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Router history={history}>
-          <StepOne />
-        </Router>
-      </userContext.Provider>,
+      <MockedProvider
+        mocks={[].concat(mockCaseQueries).concat([
+          {
+            request: {
+              query: CreateCaseMutation,
+              variables: {
+                input: {
+                  policeCaseNumber: '020-0202-2929',
+                  accusedNationalId: '0000000000',
+                  court: 'Héraðsdómur Reykjavíkur',
+                  accusedName: 'Gervipersona',
+                  accusedAddress: 'Batcave',
+                  arrestDate: '2020-11-02T12:03:00Z',
+                  requestedCourtDate: '2020-11-12T12:03:00Z',
+                },
+              },
+            },
+            result: () => {
+              createCalled = true
+              return {
+                data: {},
+              }
+            },
+          },
+        ])}
+        addTypename={false}
+      >
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Router history={history}>
+            <StepOne />
+          </Router>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     await act(async () => {
@@ -377,16 +428,12 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
       userEvent.tab()
 
-      // Assert
-      expect(spy).toHaveBeenLastCalledWith({
-        policeCaseNumber: '020-0202-2929',
-        accusedNationalId: '0000000000',
-        court: 'Héraðsdómur Reykjavíkur',
-        accusedName: 'Gervipersona',
-        accusedAddress: 'Batcave',
-        arrestDate: '2020-11-02T12:03:00Z',
-        requestedCourtDate: '2020-11-12T12:03:00Z',
-      })
+      expect((getByTestId('nationalId') as HTMLInputElement).value).toEqual(
+        '0000000000',
+      )
     })
+
+    // Assert
+    expect(createCalled).toBe(true)
   })
 })
