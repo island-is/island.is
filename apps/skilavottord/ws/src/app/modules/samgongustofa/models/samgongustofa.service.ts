@@ -4,7 +4,6 @@ import xml2js from 'xml2js'
 import { environment } from '../../../../environments'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-//TODO: create partnerDummy list
 @Injectable()
 export class SamgongustofaService {
   vehicleInformationList: VehicleInformation[]
@@ -49,7 +48,7 @@ export class SamgongustofaService {
         .toPromise()
       if (allCarsResponse.status != 200) {
         this.logger.error(allCarsResponse.statusText)
-        return []
+        throw new Error(allCarsResponse.statusText)
       }
       this.logger.info(
         'allVehiclesForPersidno Soap request successed and start parsing xml to json',
@@ -72,7 +71,7 @@ export class SamgongustofaService {
                 'soapenv:Fault'
               ][0]['faultstring'][0],
             )
-            return []
+            throw new Error(allCarsResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0])
           }
           // parse xml to Json Result
           return parser
@@ -131,19 +130,18 @@ export class SamgongustofaService {
               return vehicleArr
             })
             .catch(function (err) {
-              loggerReplacement.error(err)
-              return []
+              loggerReplacement.error(`Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`)
+              throw new Error("Getting Error while parsing xml to json...")
             })
         })
         .catch(function (err) {
-          loggerReplacement.error(err)
-          return []
+          loggerReplacement.error(`Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`)
+          throw new Error("Getting Error while parsing xml to json...")
         })
 
       this.logger.info('Finished extracting all vehicles')
       // TODO: connect to database and get 'pending' status
       const newVehicleArr = this.vehicleInformationList
-      let isRequestSuccess = true
 
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
       for (let i = 0; i < newVehicleArr.length; i++) {
@@ -174,8 +172,7 @@ export class SamgongustofaService {
             .toPromise()
           if (basicInforesponse.status != 200) {
             this.logger.error(basicInforesponse.statusText)
-            isRequestSuccess = false
-            i = newVehicleArr.length
+            throw new Error(basicInforesponse.statusText)
           }
           // parse xml to Json all Soap
           this.logger.info(
@@ -193,13 +190,8 @@ export class SamgongustofaService {
                   'soapenv:Fault',
                 )
               ) {
-                loggerReplacement.error(
-                  basicResult['soapenv:Envelope']['soapenv:Body'][0][
-                    'soapenv:Fault'
-                  ][0]['faultstring'][0],
-                )
-                isRequestSuccess = false
-                i = newVehicleArr.length
+                loggerReplacement.error(basicResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0])
+                throw new Error(basicResult['soapenv:Envelope']['soapenv:Body'][0]['soapenv:Fault'][0]['faultstring'][0])
               }
               // parse xml to Json Result
               return parser
@@ -222,20 +214,15 @@ export class SamgongustofaService {
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {
-                  loggerReplacement.error(err)
-                  isRequestSuccess = false
-                  i = newVehicleArr.length
+                  loggerReplacement.error(`Getting error while parsing xml to json on basicVehicleInformation request: ${err}`)
+                  throw new Error("Getting Error while parsing xml to json...")
                 })
             })
             .catch(function (err) {
-              loggerReplacement.error(err)
-              isRequestSuccess = false
-              i = newVehicleArr.length
+              loggerReplacement.error(`Getting error while parsing xml to json on basicVehicleInformation request: ${err}`)
+              throw new Error("Getting Error while parsing xml to json...")
             })
         }
-      }
-      if (!isRequestSuccess) {
-        return []
       }
 
       this.logger.info(
@@ -243,15 +230,12 @@ export class SamgongustofaService {
       )
       return this.vehicleInformationList
     } catch (err) {
-      this.logger.error(err)
-      return []
+      this.logger.error(`Failed on getting vehicles information from Samgongustofa: ${err}`)
+      throw new Error("Failed on getting vehicles information...")
     }
   }
 
   async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
-    function deRegisterVehicleReturn(bool: boolean) {
-      return new DeRegisterVehicle(bool)
-    }
     try {
       this.logger.info(
         `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
@@ -280,7 +264,7 @@ export class SamgongustofaService {
 
       if (authRes.status > 299 || authRes.status < 200) {
         this.logger.error(authRes.statusText)
-        return deRegisterVehicleReturn(false)
+        throw new Error(authRes.statusText)
       }
       // DeRegisterd vehicle
       const jToken = authRes.data['jwtToken']
@@ -320,14 +304,14 @@ export class SamgongustofaService {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
         )
-        return deRegisterVehicleReturn(true)
+        return new DeRegisterVehicle(true)
       } else {
         this.logger.info(deRegRes.statusText)
-        return deRegisterVehicleReturn(false)
+        throw new Error(deRegRes.statusText)
       }
     } catch (err) {
-      this.logger.error(err)
-      return deRegisterVehicleReturn(false)
+      this.logger.error(`Failed on deregistered vehicle ${vehiclePermno} with: ${err}`)
+      throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
     }
   }
 }
