@@ -24,7 +24,12 @@ export const UserInfoLine: FC<Props> = ({ label, content, editLink }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingY={3} paddingX={4} border="standard" borderRadius="large">
+    <Box
+      paddingY={[2, 3]}
+      paddingX={[2, 4]}
+      border="standard"
+      borderRadius="large"
+    >
       <Columns space={1} collapseBelow="sm" alignY="center">
         <Column width="4/12">
           <Box overflow="hidden">
@@ -36,7 +41,11 @@ export const UserInfoLine: FC<Props> = ({ label, content, editLink }) => {
         </Column>
         {editLink ? (
           <Column width="4/12">
-            <Box overflow="hidden" textAlign="right">
+            <Box
+              display="flex"
+              justifyContent={['flexStart', 'flexEnd']}
+              overflow="hidden"
+            >
               {editLink.external ? (
                 <a
                   href={editLink.url}
