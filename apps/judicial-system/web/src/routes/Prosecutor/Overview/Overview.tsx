@@ -3,8 +3,10 @@ import { useHistory } from 'react-router-dom'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
+  Case,
   CaseCustodyProvisions,
   CaseTransition,
+  TransitionCase,
 } from '@island.is/judicial-system/types'
 
 import Modal from '../../../shared-components/Modal/Modal'
@@ -21,11 +23,14 @@ import {
   TIME_FORMAT,
   formatCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import * as api from '../../../api'
-import { Case } from '@island.is/judicial-system-web/src/types'
 import { userContext } from '../../../utils/userContext'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
+import { useMutation } from '@apollo/client'
+import {
+  SendNotificationMutation,
+  TransitionCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -33,7 +38,34 @@ export const Overview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
 
   const history = useHistory()
-  const uContext = useContext(userContext)
+  const { user } = useContext(userContext)
+
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
+    const { data } = await transitionCaseMutation({
+      variables: { input: { id, ...transitionCase } },
+    })
+
+    const resCase = data?.transitionCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want the modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: { input: { caseId: id } },
+    })
+
+    return data?.sendNotification
+  }
 
   const handleNextButtonClick = async () => {
     try {
@@ -44,18 +76,16 @@ export const Overview: React.FC = () => {
       )
 
       // Transition the case
-      const response = await api.transitionCase(
-        workingCase.id,
-        transitionRequest,
-      )
+      const resCase = await transitionCase(workingCase.id, transitionRequest)
 
-      if (response !== 200) {
+      if (!resCase) {
         // Improve error handling at some point
+        console.log('Transition failing')
         return false
       }
 
       setIsSendingNotification(true)
-      await api.sendNotification(workingCase.id)
+      await sendNotification(workingCase.id)
       setIsSendingNotification(false)
       return true
     } catch (e) {
@@ -256,9 +286,10 @@ export const Overview: React.FC = () => {
           <Text>F.h.l</Text>
         </Box>
         <Text variant="h3">
+          {/* If the request has already been submitted, then the prosecutor has been set. */}
           {workingCase?.prosecutor
             ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-            : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+            : `${user?.name} ${user?.title}`}
         </Text>
       </Box>
       <FormFooter

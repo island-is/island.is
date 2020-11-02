@@ -6,9 +6,9 @@
     "target": "es2015",
     "strict": false
   },
-  "include": [],
   "allowJs": true,
   "files": [],
+  "include": [],
   "references": [
     {
       "path": "./tsconfig.app.json"

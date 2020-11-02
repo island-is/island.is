@@ -39,6 +39,12 @@
           }
         ]
       }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": ["lodash", "date-fns", "date-fns/locale"]
+      }
     ]
   },
   "overrides": [
