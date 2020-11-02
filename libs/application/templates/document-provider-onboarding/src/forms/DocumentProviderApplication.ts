@@ -8,8 +8,7 @@ import {
   ApplicationTypes,
   FormModes,
   buildSubmitField,
-  buildCustomField
-  
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
