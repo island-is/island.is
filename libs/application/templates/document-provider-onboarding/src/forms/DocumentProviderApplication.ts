@@ -2,13 +2,13 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildSubSection,
   buildIntroductionField,
   buildTextField,
   Form,
   ApplicationTypes,
   FormModes,
   buildSubmitField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -17,6 +17,20 @@ export const DocumentProviderOnboarding: Form = buildForm({
   name: m.formName,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'terms and conditions agreement',
+      name: m.termsSection,
+      children: [
+        buildCustomField(
+          {
+            id: 'termsOfAgreement',
+            name: 'Skilmálar',
+            component: 'TermsOfAgreement',
+          },
+          {},
+        ),
+      ],
+    }),
     buildSection({
       id: 'applicant',
       name: m.applicantSection,
@@ -57,62 +71,94 @@ export const DocumentProviderOnboarding: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'contacts',
-      name: m.contacts,
+      id: 'administrativeContact',
+      name: m.administrativeContactSection,
       children: [
-        buildSubSection({
+        buildMultiField({
           id: 'administrativeContact',
-          name: m.administrativeContactSection,
+          name: m.administrativeContactTitle,
+          description: m.administrativeContactSubTitle,
           children: [
-            buildMultiField({
-              id: 'administrativeContact',
-              name: m.administrativeContactTitle,
-              description: m.administrativeContactSubTitle,
-              children: [
-                buildTextField({
-                  id: 'administrativeContact.name',
-                  name: m.administrativeContactName,
-                }),
-                buildTextField({
-                  id: 'administrativeContact.email',
-                  name: m.administrativeContactEmail,
-                  variant: 'email',
-                }),
-                buildTextField({
-                  id: 'administrativeContact.phoneNumber',
-                  name: m.administrativeContactPhoneNumber,
-                  variant: 'tel',
-                }),
-              ],
+            buildTextField({
+              id: 'administrativeContact.name',
+              name: m.administrativeContactName,
+            }),
+            buildTextField({
+              id: 'administrativeContact.email',
+              name: m.administrativeContactEmail,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'administrativeContact.phoneNumber',
+              name: m.administrativeContactPhoneNumber,
+              variant: 'tel',
             }),
           ],
         }),
-        buildSubSection({
+      ],
+    }),
+    buildSection({
+      id: 'technicalContact',
+      name: m.technicalContactSection,
+      children: [
+        buildMultiField({
           id: 'technicalContact',
-          name: m.technicalContactSection,
+          name: m.technicalContactTitle,
+          description: m.technicalContactSubTitle,
           children: [
-            buildMultiField({
-              id: 'technicalContact',
-              name: m.technicalContactTitle,
-              description: m.technicalContactSubTitle,
-              children: [
-                buildTextField({
-                  id: 'technicalContact.name',
-                  name: m.technicalContactName,
-                }),
-                buildTextField({
-                  id: 'technicalContact.email',
-                  name: m.technicalContactEmail,
-                  variant: 'email',
-                }),
-                buildTextField({
-                  id: 'technicalContact.phoneNumber',
-                  name: m.technicalContactPhoneNumber,
-                  variant: 'tel',
-                }),
-              ],
+            buildTextField({
+              id: 'technicalContact.name',
+              name: m.technicalContactName,
+            }),
+            buildTextField({
+              id: 'technicalContact.email',
+              name: m.technicalContactEmail,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'technicalContact.phoneNumber',
+              name: m.technicalContactPhoneNumber,
+              variant: 'tel',
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'helpDesk',
+      name: m.helpDeskSection,
+      children: [
+        buildMultiField({
+          id: 'helpDesk',
+          name: m.helpDeskTitle,
+          description: m.helpDeskSubTitle,
+          children: [
+            buildTextField({
+              id: 'helpDesk.email',
+              name: m.helpDeskEmail,
+              variant: 'email',
+            }),
+            buildTextField({
+              id: 'helpDesk.phoneNumber',
+              name: m.helpDeskPhoneNumber,
+              variant: 'tel',
+            }),
+            buildTextField({
+              id: 'helpDesk.chatbot',
+              name: m.helpDeskChatbot,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'documents',
+      name: m.documentsSection,
+      children: [
+        buildIntroductionField({
+          id: 'fileUpload',
+          name: 'TODO',
+          introduction: 'TODO',
         }),
       ],
     }),
