@@ -4,7 +4,8 @@ import {
   GridColumn,
   GridRow,
   Text,
-  ArrowLink,
+  Link,
+  Button,
   Box,
   Swiper,
   Hidden,
@@ -46,9 +47,18 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
             <Text variant="h5" as="p" paddingBottom={2}>
-              <ArrowLink href={makePath('news')} arrowHeight={16}>
-                {n('seeMore')}
-              </ArrowLink>
+              <Link href={makePath('news')}>
+                <Button
+                  colorScheme="default"
+                  icon="arrowForward"
+                  iconType="filled"
+                  size="default"
+                  type="button"
+                  variant="text"
+                >
+                  {n('seeMore')}
+                </Button>
+              </Link>
             </Text>
           </Box>
         </GridColumn>
