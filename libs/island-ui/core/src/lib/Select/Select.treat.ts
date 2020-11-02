@@ -1,7 +1,7 @@
 import { style, globalStyle, styleMap, Style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
-import { merge } from 'lodash'
+import merge from 'lodash/merge'
 import { StyleWithSelectors } from 'treat/lib/types/types'
 
 /**
