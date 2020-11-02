@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'

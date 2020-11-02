@@ -9,6 +9,7 @@ import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { RecyclingPartner } from '@island.is/skilavottord-web/types'
 
 const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
@@ -58,7 +59,7 @@ const RecyclingCompanies: FC = () => {
             <Text>{t.empty}</Text>
           ) : (
             <Box>
-              {recyclingPartners.map((partner, index) => (
+              {recyclingPartners.map((partner: RecyclingPartner, index) => (
                 <ListItem
                   key={index}
                   title={partner.companyName}
@@ -67,7 +68,7 @@ const RecyclingCompanies: FC = () => {
                       text: `${partner.companyId}`,
                     },
                     {
-                      text: partner.isActive
+                      text: partner.active
                         ? t.status.active
                         : t.status.inactive,
                     },

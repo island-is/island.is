@@ -24,6 +24,17 @@ export interface MockRecyclingPartner {
   active?: boolean
 }
 
+export interface RecyclingPartner {
+  companyId: string
+  companyName: string
+  address: string
+  postnumber: string
+  city: string
+  website: string
+  phone: string
+  active: boolean
+}
+
 export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
 
 export interface User {

@@ -16,6 +16,7 @@ import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { MockRecyclingPartner } from '@island.is/skilavottord-web/types'
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
@@ -69,25 +70,27 @@ const CompanyInfo: FC = () => {
             <Text>{t.empty}</Text>
           ) : (
             <Box>
-              {[data?.getRecyclingPartner].map((partner, index) => (
-                <ListItem
-                  key={index}
-                  title={partner.name}
-                  content={[
-                    {
-                      text: `${partner.address}, ${partner.postNumber}`,
-                    },
-                    {
-                      text: `${partner.phone}`,
-                      isHighlighted: true,
-                    },
-                    {
-                      text: `${partner.website}`,
-                      href: partner.website,
-                    },
-                  ]}
-                />
-              ))}
+              {[data?.getRecyclingPartner].map(
+                (partner: MockRecyclingPartner, index) => (
+                  <ListItem
+                    key={index}
+                    title={partner.name}
+                    content={[
+                      {
+                        text: `${partner.address}, ${partner.postNumber}`,
+                      },
+                      {
+                        text: `${partner.phone}`,
+                        isHighlighted: true,
+                      },
+                      {
+                        text: `${partner.website}`,
+                        href: partner.website,
+                      },
+                    ]}
+                  />
+                ),
+              )}
             </Box>
           )}
         </Stack>

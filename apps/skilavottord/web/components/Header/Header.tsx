@@ -1,8 +1,7 @@
 import React, { FC, useContext, useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Header as IslandUIHeader } from '@island.is/island-ui/core'
+import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -51,11 +50,7 @@ export const Header: FC = () => {
 
   return (
     <IslandUIHeader
-      logoRender={(logo) => (
-        <Link href={homeRoute}>
-          <a>{logo}</a>
-        </Link>
-      )}
+      logoRender={(logo) => <Link href={homeRoute}>{logo}</Link>}
       logoutText={t.logoutText}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}

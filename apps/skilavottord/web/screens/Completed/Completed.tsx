@@ -33,7 +33,7 @@ const Completed = ({ apolloState }) => {
         pathname: routes.myCars,
       })
     }
-  }, [car])
+  }, [car, router, routes])
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
