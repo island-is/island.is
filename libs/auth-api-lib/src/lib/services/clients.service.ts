@@ -39,6 +39,21 @@ export class ClientsService {
     })
   }
 
+  /** Gets all clients */
+  async findAndCountAll(
+    page: number,
+    count: number = 15,
+  ): Promise<{ rows: Client[]; count: number } | null> {
+    page--
+    const offset = page * count
+    console.log('offset ')
+    console.log(offset)
+    return this.clientModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+    })
+  }
+
   /** Gets a client by it's id */
   async findClientById(id: string): Promise<Client | null> {
     this.logger.debug(`Finding client for id - "${id}"`)
