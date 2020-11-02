@@ -8,7 +8,7 @@ import {
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { Case } from '../../types'
+import { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case

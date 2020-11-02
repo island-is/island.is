@@ -12,9 +12,6 @@ export class FjarsyslaService {
   ) {}
 
   async getFjarsysluRest(nationalId: string, permno: string) {
-    function fjarsyslaReturn(bool: boolean) {
-      return new Fjarsysla(bool)
-    }
     try {
       this.logger.info(
         `---- Starting FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
@@ -39,21 +36,23 @@ export class FjarsyslaService {
         .post(restUrl, data, { headers: headersRequest })
         .toPromise()
       if (!response) {
-        this.logger.error('API call is not success')
-        return fjarsyslaReturn(false)
+        this.logger.error(response.statusText)
+        throw new Error(response.statusText)
       }
       if (response.status < 300 && response.status > 199) {
         this.logger.info(
           `---- Finished FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
         )
-        return fjarsyslaReturn(true)
+        return new Fjarsysla(true)
       } else {
         this.logger.error(response.statusText)
-        return fjarsyslaReturn(false)
+        throw new Error(response.statusText)
       }
     } catch (err) {
-      this.logger.error(err)
-      return fjarsyslaReturn(false)
+      this.logger.error(
+        `Failed on FjarsyslaRest request on ${nationalId} with number ${permno} with: ${err}`,
+      )
+      throw new Error('Failed on FjarsyslaRest request...')
     }
   }
 }
