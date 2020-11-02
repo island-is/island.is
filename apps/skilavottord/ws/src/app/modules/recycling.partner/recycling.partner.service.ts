@@ -19,6 +19,14 @@ export class RecyclingPartnerService {
     })
   }
 
+  async findRecyclingPartnerVehicles(
+    companyId: string,
+  ): Promise<RecyclingPartnerModel[]> {
+    return this.recyclingPartnerModel.findAll({
+      where: { companyId },
+    })
+  }
+
   async findAll(): Promise<RecyclingPartnerModel[]> {
     const res = await this.recyclingPartnerModel.findAll()
     this.logger.info(

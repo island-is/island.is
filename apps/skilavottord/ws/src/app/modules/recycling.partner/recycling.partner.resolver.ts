@@ -23,6 +23,15 @@ export class RecyclingPartnerResolver {
     return await this.recyclingPartnerService.findActive()
   }
 
+  @Query(() => [RecyclingPartnerModel])
+  async skilavottordRecyclingPartnerVehicles(
+    @Args('partnerId') partnerId: string,
+  ) {
+    return await this.recyclingPartnerService.findRecyclingPartnerVehicles(
+      partnerId,
+    )
+  }
+
   @Mutation((returns) => Boolean)
   async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,

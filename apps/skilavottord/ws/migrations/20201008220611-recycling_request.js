@@ -15,7 +15,14 @@ module.exports.up = (queryInterface, DataTypes) => {
         references: {
           key: 'vehicle_id',
           model: 'vehicle',
-          onDelete: 'CASCADE',
+        },
+        type: DataTypes.STRING,
+      },
+      recycling_partner_id: {
+        allowNull: false,
+        references: {
+          key: 'company_id',
+          model: 'recycling_partner',
         },
         type: DataTypes.STRING,
       },
