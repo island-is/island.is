@@ -6,6 +6,7 @@ on:
       - 'master'
       - 'release/**'
       - 'hotfix/**'
+      - 'date-fns-import'
     paths-ignore:
       - '**/*.md'
     tags:
