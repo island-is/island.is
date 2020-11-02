@@ -24,8 +24,8 @@ interface BoxChartProps {
  **************************************************
 
 <BoxChart
-    titleLabel="Total: 7 months *"
-    boxes={7}
+    titleLabel="Total: 6 months *"
+    boxes={6}
     calculateBoxStyle={(index: number) => {
         if (index === 6) return 'greenWithLines'
         return 'blue'
