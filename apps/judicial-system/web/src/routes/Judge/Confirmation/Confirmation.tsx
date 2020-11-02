@@ -300,7 +300,9 @@ export const Confirmation: React.FC = () => {
           <Text variant="eyebrow" color="blue400">
             Niðurstaða úrskurðar
           </Text>
-          <span className={style.breakSpaces}>{workingCase.ruling}</span>
+          <Text>
+            <span className={style.breakSpaces}>{workingCase.ruling}</span>
+          </Text>
         </Box>
       </Box>
       <Box component="section" marginBottom={7}>
