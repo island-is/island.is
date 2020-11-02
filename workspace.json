@@ -4372,12 +4372,12 @@
               "apps/skilavottord/ws/src/assets",
               {
                 "glob": "*",
-                "input": "apps/skilavottord/ws/db/migrations",
+                "input": "apps/skilavottord/ws/migrations",
                 "output": "./migrations"
               },
               {
                 "glob": "*",
-                "input": "apps/skilavottord/ws/db/seeders",
+                "input": "apps/skilavottord/ws/seeders",
                 "output": "./seeders"
               },
               {
