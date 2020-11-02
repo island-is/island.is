@@ -26,8 +26,10 @@ import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatISO, isValid, parseISO } from 'date-fns'
-import { isNull } from 'lodash'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
+import formatISO from 'date-fns/formatISO'
+import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {

@@ -1,5 +1,8 @@
 import { CaseTransition } from '@island.is/judicial-system/types'
-import { formatISO, setHours, setMinutes } from 'date-fns'
+import formatISO from 'date-fns/formatISO'
+import setHours from 'date-fns/setHours'
+import setMinutes from 'date-fns/setMinutes'
+
 import { validate } from './validate'
 
 export const parseArray = (property: string, array: string[]) => {
