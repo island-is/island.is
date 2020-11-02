@@ -1,3 +1,5 @@
+import 'date-fns/isValid'
+
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 import * as Constants from './constants'
