@@ -6,7 +6,8 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/core'
 import * as z from 'zod'
-import { isValid, parseISO } from 'date-fns'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 
 type Events =
   | { type: 'APPROVE' }

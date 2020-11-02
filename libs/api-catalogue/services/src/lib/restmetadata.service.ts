@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common'
 import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
 import { logger } from '@island.is/logging'
 import YamlParser from 'js-yaml'
-import lodash from 'lodash'
+import union from 'lodash/union'
 import {
   AccessCategory,
   ProviderType,
@@ -61,8 +61,8 @@ export class RestMetadataService {
           service.name = spec.info.title
           service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
           service.description = spec.info.description ?? ''
-          service.data = lodash.union(service.data, spec.info.x_category)
-          service.pricing = lodash.union(service.pricing, spec.info.x_pricing)
+          service.data = union(service.data, spec.info.x_category)
+          service.pricing = union(service.pricing, spec.info.x_pricing)
           service.xroadIdentifier.push(sorted[i])
         } else {
           logger.warn(

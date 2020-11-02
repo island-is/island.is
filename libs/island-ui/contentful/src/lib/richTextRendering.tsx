@@ -5,9 +5,13 @@ import {
   Inline,
   BLOCKS,
   INLINES,
+  MARKS,
 } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
+import {
+  documentToReactComponents,
+  RenderMark,
+} from '@contentful/rich-text-react-renderer'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
@@ -19,6 +23,7 @@ import {
   Blockquote,
   Box,
   ResponsiveSpace,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
 import EmbeddedVideo, {
@@ -105,7 +110,11 @@ export interface PaddingConfig {
 }
 
 export interface RenderConfig {
-  renderComponent: (slice: Slice, config: RenderConfig) => ReactNode
+  renderComponent: (
+    slice: Slice,
+    locale: string,
+    config: RenderConfig,
+  ) => ReactNode
   renderPadding: (top: Slice, bottom: Slice, config: RenderConfig) => ReactNode
   renderNode: RenderNode
   htmlClassName?: string
@@ -115,6 +124,7 @@ export interface RenderConfig {
 
 export const defaultRenderComponent = (
   slice: Slice,
+  locale: string,
   { renderNode, htmlClassName }: RenderConfig,
 ): ReactNode => {
   switch (slice.__typename) {
@@ -137,10 +147,18 @@ export const defaultRenderComponent = (
       return <AssetLink {...slice} />
 
     case 'ProcessEntry':
-      return <ProcessEntry {...slice} />
+      return (
+        <Hidden print={true}>
+          <ProcessEntry {...slice} locale={locale} />
+        </Hidden>
+      )
 
     case 'EmbeddedVideo':
-      return <EmbeddedVideo {...slice} />
+      return (
+        <Hidden print={true}>
+          <EmbeddedVideo {...slice} />
+        </Hidden>
+      )
 
     case 'SectionWithImage':
       return <SectionWithImage {...slice} />
@@ -208,19 +226,31 @@ export const defaultRenderNode: Readonly<RenderNode> = {
   },
 }
 
+export const defaultRenderMark: Readonly<RenderMark> = {
+  [MARKS.BOLD]: (text: ReactNode) => <strong>{text}</strong>,
+  [MARKS.ITALIC]: (text: ReactNode) => <em>{text}</em>,
+  // should text be underlinable inside contentful rich text? it is at the moment
+  // it is not provided by <Text> and we don't want the default <u> element
+  [MARKS.UNDERLINE]: (text: ReactNode) => (
+    <span style={{ textDecoration: 'underline' }}>{text}</span>
+  ),
+}
+
 export const renderHtml = (
   document: Document,
   {
     renderNode = defaultRenderNode,
+    renderMark = defaultRenderMark,
     className,
   }: {
     renderNode?: RenderNode
+    renderMark?: RenderMark
     className?: string
   } = {},
 ): ReactNode => {
   return (
     <StaticHtml className={className}>
-      {documentToReactComponents(document, { renderNode })}
+      {documentToReactComponents(document, { renderMark, renderNode })}
     </StaticHtml>
   )
 }
@@ -256,6 +286,7 @@ export const DefaultRenderConfig: RenderConfig = {
 
 export const renderSlices = (
   slices: Slice | Slice[],
+  locale?: string,
   optionalConfig?: Partial<RenderConfig>,
 ): ReactNode => {
   const config: RenderConfig = {
@@ -272,7 +303,7 @@ export const renderSlices = (
   }
 
   const components = slices.map((slice, index) => {
-    const comp = config.renderComponent(slice, config)
+    const comp = config.renderComponent(slice, locale, config)
     if (!comp) {
       return null
     }
