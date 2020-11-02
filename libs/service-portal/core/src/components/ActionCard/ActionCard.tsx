@@ -1,37 +1,26 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Typography,
   Stack,
-  Inline,
   Columns,
   Column,
+  Button,
+  Text,
 } from '@island.is/island-ui/core'
-import ActionMenu from '../ActionMenu/ActionMenu'
 import * as styles from './ActionCard.treat'
-import { Link } from 'react-router-dom'
+import { format } from 'date-fns'
 
 interface Props {
   label: string
   title: string
-  text?: string
   date: Date
-  url?: string
-  external?: boolean
-  actionMenuRender?: () => JSX.Element
-  buttonRender?: () => JSX.Element
+  cta: {
+    label: string
+    onClick: () => void
+  }
 }
 
-export const ActionCard: FC<Props> = ({
-  label,
-  title,
-  text,
-  date,
-  url,
-  external,
-  actionMenuRender,
-  buttonRender,
-}) => {
+export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
   return (
     <Box
       className={styles.wrapper}
@@ -40,56 +29,36 @@ export const ActionCard: FC<Props> = ({
       border="standard"
       borderRadius="large"
     >
-      <Stack space={1}>
-        <Columns alignY="center" space={3}>
-          <Column>
-            <Typography variant="eyebrow" color="purple400">
+      <Columns alignY="center" space={3}>
+        <Column>
+          <Stack space={1}>
+            <Text variant="eyebrow" color="purple400">
               {label}
-            </Typography>
-          </Column>
-          <Column width="content">
-            <Inline space={1} alignY="center">
-              <Typography
-                variant="pSmall"
-                color="dark300"
-              >{`${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`}</Typography>
-              {actionMenuRender && (
-                <ActionMenu>{actionMenuRender()}</ActionMenu>
-              )}
-            </Inline>
-          </Column>
-        </Columns>
-        <Typography variant="h3">
-          {url ? (
-            external ? (
-              <a
-                href={url}
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {title}
-              </a>
-            ) : (
-              <Link to={url} className={styles.link}>
-                {title}
-              </Link>
-            )
-          ) : (
-            title
-          )}
-        </Typography>
-        <Columns alignY="center" collapseBelow="sm" space={3}>
-          <Column>{text && <Typography variant="p">{text}</Typography>}</Column>
-          {buttonRender ? (
-            <Column width="content">
-              <Box display="flex" justifyContent="flexEnd" flexShrink={0}>
-                {buttonRender()}
-              </Box>
-            </Column>
-          ) : null}
-        </Columns>
-      </Stack>
+            </Text>
+            <Text variant="h3">{title}</Text>
+          </Stack>
+        </Column>
+        <Column width="content">
+          <Stack space={1}>
+            <Box justifyContent="flexEnd" display="flex">
+              <Text variant="small" as="span" color="dark400">
+                {format(date, 'dd.MM.yyyy')}
+              </Text>
+            </Box>
+            <Button
+              icon="download"
+              colorScheme="default"
+              iconType="outline"
+              onClick={cta.onClick}
+              size="small"
+              type="button"
+              variant="text"
+            >
+              {cta.label}
+            </Button>
+          </Stack>
+        </Column>
+      </Columns>
     </Box>
   )
 }

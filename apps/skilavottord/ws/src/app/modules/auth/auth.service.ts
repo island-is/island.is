@@ -28,49 +28,29 @@ const RECYCLINGFUND = [
   '0305695639', // Ása Hauksdóttir
 ]
 
-const ADMINS = [
-  /* Stafrænt Ísland */
-  '1903795829', // Örvar
-  '0301665909', // Sigurgeir
-]
-
-const TESTERS = [
-  /* Stafrænt Ísland */
-  '1903795829', // Örvar
-]
-//  console.log(`  - DEVELOPERS = ${DEVELOPERS} `)
-
 @Injectable()
 export class AuthService {
   getRole(user: AuthUser): Role {
     if (RECYCLINGCOMPANY.includes(user.nationalId)) {
-      return 'RecyclingCompany'
+      return 'recyclingCompany'
     } else if (RECYCLINGFUND.includes(user.nationalId)) {
-      return 'RecyclingFund'
+      return 'recyclingFund'
     } else if (DEVELOPERS.includes(user.nationalId)) {
       return 'developer'
-    } else if (ADMINS.includes(user.nationalId)) {
-      return 'admin'
-    } else if (TESTERS.includes(user.nationalId)) {
-      return 'tester'
     } else {
-      return 'user'
+      return 'citizen'
     }
   }
 
   checkRole(user: AuthUser, role: Role): boolean {
     //console.log("  - checkRole starting")
     switch (role) {
-      case 'RecyclingCompany':
+      case 'recyclingCompany':
         return RECYCLINGCOMPANY.includes(user.nationalId)
-      case 'RecyclingFund':
+      case 'recyclingFund':
         return RECYCLINGFUND.includes(user.nationalId)
       case 'developer':
         return DEVELOPERS.includes(user.nationalId)
-      case 'admin':
-        return [...ADMINS, ...DEVELOPERS].includes(user.nationalId)
-      case 'tester':
-        return false
       default: {
         if (role) {
           return false

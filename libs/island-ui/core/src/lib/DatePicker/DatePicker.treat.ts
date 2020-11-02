@@ -89,6 +89,8 @@ export const customHeaderContainer = style({
 
 export const decreaseButton = style({
   outline: 'none',
+  display: 'flex',
+  alignItems: 'center',
 
   ':focus': {
     boxShadow: `0 0 0 4px ${theme.color.mint400}`,
@@ -97,6 +99,8 @@ export const decreaseButton = style({
 
 export const increaseButton = style({
   outline: 'none',
+  display: 'flex',
+  alignItems: 'center',
 
   ':focus': {
     boxShadow: `0 0 0 4px ${theme.color.mint400}`,
@@ -159,14 +163,6 @@ globalStyle(
     lineHeight: `${theme.typography.baseLineHeight}`,
     textAlign: 'center',
     color: `${theme.color.dark400}`,
-    margin: `0 ${theme.spacing[4]}px 0 0`,
-  },
-)
-
-globalStyle(
-  `${root}.island-ui-datepicker .react-datepicker__day-name:last-child, .react-datepicker__day:last-child`,
-  {
-    margin: '0',
   },
 )
 

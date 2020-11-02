@@ -38,6 +38,12 @@ export class NewsSyncService {
                 key: mapped.slug,
                 type: 'slug',
               },
+              ...mapped.genericTags.map((tag) => ({
+                // add all tags as meta data to this document so we can query by it later
+                key: tag.id,
+                type: 'genericTag',
+                value: tag.title,
+              })),
             ],
             dateCreated: mapped.date || entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

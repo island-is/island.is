@@ -3,10 +3,8 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   position: 'relative',
-  borderBottom: `1px solid ${theme.color.blue400}`,
   height: '45px',
   lineHeight: '45px',
-  color: theme.color.blue400,
   fontWeight: 600,
 })
 

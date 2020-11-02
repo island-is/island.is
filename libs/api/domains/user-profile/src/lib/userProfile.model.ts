@@ -13,4 +13,10 @@ export class UserProfile {
 
   @Field(() => String)
   email!: string
+
+  @Field(() => Boolean)
+  emailVerified!: boolean
+
+  @Field(() => Boolean)
+  mobilePhoneNumberVerified!: boolean
 }

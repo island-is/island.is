@@ -69,7 +69,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
         type={type}
-        role="button"
         className={cn(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
