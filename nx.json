@@ -226,6 +226,9 @@
     "judicial-system-api": {
       "tags": []
     },
+    "judicial-system-backend": {
+      "tags": []
+    },
     "judicial-system-consts": {
       "tags": []
     },
