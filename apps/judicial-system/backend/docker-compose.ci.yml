@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  sut:
+    build:
+      context: .
+      dockerfile: ../../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: db_judicial_system
+        APP: judicial-system-backend
+    networks:
+      - local
+    depends_on:
+      - db_judicial_system
+    environment:
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+      - DB_HOST=db_judicial_system
+    volumes:
+      - ../../..:/code
+
+  db_judicial_system:
+    ports: []

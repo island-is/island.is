@@ -11,8 +11,9 @@ import {
   Body,
   Data,
 } from '@island.is/air-discount-scheme-web/components/Table'
-import { format } from 'date-fns'
-import { is, enGB } from 'date-fns/locale'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import enGB from 'date-fns/locale/en-GB'
 import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 
 const THIRTY_SECONDS = 30000 // milli-seconds
