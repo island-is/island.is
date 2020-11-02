@@ -2,22 +2,29 @@ import React from 'react'
 import { act, render, waitFor } from '@testing-library/react'
 import { RulingStepOne, RulingStepTwo } from './'
 import * as Constants from '../../../utils/constants'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
-import fetchMock from 'fetch-mock'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
-import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockJudgeUserContext,
+  mockUpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe('Ruling routes', () => {
   describe(Constants.RULING_STEP_ONE_ROUTE, () => {
-    test('should now allow users to continue unless every required field has been filled out', async () => {
+    test('should not allow users to continue unless every required field has been filled out', async () => {
       // Arrange
 
       // Have custodyEndDate in localstorage because it's hard to use the datepicker with useEvents
       Storage.prototype.getItem = jest.fn(() => {
         return JSON.stringify({
+          id: 'test_id_2',
           custodyEndDate: '2020-10-24',
         })
       })
@@ -26,9 +33,22 @@ describe('Ruling routes', () => {
 
       // Act and Assert
       const { getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <RulingStepOne />
-        </userContext.Provider>,
+        <MockedProvider
+          mocks={mockUpdateCaseMutation([
+            {
+              ruling:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
+            } as UpdateCase,
+            {
+              custodyEndDate: '2020-10-24T12:31:00Z',
+            } as UpdateCase,
+          ])}
+          addTypename={false}
+        >
+          <userContext.Provider value={mockJudgeUserContext}>
+            <RulingStepOne />
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       await act(async () => {
@@ -64,9 +84,11 @@ describe('Ruling routes', () => {
 
       // Act
       const { getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <RulingStepOne />
-        </userContext.Provider>,
+        <MockedProvider mocks={[]} addTypename={false}>
+          <userContext.Provider value={mockJudgeUserContext}>
+            <RulingStepOne />
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       // Assert
@@ -78,12 +100,13 @@ describe('Ruling routes', () => {
 
   describe(Constants.RULING_STEP_TWO_ROUTE, () => {
     describe(Constants.RULING_STEP_ONE_ROUTE, () => {
-      test('should now allow users to continue unless every required field has been filled out', () => {
+      test('should not allow users to continue unless every required field has been filled out', () => {
         // Arrange
 
         // Have custodyEndDate in localstorage because it's hard to use the datepicker with useEvents
         Storage.prototype.getItem = jest.fn(() => {
           return JSON.stringify({
+            id: 'test_id_2',
             custodyEndDate: '2020-10-24',
           })
         })
@@ -92,9 +115,21 @@ describe('Ruling routes', () => {
 
         // Act and Assert
         const { getByLabelText, getByTestId } = render(
-          <userContext.Provider value={{ user: mockJudge }}>
-            <RulingStepTwo />
-          </userContext.Provider>,
+          <MockedProvider
+            mocks={mockUpdateCaseMutation([
+              {
+                prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+              } as UpdateCase,
+              {
+                prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+              } as UpdateCase,
+            ])}
+            addTypename={false}
+          >
+            <userContext.Provider value={mockJudgeUserContext}>
+              <RulingStepTwo />
+            </userContext.Provider>
+          </MockedProvider>,
         )
 
         userEvent.click(
@@ -105,7 +140,11 @@ describe('Ruling routes', () => {
           (getByTestId('continueButton') as HTMLButtonElement).disabled,
         ).toBe(true)
 
-        userEvent.click(getByLabelText('Sækjandi kærir málið'))
+        userEvent.click(
+          getByLabelText(
+            'Sækjandi tekur sér lögboðinn frest',
+          ) as HTMLInputElement,
+        )
 
         waitFor(() => {
           expect(
@@ -125,9 +164,11 @@ describe('Ruling routes', () => {
 
       // Act
       const { getAllByRole } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <RulingStepTwo />
-        </userContext.Provider>,
+        <MockedProvider mocks={[]} addTypename={false}>
+          <userContext.Provider value={mockJudgeUserContext}>
+            <RulingStepTwo />
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       // Assert
@@ -140,13 +181,29 @@ describe('Ruling routes', () => {
 
     test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is not ${CaseAppealDecision.APPEAL}`, async () => {
       // Arrange
-      fetchMock.mock('/api/case/test_id', 200)
+      Storage.prototype.getItem = jest.fn(() => {
+        return JSON.stringify({
+          id: 'test_id_2',
+        })
+      })
 
       // Act
       const { getByText, getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <RulingStepTwo />
-        </userContext.Provider>,
+        <MockedProvider
+          mocks={mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+          ])}
+          addTypename={false}
+        >
+          <userContext.Provider value={mockJudgeUserContext}>
+            <RulingStepTwo />
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       await waitFor(() =>
@@ -168,12 +225,29 @@ describe('Ruling routes', () => {
 
     test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
       // Arrange
+      Storage.prototype.getItem = jest.fn(() => {
+        return JSON.stringify({
+          id: 'test_id_2',
+        })
+      })
 
       // Act
       const { getByText, getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <RulingStepTwo />
-        </userContext.Provider>,
+        <MockedProvider
+          mocks={mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+          ])}
+          addTypename={false}
+        >
+          <userContext.Provider value={mockJudgeUserContext}>
+            <RulingStepTwo />
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       await waitFor(() => userEvent.click(getByText('Kærði kærir málið')))

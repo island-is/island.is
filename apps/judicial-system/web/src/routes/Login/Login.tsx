@@ -1,19 +1,17 @@
 import React, { useContext, useEffect } from 'react'
-
 import {
   Text,
   ButtonDeprecated as Button,
   Box,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { apiUrl } from '../../api'
-import * as api from '../../api'
 import * as styles from './Login.treat'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import { api } from '../../services'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
-  const uContext = useContext(userContext)
+  const { user } = useContext(userContext)
 
   useEffect(() => {
     document.title = 'Réttarvörslugátt'
@@ -23,10 +21,10 @@ export const Login = () => {
     const logoutCurrentUser = async () => {
       api.logOut()
     }
-    if (uContext.user) {
+    if (user) {
       logoutCurrentUser()
     }
-  }, [uContext])
+  }, [user])
 
   return (
     <div className={styles.loginContainer}>
@@ -56,7 +54,7 @@ export const Login = () => {
       </div>
       <div className={styles.buttonContainer}>
         <Button
-          href={`${apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
+          href={`${api.apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
           width="fluid"
         >
           Innskráning
