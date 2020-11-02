@@ -4,6 +4,7 @@ import {
   ElasticService,
   SearcherInput,
   SearchIndexes,
+  TagAggregationResponse,
   WebSearchAutocompleteInput,
 } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
@@ -20,15 +21,15 @@ export class ContentSearchService {
     return SearchIndexes[languageCode] ?? SearchIndexes.is
   }
 
-  mapFindAggregations(aggregations): TagCount[] {
-    if (!aggregations) {
+  mapFindAggregations(aggregations: TagAggregationResponse): TagCount[] {
+    if (!aggregations?.group) {
       return null
     }
-    return aggregations.groupBy.filtered.groupByCount.buckets.map(
+    return aggregations.group.filtered.count.buckets.map<TagCount>(
       (tagObject) => ({
         key: tagObject.key,
-        count: tagObject.doc_count,
-        value: tagObject.groupByValue.buckets?.[0]?.key ?? '', // value of tag is allways the first value here we provide default value since value is optional
+        count: tagObject.doc_count.toString(),
+        value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is allways the first value here we provide default value since value is optional
       }),
     )
   }
