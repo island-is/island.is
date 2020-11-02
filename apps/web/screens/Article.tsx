@@ -323,16 +323,18 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   return (
     <Stack space={3}>
       {!!showActionButton && (
-        <ActionButton
-          content={article.body}
-          defaultText={n('processLinkButtonText')}
-        />
+        <Hidden print={true}>
+          <ActionButton
+            content={article.body}
+            defaultText={n('processLinkButtonText')}
+          />
+        </Hidden>
       )}
       {article.subArticles.length === 0 ? (
-        <ArticleNavigation title="Efnisyfirlit" article={article} />
+        <ArticleNavigation title={n('sidebarHeader')} article={article} />
       ) : (
         <SubArticleNavigation
-          title="Efnisyfirlit"
+          title={n('sidebarHeader')}
           article={article}
           selectedSubArticle={subArticle}
         />
@@ -446,7 +448,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           </GridColumn>
         </GridRow>
         {!!contentOverviewOptions.length && (
-          <Hidden above="sm">
+          <Hidden print={true} above="sm">
             <DrawerMenu categories={combinedMobileNavigation} />
           </Hidden>
         )}
@@ -464,7 +466,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               </Text>
             )}
             {!!processEntry && (
-              <Hidden above="sm">
+              <Hidden print={true} above="sm">
                 <Box
                   background="blue100"
                   padding={3}
@@ -481,6 +483,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <RichText
             body={(subArticle ?? article).body as SliceType[]}
             config={{ defaultPadding: [2, 2, 4] }}
+            locale={activeLocale}
           />
         </Box>
       </ArticleLayout>

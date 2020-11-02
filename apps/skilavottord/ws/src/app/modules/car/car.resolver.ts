@@ -3,6 +3,7 @@ import { Authorize } from '../auth'
 import { Car } from './models'
 import { CarService } from './models/car.service'
 
+//TODO remove
 @Resolver(() => Car)
 export class CarResolver {
   carService: CarService

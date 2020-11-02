@@ -248,8 +248,10 @@ export class SamgongustofaService {
     }
   }
 
-  async deRegisterVehicle(vehiclePermno: string) {
-    // Get jToken
+  async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
+    function deRegisterVehicleReturn(bool: boolean) {
+      return new DeRegisterVehicle(bool)
+    }
     try {
       this.logger.info(
         `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
@@ -278,7 +280,7 @@ export class SamgongustofaService {
 
       if (authRes.status > 299 || authRes.status < 200) {
         this.logger.error(authRes.statusText)
-        return new DeRegisterVehicle(false)
+        return deRegisterVehicleReturn(false)
       }
       // DeRegisterd vehicle
       const jToken = authRes.data['jwtToken']
@@ -300,7 +302,7 @@ export class SamgongustofaService {
         lost: 0,
         reportingStation: restReportingStation,
         reportingStationType: 'R',
-        disposalStation: '300',
+        disposalStation: disposalStation,
         disposalStationType: 'M',
         explanation: 'TODO, what to put here?',
       })
@@ -318,14 +320,14 @@ export class SamgongustofaService {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
         )
-        return new DeRegisterVehicle(true)
+        return deRegisterVehicleReturn(true)
       } else {
         this.logger.info(deRegRes.statusText)
-        return new DeRegisterVehicle(false)
+        return deRegisterVehicleReturn(false)
       }
     } catch (err) {
       this.logger.error(err)
-      return new DeRegisterVehicle(false)
+      return deRegisterVehicleReturn(false)
     }
   }
 }

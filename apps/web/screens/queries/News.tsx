@@ -18,6 +18,10 @@ export const GET_NEWS_QUERY = gql`
           width
           height
         }
+        genericTags {
+          id
+          title
+        }
       }
     }
   }
@@ -49,6 +53,10 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
         title
         width
         height
+      }
+      genericTags {
+        id
+        title
       }
     }
   }
