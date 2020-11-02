@@ -19,7 +19,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.STRING,
       },
       recycling_partner_id: {
-        allowNull: false,
+        allowNull: true,
         references: {
           key: 'company_id',
           model: 'recycling_partner',
