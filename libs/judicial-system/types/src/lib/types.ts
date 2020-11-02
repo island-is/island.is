@@ -75,6 +75,10 @@ export interface Case {
   // prosecutorId?: string
   prosecutor?: User
   courtCaseNumber?: string
+  courtDate?: string
+  courtRoom?: string
+  defenderName?: string
+  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
@@ -118,39 +122,39 @@ export interface CreateCase {
 }
 
 export interface UpdateCase {
-  policeCaseNumber: string
-  accusedNationalId: string
-  accusedName: string
-  accusedAddress: string
-  court: string
-  arrestDate: string
-  requestedCourtDate: string
-  requestedCustodyEndDate: string
-  lawsBroken: string
-  custodyProvisions: CaseCustodyProvisions[]
-  requestedCustodyRestrictions: CaseCustodyRestrictions[]
-  caseFacts: string
-  legalArguments: string
-  comments: string
-  courtCaseNumber: string
-  courtDate: string
-  courtRoom: string
-  defenderName: string
-  defenderEmail: string
-  courtStartTime: string
-  courtEndTime: string
-  courtAttendees: string
-  policeDemands: string
-  accusedPlea: string
-  litigationPresentations: string
-  ruling: string
-  rejecting: boolean
-  custodyEndDate: string
-  custodyRestrictions: CaseCustodyRestrictions[]
-  accusedAppealDecision: CaseAppealDecision
-  accusedAppealAnnouncement: string
-  prosecutorAppealDecision: CaseAppealDecision
-  prosecutorAppealAnnouncement: string
+  policeCaseNumber?: string
+  accusedNationalId?: string
+  accusedName?: string
+  accusedAddress?: string
+  court?: string
+  arrestDate?: string
+  requestedCourtDate?: string
+  requestedCustodyEndDate?: string
+  lawsBroken?: string
+  custodyProvisions?: CaseCustodyProvisions[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  caseFacts?: string
+  legalArguments?: string
+  comments?: string
+  courtCaseNumber?: string
+  courtDate?: string
+  courtRoom?: string
+  defenderName?: string
+  defenderEmail?: string
+  courtStartTime?: string
+  courtEndTime?: string
+  courtAttendees?: string
+  policeDemands?: string
+  accusedPlea?: string
+  litigationPresentations?: string
+  ruling?: string
+  rejecting?: boolean
+  custodyEndDate?: string
+  custodyRestrictions?: CaseCustodyRestrictions[]
+  accusedAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealDecision?: CaseAppealDecision
+  prosecutorAppealAnnouncement?: string
 }
 
 export interface TransitionCase {
