@@ -53,3 +53,4 @@
 /apps/services/xroad-collector                            @island-is/advania
 
 /apps/skilavottord/                                       @island-is/deloitte
+/libs/skilavottord/                                       @island-is/deloitte
