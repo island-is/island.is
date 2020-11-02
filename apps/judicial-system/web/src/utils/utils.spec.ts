@@ -6,10 +6,11 @@ import {
   parseTransition,
 } from './formatters'
 import { constructConclusion, isNextDisabled } from './stepHelper'
-import { Case, RequiredField } from '../types'
+import { RequiredField } from '../types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,
+  Case,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render } from '@testing-library/react'
