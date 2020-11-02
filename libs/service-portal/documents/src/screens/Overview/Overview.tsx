@@ -27,7 +27,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { isAfter, subYears, startOfTomorrow, isWithinInterval } from 'date-fns'
 import { isEqual } from 'lodash'
 
-const defaultCategory = { label: 'Allar Stofnanir', value: '' }
+const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
 const defaultStartDate = subYears(new Date(), 20)
 const defaultEndDate = startOfTomorrow()
