@@ -12,13 +12,7 @@ const rootName = defineMessage({
 
 export const applicationsModule: ServicePortalModule = {
   name: rootName,
-  widgets: () => [
-    {
-      name: rootName,
-      render: () => lazy(() => import('./widgets/applicationList')),
-      weight: 0,
-    },
-  ],
+  widgets: () => [],
   routes: () => {
     const applicationRoutes = [
       {

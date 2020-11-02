@@ -56,7 +56,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={2}>
         {mockApplicationList.map((application: Application) => (
-          <Box border="standard" key={application.id}>
+          <Box position="relative" border="standard" key={application.id}>
+            <Box position="absolute" className={styles.wipTag}>
+              <Tag variant="blue">Væntanlegt</Tag>
+            </Box>
             <div className={styles.cardBlurWrapper}>
               <ApplicationCard
                 name={application.name || application.typeId}

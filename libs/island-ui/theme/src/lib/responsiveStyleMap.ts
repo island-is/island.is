@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { isObject } from 'lodash'
+import isObject from 'lodash/isObject'
 import * as CSS from 'csstype'
 import { theme } from './theme'
 

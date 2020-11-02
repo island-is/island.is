@@ -1,10 +1,21 @@
 import React, { FC } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text, Stack, LoadingIcon } from '@island.is/island-ui/core'
+import * as styles from './Authenticator.treat'
 
 const AuthenticatorLoadingScreen: FC<{}> = () => {
   return (
-    <Box display="flex" justifyContent="center" margin={12}>
-      <Typography variant="h2">Augnablik</Typography>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      className={styles.wrapper}
+    >
+      <Stack space={3} align="center">
+        <LoadingIcon animate size={40} />
+        <Text variant="h4" color="blue600">
+          Unnið úr auðkenningu
+        </Text>
+      </Stack>
     </Box>
   )
 }

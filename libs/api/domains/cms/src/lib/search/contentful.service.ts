@@ -15,7 +15,7 @@ import {
   sortDirection,
   SyncOptions,
 } from '@island.is/api/content-search'
-import _ from 'lodash'
+import flatten from 'lodash/flatten'
 import { PostSyncOptions } from './cmsSync.service'
 
 interface SyncerResult {
@@ -166,7 +166,7 @@ export class ContentfulService {
       chunkToProcess = entries.splice(-chunkSize, chunkSize)
     } while (chunkToProcess.length)
 
-    return _.flatten(chunkedChanges)
+    return flatten(chunkedChanges)
   }
 
   /**

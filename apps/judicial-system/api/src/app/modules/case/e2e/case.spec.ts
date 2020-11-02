@@ -48,6 +48,10 @@ const remainingCaseData = {
   legalArguments: 'Legal Arguments',
   comments: 'Comments',
   courtCaseNumber: 'Court Case Number',
+  courtDate: '2020-09-29T13:00:00.000Z',
+  courtRoom: '201',
+  defenderName: 'Defender Name',
+  defenderEmail: 'Defender Email',
   courtStartTime: '2020-09-29T13:00:00.000Z',
   courtEndTime: '2020-09-29T14:00:00.000Z',
   courtAttendees: 'Court Attendees',
@@ -89,6 +93,7 @@ function dbCaseToCase(dbCase: Case) {
     requestedCustodyEndDate:
       theCase.requestedCustodyEndDate &&
       theCase.requestedCustodyEndDate.toISOString(),
+    courtDate: theCase.courtDate && theCase.courtDate.toISOString(),
     courtStartTime:
       theCase.courtStartTime && theCase.courtStartTime.toISOString(),
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
@@ -142,6 +147,10 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   )
   expect(caseOne.prosecutor || null).toStrictEqual(caseTwo.prosecutor || null)
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
+  expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
+  expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
+  expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
+  expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
   expect(caseOne.courtStartTime || null).toBe(caseTwo.courtStartTime || null)
   expect(caseOne.courtEndTime || null).toBe(caseTwo.courtEndTime || null)
   expect(caseOne.courtAttendees || null).toBe(caseTwo.courtAttendees || null)

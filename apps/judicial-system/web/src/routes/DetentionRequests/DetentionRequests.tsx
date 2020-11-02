@@ -23,7 +23,8 @@ import { UserRole } from '../../utils/authenticate'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { insertAt } from '../../utils/formatters'
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<DetentionRequest[]>(null)
@@ -109,7 +110,7 @@ export const DetentionRequests: React.FC = () => {
               <th>Kennitala</th>
               <th>Krafa stofnuð</th>
               <th>Staða</th>
-              <th>Gæsluvarðhaldstími</th>
+              <th>Gæsluvarðhald til</th>
               <th></th>
             </tr>
           </thead>
@@ -122,7 +123,10 @@ export const DetentionRequests: React.FC = () => {
               >
                 <td>{c.policeCaseNumber || '-'}</td>
                 <td>{c.accusedName || '-'}</td>
-                <td>{c.accusedNationalId || '-'}</td>
+                <td>
+                  {insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
+                    '-'}
+                </td>
                 <td>
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
@@ -133,10 +137,7 @@ export const DetentionRequests: React.FC = () => {
                 </td>
                 <td>
                   {c.state === CaseState.ACCEPTED
-                    ? `${formatDate(c.custodyEndDate, 'PP')} kl. ${formatDate(
-                        c.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`
+                    ? formatDate(c.custodyEndDate, 'PP')
                     : null}
                 </td>
                 <td>
@@ -148,7 +149,10 @@ export const DetentionRequests: React.FC = () => {
                             ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                             : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         }
-                        style={{ textDecoration: 'none' }}
+                        style={{
+                          textDecoration: 'none',
+                          whiteSpace: 'nowrap',
+                        }}
                       >
                         <Button icon="arrowRight" variant="text">
                           Opna kröfu

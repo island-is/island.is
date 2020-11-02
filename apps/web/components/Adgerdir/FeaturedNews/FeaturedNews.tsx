@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import {
   Box,
   GridContainer,
@@ -12,13 +12,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { AdgerdirNews } from '@island.is/api/schema'
+import { News } from '@island.is/api/schema'
 import { BackgroundImage, AdgerdirHeading } from '@island.is/web/components'
 
 import * as styles from './FeaturedNews.treat'
 
 interface FeaturedNewsProps {
-  items: Array<AdgerdirNews>
+  items: Array<News>
 }
 
 export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {

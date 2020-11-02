@@ -1,5 +1,6 @@
 import { ContentType, Field } from 'contentful'
-import { uniq, upperFirst } from 'lodash'
+import uniq from 'lodash/uniq'
+import upperFirst from 'lodash/upperFirst'
 
 import { Imports } from './generateFile'
 import { getFirstLevelContentType, Args } from './contentType'
