@@ -42,24 +42,16 @@ export const JudgeOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    let mounted = true
-
     const getCurrentCase = async () => {
-      if (mounted && !workingCase) {
-        const currentCase = await api.getCaseById(id)
-        setWorkingCase(currentCase.case)
-      }
+      setIsLoading(true)
+      const currentCase = await api.getCaseById(id)
+      setWorkingCase(currentCase.case)
       setIsLoading(false)
     }
-
-    if (id) {
+    if (id && !workingCase) {
       getCurrentCase()
     }
-
-    return () => {
-      mounted = false
-    }
-  }, [id, workingCase, setWorkingCase, setIsLoading])
+  }, [id, setIsLoading, workingCase, setWorkingCase])
 
   return (
     <PageLayout activeSection={1} activeSubSection={0} isLoading={isLoading}>

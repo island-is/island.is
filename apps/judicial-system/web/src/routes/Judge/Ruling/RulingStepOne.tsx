@@ -81,14 +81,11 @@ export const RulingStepOne: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-
-      if (!workingCase) {
-        const currentCase = await api.getCaseById(id)
-        setWorkingCase(currentCase.case)
-      }
+      const currentCase = await api.getCaseById(id)
+      setWorkingCase(currentCase.case)
       setIsLoading(false)
     }
-    if (id) {
+    if (id && !workingCase) {
       getCurrentCase()
     }
   }, [id, setIsLoading, workingCase, setWorkingCase])
