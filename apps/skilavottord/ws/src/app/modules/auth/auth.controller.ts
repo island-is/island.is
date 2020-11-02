@@ -12,7 +12,6 @@ import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import * as kennitala from 'kennitala'
 import IslandisLogin from 'islandis-login'
-
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
@@ -20,9 +19,6 @@ import {
   SSN_IS_NOT_A_PERSON,
 } from '@island.is/skilavottord/consts'
 import { environment } from '../../../environments'
-
-//import { UserResolver } from './../user/user.resolver'
-
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { Role, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
@@ -33,7 +29,6 @@ const {
   audience: audienceUrl,
   jwtSecret,
 } = environment.auth
-//const { samlEntryPoint2 } = environment.auth
 
 const JWT_EXPIRES_IN_SECONDS = 3600
 const ONE_HOUR = 60 * 60 * 1000
@@ -119,16 +114,13 @@ export class AuthController {
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
 
     this.logger.info(
-      `  - kennitala = ${user.kennitala}  nafn = ${user.fullname}   simi = ${user.mobile}`,
+      `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
     )
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - returnUrl = ${returnUrl}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    //const authService = new AuthService()
-
-    //const RoleForUser: string = 'Citizen'
     this.logger.info(`  - Role for ${user.fullname} is Citizen`)
     this.logger.info(`--- /citizen/callback ending ---`)
     return res
@@ -145,7 +137,6 @@ export class AuthController {
   }
 
   @Post('/company/callback')
-  // async callback2(@Body('token') token, @Res() res, @Req() req) {
   async callback2(@Body('token') token, @Res() res) {
     this.logger.info('--- /company/callback starting ---')
     let verifyResult: VerifyResult
@@ -156,15 +147,14 @@ export class AuthController {
       return res.redirect('/error')
     }
 
-    // const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user) {
-      this.logger.error('Could not verify user authenticity')
+      this.logger.error('  - Could not verify user authenticity')
       return res.redirect('/error')
     }
 
     if (!kennitala.isPerson(user.kennitala)) {
-      this.logger.warn('User used company kennitala to log in')
+      this.logger.warn('  - User used company kennitala to log in')
       return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
     }
 
@@ -190,7 +180,7 @@ export class AuthController {
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
 
     this.logger.info(
-      `  - kennitala = ${user.kennitala}  nafn = ${user.fullname}   simi = ${user.mobile}`,
+      `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
     )
     this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
@@ -203,16 +193,16 @@ export class AuthController {
       mobile: user.mobile,
       name: user.fullname,
     }
-    //  RoleUser = { nationalId: user.kennitala, mobile: user.mobile, name: user.fullname}
-    let RoleForUser: Role = 'user'
+
+    let RoleForUser: Role = 'citizen'
     RoleForUser = authService.getRole(RoleUser)
 
     this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
     let returnUrlComp: string
-    if (RoleForUser.includes('RecyclingCompany')) {
+    if (RoleForUser.includes('recyclingCompany')) {
       returnUrlComp = '/deregister-vehicle'
-    } else if (RoleForUser.includes('RecyclingFund')) {
-      returnUrlComp = '/list-vehicles'
+    } else if (RoleForUser.includes('recyclingFund')) {
+      returnUrlComp = '/recycled-vehicles'
     } else {
       return '/error'
     }

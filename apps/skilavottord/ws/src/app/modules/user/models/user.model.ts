@@ -10,4 +10,7 @@ export class User {
 
   @Field({ nullable: true })
   mobile?: string
+
+  @Field({ nullable: true })
+  role?: string = 'developer'
 }

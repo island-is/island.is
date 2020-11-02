@@ -42,4 +42,9 @@ export class GetNewsInput {
   @IsInt()
   @IsOptional()
   size?: number = 10
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  tag?: string
 }

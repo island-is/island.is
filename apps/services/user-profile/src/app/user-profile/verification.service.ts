@@ -125,7 +125,7 @@ export class VerificationService {
       ],
       subject: `Staðfestingarpóstur`,
       html: `Opnaðu þennann hlekk til þess að staðfesta netfangið ${verification.email}
-      <a href="${environment.email.currentBaseUrl}/emailConfirm?hash=${verification.hash}" target="_blank"/>Staðfesta</>`,
+      <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>`,
     })
   }
 
