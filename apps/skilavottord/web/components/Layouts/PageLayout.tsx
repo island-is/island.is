@@ -27,7 +27,7 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
             span={['12/12', '12/12', '7/12', '7/12']}
             offset={['0', '0', '1/12', '1/12']}
           >
-            <Box>{children}</Box>
+            <Box paddingBottom={10}>{children}</Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

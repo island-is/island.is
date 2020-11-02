@@ -2,12 +2,19 @@ import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 import { Box, Stack, Text, Breadcrumbs } from '@island.is/island-ui/core'
 import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { ActionCard, ProgressCard } from './components'
+import {
+  ActionCard,
+  ActionCardContainer,
+  ProgressCardContainer,
+} from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
-import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
+import {
+  GET_VEHICLES,
+  GET_OLD_VEHICLES,
+} from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
-import { MockCar } from '@island.is/skilavottord-web/types'
+import { MockCar, RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { InlineError } from '@island.is/skilavottord-web/components'
 
@@ -24,28 +31,34 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const nationalId = user?.nationalId ?? ''
-  const { data, loading, error } = useQuery(GET_VEHICLES, {
+  // const nationalId = user?.nationalId ?? ''
+  // const { data, loading, error } = useQuery(GET_VEHICLES, {
+  //   variables: { nationalId },
+  // })
+
+  const nationalId = '2222222222'
+  const { data, loading, error } = useQuery(GET_OLD_VEHICLES, {
     variables: { nationalId },
   })
 
   const { cars } = data?.getVehiclesForNationalId || []
 
-  const onRecycleCar = (id: string) => {
-    router
-      .push(routes.confirm, `${routes.baseRoute}/${id}/confirm`)
-      .then(() => window.scrollTo(0, 0))
-  }
+  const pendingCars = cars?.filter(
+    (car: MockCar) => car.status !== 'pendingRecycle',
+  )
+  const notStartedCars = cars?.filter(
+    (car: MockCar) => car.status !== 'notStarted' || car.status === undefined,
+  )
+  const recycledCars = cars?.filter(
+    (car: MockCar) => car,
+    // car.status === 'deregisterred' ||
+    // car.status === 'paymentInitiated' ||
+    // car.status === 'paymentFailed',
+  )
 
-  const onOpenProcess = (id: string) => {
+  const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
-      .push(routes.handover, `${routes.baseRoute}/${id}/handover`)
-      .then(() => window.scrollTo(0, 0))
-  }
-
-  const onSeeDetails = (id: string) => {
-    router
-      .push(routes.completed, `${routes.baseRoute}/${id}/completed`)
+      .push(routes[actionType], `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
   }
 
@@ -74,48 +87,38 @@ const Overview: FC = () => {
           )}
         </Box>
       ) : (
-        <Box>
-          <Box paddingBottom={10}>
-            <Stack space={[2, 2]}>
-              <Text variant="h3">{t.subTitles.pending}</Text>
-              {cars.map((car: MockCar) => (
-                <ProgressCard
-                  key={car.permno}
-                  car={{ ...car, status: 'pendingRecycle' }}
-                  onClick={() => onOpenProcess(car.permno)}
-                />
-              ))}
-            </Stack>
-          </Box>
-          <Box paddingBottom={10}>
-            <Stack space={[2, 2]}>
-              <Text variant="h3">{t.subTitles.active}</Text>
-              {cars.length > 0 ? (
-                cars.map((car: MockCar) => (
-                  <ActionCard
-                    key={car.permno}
-                    car={car}
-                    onContinue={() => onRecycleCar(car.permno)}
-                  />
-                ))
-              ) : (
-                <Text>{t.info.noCarsAvailable}</Text>
-              )}
-            </Stack>
-          </Box>
-          <Box paddingBottom={10}>
-            <Stack space={[2, 2]}>
-              <Text variant="h3">{t.subTitles.done}</Text>
-              {cars.map((car: MockCar) => (
-                <ProgressCard
-                  key={car.permno}
-                  car={{ ...car, status: 'handedOver' }}
-                  onClick={() => onSeeDetails(car.permno)}
-                />
-              ))}
-            </Stack>
-          </Box>
-        </Box>
+        <Stack space={[3, 3, 4, 4]}>
+          {pendingCars.length > 0 && (
+            <ProgressCardContainer
+              title={t.subTitles.pending}
+              cars={pendingCars}
+              actionType="handover"
+              onContinue={onContinue}
+              status="pendingRecycle"
+            />
+          )}
+          <Stack space={[2, 2]}>
+            <Text variant="h3">{t.subTitles.active}</Text>
+            {notStartedCars.length > 0 ? (
+              <ActionCardContainer
+                cars={notStartedCars}
+                actionType="confirm"
+                onContinue={onContinue}
+              />
+            ) : (
+              <Text>{t.info.noCarsAvailable}</Text>
+            )}
+          </Stack>
+          {recycledCars.length > 0 && (
+            <ProgressCardContainer
+              title={t.subTitles.done}
+              cars={recycledCars}
+              actionType="completed"
+              onContinue={onContinue}
+              status="handedOver"
+            />
+          )}
+        </Stack>
       )}
     </PageLayout>
   )

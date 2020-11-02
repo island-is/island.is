@@ -24,6 +24,8 @@ export interface MockRecyclingPartner {
   active?: boolean
 }
 
+export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
+
 export interface MockUser {
   name: string
   nationalId: string
