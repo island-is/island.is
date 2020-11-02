@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const TrackGrid = style({
+export const BoxGrid = style({
   display: 'grid',
   gridColumnGap: '1px',
   gridTemplateRows: 32,
