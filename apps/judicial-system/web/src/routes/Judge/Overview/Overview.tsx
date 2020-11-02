@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Text,
@@ -16,16 +16,22 @@ import {
 import { isNextDisabled, updateState } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import {
+  CaseCustodyProvisions,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
+import { useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -34,24 +40,25 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useWorkingCase()
-  const uContext = useContext(userContext)
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+  const resCase = data?.case
+
   useEffect(() => {
     let mounted = true
 
     const getCurrentCase = async () => {
-      const currentCase = await api.getCaseById(id)
-      window.localStorage.setItem(
-        'workingCase',
-        JSON.stringify(currentCase.case),
-      )
+      window.localStorage.setItem('workingCase', JSON.stringify(resCase))
 
       if (mounted && !workingCase) {
-        setWorkingCase(currentCase.case)
+        setWorkingCase(resCase)
       }
     }
 
@@ -62,7 +69,24 @@ export const JudgeOverview: React.FC = () => {
     return () => {
       mounted = false
     }
-  }, [id, workingCase, setWorkingCase])
+  }, [id, resCase, workingCase, setWorkingCase])
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want the modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
 
   return workingCase ? (
     <PageLayout activeSection={1} activeSubSection={0}>
@@ -97,7 +121,7 @@ export const JudgeOverview: React.FC = () => {
               const validateField = validate(evt.target.value, 'empty')
 
               if (validateField.isValid) {
-                api.saveCase(
+                updateCase(
                   workingCase.id,
                   parseString('courtCaseNumber', evt.target.value),
                 )
@@ -182,9 +206,8 @@ export const JudgeOverview: React.FC = () => {
           </Text>
         </Box>
         <Text variant="h3">
-          {workingCase?.prosecutor
-            ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-            : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+          {/* The prosecutor should have been set when the case was submitted to court */}
+          {`${workingCase?.prosecutor?.name}, ${workingCase?.prosecutor?.title}`}
         </Text>
       </Box>
       <Box component="section" marginBottom={5}>

@@ -1,15 +1,14 @@
 import React, { FC, useRef } from 'react'
-import {
-  format,
-  subMonths,
-  eachDayOfInterval,
-  toDate,
-  closestIndexTo,
-  isSameDay,
-  addMonths,
-  endOfMonth,
-  parseISO,
-} from 'date-fns'
+import format from 'date-fns/format'
+import subMonths from 'date-fns/subMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import toDate from 'date-fns/toDate'
+import closestIndexTo from 'date-fns/closestIndexTo'
+import isSameDay from 'date-fns/isSameDay'
+import addMonths from 'date-fns/addMonths'
+import endOfMonth from 'date-fns/endOfMonth'
+import parseISO from 'date-fns/parseISO'
+
 import { useWindowSize } from 'react-use'
 import { useDrag } from '../utils'
 
