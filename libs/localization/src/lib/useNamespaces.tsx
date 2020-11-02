@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { LocaleContext } from './LocaleContext'
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 
 export function useNamespaces(namespaces?: string | string[]) {
   const {
