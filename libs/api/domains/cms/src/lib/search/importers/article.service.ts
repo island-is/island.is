@@ -26,69 +26,69 @@ export class ArticleSyncService {
               fields: prunedRelatedArticlesFields,
             }),
           )
-
-          return { ...entry, relatedArticles }
+          // we overwrite related articles for this entry
+          processedEntries.push({
+            ...entry,
+            fields: { ...entry.fields, relatedArticles },
+          } as IArticle)
+        } else {
+          processedEntries.push(entry as IArticle)
         }
-
-
-      }
-    }
-        processedEntries.push(entry as IArticle)
       }
       return processedEntries
     }, [])
   }
 
-doMapping(entries: IArticle[]): MappedData[] {
-  logger.info('Mapping articles', { count: entries.length })
+  doMapping(entries: IArticle[]): MappedData[] {
+    logger.info('Mapping articles', { count: entries.length })
 
-  return entries
-    .map<MappedData | boolean>((entry) => {
-      let mapped: Article
+    return entries
+      .map<MappedData | boolean>((entry) => {
+        let mapped: Article
 
-      try {
-        mapped = mapArticle(entry)
-        const type = 'webArticle'
-        return {
-          _id: mapped.id,
-          title: mapped.title,
-          content: extractStringsFromObject(mapped.body),
-          type,
-          termPool: createTerms([
-            mapped.title,
-            mapped.category?.title,
-            mapped.group?.title,
-          ]),
-          response: JSON.stringify({ ...mapped, __typename: type }),
-          tags: [
-            {
-              key: entry.fields?.group?.fields?.slug,
-              value: entry.fields?.group?.fields?.title,
-              type: 'group',
-            },
-            {
-              key: entry.fields?.category?.fields?.slug,
-              value: entry.fields?.category?.fields?.title,
-              type: 'category',
-            },
-            ...mapped.otherCategories.map((x) => ({
-              key: x.slug,
-              value: x.title,
-              type: 'category',
-            })),
-            {
-              key: entry.fields?.slug,
-              type: 'slug',
-            },
-          ],
-          dateCreated: entry.sys.createdAt,
-          dateUpdated: new Date().getTime().toString(),
+        try {
+          mapped = mapArticle(entry)
+          const type = 'webArticle'
+          return {
+            _id: mapped.id,
+            title: mapped.title,
+            content: extractStringsFromObject(mapped.body),
+            type,
+            termPool: createTerms([
+              mapped.title,
+              mapped.category?.title,
+              mapped.group?.title,
+            ]),
+            response: JSON.stringify({ ...mapped, __typename: type }),
+            tags: [
+              {
+                key: entry.fields?.group?.fields?.slug,
+                value: entry.fields?.group?.fields?.title,
+                type: 'group',
+              },
+              {
+                key: entry.fields?.category?.fields?.slug,
+                value: entry.fields?.category?.fields?.title,
+                type: 'category',
+              },
+              ...mapped.otherCategories.map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'category',
+              })),
+              {
+                key: entry.fields?.slug,
+                type: 'slug',
+              },
+            ],
+            dateCreated: entry.sys.createdAt,
+            dateUpdated: new Date().getTime().toString(),
+          }
+        } catch (error) {
+          logger.warn('Failed to import article', { error: error.message })
+          return false
         }
-      } catch (error) {
-        logger.warn('Failed to import article', { error: error.message })
-        return false
-      }
-    })
-    .filter((value): value is MappedData => Boolean(value))
-}
+      })
+      .filter((value): value is MappedData => Boolean(value))
+  }
 }

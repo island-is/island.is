@@ -13,7 +13,12 @@ export class NewsSyncService {
     logger.info('Processing sync data for news')
 
     // only process news that we consider not to be empty and dont have circular structures
-    return entries.filter((entry: INews): entry is INews => entry.sys.contentType.sys.id === 'news' && !!entry.fields.title && isCircular(entry))
+    return entries.filter(
+      (entry: INews): entry is INews =>
+        entry.sys.contentType.sys.id === 'news' &&
+        !!entry.fields.title &&
+        isCircular(entry),
+    )
   }
 
   doMapping(entries: INews[]): MappedData[] {

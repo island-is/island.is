@@ -12,7 +12,12 @@ import { createTerms, extractStringsFromObject } from './utils'
 export class AboutPageSyncService {
   processSyncData(entries: Entry<any>[]): IPage[] {
     // only process pages that we consider not to be empty and dont have circular structures
-    return entries.filter((entry: IPage): entry is IPage => entry.sys.contentType.sys.id === 'page' && !!entry.fields.title && !isCircular(entry))
+    return entries.filter(
+      (entry: IPage): entry is IPage =>
+        entry.sys.contentType.sys.id === 'page' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
+    )
   }
 
   doMapping(entries: IPage[]): MappedData[] {

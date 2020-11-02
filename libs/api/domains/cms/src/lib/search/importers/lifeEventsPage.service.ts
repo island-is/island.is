@@ -14,7 +14,10 @@ export class LifeEventsPageSyncService {
 
     // only process life events that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: ILifeEventPage): entry is ILifeEventPage => entry.sys.contentType.sys.id === 'lifeEventPage' && !!entry.fields.title && !isCircular(entry),
+      (entry: ILifeEventPage): entry is ILifeEventPage =>
+        entry.sys.contentType.sys.id === 'lifeEventPage' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
     )
   }
 

@@ -14,7 +14,10 @@ export class ArticleCategorySyncService {
 
     // only process articles that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: IArticleCategory): entry is IArticleCategory => entry.sys.contentType.sys.id === 'articleCategory' && !!entry.fields.title && !isCircular(entry)
+      (entry: IArticleCategory): entry is IArticleCategory =>
+        entry.sys.contentType.sys.id === 'articleCategory' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
     )
   }
 
