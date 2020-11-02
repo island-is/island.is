@@ -14,6 +14,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -30,9 +31,13 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Get()
-  //@ApiOkResponse({ type: Client[] })
-  async findAll(): Promise<Client[]> {
-    const clients = await this.clientsService.findAll()
+  async findAndCountAll(
+    @Query('page') page: number,
+    @Query('count') count: number,
+  ): Promise<{ rows: Client[]; count: number } | null> {
+    console.log(page)
+    console.log(count)
+    const clients = await this.clientsService.findAndCountAll(page, count)
     return clients
   }
 
@@ -55,6 +60,7 @@ export class ClientsController {
   @Post()
   @ApiCreatedResponse({ type: Client })
   async create(@Body() client: ClientDTO): Promise<Client> {
+    console.log(client)
     return await this.clientsService.create(client)
   }
 
