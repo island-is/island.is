@@ -108,31 +108,6 @@ export const imageContainer = style({
   width: '100%',
 })
 
-export const arrowButton = style({
-  position: 'relative',
-  display: 'flex',
-  zIndex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: '50%',
-  width: 40,
-  height: 40,
-  backgroundColor: theme.color.red100,
-  opacity: 1,
-  transition: 'all 150ms ease',
-  outline: 0,
-  ':focus': {
-    backgroundColor: theme.color.red200,
-  },
-  ':hover': {
-    backgroundColor: theme.color.red200,
-  },
-})
-
-export const arrowButtonDisabled = style({
-  opacity: 0.5,
-})
-
 export const searchContentContainer = style({
   borderRadius: theme.border.radius.large,
   ...whenMobile({
@@ -153,4 +128,8 @@ export const tabListArrowRight = style({
   position: 'absolute',
   top: 0,
   right: 12,
+})
+
+export const zIndex1 = style({
+  zIndex: 1, // to accommodate for being a child of an absolute component
 })

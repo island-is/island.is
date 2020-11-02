@@ -162,7 +162,14 @@ export const circleSizes = styleMap({
   },
 })
 
-type PrimaryColors = (
+type PrimaryDarkColors = (
+  main: string,
+  text: string,
+  hover: string,
+  disabled: string,
+) => Style
+
+type PrimaryLightColors = (
   main: string,
   text: string,
   hover: string,
@@ -179,7 +186,7 @@ type UtilityColors = (
   borderDisabled: string,
 ) => Style
 
-const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
+const primaryDarkColors: PrimaryDarkColors = (main, text, hover, disabled) => ({
   backgroundColor: main,
   color: text,
   ':disabled': {
@@ -200,6 +207,34 @@ const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
     },
   },
 })
+
+const primaryLightColors: PrimaryLightColors = (
+  main,
+  text,
+  hover,
+  disabled,
+) => ({
+  backgroundColor: main,
+  color: text,
+  ':disabled': {
+    color: disabled,
+  },
+  ':hover': {
+    backgroundColor: hover,
+  },
+  ':active': {
+    backgroundColor: hover,
+  },
+  selectors: {
+    '&:focus:hover': {
+      color: text,
+    },
+    '&:focus:active': {
+      color: text,
+    },
+  },
+})
+
 const ghostColors: BorderedColors = (main, hover, disabled) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${main}`,
@@ -223,6 +258,7 @@ const ghostColors: BorderedColors = (main, hover, disabled) => ({
     },
   },
 })
+
 const textColors: BorderedColors = (main, hover, disabled) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 -1px 0 0 ${main}`,
@@ -246,6 +282,7 @@ const textColors: BorderedColors = (main, hover, disabled) => ({
     },
   },
 })
+
 const utilityColors: UtilityColors = (
   text,
   border,
@@ -279,22 +316,28 @@ const utilityColors: UtilityColors = (
 
 export const colors = {
   primary: styleMap({
-    default: primaryColors(
+    default: primaryDarkColors(
       theme.color.blue400,
       theme.color.white,
       theme.color.blueberry400,
       theme.color.blue300,
     ),
-    destructive: primaryColors(
+    destructive: primaryDarkColors(
       theme.color.red600,
       theme.color.white,
       theme.color.roseTinted400,
       theme.color.red200,
     ),
-    negative: primaryColors(
+    negative: primaryDarkColors(
       theme.color.white,
       theme.color.blue400,
       theme.color.blueberry100,
+      theme.color.blue300,
+    ),
+    light: primaryLightColors(
+      theme.color.blue100,
+      theme.color.blue400,
+      theme.color.blue200,
       theme.color.blue300,
     ),
   }),
