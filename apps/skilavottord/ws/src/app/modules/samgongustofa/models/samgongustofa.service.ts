@@ -161,7 +161,6 @@ export class SamgongustofaService {
           `Starting extracting details information on ${carObj['permno']}`,
         )
         if (carObj['status'] == 'inUse') {
-          // Vehicle information
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
             <soapenv:Header/>

@@ -14,19 +14,17 @@ export class RecyclingRequestService {
   ) {}
 
   async findAll(): Promise<RecyclingRequestModel[]> {
+    this.logger.info('---- Starting findAll Recycling request ----')
     const res = await this.recyclingRequestModel.findAll()
     return res
   }
 
-  // async findByNationalId(vehicleId: string): Promise<RecyclingRequestModel> {
-  //   return this.recyclingRequestModel.findOne({
-  //     where: { vehicleId },
-  //   })
-  // }
-
-  // async create(
-  //   recyclingRequest: RecyclingRequestModel,
-  // ): Promise<RecyclingRequestModel> {
-  //   return this.recyclingRequestModel.create(recyclingRequest)
-  // }
+  async findAllWithPermno(permno: string): Promise<RecyclingRequestModel[]> {
+    this.logger.info('---- Starting findAllWithPermno Recycling request ----')
+    const res = await this.recyclingRequestModel.findAll({
+      where: { vehicleId: permno },
+      order: [['updatedAt', 'DESC']],
+    })
+    return res
+  }
 }
