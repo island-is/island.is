@@ -36,6 +36,7 @@ import Table from '../components/Table'
 import { m } from '../../lib/messages'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
+type ValidRadioAnswer = 'yes' | 'no' | undefined
 
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
@@ -69,6 +70,15 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
       label: `The other parent is ${spouseName} (kt. ${spouseId})`,
     })
   }
+
+  const [statefulPrivatePension, setStatefulPrivatePension] = useState<
+    ValidRadioAnswer
+  >(
+    getValueViaPath(
+      application.answers,
+      'usePrivatePensionFund',
+    ) as ValidRadioAnswer,
+  )
 
   const dob = getExpectedDateOfBirth(application)
   const dobDate = new Date(dob)
@@ -342,16 +352,14 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                       { label: 'Yes', value: 'yes' },
                       { label: 'No', value: 'no' },
                     ]}
+                    onSelect={(s: string) => {
+                      setStatefulPrivatePension(s as ValidRadioAnswer)
+                    }}
                   />
                 </GridColumn>
               </GridRow>
-              {/* TODO: 
-                Use a state when Arni's PR comes in, and use 
-                RadioController onChange to update the state,
-                instead of using getValueViaPath below
-              */}
-              {getValueViaPath(application.answers, 'usePrivatePensionFund') ===
-                'yes' && (
+
+              {statefulPrivatePension === 'yes' && (
                 <>
                   <Box marginTop={3} />
                   <GridRow>
