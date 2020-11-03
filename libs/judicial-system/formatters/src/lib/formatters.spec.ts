@@ -56,7 +56,7 @@ describe('renderRestrictions', () => {
     const r = formatCustodyRestrictions(restrictions)
 
     // Assert
-    expect(r).toEqual('Lausagæsla')
+    expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu.')
   })
 })
 

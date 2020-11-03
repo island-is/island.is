@@ -456,7 +456,7 @@ export const StepTwo: React.FC = () => {
               Takmarkanir á gæslu
             </Text>
             <Text fontWeight="regular">
-              Ef ekkert er valið, er viðkomandi í lausagæslu
+              Ef ekkert er valið, er gæsla án takmarkana
             </Text>
           </Box>
           <GridContainer>
@@ -469,7 +469,7 @@ export const StepTwo: React.FC = () => {
                       label={restriction.restriction}
                       value={restriction.value}
                       checked={
-                        workingCase.custodyRestrictions.indexOf(
+                        workingCase.requestedCustodyRestrictions.indexOf(
                           restriction.value,
                         ) > -1
                       }

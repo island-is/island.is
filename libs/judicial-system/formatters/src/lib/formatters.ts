@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
 import { format, parseISO, isValid } from 'date-fns'
-
 import is from 'date-fns/locale/is'
 
 import {
@@ -96,5 +95,5 @@ export const formatCustodyRestrictions = (
         .map((restriction) => getRestrictionByValue(restriction))
         .toString()
         .replace(',', ', ')
-    : 'Lausagæsla'
+    : 'Ekki er farið fram á takmarkanir á gæslu.'
 }
