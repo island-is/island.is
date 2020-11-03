@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -21,6 +21,13 @@ import { MockedProvider } from '@apollo/client/testing'
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    // const continueButton = await waitFor(
+    //   () =>
+    //     screen.getByRole('button', {
+    //       name: /Halda áfram/i,
+    //     }) as HTMLButtonElement,
+    // )
+
     render(
       <MockedProvider
         mocks={mockCaseQueries.concat(
@@ -58,49 +65,60 @@ describe('Create detention request, step two', () => {
     )
 
     // Act and Assert
-    await act(async () => {
-      userEvent.type(
-        await waitFor(
-          () =>
-            screen.getByTestId('requestedCustodyEndTime') as HTMLInputElement,
-        ),
-        '13:37',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
+    userEvent.type(
+      await waitFor(
+        () => screen.getByLabelText('Tímasetning *') as HTMLInputElement,
+      ),
+      '13:37',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
 
-      userEvent.type(
-        screen.getByTestId('lawsBroken') as HTMLInputElement,
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
+    userEvent.type(
+      screen.getByLabelText(
+        'Lagaákvæði sem ætluð brot kærða þykja varða við *',
+      ) as HTMLInputElement,
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
 
-      userEvent.click(screen.getByText('c-lið 1. mgr. 95. gr.'))
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
-      userEvent.type(
-        screen.getByTestId('caseFacts') as HTMLInputElement,
-        'Lorem ipsum dolor sit amet,',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
-      userEvent.type(
-        screen.getByTestId('legalArguments') as HTMLInputElement,
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).not.toBeDisabled()
-    })
+    userEvent.click(
+      screen.getByRole('checkbox', { name: 'c-lið 1. mgr. 95. gr.' }),
+    )
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+    userEvent.type(
+      screen.getByLabelText('Málsatvik *') as HTMLInputElement,
+      'Lorem ipsum dolor sit amet,',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+    userEvent.type(
+      screen.getByLabelText('Lagarök *') as HTMLInputElement,
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).not.toBeDisabled()
   })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {

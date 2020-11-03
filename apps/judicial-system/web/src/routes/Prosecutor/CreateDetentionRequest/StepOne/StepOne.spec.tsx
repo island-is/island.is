@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, act, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne, { CreateCaseMutation } from './StepOne'
@@ -170,52 +170,50 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
       </MockedProvider>,
     )
 
-    await act(async () => {
-      await userEvent.type(
-        await waitFor(
-          () => screen.getByTestId('policeCaseNumber') as HTMLInputElement,
-        ),
-        '000-0000-0010',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
+    await userEvent.type(
+      await waitFor(
+        () => screen.getByTestId('policeCaseNumber') as HTMLInputElement,
+      ),
+      '000-0000-0010',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByTestId('continueButton') as HTMLButtonElement,
+    ).toBeDisabled()
 
-      await userEvent.type(
-        screen.getByTestId('nationalId') as HTMLInputElement,
-        '1112902539',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
+    await userEvent.type(
+      screen.getByTestId('nationalId') as HTMLInputElement,
+      '1112902539',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByTestId('continueButton') as HTMLButtonElement,
+    ).toBeDisabled()
 
-      await userEvent.type(
-        await waitFor(
-          () => screen.getByTestId('accusedName') as HTMLInputElement,
-        ),
-        'Jon Harring',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).toBeDisabled()
+    await userEvent.type(
+      await waitFor(
+        () => screen.getByTestId('accusedName') as HTMLInputElement,
+      ),
+      'Jon Harring',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByTestId('continueButton') as HTMLButtonElement,
+    ).toBeDisabled()
 
-      await userEvent.type(
-        screen.getByTestId('accusedAddress') as HTMLInputElement,
-        'Harringvej 2',
-      )
-      userEvent.tab()
+    await userEvent.type(
+      screen.getByTestId('accusedAddress') as HTMLInputElement,
+      'Harringvej 2',
+    )
+    userEvent.tab()
 
-      // TODO FIND A WAY TO SET DATE FIELDS
+    // TODO FIND A WAY TO SET DATE FIELDS
 
-      expect(
-        await waitFor(
-          () => screen.getByTestId('continueButton') as HTMLButtonElement,
-        ),
-      ).toBeDisabled()
-    })
+    expect(
+      await waitFor(
+        () => screen.getByTestId('continueButton') as HTMLButtonElement,
+      ),
+    ).toBeDisabled()
   })
 
   test('should save case if accused name is entered first and then police case number and accused national iddd', async () => {
@@ -261,39 +259,37 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
       </MockedProvider>,
     )
 
-    await act(async () => {
-      userEvent.type(
-        await waitFor(
-          () => screen.getByTestId('accusedName') as HTMLInputElement,
-        ),
-        'Gervipersona',
-      )
+    userEvent.type(
+      await waitFor(
+        () => screen.getByTestId('accusedName') as HTMLInputElement,
+      ),
+      'Gervipersona',
+    )
 
-      userEvent.tab()
+    userEvent.tab()
 
-      await userEvent.type(
-        screen.getByTestId('accusedAddress') as HTMLInputElement,
-        'Batcave',
-      )
+    await userEvent.type(
+      screen.getByTestId('accusedAddress') as HTMLInputElement,
+      'Batcave',
+    )
 
-      userEvent.tab()
+    userEvent.tab()
 
-      await userEvent.type(
-        screen.getByTestId('nationalId') as HTMLInputElement,
-        '0000000000',
-      )
+    await userEvent.type(
+      screen.getByTestId('nationalId') as HTMLInputElement,
+      '0000000000',
+    )
 
-      userEvent.tab()
+    userEvent.tab()
 
-      await userEvent.type(
-        screen.getByTestId('policeCaseNumber') as HTMLInputElement,
-        '020-0202-2929',
-      )
+    await userEvent.type(
+      screen.getByTestId('policeCaseNumber') as HTMLInputElement,
+      '020-0202-2929',
+    )
 
-      userEvent.tab()
+    userEvent.tab()
 
-      // Assert
-      await waitFor(() => expect(createCalled).toBe(true))
-    })
+    // Assert
+    await waitFor(() => expect(createCalled).toBe(true))
   })
 })

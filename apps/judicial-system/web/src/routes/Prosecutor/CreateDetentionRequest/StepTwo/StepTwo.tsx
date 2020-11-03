@@ -575,7 +575,7 @@ export const StepTwo: React.FC = () => {
               <Input
                 data-testid="caseFacts"
                 name="caseFacts"
-                label="Málsatvik rakin"
+                label="Málsatvik"
                 placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
                 errorMessage={caseFactsErrorMessage}
                 hasError={caseFactsErrorMessage !== ''}

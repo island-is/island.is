@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { RulingStepOne, RulingStepTwo } from './'
 import * as Constants from '../../../utils/constants'
 import {
@@ -51,25 +51,23 @@ describe('Ruling routes', () => {
         </MockedProvider>,
       )
 
-      await act(async () => {
-        userEvent.type(
-          await waitFor(() => screen.getByTestId('ruling') as HTMLInputElement),
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
-        )
-        userEvent.tab()
-        expect(
-          screen.getByTestId('continueButton') as HTMLButtonElement,
-        ).toBeDisabled()
+      userEvent.type(
+        await waitFor(() => screen.getByTestId('ruling') as HTMLInputElement),
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
+      )
+      userEvent.tab()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
 
-        await userEvent.type(
-          screen.getByTestId('custodyEndTime') as HTMLInputElement,
-          '12:31',
-        )
-        userEvent.tab()
-        expect(
-          screen.getByTestId('continueButton') as HTMLButtonElement,
-        ).not.toBeDisabled()
-      })
+      await userEvent.type(
+        screen.getByTestId('custodyEndTime') as HTMLInputElement,
+        '12:31',
+      )
+      userEvent.tab()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).not.toBeDisabled()
     })
 
     test('should not have a disabled continue button by default if case data is valid', async () => {

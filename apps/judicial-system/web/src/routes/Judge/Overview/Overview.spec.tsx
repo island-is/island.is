@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { act, render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { Route, Router } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
 import Overview from './Overview'
@@ -46,18 +46,16 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         </userContext.Provider>
       </MockedProvider>,
     )
-    await act(async () => {
-      await userEvent.type(
-        await waitFor(
-          () => screen.getByTestId('courtCaseNumber') as HTMLInputElement,
-        ),
-        '000-0000-000',
-      )
-      userEvent.tab()
-      expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
-      ).not.toBeDisabled()
-    })
+    userEvent.type(
+      await waitFor(
+        () => screen.getByTestId('courtCaseNumber') as HTMLInputElement,
+      ),
+      '000-0000-000',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByTestId('continueButton') as HTMLButtonElement,
+    ).not.toBeDisabled()
   })
 
   test('should display the string lausagæsla in custody restrictions if there are no custody restrictions', async () => {
