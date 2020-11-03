@@ -42,7 +42,7 @@ export class ClientsService {
   /** Gets all clients */
   async findAndCountAll(
     page: number,
-    count: number = 15,
+    count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
     page--
     const offset = page * count
