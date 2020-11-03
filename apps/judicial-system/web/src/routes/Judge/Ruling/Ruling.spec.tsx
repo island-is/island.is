@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen, cleanup } from '@testing-library/react'
 import { RulingStepOne, RulingStepTwo } from './'
 import * as Constants from '../../../utils/constants'
 import {
@@ -52,21 +52,32 @@ describe('Ruling routes', () => {
       )
 
       userEvent.type(
-        await waitFor(() => screen.getByTestId('ruling') as HTMLInputElement),
+        await waitFor(
+          () =>
+            screen.getByLabelText('Niðurstaða úrskurðar *') as HTMLInputElement,
+        ),
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
       )
+
       userEvent.tab()
+
       expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
       ).toBeDisabled()
 
-      await userEvent.type(
-        screen.getByTestId('custodyEndTime') as HTMLInputElement,
+      userEvent.type(
+        screen.getByLabelText('Tímasetning *') as HTMLInputElement,
         '12:31',
       )
+
       userEvent.tab()
+
       expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
       ).not.toBeDisabled()
     })
 
@@ -91,7 +102,10 @@ describe('Ruling routes', () => {
       // Assert
       expect(
         await waitFor(
-          () => screen.getByTestId('continueButton') as HTMLButtonElement,
+          () =>
+            screen.getByRole('button', {
+              name: /Halda áfram/i,
+            }) as HTMLButtonElement,
         ),
       ).not.toBeDisabled()
     })
@@ -107,7 +121,7 @@ describe('Ruling routes', () => {
           mocks={mockCaseQueries.concat(
             mockUpdateCaseMutation([
               {
-                prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                accusedAppealDecision: CaseAppealDecision.APPEAL,
               } as UpdateCase,
               {
                 prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
@@ -128,25 +142,32 @@ describe('Ruling routes', () => {
         </MockedProvider>,
       )
 
-      await waitFor(() =>
-        userEvent.click(
-          screen.getByLabelText('Sækjandi kærir málið') as HTMLInputElement,
+      userEvent.click(
+        await waitFor(
+          () =>
+            screen.getByRole('radio', {
+              name: 'Kærði kærir málið',
+            }) as HTMLInputElement,
         ),
       )
 
       expect(
-        screen.getByTestId('continueButton') as HTMLButtonElement,
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
       ).toBeDisabled()
 
-      await waitFor(() =>
-        userEvent.click(screen.getByLabelText('Sækjandi kærir málið')),
+      userEvent.click(
+        screen.getByRole('radio', {
+          name: 'Sækjandi tekur sér lögboðinn frest',
+        }) as HTMLInputElement,
       )
 
-      waitFor(() => {
-        expect(
-          screen.getByTestId('continueButton') as HTMLButtonElement,
-        ).not.toBeDisabled()
-      })
+      expect(
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
+      ).not.toBeDisabled()
     })
   })
 
@@ -158,7 +179,7 @@ describe('Ruling routes', () => {
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
+            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_3`]}
           >
             <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
               <RulingStepTwo />
@@ -207,23 +228,29 @@ describe('Ruling routes', () => {
     )
 
     await waitFor(() =>
-      userEvent.click(screen.getByText('Kærði tekur sér lögboðinn frest')),
+      userEvent.click(
+        screen.getByRole('radio', { name: 'Kærði tekur sér lögboðinn frest' }),
+      ),
     )
-    await waitFor(() =>
-      userEvent.click(screen.getByText('Sækjandi tekur sér lögboðinn frest')),
+
+    userEvent.click(
+      screen.getByRole('radio', {
+        name: 'Sækjandi tekur sér lögboðinn frest',
+      }),
     )
 
     // Assert
-    expect(screen.getByTestId('accusedAppealAnnouncement')).toBeDisabled()
-
-    expect(screen.getByTestId('prosecutorAppealAnnouncement')).toBeDisabled()
+    expect(
+      await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
+    ).toBeDisabled()
+    expect(screen.getByLabelText('Yfirlýsing um kæru sækjanda')).toBeDisabled()
   })
 
   test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
 
     // Act
-    const { getByText, getByTestId } = render(
+    render(
       <MockedProvider
         mocks={mockCaseQueries.concat(
           mockUpdateCaseMutation([
@@ -239,7 +266,7 @@ describe('Ruling routes', () => {
       >
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
+            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
           >
             <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
               <RulingStepTwo />
@@ -249,11 +276,12 @@ describe('Ruling routes', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() => userEvent.click(getByText('Kærði kærir málið')))
-    await waitFor(() => userEvent.click(getByText('Sækjandi kærir málið')))
-
     // Assert
-    expect(getByTestId('accusedAppealAnnouncement')).not.toBeDisabled()
-    expect(getByTestId('prosecutorAppealAnnouncement')).not.toBeDisabled()
+    expect(
+      await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
+    ).not.toBeDisabled()
+    expect(
+      screen.getByLabelText('Yfirlýsing um kæru sækjanda'),
+    ).not.toBeDisabled()
   })
 })
