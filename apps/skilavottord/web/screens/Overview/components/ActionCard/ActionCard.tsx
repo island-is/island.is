@@ -13,16 +13,16 @@ import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { MockCar } from '@island.is/skilavottord-web/types'
+import { Car } from '@island.is/skilavottord-web/types'
 
 interface ActionCardProps {
   onContinue: () => void
-  car: MockCar
+  car: Car
 }
 
 export const ActionCard: FC<ActionCardProps> = ({
   onContinue,
-  car: { permno, type, newregdate, recyclable, isCoOwned = false },
+  car: { permno, type, firstRegDate, isRecyclable, hasCoOwner },
 }: ActionCardProps) => {
   const {
     t: { myCars: t },
@@ -49,12 +49,12 @@ export const ActionCard: FC<ActionCardProps> = ({
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
                     <Text variant="h3">{permno}</Text>
-                    <Text>{`${type}, ${newregdate}`}</Text>
+                    <Text>{`${type}, ${firstRegDate}`}</Text>
                   </Stack>
                 </Box>
               </GridColumn>
               <GridColumn span={['4/10', '2/10', '2/10', '3/10']}>
-                {isCoOwned && (
+                {hasCoOwner && (
                   <ColumnBox width="full" paddingRight={[4, 4, 4, 1]}>
                     <Text variant="h5">{t.status.coOwned}</Text>
                   </ColumnBox>
@@ -63,7 +63,7 @@ export const ActionCard: FC<ActionCardProps> = ({
             </GridRow>
           </GridColumn>
           <GridColumn span={['10/10', '10/10', '4/10', '3/10']}>
-            {recyclable ? (
+            {isRecyclable ? (
               <ColumnBox
                 background="blue100"
                 width="full"
