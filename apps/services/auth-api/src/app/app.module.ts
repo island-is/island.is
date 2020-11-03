@@ -11,8 +11,8 @@ import { UsersModule } from './modules/users/users.module'
   imports: [
     AuthModule.register({
       audience: '@identityserver.api',
-      issuer: process.env.issuer, // TODO: Get from env
-      jwksUri: process.env.issuer + '/.well-known/openid-configuration/jwks', // TODO: Get from env
+      issuer: process.env.issuer,
+      jwksUri: process.env.issuer + '/.well-known/openid-configuration/jwks',
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
