@@ -4,6 +4,7 @@ module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
     'recycling_request',
     {
+      //TODO GUID vegna fjársýslu.
       id: {
         type: DataTypes.INTEGER,
         allowNull: false,
