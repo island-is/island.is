@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/client'
+import { Document } from '@contentful/rich-text-types'
 import gql from 'graphql-tag'
 import { useForm, Controller } from 'react-hook-form'
 import {
@@ -43,13 +44,19 @@ export interface TellUsAStoryFormState {
   email: string
   publicationAllowed: boolean
 }
+
 type FormState = 'edit' | 'submitting' | 'error' | 'success'
+type DocumentType = {
+  typename: string
+  id: string
+  document: Document | { [key: string]: Document }
+}
 
 export interface TellUsAStoryFormProps {
   introTitle: string
   introImage?: { url: string; title: string }
-  introDescription?: { [key: string]: any }
-  instructionsDescription?: { [key: string]: any }
+  introDescription?: DocumentType
+  instructionsDescription?: DocumentType
   instructionsTitle: string
   firstSectionTitle: string
   organizationLabel: string
@@ -76,7 +83,7 @@ export interface TellUsAStoryFormProps {
   publicationAllowedLabel: string
   submitButtonTitle: string
   SuccessMessageTitle: string
-  successMessage?: { [key: string]: any }
+  successMessage?: DocumentType
   errorMessageTitle?: string
   locale: string
   state: FormState
@@ -129,13 +136,13 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
     },
   })
 
-  const { handleSubmit, register, control, errors, reset } = methods
+  const { handleSubmit, register, control, errors } = methods
 
   useEffect(() => {
     if (state === 'error') {
       toast.error(errorMessageTitle)
     }
-  }, [state])
+  }, [state, errorMessageTitle])
 
   const options =
     !error && !loading && data?.getOrganizations?.items?.length
@@ -159,7 +166,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 {introTitle}
               </Text>
               {introDescription && (
-                <Box>{renderHtml(introDescription.document)}</Box>
+                <Box>{renderHtml(introDescription.document as Document)}</Box>
               )}
             </GridColumn>
             {!!introImage && (
@@ -327,7 +334,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       </Text>
                       {instructionsDescription && (
                         <Box>
-                          {renderHtml(instructionsDescription.document)}
+                          {renderHtml(
+                            instructionsDescription.document as Document,
+                          )}
                         </Box>
                       )}
                     </GridColumn>
@@ -408,7 +417,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
               {SuccessMessageTitle}
             </Text>
             {successMessage && (
-              <Box paddingBottom={3}>{renderHtml(successMessage.document)}</Box>
+              <Box paddingBottom={3}>
+                {renderHtml(successMessage.document as Document)}
+              </Box>
             )}
           </Box>
         )}

@@ -62,9 +62,6 @@ export const GET_TELL_US_A_STORY_DATA = gql`
       successMessage {
         ...HtmlFields
       }
-      errorMessage {
-        ...HtmlFields
-      }
     }
   }
 `

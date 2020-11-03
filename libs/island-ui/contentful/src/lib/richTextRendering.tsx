@@ -38,10 +38,7 @@ import {
 import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
 import { Location, LocationProps } from './Location/Location'
-import {
-  TellUsAStoryForm,
-  TellUsAStoryFormProps,
-} from './TellUsAStoryForm/TellUsAStoryForm'
+import { TellUsAStoryFormProps } from './TellUsAStoryForm/TellUsAStoryForm'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
