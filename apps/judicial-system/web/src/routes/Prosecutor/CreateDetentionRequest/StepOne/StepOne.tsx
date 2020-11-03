@@ -193,7 +193,7 @@ export const StepOne: React.FC = () => {
       })
 
       const resCase: Case = data?.createCase
-
+      console.log('@!#!@#!@', resCase)
       if (resCase) {
         history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${resCase.id}`)
         setWorkingCase({
