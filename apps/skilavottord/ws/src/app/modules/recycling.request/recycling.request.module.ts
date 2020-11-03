@@ -8,5 +8,6 @@ import { VehicleModel } from '../vehicle/model/vehicle.model'
 @Module({
   imports: [SequelizeModule.forFeature([RecyclingRequestModel, VehicleModel])],
   providers: [RecyclingRequestResolver, RecyclingRequestService],
+  exports: [RecyclingRequestService],
 })
 export class RecyclingRequestModule {}

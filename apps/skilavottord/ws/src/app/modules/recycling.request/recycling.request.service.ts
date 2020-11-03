@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { VehicleModel } from '../vehicle/model/vehicle.model'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -9,7 +8,6 @@ export class RecyclingRequestService {
   constructor(
     @InjectModel(RecyclingRequestModel)
     private recyclingRequestModel: typeof RecyclingRequestModel,
-    @InjectModel(VehicleModel) private vehicleModel: typeof VehicleModel,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 

@@ -3,6 +3,7 @@ import { Injectable, HttpService, Inject } from '@nestjs/common'
 import xml2js from 'xml2js'
 import { environment } from '../../../../environments'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
 
 @Injectable()
 export class SamgongustofaService {
@@ -10,6 +11,8 @@ export class SamgongustofaService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private httpService: HttpService,
+    @Inject(RecyclingRequestService)
+    private recyclingRequestService: RecyclingRequestService,
   ) {}
 
   async getVehicleInformation(nationalId: string) {
@@ -151,7 +154,7 @@ export class SamgongustofaService {
         })
 
       this.logger.info('Finished extracting all vehicles')
-      // TODO: connect to database and get 'pending' status
+
       const newVehicleArr = this.vehicleInformationList
 
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
@@ -244,6 +247,31 @@ export class SamgongustofaService {
               )
               throw new Error('Getting Error while parsing xml to json...')
             })
+        }
+      }
+
+      for (let i = 0; i < this.vehicleInformationList.length; i++) {
+        const vehicle = this.vehicleInformationList[i]
+        try {
+          if (vehicle.isRecyclable) {
+            this.logger.info(
+              `Start getting requestType from DB for vehicle ${vehicle['permno']}`,
+            )
+            const resRequestType = await this.recyclingRequestService.findAllWithPermno(
+              vehicle['permno'],
+            )
+            if (resRequestType.length > 0) {
+              const requestType = resRequestType[0]['dataValues']['requestType']
+              this.vehicleInformationList[i]['status'] = requestType
+              this.logger.info(
+                `Got ${requestType} for vehicle ${vehicle['permno']}`,
+              )
+            }
+          }
+        } catch (err) {
+          this.logger.error(
+            `Error while checking requestType in DB for vehicle ${vehicle['permno']}`,
+          )
         }
       }
 
