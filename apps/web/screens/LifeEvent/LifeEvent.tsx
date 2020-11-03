@@ -90,17 +90,19 @@ export const LifeEvent: Screen<LifeEventProps> = ({
           <GridRow>
             <GridColumn span={'9/9'} paddingBottom={2}>
               <Box marginBottom={2} display="inlineBlock" width="full">
-                <BackgroundImage
-                  ratio="12:4"
-                  background="transparent"
-                  boxProps={{ background: 'white' }}
-                  image={image}
-                />
+                <Hidden print={true}>
+                  <BackgroundImage
+                    ratio="12:4"
+                    background="transparent"
+                    boxProps={{ background: 'white' }}
+                    image={image}
+                  />
+                </Hidden>
               </Box>
             </GridColumn>
           </GridRow>
           {!!mobileNavigation.length && (
-            <Hidden above="sm">
+            <Hidden print={true} above="sm">
               <DrawerMenu
                 categories={[
                   {

@@ -14,7 +14,6 @@ import {
   Articles,
   GroupedPages,
   CardsSlider,
-  FeaturedNews,
   FrontpageSvg,
 } from '@island.is/adgerdir/components'
 import { Sleeve } from '@island.is/island-ui/core'
@@ -109,8 +108,6 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
         <Stack space={[6, 6, 12]}>
           {frontpage.slices.map((slice, index) => {
             switch (slice.__typename) {
-              case 'AdgerdirFeaturedNewsSlice':
-                return <FeaturedNews key={index} items={slice.featured} />
               case 'AdgerdirGroupSlice':
                 groupSliceCount++
 

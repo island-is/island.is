@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
 import * as styles from './NotificationMenu.treat'
-import { Box, Text, Stack, Button } from '@island.is/island-ui/core'
+import { Box, Text, Stack } from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'
 import { MenuState } from '../../../store/actions'
-import { Link } from 'react-router-dom'
-import { Menu, ServicePortalPath } from '@island.is/service-portal/core'
+import { Menu } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface Props {
@@ -49,26 +48,6 @@ const NotificationMenu: FC<Props> = ({ state, onClose }) => {
                 </Stack>
               </Box>
             ))}
-          </Box>
-          <Box marginTop={4}>
-            <Link to={ServicePortalPath.MessagesRoot} onClick={onClose}>
-              <Button fluid>
-                {formatMessage({
-                  id: 'sp.settings:see-all-messages',
-                  defaultMessage: 'Sjá öll skilaboð',
-                })}
-              </Button>
-            </Link>
-            <Box display="flex" justifyContent="center" marginTop={1}>
-              <Link to={ServicePortalPath.StillingarRoot} onClick={onClose}>
-                <Button variant="text" icon="arrowForward">
-                  {formatMessage({
-                    id: 'sp.settings:goto-settings',
-                    defaultMessage: 'Fara í stillingar',
-                  })}
-                </Button>
-              </Link>
-            </Box>
           </Box>
         </Box>
       </Menu>

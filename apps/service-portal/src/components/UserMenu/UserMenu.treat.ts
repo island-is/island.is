@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const menu = style({
   width: '100%',
@@ -14,7 +14,4 @@ export const menu = style({
 export const avatar = style({
   width: 56,
   height: 56,
-  marginRight: theme.spacing['3'],
-  backgroundSize: 'cover',
-  borderRadius: '100%',
 })

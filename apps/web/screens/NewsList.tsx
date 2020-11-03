@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { groupBy, range, capitalize } from 'lodash'
+import transform from 'lodash/transform'
+import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '../types'
@@ -21,6 +22,7 @@ import {
   Option,
   Link,
   GridColumn,
+  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -50,6 +52,7 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
+  selectedTagId: string
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -60,6 +63,7 @@ const NewsList: Screen<NewsListProps> = ({
   selectedYear,
   selectedMonth,
   selectedPage,
+  selectedTagId,
   namespace,
 }) => {
   const Router = useRouter()
@@ -98,11 +102,14 @@ const NewsList: Screen<NewsListProps> = ({
     })),
   ]
 
-  const makeHref = (y: string | number, m?: string | number) => {
-    const query: { [k: string]: number | string } = y ? { y } : null
-    if (y && m != null) {
-      query.m = m
-    }
+  const makeHref = (y: number | string, m?: number | string) => {
+    const params = { y, m, tag: selectedTagId }
+    const query = Object.entries(params).reduce((queryObject, [key, value]) => {
+      if (value) {
+        queryObject[key] = value
+      }
+      return queryObject
+    }, {})
 
     return {
       pathname: makePath('news'),
@@ -110,42 +117,69 @@ const NewsList: Screen<NewsListProps> = ({
     }
   }
 
+  // Fish the selected tag name from existing news items
+  // instead of making a request for all tags
+  const selectedTag =
+    newsList.length &&
+    selectedTagId &&
+    transform(
+      newsList,
+      (tag, item) => {
+        const found = item.genericTags.find((t) => t.id === selectedTagId)
+
+        if (found) {
+          tag.id = found.id
+          tag.title = found.title
+          // exit early since we have what we need
+          return false
+        }
+
+        return true
+      },
+      { id: '', title: '' },
+    )
+
   const sidebar = (
     <Stack space={3}>
-      <Text variant="h4" as="h1">
-        {n('newsTitle', 'Fréttir og tilkynningar')}
-      </Text>
-      <Divider weight="alternate" />
-      <NativeSelect
-        name="year"
-        value={selectedYear ? selectedYear.toString() : allYearsString}
-        options={yearOptions}
-        onChange={(e) => {
-          const selectedValue =
-            e.target.value !== allYearsString ? e.target.value : null
-          Router.push(makeHref(selectedValue))
-        }}
-      />
-      {selectedYear && (
-        <div>
-          <Link href={makeHref(selectedYear)}>
-            <Text as="span">{allMonthsString}</Text>
-          </Link>
-          <Text as="span">
-            {selectedMonth === undefined && <Bullet align="right" />}
+      <Box background="purple100" borderRadius="large" padding={4}>
+        <Stack space={3}>
+          <Text variant="h4" as="h1">
+            {n('newsTitle', 'Fréttir og tilkynningar')}
           </Text>
-        </div>
-      )}
-      {months.map((month) => (
-        <div key={month}>
-          <Link href={makeHref(selectedYear, month)}>
-            <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
-          </Link>
-          <Text as="span">
-            {selectedMonth === month && <Bullet align="right" />}
-          </Text>
-        </div>
-      ))}
+          <Divider weight="purple200" />
+          <NativeSelect
+            name="year"
+            value={selectedYear ? selectedYear.toString() : allYearsString}
+            options={yearOptions}
+            onChange={(e) => {
+              const selectedValue =
+                e.target.value !== allYearsString ? e.target.value : null
+              Router.push(makeHref(selectedValue))
+            }}
+            color="purple400"
+          />
+          {selectedYear && (
+            <div>
+              <Link href={makeHref(selectedYear)}>
+                <Text as="span">{allMonthsString}</Text>
+              </Link>
+              <Text as="span">
+                {selectedMonth === undefined && <Bullet align="right" />}
+              </Text>
+            </div>
+          )}
+          {months.map((month) => (
+            <div key={month}>
+              <Link href={makeHref(selectedYear, month)}>
+                <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
+              </Link>
+              <Text as="span">
+                {selectedMonth === month && <Bullet align="right" />}
+              </Text>
+            </div>
+          ))}
+        </Stack>
+      </Box>
     </Stack>
   )
 
@@ -161,6 +195,11 @@ const NewsList: Screen<NewsListProps> = ({
             <Link href={makePath('news')}>
               {n('newsTitle', 'Fréttir og tilkynningar')}
             </Link>
+            {!!selectedTag && (
+              <Tag variant="blue" label>
+                {selectedTag.title}
+              </Tag>
+            )}
           </Breadcrumbs>
           {selectedYear && (
             <Hidden below="lg">
@@ -169,7 +208,6 @@ const NewsList: Screen<NewsListProps> = ({
               </Text>
             </Hidden>
           )}
-
           <GridColumn hiddenAbove="sm" paddingBottom={1}>
             <Select
               label={yearString}
@@ -221,6 +259,7 @@ const NewsList: Screen<NewsListProps> = ({
               url={makePath('news', '[slug]')}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
+              tags={newsItem.genericTags.map(({ title }) => ({ title }))}
             />
           ))}
           {newsList.length > 0 && (
@@ -268,6 +307,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
+  const tag = (query.tag as string) ?? null
 
   const [
     {
@@ -285,6 +325,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          tag,
         },
       },
     }),
@@ -297,6 +338,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
           page: selectedPage,
           year,
           month,
+          tag,
         },
       },
     }),
@@ -321,6 +363,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     total,
     selectedYear: year,
     selectedMonth: month,
+    selectedTagId: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,

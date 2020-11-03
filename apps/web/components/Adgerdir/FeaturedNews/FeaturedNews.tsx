@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import {
   Box,
   GridContainer,

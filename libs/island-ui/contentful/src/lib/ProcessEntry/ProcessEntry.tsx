@@ -14,13 +14,21 @@ import IframeModal from '../IframeModal/IframeModal'
 
 import * as styles from './ProcessEntry.treat'
 
-export const Titles: { [k: string]: string } = {
+export const Titles: {
+  [Digital: string]: { is: string; en: string }
+} = {
   // TODO: translating these requires some effort
-  Digital: 'Stafræn umsókn',
-  'Digital w/login': 'Aðgangsstýrð stafræn umsókn',
-  'Not digital': 'Handvirk umsókn',
-  'Not digital w/login': 'Handvirk umsókn með innskráningu',
-  'No type': '',
+  Digital: { is: 'Stafræn umsókn', en: 'Digital application' },
+  'Digital w/login': {
+    is: 'Aðgangsstýrð stafræn umsókn',
+    en: 'Digital application with access control',
+  },
+  'Not digital': { is: 'Handvirk umsókn', en: 'Manual application' },
+  'Not digital w/login': {
+    is: 'Handvirk umsókn með innskráningu',
+    en: 'Manual application with access control',
+  },
+  'No type': { is: '', en: '' },
 }
 
 export interface ProcessEntryProps {
@@ -29,6 +37,7 @@ export interface ProcessEntryProps {
   openLinkInModal?: boolean
   type: string
   buttonText: string
+  locale?: string
 }
 
 export const ProcessEntryLinkButton: FC<
@@ -64,9 +73,9 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   openLinkInModal,
   type,
   buttonText,
+  locale = 'is',
 }) => {
-  const label = Titles[type]
-
+  const translatedLabel = Titles[type][locale]
   return (
     <>
       <Box width="full" background="blue100" borderRadius="large">
@@ -85,9 +94,9 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
             >
               <Box flexGrow={1}>
                 <Stack space={1}>
-                  {Boolean(label) && (
+                  {Boolean(translatedLabel) && (
                     <Text variant="eyebrow" color="blue400">
-                      {label}
+                      {translatedLabel}
                     </Text>
                   )}
                   <Text variant="h3" as="h3">

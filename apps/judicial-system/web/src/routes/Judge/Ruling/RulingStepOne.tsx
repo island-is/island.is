@@ -11,24 +11,29 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
-import { Case } from '../../../types'
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { parseArray, parseString, parseTime } from '../../../utils/formatters'
 import {
   autoSave,
+  createCaseFromDraft,
   isNextDisabled,
   updateState,
 } from '../../../utils/stepHelper'
-import * as api from '../../../api'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatISO } from 'date-fns'
+import formatISO from 'date-fns/formatISO'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
+import { useMutation } from '@apollo/client'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/graphql'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -82,51 +87,7 @@ export const RulingStepOne: React.FC = () => {
     const caseDraft = window.localStorage.getItem('workingCase')
 
     if (caseDraft !== 'undefined' && !workingCase) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        rejecting: caseDraftJSON.rejecting ?? false,
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
-        accusedAppealAnnouncement:
-          caseDraftJSON.accusedAppealAnnouncement ?? '',
-        prosecutorAppealAnnouncement:
-          caseDraftJSON.prosecutorAppealAnnouncement ?? '',
-        prosecutorId: caseDraftJSON.prosecutorId ?? null,
-        prosecutor: caseDraftJSON.prosecutor ?? null,
-        judgeId: caseDraftJSON.judgeId ?? null,
-        judge: caseDraftJSON.judge ?? null,
-      })
+      setWorkingCase(createCaseFromDraft(caseDraft))
     }
   }, [workingCase, setWorkingCase])
 
@@ -144,6 +105,23 @@ export const RulingStepOne: React.FC = () => {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, isStepIllegal])
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
 
   return workingCase ? (
     <PageLayout activeSection={1} activeSubSection={2}>
@@ -192,7 +170,7 @@ export const RulingStepOne: React.FC = () => {
                 validateEmpty.isValid &&
                 workingCase.ruling !== evt.target.value
               ) {
-                api.saveCase(
+                updateCase(
                   workingCase.id,
                   parseString('ruling', evt.target.value),
                 )
@@ -215,6 +193,7 @@ export const RulingStepOne: React.FC = () => {
                   'rejecting',
                   target.checked,
                   setWorkingCase,
+                  updateCase,
                 )
               }}
               checked={workingCase.rejecting}
@@ -257,7 +236,7 @@ export const RulingStepOne: React.FC = () => {
                   setWorkingCase,
                 )
 
-                api.saveCase(
+                updateCase(
                   workingCase.id,
                   parseString('custodyEndDate', formattedDate),
                 )
@@ -300,7 +279,7 @@ export const RulingStepOne: React.FC = () => {
                 )
 
                 if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('custodyEndDate', custodyEndDateMinutes),
                   )
@@ -371,7 +350,7 @@ export const RulingStepOne: React.FC = () => {
                         setWorkingCase(copyOfState)
 
                         // Save case
-                        api.saveCase(
+                        updateCase(
                           workingCase.id,
                           parseArray(
                             'custodyRestrictions',

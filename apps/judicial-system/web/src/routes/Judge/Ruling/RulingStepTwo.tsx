@@ -8,64 +8,27 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
-import { Case } from '../../../types'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseAppealDecision,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { parseString } from '../../../utils/formatters'
 import {
   autoSave,
   constructConclusion,
+  createCaseFromDraft,
   updateState,
 } from '../../../utils/stepHelper'
-import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { useMutation } from '@apollo/client'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/graphql'
 
 export const RulingStepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
-  const caseDraftJSON = JSON.parse(caseDraft)
-
-  const [workingCase, setWorkingCase] = useState<Case>({
-    id: caseDraftJSON.id ?? '',
-    created: caseDraftJSON.created ?? '',
-    modified: caseDraftJSON.modified ?? '',
-    state: caseDraftJSON.state ?? '',
-    policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-    accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-    accusedName: caseDraftJSON.accusedName ?? '',
-    accusedAddress: caseDraftJSON.accusedAddress ?? '',
-    court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-    arrestDate: caseDraftJSON.arrestDate ?? null,
-    requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-    requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-    lawsBroken: caseDraftJSON.lawsBroken ?? '',
-    custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-    requestedCustodyRestrictions:
-      caseDraftJSON.requestedCustodyRestrictions ?? [],
-    caseFacts: caseDraftJSON.caseFacts ?? '',
-    legalArguments: caseDraftJSON.legalArguments ?? '',
-    comments: caseDraftJSON.comments ?? '',
-    notifications: caseDraftJSON.Notification ?? [],
-    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-    courtStartTime: caseDraftJSON.courtStartTime ?? '',
-    courtEndTime: caseDraftJSON.courtEndTime ?? '',
-    courtAttendees: caseDraftJSON.courtAttendees ?? '',
-    policeDemands: caseDraftJSON.policeDemands ?? '',
-    accusedPlea: caseDraftJSON.accusedPlea ?? '',
-    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-    ruling: caseDraftJSON.ruling ?? '',
-    rejecting: caseDraftJSON.rejecting ?? false,
-    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-    accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
-    prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
-    accusedAppealAnnouncement: caseDraftJSON.accusedAppealAnnouncement ?? '',
-    prosecutorAppealAnnouncement:
-      caseDraftJSON.prosecutorAppealAnnouncement ?? '',
-    prosecutorId: caseDraftJSON.prosecutorId ?? null,
-    prosecutor: caseDraftJSON.prosecutor ?? null,
-    judgeId: caseDraftJSON.judgeId ?? null,
-    judge: caseDraftJSON.judge ?? null,
-  })
+  const caseDraftJSON = createCaseFromDraft(caseDraft)
+  const [workingCase, setWorkingCase] = useState<Case>(caseDraftJSON)
 
   const [accusedAppealDecition, setAccusedAppealDecition] = useState<
     CaseAppealDecision
@@ -77,6 +40,23 @@ export const RulingStepTwo: React.FC = () => {
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
   }, [])
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
 
   return workingCase ? (
     <PageLayout activeSection={1} activeSubSection={3}>
@@ -143,7 +123,7 @@ export const RulingStepTwo: React.FC = () => {
                       CaseAppealDecision.APPEAL,
                       setWorkingCase,
                     )
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString(
                         'accusedAppealDecision',
@@ -171,7 +151,7 @@ export const RulingStepTwo: React.FC = () => {
                       setWorkingCase,
                     )
 
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString(
                         'accusedAppealDecision',
@@ -205,7 +185,7 @@ export const RulingStepTwo: React.FC = () => {
                       setWorkingCase,
                     )
 
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString(
                         'accusedAppealDecision',
@@ -233,6 +213,7 @@ export const RulingStepTwo: React.FC = () => {
                 'accusedAppealAnnouncement',
                 evt.target.value,
                 setWorkingCase,
+                updateCase,
               )
             }}
             textarea
@@ -266,7 +247,7 @@ export const RulingStepTwo: React.FC = () => {
                     setWorkingCase,
                   )
 
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString(
                       'prosecutorAppealDecision',
@@ -294,7 +275,7 @@ export const RulingStepTwo: React.FC = () => {
                     setWorkingCase,
                   )
 
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString(
                       'prosecutorAppealDecision',
@@ -328,7 +309,7 @@ export const RulingStepTwo: React.FC = () => {
                     setWorkingCase,
                   )
 
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString(
                       'prosecutorAppealDecision',
@@ -357,6 +338,7 @@ export const RulingStepTwo: React.FC = () => {
                 'prosecutorAppealAnnouncement',
                 evt.target.value,
                 setWorkingCase,
+                updateCase,
               )
             }}
             textarea

@@ -15,6 +15,8 @@ export type Icon =
   | 'chevronForward'
   | 'closeCircle'
   | 'close'
+  | 'documents'
+  | 'download'
   | 'fileTrayFull'
   | 'heart'
   | 'home'
@@ -22,6 +24,7 @@ export type Icon =
   | 'lockClosed'
   | 'logOut'
   | 'menu'
+  | 'notifications'
   | 'open'
   | 'people'
   | 'person'
@@ -51,6 +54,8 @@ export default {
     chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircle',
     close: 'Close',
+    documents: 'Documents',
+    download: 'Download',
     fileTrayFull: 'FileTrayFull',
     heart: 'Heart',
     home: 'Home',
@@ -58,6 +63,7 @@ export default {
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
     menu: 'Menu',
+    notifications: 'Notifications',
     open: 'Open',
     people: 'People',
     person: 'Person',
@@ -86,6 +92,8 @@ export default {
     chevronForward: 'ChevronForwardOutline',
     closeCircle: 'CloseCircleOutline',
     close: 'CloseOutline',
+    documents: 'DocumentsOutline',
+    download: 'DownloadOutline',
     fileTrayFull: 'FileTrayFullOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
@@ -93,6 +101,7 @@ export default {
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
     menu: 'MenuOutline',
+    notifications: 'NotificationsOutline',
     open: 'OpenOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',

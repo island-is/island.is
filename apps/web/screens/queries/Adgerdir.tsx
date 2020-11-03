@@ -85,20 +85,20 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
           title
           featured {
             id
-            subtitle
             title
+            subtitle
+            date
             slug
             intro
             image {
               url
               title
-              contentType
               width
               height
             }
-            date
-            content {
-              __typename
+            genericTags {
+              id
+              title
             }
           }
         }

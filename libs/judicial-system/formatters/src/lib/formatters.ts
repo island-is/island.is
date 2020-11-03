@@ -1,5 +1,7 @@
-import { isValid, format, parseISO } from 'date-fns'
-import { is } from 'date-fns/locale'
+// eslint-disable-next-line no-restricted-imports
+import { format, parseISO, isValid } from 'date-fns'
+
+import is from 'date-fns/locale/is'
 
 import {
   CaseCustodyProvisions,

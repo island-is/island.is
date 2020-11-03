@@ -25,7 +25,7 @@ const Completed = ({ apolloState }) => {
   const router = useRouter()
   const { id } = router.query
 
-  const car = apolloState[`Car:${id}`]
+  const car = apolloState[`VehicleInformation:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -33,7 +33,7 @@ const Completed = ({ apolloState }) => {
         pathname: routes.myCars,
       })
     }
-  }, [car])
+  }, [car, router, routes])
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
