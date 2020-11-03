@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import {
@@ -16,8 +16,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Review.treat'
-import { theme } from '@island.is/island-ui/theme'
 import {
   FieldDescription,
   RadioController,
@@ -30,24 +28,52 @@ import {
   formatIsk,
   formatPeriods,
   getExpectedDateOfBirth,
+  getNameAndIdOfSpouse,
 } from '../parentalLeaveUtils'
 import { Payment, Period } from '../../types'
-import { format } from 'date-fns'
+import { default as format } from 'date-fns/format'
 import Table from '../components/Table'
 import { m } from '../../lib/messages'
 
+type ValidOtherParentAnswer = 'no' | 'manual' | undefined
+
 const Review: FC<FieldBaseProps> = ({ field, application }) => {
-  const { id, description } = field
-  const { clearErrors, register } = useFormContext()
+  const { description } = field
+  const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
-  // TODO: Get this info from somewhere...
-  const isPrimaryParent = true
+  const [
+    statefulOtherParentConfirmed,
+    setStatefulOtherParentConfirmed,
+  ] = useState<ValidOtherParentAnswer>(
+    getValueViaPath(
+      application.answers,
+      'otherParent',
+    ) as ValidOtherParentAnswer,
+  )
+  const [spouseName, spouseId] = getNameAndIdOfSpouse(application)
+  const otherParentInfoAvailable =
+    spouseName !== undefined && spouseId !== undefined
+
+  const otherParentOptions = [
+    {
+      value: 'no',
+      label: 'I do not want to confirm the other parent at this time ',
+    },
+    { value: 'manual', label: 'The other parent is:' },
+  ]
+
+  if (otherParentInfoAvailable) {
+    otherParentOptions.unshift({
+      value: 'spouse',
+      label: `The other parent is ${spouseName} (kt. ${spouseId})`,
+    })
+  }
 
   const dob = getExpectedDateOfBirth(application)
   const dobDate = new Date(dob)
 
-  // TODO, TEMP; this will also come from somewhere in the external data
+  // TODO: This will also come from somewhere in the external data
   const otherParentPeriods: Period[] = [
     {
       startDate: dob,
@@ -61,7 +87,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
     },
   ]
 
-  // TODO, TEMP: This will come from the formValue
+  // TODO: This will come from the formValue
   const payments: Payment[] = [
     {
       date: '2020-12-01T00:00:00.000Z',
@@ -119,7 +145,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
     },
   ]
 
-  // TODO: Copy pasted code from PaymentSchedule/index... could refactor to reuse in both places.
+  // TODO: Copy pasted code from PaymentSchedule/index... will refactor
   const formatedPayments = payments.map((payment) => {
     const paymentDate = new Date(payment.date)
     return {
@@ -162,9 +188,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
     [application, formatMessage],
   )
 
-  // const otherParentInfoAvailable =
-  //   formValue.secondaryParentName && formValue.secondaryParentId
-
   return (
     <div>
       {description && (
@@ -172,6 +195,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
           description={formatText(description, application, formatMessage)}
         />
       )}
+
       <Box marginTop={8} marginBottom={6}>
         <Accordion singleExpand={false}>
           <AccordionItem id="id_1" label="Contact information">
@@ -194,6 +218,56 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                   />
                 </GridColumn>
               </GridRow>
+            </Box>
+          </AccordionItem>
+
+          <AccordionItem id="id_4" label="Other parent confirmation">
+            <Box paddingY={4}>
+              <GridRow>
+                <GridColumn span="12/12">
+                  <RadioController
+                    emphasize={true}
+                    id={'otherParent'}
+                    disabled={false}
+                    name={'otherParent'}
+                    defaultValue={
+                      getValueViaPath(
+                        application.answers,
+                        'otherParent',
+                      ) as string[]
+                    }
+                    options={otherParentOptions}
+                    onSelect={(s: string) => {
+                      setStatefulOtherParentConfirmed(
+                        s as ValidOtherParentAnswer,
+                      )
+                    }}
+                  />
+                </GridColumn>
+              </GridRow>
+              {statefulOtherParentConfirmed === 'manual' && (
+                <>
+                  <Box marginTop={3} />
+                  <GridRow>
+                    <GridColumn span="6/12">
+                      <Input
+                        id={'otherParentName'}
+                        name={'otherParentName'}
+                        label={'Name of other parent'}
+                        ref={register}
+                      />
+                    </GridColumn>
+                    <GridColumn span="6/12">
+                      <Input
+                        id={'otherParentId'}
+                        name={'otherParentId'}
+                        label={'National ID of other parent'}
+                        ref={register}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </>
+              )}
             </Box>
           </AccordionItem>
 
@@ -304,7 +378,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               )}
             </Box>
           </AccordionItem>
-
           <AccordionItem id="id_1" label="Employer">
             <Box paddingY={4}>
               <GridRow>
@@ -346,43 +419,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
-
-          {/* 
-          {isPrimaryParent && otherParentInfoAvailable && (
-            <AccordionItem id="id_4" label="Other parent">
-              <Text variant="h4">Name</Text>
-              <Text>{formValue.secondaryParentName}</Text>
-              <Box display="flex" justifyContent="spaceBetween" marginTop={3}>
-                <Box>
-                  <Text variant="h4">National ID</Text>
-                  <Text>{formValue.secondaryParentId}</Text>
-                </Box>
-                <Button size="small" type="button">
-                  Edit
-                </Button>
-              </Box>
-            </AccordionItem>
-          )}
-          {isPrimaryParent && !otherParentInfoAvailable && (
-            <AccordionItem id="id_4" label="Other parent">
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="spaceBetween"
-                marginTop={3}
-              >
-                <Box>
-                  <Text>
-                    <em>Not specified at this moment</em>
-                  </Text>
-                </Box>
-                <Button size="small" type="button">
-                  Edit
-                </Button>
-              </Box>
-            </AccordionItem>
-          )} */}
-
           {/* TODO: Calculate this dynamically when Arni's PR gets merged */}
           <AccordionItem id="id_4" label="Your leave rights">
             <Box paddingY={4}>
@@ -410,7 +446,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
-
           <AccordionItem id="id_4" label="Your periods">
             <Box paddingY={4}>
               <GridRow>
@@ -431,7 +466,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
-
           <AccordionItem id="id_4" label="Payment plan">
             <Box paddingY={4}>
               <GridRow>
@@ -455,7 +489,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
-
           <AccordionItem id="id_4" label="Share information">
             <Box paddingY={4}>
               <GridRow>
