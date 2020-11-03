@@ -38,7 +38,6 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
-  console.log('data', data)
   return (
     <Box paddingY={[2, 2, 10]}>
       <GridContainer>
@@ -50,7 +49,11 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
-        <TellUsAStory {...data} showIntro={true} />
+        <TellUsAStory
+          {...data}
+          showIntro={true}
+          locale={activeLocale as string}
+        />
       </GridContainer>
     </Box>
   )

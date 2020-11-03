@@ -35,7 +35,7 @@ const renderComponent = (
       children = <ContactUs {...slice} />
       break
     case 'TellUsAStory':
-      children = <TellUsAStory {...slice} showIntro={false} />
+      children = <TellUsAStory {...slice} showIntro={false} locale={locale} />
       break
     default:
       children = defaultRenderComponent(slice, locale, config)

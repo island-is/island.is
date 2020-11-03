@@ -272,6 +272,10 @@ export const slices = gql`
     introDescription {
       ...HtmlFields
     }
+    instructionsTitle
+    instructionsDescription {
+      ...HtmlFields
+    }
     firstSectionTitle
     organizationLabel
     organizationPlaceholder
@@ -291,7 +295,6 @@ export const slices = gql`
       title
       url
     }
-    informationTitle
     nameLabel
     namePlaceholder
     nameInputErrorMessage

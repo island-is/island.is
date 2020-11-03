@@ -26,6 +26,10 @@ export const GET_TELL_US_A_STORY_DATA = gql`
       introDescription {
         ...HtmlFields
       }
+      instructionsTitle
+      instructionsDescription {
+        ...HtmlFields
+      }
       firstSectionTitle
       organizationLabel
       organizationPlaceholder
@@ -45,7 +49,6 @@ export const GET_TELL_US_A_STORY_DATA = gql`
         title
         url
       }
-      informationTitle
       nameLabel
       namePlaceholder
       nameInputErrorMessage
@@ -54,6 +57,14 @@ export const GET_TELL_US_A_STORY_DATA = gql`
       emailInputErrorMessage
       publicationAllowedLabel
       submitButtonTitle
+      errorMessageTitle
+      SuccessMessageTitle
+      successMessage {
+        ...HtmlFields
+      }
+      errorMessage {
+        ...HtmlFields
+      }
     }
   }
 `

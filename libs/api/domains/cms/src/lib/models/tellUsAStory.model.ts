@@ -73,7 +73,7 @@ export class TellUsAStory {
   instructionsImage: Image
 
   @Field()
-  informationTitle: string
+  instructionsTitle: string
 
   @Field()
   nameLabel: string
@@ -124,6 +124,7 @@ export const mapTellUsAStory = ({
       mapHtml(fields.introDescription, sys.id + ':introDescription')) ??
     null,
   introImage: mapImage(fields.introImage),
+  instructionsTitle: fields.instructionsTitle ?? '',
   firstSectionTitle: fields.firstSectionTitle ?? '',
   organizationLabel: fields.organizationLabel ?? '',
   organizationPlaceholder: fields.organizationPlaceholder ?? '',
@@ -147,7 +148,6 @@ export const mapTellUsAStory = ({
       )) ??
     null,
   instructionsImage: mapImage(fields.instructionsImage),
-  informationTitle: fields.informationTitle ?? '',
   nameLabel: fields.nameLabel ?? '',
   namePlaceholder: fields.namePlaceholder ?? '',
   nameInputErrorMessage: fields.nameInputErrorMessage ?? '',
