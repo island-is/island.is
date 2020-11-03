@@ -85,6 +85,9 @@ export class SamgongustofaService {
               ][0]['allVehiclesForPersidnoReturn'][0]['_'],
             )
             .then(function (allCars) {
+              if (allCars['persidnolookup']['vehicleList'][0] == '') {
+                return []
+              }
               let vehicleArr: VehicleInformation[]
               vehicleArr = []
               // TODO: will be fixed
@@ -135,14 +138,14 @@ export class SamgongustofaService {
             })
             .catch(function (err) {
               loggerReplacement.error(
-                `Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`,
+                `Getting error while parsing second xml to json on allVehiclesForPersidno request: ${err}`,
               )
               throw new Error('Getting Error while parsing xml to json...')
             })
         })
         .catch(function (err) {
           loggerReplacement.error(
-            `Getting error while parsing xml to json on allVehiclesForPersidno request: ${err}`,
+            `Getting error while parsing first xml to json on allVehiclesForPersidno request: ${err}`,
           )
           throw new Error('Getting Error while parsing xml to json...')
         })
@@ -158,7 +161,6 @@ export class SamgongustofaService {
           `Starting extracting details information on ${carObj['permno']}`,
         )
         if (carObj['status'] == 'inUse') {
-          // Vehicle information
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
             <soapenv:Header/>
@@ -231,14 +233,14 @@ export class SamgongustofaService {
                 })
                 .catch(function (err) {
                   loggerReplacement.error(
-                    `Getting error while parsing xml to json on basicVehicleInformation request: ${err}`,
+                    `Getting error while parsing second xml to json on basicVehicleInformation request: ${err}`,
                   )
                   throw new Error('Getting Error while parsing xml to json...')
                 })
             })
             .catch(function (err) {
               loggerReplacement.error(
-                `Getting error while parsing xml to json on basicVehicleInformation request: ${err}`,
+                `Getting error while parsing first xml to json on basicVehicleInformation request: ${err}`,
               )
               throw new Error('Getting Error while parsing xml to json...')
             })

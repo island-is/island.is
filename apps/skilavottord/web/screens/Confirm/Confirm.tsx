@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -27,7 +27,7 @@ const Confirm = ({ apolloState }) => {
   const router = useRouter()
   const { id } = router.query
 
-  const car = apolloState[`Car:${id}`]
+  const car = apolloState[`VehicleInformation:${id}`]
 
   useEffect(() => {
     if (!car) {
@@ -88,7 +88,7 @@ const Confirm = ({ apolloState }) => {
                     setCheckbox(target.checked)
                   }}
                   checked={checkbox}
-                  disabled={!car.recyclable}
+                  disabled={!car.isRecyclable}
                 />
               </Box>
             </Stack>

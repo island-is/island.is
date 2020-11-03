@@ -14,19 +14,20 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
-  createSequelizeOptions(): SequelizeModuleOptions {
-    let config
+
+  getSequelizeConfig() {
     switch (process.env.NODE_ENV) {
       case 'test':
-        config = databaseConfig.test
-        break
+        return databaseConfig.test
       case 'production':
-        config = databaseConfig.production
-        break
+        return databaseConfig.production
       default:
-        config = databaseConfig.development
+        return databaseConfig.development
     }
+  }
 
+  createSequelizeOptions(): SequelizeModuleOptions {
+    const config = this.getSequelizeConfig()
     return {
       ...config,
       define: {

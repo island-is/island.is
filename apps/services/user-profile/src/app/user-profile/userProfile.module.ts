@@ -11,6 +11,8 @@ import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { SmsVerification } from './sms-verification.model'
 import { EmailVerification } from './email-verification.model'
 import { VerificationService } from './verification.service'
+import { UserProfileInfraController } from './userProfileInfra.controller'
+import { SequelizeConfigService } from '../sequelizeConfig.service'
 
 @Module({
   imports: [
@@ -20,11 +22,12 @@ import { VerificationService } from './verification.service'
       UserProfile,
     ]),
   ],
-  controllers: [UserProfileController],
+  controllers: [UserProfileController, UserProfileInfraController],
   providers: [
     UserProfileService,
     VerificationService,
     EmailService,
+    SequelizeConfigService,
     {
       provide: SMS_OPTIONS,
       useValue: environment.smsOptions,

@@ -1,6 +1,8 @@
+import { Colors } from '@island.is/island-ui/theme'
 import { FormText, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
+import { Application } from './Application'
 
 export interface Option {
   value: string
@@ -8,6 +10,9 @@ export interface Option {
   tooltip?: FormText
   excludeOthers?: boolean
 }
+
+export type MaybeWithApplication<T> = T | ((a: Application) => T)
+
 export type FieldWidth = 'full' | 'half'
 export type TextFieldVariant = 'text' | 'email' | 'number' | 'tel' | 'textarea'
 
@@ -54,7 +59,7 @@ export enum FieldComponents {
 export interface CheckboxField extends BaseField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
-  options: Option[]
+  options: MaybeWithApplication<Option[]>
 }
 
 export interface DateField extends BaseField {
@@ -74,7 +79,7 @@ export interface IntroductionField extends BaseField {
 export interface RadioField extends BaseField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
-  options: Option[]
+  options: MaybeWithApplication<Option[]>
   emphasize?: boolean
   largeButtons?: boolean
 }
@@ -82,7 +87,7 @@ export interface RadioField extends BaseField {
 export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
-  options: Option[]
+  options: MaybeWithApplication<Option[]>
   placeholder?: FormText
 }
 
@@ -116,6 +121,7 @@ export interface SubmitField extends BaseField {
 
 export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
+  readonly color?: Colors
   component: FieldComponents.DIVIDER
 }
 

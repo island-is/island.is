@@ -289,7 +289,7 @@ export const Overview: React.FC = () => {
           {/* If the request has already been submitted, then the prosecutor has been set. */}
           {workingCase?.prosecutor
             ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-            : `${user?.name}, ${user?.title}`}
+            : `${user?.name} ${user?.title}`}
         </Text>
       </Box>
       <FormFooter
