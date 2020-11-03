@@ -4,12 +4,6 @@ import * as styles from './ServiceCard.treat'
 import cn from 'classnames'
 import { useHorizontalDragScroll } from '..'
 import { ApiService } from '@island.is/api/schema'
-import {
-  AccessCategory,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
 import { ContentfulString } from '../../services/contentful.types'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -65,9 +59,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                       strings.find(
                         (s) =>
                           s.id ===
-                          `catalog-filter-pricing-${PricingCategory[
-                            item
-                          ].toLowerCase()}`,
+                          `catalog-filter-pricing-${item.toLowerCase()}`,
                       ).text
                     }
                   </Box>
@@ -80,10 +72,7 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     {
                       strings.find(
                         (s) =>
-                          s.id ===
-                          `catalog-filter-data-${DataCategory[
-                            item
-                          ].toLowerCase()}`,
+                          s.id === `catalog-filter-data-${item.toLowerCase()}`,
                       ).text
                     }
                   </Box>
@@ -93,7 +82,12 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     className={cn(styles.categoryItem, styles.noSelect)}
                     key={index}
                   >
-                    {TypeCategory[item]}
+                    {
+                      strings.find(
+                        (s) =>
+                          s.id === `catalog-filter-type-${item.toLowerCase()}`,
+                      ).text
+                    }
                   </Box>
                 ))}
                 {service.access?.map((item, index) => (
@@ -101,7 +95,13 @@ export const ServiceCard = ({ service, strings }: ServiceCardProps) => {
                     className={cn(styles.categoryItem, styles.noSelect)}
                     key={index}
                   >
-                    {AccessCategory[item]}
+                    {
+                      strings.find(
+                        (s) =>
+                          s.id ===
+                          `catalog-filter-access-${item.toLowerCase()}`,
+                      ).text
+                    }
                   </Box>
                 ))}
               </Box>

@@ -11,6 +11,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import Greeting from '../../components/Greeting/Greeting'
 import { User } from 'oidc-client'
 import { useLocale } from '@island.is/localization'
+import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -25,7 +26,9 @@ const Widget: FC<{
   if (Component)
     return (
       <Suspense fallback={<WidgetLoading />}>
-        <Component userInfo={userInfo} client={client} />
+        <WidgetErrorBoundary name={widget.name}>
+          <Component userInfo={userInfo} client={client} />
+        </WidgetErrorBoundary>
       </Suspense>
     )
 
