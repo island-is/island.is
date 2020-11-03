@@ -50,9 +50,14 @@ Developer can now access Security Server AdminUI on `https://localhost:4000`
 to register custom services and clients for testing.
 
 or connect to Stafrænt Ísland X-Road Dev environment using kubernetes
-port-forwarding.
+port-forwarding:
 
 ```
+# Pre-requisite: AWS authentication env params added to the current shell
+# Get kubernetes namespaces from the dev cluster using AWS
+aws eks update-kubeconfig --name dev-cluster01 --region eu-west-1
+
+# Port forward to the kubernetes cluster
 kubectl -n socat port-forward svc/socat-xroad 8080:80
 ```
 
