@@ -167,6 +167,7 @@ type PrimaryColors = (
   text: string,
   hover: string,
   disabled: string,
+  textDisabled?: string,
 ) => Style
 
 type BorderedColors = (main: string, hover: string, disabled: string) => Style
@@ -179,11 +180,18 @@ type UtilityColors = (
   borderDisabled: string,
 ) => Style
 
-const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
+const primaryColors: PrimaryColors = (
+  main,
+  text,
+  hover,
+  disabled,
+  textDisabled = text,
+) => ({
   backgroundColor: main,
   color: text,
   ':disabled': {
     backgroundColor: disabled,
+    color: textDisabled,
   },
   ':hover': {
     backgroundColor: hover,
@@ -295,6 +303,13 @@ export const colors = {
       theme.color.white,
       theme.color.blue400,
       theme.color.blueberry100,
+      theme.color.blue300,
+    ),
+    light: primaryColors(
+      theme.color.blue100,
+      theme.color.blue400,
+      theme.color.blue200,
+      theme.color.blue100,
       theme.color.blue300,
     ),
   }),
