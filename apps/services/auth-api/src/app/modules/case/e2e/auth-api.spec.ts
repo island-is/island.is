@@ -1,6 +1,10 @@
 import { GrantDto, UserIdentityDto } from '@island.is/auth-api-lib'
 import { INestApplication } from '@nestjs/common'
 import { setup } from '../../../../../test/setup'
+<<<<<<< HEAD
+=======
+import * as request from 'supertest'
+>>>>>>> ae053c8975068537a14f8f5bd859b827c0aad11c
 
 let app: INestApplication
 
