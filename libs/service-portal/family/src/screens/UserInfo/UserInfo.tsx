@@ -120,10 +120,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={natRegInfo?.religion || '...'}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-religious-org',
-              defaultMessage: 'Breyta trú-/lífsskoðunarfélagi',
-            }),
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
