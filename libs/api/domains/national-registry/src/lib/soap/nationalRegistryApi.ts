@@ -73,7 +73,7 @@ export class NationalRegistryApi {
         `family for nationalId ${nationalId} not found`,
       )
 
-    let family = Array.isArray(
+    const family = Array.isArray(
       response?.table.diffgram.DocumentElement.Fjolskyldan,
     )
       ? response?.table.diffgram.DocumentElement.Fjolskyldan
