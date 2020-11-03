@@ -10,9 +10,6 @@ Sentry.init({
   dsn: environment.sentry.dsn,
   integrations: [new Integrations.BrowserTracing()],
   environment: 'frontend',
-
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
   tracesSampleRate: 1.0,
 })
 
