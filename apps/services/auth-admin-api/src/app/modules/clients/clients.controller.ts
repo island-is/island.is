@@ -35,8 +35,6 @@ export class ClientsController {
     @Query('page') page: number,
     @Query('count') count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
-    console.log(page)
-    console.log(count)
     const clients = await this.clientsService.findAndCountAll(page, count)
     return clients
   }

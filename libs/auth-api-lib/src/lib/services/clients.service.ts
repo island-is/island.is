@@ -46,8 +46,6 @@ export class ClientsService {
   ): Promise<{ rows: Client[]; count: number } | null> {
     page--
     const offset = page * count
-    console.log('offset ')
-    console.log(offset)
     return this.clientModel.findAndCountAll({
       limit: count,
       offset: offset,
