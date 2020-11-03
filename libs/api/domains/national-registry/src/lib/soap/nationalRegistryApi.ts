@@ -67,12 +67,17 @@ export class NationalRegistryApi {
 
   public async getMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
     const response = await this.getViewFjolskyldan(nationalId)
+
     if (!response)
       throw new NotFoundException(
         `family for nationalId ${nationalId} not found`,
       )
 
-    const family = response?.table.diffgram.DocumentElement.Fjolskyldan
+    const family = Array.isArray(
+      response?.table.diffgram.DocumentElement.Fjolskyldan,
+    )
+      ? response?.table.diffgram.DocumentElement.Fjolskyldan
+      : [response?.table.diffgram.DocumentElement.Fjolskyldan]
 
     if (!family)
       throw new NotFoundException(
