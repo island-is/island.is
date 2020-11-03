@@ -13,7 +13,7 @@ import {
   UseInterceptors,
   Optional,
 } from '@nestjs/common'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
 import { WhereOptions } from 'sequelize/types'

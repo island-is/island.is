@@ -1,6 +1,6 @@
 import React from 'react'
-import { is } from 'date-fns/locale'
-import { format } from 'date-fns'
+import is from 'date-fns/locale/is'
+import format from 'date-fns/format'
 
 import {
   Table,

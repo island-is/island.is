@@ -1,79 +1,33 @@
-import {
-  Column,
-  CreatedAt,
-  DataType,
-  Model,
-  Table,
-  UpdatedAt,
-} from 'sequelize-typescript'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { User as TUser, UserRole } from '@island.is/judicial-system/types'
 
-import { UserRole } from './user.types'
+@ObjectType()
+export class User implements TUser {
+  @Field(() => ID)
+  readonly id: string
 
-@Table({
-  tableName: 'user',
-  timestamps: true,
-})
-export class User extends Model<User> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
+  @Field()
+  readonly created: string
 
-  @CreatedAt
-  @ApiProperty()
-  created: Date
+  @Field()
+  readonly modified: string
 
-  @UpdatedAt
-  @ApiProperty()
-  modified: Date
+  @Field()
+  readonly nationalId: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    unique: true,
-  })
-  @ApiProperty()
-  nationalId: string
+  @Field()
+  readonly name: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  name: string
+  @Field()
+  readonly title: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  title: string
+  @Field()
+  readonly mobileNumber: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  mobileNumber: string
+  @Field()
+  readonly email: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  email: string
-
-  @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(UserRole),
-  })
-  @ApiProperty({ enum: UserRole })
-  role: UserRole
+  @Field(() => String)
+  readonly role: UserRole
 }

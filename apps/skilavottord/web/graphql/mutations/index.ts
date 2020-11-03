@@ -1,1 +1,1 @@
-export * from './gdprInfo'
+export * from './GDPR'

@@ -331,10 +331,10 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
         </Hidden>
       )}
       {article.subArticles.length === 0 ? (
-        <ArticleNavigation title={n('categoryTitle')} article={article} />
+        <ArticleNavigation title={n('sidebarHeader')} article={article} />
       ) : (
         <SubArticleNavigation
-          title={n('categoryTitle')}
+          title={n('sidebarHeader')}
           article={article}
           selectedSubArticle={subArticle}
         />
