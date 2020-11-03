@@ -11,7 +11,7 @@ import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('user-identities')
 @Controller('user-identities')
 export class UserIdentitiesController {
