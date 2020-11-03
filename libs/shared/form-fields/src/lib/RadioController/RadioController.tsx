@@ -17,6 +17,7 @@ interface Props {
   options?: Option[]
   largeButtons?: boolean
   emphasize?: boolean
+  onSelect?: (s: string) => void
 }
 export const RadioController: FC<Props> = ({
   defaultValue,
@@ -27,6 +28,7 @@ export const RadioController: FC<Props> = ({
   options = [],
   largeButtons = false,
   emphasize = false,
+  onSelect = () => {},
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -45,6 +47,7 @@ export const RadioController: FC<Props> = ({
                 onChange={({ target }) => {
                   clearErrors(id)
                   onChange(target.value)
+                  onSelect(target.value)
                   setValue(id, target.value)
                 }}
                 checked={option.value === value}
