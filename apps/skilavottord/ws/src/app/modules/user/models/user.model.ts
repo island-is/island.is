@@ -13,4 +13,7 @@ export class User {
 
   @Field({ nullable: true })
   role?: string = 'developer'
+  
+  @Field({ nullable: true })
+  partnerId?: string 
 }
