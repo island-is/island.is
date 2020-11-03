@@ -26,6 +26,11 @@ interface SyncerResult {
   elasticIndex: string
 }
 
+interface UpdateNextSyncTokenOptions {
+  token: string
+  elasticIndex: string
+}
+
 type typeOfSync = { initial: boolean } | { nextSyncToken: string }
 
 @Injectable()
@@ -97,7 +102,7 @@ export class ContentfulService {
     return document.hits.hits?.[0]?._source.title
   }
 
-  updateNextSyncToken({ elasticIndex, token }: PostSyncOptions) {
+  updateNextSyncToken({ elasticIndex, token }: UpdateNextSyncTokenOptions) {
     // we get this next sync token from Contentful on sync request
     const nextSyncTokenDocument = {
       title: token,
@@ -112,13 +117,13 @@ export class ContentfulService {
   }
 
   private async getTypeOfSync({
-    fullSync,
+    syncType,
     elasticIndex,
   }: {
-    fullSync: boolean
+    syncType: string
     elasticIndex: string
   }): Promise<typeOfSync> {
-    if (fullSync) {
+    if (syncType === 'full') {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
       return { initial: true }
@@ -192,11 +197,11 @@ export class ContentfulService {
 
   async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
     const {
-      fullSync,
+      syncType,
       locale,
       elasticIndex = SearchIndexes[options.locale],
     } = options
-    const typeOfSync = await this.getTypeOfSync({ fullSync, elasticIndex })
+    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
 
     // gets all changes in all locales
     const {
@@ -221,7 +226,7 @@ export class ContentfulService {
     const items = await this.getAllEntriesFromContentful(entries, locale)
 
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (!fullSync && nestedEntries) {
+    if (syncType !== 'full' && nestedEntries) {
       logger.info('Finding root entries from nestedEntries')
       const alreadyProcessedIds = items.map((entry) => entry.sys.id)
       for (const entryId of nestedEntries) {

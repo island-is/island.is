@@ -114,7 +114,7 @@ class App {
             await elastic.updateIndexTemplate(locale, esPackages)
             await elastic.createNewIndexVersion(locale, newIndexVersion)
             processedMigrations[locale].newIndexVersion = newIndexVersion
-            await elastic.importContentToNewIndex(locale, newIndexVersion)
+            await elastic.importContentToIndex(locale, newIndexVersion, 'full')
             await elastic.moveAliasToNewIndex(
               locale,
               newIndexVersion,
@@ -141,6 +141,9 @@ class App {
               codeIndexVersion: newIndexVersion,
             },
           )
+          logger.info('Initializing elastic data')
+          // we send a initialize sync request to ensure all assets are up to date before this container runs
+          await elastic.importContentToIndex(locale, oldIndexVersion, 'initialize')
         }
         return { success: true }
       },
@@ -154,7 +157,7 @@ class App {
       })
     } catch (error) {
       logger.error(
-        'Failed to migrate ES, rolling back to earlier version',
+        'Failed to migrate elasticsearch, rolling back to earlier version',
         error,
       )
       const locales = Object.keys(processedMigrations)
@@ -185,6 +188,7 @@ async function migrateBootstrap() {
   const app = new App()
   await app.run()
 }
+// TODO: Add lock to this procedure to ensure only a single initContainer can run this
 
 migrateBootstrap().catch((error) => {
   logger.error('ERROR: ', error)

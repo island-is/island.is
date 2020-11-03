@@ -210,22 +210,23 @@ export const removeIndexesBelowVersion = async (
   return true
 }
 
-export const importContentToNewIndex = async (
+export const importContentToIndex = async (
   locale: string,
-  newIndexVersion: number,
+  indexVersion: number,
+  syncType: SyncOptions['syncType']
 ) => {
   // we do a full sync here to import data
-  const elasticIndex = getIndexNameForVersion(locale, newIndexVersion)
+  const elasticIndex = getIndexNameForVersion(locale, indexVersion)
   const app = await NestFactory.create(IndexingModule)
   const indexingService = app.get(IndexingService)
   await indexingService.doSync({
-    fullSync: true,
+    syncType,
     locale: locale as SyncOptions['locale'],
     elasticIndex,
   })
   await app.close()
 
-  logger.info('Imported all content into new index')
+  logger.info('Done with content import', { elasticIndex, syncType })
   return true
 }
 

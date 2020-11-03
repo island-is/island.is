@@ -12,7 +12,7 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
-  ) {}
+  ) { }
 
   async ping() {
     return this.elasticService.ping()
@@ -20,18 +20,24 @@ export class IndexingService {
 
   async doSync(options: SyncOptions) {
     const {
-      fullSync = false,
-      locale = 'is',
+      syncType = 'fromLast',
       elasticIndex = SearchIndexes[options.locale],
     } = options
+
+    // importers can skip import by returning null
+    const importerResponse = await this.cmsSyncService.doSync(options)
+    if (!importerResponse) {
+      return true
+    }
+
     const {
       postSyncOptions,
       ...elasticData
-    } = await this.cmsSyncService.doSync(options)
+    } = importerResponse
     await this.elasticService.bulk(elasticIndex, elasticData)
 
     // clear index of stale data by deleting all ids but those added on full sync
-    if (fullSync) {
+    if (syncType === 'full') {
       logger.info('Removing stale data')
       const allAddedIds = elasticData.add.map(({ _id }) => _id)
       await this.elasticService.deleteAllExcept(elasticIndex, allAddedIds)
