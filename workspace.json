@@ -2349,6 +2349,32 @@
         }
       }
     },
+    "island-ui-connected": {
+      "root": "libs/island-ui/connected",
+      "sourceRoot": "libs/island-ui/connected/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/island-ui/connected/tsconfig.lib.json",
+              "libs/island-ui/connected/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/connected/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/connected/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "island-ui-contentful": {
       "root": "libs/island-ui/contentful",
       "sourceRoot": "libs/island-ui/contentful/src",

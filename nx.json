@@ -216,6 +216,9 @@
     "infra-tracing": {
       "tags": []
     },
+    "island-ui-connected": {
+      "tags": []
+    },
     "island-ui-contentful": {
       "tags": []
     },

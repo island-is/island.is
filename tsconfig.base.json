@@ -126,6 +126,9 @@
       "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"],
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
+      "@island.is/island-ui/connected": [
+        "libs/island-ui/connected/src/index.ts"
+      ],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],
