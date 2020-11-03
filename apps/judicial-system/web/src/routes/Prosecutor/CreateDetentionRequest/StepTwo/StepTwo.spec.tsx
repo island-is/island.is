@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, render, waitFor } from '@testing-library/react'
+import { act, render, waitFor, screen } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -21,7 +21,7 @@ import { MockedProvider } from '@apollo/client/testing'
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const { getByTestId, getByText } = render(
+    render(
       <MockedProvider
         mocks={mockCaseQueries.concat(
           mockUpdateCaseMutation([
@@ -61,35 +61,44 @@ describe('Create detention request, step two', () => {
     await act(async () => {
       userEvent.type(
         await waitFor(
-          () => getByTestId('requestedCustodyEndTime') as HTMLInputElement,
+          () =>
+            screen.getByTestId('requestedCustodyEndTime') as HTMLInputElement,
         ),
         '13:37',
       )
       userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
 
       userEvent.type(
-        getByTestId('lawsBroken') as HTMLInputElement,
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-      )
-      userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
-
-      userEvent.click(getByText('c-lið 1. mgr. 95. gr.'))
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
-      userEvent.type(
-        getByTestId('caseFacts') as HTMLInputElement,
-        'Lorem ipsum dolor sit amet,',
-      )
-      userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
-      userEvent.type(
-        getByTestId('legalArguments') as HTMLInputElement,
+        screen.getByTestId('lawsBroken') as HTMLInputElement,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
       )
       userEvent.tab()
       expect(
-        getByTestId('continueButton') as HTMLButtonElement,
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
+
+      userEvent.click(screen.getByText('c-lið 1. mgr. 95. gr.'))
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
+      userEvent.type(
+        screen.getByTestId('caseFacts') as HTMLInputElement,
+        'Lorem ipsum dolor sit amet,',
+      )
+      userEvent.tab()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
+      userEvent.type(
+        screen.getByTestId('legalArguments') as HTMLInputElement,
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+      )
+      userEvent.tab()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
       ).not.toBeDisabled()
     })
   })
@@ -98,7 +107,7 @@ describe('Create detention request, step two', () => {
     // Arrange
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter initialEntries={['/stofna-krofu/lagaakvaedi/test_id']}>
@@ -112,7 +121,9 @@ describe('Create detention request, step two', () => {
 
     // Assert
     expect(
-      await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+      await waitFor(
+        () => screen.getByTestId('continueButton') as HTMLButtonElement,
+      ),
     ).not.toBeDisabled()
   })
 
@@ -120,7 +131,7 @@ describe('Create detention request, step two', () => {
     // Arrange
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter
@@ -138,7 +149,8 @@ describe('Create detention request, step two', () => {
     expect(
       (
         await waitFor(
-          () => getByTestId('requestedCustodyEndTime') as HTMLInputElement,
+          () =>
+            screen.getByTestId('requestedCustodyEndTime') as HTMLInputElement,
         )
       ).value,
     ).toEqual('19:51')

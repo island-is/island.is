@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, act, waitFor } from '@testing-library/react'
+import { render, act, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne, { CreateCaseMutation } from './StepOne'
@@ -20,7 +20,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Arrange
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter initialEntries={['/krafa/test_id']}>
@@ -35,13 +35,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Assert
     expect(
       await waitFor(
-        () => (getByTestId('accusedName') as HTMLInputElement).value,
+        () => (screen.getByTestId('accusedName') as HTMLInputElement).value,
       ),
     ).toEqual('Jon Harring')
 
     expect(
       await waitFor(
-        () => (getByTestId('accusedAddress') as HTMLInputElement).value,
+        () => (screen.getByTestId('accusedAddress') as HTMLInputElement).value,
       ),
     ).toEqual('Harringvej 2')
   })
@@ -50,7 +50,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Arrange
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter initialEntries={['/krafa/test_id']}>
@@ -66,14 +66,16 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // TODO FIND A WAY TO SET DATES
     expect(
-      await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+      await waitFor(
+        () => screen.getByTestId('continueButton') as HTMLButtonElement,
+      ),
     ).toBeDisabled()
   })
 
   test('should display an empty form if there is no id in url', async () => {
     // Arrange
 
-    const { getByTestId, queryAllByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
@@ -87,29 +89,32 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const aa = [
-      await waitFor(() => getByTestId(/policeCaseNumber/i)),
-      await waitFor(() => getByTestId(/nationalId/i)),
-      await waitFor(() => getByTestId(/accusedName/i)),
-      await waitFor(() => getByTestId(/accusedAddress/i)),
-      await waitFor(() => getByTestId(/arrestTime/i)),
-      await waitFor(() => getByTestId(/requestedCourtDate/i)),
+      await waitFor(() => screen.getByTestId(/policeCaseNumber/i)),
+      await waitFor(() => screen.getByTestId(/nationalId/i)),
+      await waitFor(() => screen.getByTestId(/accusedName/i)),
+      await waitFor(() => screen.getByTestId(/accusedAddress/i)),
+      await waitFor(() => screen.getByTestId(/arrestTime/i)),
+      await waitFor(() => screen.getByTestId(/requestedCourtDate/i)),
     ]
 
     const court = await waitFor(
       () =>
-        getByTestId(/select-court/i).getElementsByClassName('singleValue')[0]
-          .innerHTML,
+        screen
+          .getByTestId(/select-court/i)
+          .getElementsByClassName('singleValue')[0].innerHTML,
     )
 
     const datepickers = await waitFor(() =>
-      queryAllByTestId(/datepicker-value/i),
+      screen.queryAllByTestId(/datepicker-value/i),
     )
 
     // Assert
     expect(aa.filter((a) => a.innerHTML !== '').length).toEqual(0)
     expect(court).toEqual('Héraðsdómur Reykjavíkur')
     expect(datepickers.length).toEqual(0)
-    expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+    expect(
+      screen.getByTestId('continueButton') as HTMLButtonElement,
+    ).toBeDisabled()
   })
 })
 
@@ -118,7 +123,7 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
     // Arrange
 
     // Act and Assert
-    const { getByTestId } = render(
+    render(
       <MockedProvider
         mocks={[]
           .concat(mockCaseQueries)
@@ -168,29 +173,37 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
     await act(async () => {
       await userEvent.type(
         await waitFor(
-          () => getByTestId('policeCaseNumber') as HTMLInputElement,
+          () => screen.getByTestId('policeCaseNumber') as HTMLInputElement,
         ),
         '000-0000-0010',
       )
       userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
 
       await userEvent.type(
-        getByTestId('nationalId') as HTMLInputElement,
+        screen.getByTestId('nationalId') as HTMLInputElement,
         '1112902539',
       )
       userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
 
       await userEvent.type(
-        await waitFor(() => getByTestId('accusedName') as HTMLInputElement),
+        await waitFor(
+          () => screen.getByTestId('accusedName') as HTMLInputElement,
+        ),
         'Jon Harring',
       )
       userEvent.tab()
-      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+      expect(
+        screen.getByTestId('continueButton') as HTMLButtonElement,
+      ).toBeDisabled()
 
       await userEvent.type(
-        getByTestId('accusedAddress') as HTMLInputElement,
+        screen.getByTestId('accusedAddress') as HTMLInputElement,
         'Harringvej 2',
       )
       userEvent.tab()
@@ -198,7 +211,9 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
       // TODO FIND A WAY TO SET DATE FIELDS
 
       expect(
-        await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+        await waitFor(
+          () => screen.getByTestId('continueButton') as HTMLButtonElement,
+        ),
       ).toBeDisabled()
     })
   })
@@ -208,7 +223,7 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
     let createCalled = false
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider
         mocks={[].concat(mockCaseQueries).concat([
           {
@@ -248,28 +263,30 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
 
     await act(async () => {
       userEvent.type(
-        await waitFor(() => getByTestId('accusedName') as HTMLInputElement),
+        await waitFor(
+          () => screen.getByTestId('accusedName') as HTMLInputElement,
+        ),
         'Gervipersona',
       )
 
       userEvent.tab()
 
       await userEvent.type(
-        getByTestId('accusedAddress') as HTMLInputElement,
+        screen.getByTestId('accusedAddress') as HTMLInputElement,
         'Batcave',
       )
 
       userEvent.tab()
 
       await userEvent.type(
-        getByTestId('nationalId') as HTMLInputElement,
+        screen.getByTestId('nationalId') as HTMLInputElement,
         '0000000000',
       )
 
       userEvent.tab()
 
       await userEvent.type(
-        getByTestId('policeCaseNumber') as HTMLInputElement,
+        screen.getByTestId('policeCaseNumber') as HTMLInputElement,
         '020-0202-2929',
       )
 

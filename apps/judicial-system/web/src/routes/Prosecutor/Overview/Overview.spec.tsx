@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import Overview from './Overview'
 import * as Constants from '../../../utils/constants'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
@@ -15,7 +15,7 @@ describe(`${Constants.STEP_THREE_ROUTE}`, () => {
     // Arrange
 
     // Act
-    const { getByText } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter
@@ -30,9 +30,9 @@ describe(`${Constants.STEP_THREE_ROUTE}`, () => {
     )
 
     // Assert
-    await waitFor(() => getByText('a-lið 1. mgr. 95. gr.'))
-    expect(getByText('a-lið 1. mgr. 95. gr.')).toBeTruthy()
-    await waitFor(() => getByText('c-lið 1. mgr. 95. gr.'))
-    expect(getByText('c-lið 1. mgr. 95. gr.')).toBeTruthy()
+    await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.'))
+    expect(screen.getByText('a-lið 1. mgr. 95. gr.')).toBeTruthy()
+    await waitFor(() => screen.getByText('c-lið 1. mgr. 95. gr.'))
+    expect(screen.getByText('c-lið 1. mgr. 95. gr.')).toBeTruthy()
   })
 })

@@ -11,6 +11,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { CasesQuery } from './DetentionRequests'
 import * as Constants from '../../utils/constants'
+import fetchMock from 'fetch-mock'
 
 const mockCasesQuery = [
   {
@@ -55,7 +56,7 @@ const mockCasesQuery = [
 
 describe('Detention requests route', () => {
   test('should list all cases that are not a draft a list if you are a judge', async () => {
-    const { getAllByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
@@ -69,9 +70,11 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() => getAllByTestId('detention-requests-table-row'))
+    await waitFor(() => screen.getAllByTestId('detention-requests-table-row'))
 
-    expect(getAllByTestId('detention-requests-table-row').length).toEqual(
+    expect(
+      screen.getAllByTestId('detention-requests-table-row').length,
+    ).toEqual(
       mockCasesQuery[0].result.data.cases.filter((dr) => {
         return dr.state !== CaseState.DRAFT
       }).length,
@@ -79,7 +82,7 @@ describe('Detention requests route', () => {
   })
 
   test('should display the judge logo if you are a judge', async () => {
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
@@ -93,13 +96,13 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() => getByTestId('judge-logo'))
+    await waitFor(() => screen.getByTestId('judge-logo'))
 
-    expect(getByTestId('judge-logo')).toBeTruthy()
+    expect(screen.getByTestId('judge-logo')).toBeTruthy()
   })
 
   test('should not display a button to create a request if you are a judge', async () => {
-    const { queryByText } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
@@ -113,12 +116,12 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() => queryByText('Stofna nýja kröfu'))
-    expect(queryByText('Stofna nýja kröfu')).toBeNull()
+    await waitFor(() => screen.queryByText('Stofna nýja kröfu'))
+    expect(screen.queryByText('Stofna nýja kröfu')).toBeNull()
   })
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter
@@ -132,13 +135,13 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() => getByTestId('prosecutor-logo'))
+    await waitFor(() => screen.getByTestId('prosecutor-logo'))
 
-    expect(getByTestId('prosecutor-logo')).toBeTruthy()
+    expect(screen.getByTestId('prosecutor-logo')).toBeTruthy()
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {
-    const { getAllByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter
@@ -152,11 +155,11 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() => getAllByTestId('detention-requests-table-row'))
+    await waitFor(() => screen.getAllByTestId('detention-requests-table-row'))
 
-    expect(getAllByTestId('detention-requests-table-row').length).toEqual(
-      mockCasesQuery[0].result.data.cases.length,
-    )
+    expect(
+      screen.getAllByTestId('detention-requests-table-row').length,
+    ).toEqual(mockCasesQuery[0].result.data.cases.length)
   })
 
   test('should display custody end date if case has ACCEPTED status', async () => {
@@ -180,7 +183,7 @@ describe('Detention requests route', () => {
   })
 
   test('should display an error alert if the api call fails', async () => {
-    const { getByTestId, queryByTestId } = render(
+    render(
       <MockedProvider
         mocks={[
           {
@@ -203,9 +206,9 @@ describe('Detention requests route', () => {
         </userContext.Provider>
       </MockedProvider>,
     )
-    await waitFor(() => getByTestId('detention-requests-error'))
+    await waitFor(() => screen.getByTestId('detention-requests-error'))
 
-    expect(queryByTestId('detention-requests-table')).toBeNull()
-    expect(getByTestId('detention-requests-error')).toBeTruthy()
+    expect(screen.queryByTestId('detention-requests-table')).toBeNull()
+    expect(screen.getByTestId('detention-requests-error')).toBeTruthy()
   })
 })

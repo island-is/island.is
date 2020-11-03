@@ -45,7 +45,7 @@ describe('Confirmation route', () => {
     // Arrange
 
     // Act
-    const { getByText } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
@@ -61,10 +61,12 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(() => getByText('accusedAppealAnnouncement test')),
+      await waitFor(() => screen.getByText('accusedAppealAnnouncement test')),
     ).toBeTruthy()
     expect(
-      await waitFor(() => getByText('prosecutorAppealAnnouncement test')),
+      await waitFor(() =>
+        screen.getByText('prosecutorAppealAnnouncement test'),
+      ),
     ).toBeTruthy()
   })
 })
