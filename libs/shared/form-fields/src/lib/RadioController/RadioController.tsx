@@ -28,7 +28,7 @@ export const RadioController: FC<Props> = ({
   options = [],
   largeButtons = false,
   emphasize = false,
-  onSelect = () => {},
+  onSelect = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
