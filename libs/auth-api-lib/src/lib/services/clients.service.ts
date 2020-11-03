@@ -39,7 +39,7 @@ export class ClientsService {
     })
   }
 
-  /** Gets all clients */
+  /** Gets all clients with paging */
   async findAndCountAll(
     page: number,
     count: number,
@@ -49,6 +49,17 @@ export class ClientsService {
     return this.clientModel.findAndCountAll({
       limit: count,
       offset: offset,
+      include: [
+        ClientAllowedScope,
+        ClientAllowedCorsOrigin,
+        ClientRedirectUri,
+        ClientIdpRestrictions,
+        ClientSecret,
+        ClientPostLogoutRedirectUri,
+        ClientPostLogoutRedirectUri,
+        ClientGrantType,
+        ClientClaim,
+      ],
     })
   }
 
