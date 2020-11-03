@@ -22,8 +22,7 @@ export class FjarsyslaService {
       const data = JSON.stringify({
         fastnr: permno,
         kennitala: nationalId,
-        // ToDo: what is tilvisun?
-        tilvisun: 'Stafrænt Ísland - skilagjald',
+        tilvisun: 'Skilagjald ökutækis',
       })
 
       const headersRequest = {

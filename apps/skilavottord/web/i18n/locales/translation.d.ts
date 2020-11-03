@@ -352,7 +352,7 @@ export interface Routes {
 
 export interface HomeRoutes {
   citizen: string
-  recyclingPartner: string
+  recyclingCompany: string
   recyclingFund: string
 }
 

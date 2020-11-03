@@ -12,6 +12,8 @@ import YamlParser from 'js-yaml'
 import union from 'lodash/union'
 import {
   AccessCategory,
+  DataCategory,
+  PricingCategory,
   ProviderType,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
@@ -55,18 +57,18 @@ export class RestMetadataService {
       for (let i = 0; i < sorted.length; i++) {
         const spec = await this.getOpenApi(sorted[i])
 
-        if (spec) {
+        if (spec && this.validateSpec(spec)) {
           // The list is sorted for the latest service version to be the last element
           // so name, owner and description will be from the latest version.
           service.name = spec.info.title
           service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
           service.description = spec.info.description ?? ''
-          service.data = union(service.data, spec.info.x_category)
-          service.pricing = union(service.pricing, spec.info.x_pricing)
+          service.data = union(service.data, spec.info['x-category'])
+          service.pricing = union(service.pricing, spec.info['x-pricing'])
           service.xroadIdentifier.push(sorted[i])
         } else {
-          logger.warn(
-            `OpenAPI not found for service code ${sorted[i].memberCode}/${sorted[i].subsystemCode}/${sorted[i].serviceCode}`,
+          logger.error(
+            `OpenAPI not found or is invalid for service code ${sorted[i].memberCode}/${sorted[i].subsystemCode}/${sorted[i].serviceCode}`,
           )
         }
       }
@@ -166,5 +168,40 @@ export class RestMetadataService {
     })
 
     return serviceMap
+  }
+
+  private validateSpec(spec: OpenApi): boolean {
+    if (!spec.info.title) {
+      logger.error('OpenApi Specification is missing info.title')
+      return false
+    }
+
+    if (spec.info['x-category']) {
+      // Softer check for the moment while testing in dev with fewer
+      // services registered with correct form of the OpenApi
+      // Should be updated to validate that 'x-category' is
+      // required and contains only valid values
+      for (const item of spec.info['x-category']) {
+        if (!Object.values(DataCategory).includes(item as DataCategory)) {
+          logger.error(`${item} is not valid value for DataCategory`)
+          return false
+        }
+      }
+    }
+
+    if (spec.info['x-pricing']) {
+      // Softer check for the moment while testing in dev with fewer
+      // services registered with correct form of the OpenApi
+      // Should be updated to validate that 'x-pricing' is
+      // required and contains only valid values
+      for (const item of spec.info['x-pricing']) {
+        if (!Object.values(PricingCategory).includes(item as PricingCategory)) {
+          logger.error(`${item} is not valid value for PricingCategory`)
+          return false
+        }
+      }
+    }
+
+    return true
   }
 }

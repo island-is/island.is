@@ -1,17 +1,17 @@
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Client } from '../entities/models/client.model'
-import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
-import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
-import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model'
-import { ClientIdpRestrictions } from '../entities/models/client-idp-restrictions.model'
-import { ClientSecret } from '../entities/models/client-secret.model'
-import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model'
-import { ClientGrantType } from '../entities/models/client-grant-type.model'
 import { ClientDTO } from '../entities/dto/client-dto'
 import { ClientUpdateDTO } from '../entities/dto/client-update-dto'
+import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
+import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 import { ClientClaim } from '../entities/models/client-claim.model'
+import { ClientGrantType } from '../entities/models/client-grant-type.model'
+import { ClientIdpRestrictions } from '../entities/models/client-idp-restrictions.model'
+import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model'
+import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model'
+import { ClientSecret } from '../entities/models/client-secret.model'
+import { Client } from '../entities/models/client.model'
 
 @Injectable()
 export class ClientsService {
@@ -21,6 +21,47 @@ export class ClientsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
+  /** Gets all clients */
+  async findAll(): Promise<Client[] | null> {
+    return this.clientModel.findAll({
+      include: [
+        ClientAllowedScope,
+        ClientAllowedCorsOrigin,
+        ClientRedirectUri,
+        ClientIdpRestrictions,
+        ClientSecret,
+        ClientPostLogoutRedirectUri,
+        ClientPostLogoutRedirectUri,
+        ClientGrantType,
+        ClientClaim,
+      ],
+    })
+  }
+
+  /** Gets all clients with paging */
+  async findAndCountAll(
+    page: number,
+    count: number,
+  ): Promise<{ rows: Client[]; count: number } | null> {
+    page--
+    const offset = page * count
+    return this.clientModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      include: [
+        ClientAllowedScope,
+        ClientAllowedCorsOrigin,
+        ClientRedirectUri,
+        ClientIdpRestrictions,
+        ClientSecret,
+        ClientPostLogoutRedirectUri,
+        ClientPostLogoutRedirectUri,
+        ClientGrantType,
+        ClientClaim,
+      ],
+    })
+  }
 
   /** Gets a client by it's id */
   async findClientById(id: string): Promise<Client | null> {
