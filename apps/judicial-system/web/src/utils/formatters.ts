@@ -1,5 +1,8 @@
 import { CaseTransition } from '@island.is/judicial-system/types'
-import { formatISO, setHours, setMinutes } from 'date-fns'
+import formatISO from 'date-fns/formatISO'
+import setHours from 'date-fns/setHours'
+import setMinutes from 'date-fns/setMinutes'
+
 import { validate } from './validate'
 
 export const parseArray = (property: string, array: string[]) => {
@@ -65,3 +68,7 @@ export const parseTime = (date: string, time: string) => {
     return date.indexOf('T') > -1 ? date.substring(0, date.indexOf('T')) : date
   }
 }
+
+// Credit: https://stackoverflow.com/a/53060314
+export const insertAt = (str: string, sub: string, pos: number) =>
+  `${str.slice(0, pos)}${sub}${str.slice(pos)}`

@@ -12,12 +12,12 @@ import {
   Option,
   DatePicker,
 } from '@island.is/island-ui/core'
-import { Case } from '../../../../types'
-import * as api from '../../../../api'
 import { validate, Validation } from '../../../../utils/validate'
 import { isNextDisabled } from '../../../../utils/stepHelper'
-import { isValid, parseISO, formatISO } from 'date-fns'
-import { isNull } from 'lodash'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
+import formatISO from 'date-fns/formatISO'
+import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
@@ -28,7 +28,63 @@ import {
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { CaseState } from '@island.is/judicial-system/types'
+import { Case, UpdateCase, CaseState } from '@island.is/judicial-system/types'
+import { gql, useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  SendNotificationMutation,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
+
+export const CreateCaseMutation = gql`
+  mutation CreateCaseMutation($input: CreateCaseInput!) {
+    createCase(input: $input) {
+      id
+      created
+      modified
+      state
+      policeCaseNumber
+      accusedNationalId
+      accusedName
+      accusedAddress
+      court
+      arrestDate
+      requestedCourtDate
+      requestedCustodyEndDate
+      lawsBroken
+      custodyProvisions
+      requestedCustodyRestrictions
+      caseFacts
+      witnessAccounts
+      investigationProgress
+      legalArguments
+      comments
+      prosecutor {
+        name
+        title
+      }
+      courtCaseNumber
+      courtStartTime
+      courtEndTime
+      courtAttendees
+      policeDemands
+      accusedPlea
+      litigationPresentations
+      ruling
+      rejecting
+      custodyEndDate
+      custodyRestrictions
+      accusedAppealDecision
+      accusedAppealAnnouncement
+      prosecutorAppealDecision
+      prosecutorAppealAnnouncement
+      judge {
+        name
+        title
+      }
+    }
+  }
+`
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
@@ -68,6 +124,12 @@ export const StepOne: React.FC = () => {
   const accusedNationalIdRef = useRef<HTMLInputElement>()
   const arrestTimeRef = useRef<HTMLInputElement>()
   const requestedCourtTimeRef = useRef<HTMLInputElement>()
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+
+  const resCase = data?.case
 
   const courts = [
     {
@@ -104,6 +166,8 @@ export const StepOne: React.FC = () => {
     (court) => court.label === workingCase?.court,
   )
 
+  const [createCaseMutation] = useMutation(CreateCaseMutation)
+
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
       workingCase.id === '' &&
@@ -111,25 +175,69 @@ export const StepOne: React.FC = () => {
       accusedNationalIdRef.current.value !== ''
 
     if (isPossibleToSave) {
-      const caseId = await api.createCase({
-        policeCaseNumber: policeCaseNumberRef.current.value,
-        accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
-        court: workingCase.court,
-        accusedName: workingCase.accusedName,
-        accusedAddress: workingCase.accusedAddress,
-        arrestDate: workingCase.arrestDate,
-        requestedCourtDate: workingCase.requestedCourtDate,
+      const { data } = await createCaseMutation({
+        variables: {
+          input: {
+            policeCaseNumber: policeCaseNumberRef.current.value,
+            accusedNationalId: accusedNationalIdRef.current.value.replace(
+              '-',
+              '',
+            ),
+            court: workingCase.court,
+            accusedName: workingCase.accusedName,
+            accusedAddress: workingCase.accusedAddress,
+            arrestDate: workingCase.arrestDate,
+            requestedCourtDate: workingCase.requestedCourtDate,
+          },
+        },
       })
 
-      history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${caseId}`)
+      const resCase: Case = data?.createCase
 
-      setWorkingCase({
-        ...workingCase,
-        id: caseId,
-        accusedNationalId: accusedNationalIdRef.current.value.replace('-', ''),
-        policeCaseNumber: policeCaseNumberRef.current.value,
-      })
+      if (resCase) {
+        history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${resCase.id}`)
+        setWorkingCase({
+          ...workingCase,
+          id: resCase.id,
+          accusedNationalId: accusedNationalIdRef.current.value.replace(
+            '-',
+            '',
+          ),
+          policeCaseNumber: policeCaseNumberRef.current.value,
+        })
+      }
     }
+  }
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    // Only update if id has been set
+    if (!id) {
+      return null
+    }
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: { input: { caseId: id } },
+    })
+
+    return data?.sendNotification
   }
 
   useEffect(() => {
@@ -140,11 +248,10 @@ export const StepOne: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     } else {
       if (!workingCase) {
@@ -163,7 +270,7 @@ export const StepOne: React.FC = () => {
         })
       }
     }
-  }, [id, workingCase, setWorkingCase, setIsLoading])
+  }, [id, workingCase, setWorkingCase, setIsLoading, resCase])
 
   /**
    * Run this to validate form after each change
@@ -204,7 +311,7 @@ export const StepOne: React.FC = () => {
     arrestTimeRef.current?.value,
     requestedCourtTimeRef.current?.value,
   ])
-
+  console.log(workingCase)
   return (
     <PageLayout activeSection={0} activeSubSection={0} isLoading={isLoading}>
       {workingCase ? (
@@ -244,7 +351,7 @@ export const StepOne: React.FC = () => {
 
                   if (validateField.isValid && validateFieldFormat.isValid) {
                     if (workingCase.id !== '') {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString('policeCaseNumber', evt.target.value),
                       )
@@ -294,7 +401,7 @@ export const StepOne: React.FC = () => {
 
                     if (validateField.isValid && validateFieldFormat.isValid) {
                       if (workingCase.id !== '') {
-                        api.saveCase(
+                        updateCase(
                           workingCase.id,
                           parseString(
                             'accusedNationalId',
@@ -335,7 +442,7 @@ export const StepOne: React.FC = () => {
                     })
 
                     if (validateField.isValid) {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString('accusedName', evt.target.value),
                       )
@@ -367,7 +474,7 @@ export const StepOne: React.FC = () => {
                     })
 
                     if (validateField.isValid) {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString('accusedAddress', evt.target.value),
                       )
@@ -403,7 +510,7 @@ export const StepOne: React.FC = () => {
               options={courts}
               onChange={({ label }: Option) => {
                 setWorkingCase({ ...workingCase, court: label })
-                api.saveCase(workingCase.id, parseString('court', label))
+                updateCase(workingCase.id, parseString('court', label))
               }}
             />
           </Box>
@@ -439,7 +546,7 @@ export const StepOne: React.FC = () => {
                       arrestDate: formattedDate,
                     })
 
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('arrestDate', formattedDate),
                     )
@@ -491,7 +598,7 @@ export const StepOne: React.FC = () => {
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
                     ) {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString('arrestDate', arrestDateMinutes),
                       )
@@ -539,7 +646,7 @@ export const StepOne: React.FC = () => {
                       requestedCourtDate: formattedDate,
                     })
 
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('requestedCourtDate', formattedDate),
                     )
@@ -585,7 +692,7 @@ export const StepOne: React.FC = () => {
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
                     ) {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString(
                           'requestedCourtDate',
@@ -623,7 +730,7 @@ export const StepOne: React.FC = () => {
               }
               handlePrimaryButtonClick={async () => {
                 setIsSendingNotification(true)
-                await api.sendNotification(workingCase.id)
+                await sendNotification(workingCase.id)
                 setIsSendingNotification(false)
                 history.push(
                   `${Constants.STEP_TWO_ROUTE}/${workingCase.id ?? id}`,

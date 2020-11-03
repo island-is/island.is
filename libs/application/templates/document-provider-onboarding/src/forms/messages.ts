@@ -137,6 +137,62 @@ export const m = defineMessages({
     defaultMessage: 'Póstnúmer og staður',
     description: '',
   },
+  helpDeskSection: {
+    id: 'dpo.application:helpDesk.section',
+    defaultMessage: 'Notendaaðstoð',
+    description: 'Some description',
+  },
+  helpDeskTitle: {
+    id: 'dpo.application:helpDesk.title',
+    defaultMessage: 'Notendaaðstoð',
+    description: '',
+  },
+  helpDeskSubTitle: {
+    id: 'dpo.application:helpDesk.subtitle',
+    defaultMessage:
+      'Leiðir viðskiptavina til að koma athugasemdum til skjalaveitanda.',
+    description: '',
+  },
+  helpDeskEmail: {
+    id: 'dpo.application:helpDesk.email',
+    defaultMessage: 'Netfang',
+    description: '',
+  },
+  helpDeskPhoneNumber: {
+    id: 'dpo.application:helpDesk.phoneNumber',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  helpDeskChatbot: {
+    id: 'dpo.application:helpDesk.chatbot',
+    defaultMessage: 'Snjallmenni',
+    description: '',
+  },
+  termsSection: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar',
+    description: 'Some description',
+  },
+  termsAgreement: {
+    id: 'dpo.application:terms.section',
+    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Island.is',
+    description: 'Some description',
+  },
+  userAgreementOptionLabel: {
+    id: 'dpo.application:userAgreement.option.label',
+    defaultMessage: 'Ég samþykki notendaskilmála',
+    description: 'Some description',
+  },
+  safetyAgreementOptionLabel: {
+    id: 'dpo.application:safetyAgreement.option.label',
+    defaultMessage: 'Ég samþykki öryggisskilmála',
+    description: 'Some description',
+  },
+  documentsSection: {
+    id: 'dpo.application:documents.section',
+    defaultMessage: 'Skjöl',
+    description: '',
+  },
   confirmationSection: {
     id: 'dpo.application:confirmation.section',
     defaultMessage: 'Staðfesta',

@@ -1,22 +1,26 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import fetchMock from 'fetch-mock'
 import { BrowserRouter } from 'react-router-dom'
 import { userContext } from '../../utils/userContext'
 
 import Login from './Login'
 import { mockJudge } from '../../utils/mocks'
-import * as api from '../../api'
+import { User } from '@island.is/judicial-system/types'
+import { api } from '../../services'
+
+const mockJudgeUserContext = {
+  isAuthenticated: () => false,
+  user: mockJudge,
+  setUser: (_: User) => undefined,
+}
 
 describe('Login route', () => {
   test('should render successfully', () => {
     // Arrange
-    fetchMock.get('/api/cases', [])
-    fetchMock.mock('/api/auth/logout', 200)
 
     // Act
     const { baseElement } = render(
-      <userContext.Provider value={{ user: mockJudge }}>
+      <userContext.Provider value={mockJudgeUserContext}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>
@@ -32,7 +36,7 @@ describe('Login route', () => {
 
     // Act
     render(
-      <userContext.Provider value={{ user: mockJudge }}>
+      <userContext.Provider value={mockJudgeUserContext}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>
@@ -49,7 +53,7 @@ describe('Login route', () => {
 
     // Act
     render(
-      <userContext.Provider value={{ user: mockJudge }}>
+      <userContext.Provider value={mockJudgeUserContext}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>

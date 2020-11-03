@@ -1,14 +1,16 @@
 import {
+  insertAt,
   parseArray,
   parseString,
   parseTime,
   parseTransition,
 } from './formatters'
 import { constructConclusion, isNextDisabled } from './stepHelper'
-import { Case, RequiredField } from '../types'
+import { RequiredField } from '../types'
 import {
   CaseTransition,
   CaseCustodyRestrictions,
+  Case,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render } from '@testing-library/react'
@@ -186,6 +188,20 @@ describe('Validation', () => {
 })
 
 describe('Step helper', () => {
+  describe('insertAt()', () => {
+    test('should insert a string at a certain position into another string', () => {
+      // Arrange
+      const str = 'Lorem ipsum dolum kara'
+      const insertion = ' lara'
+
+      // Act
+      const result = insertAt(str, insertion, 5)
+
+      // Assert
+      expect(result).toEqual('Lorem lara ipsum dolum kara')
+    })
+  })
+
   describe('constructConclution', () => {
     test('should return rejected message if the case is being rejected', () => {
       // Arrange

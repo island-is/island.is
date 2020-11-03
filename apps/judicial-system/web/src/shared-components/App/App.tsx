@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { ApolloProvider } from '@apollo/client'
 import { Header } from '../Header'
 import * as Constants from '../../utils/constants'
 import { Overview } from '../../routes/Prosecutor/Overview'
@@ -9,36 +10,37 @@ import {
 } from '../../routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '../../routes/DetentionRequests'
 import { Login } from '../../routes/Login'
-import { User } from '../../types'
 import { userContext } from '../../utils/userContext'
 import JudgeOverview from '../../routes/Judge/Overview/Overview'
 import CourtRecord from '../../routes/Judge/CourtRecord/CourtRecord'
 import { RulingStepOne, RulingStepTwo } from '../../routes/Judge/Ruling'
 import Confirmation from '../../routes/Judge/Confirmation/Confirmation'
-import * as api from '../../api'
+import { client } from '../../graphql'
+import { User } from '@island.is/judicial-system/types'
+import Cookie from 'js-cookie'
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const isAuthenticated = () => Boolean(Cookie.get(CSRF_COOKIE_NAME))
 
-  useEffect(() => {
-    const getUser = async () => {
-      if (!user) {
-        const user = await api.getUser()
-        setUser(user)
-      }
-    }
-
-    getUser()
-
-    return () => {
-      setIsLoading(false)
-    }
-  }, [user, setUser, setIsLoading])
+  if (
+    !isAuthenticated() &&
+    window.location.pathname !== '/' &&
+    window.location.pathname.substring(0, 1) !== '/?'
+  ) {
+    window.location.assign('/')
+  }
 
   return (
-    !isLoading && (
-      <userContext.Provider value={{ user: user }}>
+    <ApolloProvider client={client}>
+      <userContext.Provider
+        value={{
+          isAuthenticated: isAuthenticated,
+          user,
+          setUser,
+        }}
+      >
         <BrowserRouter>
           <Route
             render={(props) => {
@@ -88,7 +90,7 @@ const App: React.FC = () => {
           </main>
         </BrowserRouter>
       </userContext.Provider>
-    )
+    </ApolloProvider>
   )
 }
 

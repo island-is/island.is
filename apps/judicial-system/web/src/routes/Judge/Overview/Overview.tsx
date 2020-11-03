@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Text,
@@ -16,16 +16,22 @@ import {
 import { isNextDisabled } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
-import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
-import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
+import {
+  Case,
+  CaseCustodyProvisions,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import * as styles from './Overview.treat'
-import { Case } from '@island.is/judicial-system-web/src/types'
+import { useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const JudgeOverview: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -35,7 +41,25 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const uContext = useContext(userContext)
+
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+  const resCase = data?.case
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+    const resCase = data?.updateCase
+    if (resCase) {
+      // Do something with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+    return resCase
+  }
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -44,14 +68,13 @@ export const JudgeOverview: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase])
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
     <PageLayout activeSection={1} activeSubSection={0} isLoading={isLoading}>
@@ -86,7 +109,7 @@ export const JudgeOverview: React.FC = () => {
                   const validateField = validate(evt.target.value, 'empty')
 
                   if (validateField.isValid) {
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('courtCaseNumber', evt.target.value),
                     )
@@ -146,7 +169,7 @@ export const JudgeOverview: React.FC = () => {
               </Text>
             </Box>
             <Text variant="h3">
-              {workingCase?.arrestDate &&
+              {workingCase.arrestDate &&
                 `${capitalize(
                   formatDate(workingCase.arrestDate, 'PPPP'),
                 )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
@@ -162,7 +185,7 @@ export const JudgeOverview: React.FC = () => {
               {`${capitalize(
                 formatDate(workingCase.requestedCourtDate, 'PPPP'),
               )} kl. ${formatDate(
-                workingCase?.requestedCourtDate,
+                workingCase.requestedCourtDate,
                 TIME_FORMAT,
               )}`}
             </Text>
@@ -174,9 +197,7 @@ export const JudgeOverview: React.FC = () => {
               </Text>
             </Box>
             <Text variant="h3">
-              {workingCase?.prosecutor
-                ? `${workingCase.prosecutor.name}, ${workingCase.prosecutor.title}`
-                : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+              {workingCase.prosecutor?.name} {workingCase.prosecutor?.title}
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
@@ -215,7 +236,7 @@ export const JudgeOverview: React.FC = () => {
                   </Box>
                   <Text>
                     <span className={styles.breakSpaces}>
-                      {workingCase?.lawsBroken}
+                      {workingCase.lawsBroken}
                     </span>
                   </Text>
                 </Box>
@@ -261,7 +282,7 @@ export const JudgeOverview: React.FC = () => {
                     </Box>
                     <Text>
                       <span className={styles.breakSpaces}>
-                        {workingCase?.caseFacts}
+                        {workingCase.caseFacts}
                       </span>
                     </Text>
                   </Box>
@@ -273,7 +294,7 @@ export const JudgeOverview: React.FC = () => {
                     </Box>
                     <Text>
                       <span className={styles.breakSpaces}>
-                        {workingCase?.legalArguments}
+                        {workingCase.legalArguments}
                       </span>
                     </Text>
                   </Box>
@@ -287,7 +308,7 @@ export const JudgeOverview: React.FC = () => {
               >
                 <Text>
                   <span className={styles.breakSpaces}>
-                    {workingCase?.comments}
+                    {workingCase.comments}
                   </span>
                 </Text>
               </AccordionItem>

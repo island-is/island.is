@@ -8,7 +8,6 @@ import {
 import React, { useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
-import { Case } from '../../../types'
 import { isNextDisabled } from '../../../utils/stepHelper'
 import { validate } from '../../../utils/validate'
 import * as Constants from '../../../utils/constants'
@@ -18,9 +17,14 @@ import {
   parseString,
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
+import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -41,6 +45,24 @@ export const CourtRecord: React.FC = () => {
     setLitigationPresentationsMessage,
   ] = useState('')
   const { id } = useParams<{ id: string }>()
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+
+  const resCase = data?.case
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+    const resCase = data?.updateCase
+    if (resCase) {
+      // Do something with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+    return resCase
+  }
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -49,14 +71,13 @@ export const CourtRecord: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase])
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
     <PageLayout activeSection={1} activeSubSection={1} isLoading={isLoading}>
@@ -115,7 +136,7 @@ export const CourtRecord: React.FC = () => {
                       if (
                         courtStartTimeMinutes !== workingCase.courtStartTime
                       ) {
-                        api.saveCase(
+                        updateCase(
                           workingCase.id,
                           parseString('courtStartTime', courtStartTimeMinutes),
                         )
@@ -158,7 +179,7 @@ export const CourtRecord: React.FC = () => {
                     })
 
                     if (courtEndTimeMinutes !== workingCase.courtEndTime) {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString('courtEndTime', courtEndTimeMinutes),
                       )
@@ -195,7 +216,7 @@ export const CourtRecord: React.FC = () => {
                     validateEmpty.isValid &&
                     workingCase.courtAttendees !== evt.target.value
                   ) {
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('courtAttendees', evt.target.value),
                     )
@@ -228,7 +249,7 @@ export const CourtRecord: React.FC = () => {
                   validateEmpty.isValid &&
                   workingCase.policeDemands !== evt.target.value
                 ) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('policeDemands', evt.target.value),
                   )
@@ -292,7 +313,7 @@ export const CourtRecord: React.FC = () => {
                   validateEmpty.isValid &&
                   workingCase.accusedPlea !== evt.target.value
                 ) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('accusedPlea', evt.target.value),
                   )
@@ -331,7 +352,7 @@ export const CourtRecord: React.FC = () => {
                   validateEmpty.isValid &&
                   workingCase.litigationPresentations !== evt.target.value
                 ) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('litigationPresentations', evt.target.value),
                   )

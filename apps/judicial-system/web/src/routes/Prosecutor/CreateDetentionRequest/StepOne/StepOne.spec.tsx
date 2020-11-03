@@ -1,107 +1,148 @@
 import React from 'react'
 import { render, act, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import StepOne from './StepOne'
 import { Route, MemoryRouter } from 'react-router-dom'
-import fetchMock from 'fetch-mock'
+import StepOne, { CreateCaseMutation } from './StepOne'
 import * as Constants from '../../../../utils/constants'
-import * as api from '../../../../api'
 import { userContext } from '../../../../utils/userContext'
-import { mockProsecutor } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCaseQueries,
+  mockProsecutorUserContext,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
     // Arrange
 
-    fetchMock.mock(
-      '/api/case/test_id',
-      { accusedName: 'Jon Harring', accusedAddress: 'Harringvej 2' },
-      { method: 'get' },
-    )
-
     // Act
-    await act(async () => {
-      const { getByTestId } = render(
-        <userContext.Provider value={{ user: mockProsecutor }}>
+    const { getByTestId } = render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
           <MemoryRouter initialEntries={['/krafa/test_id']}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </MemoryRouter>
-        </userContext.Provider>,
-      )
-
-      // Assert
-      expect(
-        await waitFor(
-          () => (getByTestId('accusedName') as HTMLInputElement).value,
-        ),
-      ).toEqual('Jon Harring')
-
-      expect(
-        await waitFor(
-          () => (getByTestId('accusedAddress') as HTMLInputElement).value,
-        ),
-      ).toEqual('Harringvej 2')
-    })
-  })
-
-  test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
-    // Arrange
-    fetchMock.mock(
-      '/api/case/test_id',
-      {
-        policeCaseNumber: '000-0000-020',
-        accusedNationalId: '1111119999',
-        accusedName: 'Jon Harring',
-        accusedAddress: 'Harringvej 2',
-        arrestDate: '2020-09-16T19:51:28.224Z',
-        requestedCourtDate: '2020-09-16T19:51:28.224Z',
-      },
-      { method: 'get', overwriteRoutes: true },
-    )
-
-    // Act
-    const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <MemoryRouter initialEntries={['/krafa/test_id']}>
-          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-            <StepOne />
-          </Route>
-        </MemoryRouter>
-      </userContext.Provider>,
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert
     expect(
-      await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+      await waitFor(
+        () => (getByTestId('accusedName') as HTMLInputElement).value,
+      ),
+    ).toEqual('Jon Harring')
+
+    expect(
+      await waitFor(
+        () => (getByTestId('accusedAddress') as HTMLInputElement).value,
+      ),
+    ).toEqual('Harringvej 2')
+  })
+
+  test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
+    // Arrange
+
+    // Act
+    const { getByTestId } = render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <MemoryRouter initialEntries={['/krafa/test_id']}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
+    )
+
+    // Assert
+    expect(
+      getByTestId('continueButton') as HTMLButtonElement,
     ).not.toBeDisabled()
   })
 
-  test('should now allow users to continue unless every required field has been filled out', async () => {
+  test('should display an empty form if there is nothing in local storage', async () => {
     // Arrange
-    fetchMock.mock('/api/case/test_id', 200, { method: 'put' })
-    fetchMock.mock(
-      '/api/case/test_id',
-      {
-        id: 'test_id',
-        arrestDate: '2020-09-16T19:51:28.224Z',
-        requestedCourtDate: '2020-09-16T19:51:28.224Z',
-      },
-      { method: 'get', overwriteRoutes: true },
+
+    const { getByTestId, queryAllByTestId } = render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <MemoryRouter initialEntries={['/krafa']}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
     )
+
+    // Act
+    const aa = [
+      getByTestId(/policeCaseNumber/i),
+      getByTestId(/nationalId/i),
+      getByTestId(/accusedName/i),
+      getByTestId(/accusedAddress/i),
+      getByTestId(/arrestTime/i),
+      getByTestId(/requestedCourtDate/i),
+    ]
+
+    const court = getByTestId(/select-court/i).getElementsByClassName(
+      'singleValue',
+    )[0].innerHTML
+
+    const datepickers = queryAllByTestId(/datepicker-value/i)
+
+    // Assert
+    expect(aa.filter((a) => a.innerHTML !== '').length).toEqual(0)
+    expect(court).toEqual('Héraðsdómur Reykjavíkur')
+    expect(datepickers.length).toEqual(0)
+    expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+  })
+})
+
+describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
+    // Arrange
 
     // Act and Assert
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <MemoryRouter initialEntries={['/krafa/test_id']}>
-          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-            <StepOne />
-          </Route>
-        </MemoryRouter>
-      </userContext.Provider>,
+      <MockedProvider
+        mocks={[].concat(mockCaseQueries).concat([
+          {
+            request: {
+              query: CreateCaseMutation,
+              variables: {
+                input: {
+                  policeCaseNumber: '000-0000-0010',
+                  accusedNationalId: '1112902539',
+                  court: 'Héraðsdómur Reykjavíkur',
+                  accusedName: 'Jon Harring',
+                  accusedAddress: '',
+                  arrestDate: '2020-10-15',
+                  requestedCourtDate: '2020-10-16',
+                },
+              },
+            },
+            result: {
+              data: {},
+            },
+          },
+        ])}
+        addTypename={false}
+      >
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <MemoryRouter initialEntries={['/krafa/test_id']}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     await act(async () => {
@@ -139,39 +180,52 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
       ).not.toBeDisabled()
     })
   })
-})
 
-describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
-  test('should save case if accused name is entered first and then police case number and accused national id', async () => {
+  test('should save case if accused name is entered first and then police case number and accused national iddd', async () => {
     // Arrange
-    const spy = jest.spyOn(api, 'createCase')
-    fetchMock.mock(
-      '/api/case',
-      {
-        policeCaseNumber: 'string',
-        accusedNationalId: 'string',
-        accusedName: 'string',
-        accusedAddress: 'string',
-        court: 'string',
-        arrestDate: '2020-10-28T20:50:42.571Z',
-        requestedCourtDate: '2020-10-28T20:50:42.571Z',
-      },
-      { method: 'post' },
-    )
+    let createCalled = false
 
     // Act
     const { getByTestId } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <MemoryRouter initialEntries={['/krafa']}>
-          <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
-            <StepOne />
-          </Route>
-        </MemoryRouter>
-      </userContext.Provider>,
+      <MockedProvider
+        mocks={[].concat(mockCaseQueries).concat([
+          {
+            request: {
+              query: CreateCaseMutation,
+              variables: {
+                input: {
+                  policeCaseNumber: '020-0202-2929',
+                  accusedNationalId: '0000000000',
+                  court: 'Héraðsdómur Reykjavíkur',
+                  accusedName: 'Gervipersona',
+                  accusedAddress: 'Batcave',
+                  arrestDate: '2020-11-02T12:03:00Z',
+                  requestedCourtDate: '2020-11-12T12:03:00Z',
+                },
+              },
+            },
+            result: () => {
+              createCalled = true
+              return {
+                data: {},
+              }
+            },
+          },
+        ])}
+        addTypename={false}
+      >
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     await act(async () => {
-      await userEvent.type(
+      userEvent.type(
         await waitFor(() => getByTestId('accusedName') as HTMLInputElement),
         'Gervipersona',
       )
@@ -198,17 +252,9 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
       )
 
       userEvent.tab()
-
-      // Assert
-      expect(spy).toHaveBeenLastCalledWith({
-        policeCaseNumber: '020-0202-2929',
-        accusedNationalId: '0000000000',
-        court: 'Héraðsdómur Reykjavíkur',
-        accusedName: 'Gervipersona',
-        accusedAddress: 'Batcave',
-        arrestDate: null,
-        requestedCourtDate: null,
-      })
     })
+
+    // Assert
+    expect(createCalled).toBe(true)
   })
 })

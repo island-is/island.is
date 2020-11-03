@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
   APPLICANT_APPLICATIONS,

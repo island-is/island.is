@@ -1,0 +1,26 @@
+generates:
+  ./apps/judicial-system/web/src/graphql/schema.tsx:
+    schema:
+      - ./apps/judicial-system/api.graphql
+    documents:
+      - ./apps/judicial-system/web/**/*.(ts|tsx)
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false
+      avoidOptionals:
+        object: true
+  ./apps/judicial-system/web/src/graphql/possibleTypes.json:
+    schema:
+      - ./apps/judicial-system/api.graphql
+    plugins:
+      - fragment-matcher
+    config:
+      apolloClientVersion: 3
+hooks:
+  afterAllFileWrite:
+    - prettier --write

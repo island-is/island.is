@@ -8,7 +8,7 @@ Install dependencies with Yarn
 
 `yarn`
 
-Start the API locally. Instructions on how to do that can be found [in the API project.](https://github.com/island-is/island.is/tree/master/apps/judicial-system/api)
+Start the backend locally. Instructions on how to do that can be found [in the backend project.](https://github.com/island-is/island.is/tree/master/apps/judicial-system/backend)
 
 Start the application
 

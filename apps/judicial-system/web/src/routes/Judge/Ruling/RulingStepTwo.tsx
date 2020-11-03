@@ -8,19 +8,47 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
-import { Case } from '../../../types'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseAppealDecision,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { parseString } from '../../../utils/formatters'
 import { constructConclusion } from '../../../utils/stepHelper'
-import * as api from '../../../api'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
+import { useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { id } = useParams<{ id: string }>()
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+  const resCase = data?.case
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
 
   useEffect(() => {
     document.title = 'Úrskurðarorð - Réttarvörslugátt'
@@ -29,14 +57,13 @@ export const RulingStepTwo: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase])
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
     <PageLayout activeSection={1} activeSubSection={3} isLoading={isLoading}>
@@ -106,7 +133,7 @@ export const RulingStepTwo: React.FC = () => {
                           accusedAppealDecision: CaseAppealDecision.APPEAL,
                         })
 
-                        api.saveCase(
+                        updateCase(
                           workingCase.id,
                           parseString(
                             'accusedAppealDecision',
@@ -133,7 +160,7 @@ export const RulingStepTwo: React.FC = () => {
                           accusedAppealDecision: CaseAppealDecision.ACCEPT,
                         })
 
-                        api.saveCase(
+                        updateCase(
                           workingCase.id,
                           parseString(
                             'accusedAppealDecision',
@@ -164,7 +191,7 @@ export const RulingStepTwo: React.FC = () => {
                           accusedAppealDecision: CaseAppealDecision.POSTPONE,
                         })
 
-                        api.saveCase(
+                        updateCase(
                           workingCase.id,
                           parseString(
                             'accusedAppealDecision',
@@ -193,7 +220,7 @@ export const RulingStepTwo: React.FC = () => {
                     accusedAppealAnnouncement: evt.target.value,
                   })
 
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('accusedAppealAnnouncement', evt.target.value),
                   )
@@ -228,7 +255,7 @@ export const RulingStepTwo: React.FC = () => {
                         prosecutorAppealDecision: CaseAppealDecision.APPEAL,
                       })
 
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString(
                           'prosecutorAppealDecision',
@@ -255,7 +282,7 @@ export const RulingStepTwo: React.FC = () => {
                         prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
                       })
 
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString(
                           'prosecutorAppealDecision',
@@ -286,7 +313,7 @@ export const RulingStepTwo: React.FC = () => {
                         prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
                       })
 
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString(
                           'prosecutorAppealDecision',
@@ -316,7 +343,7 @@ export const RulingStepTwo: React.FC = () => {
                     prosecutorAppealAnnouncement: evt.target.value,
                   })
 
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString(
                       'prosecutorAppealAnnouncement',

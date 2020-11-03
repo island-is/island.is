@@ -3,44 +3,153 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import Modal from '../../../shared-components/Modal/Modal'
 import {
-  AppealDecitionRole,
-  Case,
-  ConfirmSignatureResponse,
-  RequestSignatureResponse,
-} from '../../../types'
-import {
   constructConclusion,
   getAppealDecitionText,
 } from '../../../utils/stepHelper'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
+import { AppealDecisionRole } from '../../../types'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import {
+  Case,
   CaseAppealDecision,
   CaseState,
   CaseTransition,
+  SignatureResponse,
+  TransitionCase,
 } from '@island.is/judicial-system/types'
-import * as api from '../../../api'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { useHistory, useParams } from 'react-router-dom'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import * as style from './Confirmation.treat'
+import {
+  CaseQuery,
+  TransitionCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
+import { gql, useMutation, useQuery } from '@apollo/client'
+import { PendingSignature } from '@island.is/judicial-system-web/src/graphql/schema'
+
+export const RequestSignatureMutation = gql`
+  mutation RequestSignatureMutation($input: RequestSignatureInput!) {
+    requestSignature(input: $input) {
+      controlCode
+      documentToken
+    }
+  }
+`
+
+export const SignatureConfirmationQuery = gql`
+  query ConfirmSignatureQuery($input: SignatureConfirmationQueryInput!) {
+    confirmSignature(input: $input) {
+      documentSigned
+      code
+      message
+    }
+  }
+`
+
+interface SigningModalProps {
+  caseId: string
+  pendingSignature: PendingSignature
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const SigningModal: React.FC<SigningModalProps> = (
+  props: SigningModalProps,
+) => {
+  const history = useHistory()
+  const [signatureResponse, setSignatureResponse] = useState<
+    SignatureResponse
+  >()
+
+  const { data } = useQuery(SignatureConfirmationQuery, {
+    variables: {
+      input: {
+        caseId: props.caseId,
+        documentToken: props.pendingSignature.documentToken,
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
+  const resSignatureResponse = data?.confirmSignature
+
+  useEffect(() => {
+    if (resSignatureResponse) {
+      setSignatureResponse(resSignatureResponse)
+    }
+  }, [resSignatureResponse, setSignatureResponse])
+
+  const renderContolCode = () => {
+    return (
+      <>
+        <Box marginBottom={2}>
+          <Text variant="h2" color="blue400">
+            {`Öryggistala: ${props.pendingSignature.controlCode}`}
+          </Text>
+        </Box>
+        <Text>
+          Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
+          öryggistala birtist í símanum þínum.
+        </Text>
+      </>
+    )
+  }
+
+  return (
+    <Modal
+      title={
+        !signatureResponse
+          ? 'Rafræn undirritun'
+          : signatureResponse.documentSigned
+          ? 'Úrskurður hefur verið staðfestur og undirritaður'
+          : signatureResponse.code === 7023 // User cancelled
+          ? 'Notandi hætti við undirritun'
+          : 'Undirritun tókst ekki'
+      }
+      text={
+        !signatureResponse
+          ? renderContolCode()
+          : signatureResponse.documentSigned
+          ? 'Tilkynning hefur verið send á ákæranda og dómara sem kvað upp úrskurð.'
+          : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
+      }
+      secondaryButtonText={
+        !signatureResponse
+          ? null
+          : signatureResponse.documentSigned
+          ? 'Loka glugga'
+          : 'Loka og reyna aftur'
+      }
+      primaryButtonText={!signatureResponse ? null : 'Gefa endurgjöf á gáttina'}
+      handlePrimaryButtonClick={() => {
+        history.push(Constants.FEEDBACK_FORM_ROUTE)
+      }}
+      handleSecondaryButtonClick={async () => {
+        if (signatureResponse?.documentSigned === true) {
+          history.push(Constants.DETENTION_REQUESTS_ROUTE)
+        } else {
+          props.setModalVisible(false)
+        }
+      }}
+    />
+  )
+}
 
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [signatureResponse, setSignatureResponse] = useState<
-    RequestSignatureResponse
-  >()
-  const [confirmSignatureResponse, setConfirmSignatureResponse] = useState<
-    ConfirmSignatureResponse
-  >()
+  const [pendingSignature, setPendingSignature] = useState<PendingSignature>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const uContext = useContext(userContext)
-  const history = useHistory()
   const { id } = useParams<{ id: string }>()
+  const { user } = useContext(userContext)
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+
+  const resCase = data?.case
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -49,21 +158,46 @@ export const Confirmation: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase])
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     if (!modalVisible) {
-      setSignatureResponse(null)
-      setConfirmSignatureResponse(null)
+      setPendingSignature(null)
     }
-  }, [modalVisible, setSignatureResponse, setConfirmSignatureResponse])
+  }, [modalVisible, setPendingSignature])
+
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const transitionCase = async (id: string, transitionCase: TransitionCase) => {
+    const { data } = await transitionCaseMutation({
+      variables: { input: { id, ...transitionCase } },
+    })
+
+    const resCase = data?.transitionCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want the modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
+
+  const [requestSignatureMutation] = useMutation(RequestSignatureMutation)
+
+  const requestSignature = async (id: string) => {
+    const { data } = await requestSignatureMutation({
+      variables: { input: { caseId: id } },
+    })
+
+    return data?.requestSignature
+  }
 
   const handleNextButtonClick = async () => {
     try {
@@ -75,13 +209,11 @@ export const Confirmation: React.FC = () => {
         )
 
         // Transition the case
-        const response = await api.transitionCase(
-          workingCase.id,
-          transitionRequest,
-        )
+        const resCase = await transitionCase(workingCase.id, transitionRequest)
 
-        if (response !== 200) {
+        if (!resCase) {
           // Improve error handling at some point
+          console.log('Transition failing')
           return false
         }
 
@@ -90,22 +222,6 @@ export const Confirmation: React.FC = () => {
     } catch (e) {
       return false
     }
-  }
-
-  const renderContolCode = () => {
-    return (
-      <>
-        <Box marginBottom={2}>
-          <Text variant="h2" color="blue400">
-            {`Öryggistala: ${signatureResponse.response.controlCode}`}
-          </Text>
-        </Box>
-        <Text>
-          Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
-          öryggistala birtist í símanum þínum.
-        </Text>
-      </>
-    )
   }
 
   return (
@@ -232,14 +348,14 @@ export const Confirmation: React.FC = () => {
             <Box marginBottom={1}>
               <Text variant="h4">
                 {getAppealDecitionText(
-                  AppealDecitionRole.ACCUSED,
+                  AppealDecisionRole.ACCUSED,
                   workingCase.accusedAppealDecision,
                 )}
               </Text>
             </Box>
             <Text variant="h4">
               {getAppealDecitionText(
-                AppealDecitionRole.PROSECUTOR,
+                AppealDecisionRole.PROSECUTOR,
                 workingCase.prosecutorAppealDecision,
               )}
             </Text>
@@ -276,8 +392,8 @@ export const Confirmation: React.FC = () => {
           <Box marginBottom={15}>
             <Text variant="h3">
               {workingCase?.judge
-                ? `${workingCase?.judge.name}, ${workingCase?.judge.title}`
-                : `${uContext?.user?.name}, ${uContext?.user?.title}`}
+                ? `${workingCase?.judge.name} ${workingCase?.judge.title}`
+                : `${user?.name} ${user?.title}`}
             </Text>
           </Box>
           <FormFooter
@@ -287,75 +403,25 @@ export const Confirmation: React.FC = () => {
               // Set loading indicator on the Continue button in the footer
               setIsLoading(true)
 
-              // Accept or reject case
+              // Transition case from submitted state to either accepted or rejected
               await handleNextButtonClick()
 
               // Request signature to get control code
-              const signature = await api.requestSignature(workingCase.id)
+              const pendingSignature = await requestSignature(workingCase.id)
 
-              if (
-                signature.httpStatusCode >= 200 &&
-                signature.httpStatusCode < 300
-              ) {
-                setSignatureResponse(signature)
+              if (pendingSignature) {
+                setPendingSignature(pendingSignature)
                 setModalVisible(true)
                 setIsLoading(false)
-
-                // Confirm requested signature
-                const confirmSignature = await api.confirmSignature(
-                  workingCase.id,
-                  signature.response.documentToken,
-                )
-
-                setConfirmSignatureResponse(confirmSignature)
               }
             }}
             nextIsLoading={isLoading}
           />
           {modalVisible && (
-            <Modal
-              title={
-                confirmSignatureResponse?.httpStatusCode >= 400
-                  ? confirmSignatureResponse?.code === 7023 // User cancelled
-                    ? 'Notandi hætti við undirritun'
-                    : 'Undirritun tókst ekki'
-                  : confirmSignatureResponse?.httpStatusCode >= 200 &&
-                    confirmSignatureResponse?.httpStatusCode < 300
-                  ? 'Úrskurður hefur verið staðfestur og undirritaður'
-                  : 'Rafræn undirritun'
-              }
-              text={
-                confirmSignatureResponse?.httpStatusCode >= 400
-                  ? 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
-                  : confirmSignatureResponse?.httpStatusCode >= 200 &&
-                    confirmSignatureResponse?.httpStatusCode < 300
-                  ? 'Tilkynning hefur verið send á ákæranda og dómara sem kvað upp úrskurð.'
-                  : renderContolCode()
-              }
-              secondaryButtonText={
-                !confirmSignatureResponse
-                  ? null
-                  : confirmSignatureResponse.httpStatusCode >= 200 &&
-                    confirmSignatureResponse.httpStatusCode < 300
-                  ? 'Loka glugga'
-                  : 'Loka og reyna aftur'
-              }
-              primaryButtonText={
-                !confirmSignatureResponse ? null : 'Gefa endurgjöf á gáttina'
-              }
-              handlePrimaryButtonClick={() => {
-                history.push(Constants.FEEDBACK_FORM_ROUTE)
-              }}
-              handleSecondaryButtonClick={async () => {
-                if (
-                  confirmSignatureResponse.httpStatusCode >= 200 &&
-                  confirmSignatureResponse.httpStatusCode < 300
-                ) {
-                  history.push(Constants.DETENTION_REQUESTS_ROUTE)
-                } else {
-                  setModalVisible(false)
-                }
-              }}
+            <SigningModal
+              caseId={workingCase?.id}
+              pendingSignature={pendingSignature}
+              setModalVisible={setModalVisible}
             />
           )}
         </>

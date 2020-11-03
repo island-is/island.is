@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'

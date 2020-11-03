@@ -1,31 +1,32 @@
 import React from 'react'
-import { AppealDecitionRole, Case, RequiredField } from '../types'
+import { AppealDecisionRole, RequiredField } from '../types'
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 
 export const getAppealDecitionText = (
-  role: AppealDecitionRole,
+  role: AppealDecisionRole,
   appealDecition: CaseAppealDecision,
 ) => {
   switch (appealDecition) {
     case CaseAppealDecision.APPEAL: {
       return `${
-        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } kærir málið`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
-        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
-        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }
   }

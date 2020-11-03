@@ -11,21 +11,28 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
-import { Case } from '../../../types'
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { parseArray, parseString, parseTime } from '../../../utils/formatters'
 import { isNextDisabled } from '../../../utils/stepHelper'
-import * as api from '../../../api'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatISO } from 'date-fns'
+import formatISO from 'date-fns/formatISO'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 import { useParams } from 'react-router-dom'
+import { useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -42,6 +49,25 @@ export const RulingStepOne: React.FC = () => {
     '',
   )
   const { id } = useParams<{ id: string }>()
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+
+  const resCase = data?.case
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+    const resCase = data?.updateCase
+    if (resCase) {
+      // Do something with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+    return resCase
+  }
 
   const restrictions = [
     {
@@ -81,14 +107,13 @@ export const RulingStepOne: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase])
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -149,7 +174,7 @@ export const RulingStepOne: React.FC = () => {
                     validateEmpty.isValid &&
                     workingCase.ruling !== evt.target.value
                   ) {
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('ruling', evt.target.value),
                     )
@@ -171,7 +196,7 @@ export const RulingStepOne: React.FC = () => {
                       ...workingCase,
                       rejecting: target.checked,
                     })
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('rejecting', target.checked),
                     )
@@ -214,7 +239,7 @@ export const RulingStepOne: React.FC = () => {
                       custodyEndDate: formattedDate,
                     })
 
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('custodyEndDate', formattedDate),
                     )
@@ -264,7 +289,7 @@ export const RulingStepOne: React.FC = () => {
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
                     ) {
-                      api.saveCase(
+                      updateCase(
                         workingCase.id,
                         parseString('custodyEndDate', custodyEndDateMinutes),
                       )
@@ -343,7 +368,7 @@ export const RulingStepOne: React.FC = () => {
                             })
 
                             // Save case
-                            api.saveCase(
+                            updateCase(
                               workingCase.id,
                               parseArray(
                                 'custodyRestrictions',

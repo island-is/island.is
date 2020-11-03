@@ -2,46 +2,53 @@ import React from 'react'
 import { act, render, waitFor } from '@testing-library/react'
 import { RulingStepOne, RulingStepTwo } from './'
 import * as Constants from '../../../utils/constants'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
-import fetchMock from 'fetch-mock'
 import '@testing-library/jest-dom'
 import '@testing-library/jest-dom/extend-expect'
-import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCaseQueries,
+  mockJudgeUserContext,
+  mockUpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe('Ruling routes', () => {
-  beforeEach(() => {
-    fetchMock.mock('/api/case/test_id', 200, {
-      method: 'put',
-      overwriteRoutes: true,
-    })
-  })
-
   describe(Constants.RULING_STEP_ONE_ROUTE, () => {
-    test('should now allow users to continue unless every required field has been filled out', async () => {
+    test('should not allow users to continue unless every required field has been filled out', async () => {
       // Arrange
-      fetchMock.mock(
-        '/api/case/test_id',
-        {
-          id: 'test_id',
-          custodyEndDate: '2020-10-24',
-        },
-        { method: 'get' },
-      )
 
       // Act and Assert
       const { getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-          >
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </MemoryRouter>
-        </userContext.Provider>,
+        <MockedProvider
+          mocks={mockCaseQueries.concat(
+            mockUpdateCaseMutation([
+              {
+                ruling:
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
+              } as UpdateCase,
+              {
+                custodyEndDate: '2020-10-24T12:31:00Z',
+              } as UpdateCase,
+            ]),
+          )}
+          addTypename={false}
+        >
+          <userContext.Provider value={mockJudgeUserContext}>
+            <MemoryRouter
+              initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_3`]}
+            >
+              <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+                <RulingStepOne />
+              </Route>
+            </MemoryRouter>
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       await act(async () => {
@@ -67,28 +74,20 @@ describe('Ruling routes', () => {
 
     test('should not have a disabled continue button by default if case data is valid', async () => {
       // Arrange
-      fetchMock.mock(
-        '/api/case/test_id',
-        {
-          id: 'test_id',
-          ruling:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui autem de summo bono dissentit de tota philosophiae ratione dissentit. Sed est forma eius disciplinae, sicut fere ceterarum, triplex: una pars est naturae, disserendi altera, vivendi tertia. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Tu enim ista lenius, hic Stoicorum more nos vexat. Si est nihil nisi corpus, summa erunt illa: valitudo, vacuitas doloris, pulchritudo, cetera. Prodest, inquit, mihi eo esse animo. Quonam modo? Duo Reges: constructio interrete.',
-          custodyEndDate: '2020-09-16T19:51:39.466Z',
-        },
-        { method: 'get', overwriteRoutes: true },
-      )
 
       // Act
       const { getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-          >
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </MemoryRouter>
-        </userContext.Provider>,
+        <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+          <userContext.Provider value={mockJudgeUserContext}>
+            <MemoryRouter
+              initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
+            >
+              <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+                <RulingStepOne />
+              </Route>
+            </MemoryRouter>
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       // Assert
@@ -99,29 +98,34 @@ describe('Ruling routes', () => {
   })
 
   describe(Constants.RULING_STEP_TWO_ROUTE, () => {
-    test('should now allow users to continue unless every required field has been filled out', async () => {
+    test('should not allow users to continue unless every required field has been filled out', async () => {
       // Arrange
-      fetchMock.mock(
-        '/api/case/test_id',
-        {
-          id: 'test_id',
-          accusedAppealDecision: null,
-          prosecutorAppealDecision: null,
-        },
-        { method: 'get', overwriteRoutes: true },
-      )
 
       // Act and Assert
       const { getByLabelText, getByTestId } = render(
-        <userContext.Provider value={{ user: mockJudge }}>
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
-          >
-            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </MemoryRouter>
-        </userContext.Provider>,
+        <MockedProvider
+          mocks={mockCaseQueries.concat(
+            mockUpdateCaseMutation([
+              {
+                prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+              } as UpdateCase,
+              {
+                prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+              } as UpdateCase,
+            ]),
+          )}
+          addTypename={false}
+        >
+          <userContext.Provider value={mockJudgeUserContext}>
+            <MemoryRouter
+              initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
+            >
+              <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+                <RulingStepTwo />
+              </Route>
+            </MemoryRouter>
+          </userContext.Provider>
+        </MockedProvider>,
       )
 
       await waitFor(() =>
@@ -146,27 +150,20 @@ describe('Ruling routes', () => {
 
   test('should not have a selected radio button by default', async () => {
     // Arrange
-    fetchMock.mock(
-      '/api/case/test_id',
-      {
-        id: 'test_id',
-        accusedAppealDecision: null,
-        prosecutorAppealDecision: null,
-      },
-      { method: 'get', overwriteRoutes: true },
-    )
 
     // Act
     const { getAllByRole } = render(
-      <userContext.Provider value={{ user: mockJudge }}>
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
-        >
-          <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-            <RulingStepTwo />
-          </Route>
-        </MemoryRouter>
-      </userContext.Provider>,
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+        <userContext.Provider value={mockJudgeUserContext}>
+          <MemoryRouter
+            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
+          >
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert
@@ -179,27 +176,32 @@ describe('Ruling routes', () => {
 
   test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
-    fetchMock.mock(
-      '/api/case/test_id',
-      {
-        id: 'test_id',
-        accusedAppealDecision: CaseAppealDecision.ACCEPT,
-        prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-      },
-      { method: 'get', overwriteRoutes: true },
-    )
 
     // Act
     const { getByText, getByTestId } = render(
-      <userContext.Provider value={{ user: mockJudge }}>
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
-        >
-          <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-            <RulingStepTwo />
-          </Route>
-        </MemoryRouter>
-      </userContext.Provider>,
+      <MockedProvider
+        mocks={mockCaseQueries.concat(
+          mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+          ]),
+        )}
+        addTypename={false}
+      >
+        <userContext.Provider value={mockJudgeUserContext}>
+          <MemoryRouter
+            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
+          >
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     await waitFor(() =>
@@ -221,27 +223,32 @@ describe('Ruling routes', () => {
 
   test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
-    fetchMock.mock(
-      '/api/case/test_id',
-      {
-        id: 'test_id',
-        accusedAppealDecision: CaseAppealDecision.APPEAL,
-        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-      },
-      { method: 'get', overwriteRoutes: true },
-    )
 
     // Act
     const { getByText, getByTestId } = render(
-      <userContext.Provider value={{ user: mockJudge }}>
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
-        >
-          <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-            <RulingStepTwo />
-          </Route>
-        </MemoryRouter>
-      </userContext.Provider>,
+      <MockedProvider
+        mocks={mockCaseQueries.concat(
+          mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+          ]),
+        )}
+        addTypename={false}
+      >
+        <userContext.Provider value={mockJudgeUserContext}>
+          <MemoryRouter
+            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
+          >
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </MemoryRouter>
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     await waitFor(() => userEvent.click(getByText('Kærði kærir málið')))

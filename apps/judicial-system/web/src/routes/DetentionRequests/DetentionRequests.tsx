@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { format, parseISO } from 'date-fns'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 
 import localeIS from 'date-fns/locale/is'
 
@@ -15,48 +16,64 @@ import {
   TagVariant,
   Box,
 } from '@island.is/island-ui/core'
-import { CaseState } from '@island.is/judicial-system/types'
-import { DetentionRequest, User } from '../../types'
-import * as api from '../../api'
+import { Case, CaseState, User } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
-import { UserRole } from '../../utils/authenticate'
+import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '../../utils/constants'
 import { Link } from 'react-router-dom'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { insertAt } from '../../utils/formatters'
+import { gql, useQuery } from '@apollo/client'
+
+export const CasesQuery = gql`
+  query CasesQuery {
+    cases {
+      id
+      created
+      state
+      policeCaseNumber
+      accusedNationalId
+      accusedName
+      custodyEndDate
+    }
+  }
+`
 
 export const DetentionRequests: React.FC = () => {
-  const [cases, setCases] = useState<DetentionRequest[]>(null)
+  const [cases, setCases] = useState<Case[]>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const uContext = useContext(userContext)
-  const isJudge = uContext.user.role === UserRole.JUDGE
+  const { user } = useContext(userContext)
+
+  const isJudge = user?.role === UserRole.JUDGE
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
   }, [])
 
+  const { data } = useQuery(CasesQuery, { fetchPolicy: 'no-cache' })
+  const resCases = data?.cases
+
   useEffect(() => {
     async function getCases(user: User) {
-      const cases = await api.getCases()
-
-      if (cases && user.role === UserRole.JUDGE) {
-        const judgeCases = cases.filter((c) => {
-          // Judges should see all cases exept drafts
+      if (resCases && isJudge) {
+        const judgeCases = resCases.filter((c: Case) => {
+          // Judges should see all cases excpet drafts
           return c.state !== CaseState.DRAFT
         })
 
         setCases(judgeCases)
       } else {
-        setCases(cases)
+        setCases(resCases)
       }
 
       setIsLoading(false)
     }
 
-    if (uContext?.user?.role) {
-      getCases(uContext.user)
+    if (user?.role) {
+      getCases(user)
     }
-  }, [uContext])
+  }, [user, isJudge, resCases, setCases])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
@@ -77,17 +94,19 @@ export const DetentionRequests: React.FC = () => {
 
   return (
     <div className={styles.detentionRequestsContainer}>
-      <div className={styles.logoContainer}>
-        {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
-        {!isJudge && (
-          <Link
-            to={Constants.SINGLE_REQUEST_BASE_ROUTE}
-            style={{ textDecoration: 'none' }}
-          >
-            <Button icon="plus">Stofna nýja kröfu</Button>
-          </Link>
-        )}
-      </div>
+      {user && (
+        <div className={styles.logoContainer}>
+          {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
+          {!isJudge && (
+            <Link
+              to={Constants.SINGLE_REQUEST_BASE_ROUTE}
+              style={{ textDecoration: 'none' }}
+            >
+              <Button icon="plus">Stofna nýja kröfu</Button>
+            </Link>
+          )}
+        </div>
+      )}
       {isLoading ? null : cases ? (
         <table
           className={styles.detentionRequestsTable}
@@ -116,7 +135,10 @@ export const DetentionRequests: React.FC = () => {
               >
                 <td>{c.policeCaseNumber || '-'}</td>
                 <td>{c.accusedName || '-'}</td>
-                <td>{c.accusedNationalId || '-'}</td>
+                <td>
+                  {insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
+                    '-'}
+                </td>
                 <td>
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
@@ -127,10 +149,7 @@ export const DetentionRequests: React.FC = () => {
                 </td>
                 <td>
                   {c.state === CaseState.ACCEPTED
-                    ? `${formatDate(c.custodyEndDate, 'PP')} kl. ${formatDate(
-                        c.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`
+                    ? `${formatDate(c.custodyEndDate, 'PP')}`
                     : null}
                 </td>
                 <td>

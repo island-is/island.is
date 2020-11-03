@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-
 import {
   Text,
   GridContainer,
@@ -11,20 +10,22 @@ import {
   Checkbox,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system-web/src/types'
 import {
+  Case,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatISO, isValid, parseISO } from 'date-fns'
-import { isNull } from 'lodash'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
+import formatISO from 'date-fns/formatISO'
+import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
-import * as api from '../../../../api'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
@@ -35,6 +36,11 @@ import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useParams } from 'react-router-dom'
+import { useMutation, useQuery } from '@apollo/client'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -69,6 +75,13 @@ export const StepTwo: React.FC = () => {
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
   const [, setRestrictionCheckboxThree] = useState<boolean>()
   const [, setRestrictionCheckboxFour] = useState<boolean>()
+
+  const { data } = useQuery(CaseQuery, {
+    variables: { input: { id: id } },
+    fetchPolicy: 'no-cache',
+  })
+
+  const resCase = data?.case
 
   const caseCustodyProvisions = [
     {
@@ -153,14 +166,13 @@ export const StepTwo: React.FC = () => {
   useEffect(() => {
     const getCurrentCase = async () => {
       setIsLoading(true)
-      const currentCase = await api.getCaseById(id)
-      setWorkingCase(currentCase.case)
+      setWorkingCase(resCase)
       setIsLoading(false)
     }
-    if (id && !workingCase) {
+    if (id && !workingCase && resCase) {
       getCurrentCase()
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase])
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -181,6 +193,23 @@ export const StepTwo: React.FC = () => {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
 
   return (
     <PageLayout activeSection={0} activeSubSection={1} isLoading={isLoading}>
@@ -225,7 +254,7 @@ export const StepTwo: React.FC = () => {
                       requestedCustodyEndDate: formattedDate,
                     })
 
-                    api.saveCase(
+                    updateCase(
                       id,
                       JSON.parse(`{
                           "requestedCustodyEndDate": "${formattedDate}",
@@ -288,7 +317,7 @@ export const StepTwo: React.FC = () => {
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
                     ) {
-                      await api.saveCase(
+                      await updateCase(
                         workingCase.id,
                         JSON.parse(`{
                             "requestedCustodyEndDate": "${requestedCustodyEndDateMinutes}",
@@ -327,7 +356,7 @@ export const StepTwo: React.FC = () => {
 
                 const validateField = validate(evt.target.value, 'empty')
                 if (validateField.isValid) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('lawsBroken', evt.target.value),
                   )
@@ -404,7 +433,7 @@ export const StepTwo: React.FC = () => {
                             setWorkingCase(copyOfState)
 
                             // Save case
-                            api.saveCase(
+                            updateCase(
                               workingCase.id,
                               parseArray(
                                 'custodyProvisions',
@@ -504,7 +533,7 @@ export const StepTwo: React.FC = () => {
                           setWorkingCase(copyOfState)
 
                           // Save case
-                          await api.saveCase(
+                          await updateCase(
                             workingCase.id,
                             parseArray(
                               'requestedCustodyRestrictions',
@@ -512,7 +541,7 @@ export const StepTwo: React.FC = () => {
                             ),
                           )
                           // TODO: COMBINE IN A SINGLE API CALL
-                          await api.saveCase(
+                          await updateCase(
                             workingCase.id,
                             parseArray(
                               'custodyRestrictions',
@@ -559,7 +588,7 @@ export const StepTwo: React.FC = () => {
 
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('caseFacts', evt.target.value),
                     )
@@ -590,7 +619,7 @@ export const StepTwo: React.FC = () => {
 
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('legalArguments', evt.target.value),
                     )
@@ -627,7 +656,7 @@ export const StepTwo: React.FC = () => {
                       comments: evt.target.value,
                     })
 
-                    api.saveCase(
+                    updateCase(
                       workingCase.id,
                       parseString('comments', evt.target.value),
                     )

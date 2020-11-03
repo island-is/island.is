@@ -9,10 +9,10 @@ import {
 } from '@island.is/island-ui/core'
 import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
-import { UserRole } from '../../utils/authenticate'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
+import { UserRole } from '@island.is/judicial-system/types'
 
 interface PageProps {
   children: ReactNode
@@ -27,7 +27,7 @@ export const PageLayout: FC<PageProps> = ({
   activeSubSection,
   isLoading,
 }) => {
-  const uContext = useContext(userContext)
+  const { user } = useContext(userContext)
 
   return children ? (
     <Box
@@ -55,11 +55,11 @@ export const PageLayout: FC<PageProps> = ({
           </GridColumn>
           <GridColumn span={['0', '0', '3/12', '3/12']}>
             <Box marginLeft={2}>
-              {uContext.user?.role === UserRole.JUDGE ? (
+              {user?.role === UserRole.JUDGE ? (
                 <Box marginBottom={7}>
                   <JudgeLogo />
                 </Box>
-              ) : uContext.user?.role === UserRole.PROSECUTOR ? (
+              ) : user?.role === UserRole.PROSECUTOR ? (
                 <Box marginBottom={7}>
                   <ProsecutorLogo />
                 </Box>
