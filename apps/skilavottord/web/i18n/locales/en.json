@@ -265,7 +265,7 @@
   "routes": {
     "home": {
       "citizen": "/en/my-cars",
-      "recyclingPartner": "/en/deregister-vehicle",
+      "recyclingCompany": "/en/deregister-vehicle",
       "recyclingFund": "/en/recycled-vehicles"
     },
     "myCars": "/en/my-cars",
