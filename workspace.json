@@ -2532,17 +2532,13 @@
             "passWithNoTests": true
           }
         },
-        "init-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts",
-              "yarn nx run judicial-system-api:codegen"
-            ]
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts"
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/judicial-system/codegen.yml"
@@ -2638,19 +2634,8 @@
         "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
-          }
-        },
-        "generate-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "parallel": false,
             "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
-            "commands": [
-              "yarn build judicial-system-backend",
-              "node dist/apps/judicial-system/backend/main --generate-schema apps/judicial-system/backend/src/openapi.yaml"
-            ]
+            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
