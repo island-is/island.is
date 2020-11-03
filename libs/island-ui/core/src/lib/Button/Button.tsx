@@ -70,9 +70,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     ref,
   ) => {
     const getVariantColorScheme = (
-      variant: ButtonTypes['variant'],
+      variantProp: ButtonTypes['variant'],
       colorScheme: ButtonTypes['colorScheme'],
     ) => {
+      const variant = variantProp as keyof typeof styles.colors
       const color = styles.colors[variant]
       const scheme = colorScheme as keyof typeof color
       if (typeof color[scheme] !== undefined) {
