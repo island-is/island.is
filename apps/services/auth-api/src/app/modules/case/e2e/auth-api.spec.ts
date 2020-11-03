@@ -1,3 +1,9 @@
+describe('Dummy', () => {
+  it('dummy', () => {
+    expect(1).toBe(1)
+  })
+})
+// Add when working with auth guards
 // import { GrantDto, UserIdentityDto } from '@island.is/auth-api-lib'
 // import { INestApplication } from '@nestjs/common'
 // import { setup } from '../../../../../test/setup'
