@@ -45,14 +45,17 @@ const dataSchema = z.object({
   employer: z.object({
     name: z.string().nonempty(),
     nationalRegistryId: z.string().nonempty(),
+    contact: z.string().nonempty(),
+    contactId: z.string().nonempty(),
   }),
   requestExtraTime: z.enum(['yes', 'no']),
   giveExtraTime: z.enum(['yes', 'no']),
   singlePeriod: z.enum(['yes', 'no']),
   firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
-  secondaryParentName: z.string().optional(),
-  secondaryParentId: z.string().optional(),
+  otherParent: z.enum(['spouse', 'no', 'manual']).optional(),
+  otherParentName: z.string().optional(),
+  otherParentId: z.string().optional(),
 })
 
 const ParentalLeaveTemplate: ApplicationTemplate<

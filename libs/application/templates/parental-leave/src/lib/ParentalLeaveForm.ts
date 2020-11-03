@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
+  buildDividerField,
   buildExternalDataProvider,
   buildForm,
   buildIntroductionField,
@@ -14,8 +15,10 @@ import {
   DataProviderTypes,
   Form,
   FormModes,
+  Option,
 } from '@island.is/application/core'
 import { m } from './messages'
+import { getNameAndIdOfSpouse } from '../fields/parentalLeaveUtils'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -72,8 +75,8 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'secondaryParent',
-          name: 'Confirm the other parent (if any)',
+          id: 'otherParent',
+          name: 'Please confirm the other parent (if any)',
           description:
             'This person is by default your spouse or partner. If there is no other parent in the picture at this point in time, leave this empty.',
           condition: () => {
@@ -81,40 +84,55 @@ export const ParentalLeaveForm: Form = buildForm({
             return true
           },
           children: [
+            buildRadioField({
+              id: 'otherParent',
+              name: '',
+              options: (application) => {
+                const [spouseName, spouseId] = getNameAndIdOfSpouse(application)
+                const options: Option[] = [
+                  {
+                    value: 'no',
+                    label:
+                      'I do not want to confirm the other parent at this time ',
+                  },
+                  { value: 'manual', label: 'The other parent is:' },
+                ]
+                if (spouseName !== undefined && spouseId !== undefined) {
+                  options.unshift({
+                    value: 'spouse',
+                    label: `The other parent is ${spouseName} (kt. ${spouseId})`,
+                  })
+                }
+                return options
+              },
+              emphasize: false,
+              largeButtons: true,
+            }),
             buildTextField({
-              id: 'secondaryParentName',
+              id: 'otherParentName',
+              condition: (answers) => answers.otherParent === 'manual',
               name: 'Name of other parent',
               width: 'half',
             }),
             buildTextField({
-              id: 'secondaryParentId',
+              id: 'otherParentId',
+              condition: (answers) => answers.otherParent === 'manual',
               name: 'National ID of other parent',
               width: 'half',
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'paymentDetails',
-      name: 'Payment details',
-      children: [
-        buildIntroductionField({
-          id: 'paymentsImageScreen',
-          name: 'Next we will verify your bank information for payments',
-          introduction: 'Here we will add a nice picture',
         }),
         buildMultiField({
           name: 'Is everything how it is supposed to be?',
           id: 'payments',
           children: [
             buildTextField({
-              name: 'Bank details',
+              name: 'Bank',
               id: 'payments.bank',
               width: 'half',
             }),
             buildSelectField({
-              name: 'Personal allowance usage',
+              name: 'Personal discount',
               id: 'payments.personalAllowanceUsage',
               width: 'half',
               options: [
@@ -148,20 +166,15 @@ export const ParentalLeaveForm: Form = buildForm({
                 { label: 'No', value: 'no' },
               ],
             }),
-          ],
-        }),
-        buildMultiField({
-          id: 'privatePensionFund',
-          condition: (formValue) => formValue.usePrivatePensionFund === 'yes',
-          name: 'Private pension fund information',
-          children: [
             buildSelectField({
+              condition: (answers) => answers.usePrivatePensionFund === 'yes',
               id: 'payments.privatePensionFund',
               name: 'Private pension fund',
               width: 'half',
               options: [{ label: 'Frjalsi', value: 'frjalsi' }],
             }),
             buildSelectField({
+              condition: (answers) => answers.usePrivatePensionFund === 'yes',
               id: 'payments.privatePensionFundPercentage',
               name: 'Private pension fund %',
               width: 'half',
@@ -184,15 +197,29 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'employer.name',
             }),
             buildTextField({
-              name: 'Employer national registry id',
+              name: 'Social security nr of employer',
               width: 'half',
               id: 'employer.nationalRegistryId',
+            }),
+            buildDividerField({
+              color: 'dark400',
+              name:
+                'Who on behalf of your employer will have to approve this application?',
+            }),
+            buildTextField({
+              name: 'Contact name',
+              width: 'half',
+              id: 'employer.contact',
+            }),
+            buildTextField({
+              name: 'Contact social security nr',
+              width: 'half',
+              id: 'employer.contactId',
             }),
           ],
         }),
       ],
     }),
-
     buildSection({
       id: 'rights',
       name: 'Parental leave rights',
