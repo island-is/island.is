@@ -222,7 +222,7 @@ export function buildCustomField(
     description?: FormText
     component: string
   },
-  props: object,
+  props?: object,
 ): CustomField {
   const { condition, id, name, description, component } = data
   return {
@@ -233,7 +233,7 @@ export function buildCustomField(
     description,
     type: FieldTypes.CUSTOM,
     component,
-    props,
+    props: props ?? {},
   }
 }
 
