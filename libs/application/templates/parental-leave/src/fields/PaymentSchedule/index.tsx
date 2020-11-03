@@ -8,13 +8,8 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
 import Table from '../components/Table'
-
-interface Payment {
-  date: string
-  tax: number
-  pensionContribution: number
-  amount: number
-}
+import { formatIsk } from '../parentalLeaveUtils'
+import { Payment } from '../../types'
 
 // TODO: This will come from the formValue
 const payments: Payment[] = [
@@ -73,13 +68,6 @@ const payments: Payment[] = [
     amount: 119000,
   },
 ]
-
-/*
- *  Takes in a number (ex: 119000) and
- *  returns a formated ISK value "119.000 kr."
- */
-const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field
