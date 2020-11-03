@@ -14,10 +14,12 @@ const hexToRgb = (hex: string) => {
 
 export const menu = style({
   position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
+  top: theme.spacing['3'],
+  right: theme.spacing['3'],
+  left: theme.spacing['3'],
   zIndex: zIndex.menu,
+  maxHeight: `calc(100vh - ${theme.spacing['6']}px)`,
+  marginBottom: theme.spacing['3'],
   opacity: 0,
   overflowY: 'auto',
   visibility: 'hidden',
@@ -28,6 +30,7 @@ export const menu = style({
     md: {
       top: 'auto',
       left: 'auto',
+      right: 'auto',
       width: 'auto',
       transform: `translate3d(-100%, -${theme.spacing['2']}px, 0)`,
     },
