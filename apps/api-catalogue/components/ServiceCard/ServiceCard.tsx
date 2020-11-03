@@ -4,12 +4,6 @@ import * as styles from './ServiceCard.treat'
 import cn from 'classnames'
 import { useHorizontalDragScroll } from '..'
 import { ApiService } from '@island.is/api/schema'
-import {
-  AccessCategory,
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
 import { ContentfulString } from '../../services/contentful.types'
 import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'

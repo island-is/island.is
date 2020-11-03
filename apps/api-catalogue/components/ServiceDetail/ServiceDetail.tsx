@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -10,21 +10,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './ServiceDetail.treat'
 import cn from 'classnames'
-import {
-  ApiService,
-  GetOpenApiInput,
-  Query,
-  QueryGetOpenApiArgs,
-} from '@island.is/api/schema'
-import { useLazyQuery } from 'react-apollo'
+import { ApiService, GetOpenApiInput } from '@island.is/api/schema'
+import { useQuery } from 'react-apollo'
 import { GET_OPEN_API_QUERY } from '../../screens/Queries'
 import { ContentfulString } from '../../services/contentful.types'
-import {
-  AccessCategory,
-  PricingCategory,
-  TypeCategory,
-  DataCategory,
-} from '@island.is/api-catalogue/consts'
 import { OpenApi } from '@island.is/api-catalogue/types'
 import YamlParser from 'js-yaml'
 import { OpenApiView } from '../OpenApiView'
@@ -51,18 +40,11 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
     },
   }))
   const [openApi, setOpenApi] = useState<GetOpenApiInput>(options[0].value)
-  // prettier-ignore
-  const [getOpenApi, { data, loading, error }] = useLazyQuery<Query,QueryGetOpenApiArgs>(GET_OPEN_API_QUERY,
-  {
+  const { data, loading } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
       input: openApi,
     },
   })
-
-  useEffect(() => {
-    getOpenApi()
-  }, [openApi])
-
   const onSelectChange = (option: SelectOption) => {
     setOpenApi(option.value)
   }
@@ -173,7 +155,7 @@ export const ServiceDetail = ({ service, strings }: ServiceDetailProps) => {
                 <div style={{ textAlign: 'center' }}>
                   <LoadingIcon animate color="blue400" size={50} />
                 </div>
-              ) : data?.getOpenApi.spec == '' || data?.getOpenApi == null ? (
+              ) : data?.getOpenApi.spec === '' || data?.getOpenApi == null ? (
                 'Ekki tókst að sækja skjölun'
               ) : (
                 <OpenApiView

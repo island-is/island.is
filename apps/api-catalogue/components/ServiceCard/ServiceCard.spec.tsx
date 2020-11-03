@@ -1,14 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import { ServiceCard } from '.'
-
-// import {
-//   PricingCategory,
-//   DataCategory,
-//   TypeCategory,
-//   AccessCategory,
-// } from '../../const/TestConst'
-
 import {
   AccessCategory,
   PricingCategory,

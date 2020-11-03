@@ -64,10 +64,7 @@ export class RestMetadataService {
           service.owner = spec.info.contact?.name || provider.subsystemCode // ToDo: Maybe update to use provider.memberCode to look up the name
           service.description = spec.info.description ?? ''
           service.data = union(service.data, spec.info['x-category'])
-          service.pricing = union(
-            service.pricing,
-            spec.info['x-pricing'],
-          )
+          service.pricing = union(service.pricing, spec.info['x-pricing'])
           service.xroadIdentifier.push(sorted[i])
         } else {
           logger.error(
@@ -184,7 +181,7 @@ export class RestMetadataService {
       // services registered with correct form of the OpenApi
       // Should be updated to validate that 'x-category' is
       // required and contains only valid values
-      for (let item of spec.info['x-category']) {
+      for (const item of spec.info['x-category']) {
         if (!Object.values(DataCategory).includes(item as DataCategory)) {
           logger.error(`${item} is not valid value for DataCategory`)
           return false
@@ -197,7 +194,7 @@ export class RestMetadataService {
       // services registered with correct form of the OpenApi
       // Should be updated to validate that 'x-pricing' is
       // required and contains only valid values
-      for (let item of spec.info['x-pricing']) {
+      for (const item of spec.info['x-pricing']) {
         if (!Object.values(PricingCategory).includes(item as PricingCategory)) {
           logger.error(`${item} is not valid value for PricingCategory`)
           return false
