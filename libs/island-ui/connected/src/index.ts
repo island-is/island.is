@@ -1,1 +1,1 @@
-export * from './lib/skilavottord/CompanyList/CompanyList'
+export * from './lib/skilavottord/CompanyList'

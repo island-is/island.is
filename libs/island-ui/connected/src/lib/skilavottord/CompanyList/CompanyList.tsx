@@ -4,17 +4,6 @@ import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import * as styles from './CompanyList.treat'
 
-export interface RecyclingPartner {
-  companyId: string
-  companyName: string
-  address: string
-  postnumber: string
-  city: string
-  website: string
-  phone: string
-  active: boolean
-}
-
 export const RECYCLING_PARTNERS = gql`
   query skilavottordAllActiveRecyclingPartners {
     skilavottordAllActiveRecyclingPartners {
@@ -30,7 +19,7 @@ export const RECYCLING_PARTNERS = gql`
   }
 `
 
-export const SkilavottordCompanyList = () => {
+export const CompanyList = () => {
   const { data, error, loading } = useQuery(RECYCLING_PARTNERS)
 
   if (error || (loading && !data)) {
@@ -38,11 +27,9 @@ export const SkilavottordCompanyList = () => {
   }
 
   const recyclingPartners = data?.skilavottordAllActiveRecyclingPartners || []
-  const sortedPartners = recyclingPartners
-    .slice()
-    .sort((a: RecyclingPartner, b: RecyclingPartner) => {
-      return a.city < b.city ? -1 : 1
-    })
+  const sortedPartners = recyclingPartners.slice().sort((a, b) => {
+    return a.city < b.city ? -1 : 1
+  })
 
   const createLink = (link: string) => {
     return link.indexOf('http://') === -1 ? `https://${link}` : link
@@ -50,7 +37,7 @@ export const SkilavottordCompanyList = () => {
 
   return (
     <Box>
-      {sortedPartners.map((partner: RecyclingPartner, index: number) => (
+      {sortedPartners.map((partner, index) => (
         <Box
           key={index}
           display="flex"
@@ -83,4 +70,4 @@ export const SkilavottordCompanyList = () => {
   )
 }
 
-export default SkilavottordCompanyList
+export default CompanyList
