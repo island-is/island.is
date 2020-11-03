@@ -11,23 +11,23 @@ import { Icon as IconType, Type } from '../IconRC/iconMap'
 
 type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
 type PrimaryButtonType = {
-  variant: 'primary'
-  colorScheme: keyof typeof styles.colors.primary
+  variant?: 'primary'
+  colorScheme?: keyof typeof styles.colors.primary
   circle?: boolean
 }
 type GhostButtonType = {
-  variant: 'ghost'
-  colorScheme: keyof typeof styles.colors.ghost
+  variant?: 'ghost'
+  colorScheme?: keyof typeof styles.colors.ghost
   circle?: boolean
 }
 type TextButtonType = {
-  variant: 'text'
-  colorScheme: keyof typeof styles.colors.text
+  variant?: 'text'
+  colorScheme?: keyof typeof styles.colors.text
   circle?: never
 }
 type UtilityButtonType = {
-  variant: 'utility'
-  colorScheme: keyof typeof styles.colors.utility
+  variant?: 'utility'
+  colorScheme?: keyof typeof styles.colors.utility
   circle?: never
 }
 
