@@ -13,7 +13,7 @@ import { UsersModule } from './modules/users/users.module'
       audience: '@identityserver.api',
       issuer: 'https://identity-server.dev01.devland.is', // TODO: process.env.issuer -- needs to be configured locally
       jwksUri:
-        'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
+        'http://web-identity-server/.well-known/openid-configuration/jwks',
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
