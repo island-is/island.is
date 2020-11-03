@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import { Box, Input } from '@island.is/island-ui/core'
 import { useForm, Controller } from 'react-hook-form'
+import { useLocale } from '@island.is/localization'
 
 export interface EmailFormData {
   email: string
@@ -19,6 +20,7 @@ export const EmailForm: FC<Props> = ({
   renderSubmitButton,
   onSubmit,
 }) => {
+  const { formatMessage } = useLocale()
   const { handleSubmit, control, errors, reset } = useForm()
 
   useEffect(() => {
@@ -37,18 +39,31 @@ export const EmailForm: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda er að fylla út netfang',
+              message: formatMessage({
+                id: 'sp.settings:email-required-message',
+                defaultMessage: 'Skylda er að fylla út netfang',
+              }),
             },
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Netfangið er ekki á réttu formi',
+              message: formatMessage({
+                id: 'sp.settings:email-wrong-format-message',
+                defaultMessage: 'Netfangið er ekki á réttu formi',
+              }),
             },
           }}
           defaultValue={email}
           render={({ onChange, value, name }) => (
             <Input
               name={name}
-              label="Netfang"
+              label={formatMessage({
+                id: 'global:email',
+                defaultMessage: 'Netfang',
+              })}
+              placeholder={formatMessage({
+                id: 'global:email',
+                defaultMessage: 'Netfang',
+              })}
               value={value}
               hasError={errors.email}
               errorMessage={errors.email?.message}
