@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   CheckboxField,
   FieldBaseProps,
@@ -11,6 +11,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { buildOptions } from '../utils'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -23,6 +24,11 @@ const CheckboxFormField: FC<Props> = ({
 }) => {
   const { id, name, description, options, disabled } = field
   const { formatMessage } = useLocale()
+
+  const finalOptions = useMemo(() => buildOptions(options, application), [
+    options,
+    application,
+  ])
 
   return (
     <div>
@@ -45,7 +51,7 @@ const CheckboxFormField: FC<Props> = ({
             getValueViaPath(application.answers, id, []) as string[]
           }
           error={error}
-          options={options.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
             ...(tooltip && {
