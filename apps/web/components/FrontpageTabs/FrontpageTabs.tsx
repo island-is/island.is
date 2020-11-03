@@ -16,11 +16,11 @@ import {
   Text,
   Stack,
   Box,
+  Button,
   GridContainer,
   GridRow,
   GridColumn,
   IconDeprecated as Icon,
-  Button,
 } from '@island.is/island-ui/core'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/web/i18n/I18n'
@@ -269,19 +269,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               alignItems="center"
               className={styles.tabListArrowLeft}
             >
-              <Box className={styles.zIndex1}>
-                <Button
-                  circle
-                  aria-label={t.frontpageTabsPrevious}
-                  colorScheme="light"
-                  icon="arrowBack"
-                  iconType="filled"
-                  onClick={() => goTo('prev')}
-                  size="default"
-                  type="button"
-                  variant="primary"
-                ></Button>
-              </Box>
+              <button
+                onClick={() => goTo('prev')}
+                type="button"
+                aria-label={t.frontpageTabsPrevious}
+                className={cn(styles.arrowButton, {
+                  [styles.arrowButtonDisabled]: false,
+                })}
+              >
+                <Icon color="red400" width="18" height="18" type="arrowLeft" />
+              </button>
             </Box>
             <Box
               display="flex"
@@ -290,19 +287,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               alignItems="center"
               className={styles.tabListArrowRight}
             >
-              <Box className={styles.zIndex1}>
-                <Button
-                  circle
-                  aria-label={t.frontpageTabsNext}
-                  colorScheme="light"
-                  icon="arrowForward"
-                  iconType="filled"
-                  onClick={() => goTo('next')}
-                  size="default"
-                  type="button"
-                  variant="primary"
-                ></Button>
-              </Box>
+              <button
+                onClick={() => goTo('next')}
+                type="button"
+                aria-label={t.frontpageTabsNext}
+                className={cn(styles.arrowButton, {
+                  [styles.arrowButtonDisabled]: false,
+                })}
+              >
+                <Icon color="red400" width="18" height="18" type="arrowRight" />
+              </button>
             </Box>
           </GridColumn>
 
