@@ -76,10 +76,8 @@ export const IntroductionSection: FC<Props> = ({
           <Box paddingY={2}>
             <Link href={linkUrl}>
               <Button
-                colorScheme="default"
                 icon="arrowForward"
                 iconType="filled"
-                size="default"
                 type="button"
                 variant="text"
               >

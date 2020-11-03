@@ -101,10 +101,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
         <Text paddingBottom={3}>{introduction}</Text>
         <div className={styles.readMore}>
           <Button
-            colorScheme="default"
             icon="arrowForward"
             iconType="filled"
-            size="default"
             type="button"
             variant="text"
           >

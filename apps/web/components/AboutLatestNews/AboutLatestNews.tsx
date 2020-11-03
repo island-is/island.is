@@ -128,10 +128,8 @@ const BigNewsItem = ({
       <Text variant="intro">{news.intro}</Text>
       <Link as={as} href={href}>
         <Button
-          colorScheme="default"
           icon="arrowForward"
           iconType="filled"
-          size="default"
           type="button"
           variant="text"
         >

@@ -49,10 +49,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
             <Text variant="h5" as="p" paddingBottom={2}>
               <Link href={makePath('news')}>
                 <Button
-                  colorScheme="default"
                   icon="arrowForward"
                   iconType="filled"
-                  size="default"
                   type="button"
                   variant="text"
                 >
