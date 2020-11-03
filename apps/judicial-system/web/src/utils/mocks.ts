@@ -1,4 +1,5 @@
 import {
+  CaseAppealDecision,
   CaseCustodyProvisions,
   UpdateCase,
   User,
@@ -67,10 +68,10 @@ const testCase1 = {
   rejecting: null,
   custodyEndDate: '2020-09-16T19:50:08.033Z',
   custodyRestrictions: null,
-  accusedAppealDecision: null,
-  accusedAppealAnnouncement: null,
-  prosecutorAppealDecision: null,
-  prosecutorAppealAnnouncement: null,
+  accusedAppealDecision: CaseAppealDecision.APPEAL,
+  accusedAppealAnnouncement: 'accusedAppealAnnouncement test',
+  prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+  prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
   notifications: null,
 }

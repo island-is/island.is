@@ -20,7 +20,7 @@ describe('Confirmation route', () => {
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
-            initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
+            initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_2`]}
           >
             <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
               <Confirmation />

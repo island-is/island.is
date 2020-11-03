@@ -21,7 +21,6 @@ import { MockedProvider } from '@apollo/client/testing'
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-
     const { getByTestId, getByText } = render(
       <MockedProvider
         mocks={mockCaseQueries.concat(
@@ -67,38 +66,30 @@ describe('Create detention request, step two', () => {
         '13:37',
       )
       userEvent.tab()
-      expect(
-        await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
-      ).toBeDisabled()
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
-      await userEvent.type(
+      userEvent.type(
         getByTestId('lawsBroken') as HTMLInputElement,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
       )
       userEvent.tab()
-      expect(
-        await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
-      ).toBeDisabled()
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
 
       userEvent.click(getByText('c-lið 1. mgr. 95. gr.'))
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
-      await userEvent.type(
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+      userEvent.type(
         getByTestId('caseFacts') as HTMLInputElement,
         'Lorem ipsum dolor sit amet,',
       )
       userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
-      await userEvent.type(
+      expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
+      userEvent.type(
         getByTestId('legalArguments') as HTMLInputElement,
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
       )
       userEvent.tab()
       expect(
-        await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+        getByTestId('continueButton') as HTMLButtonElement,
       ).not.toBeDisabled()
     })
   })

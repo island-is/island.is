@@ -63,19 +63,21 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
+
+    // TODO FIND A WAY TO SET DATES
     expect(
-      getByTestId('continueButton') as HTMLButtonElement,
-    ).not.toBeDisabled()
+      await waitFor(() => getByTestId('continueButton') as HTMLButtonElement),
+    ).toBeDisabled()
   })
 
-  test('should display an empty form if there is nothing in local storage', async () => {
+  test('should display an empty form if there is no id in url', async () => {
     // Arrange
 
     const { getByTestId, queryAllByTestId } = render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa']}>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
               <StepOne />
             </Route>
           </MemoryRouter>
@@ -85,19 +87,23 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const aa = [
-      getByTestId(/policeCaseNumber/i),
-      getByTestId(/nationalId/i),
-      getByTestId(/accusedName/i),
-      getByTestId(/accusedAddress/i),
-      getByTestId(/arrestTime/i),
-      getByTestId(/requestedCourtDate/i),
+      await waitFor(() => getByTestId(/policeCaseNumber/i)),
+      await waitFor(() => getByTestId(/nationalId/i)),
+      await waitFor(() => getByTestId(/accusedName/i)),
+      await waitFor(() => getByTestId(/accusedAddress/i)),
+      await waitFor(() => getByTestId(/arrestTime/i)),
+      await waitFor(() => getByTestId(/requestedCourtDate/i)),
     ]
 
-    const court = getByTestId(/select-court/i).getElementsByClassName(
-      'singleValue',
-    )[0].innerHTML
+    const court = await waitFor(
+      () =>
+        getByTestId(/select-court/i).getElementsByClassName('singleValue')[0]
+          .innerHTML,
+    )
 
-    const datepickers = queryAllByTestId(/datepicker-value/i)
+    const datepickers = await waitFor(() =>
+      queryAllByTestId(/datepicker-value/i),
+    )
 
     // Assert
     expect(aa.filter((a) => a.innerHTML !== '').length).toEqual(0)

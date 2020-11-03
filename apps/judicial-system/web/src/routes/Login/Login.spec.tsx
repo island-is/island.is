@@ -7,6 +7,7 @@ import Login from './Login'
 import { mockJudge } from '../../utils/mocks'
 import { User } from '@island.is/judicial-system/types'
 import { api } from '../../services'
+import fetchMock from 'fetch-mock'
 
 const mockJudgeUserContext = {
   isAuthenticated: () => false,
@@ -15,6 +16,8 @@ const mockJudgeUserContext = {
 }
 
 describe('Login route', () => {
+  fetchMock.mock('/api/auth/logout', 200)
+
   test('should render successfully', () => {
     // Arrange
 

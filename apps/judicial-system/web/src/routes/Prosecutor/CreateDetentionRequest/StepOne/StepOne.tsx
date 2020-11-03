@@ -193,7 +193,7 @@ export const StepOne: React.FC = () => {
       })
 
       const resCase: Case = data?.createCase
-      console.log('@!#!@#!@', resCase)
+
       if (resCase) {
         history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${resCase.id}`)
         setWorkingCase({
@@ -253,22 +253,20 @@ export const StepOne: React.FC = () => {
     }
     if (id && !workingCase && resCase) {
       getCurrentCase()
-    } else {
-      if (!workingCase) {
-        setWorkingCase({
-          id: '',
-          created: '',
-          modified: '',
-          state: CaseState.DRAFT,
-          policeCaseNumber: '',
-          accusedNationalId: '',
-          accusedName: '',
-          accusedAddress: '',
-          court: 'Héraðsdómur Reykjavíkur',
-          arrestDate: null,
-          requestedCourtDate: null,
-        })
-      }
+    } else if (!id && !workingCase) {
+      setWorkingCase({
+        id: '',
+        created: '',
+        modified: '',
+        state: CaseState.DRAFT,
+        policeCaseNumber: '',
+        accusedNationalId: '',
+        accusedName: '',
+        accusedAddress: '',
+        court: 'Héraðsdómur Reykjavíkur',
+        arrestDate: null,
+        requestedCourtDate: null,
+      })
     }
   }, [id, workingCase, setWorkingCase, setIsLoading, resCase])
 
@@ -311,7 +309,7 @@ export const StepOne: React.FC = () => {
     arrestTimeRef.current?.value,
     requestedCourtTimeRef.current?.value,
   ])
-  console.log(workingCase)
+
   return (
     <PageLayout activeSection={0} activeSubSection={0} isLoading={isLoading}>
       {workingCase ? (
