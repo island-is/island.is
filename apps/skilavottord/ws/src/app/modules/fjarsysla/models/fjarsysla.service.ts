@@ -1,4 +1,3 @@
-import { Fjarsysla } from '.'
 import { Base64 } from 'js-base64'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import { environment } from '../../../../environments'
@@ -42,7 +41,7 @@ export class FjarsyslaService {
         this.logger.info(
           `---- Finished FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
         )
-        return new Fjarsysla(true)
+        return true
       } else {
         this.logger.error(response.statusText)
         throw new Error(response.statusText)
