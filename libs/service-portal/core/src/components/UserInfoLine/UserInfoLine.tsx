@@ -56,6 +56,7 @@ export const UserInfoLine: FC<Props> = ({ label, content, tag, editLink }) => {
               display="flex"
               justifyContent={['flexStart', 'flexEnd']}
               overflow="hidden"
+              className={styles.buttonWrapper}
             >
               {editLink.external ? (
                 <a
