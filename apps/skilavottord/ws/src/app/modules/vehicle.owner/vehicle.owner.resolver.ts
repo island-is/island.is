@@ -33,13 +33,14 @@ export class VehicleOwnerResolver {
     return res
   }
 
-  //TODO test
   @Query(() => [VehicleOwnerModel])
-  async skilavottordTEST(): Promise<VehicleOwnerModel[]> {
-    const res = await this.vehicleOwnerService.findAll()
-    this.logger.debug(
-      'getAllVehicleOwners responce:' + JSON.stringify(res, null, 2),
+  async skilavottordRecyclingPartnerVehicles(
+    @Args('partnerId') partnerId: string,
+  ): Promise<VehicleOwnerModel[]> {
+    const res = await this.vehicleOwnerService.findRecyclingPartnerVehicles(
+      partnerId,
     )
+    this.logger.debug('getTEST responce:' + JSON.stringify(res, null, 2))
     return res
   }
 }
