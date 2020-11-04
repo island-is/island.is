@@ -1,4 +1,5 @@
 import { elasticTagField, sortableFields } from '../types'
+import { tagQuery } from './tagQuery'
 
 interface MetaPropsBase {
   types?: string[]
@@ -21,28 +22,6 @@ interface RequiredTags extends MetaPropsBase {
 }
 
 export type DocumentByMetaDataInput = RequiredTypes | RequiredTags
-
-export const tagQuery = (tag) => ({
-  nested: {
-    path: 'tags',
-    query: {
-      bool: {
-        must: [
-          {
-            term: {
-              'tags.key': tag.key,
-            },
-          },
-          {
-            term: {
-              'tags.type': tag.type,
-            },
-          },
-        ],
-      },
-    },
-  },
-})
 
 // TODO: Make inclusivity optional
 // TODO: Scope tags to single document

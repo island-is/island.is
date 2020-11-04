@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args } from '@nestjs/graphql'
-import { VehicleInformation, DeRegisterVehicle } from './models'
+import { VehicleInformation } from './models'
 import { SamgongustofaService } from './models/samgongustofa.service'
 
 @Resolver(() => VehicleInformation)
@@ -11,16 +11,17 @@ export class SamgongustofaResolver {
   ) {}
 
   @Query(() => [VehicleInformation])
-  async SkilavottordVehicleInformation(
+  async skilavottordVehicles(
     @Args('nationalId') nid: string,
   ): Promise<Array<VehicleInformation>> {
     return this.samgongustofaService.getVehicleInformation(nid)
   }
 
-  @Query(() => DeRegisterVehicle)
-  async SkilavottordDeRegisterVehicle(
+  @Query(() => Boolean)
+  async skilavottordDeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
-  ): Promise<DeRegisterVehicle> {
-    return this.samgongustofaService.deRegisterVehicle(nid)
+    @Args('recyclingPartner') station: string,
+  ): Promise<boolean> {
+    return this.samgongustofaService.deRegisterVehicle(nid, station)
   }
 }

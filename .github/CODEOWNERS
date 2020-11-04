@@ -18,6 +18,8 @@
 
 /*/air-discount-scheme/                                   @island-is/vice-versa
 /*/gjafakort/                                             @island-is/vice-versa
+/apps/services/driving-license/                           @island-is/vice-versa
+/libs/api/domains/driving-license/                        @island-is/vice-versa
 
 /apps/application-system/                                 @island-is/aranja
 /libs/api/domains/application/                            @island-is/aranja
@@ -31,6 +33,8 @@
 
 /*/service-portal*/                                       @island-is/sendiradid
 /libs/api/domains/documents/                              @island-is/sendiradid
+/libs/api/domains/national-registry/                      @island-is/sendiradid
+/apps/services/user-profile/                              @island-is/sendiradid
 
 /apps/services/search-indexer/                            @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/content-search/                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
@@ -44,6 +48,8 @@
 /libs/infra*/                                             @island-is/devops
 /libs/logging/                                            @island-is/devops
 /scripts/                                                 @island-is/devops
+/scripts/postinstall.js                                   @island-is/devops @jeremybarbet
+/scripts/schemas.js                                       @island-is/devops @jeremybarbet
 
 /apps/api-catalogue/                                      @island-is/advania
 /libs/api/domains/api-catalogue/                          @island-is/advania
@@ -51,3 +57,6 @@
 
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
 /apps/services/xroad-collector                            @island-is/advania
+
+/apps/skilavottord/                                       @island-is/deloitte
+/libs/skilavottord/                                       @island-is/deloitte

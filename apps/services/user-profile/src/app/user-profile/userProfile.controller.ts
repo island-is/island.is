@@ -125,7 +125,7 @@ export class UserProfileController {
       }
     }
 
-    if (userProfileToUpdate.email) {
+    if (userProfileToUpdate.email !== profile.email) {
       await this.verificationService.createEmailVerification(
         nationalId,
         userProfileToUpdate.email,

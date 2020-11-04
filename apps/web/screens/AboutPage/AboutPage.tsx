@@ -178,7 +178,7 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
           <DrawerMenu
             categories={[
               {
-                title: 'Efnisyfirlit',
+                title: page.title,
                 items: combinedMobileNavigation,
               },
             ]}

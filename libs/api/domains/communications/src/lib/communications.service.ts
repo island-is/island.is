@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { Logger, logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
@@ -33,13 +33,13 @@ export class CommunicationsService {
   }
 
   async sendEmail(input: SendEmailInput): Promise<boolean> {
-    logger.info('Sending email', { type: input.type, from: input?.email ?? '' })
+    this.logger.info('Sending email', { type: input.type })
     try {
       const emailOptions = this.getEmailTemplate(input)
       await this.emailService.sendEmail(emailOptions)
       return true
     } catch (error) {
-      logger.error('Failed to send email', { message: error.message })
+      this.logger.error('Failed to send email', { message: error.message })
       // we dont want the client to see these errors since they might contain sensitive data
       throw new Error('Failed to send message')
     }

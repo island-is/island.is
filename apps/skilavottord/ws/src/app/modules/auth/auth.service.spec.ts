@@ -27,14 +27,14 @@ describe('AuthService', () => {
 
       // Assert
       //expect(role).toBe('developer')
-      expect(role).toBe('user')
+      expect(role).toBe('citizen')
     })
   })
 
   describe('checkRole', () => {
     it('should return true for valid permission', () => {
       // Arrange & Act
-      const hasPermission = authService.checkRole(user, 'admin')
+      const hasPermission = authService.checkRole(user, 'citizen')
 
       // Assert
       //expect(hasPermission).toBeTruthy()

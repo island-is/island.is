@@ -21,7 +21,7 @@ export type elasticTagField = {
 
 export interface SyncOptions {
   locale: keyof typeof SearchIndexes
-  fullSync: boolean
+  syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
 }
 
@@ -50,3 +50,27 @@ export interface MappedData {
 }
 
 export type dateResolution = 'year' | 'month' | 'week' | 'day'
+
+export interface TagAggregationResponse {
+  group: {
+    filtered: {
+      doc_count: number
+      count: {
+        buckets: [
+          {
+            key: string
+            doc_count: number
+            value: {
+              buckets: [
+                {
+                  key: string
+                  doc_count: number
+                },
+              ]
+            }
+          },
+        ]
+      }
+    }
+  }
+}

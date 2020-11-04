@@ -1,5 +1,5 @@
 export enum TypeCategory {
-  REST = 'REST',
-  SOAP = 'SOAP',
-  GRAPHQL = 'GraphQL',
+  REST = 'rest',
+  SOAP = 'soap',
+  GRAPHQL = 'graphql',
 }

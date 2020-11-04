@@ -3,6 +3,7 @@ export default {
   email: {
     fromEmail: process.env.EMAIL_FROM,
     fromName: process.env.EMAIL_FROM_NAME,
+    servicePortalBaseUrl: process.env.SERVICE_PORTAL_BASE_URL,
   },
   smsOptions: {
     url: process.env.NOVA_URL,
@@ -14,5 +15,8 @@ export default {
     options: {
       region: process.env.EMAIL_REGION,
     },
+  },
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
   },
 }

@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class VehicleInformation {
@@ -40,14 +40,4 @@ export class VehicleInformation {
 
   @Field()
   status: string
-}
-
-@ObjectType()
-export class DeRegisterVehicle {
-  constructor(status: boolean) {
-    this.status = status
-  }
-
-  @Field()
-  status: boolean
 }

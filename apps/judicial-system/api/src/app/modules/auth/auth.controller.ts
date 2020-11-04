@@ -93,7 +93,7 @@ export class AuthController {
       this.logger.error('Could not verify user authenticity', {
         extra: {
           authId,
-          userAuthId: user.authId,
+          userAuthId: user?.authId,
         },
       })
       return res.redirect('/?error=true')

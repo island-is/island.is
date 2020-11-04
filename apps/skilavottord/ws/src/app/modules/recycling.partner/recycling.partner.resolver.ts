@@ -12,17 +12,38 @@ export class RecyclingPartnerResolver {
   ) {}
 
   @Query(() => [RecyclingPartnerModel])
-  async getAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+  async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return await this.recyclingPartnerService.findAll()
   }
 
   @Query(() => [RecyclingPartnerModel])
-  async getAllActiveRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
+  async skilavottordAllActiveRecyclingPartners(): Promise<
+    RecyclingPartnerModel[]
+  > {
     return await this.recyclingPartnerService.findActive()
   }
 
+  //TODO in progress
+  @Query(() => String)
+  async RRTEST(@Args('partnerId') partnerId: string) {
+    const res = await this.recyclingPartnerService.findRecyclingPartnerVehicles(
+      partnerId,
+    )
+    return 'TEST'
+  }
+
+  //TODO in progress
+  @Query(() => [RecyclingPartnerModel])
+  async skilavottordRecyclingPartnerVehicles(
+    @Args('partnerId') partnerId: string,
+  ) {
+    return await this.recyclingPartnerService.findRecyclingPartnerVehicles(
+      partnerId,
+    )
+  }
+
   @Mutation((returns) => Boolean)
-  async setRecyclingPartner(
+  async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,
     @Args('companyName') companyName: string,
     @Args('address') address: string,
@@ -44,5 +65,33 @@ export class RecyclingPartnerResolver {
     logger.info('create new recyclingPartner...' + JSON.stringify(rp, null, 2))
     await this.recyclingPartnerService.createRecyclingPartner(rp)
     return true
+  }
+
+  @Mutation((returns) => String)
+  async skilavottordDeactivateRecycllingPartner(
+    @Args('companyId') nationalId: string,
+  ) {
+    logger.info('deactivate recycling-partner:' + nationalId)
+    RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
+      (rp) => {
+        rp.active = false
+        return rp.save()
+      },
+    )
+    return nationalId
+  }
+
+  @Mutation((returns) => String)
+  async skilavottordActivateRecycllingPartner(
+    @Args('companyId') nationalId: string,
+  ) {
+    logger.info('activate recycling-partner:' + nationalId)
+    RecyclingPartnerModel.findOne({ where: { companyId: nationalId } }).then(
+      (rp) => {
+        rp.active = true
+        return rp.save()
+      },
+    )
+    return nationalId
   }
 }

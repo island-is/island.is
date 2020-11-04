@@ -10,11 +10,11 @@ export class FjarsyslaResolver {
     private fjarsyslaService: FjarsyslaService,
   ) {}
 
-  @Query(() => Fjarsysla)
-  async SkilavottordFjarsysluRest(
+  @Query(() => Boolean)
+  async skilavottordFjarsyslaSkilagjald(
     @Args('nationalId') nid: string,
-    @Args('permno') permno: string,
-  ): Promise<Fjarsysla> {
+    @Args('vehiclePermno') permno: string,
+  ): Promise<boolean> {
     return this.fjarsyslaService.getFjarsysluRest(nid, permno)
   }
 }

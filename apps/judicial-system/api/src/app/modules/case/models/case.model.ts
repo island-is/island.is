@@ -1,309 +1,134 @@
-import {
-  BelongsTo,
-  Column,
-  CreatedAt,
-  DataType,
-  ForeignKey,
-  HasMany,
-  Model,
-  Table,
-  UpdatedAt,
-} from 'sequelize-typescript'
-
-import { ApiProperty } from '@nestjs/swagger'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import {
-  CaseState,
-  CaseCustodyProvisions,
+  Case as TCase,
   CaseAppealDecision,
+  CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseState,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
-import { Notification } from './notification.model'
 
-@Table({
-  tableName: 'case',
-  timestamps: true,
-})
-export class Case extends Model<Case> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
+@ObjectType()
+export class Case implements TCase {
+  @Field(() => ID)
+  readonly id: string
 
-  @CreatedAt
-  @ApiProperty()
-  created: Date
+  @Field()
+  readonly created: string
 
-  @UpdatedAt
-  @ApiProperty()
-  modified: Date
+  @Field()
+  readonly modified: string
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(CaseState),
-    defaultValue: CaseState.DRAFT,
-  })
-  @ApiProperty({ enum: CaseState })
-  state: CaseState
+  @Field(() => String)
+  readonly state: CaseState
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  policeCaseNumber: string
+  @Field()
+  readonly policeCaseNumber: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  accusedNationalId: string
+  @Field()
+  readonly accusedNationalId: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedName: string
+  @Field({ nullable: true })
+  readonly accusedName?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedAddress: string
+  @Field({ nullable: true })
+  readonly accusedAddress?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  court: string
+  @Field({ nullable: true })
+  readonly court?: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  arrestDate: Date
+  @Field({ nullable: true })
+  readonly arrestDate?: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  requestedCourtDate: Date
+  @Field({ nullable: true })
+  readonly requestedCourtDate?: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  requestedCustodyEndDate: Date
+  @Field({ nullable: true })
+  readonly requestedCustodyEndDate?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Lagaákvæði sem brot varða við
-  lawsBroken: string
+  @Field({ nullable: true })
+  readonly lawsBroken?: string
 
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(CaseCustodyProvisions),
-  })
-  @ApiProperty({ enum: CaseCustodyProvisions, isArray: true })
-  // Lagaákvæði sem krafan byggir á
-  custodyProvisions: CaseCustodyProvisions[]
+  @Field(() => [String], { nullable: true })
+  readonly custodyProvisions?: CaseCustodyProvisions[]
 
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(CaseCustodyRestrictions),
-  })
-  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  // Takmarkanir á gæslu
-  requestedCustodyRestrictions: CaseCustodyRestrictions[]
+  @Field(() => [String], { nullable: true })
+  readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Málsatvik rakin
-  caseFacts: string
+  @Field({ nullable: true })
+  readonly caseFacts?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Lagarök
-  legalArguments: string
+  @Field({ nullable: true })
+  readonly witnessAccounts?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Athugasemdir til dómara
-  comments: string
+  @Field({ nullable: true })
+  readonly investigationProgress?: string
 
-  @ForeignKey(() => User)
-  @Column({
-    type: DataType.UUID,
-    allowNull: true,
-  })
-  @ApiProperty()
-  prosecutorId: string
+  @Field({ nullable: true })
+  readonly legalArguments?: string
 
-  @BelongsTo(() => User, 'prosecutorId')
-  @ApiProperty({ type: User })
-  prosecutor: User
+  @Field({ nullable: true })
+  readonly comments?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Málsnúmer héraðsdóms
-  courtCaseNumber: string
+  // @Field({ nullable: true })
+  // readonly prosecutorId?: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  courtStartTime: Date
+  @Field(() => User, { nullable: true })
+  readonly prosecutor?: User
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  courtEndTime: Date
+  @Field({ nullable: true })
+  readonly courtCaseNumber?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Viðstaddir og hlutverk þeirra
-  courtAttendees: string
+  @Field({ nullable: true })
+  readonly courtStartTime?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Krafa lögreglu
-  policeDemands: string
+  @Field({ nullable: true })
+  readonly courtEndTime?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Afstaða kærða
-  accusedPlea: string
+  @Field({ nullable: true })
+  readonly courtAttendees?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Málflutningsræður
-  litigationPresentations: string
+  @Field({ nullable: true })
+  readonly policeDemands?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Niðurstaða úrskurðar
-  ruling: string
+  @Field({ nullable: true })
+  readonly accusedPlea?: string
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Hafna kröfu
-  rejecting: boolean
+  @Field({ nullable: true })
+  readonly litigationPresentations?: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  custodyEndDate: Date
+  @Field({ nullable: true })
+  readonly ruling?: string
 
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(CaseCustodyRestrictions),
-  })
-  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  // Takmarkanir á gæslu
-  custodyRestrictions: CaseCustodyRestrictions[]
+  @Field({ nullable: true })
+  readonly rejecting?: boolean
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseAppealDecision),
-  })
-  @ApiProperty({ enum: CaseAppealDecision })
-  // Ákvörðun um kæru kærða
-  accusedAppealDecision: CaseAppealDecision
+  @Field({ nullable: true })
+  readonly custodyEndDate?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Yfirlýsing um kæru
-  accusedAppealAnnouncement: string
+  @Field(() => [String], { nullable: true })
+  readonly custodyRestrictions?: CaseCustodyRestrictions[]
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseAppealDecision),
-  })
-  @ApiProperty({ enum: CaseAppealDecision })
-  // Ákvörðun um kæru sækjanda
-  prosecutorAppealDecision: CaseAppealDecision
+  @Field(() => String, { nullable: true })
+  readonly accusedAppealDecision?: CaseAppealDecision
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  // Yfirlýsing um kæru
-  prosecutorAppealAnnouncement: string
+  @Field({ nullable: true })
+  readonly accusedAppealAnnouncement?: string
 
-  @ForeignKey(() => User)
-  @Column({
-    type: DataType.UUID,
-    allowNull: true,
-  })
-  @ApiProperty()
-  judgeId: string
+  @Field(() => String, { nullable: true })
+  readonly prosecutorAppealDecision?: CaseAppealDecision
 
-  @BelongsTo(() => User, 'judgeId')
-  @ApiProperty({ type: User })
-  judge: User
+  @Field({ nullable: true })
+  readonly prosecutorAppealAnnouncement?: string
 
-  @HasMany(() => Notification)
-  @ApiProperty({ type: Notification, isArray: true })
-  notifications: Notification[]
+  // @Field({ nullable: true })
+  // readonly judgeId?: string
+
+  @Field(() => User, { nullable: true })
+  readonly judge?: User
+
+  // @Field(() => Notification[], { nullable: true })
+  // readonly notifications?: Notification[]
 }
