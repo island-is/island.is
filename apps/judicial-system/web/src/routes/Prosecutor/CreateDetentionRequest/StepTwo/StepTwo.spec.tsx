@@ -111,7 +111,7 @@ describe('Create detention request, step two', () => {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
     ).not.toBeDisabled()
-  })
+  }, 10000)
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange

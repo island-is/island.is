@@ -210,9 +210,13 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(
-      await waitFor(() => screen.queryByRole('table')),
-    ).not.toBeInTheDocument()
-    expect(screen.getByTestId('detention-requests-error')).toBeInTheDocument()
+      await waitFor(() =>
+        screen.getByText(
+          'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
+        ),
+      ),
+    ).toBeInTheDocument()
   })
 })

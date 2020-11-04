@@ -16,6 +16,7 @@ import {
   TagVariant,
   Box,
 } from '@island.is/island-ui/core'
+import Loading from '../../shared-components/Loading/Loading'
 import { Case, CaseState, User } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
@@ -42,7 +43,6 @@ export const CasesQuery = gql`
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const { user } = useContext(userContext)
 
   const isJudge = user?.role === UserRole.JUDGE
@@ -51,12 +51,15 @@ export const DetentionRequests: React.FC = () => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
   }, [])
 
-  const { data } = useQuery(CasesQuery, { fetchPolicy: 'no-cache' })
+  const { data, error, loading } = useQuery(CasesQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
   const resCases = data?.cases
 
   useEffect(() => {
-    async function getCases(user: User) {
-      if (resCases && isJudge) {
+    if (resCases && !cases) {
+      if (isJudge) {
         const judgeCases = resCases.filter((c: Case) => {
           // Judges should see all cases except drafts
           return c.state !== CaseState.DRAFT
@@ -66,14 +69,8 @@ export const DetentionRequests: React.FC = () => {
       } else {
         setCases(resCases)
       }
-
-      setIsLoading(false)
     }
-
-    if (user?.role) {
-      getCases(user)
-    }
-  }, [user, isJudge, resCases, setCases])
+  }, [cases, isJudge, resCases, setCases])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
@@ -107,7 +104,7 @@ export const DetentionRequests: React.FC = () => {
           )}
         </div>
       )}
-      {isLoading ? null : cases ? (
+      {cases ? (
         <table
           className={styles.detentionRequestsTable}
           data-testid="detention-requests-table"
@@ -153,39 +150,39 @@ export const DetentionRequests: React.FC = () => {
                     : null}
                 </td>
                 <td>
-                  <userContext.Consumer>
-                    {(user) => (
-                      <Link
-                        to={
-                          user.user.role === UserRole.JUDGE
-                            ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
-                            : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
-                        }
-                        style={{ textDecoration: 'none' }}
-                      >
-                        <Button icon="arrowRight" variant="text">
-                          Opna kröfu
-                        </Button>
-                      </Link>
-                    )}
-                  </userContext.Consumer>
+                  <Link
+                    to={
+                      isJudge
+                        ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
+                        : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
+                    }
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <Button icon="arrowRight" variant="text">
+                      Opna kröfu
+                    </Button>
+                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      ) : (
+      ) : error ? (
         <div
           className={styles.detentionRequestsError}
           data-testid="detention-requests-error"
         >
           <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar"
+            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
             type="error"
           />
         </div>
-      )}
+      ) : loading ? (
+        <Box className={styles.detentionRequestsTable}>
+          <Loading />
+        </Box>
+      ) : null}
     </div>
   )
 }
