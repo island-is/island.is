@@ -21,7 +21,7 @@ export type elasticTagField = {
 
 export interface SyncOptions {
   locale: keyof typeof SearchIndexes
-  fullSync: boolean
+  syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
 }
 
