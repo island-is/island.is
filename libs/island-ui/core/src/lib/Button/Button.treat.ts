@@ -329,6 +329,11 @@ export const colors = {
       theme.color.dark100,
       theme.color.dark200,
     ),
+    light: ghostColors(
+      theme.color.blue400,
+      theme.color.blueberry400,
+      theme.color.blue300,
+    ),
   }),
   text: styleMap({
     default: textColors(
@@ -345,6 +350,11 @@ export const colors = {
       theme.color.white,
       theme.color.dark100,
       theme.color.dark200,
+    ),
+    light: textColors(
+      theme.color.blue400,
+      theme.color.blueberry400,
+      theme.color.blue300,
     ),
   }),
   utility: styleMap({
@@ -369,6 +379,14 @@ export const colors = {
       theme.color.white,
       theme.color.white,
       theme.color.white,
+      theme.color.dark200,
+      theme.color.blue100,
+    ),
+    light: utilityColors(
+      theme.color.dark400,
+      theme.color.blue200,
+      theme.color.dark400,
+      theme.color.blue400,
       theme.color.dark200,
       theme.color.blue100,
     ),

@@ -69,18 +69,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     },
     ref,
   ) => {
-    const getVariantColorScheme = (
-      variantProp: ButtonTypes['variant'],
-      colorScheme: ButtonTypes['colorScheme'],
-    ) => {
-      const variant = variantProp as keyof typeof styles.colors
-      const color = styles.colors[variant]
-      const scheme = colorScheme as keyof typeof color
-      if (typeof color[scheme] !== undefined) {
-        return color[scheme]
-      }
-      return ''
-    }
     return (
       <Box
         component={ReaButton}
@@ -89,7 +77,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         type={type}
         className={cn(
           styles.variants[variant],
-          getVariantColorScheme(variant, colorScheme),
+          styles.colors[variant][colorScheme],
           {
             [styles.size[size]]: variant !== 'utility' && !circle,
             [styles.fluid]: fluid,
