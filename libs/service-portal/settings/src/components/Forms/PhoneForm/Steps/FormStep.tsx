@@ -39,26 +39,44 @@ export const FormStep: FC<Props> = ({
           rules={{
             required: {
               value: true,
-              message: 'Skylda er að fylla út símanúmer',
+              message: formatMessage({
+                id: 'sp.settings:tel-required-msg',
+                defaultMessage: 'Skylda er að fylla út símanúmer',
+              }),
             },
             minLength: {
               value: 7,
-              message: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+              message: formatMessage({
+                id: 'sp.settings:tel-required-length-msg',
+                defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+              }),
             },
             maxLength: {
               value: 7,
-              message: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+              message: formatMessage({
+                id: 'sp.settings:tel-required-length-msg',
+                defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+              }),
             },
             pattern: {
               value: /^\d+$/,
-              message: 'Eingöngu tölustafir eru leyfðir',
+              message: formatMessage({
+                id: 'sp.settings:only-numbers-allowed',
+                defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+              }),
             },
           }}
           defaultValue={tel}
           render={({ onChange, value, name }) => (
             <Input
-              label="Símanúmer"
-              placeholder="Símanúmer"
+              label={formatMessage({
+                id: 'global:telephone',
+                defaultMessage: 'Símanúmer',
+              })}
+              placeholder={formatMessage({
+                id: 'global:telephone',
+                defaultMessage: 'Símanúmer',
+              })}
               name={name}
               value={value}
               hasError={errors.tel}
