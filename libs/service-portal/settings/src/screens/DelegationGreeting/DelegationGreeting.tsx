@@ -27,7 +27,7 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
               defaultMessage: 'Mín réttindi',
             })}
           </Text>
-          <Tag variant="blue">
+          <Tag variant="mint">
             {formatMessage({
               id: 'service.portal:in-progress',
               defaultMessage: 'Í vinnslu',
