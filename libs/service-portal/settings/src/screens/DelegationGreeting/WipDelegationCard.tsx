@@ -1,6 +1,5 @@
 import { Box, Stack, Columns, Column, Tag } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import * as styles from './wipDeligation.treat'
 
 interface Props {
   label: string
@@ -19,7 +18,7 @@ export const WipDelegationCard: FC<Props> = ({ label }) => {
       <Stack space={1}>
         <Columns space="gutter" alignY="center">
           <Column width="2/12">
-            <Box className={styles.WipBoxSmall} />
+            <Box background="blue100" borderRadius="standard" paddingTop={2} />
           </Column>
           <Column>
             <Box display="flex" justifyContent="flexEnd">
@@ -29,7 +28,7 @@ export const WipDelegationCard: FC<Props> = ({ label }) => {
         </Columns>
         <Columns space={1}>
           <Column width="6/12">
-            <Box className={styles.WipBoxLarge} />
+            <Box background="blue100" borderRadius="standard" paddingTop={3} />
           </Column>
         </Columns>
       </Stack>
