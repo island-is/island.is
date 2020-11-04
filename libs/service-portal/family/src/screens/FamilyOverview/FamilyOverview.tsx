@@ -1,3 +1,4 @@
+import { FamilyMember } from '@island.is/api/schema'
 import {
   Box,
   SkeletonLoader,
@@ -20,6 +21,13 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     loading,
     error,
   } = useNationalRegistryFamilyInfo()
+
+  // TODO: This is a temp solution while there is a mismatch between identity servers
+  const userInfoNationalId =
+    userInfo.profile.nationalId || userInfo.profile.natreg
+
+  const familyMemberList: FamilyMember[] =
+    natRegFamilyInfo?.filter((x) => x.nationalId !== userInfoNationalId) || []
 
   return (
     <>
@@ -47,7 +55,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           [...Array(3)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
           ))}
-        {natRegFamilyInfo?.map((familyMember, index) => (
+        {familyMemberList?.map((familyMember, index) => (
           <FamilyMemberCard
             key={index}
             title={familyMember.fullName}

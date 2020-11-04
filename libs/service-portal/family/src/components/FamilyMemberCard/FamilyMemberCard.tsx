@@ -46,7 +46,7 @@ export const FamilyMemberCard: FC<Props> = ({
           </Text>
         </Box>
         <div>
-          <Text variant="h3" color="blue400">
+          <Text variant="h3" color="dark400">
             {title}
           </Text>
           {nationalId && (
