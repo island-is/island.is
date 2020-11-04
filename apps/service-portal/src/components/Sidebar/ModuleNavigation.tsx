@@ -43,7 +43,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
       {Array.isArray(nav.children) && nav.children.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <div>
-            <Box className={styles.subnav} paddingLeft={2} marginTop={2}>
+            <Box className={styles.subnav} marginTop={2}>
               <Stack space={1}>
                 {nav.children.map((child, index) => (
                   <SubNavItem

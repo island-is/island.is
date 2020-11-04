@@ -7,12 +7,12 @@ import * as styles from './BoxChart.treat'
 
 type boxStyle = 'blue' | 'green' | 'gray' | 'greenWithLines' | 'grayWithLines'
 
-interface BoxChartKey {
+export interface BoxChartKey {
   label: string
   bulletStyle: boxStyle
 }
 
-interface BoxChartProps {
+export interface BoxChartProps {
   titleLabel?: string
   boxes: number
   calculateBoxStyle: (index: number) => boxStyle
@@ -90,6 +90,7 @@ const BoxChart = ({
                 flexDirection="row"
                 alignItems="center"
                 justifyContent="flexStart"
+                key={`boxChartBullet-${index}`}
               >
                 <Box
                   marginRight={1}
