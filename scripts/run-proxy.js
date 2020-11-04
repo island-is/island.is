@@ -32,6 +32,10 @@ const args = argv
     description: 'Port number the local proxy is listening on',
     default: 8080,
   })
+  .option('cluster', {
+    description: 'Name of Kubernetes cluster',
+    default: 'dev-cluster01',
+  })
   .demandOption(
     'namespace',
     'Name of the Kubernetes namespace the service is part of',
@@ -43,11 +47,11 @@ checkPresenceAWSAccessVars()
 
 console.log(`Preparing docker image for the local proxy - \uD83D\uDE48`)
 execSync(
-  `docker build -f ${__dirname}/Dockerfile.proxy -t es-proxy ${__dirname}`,
+  `docker build -f ${__dirname}/Dockerfile.proxy -t ${args.service} ${__dirname}`,
 )
 
 console.log(`Now running the proxy - \uD83D\uDE31`)
 execSync(
-  `docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 es-proxy`,
+  `docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${args.service}`,
   { stdio: 'inherit' },
 )
