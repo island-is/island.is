@@ -5,14 +5,13 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Icon,
   Inline,
   Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { mockDelegationList } from './mockDelegationList'
-import * as styles from './DelegationGreeting.treat'
+import WipDelegationCard from './WipDelegationCard'
 
 export const DelegationGreeting: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
@@ -53,47 +52,13 @@ export const DelegationGreeting: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={2}>
         {mockDelegationList.map((item) => (
-          <Box
-            position="relative"
-            border="standard"
-            borderRadius="large"
+          <WipDelegationCard
             key={item.id}
-          >
-            <Box position="absolute" className={styles.wipTag}>
-              <Tag variant="blue">Væntanlegt</Tag>
-            </Box>
-            <div className={styles.cardBlurWrapper}>
-              <Box paddingY={3} paddingX={4}>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  marginBottom={1}
-                >
-                  <Text variant="eyebrow" color="purple400">
-                    {item.provider}
-                  </Text>
-                </Box>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                >
-                  <Text variant="h4" color="blue400">
-                    {item.title}
-                  </Text>
-                  <Box background="blue100" borderRadius="circle" padding={1}>
-                    <Icon
-                      type="outline"
-                      icon="add"
-                      size="medium"
-                      color="blue400"
-                    />
-                  </Box>
-                </Box>
-              </Box>
-            </div>
-          </Box>
+            label={formatMessage({
+              id: 'service.portal:in-progress',
+              defaultMessage: 'Í vinnslu',
+            })}
+          />
         ))}
       </Stack>
     </>
