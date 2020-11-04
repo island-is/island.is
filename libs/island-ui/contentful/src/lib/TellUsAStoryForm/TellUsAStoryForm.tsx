@@ -47,7 +47,7 @@ export interface TellUsAStoryFormState {
 
 type FormState = 'edit' | 'submitting' | 'error' | 'success'
 type DocumentType = {
-  typename: string
+  __typename: string
   id: string
   document: Document | { [key: string]: Document }
 }
