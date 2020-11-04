@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-
 import {
   Text,
   GridContainer,
@@ -11,24 +10,27 @@ import {
   Checkbox,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system-web/src/types'
 import {
+  Case,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   updateState,
   autoSave,
   isNextDisabled,
+  createCaseFromDraft,
 } from '../../../../utils/stepHelper'
 import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatISO, isValid, parseISO } from 'date-fns'
-import { isNull } from 'lodash'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
+import formatISO from 'date-fns/formatISO'
+import isNull from 'lodash/isNull'
 import { FormFooter } from '../../../../shared-components/FormFooter'
-import * as api from '../../../../api'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
@@ -38,6 +40,8 @@ import {
 import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
+import { useMutation } from '@apollo/client'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/graphql'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -155,50 +159,7 @@ export const StepTwo: React.FC = () => {
     const caseDraft = window.localStorage.getItem('workingCase')
 
     if (caseDraft !== 'undefined' && !workingCase) {
-      const caseDraftJSON = JSON.parse(caseDraft || '{}')
-
-      setWorkingCase({
-        id: caseDraftJSON.id ?? '',
-        created: caseDraftJSON.created ?? '',
-        modified: caseDraftJSON.modified ?? '',
-        state: caseDraftJSON.state ?? '',
-        policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
-        accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
-        accusedName: caseDraftJSON.accusedName ?? '',
-        accusedAddress: caseDraftJSON.accusedAddress ?? '',
-        court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
-        arrestDate: caseDraftJSON.arrestDate ?? null,
-        requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
-        requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
-        lawsBroken: caseDraftJSON.lawsBroken ?? '',
-        custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
-        requestedCustodyRestrictions:
-          caseDraftJSON.requestedCustodyRestrictions ?? [],
-        caseFacts: caseDraftJSON.caseFacts ?? '',
-        legalArguments: caseDraftJSON.legalArguments ?? '',
-        comments: caseDraftJSON.comments ?? '',
-        notifications: caseDraftJSON.Notification ?? [],
-        courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
-        courtDate: caseDraftJSON.courtDate ?? '',
-        courtRoom: caseDraftJSON.courtRoom ?? '',
-        defenderName: caseDraftJSON.defenderName ?? '',
-        defenderEmail: caseDraftJSON.defenderEmail ?? '',
-        courtStartTime: caseDraftJSON.courtStartTime ?? '',
-        courtEndTime: caseDraftJSON.courtEndTime ?? '',
-        courtAttendees: caseDraftJSON.courtAttendees ?? '',
-        policeDemands: caseDraftJSON.policeDemands ?? '',
-        accusedPlea: caseDraftJSON.accusedPlea ?? '',
-        litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
-        ruling: caseDraftJSON.ruling ?? '',
-        custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
-        custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
-        accusedAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorAppealDecision: caseDraftJSON.AppealDecision ?? '',
-        prosecutorId: caseDraftJSON.prosecutorId ?? null,
-        prosecutor: caseDraftJSON.prosecutor ?? null,
-        judgeId: caseDraftJSON.judgeId ?? null,
-        judge: caseDraftJSON.judge ?? null,
-      })
+      setWorkingCase(createCaseFromDraft(caseDraft))
     }
   }, [workingCase, setWorkingCase])
 
@@ -221,6 +182,23 @@ export const StepTwo: React.FC = () => {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, setIsStepIllegal, requestedCustodyEndTimeRef.current?.value])
+
+  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+
+  const updateCase = async (id: string, updateCase: UpdateCase) => {
+    const { data } = await updateCaseMutation({
+      variables: { input: { id, ...updateCase } },
+    })
+
+    const resCase = data?.updateCase
+
+    if (resCase) {
+      // Do smoething with the result. In particular, we want th modified timestamp passed between
+      // the client and the backend so that we can handle multiple simultanious updates.
+    }
+
+    return resCase
+  }
 
   return (
     workingCase && (
@@ -265,7 +243,7 @@ export const StepTwo: React.FC = () => {
                     setWorkingCase,
                   )
 
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     JSON.parse(`{
                           "requestedCustodyEndDate": "${formattedDate}",
@@ -331,7 +309,7 @@ export const StepTwo: React.FC = () => {
                   })
 
                   if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                    await api.saveCase(
+                    await updateCase(
                       workingCase.id,
                       JSON.parse(`{
                             "requestedCustodyEndDate": "${requestedCustodyEndDateMinutes}",
@@ -375,7 +353,7 @@ export const StepTwo: React.FC = () => {
 
               const validateField = validate(evt.target.value, 'empty')
               if (validateField.isValid) {
-                api.saveCase(
+                updateCase(
                   workingCase.id,
                   parseString('lawsBroken', evt.target.value),
                 )
@@ -448,7 +426,7 @@ export const StepTwo: React.FC = () => {
                           setWorkingCase(copyOfState)
 
                           // Save case
-                          api.saveCase(
+                          updateCase(
                             workingCase.id,
                             parseArray(
                               'custodyProvisions',
@@ -545,7 +523,7 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase(copyOfState)
 
                         // Save case
-                        await api.saveCase(
+                        await updateCase(
                           workingCase.id,
                           parseArray(
                             'requestedCustodyRestrictions',
@@ -553,7 +531,7 @@ export const StepTwo: React.FC = () => {
                           ),
                         )
                         // TODO: COMBINE IN A SINGLE API CALL
-                        await api.saveCase(
+                        await updateCase(
                           workingCase.id,
                           parseArray(
                             'custodyRestrictions',
@@ -609,7 +587,7 @@ export const StepTwo: React.FC = () => {
 
                 const validateField = validate(evt.target.value, 'empty')
                 if (validateField.isValid) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('caseFacts', evt.target.value),
                   )
@@ -642,7 +620,7 @@ export const StepTwo: React.FC = () => {
 
                 const validateField = validate(evt.target.value, 'empty')
                 if (validateField.isValid) {
-                  api.saveCase(
+                  updateCase(
                     workingCase.id,
                     parseString('legalArguments', evt.target.value),
                   )
@@ -679,6 +657,7 @@ export const StepTwo: React.FC = () => {
                     'comments',
                     evt.target.value,
                     setWorkingCase,
+                    updateCase,
                   )
                 }}
                 textarea

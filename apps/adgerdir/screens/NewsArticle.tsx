@@ -3,8 +3,8 @@ import React from 'react'
 // import cn from 'classnames'
 import Link from 'next/link'
 import Head from 'next/head'
-import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import {
   ContentBlock,
   Box,

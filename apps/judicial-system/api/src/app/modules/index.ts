@@ -1,3 +1,3 @@
 export { AuthModule } from './auth'
-export { UserModule } from './user'
-export { CaseModule } from './case'
+export { UserModule, UserResolver } from './user'
+export { CaseModule, CaseResolver } from './case'

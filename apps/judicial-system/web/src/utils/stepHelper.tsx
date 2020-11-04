@@ -1,14 +1,68 @@
 import React from 'react'
-import { AppealDecitionRole, Case, RequiredField } from '../types'
-import * as api from '../api'
+import { AppealDecisionRole, RequiredField } from '../types'
 import { parseString } from './formatters'
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
+
+export const createCaseFromDraft = (caseDraft: string): Case => {
+  const caseDraftJSON = JSON.parse(caseDraft || '{}')
+
+  return {
+    id: caseDraftJSON.id ?? '',
+    created: caseDraftJSON.created ?? '',
+    modified: caseDraftJSON.modified ?? '',
+    state: caseDraftJSON.state ?? '',
+    policeCaseNumber: caseDraftJSON.policeCaseNumber ?? '',
+    accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
+    accusedName: caseDraftJSON.accusedName ?? '',
+    accusedAddress: caseDraftJSON.accusedAddress ?? '',
+    court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
+    arrestDate: caseDraftJSON.arrestDate ?? null,
+    requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
+    requestedCustodyEndDate: caseDraftJSON.requestedCustodyEndDate ?? null,
+    lawsBroken: caseDraftJSON.lawsBroken ?? '',
+    custodyProvisions: caseDraftJSON.custodyProvisions ?? [],
+    requestedCustodyRestrictions:
+      caseDraftJSON.requestedCustodyRestrictions ?? [],
+    caseFacts: caseDraftJSON.caseFacts ?? '',
+    witnessAccounts: caseDraftJSON.witnessAccounts ?? '',
+    investigationProgress: caseDraftJSON.investigationProgress ?? '',
+    legalArguments: caseDraftJSON.legalArguments ?? '',
+    comments: caseDraftJSON.comments ?? '',
+    // prosecutorId: caseDraftJSON.prosecutorId ?? null,
+    prosecutor: caseDraftJSON.prosecutor ?? null,
+    courtCaseNumber: caseDraftJSON.courtCaseNumber ?? '',
+    courtDate: caseDraftJSON.courtDate ?? '',
+    courtRoom: caseDraftJSON.courtRoom ?? '',
+    defenderName: caseDraftJSON.defenderName ?? '',
+    defenderEmail: caseDraftJSON.defenderEmail ?? '',
+    courtStartTime: caseDraftJSON.courtStartTime ?? '',
+    courtEndTime: caseDraftJSON.courtEndTime ?? '',
+    courtAttendees: caseDraftJSON.courtAttendees ?? '',
+    policeDemands: caseDraftJSON.policeDemands ?? '',
+    accusedPlea: caseDraftJSON.accusedPlea ?? '',
+    litigationPresentations: caseDraftJSON.litigationPresentations ?? '',
+    ruling: caseDraftJSON.ruling ?? '',
+    rejecting: caseDraftJSON.rejecting ?? false,
+    custodyEndDate: caseDraftJSON.custodyEndDate ?? '',
+    custodyRestrictions: caseDraftJSON.custodyRestrictions ?? [],
+    accusedAppealDecision: caseDraftJSON.accusedAppealDecision ?? '',
+    accusedAppealAnnouncement: caseDraftJSON.accusedAppealAnnouncement ?? '',
+    prosecutorAppealDecision: caseDraftJSON.prosecutorAppealDecision ?? '',
+    prosecutorAppealAnnouncement:
+      caseDraftJSON.prosecutorAppealAnnouncement ?? '',
+    // judgeId: caseDraftJSON.judgeId ?? null,
+    judge: caseDraftJSON.judge ?? null,
+    // notifications: caseDraftJSON.Notification ?? [],
+  }
+}
 
 export const updateState = (
   state: Case,
@@ -41,6 +95,7 @@ export const autoSave = async (
   caseField: string,
   caseFieldValue: string | Date | boolean,
   stateSetter: (state: Case) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => Promise<Case>,
 ) => {
   console.warn('Calling AutoSave() is discuraged. Will be removed shortly.')
   // Only save if the field has changes and the case exists
@@ -49,9 +104,9 @@ export const autoSave = async (
     const propertyChange = parseString(caseField, caseFieldValue)
 
     // Save the case
-    const response = await api.saveCase(state.id, propertyChange)
+    const updatedCase = await updateCase(state.id, propertyChange)
 
-    if (response === 200) {
+    if (updatedCase) {
       // Update the working case
       updateState(state, caseField, caseFieldValue, stateSetter)
     } else {
@@ -61,23 +116,23 @@ export const autoSave = async (
 }
 
 export const getAppealDecitionText = (
-  role: AppealDecitionRole,
+  role: AppealDecisionRole,
   appealDecition: CaseAppealDecision,
 ) => {
   switch (appealDecition) {
     case CaseAppealDecision.APPEAL: {
       return `${
-        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } kærir málið`
     }
     case CaseAppealDecision.ACCEPT: {
       return `${
-        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } unir úrskurðinum`
     }
     case CaseAppealDecision.POSTPONE: {
       return `${
-        role === AppealDecitionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
+        role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } tekur sér lögboðinn frest`
     }
   }
