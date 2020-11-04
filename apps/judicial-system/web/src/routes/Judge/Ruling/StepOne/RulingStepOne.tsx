@@ -10,16 +10,20 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef } from 'react'
-import { FormFooter } from '../../../shared-components/FormFooter'
+import { FormFooter } from '../../../../shared-components/FormFooter'
 import {
   Case,
   CaseCustodyRestrictions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '../../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { parseArray, parseString, parseTime } from '../../../utils/formatters'
-import { isNextDisabled } from '../../../utils/stepHelper'
+import {
+  parseArray,
+  parseString,
+  parseTime,
+} from '../../../../utils/formatters'
+import { isNextDisabled } from '../../../../utils/stepHelper'
 import {
   validate,
   Validation,
