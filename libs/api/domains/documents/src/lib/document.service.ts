@@ -50,7 +50,7 @@ export class DocumentService {
       },
       [])
     } catch (exception) {
-      logger.error(JSON.stringify(exception))
+      logger.error(exception)
       return []
     }
   }
