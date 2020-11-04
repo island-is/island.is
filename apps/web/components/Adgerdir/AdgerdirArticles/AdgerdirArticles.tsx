@@ -57,7 +57,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   )
   const [tagIds, setTagIds] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
+  const [showCount, setShowCount] = useState<number | null>(ITEMS_PER_SHOW)
   const [indexesFilteredByString, setIndexesFilteredByString] = useState<
     Array<number>
   >([])
@@ -136,15 +136,20 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     return () => clearTimeout(timerRef.current)
   }, [onUpdateFilters])
 
-  const filteredItems = visibleItems
-    .filter((_, index) => {
-      const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
-        (x) => x.length > 0,
-      )
+  const filteredItems = visibleItems.filter((_, index) => {
+    const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
+      (x) => x.length > 0,
+    )
 
-      return intersection(...indexList).includes(index)
-    })
-    .splice(0, showAll ? visibleItems.length : showCount)
+    return intersection(...indexList).includes(index)
+  })
+
+  const batches = [...filteredItems].splice(
+    0,
+    showAll ? filteredItems.length : showCount,
+  )
+
+  const showMoreButton = batches.length < filteredItems.length
 
   useEffect(() => {
     if (currentArticle) {
@@ -237,7 +242,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
           </div>
         </Box>
       </Box>
-      {filteredItems.length === 0 ? (
+      {batches.length === 0 ? (
         <Box marginTop={2}>
           <Stack space={2}>
             <Text color="red600">
@@ -256,7 +261,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
       ) : null}
       <Box marginTop={3}>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
-          {filteredItems.map(
+          {batches.map(
             ({ title, description, tags, slug }: AdgerdirPage, index) => {
               return (
                 <Card
@@ -280,15 +285,15 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
           )}
         </Tiles>
       </Box>
-      {showCount < visibleItems.length ? (
+      {!showAll && showMoreButton ? (
         <Box marginY={3} width="full" display="flex" justifyContent="center">
           <Button
-            colorScheme="destructive"
             onClick={() => {
-              setShowCount(showCount + ITEMS_PER_SHOW)
+              setShowCount(visibleItems.length)
             }}
+            colorScheme="destructive"
           >
-            {n('seeMoreItems')}
+            {n('seeMoreItems2', 'Sjá allt')}
           </Button>
         </Box>
       ) : null}
