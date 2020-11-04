@@ -1,22 +1,23 @@
 import {
+  ApiResource,
+  ApiScope,
+  IdentityResource,
+  IdsAuthGuard,
+  ResourcesService,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-api-lib'
+import {
+  BadRequestException,
   Controller,
   Get,
-  Query,
   ParseArrayPipe,
-  BadRequestException,
+  Query,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger'
-import {
-  IdentityResource,
-  ResourcesService,
-  ApiScope,
-  ApiResource,
-  Scopes,
-} from '@island.is/auth-api-lib'
+import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 
-// Try comment to trigger deployment
-// TODO: Add guards after getting communications to work properly with IDS4
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {

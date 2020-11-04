@@ -62,16 +62,10 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/adgerdir/codegen.yml"
-          }
-        },
-        "init-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn nx run adgerdir:codegen"
           }
         },
         "docker-next": {}
@@ -161,17 +155,14 @@
             "passWithNoTests": true
           }
         },
-        "init-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts",
-              "yarn nx run air-discount-scheme-api:codegen"
-            ]
+            "outputPath": "apps/air-discount-scheme/api.graphql",
+            "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.app.json apps/air-discount-scheme/api/src/buildSchema.ts"
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
@@ -254,21 +245,11 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
-        "init-schema": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
-          }
-        },
-        "generate-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "parallel": false,
             "outputPath": "apps/air-discount-scheme/backend/src/openapi.yaml",
-            "commands": [
-              "yarn build air-discount-scheme-backend",
-              "node dist/apps/air-discount-scheme/backend/main --generate-schema apps/air-discount-scheme/backend/src/openapi.yaml"
-            ]
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node --files -P apps/air-discount-scheme/backend/tsconfig.app.json apps/air-discount-scheme/backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -492,18 +473,6 @@
             "buildTarget": "api:build"
           }
         },
-        "build-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
-          }
-        },
-        "init-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn nx run api:codegen"
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
@@ -522,25 +491,32 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "graphql-codegen --config apps/api/codegen.yml"
-          },
-          "configurations": {
-            "watch": {
-              "command": "graphql-codegen --config apps/api/codegen.yml --watch"
-            }
-          }
-        },
         "env-secrets": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./scripts/secrets.sh api --reset"
           }
         },
+        "schemas/build-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/api/src/api.graphql",
+            "command": "yarn ts-node -P apps/api/tsconfig.app.json apps/api/src/buildSchema.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              "yarn nx run api:contentful-types",
+              "graphql-codegen --config apps/api/codegen.yml"
+            ]
+          }
+        },
         "contentful-types": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputPath": "libs/api/domains/cms/scripts/generateContentfulTypes.ts",
           "options": {
             "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
           }
@@ -729,12 +705,13 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "parallel": false,
             "commands": [
-              "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
-              "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
+              "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd -i libs/api-catalogue/services/config/xrd-meta-oas.yaml",
+              "yarn openapi-generator -o libs/api-catalogue/services/gen/fetch/xrd-rest -i libs/api-catalogue/services/config/xrd-rest-meta-oas.yaml"
             ]
           }
         }
@@ -852,10 +829,11 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+            "outputPath": "libs/api/domains/application/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
           }
         }
       }
@@ -971,6 +949,13 @@
             "jestConfig": "libs/api/domains/documents/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/api/domains/documents/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/documents/gen/fetch -i libs/api/domains/documents/skjalabirting-test.yaml"
+          }
         }
       }
     },
@@ -1081,12 +1066,6 @@
             ]
           }
         },
-        "init-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn nx run api-domains-user-profile:codegen"
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
@@ -1094,10 +1073,11 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+            "outputPath": "libs/api/domains/user-profile/gen/fetch",
+            "command": "yarn openapi-generator -o libs/api/domains/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
           }
         }
       }
@@ -1126,7 +1106,7 @@
             "passWithNoTests": true
           }
         },
-        "init-schema": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
@@ -1304,21 +1284,11 @@
             "cwd": "apps/application-system/api"
           }
         },
-        "build-schema": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
-          }
-        },
-        "generate-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "parallel": false,
             "outputPath": "apps/application-system/api/src/openapi.yaml",
-            "commands": [
-              "yarn build application-system-api",
-              "node dist/apps/application-system/api/main --generate-schema apps/application-system/api/src/openapi.yaml"
-            ]
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -1944,16 +1914,10 @@
             "passWithNoTests": true
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
-          }
-        },
-        "init-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn nx run gjafakort-api:codegen"
           }
         },
         "docker-express": {}
@@ -2568,17 +2532,13 @@
             "passWithNoTests": true
           }
         },
-        "init-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts",
-              "yarn nx run judicial-system-api:codegen"
-            ]
+            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts"
           }
         },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/judicial-system/codegen.yml"
@@ -2671,22 +2631,11 @@
             "cwd": "apps/judicial-system/backend"
           }
         },
-        "init-schema": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
-          }
-        },
-        "generate-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "parallel": false,
             "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
-            "commands": [
-              "yarn build judicial-system-backend",
-              "node dist/apps/judicial-system/backend/main --generate-schema apps/judicial-system/backend/src/openapi.yaml"
-            ]
+            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -3073,22 +3022,11 @@
             "cwd": "apps/reference-backend"
           }
         },
-        "init-schema": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/reference-backend/src/openapi.yaml",
             "command": "yarn ts-node -P apps/reference-backend/tsconfig.app.json apps/reference-backend/src/buildOpenApi.ts"
-          }
-        },
-        "generate-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "parallel": false,
-            "outputPath": "apps/reference-backend/src/openapi.yaml",
-            "commands": [
-              "yarn build reference-backend",
-              "node dist/apps/reference-backend/main --generate-schema apps/reference-backend/src/openapi.yaml"
-            ]
           }
         },
         "migrate": {
@@ -3253,12 +3191,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}"
           }
         },
         "docker-static": {}
@@ -3334,12 +3267,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3400,12 +3328,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3440,12 +3363,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3508,12 +3426,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3548,12 +3461,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3588,12 +3496,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3657,12 +3560,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3697,12 +3595,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3846,48 +3739,28 @@
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              {
-                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
-              }
-            ],
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
             "cwd": "apps/services/auth-api"
           }
         },
-        "init-schema": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "parallel": false,
             "outputPath": "apps/services/auth-api/src/openapi.yaml",
-            "commands": [
-              {
-                "command": "yarn build services-auth-api"
-              },
-              {
-                "command": "node dist/apps/services/auth-api/main --generate-schema apps/services/auth-api/src/openapi.yaml"
-              }
-            ]
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth-api/tsconfig.app.json apps/services/auth-api/src/buildOpenApi.ts"
           }
         },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              {
-                "command": "sequelize-cli db:migrate"
-              }
-            ],
+            "command": "sequelize-cli db:migrate",
             "cwd": "libs/auth-api-lib"
           }
         },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              {
-                "command": "sequelize-cli migration:generate --name $(whoami)"
-              }
-            ],
+            "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "libs/auth-api-lib"
           }
         },
@@ -4060,27 +3933,11 @@
             "cwd": "apps/services/user-profile"
           }
         },
-        "init-schema": {
+        "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn nx run services-user-profile:build-schema"
-          }
-        },
-        "build-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
-          }
-        },
-        "generate-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "parallel": false,
             "outputPath": "apps/services/user-profile/src/openapi.yaml",
-            "commands": [
-              "yarn build services-user-profile",
-              "node dist/apps/services/user-profile/main --generate-schema apps/services/user-profile/src/openapi.yaml"
-            ]
+            "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
           }
         },
         "migrate": {
@@ -4430,9 +4287,10 @@
             "passWithNoTests": true
           }
         },
-        "init-schema": {
+        "schemas/build-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "apps/skilavottord/ws/src/app/api.graphql",
             "command": "yarn ts-node -P apps/skilavottord/ws/tsconfig.app.json apps/skilavottord/ws/src/buildSchema.ts"
           }
         },
@@ -4549,21 +4407,10 @@
             "passWithNoTests": true
           }
         },
-        "init-schema": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn nx run web:codegen"
-          }
-        },
-        "codegen": {
+        "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config apps/web/codegen.yml"
-          },
-          "configurations": {
-            "watch": {
-              "command": "graphql-codegen --config apps/web/codegen.yml --watch"
-            }
           }
         },
         "docker-next": {}
