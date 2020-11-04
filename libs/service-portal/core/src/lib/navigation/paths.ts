@@ -32,11 +32,12 @@ export enum ServicePortalPath {
   // Eignir
   EignirRoot = '/eignir',
   // Skilabod
-  SkilabodRoot = '/skilabod',
+  MessagesRoot = '/skilabod',
 
   // User Profile
   UserProfileRoot = '/stillingar/minn-adgangur',
   UserProfileEditPhoneNumber = '/stillingar/minn-adgangur/breyta-simanumeri',
   UserProfileEditEmail = '/stillingar/minn-adgangur/breyta-netfangi',
   UserProfileEditLanguage = '/stillingar/minn-adgangur/breyta-tungumali',
+  UserProfileEmailConfirmation = '/stillingar/minn-adgangur/stadfesta-netfang/:hash',
 }

@@ -3,7 +3,8 @@ import { render } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import { mockJudgeUserContext } from '@island.is/judicial-system-web/src/utils/mocks'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe('Confirmation route', () => {
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, () => {
@@ -21,9 +22,11 @@ describe('Confirmation route', () => {
 
     // Act
     const { queryByText } = render(
-      <userContext.Provider value={{ user: mockJudge }}>
-        <Confirmation />
-      </userContext.Provider>,
+      <MockedProvider mocks={[]} addTypename={false}>
+        <userContext.Provider value={mockJudgeUserContext}>
+          <Confirmation />
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert
@@ -46,9 +49,11 @@ describe('Confirmation route', () => {
 
     // Act
     const { queryByText } = render(
-      <userContext.Provider value={{ user: mockJudge }}>
-        <Confirmation />
-      </userContext.Provider>,
+      <MockedProvider mocks={[]} addTypename={false}>
+        <userContext.Provider value={mockJudgeUserContext}>
+          <Confirmation />
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert

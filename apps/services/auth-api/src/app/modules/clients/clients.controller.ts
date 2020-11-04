@@ -1,4 +1,11 @@
 import {
+  Client,
+  ClientsService,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-api-lib'
+import {
   BadRequestException,
   Controller,
   Get,
@@ -7,16 +14,8 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import {
-  Client,
-  ClientsService,
-  Scopes,
-  ScopesGuard,
-  IdsAuthGuard,
-} from '@island.is/auth-api-lib'
 
-// TODO: Add guards after getting communications to work properly with IDS4
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {

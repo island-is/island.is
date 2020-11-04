@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDataProviderItem,
   buildDateField,
+  buildDividerField,
   buildExternalDataProvider,
   buildForm,
   buildIntroductionField,
@@ -14,8 +15,13 @@ import {
   DataProviderTypes,
   Form,
   FormModes,
+  Option,
 } from '@island.is/application/core'
 import { m } from './messages'
+import {
+  getEstimatedMonthlyPay,
+  getNameAndIdOfSpouse,
+} from '../fields/parentalLeaveUtils'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -72,8 +78,8 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'secondaryParent',
-          name: 'Confirm the other parent (if any)',
+          id: 'otherParent',
+          name: 'Please confirm the other parent (if any)',
           description:
             'This person is by default your spouse or partner. If there is no other parent in the picture at this point in time, leave this empty.',
           condition: () => {
@@ -81,40 +87,55 @@ export const ParentalLeaveForm: Form = buildForm({
             return true
           },
           children: [
+            buildRadioField({
+              id: 'otherParent',
+              name: '',
+              options: (application) => {
+                const [spouseName, spouseId] = getNameAndIdOfSpouse(application)
+                const options: Option[] = [
+                  {
+                    value: 'no',
+                    label:
+                      'I do not want to confirm the other parent at this time ',
+                  },
+                  { value: 'manual', label: 'The other parent is:' },
+                ]
+                if (spouseName !== undefined && spouseId !== undefined) {
+                  options.unshift({
+                    value: 'spouse',
+                    label: `The other parent is ${spouseName} (kt. ${spouseId})`,
+                  })
+                }
+                return options
+              },
+              emphasize: false,
+              largeButtons: true,
+            }),
             buildTextField({
-              id: 'secondaryParentName',
+              id: 'otherParentName',
+              condition: (answers) => answers.otherParent === 'manual',
               name: 'Name of other parent',
               width: 'half',
             }),
             buildTextField({
-              id: 'secondaryParentId',
+              id: 'otherParentId',
+              condition: (answers) => answers.otherParent === 'manual',
               name: 'National ID of other parent',
               width: 'half',
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'paymentDetails',
-      name: 'Payment details',
-      children: [
-        buildIntroductionField({
-          id: 'paymentsImageScreen',
-          name: 'Next we will verify your bank information for payments',
-          introduction: 'Here we will add a nice picture',
         }),
         buildMultiField({
           name: 'Is everything how it is supposed to be?',
           id: 'payments',
           children: [
             buildTextField({
-              name: 'Bank details',
+              name: 'Bank',
               id: 'payments.bank',
               width: 'half',
             }),
             buildSelectField({
-              name: 'Personal allowance usage',
+              name: 'Personal discount',
               id: 'payments.personalAllowanceUsage',
               width: 'half',
               options: [
@@ -148,20 +169,15 @@ export const ParentalLeaveForm: Form = buildForm({
                 { label: 'No', value: 'no' },
               ],
             }),
-          ],
-        }),
-        buildMultiField({
-          id: 'privatePensionFund',
-          condition: (formValue) => formValue.usePrivatePensionFund === 'yes',
-          name: 'Private pension fund information',
-          children: [
             buildSelectField({
+              condition: (answers) => answers.usePrivatePensionFund === 'yes',
               id: 'payments.privatePensionFund',
               name: 'Private pension fund',
               width: 'half',
               options: [{ label: 'Frjalsi', value: 'frjalsi' }],
             }),
             buildSelectField({
+              condition: (answers) => answers.usePrivatePensionFund === 'yes',
               id: 'payments.privatePensionFundPercentage',
               name: 'Private pension fund %',
               width: 'half',
@@ -184,67 +200,91 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'employer.name',
             }),
             buildTextField({
-              name: 'Employer national registry id',
+              name: 'Social security nr of employer',
               width: 'half',
               id: 'employer.nationalRegistryId',
+            }),
+            buildDividerField({
+              color: 'dark400',
+              name:
+                'Who on behalf of your employer will have to approve this application?',
+            }),
+            buildTextField({
+              name: 'Contact name',
+              width: 'half',
+              id: 'employer.contact',
+            }),
+            buildTextField({
+              name: 'Contact social security nr',
+              width: 'half',
+              id: 'employer.contactId',
             }),
           ],
         }),
       ],
     }),
-
     buildSection({
       id: 'rights',
       name: 'Parental leave rights',
       children: [
-        buildIntroductionField({
-          id: 'rights.intro',
+        buildMultiField({
+          id: 'rightsIntro',
           name: 'These are your rights',
-          introduction:
-            'Both parents have 6 months, but can give up to 1 month to the other parent. TODO maybe ad the boxes below? Should we add the payments rule here as well?',
-        }),
-        buildRadioField({
-          id: 'requestExtraTime',
-          name: 'Do you want to request extra time from the other parent?',
-          description: 'Your partner can give up to 1 month of their rights',
-          emphasize: true,
-          largeButtons: true,
-          options: [
-            {
-              label: 'Yes, I want to request extra time from my partner',
-              value: 'yes',
-            },
-            { label: 'No, I will only use my rights', value: 'no' },
-          ],
-        }),
-        buildRadioField({
-          id: 'giveExtraTime',
-          name: 'Do you want to give the other parent more parental leave?',
           description:
-            'You can give the other parent up to 1 month of your rights',
-          emphasize: true,
-          largeButtons: true,
-          condition: (formValue) => formValue.requestExtraTime === 'no',
-          options: [
-            {
-              label:
-                'Yes, I want to give up to 1 month of my rights to the other parent',
-              value: 'yes',
-            },
-            { label: 'No, I want to keep my months for myself', value: 'no' },
+            'Both parents have 6 months, but can give up to 1 month to the other parent.',
+          children: [
+            buildCustomField(
+              {
+                id: 'rightsIntro',
+                name: '',
+                component: 'BoxChart',
+              },
+              {
+                boxes: 6,
+                calculateBoxStyle: () => 'blue',
+                keys: [{ label: '6 personal months', bulletStyle: 'blue' }],
+              },
+            ),
           ],
         }),
         buildMultiField({
-          id: 'rightsSummary',
-          name: 'Monthly salary for your parental leave',
-          description: () =>
-            `384.000 kr. is your expected payment for each full month of leave`,
+          id: 'requestRights',
+          name: 'Do you want to request extra time from the other parent?',
+          description: 'Your partner can give up to 1 month of their rights',
           children: [
-            buildIntroductionField({
-              id: 'todosummary',
-              name: 'TODO add the custom boxes component',
-              introduction:
-                '* You will need to change the application if the other parent does not approve the extra month you requested.',
+            buildCustomField({
+              id: 'requestRights',
+              name: '',
+              component: 'RequestRights',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'giveRights',
+          name: 'Do you want to give the other parent more parental leave?',
+          description:
+            'You can give the other parent up to 1 month of your rights',
+          condition: (formValue) => formValue.requestRights === 'no',
+          children: [
+            buildCustomField({
+              id: 'giveRights',
+              name: '',
+              component: 'GiveRights',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'reviewRights',
+          name: 'Estimated monthly salary for your parental leave',
+          description: (application) =>
+            `${getEstimatedMonthlyPay(
+              application,
+            )} kr. is your expected payment for each full month of leave after tax`,
+          children: [
+            buildCustomField({
+              id: 'reviewRights',
+              name: '',
+              component: 'ReviewRights',
             }),
           ],
         }),
@@ -330,7 +370,7 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'startDate',
+          id: 'endDate',
           condition: (formValue) =>
             formValue.confirmLeaveDuration === 'specificDate',
           name: 'Please pick the end date',
@@ -388,17 +428,30 @@ export const ParentalLeaveForm: Form = buildForm({
                 'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
               placeholder: 'Pick the start date',
             }),
-            buildCustomField(
-              {
-                id: 'endDate',
-                name: m.duration,
-                description: m.durationDescription,
-                component: 'ParentalLeaveDuration',
-              },
-              {
-                showTimeline: true,
-              },
-            ),
+            buildMultiField({
+              id: 'endDate',
+              name: 'Please pick the end date',
+              description:
+                'You can choose to end the parental leave no later than 18 months after the date of birth.',
+              children: [
+                buildDateField({
+                  id: 'endDate',
+                  name: 'End date',
+                  placeholder: 'Pick the end date',
+                }),
+              ],
+            }),
+            // buildCustomField(
+            //   {
+            //     id: 'endDate',
+            //     name: m.duration,
+            //     description: m.durationDescription,
+            //     component: 'ParentalLeaveDuration',
+            //   },
+            //   {
+            //     showTimeline: true,
+            //   },
+            // ),
             buildMultiField({
               id: 'ratio',
               name: 'What percent off will you take for this period?',
@@ -427,7 +480,7 @@ export const ParentalLeaveForm: Form = buildForm({
             name: 'Here is your current payment plan',
             description:
               'Payments amount to 80% of the average of your total wages during the last 6 monhts before the birth of the child. TODO add the table',
-            component: 'PaymentPlan',
+            component: 'PaymentSchedule',
           },
           {},
         ),

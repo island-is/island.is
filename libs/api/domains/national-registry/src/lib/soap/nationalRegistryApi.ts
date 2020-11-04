@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common'
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import Soap from 'soap'
 import { MyInfo } from '../myInfo.model'
@@ -11,15 +11,25 @@ import { FamilyMember } from '../familyMember.model'
 import { GetViewBanmarkingDto } from './dto/getViewBanmarkingDto'
 
 export class NationalRegistryApi {
-  private readonly client: Soap.Client
+  private readonly client: Soap.Client | null
   private readonly clientUser: string
   private readonly clientPassword: string
 
   constructor(
-    private soapClient: Soap.Client,
+    private soapClient: Soap.Client | null,
     clientPassword: string,
     clientUser: string,
   ) {
+    if (!soapClient) {
+      logger.error('NationalRegistry Soap client not initialized')
+    }
+    if (!clientUser) {
+      logger.error('NationalRegistry user not provided')
+    }
+    if (!clientPassword) {
+      logger.error('NationalRegistry password not provided')
+    }
+
     this.client = soapClient
     this.clientUser = clientUser
     this.clientPassword = clientPassword
@@ -57,12 +67,17 @@ export class NationalRegistryApi {
 
   public async getMyFamily(nationalId: string): Promise<FamilyMember[] | null> {
     const response = await this.getViewFjolskyldan(nationalId)
+
     if (!response)
       throw new NotFoundException(
         `family for nationalId ${nationalId} not found`,
       )
 
-    const family = response?.table.diffgram.DocumentElement.Fjolskyldan
+    const family = Array.isArray(
+      response?.table.diffgram.DocumentElement.Fjolskyldan,
+    )
+      ? response?.table.diffgram.DocumentElement.Fjolskyldan
+      : [response?.table.diffgram.DocumentElement.Fjolskyldan]
 
     if (!family)
       throw new NotFoundException(
@@ -173,6 +188,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewRegistryDto | null> {
     return await new Promise((resolve, _reject) => {
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewThjodskra(
         {
           ':SortColumn': 1,
@@ -209,6 +226,8 @@ export class NationalRegistryApi {
     houseCode: string,
   ): Promise<GetViewHomeDto | null> {
     return await new Promise((resolve, _reject) => {
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewHusaskra(
         {
           ':SortColumn': 1,
@@ -245,6 +264,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewReligionDto | null> {
     return await new Promise((resolve, _reject) => {
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewKennitalaOgTrufelag(
         {
           ':SortColumn': 1,
@@ -281,6 +302,8 @@ export class NationalRegistryApi {
     municipalCode: string,
   ): Promise<GetViewMunicipalityDto | null> {
     return await new Promise((resolve, _reject) => {
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewSveitarfelag(
         {
           ':SortColumn': 1,
@@ -317,6 +340,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewFamilyDto | null> {
     return await new Promise((resolve, _reject) => {
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewFjolskyldan(
         {
           ':SortColumn': 1,
@@ -353,6 +378,8 @@ export class NationalRegistryApi {
     nationalId: string,
   ): Promise<GetViewBanmarkingDto | null> {
     return await new Promise((resolve, _reject) => {
+      if (!this.client)
+        throw new InternalServerErrorException('Client not initialized')
       this.client.GetViewKennitalaOgBannmerking(
         {
           ':SortColumn': 1,

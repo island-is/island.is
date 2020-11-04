@@ -12,9 +12,9 @@ export class VehicleResolver {
   ) {}
 
   @Query(() => [VehicleModel])
-  async getAllVehicles(): Promise<VehicleModel[]> {
+  async skilavottordAllVehicles(): Promise<VehicleModel[]> {
     const res = await this.vehicleService.findAll()
-    this.logger.debug('getAllVehicle responce:' + JSON.stringify(res, null, 2))
+    this.logger.info('getAllVehicle responce:' + JSON.stringify(res, null, 2))
     return res
   }
 

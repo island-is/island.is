@@ -1,52 +1,33 @@
 import React from 'react'
-import { Typography, Box, Stack, Icon, Hidden } from '@island.is/island-ui/core'
+import { Box, Stack, Tag, Text } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import * as styles from './UserProfile.treat'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { UserInfoLine } from '@island.is/service-portal/core'
+import { FamilyMemberCard } from '@island.is/service-portal/family'
+import { Link } from 'react-router-dom'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: userProfile } = useUserProfile()
 
   return (
     <>
       <Box marginBottom={6}>
-        <Typography variant="h1" as="h1">
+        <Text variant="h1" as="h1">
           {formatMessage({
             id: 'service.portal:profile-info',
             defaultMessage: 'Minn aðgangur',
           })}
-        </Typography>
+        </Text>
       </Box>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="spaceBetween"
-        paddingY={4}
-        paddingX={6}
-        marginBottom={4}
-        border="standard"
-      >
-        <Typography variant="h2">{userInfo.profile.name}</Typography>
-        <Hidden below="sm">
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            marginRight={5}
-            borderRadius="circle"
-            background="purple200"
-            className={styles.avatar}
-          >
-            <Icon type="outline" icon="person" color="purple400" size="large" />
-          </Box>
-        </Hidden>
+      <Box marginBottom={[2, 3]}>
+        <FamilyMemberCard title={userInfo.profile.name || ''} />
       </Box>
       <Stack space={1}>
         <UserInfoLine
@@ -55,12 +36,27 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Netfang',
           })}
           content={userProfile?.email || ''}
+          tag={
+            userProfile?.emailVerified ? (
+              <Tag variant="darkerMint">
+                {formatMessage({
+                  id: 'sp.settings:verified',
+                  defaultMessage: 'Staðfest',
+                })}
+              </Tag>
+            ) : (
+              <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
+                <Tag variant="red">
+                  {formatMessage({
+                    id: 'sp.settings:not-verified',
+                    defaultMessage: 'Óstaðfest',
+                  })}
+                </Tag>
+              </Link>
+            )
+          }
           editLink={{
             url: ServicePortalPath.UserProfileEditEmail,
-            title: defineMessage({
-              id: 'sp.settings:edit-email',
-              defaultMessage: 'Breyta netfangi',
-            }),
           }}
         />
         <UserInfoLine
@@ -69,12 +65,27 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             defaultMessage: 'Símanúmer',
           })}
           content={userProfile?.mobilePhoneNumber || ''}
+          tag={
+            userProfile?.mobilePhoneNumberVerified ? (
+              <Tag variant="darkerMint">
+                {formatMessage({
+                  id: 'sp.settings:verified',
+                  defaultMessage: 'Staðfest',
+                })}
+              </Tag>
+            ) : (
+              <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
+                <Tag variant="red">
+                  {formatMessage({
+                    id: 'sp.settings:not-verified',
+                    defaultMessage: 'Óstaðfest',
+                  })}
+                </Tag>
+              </Link>
+            )
+          }
           editLink={{
             url: ServicePortalPath.UserProfileEditPhoneNumber,
-            title: defineMessage({
-              id: 'sp.settings:edit-phone-number',
-              defaultMessage: 'Breyta símanúmeri',
-            }),
           }}
         />
         <UserInfoLine
@@ -91,10 +102,6 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           editLink={{
             url: ServicePortalPath.UserProfileEditLanguage,
-            title: defineMessage({
-              id: 'sp.settings:edit-language',
-              defaultMessage: 'Breyta tungumáli',
-            }),
           }}
         />
       </Stack>

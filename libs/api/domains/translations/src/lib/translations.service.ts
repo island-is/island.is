@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
-import { isEmpty, mergeWith } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
+import mergeWith from 'lodash/mergeWith'
 
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
 // this can be replaced by fetching contentful locales if fallback is set in the future, same format.

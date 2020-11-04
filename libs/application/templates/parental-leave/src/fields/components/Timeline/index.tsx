@@ -1,14 +1,14 @@
 import React, { FC, useRef } from 'react'
-import {
-  format,
-  subMonths,
-  eachDayOfInterval,
-  toDate,
-  closestIndexTo,
-  isSameDay,
-  addMonths,
-  endOfMonth,
-} from 'date-fns'
+import format from 'date-fns/format'
+import subMonths from 'date-fns/subMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import toDate from 'date-fns/toDate'
+import closestIndexTo from 'date-fns/closestIndexTo'
+import isSameDay from 'date-fns/isSameDay'
+import addMonths from 'date-fns/addMonths'
+import endOfMonth from 'date-fns/endOfMonth'
+import parseISO from 'date-fns/parseISO'
+
 import { useWindowSize } from 'react-use'
 import { useDrag } from '../utils'
 
@@ -16,7 +16,7 @@ import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Timeline.treat'
 
-export interface Period {
+export interface TimelinePeriod {
   startDate: string
   endDate: string
   title: string
@@ -28,7 +28,7 @@ const Panel: FC<{
   initDate: Date
   title: string
   titleSmall: string
-  periods: Period[]
+  periods: TimelinePeriod[]
   isMobile: boolean
   onDeletePeriod?: (index: number) => void
 }> = ({ initDate, title, titleSmall, periods, isMobile, onDeletePeriod }) => {
@@ -68,8 +68,8 @@ const Panel: FC<{
                 {p.title}
               </Text>
               <br />
-              {format(new Date(p.startDate), formatStyle)}—
-              {format(new Date(p.endDate), formatStyle)}
+              {format(parseISO(p.startDate), formatStyle)}—
+              {format(parseISO(p.endDate), formatStyle)}
             </Text>
           </Box>
         )
@@ -114,7 +114,8 @@ const ChartMonths: FC<{
             >
               <Box className={styles.chartMonth}>
                 <Text variant="small">
-                  {(isFirstDayOfMonth || index === 0) && format(day, 'MMM yy')}
+                  {(isFirstDayOfMonth || index === 0) &&
+                    format(day, 'MMM yyyy')}
                   &nbsp;
                 </Text>
                 {isInitDay && <Box className={styles.highlightDay} />}
@@ -125,7 +126,7 @@ const ChartMonths: FC<{
                   height: `${height}px`,
                   borderLeft: `1px solid ${color}`,
                 }}
-              ></Box>
+              />
             </Box>
           )
         })}
@@ -136,7 +137,7 @@ const ChartMonths: FC<{
 
 const Chart: FC<{
   initDate: Date
-  periods: Period[]
+  periods: TimelinePeriod[]
   dayWidth: number
   spanInMonths?: number
 }> = ({ initDate, dayWidth, periods, spanInMonths = 18 }) => {
@@ -218,8 +219,8 @@ const Chart: FC<{
       />
 
       {periods.map((p, index) => {
-        const periodStartDate = new Date(p.startDate)
-        const periodEndDate = new Date(p.endDate)
+        const periodStartDate = parseISO(p.startDate)
+        const periodEndDate = parseISO(p.endDate)
 
         return (
           <Box
@@ -241,7 +242,7 @@ const Chart: FC<{
                     closestIndexTo(toDate(periodStartDate), totalDays) + 1
                   }/${closestIndexTo(toDate(periodEndDate), totalDays) + 1}`,
                 }}
-              ></Box>
+              />
             </Box>
           </Box>
         )
@@ -252,7 +253,7 @@ const Chart: FC<{
 
 interface TimelineProps {
   initDate: Date
-  periods: Period[]
+  periods: TimelinePeriod[]
   spanInMonths?: number
   title: string
   titleSmall?: string

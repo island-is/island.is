@@ -1,4 +1,12 @@
 import {
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+  UserIdentitiesService,
+  UserIdentity,
+  UserIdentityDto,
+} from '@island.is/auth-api-lib'
+import {
   Body,
   Controller,
   Get,
@@ -7,18 +15,9 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import {
-  UserIdentity,
-  UserIdentitiesService,
-  UserIdentityDto,
-  ScopesGuard,
-  Scopes,
-  IdsAuthGuard,
-} from '@island.is/auth-api-lib'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-// TODO: Add guards after getting communications to work properly with IDS4
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('user-identities')
 @Controller('user-identities')
 export class UserIdentitiesController {
@@ -28,7 +27,9 @@ export class UserIdentitiesController {
   @Scopes('@identityserver.api/authentication')
   @Post()
   @ApiCreatedResponse({ type: UserIdentity })
-  async create(@Body() userIdentity: UserIdentityDto): Promise<UserIdentity> {
+  async create(
+    @Body() userIdentity: UserIdentityDto,
+  ): Promise<UserIdentity | undefined> {
     return await this.userIdentityService.create(userIdentity)
   }
 

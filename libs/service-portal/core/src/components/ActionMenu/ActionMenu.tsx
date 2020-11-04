@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef } from 'react'
 import { useClickAway } from 'react-use'
-import { Box, IconDeprecated as Icon, Stack } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import * as styles from './ActionMenu.treat'
 
 interface ActionMenuItemProps {

@@ -21,7 +21,7 @@ export class SoapClient {
             resolve(client)
           } else {
             logger.info('NationalRegistry connection failed', error)
-            resolve(error)
+            resolve(client)
           }
         },
       )

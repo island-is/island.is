@@ -6,6 +6,8 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 
 type Events =
   | { type: 'APPROVE' }
@@ -19,8 +21,6 @@ const dataSchema = z.object({
     email: z.string().email(),
     phoneNumber: z.string(),
   }),
-  usage: z.number().min(0).max(6),
-  spread: z.number().max(24),
   payments: z.object({
     bank: z.string().nonempty(),
     personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
@@ -32,8 +32,8 @@ const dataSchema = z.object({
   usePrivatePensionFund: z.enum(['yes', 'no']),
   periods: z.array(
     z.object({
-      start: z.date(),
-      end: z.date(),
+      startDate: z.string().refine((d) => isValid(parseISO(d))),
+      endDate: z.string().refine((d) => isValid(parseISO(d))),
       ratio: z
         .string()
         .refine(
@@ -45,14 +45,17 @@ const dataSchema = z.object({
   employer: z.object({
     name: z.string().nonempty(),
     nationalRegistryId: z.string().nonempty(),
+    contact: z.string().nonempty(),
+    contactId: z.string().nonempty(),
   }),
-  requestExtraTime: z.enum(['yes', 'no']),
-  giveExtraTime: z.enum(['yes', 'no']),
+  requestRights: z.enum(['yes', 'no']),
+  giveRights: z.enum(['yes', 'no']),
   singlePeriod: z.enum(['yes', 'no']),
   firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
-  secondaryParentName: z.string().optional(),
-  secondaryParentId: z.string().optional(),
+  otherParent: z.enum(['spouse', 'no', 'manual']).optional(),
+  otherParentName: z.string().optional(),
+  otherParentId: z.string().optional(),
 })
 
 const ParentalLeaveTemplate: ApplicationTemplate<

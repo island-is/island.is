@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -21,14 +21,15 @@ import React, { useEffect, useState } from 'react'
 import { EmailForm, EmailFormData } from '../../components/Forms/EmailForm'
 
 export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const [email, setEmail] = useState('')
-  const { data: userProfile } = useUserProfile(userInfo.profile.natreg)
+  const { data: userProfile } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
   const { formatMessage } = useLocale()
-  const { createUserProfile } = useCreateUserProfile(userInfo.profile.natreg)
-  const { updateUserProfile } = useUpdateUserProfile(userInfo.profile.natreg)
+  const { createUserProfile } = useCreateUserProfile()
+  const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
     if (!userProfile) return
@@ -111,9 +112,9 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
         <Box marginTop={[5, 7, 15]}>
           {status === 'success' && (
             <AlertMessage
-              type="success"
+              type="info"
               title="Nýtt netfang hefur verið vistað"
-              message="Þú hefur vistað nýtt netfang hjá Stafrænt Ísland"
+              message="Vinsamlegast athugaðu netpóstinn þinn, staðfestingarpóstur hefur verið sendur á þig"
             />
           )}
           {status === 'error' && (

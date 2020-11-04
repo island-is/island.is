@@ -10,7 +10,7 @@ export type CreateUserProfileData = {
   mobilePhoneNumber?: string
 }
 
-export const useCreateUserProfile = (natReg: string) => {
+export const useCreateUserProfile = () => {
   const [createUserProfileMutation, { loading, error }] = useMutation<
     Mutation,
     MutationCreateProfileArgs
@@ -18,11 +18,6 @@ export const useCreateUserProfile = (natReg: string) => {
     refetchQueries: [
       {
         query: USER_PROFILE,
-        variables: {
-          input: {
-            nationalId: natReg,
-          },
-        },
       },
     ],
   })
@@ -31,7 +26,6 @@ export const useCreateUserProfile = (natReg: string) => {
     return createUserProfileMutation({
       variables: {
         input: {
-          nationalId: natReg,
           email: data.email || '',
           locale: data.locale || '',
           mobilePhoneNumber: data.mobilePhoneNumber || '',

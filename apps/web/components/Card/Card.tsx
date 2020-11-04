@@ -13,9 +13,9 @@ import {
   IconTypesDeprecated as IconTypes,
   IconDeprecated as Icon,
   FocusableBox,
-  ColorSchemeContext,
   TagVariant,
 } from '@island.is/island-ui/core'
+import { ColorSchemeContext } from '@island.is/web/context'
 import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
 
@@ -41,6 +41,7 @@ interface CardProps {
   linkProps?: LinkProps
   href?: string
   as?: string
+  status?: string
 }
 
 export const Card: FC<CardProps> = ({
@@ -51,6 +52,7 @@ export const Card: FC<CardProps> = ({
   tags = [],
   href,
   as,
+  status,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
@@ -58,23 +60,28 @@ export const Card: FC<CardProps> = ({
   const stackImage = width < 360
 
   let borderColor = null
+  let titleColor = null
   let tagVariant = 'purple' as TagVariant
 
   switch (colorScheme) {
     case 'red':
       borderColor = 'red200'
+      titleColor = 'red600'
       tagVariant = 'red'
       break
     case 'blue':
       borderColor = 'blue200'
+      titleColor = 'blue400'
       tagVariant = 'blue'
       break
     case 'purple':
       borderColor = 'purple200'
+      titleColor = 'purple400'
       tagVariant = 'purple'
       break
     default:
       borderColor = 'purple200'
+      titleColor = 'blue400'
       break
   }
 
@@ -86,7 +93,7 @@ export const Card: FC<CardProps> = ({
       })}
     >
       <Stack space={1}>
-        <Text as="h3" variant="h3" color="blue400">
+        <Text as="h3" variant="h3" color={titleColor}>
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box display="inlineFlex" flexGrow={1}>
               {title}
@@ -179,15 +186,39 @@ export const Card: FC<CardProps> = ({
         flexDirection="column"
         height="full"
         width="full"
+        flexGrow={1}
+        background="white"
         borderColor={borderColor}
         borderWidth="standard"
       >
+        {status ? (
+          <span
+            className={cn(
+              styles.status,
+              styles.statusPosition,
+              styles.statusType[status],
+            )}
+          ></span>
+        ) : null}
         <Frame>{Content}</Frame>
       </FocusableBox>
     )
   }
 
-  return <Frame>{Content}</Frame>
+  return (
+    <Frame>
+      {status ? (
+        <span
+          className={cn(
+            styles.status,
+            styles.statusPosition,
+            styles.statusType[status],
+          )}
+        ></span>
+      ) : null}
+      {Content}
+    </Frame>
+  )
 }
 
 export const Frame = ({ children }) => {

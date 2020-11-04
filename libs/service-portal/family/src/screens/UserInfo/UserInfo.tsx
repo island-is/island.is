@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Typography,
+  Text,
   Box,
   Stack,
   GridRow,
@@ -10,13 +10,14 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { defineMessage } from 'react-intl'
 import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data: natRegInfo } = useNationalRegistryInfo(userInfo.profile.natreg)
+  const { data: natRegInfo } = useNationalRegistryInfo()
 
   return (
     <>
@@ -24,19 +25,19 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
-              <Typography variant="h1" as="h1">
+              <Text variant="h1" as="h1">
                 {formatMessage({
                   id: 'service.portal:user-info',
                   defaultMessage: 'Mínar upplýsingar',
                 })}
-              </Typography>
-              <Typography variant="p" as="p">
+              </Text>
+              <Text as="p">
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:
                     'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum',
                 })}
-              </Typography>
+              </Text>
             </Stack>
           </GridColumn>
         </GridRow>
@@ -119,10 +120,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={natRegInfo?.religion || '...'}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-religious-org',
-              defaultMessage: 'Breyta trú-/lífsskoðunarfélagi',
-            }),
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}

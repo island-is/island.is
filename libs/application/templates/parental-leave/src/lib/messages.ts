@@ -36,6 +36,41 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: 'Some description',
   },
+  salaryLabelYear: {
+    id: 'pl.application:salary.label.year',
+    defaultMessage: 'Year',
+    description: '',
+  },
+  salaryLabelMonth: {
+    id: 'pl.application:salary.label.month',
+    defaultMessage: 'Month',
+    description: '',
+  },
+  salaryLabelPensionFund: {
+    id: 'pl.application:salary.label.pensionfund',
+    defaultMessage: 'Pension fund',
+    description: '',
+  },
+  salaryLabelTax: {
+    id: 'pl.application:salary.label.tax',
+    defaultMessage: 'Tax',
+    description: '',
+  },
+  salaryLabelPaidAmount: {
+    id: 'pl.application:salary.label.paidamount',
+    defaultMessage: 'Paid amount',
+    description: '',
+  },
+  salaryLabelShowMore: {
+    id: 'pl.application:salary.label.paidamount',
+    defaultMessage: 'See all months',
+    description: '',
+  },
+  salaryLabelShowLess: {
+    id: 'pl.application:salary.label.paidamount',
+    defaultMessage: 'See less',
+    description: '',
+  },
   sharedTimeSection: {
     id: 'pl.application:sharedTime.section',
     defaultMessage: 'Shared time',

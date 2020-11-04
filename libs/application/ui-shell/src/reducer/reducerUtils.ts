@@ -11,6 +11,7 @@ import {
   getSubSectionsInSection,
   getValueViaPath,
   isValidScreen,
+  mergeAnswers,
   MultiField,
   Repeater,
   Section,
@@ -39,7 +40,7 @@ export function calculateProgress(
 
   for (let i = 0; i < screens.length; i++) {
     const screen = screens[i]
-    if (screen.isNavigable && screen.repeaterIndex === undefined) {
+    if (screen.isNavigable && !screen.isPartOfRepeater) {
       screensThatCountForProgress += 1
     } else if (i <= activeScreenIndex) {
       pastScreensThatDontCountForProgress += 1
@@ -131,35 +132,6 @@ export const moveToScreen = (
   }
 }
 
-function updateNodeInTree(source: FormNode, target: FormNode): FormNode {
-  if (source.type === target.type && source.id === target.id) {
-    return target
-  } else if (source.children !== undefined) {
-    const newChildren: FormNode[] = []
-    source.children.forEach((child: FormNode) => {
-      newChildren.push(updateNodeInTree(child, target))
-    })
-    return {
-      ...source,
-      children: newChildren,
-    } as FormNode
-  }
-  return source
-}
-
-export function expandRepeater(
-  repeaterIndex: number,
-  form: Form,
-  screens: FormScreen[],
-): Form | undefined {
-  const repeater = screens[repeaterIndex]
-  if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
-    return undefined
-  }
-  const newRepeater = { ...repeater, repetitions: repeater.repetitions + 1 }
-  return updateNodeInTree(form, newRepeater) as Form
-}
-
 function convertFieldToScreen(
   field: Field,
   answers: FormValue,
@@ -213,17 +185,35 @@ function convertRepeaterToScreens(
   answers: FormValue,
   isParentNavigable = true,
 ): FormScreen[] {
-  const { id, children, repetitions } = repeater
+  const { id, children } = repeater
   const newScreens: FormScreen[] = []
-  for (let i = 0; i < repetitions; i++) {
+  function recursiveMap(field: FormLeaf, fn: (l: FormLeaf) => FormLeaf): any {
+    if (Array.isArray(field.children)) {
+      return (field.children as FormLeaf[]).map((c) => recursiveMap(c, fn))
+    }
+    return fn(field)
+  }
+  const repeatedValues = getValueViaPath(answers, id, []) as unknown[]
+  for (let i = 0; i < repeatedValues.length; i++) {
     children.forEach((field, index) => {
+      let grandChildren = field.children
+      let fieldId = field.id
+      if (Array.isArray(field.children)) {
+        grandChildren = recursiveMap(field, (c) => ({
+          ...c,
+          id: `${id}[${i}].${c.id}`,
+        }))
+      } else {
+        fieldId = `${id}[${i}].${field.id}`
+      }
       newScreens.push(
         ...convertLeafToScreens(
           {
             ...field,
-            id: `${id}[${i}].${field.id}`,
-            repeaterIndex: index + children.length * i,
-          },
+            children: grandChildren,
+            id: fieldId,
+            isPartOfRepeater: true,
+          } as FormLeaf,
           answers,
           isParentNavigable,
         ),

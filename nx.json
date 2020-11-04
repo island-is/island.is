@@ -47,8 +47,15 @@
     "api": {
       "tags": []
     },
+    "api-catalogue": {
+      "tags": []
+    },
     "api-catalogue-consts": {
       "tags": []
+    },
+    "api-catalogue-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalogue"]
     },
     "api-catalogue-elastic": {
       "tags": []
@@ -60,6 +67,9 @@
       "tags": []
     },
     "api-content-search": {
+      "tags": []
+    },
+    "api-domains-api-catalogue": {
       "tags": []
     },
     "api-domains-application": {
@@ -115,6 +125,9 @@
       "implicitDependencies": ["application-system-form"]
     },
     "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-document-provider-onboarding": {
       "tags": []
     },
     "application-templates-driving-lessons": {
@@ -213,6 +226,9 @@
     "judicial-system-api": {
       "tags": []
     },
+    "judicial-system-backend": {
+      "tags": []
+    },
     "judicial-system-consts": {
       "tags": []
     },
@@ -298,6 +314,9 @@
     },
     "services-user-profile": {
       "tags": []
+    },
+    "services-xroad-collector": {
+      "tags": ["api-catalogue-services"]
     },
     "shared-form-fields": {
       "tags": []

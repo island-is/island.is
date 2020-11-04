@@ -6,15 +6,15 @@ import {
   Text,
   Breadcrumbs,
   Button,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import CarsTable from './components/CarsTable'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
+import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
 import { useRouter } from 'next/router'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -30,36 +30,14 @@ const Overview: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (
     <PartnerPageLayout
-      top={
-        <Box>
-          <Box paddingBottom={6}>
-            <Breadcrumbs>
-              <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
-              <span>{t.title}</span>
-            </Breadcrumbs>
-          </Box>
-          <Stack space={6}>
-            <Stack space={4}>
-              <Stack space={2}>
-                <Text variant="h1">{t.title}</Text>
-                <Text variant="intro">{t.info}</Text>
-              </Stack>
-              <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
-            </Stack>
-            <Text variant="h3">{t.subtitles.history}</Text>
-          </Stack>
-        </Box>
-      }
-      bottom={<CarsTable />}
-      left={
+      side={
         <Sidenav
-          title="Company name"
+          title={user.name}
           sections={[
             {
               icon: 'car',
@@ -75,7 +53,29 @@ const Overview: FC = () => {
           activeSection={0}
         />
       }
-    />
+    >
+      <Stack space={6}>
+        <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
+          <Stack space={4}>
+            <Breadcrumbs>
+              <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
+              <span>{t.title}</span>
+            </Breadcrumbs>
+            <Stack space={2}>
+              <Text variant="h1">{t.title}</Text>
+              <Text variant="intro">{t.info}</Text>
+            </Stack>
+            <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
+          </Stack>
+        </GridColumn>
+        <Box marginX={1}>
+          <Stack space={4}>
+            <Text variant="h3">{t.subtitles.history}</Text>
+            <CarsTable titles={t.table} />
+          </Stack>
+        </Box>
+      </Stack>
+    </PartnerPageLayout>
   )
 }
 

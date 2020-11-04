@@ -7,6 +7,7 @@ import {
   Footer,
   AlertBanner,
   AlertBannerVariants,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
@@ -38,6 +39,22 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments/environment'
 import { useNamespace } from '../hooks'
 
+const absoluteUrl = (req, setLocalhost) => {
+  let protocol = 'https:'
+  let host = req
+    ? req.headers['x-forwarded-host'] || req.headers['host']
+    : window.location.host
+  if (host.indexOf('localhost') > -1) {
+    if (setLocalhost) host = setLocalhost
+    protocol = 'http:'
+  }
+  return {
+    protocol: protocol,
+    host: host,
+    origin: protocol + '//' + host,
+  }
+}
+
 export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
@@ -46,12 +63,14 @@ export interface LayoutProps {
   hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
-  footerUpperMenu?: FooterLinkProps[]
+  footerUpperInfo?: FooterLinkProps[]
+  footerUpperContact?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  respOrigin
 }
 
 if (environment.sentryDsn) {
@@ -81,18 +100,21 @@ const Layout: NextComponentType<
   hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
-  footerUpperMenu,
+  footerUpperInfo,
+  footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
   namespace,
   alertBannerContent,
+  respOrigin,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
   const { makePath } = routeNames(activeLocale)
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
+  const fullUrl = `${respOrigin}${asPath}`
 
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
@@ -157,20 +179,18 @@ const Layout: NextComponentType<
           <link rel="manifest" href="/site.webmanifest" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
+          <meta name="description" content={n('description')} />
+
           <meta property="og:title" content={n('title')} />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://island.is/" />
+          <meta property="og:url" content={fullUrl} />
           <meta
             property="og:image"
             content="https://island.is/island-fb-1200x630.png"
           />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta
-            name="description"
-            property="og:description"
-            content={n('description')}
-          />
+          <meta property="og:description" content={n('description')} />
           <title>{n('title')}</title>
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
@@ -199,29 +219,34 @@ const Layout: NextComponentType<
             menuTabs,
           }}
         >
-          <FixedNav />
-          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          <Hidden print={true}>
+            <FixedNav />
+            {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          </Hidden>
           <div id="main-content">
             {wrapContent ? <Box width="full">{children}</Box> : children}
           </div>
         </MenuTabsContext.Provider>
         {showFooter && (
-          <Footer
-            topLinks={footerUpperMenu}
-            bottomLinks={footerLowerMenu}
-            middleLinks={footerMiddleMenu}
-            bottomLinksTitle={t.siteExternalTitle}
-            tagLinks={footerTagsMenu}
-            middleLinksTitle={String(namespace.footerMiddleLabel)}
-            tagLinksTitle={String(namespace.footerRightLabel)}
-            languageSwitchLink={{
-              title: activeLocale === 'en' ? 'Íslenska' : 'English',
-              href: activeLocale === 'en' ? '/' : '/en',
-            }}
-            showMiddleLinks
-            showTagLinks
-            hasDrawerMenu
-          />
+          <Hidden print={true}>
+            <Footer
+              topLinks={footerUpperInfo}
+              topLinksContact={footerUpperContact}
+              bottomLinks={footerLowerMenu}
+              middleLinks={footerMiddleMenu}
+              bottomLinksTitle={t.siteExternalTitle}
+              tagLinks={footerTagsMenu}
+              middleLinksTitle={String(namespace.footerMiddleLabel)}
+              tagLinksTitle={String(namespace.footerRightLabel)}
+              languageSwitchLink={{
+                title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                href: activeLocale === 'en' ? '/' : '/en',
+              }}
+              showMiddleLinks
+              showTagLinks
+              hasDrawerMenu
+            />
+          </Hidden>
         )}
         <style jsx global>{`
           @font-face {
@@ -275,14 +300,17 @@ const Layout: NextComponentType<
   )
 }
 
-Layout.getInitialProps = async ({ apolloClient, locale }) => {
+Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
+  const { origin } = absoluteUrl(req, 'localhost:4200')
+  const respOrigin = `${origin}`
   const [
     categories,
     topMenuCustomLinks,
     alertBanner,
-    upperMenu,
+    upperMenuInfo,
+    upperMenuContact,
     lowerMenu,
     middleMenu,
     tagsMenu,
@@ -318,7 +346,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer upper', lang },
+          input: { name: 'Footer upper info', lang },
+        },
+      })
+      .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetMenuQuery, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer upper contact', lang },
         },
       })
       .then((res) => res.data.getMenu),
@@ -371,7 +407,11 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       }),
     ),
     alertBannerContent: alertBanner,
-    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
+    footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerUpperContact: (upperMenuContact.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
@@ -388,6 +428,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       href: url,
     })),
     namespace,
+    respOrigin,
   }
 }
 

@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver, Args } from '@nestjs/graphql'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -13,10 +13,22 @@ export class RecyclingRequestResolver {
   ) {}
 
   @Query(() => [RecyclingRequestModel])
-  async getAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
+  async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
-    logger.debug(
-      'getAllRecyclingRequests responce:' + JSON.stringify(res, null, 2),
+    logger.info(
+      'skilavottordAllRecyclingRequests responce:' +
+        JSON.stringify(res, null, 2),
+    )
+    return res
+  }
+
+  @Query(() => [RecyclingRequestModel])
+  async skilavottordRecyclingRequest(
+    @Args('permno') perm: string,
+  ): Promise<RecyclingRequestModel[]> {
+    const res = await this.recyclingRequestService.findAllWithPermno(perm)
+    logger.info(
+      'skilavottordRecyclingRequest responce:' + JSON.stringify(res, null, 2),
     )
     return res
   }

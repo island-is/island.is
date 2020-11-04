@@ -4,7 +4,7 @@ import {
   Box,
   Hidden,
   ContentBlock,
-  ButtonDeprecated as Button,
+  Button,
   Inline,
   Logo,
   FocusableBox,
@@ -57,7 +57,7 @@ export const Header: FC<{}> = () => {
               </Link>
               <Inline space={[1, 1, 1, 2]}>
                 <Button
-                  variant="menu"
+                  variant="utility"
                   onClick={handleLangClick.bind(
                     null,
                     lang === 'is' ? 'en' : 'is',
@@ -71,7 +71,7 @@ export const Header: FC<{}> = () => {
                   <Hidden above="md">
                     <Box>
                       <Button
-                        variant="menu"
+                        variant="utility"
                         icon="close"
                         onClick={handleMobileMenuClose}
                       />

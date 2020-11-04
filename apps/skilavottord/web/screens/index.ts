@@ -3,7 +3,6 @@ export * from './Overview'
 export * from './Confirm'
 export * from './Handover'
 export * from './Completed'
-export * from './Data'
 
 /* Company screens */
 export * from './CompanyInfo'
@@ -15,3 +14,5 @@ export {
 } from './DeregisterVehicle'
 
 /* Fund screens */
+export { Overview as RecyclingFundOverview } from './RecyclingFund'
+export * from './ReclingCompanies'

@@ -1,11 +1,9 @@
-import '@island.is/infra-tracing'
 import { bootstrap } from '@island.is/infra-nest-server'
 
-import { AppModule } from './app'
-import { openApi } from './openApi'
+import { AppModule } from './app/app.module'
 
 bootstrap({
   appModule: AppModule,
   name: 'judicial-system-api',
-  openApi,
+  port: 3333,
 })

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { IVidspyrnaNews } from '../generated/contentfulTypes'
 
@@ -7,7 +7,7 @@ import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class AdgerdirNews {
-  @Field()
+  @Field(() => ID)
   id: string
 
   @Field()

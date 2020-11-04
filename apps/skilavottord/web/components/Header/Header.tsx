@@ -1,24 +1,15 @@
 import React, { FC, useContext, useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Header as IslandUIHeader } from '@island.is/island-ui/core'
+import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
-
-const mockUser = {
-  name: 'Mock User',
-  nationalId: '2222222222',
-  mobile: 123456,
-  // role: 'citizen',
-  role: 'developer',
-  // role: 'recyclingPartner',
-  // role: 'recyclingFund',
-}
+import { useQuery } from '@apollo/client'
+import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
 
 export const Header: FC = () => {
   const router = useRouter()
@@ -28,6 +19,9 @@ export const Header: FC = () => {
     locale,
     t: { header: t, routes },
   } = useI18n()
+
+  const { data } = useQuery(GET_USER)
+  const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
 
@@ -49,24 +43,21 @@ export const Header: FC = () => {
   }
 
   useEffect(() => {
-    setUser(mockUser)
-  }, [mockUser, setUser])
+    setUser(user)
+  }, [user, setUser])
+
+  const homeRoute = routes.home[user?.role] ?? routes.home['citizen']
 
   return (
     <IslandUIHeader
-      logoRender={(logo) => (
-        <Link href={activeLocale === 'is' ? '/' : '/en'}>
-          <a>{logo}</a>
-        </Link>
-      )}
+      logoRender={(logo) => <Link href={homeRoute}>{logo}</Link>}
       logoutText={t.logoutText}
-      userLogo={mockUser?.role === 'developer' ? '👑' : undefined}
+      userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}
       switchLanguage={() => switchLanguage(nextLanguage)}
-      userName={mockUser?.name ?? ''}
+      userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        const homeRoute = routes.home[mockUser.role] ?? routes.home['citizen']
         api.logout().then(() => router.push(homeRoute))
       }}
     />

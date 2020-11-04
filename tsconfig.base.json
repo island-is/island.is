@@ -41,6 +41,9 @@
         "libs/api-catalogue/types/src/index.ts"
       ],
       "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
+      "@island.is/api/domains/api-catalogue": [
+        "libs/api/domains/api-catalogue/src/index.ts"
+      ],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
@@ -80,6 +83,9 @@
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
+      ],
+      "@island.is/application/templates/document-provider-onboarding": [
+        "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
       "@island.is/application/templates/driving-lessons": [
         "libs/application/templates/driving-lessons/src/index.ts"

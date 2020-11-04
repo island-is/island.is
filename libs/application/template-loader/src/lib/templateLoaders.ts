@@ -9,6 +9,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-lessons'),
   [ApplicationTypes.META_APPLICATION]: () =>
     import('@island.is/application/templates/meta-application'),
+  [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: () =>
+    import('@island.is/application/templates/document-provider-onboarding'),
 }
 
 export default templates

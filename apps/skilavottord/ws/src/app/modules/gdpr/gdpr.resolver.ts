@@ -12,7 +12,7 @@ export class GdprResolver {
   ) {}
 
   @Mutation((returns) => Boolean)
-  async setGDPRInfo(
+  async createSkilavottordGdpr(
     @Args('nationalId') nationalId: string,
     @Args('gdprStatus') gdprStatus: string,
   ): Promise<boolean> {
@@ -21,14 +21,14 @@ export class GdprResolver {
   }
 
   @Query(() => GdprModel)
-  async getGDPRInfo(@Args('nationalId') nid: string): Promise<GdprModel> {
+  async skilavottordGdpr(@Args('nationalId') nid: string): Promise<GdprModel> {
     return await this.gdprService.findByNationalId(nid)
   }
 
   @Query(() => [GdprModel])
-  async getAllGdprs(): Promise<GdprModel[]> {
+  async skilavottordAllGdprs(): Promise<GdprModel[]> {
     const res = this.gdprService.findAll()
-    this.logger.debug('getAllGdrps responce:' + JSON.stringify(res, null, 2))
+    this.logger.info('getAllGdrps responce:' + JSON.stringify(res, null, 2))
     return res
   }
 }

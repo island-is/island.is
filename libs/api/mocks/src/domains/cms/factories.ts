@@ -152,6 +152,7 @@ export const news = factory<News>({
   image: () => image(),
   content: () => slice.list(3),
   author: () => author(),
+  genericTags: () => [],
 })
 
 export const frontPageSlider = factory<FrontpageSlider>({
@@ -159,7 +160,6 @@ export const frontPageSlider = factory<FrontpageSlider>({
   subtitle: () => faker.lorem.sentence(),
   link: null,
   content: () => faker.lorem.paragraph(),
-  animationJson: null,
 })
 
 export const featured = factory<Featured>({

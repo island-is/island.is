@@ -12,8 +12,8 @@ import { CarDetailsBox } from '../Confirm/components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { Unauthorized } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { NotFound } from '@island.is/skilavottord-web/components'
 
 const Confirm: FC = () => {
   const { user } = useContext(UserContext)
@@ -29,11 +29,11 @@ const Confirm: FC = () => {
   const mockCar = {
     permno: id.toString(),
     type: 'Volvo',
-    newregdate: '01-20-2004',
+    firstRegDate: '01-20-2004',
     color: 'red',
-    recyclable: true,
+    isRecyclable: true,
     status: 'pendingRecycle',
-    isCoOwned: false,
+    hasCoOwner: false,
   }
 
   const handleConfirm = () => {
@@ -47,8 +47,7 @@ const Confirm: FC = () => {
   if (!user) {
     return null
   } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
-    console.log(user?.role, 'is not allowed to view this page')
-    return <Unauthorized />
+    return <NotFound />
   }
 
   return (

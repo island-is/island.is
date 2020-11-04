@@ -14,16 +14,22 @@ import {
 } from '@island.is/island-ui/core'
 import { Application } from '@island.is/application/core'
 import { mockApplicationList } from './mockApplicationList'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ApplicationList: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.applications')
   const { formatMessage } = useLocale()
 
   return (
     <>
       <Box marginBottom={4}>
         <Inline space={1}>
-          <Text variant="h1">Umsóknir</Text>
+          <Text variant="h1">
+            {formatMessage({
+              id: 'service.portal:applications',
+              defaultMessage: 'Umsóknir',
+            })}
+          </Text>
           <Tag variant="mint">
             {formatMessage({
               id: 'service.portal:in-progress',
@@ -50,7 +56,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={2}>
         {mockApplicationList.map((application: Application) => (
-          <Box border="standard" key={application.id}>
+          <Box position="relative" border="standard" key={application.id}>
+            <Box position="absolute" className={styles.wipTag}>
+              <Tag variant="blue">Væntanlegt</Tag>
+            </Box>
             <div className={styles.cardBlurWrapper}>
               <ApplicationCard
                 name={application.name || application.typeId}

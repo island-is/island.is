@@ -41,7 +41,6 @@ export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 
 // Form
-export * from './lib/AsyncSelect/AsyncSelect'
 export * from './lib/Checkbox/Checkbox'
 export * from './lib/RadioButton/RadioButton'
 export * from './lib/DatePicker/DatePicker'

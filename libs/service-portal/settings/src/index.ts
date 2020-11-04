@@ -1,4 +1,4 @@
-import { Query, QueryGetUserProfileArgs } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -59,21 +59,33 @@ export const settingsModule: ServicePortalModule = {
         path: ServicePortalPath.UserProfileEditLanguage,
         render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
       },
+      {
+        name: defineMessage({
+          id: 'service.portal:messages',
+          defaultMessage: 'Skilaboð',
+        }),
+        path: ServicePortalPath.MessagesRoot,
+        render: () => lazy(() => import('./screens/Messages/Messages')),
+      },
+      {
+        name: defineMessage({
+          id: 'sp.settings:email-confirmation',
+          defaultMessage: 'Staðfesta netfang',
+        }),
+        path: ServicePortalPath.UserProfileEmailConfirmation,
+        render: () =>
+          lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
+      },
     ]
 
     return routes
   },
-  global: async ({ userInfo, client }) => {
+  global: async ({ client }) => {
     const routes: ServicePortalGlobalComponent[] = []
 
     try {
-      await client.query<Query, QueryGetUserProfileArgs>({
+      await client.query<Query>({
         query: USER_PROFILE,
-        variables: {
-          input: {
-            nationalId: userInfo.profile.natreg,
-          },
-        },
       })
       // If successful, there is a user profile present and we
       // don't render the onboarding prompt

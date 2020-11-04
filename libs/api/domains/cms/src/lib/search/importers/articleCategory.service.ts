@@ -1,17 +1,23 @@
 import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { Entry } from 'contentful'
+import isCircular from 'is-circular'
 import { IArticleCategory } from '../../generated/contentfulTypes'
 import { mapArticleCategory } from '../../models/articleCategory.model'
 import { createTerms } from './utils'
 
 @Injectable()
 export class ArticleCategorySyncService {
-  processSyncData(items) {
+  processSyncData(entries: Entry<any>[]): IArticleCategory[] {
     logger.info('Processing sync data for article category')
 
-    return items.filter(
-      (item) => item.sys.contentType.sys.id === 'articleCategory',
+    // only process articles that we consider not to be empty and dont have circular structures
+    return entries.filter(
+      (entry: IArticleCategory): entry is IArticleCategory =>
+        entry.sys.contentType.sys.id === 'articleCategory' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
     )
   }
 
@@ -34,7 +40,9 @@ export class ArticleCategorySyncService {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.error('Failed to import article category', error)
+          logger.warn('Failed to import article category', {
+            error: error.message,
+          })
           return false
         }
       })

@@ -1,34 +1,32 @@
 import {
-  Controller,
-  Get,
-  Query,
-  Post,
-  Body,
-  UseGuards,
-  Param,
-  Put,
-  Delete,
+  ApiResource,
+  ApiScope,
+  ApiScopesDTO,
+  IdentityResource,
+  IdentityResourcesDTO,
+  ResourcesService,
+} from '@island.is/auth-api-lib'
+import {
   BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiQuery,
   ApiOAuth2,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger'
-import {
-  IdentityResource,
-  ResourcesService,
-  ApiScope,
-  ApiResource,
-  ApiScopesDTO,
-  IdentityResourcesDTO,
-} from '@island.is/auth-api-lib'
-import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {
@@ -42,7 +40,7 @@ export class ResourcesController {
   ): Promise<IdentityResource[]> {
     const identityResources = await this.resourcesService.findIdentityResourcesByScopeName(
       scopeNames ? scopeNames.split(',') : null,
-    ) // TODO: Use ParseArrayPipe from v7
+    ) // TODO: Check if we can use ParseArrayPipe from v7
 
     return identityResources
   }
@@ -55,7 +53,7 @@ export class ResourcesController {
   ): Promise<ApiScope[]> {
     const apiScopes = await this.resourcesService.findApiScopesByNameAsync(
       scopeNames ? scopeNames.split(',') : null,
-    ) // TODO: Use ParseArrayPipe from v7
+    ) // TODO: Check if we can use ParseArrayPipe from v7
 
     return apiScopes
   }
@@ -77,11 +75,11 @@ export class ResourcesController {
     if (apiResourceNames) {
       return await this.resourcesService.findApiResourcesByNameAsync(
         apiResourceNames.split(','),
-      ) // TODO: Use ParseArrayPipe from v7
+      ) // TODO: Check if we can use ParseArrayPipe from v7
     } else {
       return await this.resourcesService.findApiResourcesByScopeNameAsync(
         apiScopeNames ? apiScopeNames.split(',') : null,
-      ) // TODO: Use ParseArrayPipe from v7
+      ) // TODO: Check if we can use ParseArrayPipe from v7
     }
   }
 
@@ -97,7 +95,7 @@ export class ResourcesController {
   @ApiOkResponse({ type: IdentityResource })
   async updateIdentityResource(
     @Body() identityResource: IdentityResourcesDTO,
-    @Param('name') namne: string,
+    @Param('name') name: string,
   ): Promise<IdentityResource> {
     if (!name) {
       throw new BadRequestException('Name must be provided')

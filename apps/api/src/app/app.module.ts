@@ -11,8 +11,10 @@ import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { AuthModule } from '@island.is/auth-api-lib'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
+import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -42,7 +44,12 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     CmsModule,
     ApplicationModule,
     FileUploadModule,
-    DocumentModule,
+    DocumentModule.register({
+      basePath: environment.documentService.basePath,
+      clientId: environment.documentService.clientId,
+      clientSecret: environment.documentService.clientSecret,
+      tokenUrl: environment.documentService.tokenUrl,
+    }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
@@ -56,6 +63,12 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
         environment.userProfile.userProfileServiceBasePath,
     }),
     CommunicationsModule,
+    ApiCatalogueModule,
+    AuthModule.register({
+      audience: environment.identityServer.audience,
+      issuer: environment.identityServer.baseUrl,
+      jwksUri: `${environment.identityServer.jwksUri}`,
+    }),
   ],
 })
 export class AppModule {}

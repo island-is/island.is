@@ -4,9 +4,10 @@ import {
   InMemoryWebStorage,
   UserManagerSettings,
 } from 'oidc-client'
+import { environment } from '../environments'
 
 const settings: UserManagerSettings = {
-  authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
+  authority: environment.identityServer.IDENTITY_SERVER_BASE_URL,
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
@@ -18,7 +19,7 @@ const settings: UserManagerSettings = {
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
   automaticSilentRenew: true,
-  scope: 'openid profile offline_access',
+  scope: 'openid profile offline_access api_resource.scope',
   userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
 }
 
