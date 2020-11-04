@@ -8,11 +8,8 @@ export const wrapper = style({
   },
 })
 
-export const link = style({
-  color: theme.color.blue400,
-  transition: 'color 200ms',
-  ':hover': {
-    color: theme.color.purple400,
-    textDecoration: 'none',
-  },
+// The line on text buttons overflows it's element,
+// resulting in uneven alignment
+export const buttonWrapper = style({
+  paddingBottom: 2,
 })

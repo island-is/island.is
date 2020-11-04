@@ -1,4 +1,4 @@
-import { VehicleInformation, DeRegisterVehicle } from '.'
+import { VehicleInformation } from '.'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import xml2js from 'xml2js'
 import { environment } from '../../../../environments'
@@ -356,7 +356,7 @@ export class SamgongustofaService {
         this.logger.info(
           `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
         )
-        return new DeRegisterVehicle(true)
+        return true
       } else {
         this.logger.info(deRegRes.statusText)
         throw new Error(deRegRes.statusText)
