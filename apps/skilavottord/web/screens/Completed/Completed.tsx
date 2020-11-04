@@ -18,6 +18,7 @@ import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
+import { getTime, getDate } from '@island.is/skilavottord-web/utils'
 
 const Completed = ({ apolloState }) => {
   const { user } = useContext(UserContext)
@@ -61,10 +62,16 @@ const Completed = ({ apolloState }) => {
   })
 
   const userRequests = sortedRequests.filter(
-    (request) => request.nameOfRequestor === user?.name,
+    (request) =>
+      request.requestType === 'pendingRecycle' ||
+      request.requestType === 'cancelled',
   )
   const partnerRequests = sortedRequests.filter(
-    (request) => request.nameOfRequestor !== user?.name,
+    (request) =>
+      request.requestType === 'handedOver' ||
+      request.requestType === 'deregistered' ||
+      request.requestType === 'paymentInitiated' ||
+      request.requestType === 'paymentFailed',
   )
 
   const getConfirmationText = (
@@ -77,7 +84,7 @@ const Completed = ({ apolloState }) => {
       case 'cancelled':
         return `${t.cancelledBy.user} ${requestor}`
       case 'handedOver':
-        return `${t.confirmedBy.user} ${requestor}`
+        return `${t.confirmedBy.company} ${requestor}`
       case 'deregistered':
         return t.confirmedBy.authority
       case 'paymentInitiated':
@@ -85,18 +92,6 @@ const Completed = ({ apolloState }) => {
       case 'paymentFailed':
         return t.cancelledBy.fund
     }
-  }
-
-  const getDate = (dateTime: Date) => {
-    const d = new Date(dateTime).toISOString()
-    const date = d.split('T')[0]
-    return date
-  }
-
-  const getTime = (dateTime: Date) => {
-    const d = new Date(dateTime).toISOString()
-    const time = d.slice(11, 16)
-    return time
   }
 
   return (
@@ -129,15 +124,14 @@ const Completed = ({ apolloState }) => {
                         </GridColumn>
                         <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                           <Text variant="h5">
-                            {`${getDate(new Date(request.createdAt))} ${getTime(
-                              new Date(request.createdAt),
+                            {`${getDate(request.createdAt)} ${getTime(
+                              request.createdAt,
                             )}`}
                           </Text>
                         </GridColumn>
                       </GridRow>
                     ))}
                   </Stack>
-
                   <Divider />
                   <Stack space={2}>
                     {partnerRequests.map((request) => (
@@ -152,8 +146,8 @@ const Completed = ({ apolloState }) => {
                         </GridColumn>
                         <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                           <Text variant="h5">
-                            {`${getDate(new Date(request.createdAt))} ${getTime(
-                              new Date(request.createdAt),
+                            {`${getDate(request.createdAt)} ${getTime(
+                              request.createdAt,
                             )}`}
                           </Text>
                         </GridColumn>
