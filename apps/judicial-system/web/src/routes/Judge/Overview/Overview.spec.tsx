@@ -58,7 +58,7 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     })
   })
 
-  test('should display the string "Ekki er farið fram á takmarkanir á gæslu." in custody restrictions if there are no custody restrictions', async () => {
+  test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -80,8 +80,8 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => getByText('Ekki er farið fram á takmarkanir á gæslu.'))
-    expect(getByText('Ekki er farið fram á takmarkanir á gæslu.')).toBeTruthy()
+    await waitFor(() => getByText('Ekki er farið fram á takmarkanir á gæslu'))
+    expect(getByText('Ekki er farið fram á takmarkanir á gæslu')).toBeTruthy()
     cleanup()
   })
 

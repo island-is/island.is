@@ -95,5 +95,5 @@ export const formatCustodyRestrictions = (
         .map((restriction) => getRestrictionByValue(restriction))
         .toString()
         .replace(',', ', ')
-    : 'Ekki er farið fram á takmarkanir á gæslu.'
+    : 'Ekki er farið fram á takmarkanir á gæslu'
 }
