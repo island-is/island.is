@@ -143,7 +143,11 @@ class App {
           )
           logger.info('Initializing elastic data')
           // we send a initialize sync request to ensure all assets are up to date before this container runs
-          await elastic.importContentToIndex(locale, oldIndexVersion, 'initialize')
+          await elastic.importContentToIndex(
+            locale,
+            oldIndexVersion,
+            'initialize',
+          )
         }
         return { success: true }
       },

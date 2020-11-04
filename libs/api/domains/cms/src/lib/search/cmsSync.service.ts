@@ -52,19 +52,22 @@ export class CmsSyncService {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
-    return this.elasticService.findById(
-      elasticIndex,
-      'cmsImportFolderHashId',
-    )
+    return this.elasticService
+      .findById(elasticIndex, 'cmsImportFolderHashId')
       .then((document) => document.body._source.title)
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
-        logger.warning('Failed to get last folder hash', { error: error.message })
+        logger.warning('Failed to get last folder hash', {
+          error: error.message,
+        })
         return ''
       })
   }
 
-  private async updateLastFolderHash({ elasticIndex, folderHash }: UpdateLastHashOptions) {
+  private async updateLastFolderHash({
+    elasticIndex,
+    folderHash,
+  }: UpdateLastHashOptions) {
     // we get this next sync token from Contentful on sync request
     const folderHashDocument = {
       _id: 'cmsImportFolderHashId',
@@ -94,21 +97,24 @@ export class CmsSyncService {
      * We don't want full sync to run every time we start a new pod
      * We want full sync to run once when the first pod initializes the first container
      * and the never again until a new build is deployed
-    */
+     */
     let folderHash
     if (options.syncType === 'initialize') {
       // TODO: Add lock to this procedure to ensure only a single initContainer can run this
-      const {
-        elasticIndex = SearchIndexes[options.locale]
-      } = options
+      const { elasticIndex = SearchIndexes[options.locale] } = options
 
       folderHash = await this.getModelsFolderHash()
       const lastFolderHash = await this.getLastFolderHash(elasticIndex)
       if (folderHash !== lastFolderHash) {
-        logger.info('Folder and index folder hash dont match, running full sync', { locale: options.locale })
+        logger.info(
+          'Folder and index folder hash dont match, running full sync',
+          { locale: options.locale },
+        )
         cmsSyncOptions = { ...options, syncType: 'full' }
       } else {
-        logger.info('Folder and index folder hash match, skipping sync', { locale: options.locale })
+        logger.info('Folder and index folder hash match, skipping sync', {
+          locale: options.locale,
+        })
         // we skip import if it is not needed
         return null
       }

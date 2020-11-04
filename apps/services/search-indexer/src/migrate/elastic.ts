@@ -213,7 +213,7 @@ export const removeIndexesBelowVersion = async (
 export const importContentToIndex = async (
   locale: string,
   indexVersion: number,
-  syncType: SyncOptions['syncType']
+  syncType: SyncOptions['syncType'],
 ) => {
   // we do a full sync here to import data
   const elasticIndex = getIndexNameForVersion(locale, indexVersion)

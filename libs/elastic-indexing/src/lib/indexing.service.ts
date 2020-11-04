@@ -12,7 +12,7 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
-  ) { }
+  ) {}
 
   async ping() {
     return this.elasticService.ping()
@@ -30,10 +30,7 @@ export class IndexingService {
       return true
     }
 
-    const {
-      postSyncOptions,
-      ...elasticData
-    } = importerResponse
+    const { postSyncOptions, ...elasticData } = importerResponse
     await this.elasticService.bulk(elasticIndex, elasticData)
 
     // clear index of stale data by deleting all ids but those added on full sync

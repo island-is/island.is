@@ -88,20 +88,20 @@ export class ContentfulService {
    * Next sync token is returned by Contentful sync API to mark starting point for next sync.
    * We keep this token in elasticsearch per locale.
    * This token is only used in "fromLast" type syncs
-  */
+   */
   private async getNextSyncToken(elasticIndex: string): Promise<string> {
     logger.info('Getting models hash from index', {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
-    return this.elasticService.findById(
-      elasticIndex,
-      'cmsNextSyncTokenId',
-    )
+    return this.elasticService
+      .findById(elasticIndex, 'cmsNextSyncTokenId')
       .then((document) => document.body._source.title)
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
-        logger.warning('Failed to get next sync token', { error: error.message })
+        logger.warning('Failed to get next sync token', {
+          error: error.message,
+        })
         return ''
       })
   }

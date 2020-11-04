@@ -12,7 +12,7 @@ import { SyncInput } from './dto/syncInput.input'
 
 @Controller('')
 export class IndexingController {
-  constructor(private readonly indexingService: IndexingService) { }
+  constructor(private readonly indexingService: IndexingService) {}
 
   @Get('/')
   async hello() {
