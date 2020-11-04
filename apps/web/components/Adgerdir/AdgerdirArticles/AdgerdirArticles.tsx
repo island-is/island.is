@@ -73,12 +73,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 
   const visibleItems = startingItems.length ? startingItems : items
 
-  const statusNames = {
-    preparing: 'Í undirbúningi',
-    ongoing: 'Í framkvæmd',
-    completed: 'Lokið',
-  }
-
   const handleResize = useCallback(() => {
     setFiltersToggled(window.innerWidth >= theme.breakpoints.lg)
   }, [])
@@ -121,24 +115,11 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     setIndexesFilteredByTag(arr)
   }, [visibleItems, tagIds])
 
-  const onFilterStatusChange = useCallback(() => {
-    const arr = []
-
-    visibleItems.forEach(({ status }, index) => {
-      if (selectedStatuses.includes(status)) {
-        arr.push(index)
-      }
-    })
-
-    setIndexesFilteredByStatus(arr)
-  }, [visibleItems, selectedStatuses])
-
   const doUpdate = useCallback(() => {
     onFilterStringChange()
     onFilterTagChange()
-    onFilterStatusChange()
     setIsLoading(false)
-  }, [onFilterStringChange, onFilterTagChange, onFilterStatusChange])
+  }, [onFilterStringChange, onFilterTagChange])
 
   const onUpdateFilters = useCallback(() => {
     clearTimeout(timerRef.current)
@@ -164,20 +145,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     }
 
     setTagIds(arr)
-  }
-
-  const onStatusClick = (status: string) => {
-    clearTimeout(timerRef.current)
-    const arr = [...selectedStatuses]
-    const index = selectedStatuses.findIndex((x) => x === status)
-
-    if (index < 0) {
-      arr.push(status)
-    } else {
-      arr.splice(index, 1)
-    }
-
-    setSelectedStatuses(arr)
   }
 
   useEffect(() => {
@@ -250,39 +217,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
             <Stack space={2}>
               <Inline space={2} alignY="center" collapseBelow="sm">
                 <Typography variant="tag" color="red600">
-                  Staða aðgerðar:
-                </Typography>
-                <Inline space={2} alignY="center">
-                  {Object.keys(statusNames).map((status, index) => {
-                    return (
-                      <Tag
-                        key={index}
-                        variant="red"
-                        onClick={() => {
-                          setstartingItems([])
-                          onStatusClick(status)
-                        }}
-                        active={selectedStatuses.includes(status)}
-                        bordered
-                      >
-                        <Box position="relative">
-                          <Inline space={1} alignY="center">
-                            <span>{statusNames[status]}</span>
-                            <span
-                              className={cn(
-                                cardStyles.status,
-                                cardStyles.statusType[status],
-                              )}
-                            ></span>
-                          </Inline>
-                        </Box>
-                      </Tag>
-                    )
-                  })}
-                </Inline>
-              </Inline>
-              <Inline space={2} alignY="center" collapseBelow="sm">
-                <Typography variant="tag" color="red600">
                   Málefni:
                 </Typography>
                 <Inline space={2} alignY="center">
@@ -350,10 +284,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
       <Box marginTop={3}>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
           {filteredItems.map(
-            (
-              { title, description, tags, status, slug }: AdgerdirPage,
-              index,
-            ) => {
+            ({ title, description, tags, slug }: AdgerdirPage, index) => {
               return (
                 <Card
                   key={index}
@@ -368,7 +299,6 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                       },
                     }
                   })}
-                  status={status}
                   as={makePath('adgerdir', slug)}
                   href={makePath('adgerdir', '[slug]')}
                 />
