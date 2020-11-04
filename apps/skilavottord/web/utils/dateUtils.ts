@@ -6,8 +6,8 @@ export const formatYear = (dateTime: string, dateFormat: string) => {
 }
 
 export const getDate = (dateTime: string) => {
-  const time = new Date(dateTime)
-  return format(time, 'yyyy-MM-dd')
+  const date = new Date(dateTime)
+  return format(date, 'yyyy-MM-dd')
 }
 
 export const getTime = (dateTime: string) => {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Stack,
   GridContainer,
@@ -17,11 +17,9 @@ import { theme } from '@island.is/island-ui/theme'
 import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { getTime, getDate } from '@island.is/skilavottord-web/utils'
 
 const Completed = ({ apolloState }) => {
-  const { user } = useContext(UserContext)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   const {
@@ -61,11 +59,10 @@ const Completed = ({ apolloState }) => {
     return new Date(a.createdAt).getDate() - new Date(b.createdAt).getDate()
   })
 
-  const userRequests = sortedRequests.filter(
-    (request) =>
-      request.requestType === 'pendingRecycle' ||
-      request.requestType === 'cancelled',
-  )
+  const latestUserRequest = sortedRequests.filter(
+    (request) => request.requestType === 'pendingRecycle',
+  )[0]
+
   const partnerRequests = sortedRequests.filter(
     (request) =>
       request.requestType === 'handedOver' ||
@@ -81,16 +78,13 @@ const Completed = ({ apolloState }) => {
     switch (requestType) {
       case 'pendingRecycle':
         return `${t.confirmedBy.user} ${requestor}`
-      case 'cancelled':
-        return `${t.cancelledBy.user} ${requestor}`
       case 'handedOver':
         return `${t.confirmedBy.company} ${requestor}`
       case 'deregistered':
         return t.confirmedBy.authority
       case 'paymentInitiated':
-        return t.confirmedBy.fund
       case 'paymentFailed':
-        return t.cancelledBy.fund
+        return t.confirmedBy.fund
     }
   }
 
@@ -112,25 +106,25 @@ const Completed = ({ apolloState }) => {
               <GridContainer>
                 <Stack space={4}>
                   <Stack space={2}>
-                    {userRequests.map((request) => (
+                    {latestUserRequest && (
                       <GridRow>
                         <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
                           <Text>
                             {`${getConfirmationText(
-                              request.requestType,
-                              request.nameOfRequestor,
+                              latestUserRequest.requestType,
+                              latestUserRequest.nameOfRequestor,
                             )}`}
                           </Text>
                         </GridColumn>
                         <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
                           <Text variant="h5">
-                            {`${getDate(request.createdAt)} ${getTime(
-                              request.createdAt,
+                            {`${getDate(latestUserRequest.createdAt)} ${getTime(
+                              latestUserRequest.createdAt,
                             )}`}
                           </Text>
                         </GridColumn>
                       </GridRow>
-                    ))}
+                    )}
                   </Stack>
                   <Divider />
                   <Stack space={2}>
