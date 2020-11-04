@@ -70,10 +70,14 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await waitFor(() => screen.getAllByRole('row').length)).toEqual(
+    expect(
+      await waitFor(
+        () => screen.getAllByTestId('detention-requests-table-row').length,
+      ),
+    ).toEqual(
       mockCasesQuery[0].result.data.cases.filter((dr) => {
         return dr.state !== CaseState.DRAFT
-      }).length + 1, // Plus one because thead is counted as a row
+      }).length,
     )
   })
 
@@ -154,9 +158,11 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await waitFor(() => screen.getAllByRole('row').length)).toEqual(
-      mockCasesQuery[0].result.data.cases.length + 1, // Plus one because thead is counted as a row
-    )
+    expect(
+      await waitFor(
+        () => screen.getAllByTestId('detention-requests-table-row').length,
+      ),
+    ).toEqual(mockCasesQuery[0].result.data.cases.length)
   })
 
   test('should display custody end date if case has ACCEPTED status', async () => {
