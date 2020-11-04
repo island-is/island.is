@@ -1,10 +1,9 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import flatten from 'lodash/flatten'
-import { hashElement, HashElementOptions } from 'folder-hash'
+import { hashElement } from 'folder-hash'
 import {
   ElasticService,
-  MappedData,
   SearchIndexes,
   SyncOptions,
   SyncResponse,
@@ -59,24 +58,25 @@ export class CmsSyncService {
     )
       .then((document) => document.body._source.title)
       .catch((error) => {
-        logger.error('Failed to get last folder hash', { error: error.message })
+        // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
+        logger.warning('Failed to get last folder hash', { error: error.message })
         return ''
       })
   }
 
   private async updateLastFolderHash({ elasticIndex, folderHash }: UpdateLastHashOptions) {
     // we get this next sync token from Contentful on sync request
-    const nextSyncTokenDocument: MappedData = {
+    const folderHashDocument = {
       _id: 'cmsImportFolderHashId',
       title: folderHash,
-      type: 'cmsImportModelsFolderHash',
+      type: 'cmsImportFolderHash',
       dateCreated: new Date().getTime().toString(),
       dateUpdated: new Date().getTime().toString(),
     }
 
     // write sync token to elastic here as it's own type
     logger.info('Writing models hash to elasticsearch index')
-    return this.elasticService.index(elasticIndex, nextSyncTokenDocument)
+    return this.elasticService.index(elasticIndex, folderHashDocument)
   }
 
   // this will generate diffrent hash for each build
@@ -101,14 +101,14 @@ export class CmsSyncService {
       const {
         elasticIndex = SearchIndexes[options.locale]
       } = options
+
       folderHash = await this.getModelsFolderHash()
       const lastFolderHash = await this.getLastFolderHash(elasticIndex)
-
-      logger.info('Hashes response', { folderHash, lastFolderHash })
-
       if (folderHash !== lastFolderHash) {
+        logger.info('Folder and index folder hash dont match, running full sync', { locale: options.locale })
         cmsSyncOptions = { ...options, syncType: 'full' }
       } else {
+        logger.info('Folder and index folder hash match, skipping sync', { locale: options.locale })
         // we skip import if it is not needed
         return null
       }
@@ -152,5 +152,3 @@ export class CmsSyncService {
     return true
   }
 }
-
-// TODO: Make nextSyncToken use same method of keeping keys as lastFolderHash
