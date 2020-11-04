@@ -6,20 +6,21 @@ import isCircular from 'is-circular'
 
 import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
+import { CmsSyncProvider } from '../cmsSync.service'
 
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class ArticleSyncService {
-  processSyncData(entries: Entry<any>[]): IArticle[] {
+export class ArticleSyncService implements CmsSyncProvider<IArticle>{
+  processSyncData(entries: (Entry<any> | IArticle)[]): IArticle[] {
     // only process articles that we consider not to be empty and dont have circular structures
-    return entries.reduce<IArticle[]>(
-      (processedEntries: IArticle[], entry: IArticle) => {
+    return entries.reduce(
+      (processedEntries: IArticle[], entry: Entry<any>) => {
         // only process articles that we consider not to be empty
-        if (
-          entry.sys.contentType.sys.id === 'article' &&
-          !!entry.fields.title
-        ) {
+        const validateArticle = (singleEntry: Entry<any> | IArticle): singleEntry is IArticle => {
+          return entry.sys.contentType.sys.id === 'article' && !!entry.fields.title
+        }
+        if (validateArticle(entry)) {
           // remove nested related articles from releated articles
           const relatedArticles = (entry.fields.relatedArticles ?? []).map(
             ({
@@ -68,22 +69,22 @@ export class ArticleSyncService {
             type,
             termPool: createTerms([
               mapped.title,
-              mapped.category?.title,
-              mapped.group?.title,
+              mapped.category?.title ?? '',
+              mapped.group?.title ?? '',
             ]),
             response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [
               {
-                key: entry.fields?.group?.fields?.slug,
+                key: entry.fields?.group?.fields?.slug ?? '',
                 value: entry.fields?.group?.fields?.title,
                 type: 'group',
               },
               {
-                key: entry.fields?.category?.fields?.slug,
+                key: entry.fields?.category?.fields?.slug ?? '',
                 value: entry.fields?.category?.fields?.title,
                 type: 'category',
               },
-              ...mapped.otherCategories.map((x) => ({
+              ...(mapped.otherCategories ?? []).map((x) => ({
                 key: x.slug,
                 value: x.title,
                 type: 'category',

@@ -5,6 +5,7 @@ import { hashElement } from 'folder-hash'
 import {
   ElasticService,
   SearchIndexes,
+  MappedData,
   SyncOptions,
   SyncResponse,
 } from '@island.is/api/content-search'
@@ -14,6 +15,7 @@ import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
+import { Entry } from 'contentful'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -26,9 +28,14 @@ interface UpdateLastHashOptions {
   folderHash: PostSyncOptions['folderHash']
 }
 
+export interface CmsSyncProvider<T> {
+  processSyncData: (entries: (Entry<any> | T)[]) => T[]
+  doMapping: (entries: T[]) => MappedData[]
+}
+
 @Injectable()
 export class CmsSyncService {
-  private contentSyncProviders
+  private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
     private readonly aboutPageSyncService: AboutPageSyncService,
     private readonly newsSyncService: NewsSyncService,

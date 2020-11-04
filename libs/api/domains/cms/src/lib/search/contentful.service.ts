@@ -20,7 +20,7 @@ interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: Entry<any>[]
   deletedItems: string[]
-  token: string | undefined
+  token: string
   elasticIndex: string
 }
 
@@ -62,7 +62,7 @@ export class ContentfulService {
 
   private getFilteredIdString(chunkToProcess: Entry<any>[]): string {
     return chunkToProcess
-      .reduce((csvIds, entry) => {
+      .reduce((csvIds: string[], entry) => {
         // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
         if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
           csvIds.push(entry.sys.id)
@@ -189,7 +189,7 @@ export class ContentfulService {
    */
   private async linksToEntry(
     linkId: string,
-    locale: string,
+    locale: keyof typeof SearchIndexes,
   ): Promise<Entry<any>[]> {
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,

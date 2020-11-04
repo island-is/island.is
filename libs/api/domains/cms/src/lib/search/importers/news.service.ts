@@ -14,7 +14,7 @@ export class NewsSyncService {
 
     // only process news that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: INews): entry is INews =>
+      (entry: Entry<any>): entry is INews =>
         entry.sys.contentType.sys.id === 'news' &&
         !!entry.fields.title &&
         !isCircular(entry),

@@ -5,15 +5,16 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IPage } from '../../generated/contentfulTypes'
 import { mapAboutPage } from '../../models/aboutPage.model'
+import { CmsSyncProvider } from '../cmsSync.service'
 
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class AboutPageSyncService {
-  processSyncData(entries: Entry<any>[]): IPage[] {
+export class AboutPageSyncService implements CmsSyncProvider<IPage> {
+  processSyncData(entries: (Entry<any> | IPage)[]) {
     // only process pages that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: IPage): entry is IPage =>
+      (entry: Entry<any>): entry is IPage =>
         entry.sys.contentType.sys.id === 'page' &&
         !!entry.fields.title &&
         !isCircular(entry),

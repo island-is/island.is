@@ -14,7 +14,7 @@ export class ArticleCategory {
   slug: string
 
   @Field({ nullable: true })
-  description?: string
+  description: string
 }
 
 export const mapArticleCategory = ({
