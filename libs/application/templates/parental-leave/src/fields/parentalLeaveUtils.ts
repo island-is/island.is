@@ -17,3 +17,8 @@ export function getNameAndIdOfSpouse(
   }
   return [undefined, undefined]
 }
+
+export function getEstimatedMonthlyPay(application: Application): number {
+  // TODO read this value from external data when APIs have arrived
+  return 384000
+}
