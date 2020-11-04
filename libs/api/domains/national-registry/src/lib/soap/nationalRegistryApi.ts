@@ -6,15 +6,17 @@ import { GetViewHomeDto } from './dto/getViewHomeDto'
 import { GetViewReligionDto } from './dto/getViewReligionDto'
 import { GetViewMunicipalityDto } from './dto/getViewMunicipalityDto'
 import { GetViewRegistryDto } from './dto/getViewRegistryDto'
-import { GetViewFamilyDto } from './dto/getViewFamilyDto'
+import { Fjolskyldan, GetViewFamilyDto } from './dto/getViewFamilyDto'
 import { FamilyMember } from '../familyMember.model'
 import { GetViewBanmarkingDto } from './dto/getViewBanmarkingDto'
+import * as kennitala from 'kennitala'
+import { FamilyRelation } from '../types/familyRelation.enum'
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
   private readonly clientUser: string
   private readonly clientPassword: string
-
+  private readonly ADULT_AGE_LIMIT = 18
   constructor(
     private soapClient: Soap.Client | null,
     clientPassword: string,
@@ -84,18 +86,41 @@ export class NationalRegistryApi {
         `family for nationalId ${nationalId} not found`,
       )
 
-    const members = family.map(
-      (familyMember) =>
-        ({
-          fullName: familyMember.Nafn,
-          nationalId: familyMember.Kennitala,
-          gender: familyMember.Kyn,
-          maritalStatus: familyMember.Hjuskapur,
-          address: `${familyMember.Husheiti}, ${familyMember.Pnr} ${familyMember.Sveitarfelag}`,
-        } as FamilyMember),
-    )
+    const members = family
+      .map(
+        (familyMember) =>
+          ({
+            fullName: familyMember.Nafn,
+            nationalId: familyMember.Kennitala,
+            gender: familyMember.Kyn,
+            maritalStatus: familyMember.Hjuskapur,
+            familyRelation: this.getFamilyRelation(familyMember),
+            address: `${familyMember.Husheiti}, ${familyMember.Pnr} ${familyMember.Sveitarfelag}`,
+          } as FamilyMember),
+      )
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
+        )
+      })
 
     return members
+  }
+
+  private getFamilyRelation(person: Fjolskyldan): FamilyRelation {
+    if (this.isChild(person)) return FamilyRelation.CHILD
+    return FamilyRelation.SPOUSE
+  }
+
+  private isParent(person: Fjolskyldan): boolean {
+    return ['1', '2'].includes(person.Kyn)
+  }
+
+  private isChild(person: Fjolskyldan): boolean {
+    return (
+      !this.isParent(person) &&
+      kennitala.info(person.Kennitala).age < this.ADULT_AGE_LIMIT
+    )
   }
 
   private formatResidenceAddressString(

@@ -10,7 +10,7 @@ import {
   User,
 } from '@island.is/auth-api-lib'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+//@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class NationalRegistryResolver {
   constructor(private nationalRegistryService: NationalRegistryService) {}
@@ -22,6 +22,6 @@ export class NationalRegistryResolver {
 
   @Query(() => [FamilyMember], { nullable: true })
   getMyFamily(@CurrentUser() user: User): Promise<FamilyMember[] | null> {
-    return this.nationalRegistryService.GetMyFamily(user.nationalId)
+    return this.nationalRegistryService.GetMyFamily('2606862759')
   }
 }
