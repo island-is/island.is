@@ -20,7 +20,7 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import BoxChart from '../components/BoxChart'
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import Timeline from '../components/Timeline'
 import {
   formatIsk,
@@ -195,6 +195,33 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
     ],
     [application, formatMessage],
   )
+
+  const requestRightsAnswer = getValueViaPath(
+    application.answers,
+    'requestRights',
+    undefined,
+  )
+  const giveRightsAnswer = getValueViaPath(
+    application.answers,
+    'giveRights',
+    undefined,
+  )
+
+  const boxChartKeys =
+    requestRightsAnswer === 'yes'
+      ? [
+          { label: '6 personal months', bulletStyle: 'blue' },
+          {
+            label: '1 shared month requested from other parent',
+            bulletStyle: 'greenWithLines',
+          },
+        ]
+      : giveRightsAnswer === 'yes'
+      ? [{ label: '5 personal months', bulletStyle: 'blue' }]
+      : [{ label: '6 personal months', bulletStyle: 'blue' }]
+
+  const numberOfBoxes =
+    requestRightsAnswer === 'yes' ? 7 : giveRightsAnswer === 'yes' ? 5 : 6
 
   return (
     <div>
@@ -431,6 +458,17 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               <GridRow>
                 <GridColumn span="12/12">
                   <BoxChart
+                    titleLabel={`Total: ${numberOfBoxes} months *`}
+                    boxes={numberOfBoxes}
+                    calculateBoxStyle={(index) => {
+                      if (index === 6) {
+                        return 'greenWithLines'
+                      }
+                      return 'blue'
+                    }}
+                    keys={boxChartKeys as BoxChartKey[]}
+                  />
+                  {/* <BoxChart
                     boxes={7}
                     titleLabel="Total: 7 months"
                     calculateBoxStyle={(index: number) => {
@@ -447,7 +485,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                         bulletStyle: 'greenWithLines',
                       },
                     ]}
-                  />
+                  /> */}
                 </GridColumn>
               </GridRow>
             </Box>
