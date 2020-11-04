@@ -26,7 +26,7 @@ export class DocumentClient {
     private httpService: HttpService,
     @Inject(DOCUMENT_CLIENT_CONFIG)
     private clientConfig: DocumentClientConfig,
-  ) {}
+  ) { }
 
   private async rehydrateToken() {
     if (
