@@ -28,9 +28,11 @@ interface UpdateLastHashOptions {
   folderHash: PostSyncOptions['folderHash']
 }
 
+export type processSyncDataInput<T> = (Entry<any> | T)[]
+export type doMappingInput<T> = T[]
 export interface CmsSyncProvider<T> {
-  processSyncData: (entries: (Entry<any> | T)[]) => T[]
-  doMapping: (entries: T[]) => MappedData[]
+  processSyncData: (entries: processSyncDataInput<T>) => T[]
+  doMapping: (entries: doMappingInput<T>) => MappedData[]
 }
 
 @Injectable()

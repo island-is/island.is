@@ -5,11 +5,16 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { INews } from '../../generated/contentfulTypes'
 import { mapNews } from '../../models/news.model'
+import {
+  CmsSyncProvider,
+  doMappingInput,
+  processSyncDataInput,
+} from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class NewsSyncService {
-  processSyncData(entries: Entry<any>[]): INews[] {
+export class NewsSyncService implements CmsSyncProvider<INews> {
+  processSyncData(entries: processSyncDataInput<INews>) {
     logger.info('Processing sync data for news')
 
     // only process news that we consider not to be empty and dont have circular structures
@@ -21,7 +26,7 @@ export class NewsSyncService {
     )
   }
 
-  doMapping(entries: INews[]): MappedData[] {
+  doMapping(entries: doMappingInput<INews>) {
     logger.info('Mapping news', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {

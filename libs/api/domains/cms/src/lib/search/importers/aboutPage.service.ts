@@ -5,13 +5,17 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IPage } from '../../generated/contentfulTypes'
 import { mapAboutPage } from '../../models/aboutPage.model'
-import { CmsSyncProvider } from '../cmsSync.service'
+import {
+  CmsSyncProvider,
+  doMappingInput,
+  processSyncDataInput,
+} from '../cmsSync.service'
 
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class AboutPageSyncService implements CmsSyncProvider<IPage> {
-  processSyncData(entries: (Entry<any> | IPage)[]) {
+  processSyncData(entries: processSyncDataInput<IPage>) {
     // only process pages that we consider not to be empty and dont have circular structures
     return entries.filter(
       (entry: Entry<any>): entry is IPage =>
@@ -21,7 +25,7 @@ export class AboutPageSyncService implements CmsSyncProvider<IPage> {
     )
   }
 
-  doMapping(entries: IPage[]): MappedData[] {
+  doMapping(entries: doMappingInput<IPage>) {
     logger.info('Mapping about page', { count: entries.length })
 
     return entries
