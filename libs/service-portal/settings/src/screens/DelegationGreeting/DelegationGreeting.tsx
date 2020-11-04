@@ -11,7 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { mockDelegationList } from './mockDelegationList'
-import WipDelegationCard from './wipDelegationCard'
+import WipDelegationCard from './WipDelegationCard'
 
 export const DelegationGreeting: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
