@@ -35,14 +35,13 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Assert
     expect(
       await waitFor(
-        () => (screen.getByTestId('accusedName') as HTMLInputElement).value,
+        () => (screen.getByLabelText('Fullt nafn *') as HTMLInputElement).value,
       ),
     ).toEqual('Jon Harring')
 
     expect(
-      await waitFor(
-        () => (screen.getByTestId('accusedAddress') as HTMLInputElement).value,
-      ),
+      (screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement)
+        .value,
     ).toEqual('Harringvej 2')
   })
 
@@ -67,7 +66,10 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // TODO FIND A WAY TO SET DATES
     expect(
       await waitFor(
-        () => screen.getByTestId('continueButton') as HTMLButtonElement,
+        () =>
+          screen.getByRole('button', {
+            name: /Halda áfram/i,
+          }) as HTMLButtonElement,
       ),
     ).toBeDisabled()
   })
@@ -89,20 +91,17 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
 
     // Act
     const aa = [
-      await waitFor(() => screen.getByTestId(/policeCaseNumber/i)),
-      await waitFor(() => screen.getByTestId(/nationalId/i)),
-      await waitFor(() => screen.getByTestId(/accusedName/i)),
-      await waitFor(() => screen.getByTestId(/accusedAddress/i)),
-      await waitFor(() => screen.getByTestId(/arrestTime/i)),
-      await waitFor(() => screen.getByTestId(/requestedCourtDate/i)),
+      await waitFor(() => screen.getByLabelText('Slá inn LÖKE málsnúmer *')),
+      await waitFor(() => screen.getByLabelText('Kennitala *')),
+      await waitFor(() => screen.getByLabelText('Fullt nafn *')),
+      await waitFor(() => screen.getByLabelText('Lögheimili/dvalarstaður *')),
+      await waitFor(() => screen.getByLabelText('Tímasetning *')),
+      await waitFor(() => screen.getByLabelText('Ósk um tíma *')),
     ]
 
-    const court = await waitFor(
-      () =>
-        screen
-          .getByTestId(/select-court/i)
-          .getElementsByClassName('singleValue')[0].innerHTML,
-    )
+    const court = screen
+      .getByTestId(/select-court/i)
+      .getElementsByClassName('singleValue')[0].innerHTML
 
     const datepickers = await waitFor(() =>
       screen.queryAllByTestId(/datepicker-value/i),
@@ -113,7 +112,9 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     expect(court).toEqual('Héraðsdómur Reykjavíkur')
     expect(datepickers.length).toEqual(0)
     expect(
-      screen.getByTestId('continueButton') as HTMLButtonElement,
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
     ).toBeDisabled()
   })
 })
@@ -170,39 +171,49 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
       </MockedProvider>,
     )
 
-    await userEvent.type(
+    userEvent.type(
       await waitFor(
-        () => screen.getByTestId('policeCaseNumber') as HTMLInputElement,
+        () =>
+          screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
       ),
       '000-0000-0010',
     )
+
     userEvent.tab()
+
     expect(
-      screen.getByTestId('continueButton') as HTMLButtonElement,
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
     ).toBeDisabled()
 
-    await userEvent.type(
-      screen.getByTestId('nationalId') as HTMLInputElement,
+    userEvent.type(
+      screen.getByLabelText('Kennitala *') as HTMLInputElement,
       '1112902539',
     )
     userEvent.tab()
+
     expect(
-      screen.getByTestId('continueButton') as HTMLButtonElement,
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
     ).toBeDisabled()
 
-    await userEvent.type(
-      await waitFor(
-        () => screen.getByTestId('accusedName') as HTMLInputElement,
-      ),
+    userEvent.type(
+      screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
       'Jon Harring',
     )
+
     userEvent.tab()
+
     expect(
-      screen.getByTestId('continueButton') as HTMLButtonElement,
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
     ).toBeDisabled()
 
-    await userEvent.type(
-      screen.getByTestId('accusedAddress') as HTMLInputElement,
+    userEvent.type(
+      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
       'Harringvej 2',
     )
     userEvent.tab()
@@ -210,9 +221,9 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
     // TODO FIND A WAY TO SET DATE FIELDS
 
     expect(
-      await waitFor(
-        () => screen.getByTestId('continueButton') as HTMLButtonElement,
-      ),
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
     ).toBeDisabled()
   })
 
@@ -261,7 +272,7 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
 
     userEvent.type(
       await waitFor(
-        () => screen.getByTestId('accusedName') as HTMLInputElement,
+        () => screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
       ),
       'Gervipersona',
     )
@@ -269,21 +280,21 @@ describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
     userEvent.tab()
 
     await userEvent.type(
-      screen.getByTestId('accusedAddress') as HTMLInputElement,
+      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
       'Batcave',
     )
 
     userEvent.tab()
 
     await userEvent.type(
-      screen.getByTestId('nationalId') as HTMLInputElement,
+      screen.getByLabelText('Kennitala *') as HTMLInputElement,
       '0000000000',
     )
 
     userEvent.tab()
 
     await userEvent.type(
-      screen.getByTestId('policeCaseNumber') as HTMLInputElement,
+      screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
       '020-0202-2929',
     )
 

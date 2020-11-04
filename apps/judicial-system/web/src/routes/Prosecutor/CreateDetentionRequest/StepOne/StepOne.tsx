@@ -656,8 +656,8 @@ export const StepOne: React.FC = () => {
                 <Input
                   data-testid="requestedCourtDate"
                   name="requestedCourtDate"
-                  label="Tímasetning"
-                  placeholder="Settu inn tíma"
+                  label="Ósk um tíma"
+                  placeholder="Settu inn tíma dags"
                   errorMessage={requestedCourtTimeErrorMessage}
                   hasError={requestedCourtTimeErrorMessage !== ''}
                   defaultValue={
