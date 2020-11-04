@@ -17,7 +17,6 @@ import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { getFooterProps } from './footerProps'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
-import MobileToolbar from '../MobileToolbar/MobileToolbar'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import { useFooterContent } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
@@ -36,7 +35,6 @@ const Layout: FC = ({ children }) => {
       <ToastContainer useKeyframeStyles={false} />
       <Header />
       <Hidden above="md">
-        <MobileToolbar />
         <MobileMenu />
       </Hidden>
       <Box overflow="hidden" className={styles.layoutWrapper}>
