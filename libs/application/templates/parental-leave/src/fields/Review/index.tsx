@@ -468,24 +468,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
                     }}
                     keys={boxChartKeys as BoxChartKey[]}
                   />
-                  {/* <BoxChart
-                    boxes={7}
-                    titleLabel="Total: 7 months"
-                    calculateBoxStyle={(index: number) => {
-                      if (index === 6) return 'greenWithLines'
-                      return 'blue'
-                    }}
-                    keys={[
-                      {
-                        label: '6 personal months',
-                        bulletStyle: 'blue',
-                      },
-                      {
-                        label: '1 granted month from other parent',
-                        bulletStyle: 'greenWithLines',
-                      },
-                    ]}
-                  /> */}
                 </GridColumn>
               </GridRow>
             </Box>
