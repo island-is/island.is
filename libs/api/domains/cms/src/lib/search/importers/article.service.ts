@@ -1,16 +1,54 @@
 import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { Entry } from 'contentful'
+import isCircular from 'is-circular'
 
-import { IArticle } from '../../generated/contentfulTypes'
+import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class ArticleSyncService {
-  processSyncData(items) {
-    return items.filter((item) => item.sys.contentType.sys.id === 'article')
+  processSyncData(entries: Entry<any>[]): IArticle[] {
+    // only process articles that we consider not to be empty and dont have circular structures
+    return entries.reduce<IArticle[]>(
+      (processedEntries: IArticle[], entry: IArticle) => {
+        // only process articles that we consider not to be empty
+        if (
+          entry.sys.contentType.sys.id === 'article' &&
+          !!entry.fields.title
+        ) {
+          // remove nested related articles from releated articles
+          const relatedArticles = (entry.fields.relatedArticles ?? []).map(
+            ({
+              sys,
+              fields: { relatedArticles, ...prunedRelatedArticlesFields },
+            }) => ({
+              sys,
+              fields: prunedRelatedArticlesFields,
+            }),
+          )
+
+          // relatedArticles can include nested articles that point back to this entry
+          const processedEntry = {
+            ...entry,
+            fields: {
+              ...entry.fields,
+              relatedArticles: (relatedArticles.length
+                ? relatedArticles
+                : undefined) as IArticleFields['relatedArticles'],
+            },
+          }
+          if (!isCircular(processedEntry)) {
+            processedEntries.push(processedEntry)
+          }
+        }
+        return processedEntries
+      },
+      [],
+    )
   }
 
   doMapping(entries: IArticle[]): MappedData[] {
@@ -21,26 +59,7 @@ export class ArticleSyncService {
         let mapped: Article
 
         try {
-          entry.fields.relatedArticles = entry.fields?.relatedArticles?.[0]
-            ?.fields
-            ? (entry.fields.relatedArticles.map(
-                ({
-                  sys,
-                  fields: { relatedArticles, ...prunedRelatedArticlesFields },
-                }) => ({
-                  sys,
-                  fields: prunedRelatedArticlesFields,
-                }),
-              ) as IArticle[])
-            : []
-
           mapped = mapArticle(entry)
-
-          // we consider article that dont have a title to be empty
-          if (!mapped.title) {
-            throw new Error('Trying to import empty article entry')
-          }
-
           const type = 'webArticle'
           return {
             _id: mapped.id,
