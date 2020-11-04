@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 
-describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
+describe('/domari-krafa with an ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const history = createMemoryHistory()

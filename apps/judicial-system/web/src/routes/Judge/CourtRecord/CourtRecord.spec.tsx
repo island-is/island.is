@@ -15,7 +15,7 @@ import { UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 
-describe(`${Constants.COURT_DOCUMENT_ROUTE}`, () => {
+describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 

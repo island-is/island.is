@@ -16,7 +16,7 @@ import { userContext } from '@island.is/judicial-system-web/src/utils/userContex
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 
-describe(Constants.RULING_STEP_TWO_ROUTE, () => {
+describe('/domari-krafa/urskurdarord', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 

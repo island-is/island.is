@@ -10,7 +10,7 @@ import {
 } from '../../../utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 
-describe(`${Constants.STEP_THREE_ROUTE}`, () => {
+describe('/stofna-krofu/yfirlit', () => {
   test('should display the approprieate custody provisions', async () => {
     // Arrange
 

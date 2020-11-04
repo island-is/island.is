@@ -13,7 +13,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { UpdateCase } from '@island.is/judicial-system/types'
 
-describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
+describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
     // Arrange
 
@@ -117,7 +117,7 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   })
 })
 
-describe(Constants.SINGLE_REQUEST_BASE_ROUTE, () => {
+describe('/krafa without ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 
