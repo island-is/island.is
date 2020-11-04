@@ -1,3 +1,5 @@
+# This file is not generated locally from this project but comes from an external api
+# We don't name it openapi.yaml otherwise it would be ignored and it would break openapi-generator command
 swagger: '2.0'
 info:
   version: v1
