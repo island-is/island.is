@@ -99,6 +99,16 @@ export const size = styleMap({
       },
     }),
   },
+  textSmall: {
+    fontSize: 12,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 14,
+        lineHeight: 1.6,
+      },
+    }),
+  },
 })
 
 export const padding = styleMap({
