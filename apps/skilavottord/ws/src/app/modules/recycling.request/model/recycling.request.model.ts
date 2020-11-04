@@ -8,7 +8,6 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
-  HasMany,
 } from 'sequelize-typescript'
 import { RecyclingPartnerModel } from '../../recycling.partner/model/recycling.partner.model'
 import { VehicleModel } from '../../vehicle/model/vehicle.model'
