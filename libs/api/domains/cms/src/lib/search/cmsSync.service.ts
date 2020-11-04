@@ -100,7 +100,6 @@ export class CmsSyncService {
      */
     let folderHash
     if (options.syncType === 'initialize') {
-      // TODO: Add lock to this procedure to ensure only a single initContainer can run this
       const { elasticIndex = SearchIndexes[options.locale] } = options
 
       folderHash = await this.getModelsFolderHash()
