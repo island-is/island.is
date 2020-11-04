@@ -37,7 +37,7 @@ export class DocumentClient {
         this.clientConfig,
       )
       this.accessToken = token
-      let expiryTime = new Date()
+      const expiryTime = new Date()
       expiryTime.setSeconds(expiryTime.getSeconds() + expiresIn)
       this.accessTokenExpiryDate = expiryTime
     }
@@ -50,7 +50,7 @@ export class DocumentClient {
         Authorization: `Bearer ${this.accessToken}`,
       },
     }
-    console.log(`Get : ${this.clientConfig.basePath}${requestRoute}`)
+
     const response: {
       data: T
     } = await this.httpService
