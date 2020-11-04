@@ -134,6 +134,7 @@
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",
     "ioredis": "4.17.3",
+    "is-circular": "1.0.2",
     "islandis-login": "1.1.4",
     "isomorphic-fetch": "2.2.1",
     "isomorphic-unfetch": "3.0.0",

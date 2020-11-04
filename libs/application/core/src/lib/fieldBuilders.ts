@@ -15,16 +15,18 @@ import {
   SelectField,
   TextField,
   TextFieldVariant,
+  MaybeWithApplication,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText } from '..'
+import { Colors } from '@island.is/island-ui/theme'
 
 export function buildCheckboxField(data: {
   condition?: Condition
   id: string
   name: FormText
   description?: FormText
-  options: Option[]
+  options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
 }): CheckboxField {
@@ -112,7 +114,7 @@ export function buildRadioField(data: {
   id: string
   name: FormText
   description?: FormText
-  options: Option[]
+  options: MaybeWithApplication<Option[]>
   emphasize?: boolean
   largeButtons?: boolean
   disabled?: boolean
@@ -151,7 +153,7 @@ export function buildSelectField(data: {
   name: FormText
   description?: FormText
   placeholder?: string
-  options: Option[]
+  options: MaybeWithApplication<Option[]>
   disabled?: boolean
   width?: FieldWidth
 }): SelectField {
@@ -220,7 +222,7 @@ export function buildCustomField(
     description?: FormText
     component: string
   },
-  props: object,
+  props?: object,
 ): CustomField {
   const { condition, id, name, description, component } = data
   return {
@@ -231,7 +233,7 @@ export function buildCustomField(
     description,
     type: FieldTypes.CUSTOM,
     component,
-    props,
+    props: props ?? {},
   }
 }
 
@@ -273,14 +275,18 @@ export function buildFileUploadField(data: {
   }
 }
 
-export function buildDividerField(data: { name: string }): DividerField {
-  const { name } = data
+export function buildDividerField(data: {
+  name: string
+  color?: Colors
+}): DividerField {
+  const { name, color } = data
   return {
     children: undefined,
     type: FieldTypes.DIVIDER,
     component: FieldComponents.DIVIDER,
     id: name,
     name,
+    color,
   }
 }
 

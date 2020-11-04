@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   FieldBaseProps,
   formatText,
@@ -10,6 +10,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { buildOptions } from '../utils'
 
 interface Props extends FieldBaseProps {
   field: SelectField
@@ -17,7 +18,10 @@ interface Props extends FieldBaseProps {
 const SelectFormField: FC<Props> = ({ application, error, field }) => {
   const { id, name, description, options, placeholder, disabled } = field
   const { formatMessage } = useLocale()
-
+  const finalOptions = useMemo(() => buildOptions(options, application), [
+    options,
+    application,
+  ])
   return (
     <div>
       {description && (
@@ -33,7 +37,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
           disabled={disabled}
           error={error}
           id={id}
-          options={options.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
             ...(tooltip && {

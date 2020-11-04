@@ -48,7 +48,7 @@ export const GDPR = () => {
     setGDPRInfo({
       variables: {
         gdprStatus: 'true',
-        nationalId: user.nationalId,
+        nationalId: user?.nationalId,
       },
     })
   }
