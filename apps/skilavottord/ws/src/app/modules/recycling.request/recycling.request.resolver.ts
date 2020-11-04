@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation, Int } from '@nestjs/graphql'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -33,10 +33,17 @@ export class RecyclingRequestResolver {
     return res
   }
 
-  // @Query(() => Gdpr)
-  // async getVehiclesForNationalId(
-  //   @Args('nationalId') nid: string,
-  // ): Promise<Gdpr> {
-  //   return await this.gdprService.findByNationalId(nid)
-  // }
+  @Mutation(() => Boolean)
+  async createSkilavottordRecyclingRequest(
+    @Args('requestType') requestType: string,
+    @Args('permno') permno: string,
+    @Args('partnerId', { type: () => Int, nullable: true }) partnerId: number,
+  ) {
+    await this.recyclingRequestService.createRecyclingRequest(
+      requestType,
+      permno,
+      partnerId,
+    )
+    return true
+  }
 }
