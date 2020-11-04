@@ -55,8 +55,8 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .lineGap(4)
     .text(`Kennitala: ${formatNationalId(existingCase.accusedNationalId)}`)
     .text(`Fullt nafn: ${existingCase.accusedName}`)
-    .lineGap(16)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -66,12 +66,12 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text('Dómkröfur')
     .font('Helvetica')
     .fontSize(12)
-    .lineGap(16)
     .text(
       `Gæsluvarðhald til ${capitalize(
         formatDate(existingCase.requestedCustodyEndDate, 'PPPp'),
       )}.`,
     )
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -82,9 +82,10 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       formatLawsBroken(existingCase.lawsBroken, existingCase.custodyProvisions),
       {
         lineGap: 6,
-        paragraphGap: 10,
+        paragraphGap: 0,
       },
     )
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -110,8 +111,9 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.caseFacts, {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -120,8 +122,9 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.legalArguments, {
       lineGap: 6,
-      paragraphGap: 10,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .text(
       `Fhl. ${existingCase.prosecutor?.name}, ${existingCase.prosecutor?.title}`,
