@@ -12,17 +12,20 @@ import { Injectable } from '@nestjs/common'
 import {
   ElasticService,
   SearchIndexes,
-  sortDirection,
   SyncOptions,
 } from '@island.is/api/content-search'
 import flatten from 'lodash/flatten'
-import { PostSyncOptions } from './cmsSync.service'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: Entry<any>[]
   deletedItems: string[]
   token: string | undefined
+  elasticIndex: string
+}
+
+interface UpdateNextSyncTokenOptions {
+  token: string
   elasticIndex: string
 }
 
@@ -81,25 +84,32 @@ export class ContentfulService {
     return data.items
   }
 
-  private async getLastSyncToken(elasticIndex: string): Promise<string> {
-    const query = {
-      types: ['cmsNextSyncToken'],
-      sort: { dateUpdated: 'desc' as sortDirection },
-      size: 1,
-    }
-    logger.info('Getting next sync token from index', {
+  /**
+   * Next sync token is returned by Contentful sync API to mark starting point for next sync.
+   * We keep this token in elasticsearch per locale.
+   * This token is only used in "fromLast" type syncs
+   */
+  private async getNextSyncToken(elasticIndex: string): Promise<string> {
+    logger.info('Getting models hash from index', {
       index: elasticIndex,
     })
-    const document = await this.elasticService.getDocumentsByMetaData(
-      elasticIndex,
-      query,
-    )
-    return document.hits.hits?.[0]?._source.title
+    // return last folder hash found in elasticsearch else return empty string
+    return this.elasticService
+      .findById(elasticIndex, 'cmsNextSyncTokenId')
+      .then((document) => document.body._source.title)
+      .catch((error) => {
+        // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
+        logger.warning('Failed to get next sync token', {
+          error: error.message,
+        })
+        return ''
+      })
   }
 
-  updateNextSyncToken({ elasticIndex, token }: PostSyncOptions) {
+  updateNextSyncToken({ elasticIndex, token }: UpdateNextSyncTokenOptions) {
     // we get this next sync token from Contentful on sync request
     const nextSyncTokenDocument = {
+      _id: 'cmsNextSyncTokenId',
       title: token,
       type: 'cmsNextSyncToken',
       dateCreated: new Date().getTime().toString(),
@@ -112,20 +122,20 @@ export class ContentfulService {
   }
 
   private async getTypeOfSync({
-    fullSync,
+    syncType,
     elasticIndex,
   }: {
-    fullSync: boolean
+    syncType: SyncOptions['syncType']
     elasticIndex: string
   }): Promise<typeOfSync> {
-    if (fullSync) {
+    if (syncType === 'full') {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
       return { initial: true }
     } else {
-      // this is a partial sync, try and get the last sync token else do full sync
-      const nextSyncToken = await this.getLastSyncToken(elasticIndex)
-      logger.info('Getting data from last sync token found in Contentful', {
+      // this is a partial sync, try and get next sync token else do full sync
+      const nextSyncToken = await this.getNextSyncToken(elasticIndex)
+      logger.info('Getting data from next sync token found in Contentful', {
         elasticIndex,
         nextSyncToken,
       })
@@ -192,11 +202,11 @@ export class ContentfulService {
 
   async getSyncEntries(options: SyncOptions): Promise<SyncerResult> {
     const {
-      fullSync,
+      syncType,
       locale,
       elasticIndex = SearchIndexes[options.locale],
     } = options
-    const typeOfSync = await this.getTypeOfSync({ fullSync, elasticIndex })
+    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
 
     // gets all changes in all locales
     const {
@@ -221,7 +231,7 @@ export class ContentfulService {
     const items = await this.getAllEntriesFromContentful(entries, locale)
 
     // In case of delta updates, we need to resolve embedded entries to their root model
-    if (!fullSync && nestedEntries) {
+    if (syncType !== 'full' && nestedEntries) {
       logger.info('Finding root entries from nestedEntries')
       const alreadyProcessedIds = items.map((entry) => entry.sys.id)
       for (const entryId of nestedEntries) {
