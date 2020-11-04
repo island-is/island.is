@@ -104,6 +104,10 @@
       "authority": "Car deregistered with Samgöngustofa",
       "fund": "Car payment inititated by Fjársýsla ríkisins"
     },
+    "cancelledBy": {
+      "user": "Cancelled recycling by",
+      "fund": "Car payment failed."
+    },
     "buttons": {
       "close": "Close"
     }

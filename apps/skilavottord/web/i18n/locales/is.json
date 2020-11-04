@@ -104,6 +104,10 @@
       "authority": "Ökutæki afskráð hjá Samgöngustofu",
       "fund": "Greiðsla skilagjalds hafin hjá Fjársýslu ríkisins"
     },
+    "cancelledBy": {
+      "user": "Cancelled recycling by",
+      "fund": "Car payment failed."
+    },
     "buttons": {
       "close": "Loka"
     }

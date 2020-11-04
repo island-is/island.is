@@ -79,6 +79,7 @@ export interface Completed {
   subTitles: CompletedSubTitles
   info: CompletedInfo
   confirmedBy: CompletedConfirmation
+  cancelledBy: CompletedCancellation
   buttons: CompletedButtons
 }
 
@@ -176,6 +177,11 @@ export interface CompletedConfirmation {
   user: string
   company: string
   authority: string
+  fund: string
+}
+
+export interface CompletedCancellation {
+  user: string
   fund: string
 }
 
