@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { VehicleOwnerModel } from './model/vehicle.owner.model'
 import { VehicleModel } from '../vehicle/model/vehicle.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
 
 @Injectable()
 export class VehicleOwnerService {
@@ -19,6 +20,22 @@ export class VehicleOwnerService {
       include: [
         {
           model: this.vehicleModel,
+        },
+      ],
+    })
+    return res
+  }
+
+  async findTEST(): Promise<VehicleOwnerModel[]> {
+    const res = VehicleOwnerModel.findAll({
+      include: [
+        {
+          model: VehicleModel,
+          include: [
+            {
+              model: RecyclingRequestModel,
+            },
+          ],
         },
       ],
     })

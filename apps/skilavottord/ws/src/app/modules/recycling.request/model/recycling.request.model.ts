@@ -29,10 +29,20 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Column({
     type: DataType.STRING,
   })
-  vehicleId: string
+  vehicleId!: string
 
   @BelongsTo(() => VehicleModel)
   vehicle: any
+
+  @ForeignKey(() => RecyclingPartnerModel)
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  recyclingPartnerId!: string
+
+  @BelongsTo(() => RecyclingPartnerModel)
+  recyclingParter: any
 
   @Field()
   @Column({
@@ -57,15 +67,4 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @UpdatedAt
   @Column
   updatedAt: Date
-
-  //TODO in progress
-  @ForeignKey(() => RecyclingPartnerModel)
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  recyclingPartnerId!: string
-
-  @BelongsTo(() => RecyclingPartnerModel)
-  recyclingParter: any
 }
