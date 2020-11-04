@@ -83,7 +83,7 @@ export interface TellUsAStoryFormProps {
   publicationAllowedLabel: string
   submitButtonTitle: string
   SuccessMessageTitle: string
-  tellUsAStorySuccessMessage: DocumentType
+  tellUsAStorySuccessMessage?: DocumentType
   errorMessageTitle: string
   locale: string
   state: FormState
