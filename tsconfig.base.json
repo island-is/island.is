@@ -57,6 +57,9 @@
       "@island.is/api/domains/documents": [
         "libs/api/domains/documents/src/index.ts"
       ],
+      "@island.is/api/domains/driving-license": [
+        "libs/api/domains/driving-license/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
