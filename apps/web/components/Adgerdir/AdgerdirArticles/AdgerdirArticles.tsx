@@ -1,30 +1,33 @@
 import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
 import intersection from 'lodash/intersection'
-import AnimateHeight from 'react-animate-height'
-import cn from 'classnames'
 import {
   Box,
   Tiles,
   Button,
   Stack,
-  Typography,
+  Text,
   Tag,
   Inline,
   Icon,
   LoadingIcon,
+  Divider,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
-import { theme } from '@island.is/island-ui/theme'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { Card } from '@island.is/web/components'
+import {
+  ADGERDIR_INDIVIDUALS_TAG_ID,
+  ADGERDIR_COMPANIES_TAG_ID,
+} from '@island.is/web/constants'
 
-import * as cardStyles from '@island.is/web/components/Card/Card.treat'
 import * as styles from './AdgerdirArticles.treat'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 6
+
+const DIVIDER_FILTERS = [ADGERDIR_INDIVIDUALS_TAG_ID, ADGERDIR_COMPANIES_TAG_ID]
 
 interface AdgerdirArticlesProps {
   title?: string
@@ -49,15 +52,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
   const [filterString, setFilterString] = useState<string>('')
-  const [filtersToggled, setFiltersToggled] = useState<boolean>(true)
-  const [filtersDisabled, setFiltersDisabled] = useState<boolean>(
-    Boolean(startingIds.length),
-  )
   const [startingItems, setstartingItems] = useState<Array<AdgerdirPage>>(
     items.filter((x) => startingIds.includes(x.id)),
   )
   const [tagIds, setTagIds] = useState<Array<string>>([])
-  const [selectedStatuses, setSelectedStatuses] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
   const [indexesFilteredByString, setIndexesFilteredByString] = useState<
@@ -66,23 +64,9 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
     Array<number>
   >([])
-  const [indexesFilteredByStatus, setIndexesFilteredByStatus] = useState<
-    Array<number>
-  >([])
   const timerRef = useRef(null)
 
   const visibleItems = startingItems.length ? startingItems : items
-
-  const handleResize = useCallback(() => {
-    setFiltersToggled(window.innerWidth >= theme.breakpoints.lg)
-  }, [])
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    handleResize()
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [handleResize])
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -153,12 +137,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [onUpdateFilters])
 
   const filteredItems = visibleItems
-    .filter((item, index) => {
-      const indexList = [
-        indexesFilteredByStatus,
-        indexesFilteredByTag,
-        indexesFilteredByString,
-      ].filter((x) => x.length > 0)
+    .filter((_, index) => {
+      const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
+        (x) => x.length > 0,
+      )
 
       return intersection(...indexList).includes(index)
     })
@@ -170,114 +152,105 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     }
   }, [currentArticle])
 
-  const toggleFilters = () => {
-    if (filtersDisabled) {
-      setFiltersDisabled(false)
-      setFiltersToggled(true)
-    } else {
-      setFiltersToggled(!filtersToggled)
-    }
+  const dividerRenames = {
+    Einstaklingar: 'Einstaklinga',
   }
 
   return (
     <Box padding={[3, 3, 6]}>
-      <Tiles space={0} columns={2}>
-        <div>
-          <Typography variant="h3" as="h3" color="red600">
-            {title || n('adgerdir')}
-          </Typography>
-        </div>
-        <Box display="flex" justifyContent="flexEnd">
-          <button onClick={toggleFilters} className={styles.filtersToggler}>
-            <Inline space={1}>
-              <span>{n('filter', 'Sía')}</span>
-              <div
-                className={cn(styles.filtersIcon, {
-                  [styles.filtersIconToggled]:
-                    !filtersDisabled && filtersToggled,
-                })}
-              >
-                <Icon
-                  type="outline"
-                  icon="chevronBack"
-                  color="red600"
-                  size="medium"
-                />
-              </div>
-            </Inline>
-          </button>
-        </Box>
-      </Tiles>
-      <AnimateHeight
-        duration={1000}
-        height={!filtersDisabled && filtersToggled ? 'auto' : 0}
-      >
-        <Box marginTop={3} className={styles.filters}>
-          <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
-            <Stack space={2}>
-              <Inline space={2} alignY="center" collapseBelow="sm">
-                <Typography variant="tag" color="red600">
-                  Málefni:
-                </Typography>
-                <Inline space={2} alignY="center">
-                  {tags.map(({ title, id }, index) => {
-                    return (
-                      <Tag
-                        key={index}
-                        variant="red"
-                        onClick={() => {
-                          setstartingItems([])
-                          onTagClick(id)
-                        }}
-                        active={tagIds.includes(id)}
-                        bordered
-                      >
-                        {title}
-                      </Tag>
-                    )
-                  })}
-                </Inline>
-              </Inline>
-            </Stack>
-          </Box>
-          <Box display="flex" marginTop={[3, 3, 3, 0]} alignItems="center">
-            <div className={styles.inputWrapper}>
-              <input
-                onChange={handleChange}
-                placeholder={n('filterBySearchQuery', 'Sía eftir leitarorði')}
-                className={styles.input}
-              />
-              <span className={styles.inputIcon}>
-                {isLoading ? (
-                  <LoadingIcon size={24} color="red600" />
-                ) : (
-                  <Icon
-                    size="medium"
-                    type="outline"
-                    icon="search"
-                    color="red600"
-                  />
-                )}
-              </span>
-            </div>
-          </Box>
-        </Box>
-      </AnimateHeight>
-      {filteredItems.length === 0 ? (
+      <Inline space={2} alignY="center">
         <Box>
+          <Text variant="h3" as="h3" color="red600">
+            {title || n('adgerdir2', 'Aðgerðir fyrir')}
+          </Text>
+        </Box>
+        <Box>
+          <Inline space={2} alignY="center">
+            {tags
+              .filter(({ id }) => DIVIDER_FILTERS.includes(id))
+              .map(({ title, id }, index) => {
+                return (
+                  <Tag
+                    key={index}
+                    variant="red"
+                    onClick={() => {
+                      setstartingItems([])
+                      onTagClick(id)
+                    }}
+                    active={tagIds.includes(id)}
+                    bordered
+                  >
+                    {dividerRenames['title'] ?? title}
+                  </Tag>
+                )
+              })}
+          </Inline>
+        </Box>
+      </Inline>
+      <Box width="full" paddingY={2}>
+        <Divider weight="red200" />
+      </Box>
+      <Box className={styles.filters}>
+        <Box display="flex" marginRight={[0, 0, 0, 3]}>
           <Stack space={2}>
-            <Typography variant="intro" color="red600">
+            <Inline space={2} alignY="center">
+              {tags
+                .filter(({ id }) => !DIVIDER_FILTERS.includes(id))
+                .map(({ title, id }, index) => {
+                  return (
+                    <Tag
+                      key={index}
+                      variant="red"
+                      onClick={() => {
+                        setstartingItems([])
+                        onTagClick(id)
+                      }}
+                      active={tagIds.includes(id)}
+                      bordered
+                    >
+                      {title}
+                    </Tag>
+                  )
+                })}
+            </Inline>
+          </Stack>
+        </Box>
+        <Box marginTop={[2, 2, 2, 0]}>
+          <div className={styles.inputWrapper}>
+            <input
+              onChange={handleChange}
+              placeholder={n('filterBySearchQuery', 'Sía eftir leitarorði')}
+              className={styles.input}
+            />
+            <span className={styles.inputIcon}>
+              {isLoading ? (
+                <LoadingIcon size={24} color="red600" />
+              ) : (
+                <Icon
+                  size="medium"
+                  type="outline"
+                  icon="search"
+                  color="red600"
+                />
+              )}
+            </span>
+          </div>
+        </Box>
+      </Box>
+      {filteredItems.length === 0 ? (
+        <Box marginTop={2}>
+          <Stack space={2}>
+            <Text color="red600">
               <span>Ekkert fannst með{` `}</span>
               {filterString
                 ? `leitarorðinu „${filterString}“${
-                    indexesFilteredByTag.length ||
-                    indexesFilteredByStatus.length
-                      ? ' og völdum málefnum/stöðum hér fyrir ofan'
+                    indexesFilteredByTag.length
+                      ? ' og völdum málefnum hér fyrir ofan'
                       : ''
                   }`
                 : null}
-              {!filterString ? 'völdum málefnum/stöðum hér fyrir ofan' : null}.
-            </Typography>
+              {!filterString ? 'völdum málefnum hér fyrir ofan' : null}.
+            </Text>
           </Stack>
         </Box>
       ) : null}
