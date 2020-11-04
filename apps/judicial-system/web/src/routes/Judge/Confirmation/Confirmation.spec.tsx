@@ -33,12 +33,10 @@ describe('Confirmation route', () => {
     // Assert
     expect(
       await waitFor(() => screen.queryByText('accusedAppealAnnouncement test')),
-    ).toBeNull()
+    ).not.toBeInTheDocument()
     expect(
-      await waitFor(() =>
-        screen.queryByText('prosecutorAppealAnnouncement test'),
-      ),
-    ).toBeNull()
+      screen.queryByText('prosecutorAppealAnnouncement test'),
+    ).not.toBeInTheDocument()
   })
 
   test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, async () => {
@@ -62,11 +60,9 @@ describe('Confirmation route', () => {
     // Assert
     expect(
       await waitFor(() => screen.getByText('accusedAppealAnnouncement test')),
-    ).toBeTruthy()
+    ).toBeInTheDocument()
     expect(
-      await waitFor(() =>
-        screen.getByText('prosecutorAppealAnnouncement test'),
-      ),
-    ).toBeTruthy()
+      screen.getByText('prosecutorAppealAnnouncement test'),
+    ).toBeInTheDocument()
   })
 })

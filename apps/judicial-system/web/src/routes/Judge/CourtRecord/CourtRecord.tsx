@@ -103,7 +103,7 @@ export const CourtRecord: React.FC = () => {
                 <Input
                   data-testid="courtStartTime"
                   name="courtStartTime"
-                  label="Þinghald hefst"
+                  label="Þinghald hófst"
                   placeholder="Veldu tíma"
                   defaultValue={formatDate(
                     workingCase.courtStartTime,
@@ -157,7 +157,7 @@ export const CourtRecord: React.FC = () => {
               <Input
                 data-testid="courtEndTime"
                 name="courtEndTime"
-                label="Þinghald lýkur"
+                label="Þinghaldi lauk"
                 placeholder="Veldu tíma"
                 defaultValue={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
                 onBlur={(evt) => {
