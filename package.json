@@ -20,8 +20,6 @@
     "affected:test": "nx affected:test",
     "affected:lint": "nx affected:lint",
     "affected:dep-graph": "nx affected:dep-graph",
-    "affected:codegen": "nx affected --target=codegen",
-    "affected:schemas": "nx affected --target=init-schema --parallel --maxParallel=5 --exclude=$EXCLUDES_SCHEMAS",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
     "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
@@ -35,7 +33,8 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
-    "schemas": "node ./scripts/generate-schemas.js",
+    "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
+    "schemas": "node ./scripts/schemas.js",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "dependencies": {
