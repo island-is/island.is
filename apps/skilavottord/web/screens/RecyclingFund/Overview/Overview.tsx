@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
+import { Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'

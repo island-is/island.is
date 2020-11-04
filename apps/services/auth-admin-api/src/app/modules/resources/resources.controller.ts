@@ -1,34 +1,32 @@
 import {
-  Controller,
-  Get,
-  Query,
-  Post,
-  Body,
-  UseGuards,
-  Param,
-  Put,
-  Delete,
+  ApiResource,
+  ApiScope,
+  ApiScopesDTO,
+  IdentityResource,
+  IdentityResourcesDTO,
+  ResourcesService,
+} from '@island.is/auth-api-lib'
+import {
   BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiQuery,
   ApiOAuth2,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger'
-import {
-  IdentityResource,
-  ResourcesService,
-  ApiScope,
-  ApiResource,
-  ApiScopesDTO,
-  IdentityResourcesDTO,
-} from '@island.is/auth-api-lib'
-import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {

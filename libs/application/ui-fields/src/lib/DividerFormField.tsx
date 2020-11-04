@@ -7,7 +7,7 @@ const DividerFormField: FC<{
 }> = ({ field }) => {
   return (
     <Box marginTop={5} marginBottom={1}>
-      <Text variant="h3" color="blue400">
+      <Text variant="h3" color={field.color ?? 'blue400'}>
         {field.name}
       </Text>
     </Box>

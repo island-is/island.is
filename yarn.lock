@@ -13741,6 +13741,11 @@ is-ci@2.0.0, is-ci@^2.0.0:
   dependencies:
     ci-info "^2.0.0"
 
+is-circular@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/is-circular/-/is-circular-1.0.2.tgz#2e0ab4e9835f4c6b0ea2b9855a84acd501b8366c"
+  integrity sha512-YttjnrswnUYRVJvxCvu8z+PGMUSzC2JttP0OEXezlAEdp3EXzhf7IZ3j0gRAybJBQupedIZFhY61Tga6E0qASA==
+
 is-color-stop@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-color-stop/-/is-color-stop-1.1.0.tgz#cfff471aee4dd5c9e158598fbe12967b5cdad345"

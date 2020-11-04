@@ -21,8 +21,9 @@ export class VehicleOwnerResolver {
     return res
   }
 
+  //TODO find right name
   @Query(() => VehicleOwnerModel)
-  async skilavottordVehicles(
+  async skilavottordVehiclesFromLocal(
     @Args('nationalId') nationalId: string,
   ): Promise<VehicleOwnerModel> {
     const res = await this.vehicleOwnerService.findByNationalId(nationalId)

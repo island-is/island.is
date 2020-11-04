@@ -16,7 +16,7 @@ export class UserResolver {
 
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
-  user(@CurrentUser() user: AuthUser): User {
+  skilavottordUser(@CurrentUser() user: AuthUser): User {
     this.logger.info(`--- skilavottordUser starting ---`)
     if (!user) {
       this.logger.info(`  - User does not exist`)
@@ -41,8 +41,13 @@ export class UserResolver {
     RoleForUser = authService.getRole(RoleUser)
 
     currUser.role = RoleForUser
+    if (currUser.role === 'recyclingCompany') {
+      currUser.partnerId = '110' // This is parter Id for Vaka, to be fixed later
+    } else {
+      currUser.partnerId = null // This is parter Id for Vaka, to be fixed later
+    }
     this.logger.info(
-      `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role}`,
+      `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role} - ${currUser.partnerId}`,
     )
     this.logger.info(`--- skilavottordUser ending ---`)
 
