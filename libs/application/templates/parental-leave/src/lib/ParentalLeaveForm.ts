@@ -18,7 +18,10 @@ import {
   Option,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { getNameAndIdOfSpouse } from '../fields/parentalLeaveUtils'
+import {
+  getEstimatedMonthlyPay,
+  getNameAndIdOfSpouse,
+} from '../fields/parentalLeaveUtils'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -224,54 +227,64 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'rights',
       name: 'Parental leave rights',
       children: [
-        buildIntroductionField({
-          id: 'rights.intro',
+        buildMultiField({
+          id: 'rightsIntro',
           name: 'These are your rights',
-          introduction:
-            'Both parents have 6 months, but can give up to 1 month to the other parent. TODO maybe ad the boxes below? Should we add the payments rule here as well?',
-        }),
-        buildRadioField({
-          id: 'requestExtraTime',
-          name: 'Do you want to request extra time from the other parent?',
-          description: 'Your partner can give up to 1 month of their rights',
-          emphasize: true,
-          largeButtons: true,
-          options: [
-            {
-              label: 'Yes, I want to request extra time from my partner',
-              value: 'yes',
-            },
-            { label: 'No, I will only use my rights', value: 'no' },
-          ],
-        }),
-        buildRadioField({
-          id: 'giveExtraTime',
-          name: 'Do you want to give the other parent more parental leave?',
           description:
-            'You can give the other parent up to 1 month of your rights',
-          emphasize: true,
-          largeButtons: true,
-          condition: (formValue) => formValue.requestExtraTime === 'no',
-          options: [
-            {
-              label:
-                'Yes, I want to give up to 1 month of my rights to the other parent',
-              value: 'yes',
-            },
-            { label: 'No, I want to keep my months for myself', value: 'no' },
+            'Both parents have 6 months, but can give up to 1 month to the other parent.',
+          children: [
+            buildCustomField(
+              {
+                id: 'rightsIntro',
+                name: '',
+                component: 'BoxChart',
+              },
+              {
+                boxes: 6,
+                calculateBoxStyle: () => 'blue',
+                keys: [{ label: '6 personal months', bulletStyle: 'blue' }],
+              },
+            ),
           ],
         }),
         buildMultiField({
-          id: 'rightsSummary',
-          name: 'Monthly salary for your parental leave',
-          description: () =>
-            `384.000 kr. is your expected payment for each full month of leave`,
+          id: 'requestRights',
+          name: 'Do you want to request extra time from the other parent?',
+          description: 'Your partner can give up to 1 month of their rights',
           children: [
-            buildIntroductionField({
-              id: 'todosummary',
-              name: 'TODO add the custom boxes component',
-              introduction:
-                '* You will need to change the application if the other parent does not approve the extra month you requested.',
+            buildCustomField({
+              id: 'requestRights',
+              name: '',
+              component: 'RequestRights',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'giveRights',
+          name: 'Do you want to give the other parent more parental leave?',
+          description:
+            'You can give the other parent up to 1 month of your rights',
+          condition: (formValue) => formValue.requestRights === 'no',
+          children: [
+            buildCustomField({
+              id: 'giveRights',
+              name: '',
+              component: 'GiveRights',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'reviewRights',
+          name: 'Estimated monthly salary for your parental leave',
+          description: (application) =>
+            `${getEstimatedMonthlyPay(
+              application,
+            )} kr. is your expected payment for each full month of leave after tax`,
+          children: [
+            buildCustomField({
+              id: 'reviewRights',
+              name: '',
+              component: 'ReviewRights',
             }),
           ],
         }),
