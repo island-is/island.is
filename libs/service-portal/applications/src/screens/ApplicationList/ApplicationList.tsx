@@ -12,14 +12,14 @@ import { Application } from '@island.is/application/core'
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data: applications, loading, error } = useApplicantApplications(
-    userInfo.profile.natreg,
+    userInfo.profile.nationalId,
   )
 
   const {
     data: assigneeApplications,
     loading: assigneeApplicationsLoading,
     error: assigneeApplicationsError,
-  } = useAssigneeApplications(userInfo.profile.natreg)
+  } = useAssigneeApplications(userInfo.profile.nationalId)
 
   return (
     <>
