@@ -1,5 +1,6 @@
 import { FamilyMember } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   SkeletonLoader,
   Stack,
@@ -20,6 +21,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     data: natRegFamilyInfo,
     loading,
     error,
+    called,
   } = useNationalRegistryFamilyInfo()
 
   // TODO: This is a temp solution while there is a mismatch between identity servers
@@ -51,11 +53,20 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       <Stack space={2}>
+        {called && !loading && !error && familyMemberList.length === 0 && (
+          <AlertMessage
+            type="info"
+            title={formatMessage({
+              id: 'service.portal:no-data-present',
+              defaultMessage: 'Engar upplýsingar til staðar',
+            })}
+          />
+        )}
         {loading &&
           [...Array(3)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
           ))}
-        {familyMemberList?.map((familyMember, index) => (
+        {familyMemberList.map((familyMember, index) => (
           <FamilyMemberCard
             key={index}
             title={familyMember.fullName}
