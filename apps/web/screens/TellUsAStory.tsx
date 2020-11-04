@@ -32,11 +32,13 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
     <Box paddingY={[2, 2, 10]}>
       <GridContainer>
         <GridRow>
-          <GridColumn offset={['0', '0', '0', '0', '1/9']}>
-            <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
-              <span>{data.introTitle}</span>
-            </Breadcrumbs>
+          <GridColumn>
+            <Box paddingX={[3, 3, 8]}>
+              <Breadcrumbs>
+                <Link href={makePath()}>Ísland.is</Link>
+                <span>{data.introTitle}</span>
+              </Breadcrumbs>
+            </Box>
           </GridColumn>
         </GridRow>
         <TellUsAStory

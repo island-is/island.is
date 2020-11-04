@@ -83,7 +83,7 @@ export interface TellUsAStoryFormProps {
   publicationAllowedLabel: string
   submitButtonTitle: string
   SuccessMessageTitle: string
-  successMessage?: DocumentType
+  tellUsAStorySuccessMessage: DocumentType
   errorMessageTitle: string
   locale: string
   state: FormState
@@ -101,7 +101,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
   showIntro = true,
   SuccessMessageTitle,
   publicationAllowedLabel,
-  successMessage,
+  tellUsAStorySuccessMessage,
   emailLabel,
   errorMessageTitle,
   submitButtonTitle,
@@ -183,7 +183,11 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                   height="full"
                   width="full"
                 >
-                  <BackgroundImage ratio="1:1" image={introImage} />
+                  <BackgroundImage
+                    ratio="1:1"
+                    background="transparent"
+                    image={introImage}
+                  />
                 </Box>
               </GridColumn>
             )}
@@ -222,7 +226,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                             ? organizationInputErrorMessage
                             : null
                         }
-                        required={true}
+                        required
                         hasError={errors.organization}
                         disabled={
                           Boolean(error || loading) || state === 'submitting'
@@ -423,9 +427,9 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
             <Text variant="h2" as="h2" paddingBottom={2}>
               {SuccessMessageTitle}
             </Text>
-            {successMessage && (
+            {tellUsAStorySuccessMessage && (
               <Box paddingBottom={3}>
-                {renderHtml(successMessage.document as Document)}
+                {renderHtml(tellUsAStorySuccessMessage.document as Document)}
               </Box>
             )}
           </Box>

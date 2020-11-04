@@ -303,6 +303,11 @@ export const slices = gql`
     emailInputErrorMessage
     publicationAllowedLabel
     submitButtonTitle
+    errorMessageTitle
+    SuccessMessageTitle
+    tellUsAStorySuccessMessage: successMessage {
+      ...HtmlFields
+    }
   }
 
   fragment AllSlices on Slice {
