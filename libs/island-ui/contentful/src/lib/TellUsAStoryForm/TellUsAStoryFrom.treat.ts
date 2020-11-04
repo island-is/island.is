@@ -8,8 +8,7 @@ export const topImage = style({
 })
 
 export const contentImage = style({
-  maxHeight: '318px',
-  maxWidth: '318px',
+  maxWidth: '200px',
 })
 
 export const alignSelfCenter = style({
@@ -17,6 +16,7 @@ export const alignSelfCenter = style({
 })
 
 export const justifyContentFlexEnd = style({
+  display: 'flex',
   justifyContent: 'flex-end',
 })
 
