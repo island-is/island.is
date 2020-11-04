@@ -10,8 +10,6 @@ import {
   mockProsecutorUserContext,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 import { MockedProvider } from '@apollo/client/testing'
 import { UpdateCase } from '@island.is/judicial-system/types'
 

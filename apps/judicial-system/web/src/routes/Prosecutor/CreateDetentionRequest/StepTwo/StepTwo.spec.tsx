@@ -3,8 +3,6 @@ import { render, waitFor, screen } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 import {
   CaseCustodyProvisions,
   UpdateCase,
@@ -21,12 +19,6 @@ import { MockedProvider } from '@apollo/client/testing'
 describe('Create detention request, step two', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    // const continueButton = await waitFor(
-    //   () =>
-    //     screen.getByRole('button', {
-    //       name: /Halda áfram/i,
-    //     }) as HTMLButtonElement,
-    // )
 
     render(
       <MockedProvider
@@ -140,7 +132,10 @@ describe('Create detention request, step two', () => {
     // Assert
     expect(
       await waitFor(
-        () => screen.getByTestId('continueButton') as HTMLButtonElement,
+        () =>
+          screen.getByRole('button', {
+            name: /Halda áfram/i,
+          }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
   })
@@ -167,8 +162,7 @@ describe('Create detention request, step two', () => {
     expect(
       (
         await waitFor(
-          () =>
-            screen.getByTestId('requestedCustodyEndTime') as HTMLInputElement,
+          () => screen.getByLabelText('Tímasetning *') as HTMLInputElement,
         )
       ).value,
     ).toEqual('19:51')

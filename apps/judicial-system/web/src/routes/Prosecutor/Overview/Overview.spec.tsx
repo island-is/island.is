@@ -30,9 +30,9 @@ describe(`${Constants.STEP_THREE_ROUTE}`, () => {
     )
 
     // Assert
-    await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.'))
-    expect(screen.getByText('a-lið 1. mgr. 95. gr.')).toBeTruthy()
-    await waitFor(() => screen.getByText('c-lið 1. mgr. 95. gr.'))
+    expect(
+      await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.')),
+    ).toBeTruthy()
     expect(screen.getByText('c-lið 1. mgr. 95. gr.')).toBeTruthy()
   })
 })

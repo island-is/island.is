@@ -58,7 +58,7 @@ export const DetentionRequests: React.FC = () => {
     async function getCases(user: User) {
       if (resCases && isJudge) {
         const judgeCases = resCases.filter((c: Case) => {
-          // Judges should see all cases excpet drafts
+          // Judges should see all cases except drafts
           return c.state !== CaseState.DRAFT
         })
 

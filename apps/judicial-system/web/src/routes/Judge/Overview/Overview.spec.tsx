@@ -13,8 +13,6 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 
 describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -48,13 +46,15 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
     userEvent.type(
       await waitFor(
-        () => screen.getByTestId('courtCaseNumber') as HTMLInputElement,
+        () => screen.getByLabelText('Slá inn málsnúmer *') as HTMLInputElement,
       ),
       '000-0000-000',
     )
     userEvent.tab()
     expect(
-      screen.getByTestId('continueButton') as HTMLButtonElement,
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
     ).not.toBeDisabled()
   })
 
@@ -80,8 +80,7 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => screen.getByText('Lausagæsla'))
-    expect(screen.getByText('Lausagæsla')).toBeTruthy()
+    expect(await waitFor(() => screen.getByText('Lausagæsla'))).toBeTruthy()
   })
 
   test('should display the approprieate custody restriction if there are any', async () => {
@@ -106,8 +105,9 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => screen.getByText('B - Einangrun, E - Fjölmiðlabann'))
-    expect(screen.getByText('B - Einangrun, E - Fjölmiðlabann')).toBeTruthy()
+    expect(
+      await waitFor(() => screen.getByText('B - Einangrun, E - Fjölmiðlabann')),
+    ).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
@@ -132,9 +132,9 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.'))
-    expect(screen.getByText('a-lið 1. mgr. 95. gr.')).toBeTruthy()
-    await waitFor(() => screen.getByText('c-lið 1. mgr. 95. gr.'))
-    expect(screen.getByText('c-lið 1. mgr. 95. gr.')).toBeTruthy()
+    expect(
+      await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.')),
+    ).toBeInTheDocument()
+    expect(screen.getByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
   })
 })

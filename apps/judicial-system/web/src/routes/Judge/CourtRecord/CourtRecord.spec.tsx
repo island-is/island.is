@@ -12,8 +12,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { UpdateCase } from '@island.is/judicial-system/types'
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 
