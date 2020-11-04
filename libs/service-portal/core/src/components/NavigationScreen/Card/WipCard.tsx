@@ -1,6 +1,5 @@
 import { Box, Stack, Columns, Column, Tag } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import * as styles from './WipCard.treat'
 
 interface Props {
   label: string
@@ -19,7 +18,7 @@ export const WipCard: FC<Props> = ({ label }) => {
       <Stack space={2}>
         <Columns space="gutter">
           <Column width="3/5">
-            <Box className={styles.WipBoxSmall} />
+            <Box background="blue100" borderRadius="standard" paddingTop={4} />
           </Column>
           <Column>
             <Box display="flex" justifyContent="flexEnd">
@@ -27,16 +26,16 @@ export const WipCard: FC<Props> = ({ label }) => {
             </Box>
           </Column>
         </Columns>
-        <Box className={styles.WipBoxLarge} />
+        <Box background="blue100" borderRadius="standard" paddingTop={6} />
         <Columns space={1}>
           <Column width="4/12">
-            <Box className={styles.WipBoxSmall} />
+            <Box background="blue100" borderRadius="standard" paddingTop={4} />
           </Column>
           <Column width="4/12">
-            <Box className={styles.WipBoxSmall} />
+            <Box background="blue100" borderRadius="standard" paddingTop={4} />
           </Column>
           <Column width="3/12">
-            <Box className={styles.WipBoxSmall} />
+            <Box background="blue100" borderRadius="standard" paddingTop={4} />
           </Column>
         </Columns>
       </Stack>
