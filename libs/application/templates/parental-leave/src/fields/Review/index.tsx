@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-
 import {
   FieldBaseProps,
   formatText,
@@ -15,7 +14,6 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-
 import {
   FieldDescription,
   RadioController,
@@ -427,7 +425,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
-          {/* TODO: Calculate this dynamically when Arni's PR gets merged */}
+
           <AccordionItem id="id_4" label="Your leave rights">
             <Box paddingY={4}>
               <GridRow>
@@ -454,6 +452,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
+
           <AccordionItem id="id_4" label="Your periods">
             <Box paddingY={4}>
               <GridRow>
@@ -474,6 +473,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
+
           <AccordionItem id="id_4" label="Payment plan">
             <Box paddingY={4}>
               <GridRow>
@@ -497,6 +497,7 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
               </GridRow>
             </Box>
           </AccordionItem>
+
           <AccordionItem id="id_4" label="Share information">
             <Box paddingY={4}>
               <GridRow>
