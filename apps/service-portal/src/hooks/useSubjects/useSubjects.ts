@@ -14,7 +14,7 @@ const useSubjects = () => {
 
       try {
         const res = await fetchWithAuth(
-          `${API_USER_ACCOUNTS}/${userInfo?.profile.natreg}`,
+          `${API_USER_ACCOUNTS}/${userInfo?.profile.nationalId}`,
           userInfo,
         )
         const data = await res.json()
