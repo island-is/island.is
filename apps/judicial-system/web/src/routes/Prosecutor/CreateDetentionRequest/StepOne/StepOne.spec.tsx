@@ -41,7 +41,7 @@ describe('/krafa with an id', () => {
       (screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement)
         .value,
     ).toEqual('Harringvej 2')
-  })
+  }, 10000)
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
