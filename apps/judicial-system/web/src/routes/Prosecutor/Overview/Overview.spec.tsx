@@ -4,7 +4,8 @@ import Overview from './Overview'
 import * as Constants from '../../../utils/constants'
 import { CaseCustodyProvisions } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { mockProsecutor } from '../../../utils/mocks'
+import { mockProsecutorUserContext } from '../../../utils/mocks'
+import { MockedProvider } from '@apollo/client/testing'
 
 describe(`${Constants.STEP_THREE_ROUTE}`, () => {
   test('should display the approprieate custody provisions', async () => {
@@ -37,9 +38,11 @@ describe(`${Constants.STEP_THREE_ROUTE}`, () => {
 
     // Act
     const { getByText } = render(
-      <userContext.Provider value={{ user: mockProsecutor }}>
-        <Overview />
-      </userContext.Provider>,
+      <MockedProvider mocks={[]} addTypename={false}>
+        <userContext.Provider value={mockProsecutorUserContext}>
+          <Overview />
+        </userContext.Provider>
+      </MockedProvider>,
     )
 
     // Assert

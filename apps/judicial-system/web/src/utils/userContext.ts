@@ -1,6 +1,10 @@
-import React from 'react'
-import { User } from '../types'
+import { createContext } from 'react'
+import { User } from '@island.is/judicial-system/types'
 
-const userContext = React.createContext<{ user: User }>(null)
+const userContext = createContext({
+  isAuthenticated: (): boolean => false,
+  user: null as User,
+  setUser: (_: User) => undefined,
+})
 
 export { userContext }

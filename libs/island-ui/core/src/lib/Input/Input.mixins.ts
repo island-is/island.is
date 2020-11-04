@@ -172,6 +172,7 @@ export const inputDisabled = {
 
 export const textarea = {
   fontSize: 16,
+  fontWeight: theme.typography.light,
   ...themeUtils.responsiveStyle({
     md: {
       fontSize: 18,

@@ -14,16 +14,16 @@ import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { MockCar } from '@island.is/skilavottord-web/types'
+import { Car } from '@island.is/skilavottord-web/types'
 
 interface ProgressCardProps {
   onClick?: () => void
-  car: MockCar
+  car: Car
 }
 
 export const ProgressCard: FC<ProgressCardProps> = ({
   onClick,
-  car: { permno, type, newregdate, status },
+  car: { permno, type, firstRegDate, status },
 }: ProgressCardProps) => {
   const {
     t: { myCars: t },
@@ -41,7 +41,7 @@ export const ProgressCard: FC<ProgressCardProps> = ({
             <Stack space={2}>
               <Stack space={1}>
                 <Text variant="h3">{permno}</Text>
-                <Text>{`${type}, ${newregdate}`}</Text>
+                <Text>{`${type}, ${firstRegDate}`}</Text>
               </Stack>
               <Box paddingRight={[0, 0, 0, 4]}>
                 <ProgressBar

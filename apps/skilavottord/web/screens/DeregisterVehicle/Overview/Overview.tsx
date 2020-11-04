@@ -58,7 +58,7 @@ const Overview: FC = () => {
         <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
           <Stack space={4}>
             <Breadcrumbs>
-              <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
+              <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
               <span>{t.title}</span>
             </Breadcrumbs>
             <Stack space={2}>

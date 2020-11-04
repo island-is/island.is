@@ -24,7 +24,7 @@ export const GDPR = () => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   const {
-    t: { data: t },
+    t: { gdpr: t },
   } = useI18n()
   const router = useRouter()
 
@@ -48,7 +48,7 @@ export const GDPR = () => {
     setGDPRInfo({
       variables: {
         gdprStatus: 'true',
-        nationalId: user.nationalId,
+        nationalId: user?.nationalId,
       },
     })
   }

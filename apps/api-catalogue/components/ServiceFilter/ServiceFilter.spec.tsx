@@ -19,7 +19,7 @@ describe(' ServiceFilter ', () => {
     { id: 'catalog-filter-pricing-paid', text: 'Gjaldskyld' },
     { id: 'catalog-filter-type', text: 'Tegund' },
     { id: 'catalog-filter-type-graphql', text: 'GraphQL' },
-    { id: 'catalog-filter-type-react', text: 'REST' },
+    { id: 'catalog-filter-type-rest', text: 'REST' },
     { id: 'catalog-filter-type-soap', text: 'SOAP' },
     { id: 'catalog-filter-access-xroad', text: 'X-Road' },
     { id: 'catalog-filter-access-apigw', text: 'API GW' },

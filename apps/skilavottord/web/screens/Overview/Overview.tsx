@@ -1,16 +1,22 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
-import { Box, Stack, Text, Breadcrumbs } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Text,
+  Breadcrumbs,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { ActionCard, ProgressCard } from './components'
+import { ActionCardContainer, ProgressCardContainer } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
 import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
-import { MockCar } from '@island.is/skilavottord-web/types'
+import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound, InlineError } from '@island.is/skilavottord-web/components'
+import { InlineError } from '@island.is/skilavottord-web/components'
+import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -30,30 +36,46 @@ const Overview: FC = () => {
     variables: { nationalId },
   })
 
-  const { cars } = data?.getVehiclesForNationalId || []
+  const cars = data?.skilavottordVehicles || []
 
-  const onRecycleCar = (id: string) => {
+  const pendingCars = filterCarsByStatus('pendingRecycle', cars)
+  const inUseCars = filterCarsByStatus('inUse', cars)
+  const recycledCars = filterCarsByStatus('deregistered', cars)
+
+  const onContinue = (id: string, actionType: RecycleActionTypes) => {
     router
-      .push(routes.confirm, `${routes.baseRoute}/${id}/confirm`)
+      .push(routes[actionType], `${routes.baseRoute}/${id}/${actionType}`)
       .then(() => window.scrollTo(0, 0))
   }
 
-  const onOpenProcess = (id: string) => {
-    router
-      .push(routes.handover, `${routes.baseRoute}/${id}/handover`)
-      .then(() => window.scrollTo(0, 0))
-  }
+  if (error || (loading && !data)) {
+    const content = error ? (
+      <InlineError
+        title={t.subTitles.active}
+        message={t.error.message}
+        primaryButton={{
+          text: t.error.primaryButton,
+          action: () => router.reload(),
+        }}
+      />
+    ) : (
+      <SkeletonLoader space={2} repeat={4} />
+    )
 
-  const onSeeDetails = (id: string) => {
-    router
-      .push(routes.completed, `${routes.baseRoute}/${id}/completed`)
-      .then(() => window.scrollTo(0, 0))
-  }
-
-  if (!user) {
-    return null
-  } else if (!hasPermission('recycleVehicle', user?.role as Role)) {
-    return <NotFound />
+    return (
+      <PageLayout>
+        <Box paddingBottom={[3, 3, 6, 6]}>
+          <Breadcrumbs>
+            <Link href={homeRoute}>Ísland.is</Link>
+            <span>{t.title}</span>
+          </Breadcrumbs>
+        </Box>
+        <Box paddingBottom={4}>
+          <Text variant="h1">{t.title}</Text>
+        </Box>
+        {content}
+      </PageLayout>
+    )
   }
 
   return (
@@ -67,63 +89,36 @@ const Overview: FC = () => {
       <Box paddingBottom={4}>
         <Text variant="h1">{t.title}</Text>
       </Box>
-      {error || (loading && !data) ? (
-        <Box>
-          {error && (
-            <InlineError
-              title={t.subTitles.active}
-              message={t.error.message}
-              primaryButton={{
-                text: t.error.primaryButton,
-                action: () => router.reload(),
-              }}
+      <Stack space={[3, 3, 4, 4]}>
+        {pendingCars.length > 0 && (
+          <ProgressCardContainer
+            title={t.subTitles.pending}
+            cars={pendingCars}
+            actionType="handover"
+            onContinue={onContinue}
+          />
+        )}
+        <Stack space={[2, 2]}>
+          <Text variant="h3">{t.subTitles.active}</Text>
+          {inUseCars.length > 0 ? (
+            <ActionCardContainer
+              cars={inUseCars}
+              actionType="confirm"
+              onContinue={onContinue}
             />
+          ) : (
+            <Text>{t.info.noCarsAvailable}</Text>
           )}
-        </Box>
-      ) : (
-        <Box>
-          <Box paddingBottom={10}>
-            <Stack space={[2, 2]}>
-              <Text variant="h3">{t.subTitles.pending}</Text>
-              {cars.map((car: MockCar) => (
-                <ProgressCard
-                  key={car.permno}
-                  car={{ ...car, status: 'pendingRecycle' }}
-                  onClick={() => onOpenProcess(car.permno)}
-                />
-              ))}
-            </Stack>
-          </Box>
-          <Box paddingBottom={10}>
-            <Stack space={[2, 2]}>
-              <Text variant="h3">{t.subTitles.active}</Text>
-              {cars.length > 0 ? (
-                cars.map((car: MockCar) => (
-                  <ActionCard
-                    key={car.permno}
-                    car={car}
-                    onContinue={() => onRecycleCar(car.permno)}
-                  />
-                ))
-              ) : (
-                <Text>{t.info.noCarsAvailable}</Text>
-              )}
-            </Stack>
-          </Box>
-          <Box paddingBottom={10}>
-            <Stack space={[2, 2]}>
-              <Text variant="h3">{t.subTitles.done}</Text>
-              {cars.map((car: MockCar) => (
-                <ProgressCard
-                  key={car.permno}
-                  car={{ ...car, status: 'handedOver' }}
-                  onClick={() => onSeeDetails(car.permno)}
-                />
-              ))}
-            </Stack>
-          </Box>
-        </Box>
-      )}
+        </Stack>
+        {recycledCars.length > 0 && (
+          <ProgressCardContainer
+            title={t.subTitles.done}
+            cars={recycledCars}
+            actionType="completed"
+            onContinue={onContinue}
+          />
+        )}
+      </Stack>
     </PageLayout>
   )
 }

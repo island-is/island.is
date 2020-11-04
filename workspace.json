@@ -2528,29 +2528,7 @@
             "outputPath": "dist/apps/judicial-system/api",
             "main": "apps/judicial-system/api/src/main.ts",
             "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
-            "assets": [
-              "apps/judicial-system/api/src/assets",
-              {
-                "glob": "*",
-                "input": "apps/judicial-system/api/migrations",
-                "output": "./migrations"
-              },
-              {
-                "glob": "*",
-                "input": "apps/judicial-system/api/seeders",
-                "output": "./seeders"
-              },
-              {
-                "glob": ".sequelizerc",
-                "input": "apps/judicial-system/api",
-                "output": "./"
-              },
-              {
-                "glob": "sequelize.config.js",
-                "input": "apps/judicial-system/api",
-                "output": "./"
-              }
-            ]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -2590,27 +2568,124 @@
             "passWithNoTests": true
           }
         },
+        "init-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildSchema.ts",
+              "yarn nx run judicial-system-api:codegen"
+            ]
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config apps/judicial-system/codegen.yml"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "judicial-system-backend": {
+      "root": "apps/judicial-system/backend",
+      "sourceRoot": "apps/judicial-system/backend/src",
+      "projectType": "application",
+      "prefix": "judicial-system-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/judicial-system/backend",
+            "main": "apps/judicial-system/backend/src/main.ts",
+            "tsConfig": "apps/judicial-system/backend/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/judicial-system/backend/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/judicial-system/backend/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/judicial-system/backend",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/judicial-system/backend",
+                "output": "./"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/backend/src/environments/environment.ts",
+                  "with": "apps/judicial-system/backend/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/judicial-system/backend/tsconfig.app.json",
+              "apps/judicial-system/backend/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/judicial-system/backend/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/judicial-system/backend/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
-            "cwd": "apps/judicial-system/api"
+            "cwd": "apps/judicial-system/backend"
           }
         },
         "init-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.app.json apps/judicial-system/api/src/buildOpenApi.ts"
+            "parallel": false,
+            "command": "yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
           }
         },
         "generate-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
-            "outputPath": "apps/judicial-system/api/src/openapi.yaml",
+            "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
             "commands": [
-              "yarn build judicial-system-api",
-              "node dist/apps/judicial-system/api/main --generate-schema apps/judicial-system/api/src/openapi.yaml"
+              "yarn build judicial-system-backend",
+              "node dist/apps/judicial-system/backend/main --generate-schema apps/judicial-system/backend/src/openapi.yaml"
             ]
           }
         },
@@ -2618,21 +2693,21 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
-            "cwd": "apps/judicial-system/api"
+            "cwd": "apps/judicial-system/backend"
           }
         },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/judicial-system/api"
+            "cwd": "apps/judicial-system/backend"
           }
         },
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
-            "cwd": "apps/judicial-system/api"
+            "cwd": "apps/judicial-system/backend"
           }
         },
         "docker-express": {}
@@ -2739,10 +2814,7 @@
             "main": "apps/judicial-system/web/src/main.tsx",
             "polyfills": "apps/judicial-system/web/src/polyfills.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
-            "assets": [
-              "apps/judicial-system/web/src/favicon.ico",
-              "apps/judicial-system/web/src/assets"
-            ],
+            "assets": ["apps/judicial-system/web/src/favicon.ico"],
             "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/judicial-system/web/webpack.config.js"
