@@ -175,9 +175,11 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}`,
       {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       },
     )
+    .lineGap(8)
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -186,8 +188,8 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.courtAttendees, {
       lineGap: 6,
+      paragraphGap: 0,
     })
-    .lineGap(4)
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -197,8 +199,9 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.policeDemands, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -209,9 +212,10 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       'Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.',
       {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       },
     )
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -222,9 +226,10 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       'Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
       {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       },
     )
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -233,8 +238,9 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.accusedPlea, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -243,7 +249,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.litigationPresentations, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
     .lineGap(40)
     .text(' ')
@@ -258,8 +264,9 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.policeDemands, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -268,8 +275,9 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.caseFacts, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -278,8 +286,9 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.legalArguments, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -288,7 +297,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(existingCase.ruling, {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
     .lineGap(40)
     .text(' ')
@@ -300,21 +309,24 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(formatConclusion(existingCase), {
       lineGap: 6,
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica-Bold')
     .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`, {
       align: 'center',
-      paragraphGap: 14,
+      paragraphGap: 0,
     })
+    .text(' ')
     .font('Helvetica')
     .text(
       'Úrskurðarorðið er lesið í heyranda hljóði að viðstöddum kærða, verjanda hans, túlki og aðstoðarsaksóknara.',
       {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       },
     )
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
@@ -331,13 +343,11 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .lineGap(6)
     .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
-    .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'), {
-      lineGap: 6,
-      paragraphGap: 14,
-    })
+    .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
   if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
     doc
+      .text(' ')
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
@@ -346,12 +356,13 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .fontSize(12)
       .text(existingCase.accusedAppealAnnouncement, {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       })
   }
 
   if (existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
     doc
+      .text(' ')
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
@@ -360,12 +371,13 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .fontSize(12)
       .text(existingCase.prosecutorAppealAnnouncement, {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       })
   }
 
   if (!existingCase.rejecting) {
     doc
+      .text(' ')
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
@@ -374,19 +386,20 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .fontSize(12)
       .text(formatRestrictions(existingCase), {
         lineGap: 6,
-        paragraphGap: 14,
+        paragraphGap: 0,
       })
+      .text(' ')
       .text(
         'Dómari bendir kærða á að honum sé heimilt að bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.',
         {
           lineGap: 6,
-          paragraphGap: 14,
+          paragraphGap: 0,
         },
       )
   }
 
   doc
-    .lineGap(10)
+    .lineGap(20)
     .text(' ')
     .text(
       `Þinghaldi lauk þann ${formatDate(existingCase.courtEndTime, 'PPPp')}`,
