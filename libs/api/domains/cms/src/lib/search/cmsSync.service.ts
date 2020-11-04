@@ -64,6 +64,9 @@ export class CmsSyncService {
       })
   }
 
+  /**
+   * We only want to keep one folder hash to have the ability to roll back when restoring old builds
+   */
   private async updateLastFolderHash({
     elasticIndex,
     folderHash,
