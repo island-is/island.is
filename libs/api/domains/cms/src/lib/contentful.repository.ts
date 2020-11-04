@@ -8,8 +8,8 @@ const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ContentfulQuery = any
 
-const validLocales = ['is-IS', 'en']
-const localeMap = {
+const validLocales = ['is-IS', 'en', '*']
+export const localeMap = {
   is: 'is-IS',
   en: 'en',
 }
