@@ -48,7 +48,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
         {items.map((item, index) =>
           item.path !== undefined ? (
             index === items.length - 1 ? (
-              <Tag key={index} variant="purple">
+              <Tag key={index} variant="purple" label>
                 {formatMessage(item.name)}
               </Tag>
             ) : (
