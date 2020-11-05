@@ -1,5 +1,5 @@
 import { style, styleMap, globalStyle } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
@@ -143,8 +143,13 @@ globalStyle(
   {
     marginTop: '0',
     right: '0',
-    top: '70px !important',
+    top: '65px !important',
     transform: 'none !important',
+    ...themeUtils.responsiveStyle({
+      md: {
+        top: '70px !important',
+      },
+    }),
   },
 )
 
