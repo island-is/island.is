@@ -25,15 +25,6 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Column
   id: string
 
-  // @Field()
-  // @Column({
-  //   type: DataType.UUID,
-  //   primaryKey: true,
-  //   allowNull: false,
-  //   defaultValue: DataTypeUIDV4,
-  // })
-  // id!: string
-
   @Field()
   @ForeignKey(() => VehicleModel)
   @Column({
@@ -48,7 +39,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   recyclingPartnerId!: string
 

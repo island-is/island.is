@@ -21,6 +21,7 @@ import {
   ITeamList,
   IContactUs,
   ILocation,
+  ITellUsAStory,
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
@@ -46,6 +47,7 @@ import { TabSection, mapTabSection } from './tabSection.model'
 import { TeamList, mapTeamList } from './teamList.model'
 import { ContactUs, mapContactUs } from './contactUs.model'
 import { Location, mapLocation } from './location.model'
+import { TellUsAStory, mapTellUsAStory } from './tellUsAStory.model'
 
 type SliceTypes =
   | ITimeline
@@ -65,6 +67,7 @@ type SliceTypes =
   | ITeamList
   | IContactUs
   | ILocation
+  | ITellUsAStory
 
 export const Slice = createUnionType({
   name: 'Slice',
@@ -86,6 +89,7 @@ export const Slice = createUnionType({
     TeamList,
     ContactUs,
     Location,
+    TellUsAStory,
     Html,
     Image,
     Asset,
@@ -129,6 +133,8 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapContactUs(slice as IContactUs)
     case 'location':
       return mapLocation(slice as ILocation)
+    case 'tellUsAStory':
+      return mapTellUsAStory(slice as ITellUsAStory)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
