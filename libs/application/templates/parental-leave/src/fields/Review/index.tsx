@@ -20,18 +20,13 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import Timeline from '../components/Timeline'
 import {
-  formatIsk,
   formatPeriods,
   getExpectedDateOfBirth,
   getNameAndIdOfSpouse,
 } from '../parentalLeaveUtils'
-import { Payment, Period } from '../../types'
-import { default as format } from 'date-fns/format'
-import Table from '../components/Table'
-import { m } from '../../lib/messages'
+import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 
