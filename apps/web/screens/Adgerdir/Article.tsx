@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import cn from 'classnames'
 import {
   ContentBlock,
   Box,
@@ -46,8 +45,6 @@ import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { ColorSchemeContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
-
-import * as cardStyles from '@island.is/web/components/Card/Card.treat'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
