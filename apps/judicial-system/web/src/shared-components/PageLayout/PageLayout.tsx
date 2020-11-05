@@ -6,6 +6,7 @@ import {
   GridColumn,
   FormStepper,
   AlertBanner,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
@@ -13,6 +14,7 @@ import { JudgeLogo, ProsecutorLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '../../utils/constants'
 import { UserRole } from '@island.is/judicial-system/types'
+import { Link } from 'react-router-dom'
 
 interface PageProps {
   children: ReactNode
@@ -99,14 +101,24 @@ export const PageLayout: FC<PageProps> = ({
       <Loading />
     </Box>
   ) : (
-    <AlertBanner
-      title="Mál fannst ekki"
-      description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
-      variant="error"
-      reactLink={{
-        href: Constants.DETENTION_REQUESTS_ROUTE,
-        title: 'Fara á yfirlitssíðu',
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <Link to={href} color="blue400" className={styles.link}>
+            {children}
+          </Link>
+        ),
       }}
-    />
+    >
+      <AlertBanner
+        title="Mál fannst ekki"
+        description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+        variant="error"
+        link={{
+          href: Constants.DETENTION_REQUESTS_ROUTE,
+          title: 'Fara á yfirlitssíðu',
+        }}
+      />
+    </LinkContext.Provider>
   )
 }

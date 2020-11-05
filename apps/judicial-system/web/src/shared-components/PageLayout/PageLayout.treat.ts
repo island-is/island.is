@@ -14,3 +14,7 @@ export const loadingWrapper = style({
   alignItems: 'center',
   justifyContent: 'center',
 })
+
+export const link = style({
+  textDecoration: 'underline',
+})
