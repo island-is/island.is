@@ -1,4 +1,11 @@
-import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
+import React, {
+  FC,
+  useState,
+  useContext,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
 import intersection from 'lodash/intersection'
 import {
   Box,
@@ -10,6 +17,7 @@ import {
   Inline,
   Icon,
   LoadingIcon,
+  SleeveContext,
   Divider,
 } from '@island.is/island-ui/core'
 import routeNames from '@island.is/web/i18n/routeNames'
@@ -50,6 +58,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const { isOpen: sleeveIsOpen, setIsOpen } = useContext(SleeveContext)
   const { makePath } = routeNames(activeLocale)
   const [filterString, setFilterString] = useState<string>('')
   const [startingItems, setstartingItems] = useState<Array<AdgerdirPage>>(
@@ -97,6 +106,10 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     })
 
     setIndexesFilteredByTag(arr)
+
+    if (!sleeveIsOpen && arr.length) {
+      setIsOpen(true)
+    }
   }, [visibleItems, tagIds])
 
   const doUpdate = useCallback(() => {
@@ -166,7 +179,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
       <Inline space={2} alignY="center">
         <Box>
           <Text variant="h3" as="h3" color="red600">
-            {title || n('adgerdir2', 'Aðgerðir fyrir')}
+            {title || n('adgerdirFor', 'Aðgerðir fyrir')}
           </Text>
         </Box>
         <Box>
@@ -293,7 +306,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
             }}
             colorScheme="destructive"
           >
-            {n('seeMoreItems2', 'Sjá allt')}
+            {n('showAll', 'Sjá allt')}
           </Button>
         </Box>
       ) : null}

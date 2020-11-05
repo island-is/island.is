@@ -96,7 +96,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
-          <Sleeve minHeight={400}>
+          <Sleeve minHeight={400} background="red100">
             <Box background="red100">
               <ContentBlock width="large">
                 <AdgerdirArticles
