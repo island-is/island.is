@@ -82,7 +82,12 @@ export const ScreenFooter: FC<FooterProps> = ({
           </Box>
           <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
             {showGoBack && (
-              <Button variant="ghost" icon="arrowBack" onClick={goBack} />
+              <Button
+                circle
+                variant="ghost"
+                icon="arrowBack"
+                onClick={goBack}
+              />
             )}
           </Box>
           <Box display="inlineFlex" padding={2} paddingRight="none">
