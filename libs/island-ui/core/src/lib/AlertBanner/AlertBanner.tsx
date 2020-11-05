@@ -4,7 +4,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.treat'
 import { Icon, IconTypes } from '../Icon/Icon'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Link } from '../Link/Link'
 
 export type AlertBannerVariants =
@@ -109,7 +109,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
       )}
       {title && (
         <Box marginRight={2} marginBottom={[1, 1, 0]}>
-          <Typography variant="h4">{title}</Typography>
+          <Text variant="h4">{title}</Text>
         </Box>
       )}
       <Box
@@ -120,13 +120,13 @@ export const AlertBanner: FC<AlertBannerProps> = ({
       >
         {description && (
           <Box marginRight={2} marginBottom={[1, 1, 0]}>
-            <Typography variant="p">{description}</Typography>
+            <Text>{description}</Text>
           </Box>
         )}
         {link && (
-          <Typography links variant="p">
+          <Text color="blue400">
             <Link href={link.href}>{link.title}</Link>
-          </Typography>
+          </Text>
         )}
       </Box>
       {dismissable && (
