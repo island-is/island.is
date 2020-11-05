@@ -393,7 +393,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .text('Tilhögun gæsluvarðhalds')
       .font('Helvetica')
       .fontSize(12)
-      .text(formatRestrictions(existingCase), {
+      .text(formatRestrictions(existingCase.custodyRestrictions), {
         lineGap: 6,
         paragraphGap: 0,
       })

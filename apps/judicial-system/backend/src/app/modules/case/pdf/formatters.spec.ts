@@ -1,4 +1,8 @@
-import { formatCourtCaseNumber, formatProsecutorDemands } from './formatters'
+import {
+  formatCourtCaseNumber,
+  formatProsecutorDemands,
+  formatRestrictions,
+} from './formatters'
 
 describe('formatProsecutorDemands', () => {
   test('should format prosecutor demands with isolation', () => {
@@ -59,5 +63,18 @@ describe('formatCourtCaseNumber', () => {
 
     // Assert
     expect(res).toBe('Málsnúmer Héraðsdóms Reykjavíkur R-5/2020')
+  })
+})
+
+describe('formatRestrictions', () => {
+  test('should return formatted restrictions for no restrictions', () => {
+    // Arrange
+    const custodyRestrictions = []
+
+    // Act
+    const res = formatRestrictions(custodyRestrictions)
+
+    // Assert
+    expect(res).toBe('Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.')
   })
 })
