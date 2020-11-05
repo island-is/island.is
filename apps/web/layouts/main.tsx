@@ -179,19 +179,53 @@ const Layout: NextComponentType<
           <link rel="manifest" href="/site.webmanifest" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
-          <meta name="description" content={n('description')} />
 
-          <meta property="og:title" content={n('title')} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={fullUrl} />
+          <title>{n('title')}</title>
+
+          <meta name="title" content={n('title')} key="title" />
+          <meta
+            name="description"
+            content={n('description')}
+            key="description"
+          />
+
+          <meta property="og:title" content={n('title')} key="ogTitle" />
+          <meta
+            property="og:description"
+            content={n('description')}
+            key="ogDescription"
+          />
+          <meta property="og:type" content="website" key="ogWebsite" />
+          <meta property="og:url" content={fullUrl} key="ogUrl" />
           <meta
             property="og:image"
             content="https://island.is/island-fb-1200x630.png"
+            key="ogImage"
           />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:description" content={n('description')} />
-          <title>{n('title')}</title>
+          <meta property="og:image:width" content="1200" key="ogIimageWidth" />
+          <meta property="og:image:height" content="630" key="ogImageHeight" />
+
+          <meta
+            property="twitter:card"
+            content="summary_large_image"
+            key="twitterCard"
+          />
+          <meta property="twitter:url" content={fullUrl} key="twitterUrl" />
+          <meta
+            property="twitter:title"
+            content={n('title')}
+            key="twitterTitle"
+          />
+          <meta
+            property="twitter:description"
+            content={n('description')}
+            key="twitterDescription"
+          />
+          <meta
+            property="twitter:image"
+            content="https://island.is/island-fb-1200x630.png"
+            key="twitterImage"
+          />
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner

@@ -88,7 +88,9 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
     <>
       <HeadWithSocialSharing
         title={`${article.title} | Viðspyrna fyrir Ísland`}
-        description={article.description}
+        description={
+          Boolean(article.description) ? article.description : undefined
+        }
       />
       <ArticleLayout
         sidebar={

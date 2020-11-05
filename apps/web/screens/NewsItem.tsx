@@ -47,6 +47,16 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   const n = useNamespace(namespace)
 
   const metaTitle = `${newsItem.title} | Ísland.is`
+  const metaDescription = Boolean(newsItem.intro) ? newsItem.intro : undefined
+  const metaImageUrl = Boolean(newsItem.image.url)
+    ? newsItem.image.url
+    : undefined
+  const metaImageWidth = Boolean(newsItem.image.width)
+    ? newsItem.image.width.toString()
+    : undefined
+  const metaImageHeight = Boolean(newsItem.image.height)
+    ? newsItem.image.height.toString()
+    : undefined
 
   const sidebar = (
     <SidebarBox>
@@ -79,10 +89,10 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
     <>
       <HeadWithSocialSharing
         title={metaTitle}
-        description={newsItem.intro}
-        imageUrl={newsItem.image?.url}
-        imageWidth={newsItem.image?.width.toString()}
-        imageHeight={newsItem.image?.height.toString()}
+        description={metaDescription}
+        imageUrl={metaImageUrl}
+        imageWidth={metaImageWidth}
+        imageHeight={metaImageHeight}
       />
       <GridContainer>
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
