@@ -87,6 +87,9 @@ export class NationalRegistryApi {
       )
 
     const members = family
+      .filter((familyMember) => {
+        return familyMember.Kennitala !== nationalId
+      })
       .map(
         (familyMember) =>
           ({
