@@ -44,6 +44,7 @@ import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
 import { AboutSubPage, mapAboutSubPage } from './models/aboutSubPage.model'
 import { Homepage, mapHomepage } from './models/homepage.model'
+import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 
 const makePage = (
   page: number,
@@ -469,5 +470,17 @@ export class CmsContentfulService {
       .catch(errorHandler('getHomepage'))
 
     return result.items.map(mapHomepage)[0]
+  }
+
+  async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ITellUsAStoryFields>(lang, {
+        ['content_type']: 'tellUsAStory',
+        include: 10,
+        order: '-sys.createdAt',
+      })
+      .catch(errorHandler('getTellUsAStory'))
+
+    return result.items.map(mapTellUsAStory)[0]
   }
 }

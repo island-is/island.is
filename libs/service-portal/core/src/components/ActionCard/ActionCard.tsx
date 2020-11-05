@@ -1,12 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Stack,
-  Columns,
-  Column,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Button, Text } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
 
@@ -24,27 +17,32 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
   return (
     <Box
       className={styles.wrapper}
-      paddingY={3}
-      paddingX={4}
+      paddingTop={[2, 4]}
+      paddingBottom={[2, 3]}
+      paddingX={[2, 4]}
       border="standard"
       borderRadius="large"
     >
-      <Columns alignY="center" space={3}>
-        <Column>
-          <Stack space={1}>
-            <Text variant="eyebrow" color="purple400">
-              {label}
-            </Text>
-            <Text variant="h3">{title}</Text>
-          </Stack>
-        </Column>
-        <Column width="content">
-          <Stack space={1}>
-            <Box justifyContent="flexEnd" display="flex">
-              <Text variant="small" as="span" color="dark400">
-                {format(date, 'dd.MM.yyyy')}
-              </Text>
-            </Box>
+      <Stack space={1}>
+        <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+          <Text variant="eyebrow" color="purple400">
+            {label}
+          </Text>
+          <Text variant="small" as="span" color="dark400">
+            {format(date, 'dd.MM.yyyy')}
+          </Text>
+        </Box>
+        <Box
+          display={['block', 'flex']}
+          justifyContent="spaceBetween"
+          alignItems="center"
+        >
+          <Text variant="h4">{title}</Text>
+          <Box
+            className={styles.buttonWrapper}
+            marginTop={[1, 0]}
+            marginLeft={[0, 3]}
+          >
             <Button
               icon="download"
               colorScheme="default"
@@ -56,9 +54,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
             >
               {cta.label}
             </Button>
-          </Stack>
-        </Column>
-      </Columns>
+          </Box>
+        </Box>
+      </Stack>
     </Box>
   )
 }
