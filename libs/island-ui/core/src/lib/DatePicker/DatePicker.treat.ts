@@ -92,8 +92,13 @@ export const customHeaderContainer = style({
 export const headerSelect = style({
   border: 'none',
   appearance: 'none',
-  fontSize: 20,
+  fontSize: 18,
   fontWeight: 600,
+  ...themeUtils.responsiveStyle({
+    md: {
+      fontSize: 20,
+    },
+  }),
 })
 
 export const decreaseButton = style({
