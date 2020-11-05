@@ -94,7 +94,7 @@ export const EditPhoneNumber: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <PhoneForm
         tel={tel}
-        natReg={userInfo.profile.natreg}
+        natReg={userInfo.profile.nationalId}
         renderBackButton={() => (
           <Link to={ServicePortalPath.UserProfileRoot}>
             <Button variant="ghost">

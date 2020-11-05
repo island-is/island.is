@@ -21,7 +21,7 @@ export const UserProfileLocale = () => {
   const userProfile = data?.getUserProfile || null
 
   useEffect(() => {
-    if (userInfo?.profile.natreg) getUserProfile()
+    if (userInfo?.profile.nationalId) getUserProfile()
   }, [userInfo])
 
   useEffect(() => {

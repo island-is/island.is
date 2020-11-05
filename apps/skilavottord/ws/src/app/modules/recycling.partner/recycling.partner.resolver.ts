@@ -24,13 +24,13 @@ export class RecyclingPartnerResolver {
   }
 
   //TODO in progress
-  @Query(() => String)
-  async RRTEST(@Args('partnerId') partnerId: string) {
-    const res = await this.recyclingPartnerService.findRecyclingPartnerVehicles(
-      partnerId,
-    )
-    return 'TEST'
-  }
+  // @Query(() => String)
+  // async RRTEST(@Args('partnerId') partnerId: string) {
+  //   const res = await this.recyclingPartnerService.findRecyclingPartnerVehicles(
+  //     partnerId,
+  //   )
+  //   return 'TEST'
+  // }
 
   //TODO in progress
   @Query(() => [RecyclingPartnerModel])

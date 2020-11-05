@@ -7,20 +7,18 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
-import { useWindowSize, useEvent, useIsomorphicLayoutEffect } from 'react-use'
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import {
   Text,
   Stack,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   GridContainer,
   GridRow,
   GridColumn,
-  IconDeprecated as Icon,
 } from '@island.is/island-ui/core'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/web/i18n/I18n'
@@ -234,7 +232,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                             {content}
                           </span>
                         </Text>
-                        {linkUrls?.href ? (
+                        {linkUrls?.href && visible ? (
                           <span
                             className={cn(styles.textItem, {
                               [styles.textItemVisible]: visible,
@@ -247,8 +245,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                             >
                               <Button
                                 variant="text"
-                                icon="arrowRight"
-                                tabIndex={visible ? 0 : -1}
+                                icon="arrowForward"
                                 aria-labelledby={tabTitleId}
                               >
                                 Sjá nánar
@@ -270,16 +267,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               alignItems="center"
               className={styles.tabListArrowLeft}
             >
-              <button
+              <Button
+                circle
+                colorScheme="light"
+                icon="arrowBack"
+                iconType="filled"
+                aria-label={t.frontpageTabsPrevious}
                 onClick={() => goTo('prev')}
                 type="button"
-                aria-label={t.frontpageTabsPrevious}
-                className={cn(styles.arrowButton, {
-                  [styles.arrowButtonDisabled]: false,
-                })}
-              >
-                <Icon color="red400" width="18" height="18" type="arrowLeft" />
-              </button>
+                variant="primary"
+              />
             </Box>
             <Box
               display="flex"
@@ -288,16 +285,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               alignItems="center"
               className={styles.tabListArrowRight}
             >
-              <button
+              <Button
+                circle
+                colorScheme="light"
+                icon="arrowForward"
+                iconType="filled"
+                aria-label={t.frontpageTabsNext}
                 onClick={() => goTo('next')}
                 type="button"
-                aria-label={t.frontpageTabsNext}
-                className={cn(styles.arrowButton, {
-                  [styles.arrowButtonDisabled]: false,
-                })}
-              >
-                <Icon color="red400" width="18" height="18" type="arrowRight" />
-              </button>
+                variant="primary"
+              />
             </Box>
           </GridColumn>
 

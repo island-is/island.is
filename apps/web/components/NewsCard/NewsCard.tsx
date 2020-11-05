@@ -3,7 +3,7 @@ import {
   Text,
   Link,
   Box,
-  ArrowLink,
+  Button,
   TagProps,
   Tag,
   Inline,
@@ -100,7 +100,14 @@ const NewsCard: React.FC<NewsCardProps> = ({
         )}
         <Text paddingBottom={3}>{introduction}</Text>
         <div className={styles.readMore}>
-          <ArrowLink>{readMoreText}</ArrowLink>
+          <Button
+            icon="arrowForward"
+            iconType="filled"
+            type="button"
+            variant="text"
+          >
+            {readMoreText}
+          </Button>
         </div>
       </Box>
     </Box>
