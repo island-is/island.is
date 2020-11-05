@@ -102,13 +102,7 @@ yarn start api
 If you change a GraphQL schema, you need to update the generated TypeScript types which are used by resolvers and client applications:
 
 ```
-yarn affected:codegen
-```
-
-When you're actively working on schemas and resolvers, you can run the code generation in a watcher which updates the TypeScript types on-save:
-
-```
-yarn codegen api --configuration=watch
+yarn nx run api:schemas/codegen
 ```
 
 ### Tests

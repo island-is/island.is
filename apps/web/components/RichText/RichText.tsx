@@ -12,7 +12,7 @@ import {
   LinkContext,
   Link,
 } from '@island.is/island-ui/core'
-import ContactUs from '../ContactUs/ContactUs'
+import { TellUsAStory, ContactUs } from '@island.is/web/components'
 
 const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'ProcessEntry',
@@ -20,6 +20,7 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'TeamList',
   'ContactUs',
   'Location',
+  'TellUsAStory',
 ]
 
 const renderComponent = (
@@ -27,12 +28,19 @@ const renderComponent = (
   locale: string,
   config: RenderConfig,
 ) => {
-  let children: ReactNode =
-    slice.__typename === 'ContactUs' ? (
-      <ContactUs {...slice} />
-    ) : (
-      defaultRenderComponent(slice, locale, config)
-    )
+  let children: ReactNode | null = null
+
+  switch (slice.__typename) {
+    case 'ContactUs':
+      children = <ContactUs {...slice} />
+      break
+    case 'TellUsAStory':
+      children = <TellUsAStory {...slice} showIntro={false} locale={locale} />
+      break
+    default:
+      children = defaultRenderComponent(slice, locale, config)
+      break
+  }
 
   if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
     // XXX: We assume the component is rendered in a 9 column layout on desktop.

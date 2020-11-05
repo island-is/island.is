@@ -51,6 +51,12 @@ export enum CaseAppealDecision {
   POSTPONE = 'POSTPONE',
 }
 
+export enum CaseGender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
+}
+
 export interface Case {
   id: string
   created: string
@@ -60,6 +66,7 @@ export interface Case {
   accusedNationalId: string
   accusedName?: string
   accusedAddress?: string
+  accusedGender?: CaseGender
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -114,11 +121,12 @@ export interface Notification {
 export interface CreateCase {
   policeCaseNumber: string
   accusedNationalId: string
-  accusedName: string
-  accusedAddress: string
-  court: string
-  arrestDate: string
-  requestedCourtDate: string
+  accusedName?: string
+  accusedAddress?: string
+  accusedGender?: CaseGender
+  court?: string
+  arrestDate?: string
+  requestedCourtDate?: string
 }
 
 export interface UpdateCase {
@@ -126,6 +134,7 @@ export interface UpdateCase {
   accusedNationalId?: string
   accusedName?: string
   accusedAddress?: string
+  accusedGender?: CaseGender
   court?: string
   arrestDate?: string
   requestedCourtDate?: string

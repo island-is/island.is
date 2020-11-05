@@ -13,7 +13,16 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "schemas/build-open-api",
+          "schemas/openapi-generator",
+          "schemas/build-schema",
+          "schemas/codegen"
+        ]
       }
     }
   },
@@ -85,6 +94,9 @@
       "tags": []
     },
     "api-domains-documents": {
+      "tags": []
+    },
+    "api-domains-driving-license": {
       "tags": []
     },
     "api-domains-file-upload": {
@@ -307,6 +319,9 @@
       "tags": []
     },
     "services-auth-api": {
+      "tags": []
+    },
+    "services-driving-license": {
       "tags": []
     },
     "services-search-indexer": {

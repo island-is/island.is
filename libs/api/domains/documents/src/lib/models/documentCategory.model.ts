@@ -1,12 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { DocumentDTO, CategoryDTO } from '../../../gen/fetch'
+import { CategoryDTO } from '../client/models'
 
 @ObjectType()
 export class DocumentCategory {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
-  @Field((type) => String)
+  @Field(() => String)
   name?: string
 
   static fromCategoryDTO(dto: CategoryDTO) {
