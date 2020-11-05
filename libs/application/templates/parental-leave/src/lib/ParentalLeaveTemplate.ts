@@ -25,23 +25,25 @@ const dataSchema = z.object({
     bank: z.string().nonempty(),
     personalAllowanceUsage: z.enum(['100', '75', '50', '25']),
     pensionFund: z.string().optional(),
-    privatePensionFund: z.enum(['frjalsi']).optional(),
-    privatePensionFundPercentage: z.enum(['2', '4']).optional(),
+    privatePensionFund: z.enum(['frjalsi', '']).optional(),
+    privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
   }),
   shareInformationWithOtherParent: z.enum(['yes', 'no']),
   usePrivatePensionFund: z.enum(['yes', 'no']),
-  periods: z.array(
-    z.object({
-      startDate: z.string().refine((d) => isValid(parseISO(d))),
-      endDate: z.string().refine((d) => isValid(parseISO(d))),
-      ratio: z
-        .string()
-        .refine(
-          (val) =>
-            !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
-        ),
-    }),
-  ),
+  periods: z
+    .array(
+      z.object({
+        startDate: z.string().refine((d) => isValid(parseISO(d))),
+        endDate: z.string().refine((d) => isValid(parseISO(d))),
+        ratio: z
+          .string()
+          .refine(
+            (val) =>
+              !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
+          ),
+      }),
+    )
+    .nonempty(),
   employer: z.object({
     name: z.string().nonempty(),
     nationalRegistryId: z.string().nonempty(),
@@ -97,6 +99,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           roles: [
             {
               id: 'employer',
+              formLoader: () =>
+                import('../forms/EmployerApproval').then((val) =>
+                  Promise.resolve(val.EmployerApproval),
+                ),
               read: { answers: ['periods'] },
               actions: [
                 { event: 'APPROVE', name: 'Approve', type: 'primary' },
@@ -106,7 +112,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: 'applicant',
               read: {
-                answers: ['usage', 'spread', 'periods'],
+                answers: ['spread', 'periods'],
                 externalData: ['expectedDateOfBirth', 'salary'],
               },
             },
@@ -141,7 +147,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(): ApplicationRole {
+  mapUserToRole(id, state): ApplicationRole {
+    if (state === 'employerApproval') {
+      return 'employer'
+    }
     return 'applicant'
   },
 }

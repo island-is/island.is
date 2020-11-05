@@ -25,13 +25,22 @@ export interface TimelinePeriod {
 }
 
 const Panel: FC<{
+  editable: boolean
   initDate: Date
   title: string
   titleSmall: string
   periods: TimelinePeriod[]
   isMobile: boolean
   onDeletePeriod?: (index: number) => void
-}> = ({ initDate, title, titleSmall, periods, isMobile, onDeletePeriod }) => {
+}> = ({
+  editable = true,
+  initDate,
+  title,
+  titleSmall,
+  periods,
+  isMobile,
+  onDeletePeriod,
+}) => {
   const formatStyle = isMobile ? 'dd MMM' : 'dd MMM yyyy'
   const titleLabel = isMobile ? titleSmall : title
 
@@ -50,7 +59,7 @@ const Panel: FC<{
       {periods.map((p, index) => {
         return (
           <Box className={styles.panelRow} key={index}>
-            {p.canDelete && onDeletePeriod && (
+            {p.canDelete && editable && onDeletePeriod && (
               <Box
                 className={styles.deleteIcon}
                 onClick={() => onDeletePeriod(index)}
@@ -252,6 +261,7 @@ const Chart: FC<{
 }
 
 interface TimelineProps {
+  editable?: boolean
   initDate: Date
   periods: TimelinePeriod[]
   spanInMonths?: number
@@ -261,6 +271,7 @@ interface TimelineProps {
 }
 
 const Timeline: FC<TimelineProps> = ({
+  editable = true,
   initDate,
   periods,
   spanInMonths = 18,
@@ -280,6 +291,7 @@ const Timeline: FC<TimelineProps> = ({
         titleSmall={titleSmall || title}
         periods={periods}
         isMobile={isMobile}
+        editable={editable}
         onDeletePeriod={onDeletePeriod}
       />
       <Chart

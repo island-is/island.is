@@ -456,7 +456,7 @@ export const StepTwo: React.FC = () => {
                 Takmarkanir á gæslu
               </Text>
               <Text fontWeight="regular">
-                Ef ekkert er valið, er viðkomandi í lausagæslu
+                Ef ekkert er valið, er gæsla án takmarkana
               </Text>
             </Box>
             <GridContainer>

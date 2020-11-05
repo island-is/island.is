@@ -6,10 +6,10 @@ module.exports.up = (queryInterface, DataTypes) => {
     {
       //TODO GUID vegna fjársýslu.
       id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
+        allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
       },
       vehicle_id: {
         allowNull: false,

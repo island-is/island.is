@@ -20,17 +20,22 @@ import {
   ApiCreatedResponse,
   ApiOAuth2,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
+// TODO: ADD guards when functional
 // @UseGuards(AuthGuard('jwt'))
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
+  /** Gets all clients and count of rows */
   @Get()
+  @ApiQuery({ name: 'page', required: true })
+  @ApiQuery({ name: 'count', required: true })
   async findAndCountAll(
     @Query('page') page: number,
     @Query('count') count: number,
@@ -39,6 +44,7 @@ export class ClientsController {
     return clients
   }
 
+  /** Gets client by id */
   @Get(':id')
   @ApiOkResponse({ type: Client })
   async findOne(@Param('id') id: string): Promise<Client> {
@@ -55,6 +61,7 @@ export class ClientsController {
     return clientProfile
   }
 
+  /** Creates a new client */
   @Post()
   @ApiCreatedResponse({ type: Client })
   async create(@Body() client: ClientDTO): Promise<Client> {
@@ -62,6 +69,7 @@ export class ClientsController {
     return await this.clientsService.create(client)
   }
 
+  /** Updates an existing client */
   @Put(':id')
   @ApiCreatedResponse({ type: Client })
   async update(
@@ -75,6 +83,7 @@ export class ClientsController {
     return await this.clientsService.update(client, id)
   }
 
+  /** Deletes a client by Id */
   @Delete(':id')
   @ApiCreatedResponse()
   async delete(@Param('id') id: string): Promise<number> {
