@@ -195,7 +195,8 @@
                 "input": "apps/air-discount-scheme/backend",
                 "output": "./"
               }
-            ]
+            ],
+            "showCircularDependencies": false
           },
           "configurations": {
             "production": {
