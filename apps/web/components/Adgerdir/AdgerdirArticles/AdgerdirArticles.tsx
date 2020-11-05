@@ -198,7 +198,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                     active={tagIds.includes(id)}
                     bordered
                   >
-                    {dividerRenames['title'] ?? title}
+                    {dividerRenames[title] ?? title}
                   </Tag>
                 )
               })}
