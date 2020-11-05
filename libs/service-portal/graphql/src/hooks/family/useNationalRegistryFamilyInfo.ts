@@ -11,6 +11,6 @@ export const useNationalRegistryFamilyInfo = () => {
     data: data?.getMyFamily || null,
     loading,
     error,
-    called
+    called,
   }
 }
