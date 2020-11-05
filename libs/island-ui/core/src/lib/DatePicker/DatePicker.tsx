@@ -124,7 +124,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             setDatePickerState('closed')
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
-          onChange={(date: any) => {
+          onChange={(date: Date) => {
             setStartDate(date)
             handleChange && handleChange(date)
           }}
