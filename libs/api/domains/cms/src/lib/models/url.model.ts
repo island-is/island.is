@@ -1,4 +1,5 @@
-import { Field, ObjectType, ID, createUnionType } from '@nestjs/graphql'
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 import {
   IArticle,
   IArticleCategory,
@@ -34,10 +35,10 @@ export class Url {
   id: string = ''
 
   @Field({ nullable: true })
-  title?: string
+  title: string = ''
 
   @Field(() => UrlPage)
-  page?: UrlPage | null
+  page: UrlPage | null = null
 
   @Field(() => [String])
   urlsList: Array<string> = []

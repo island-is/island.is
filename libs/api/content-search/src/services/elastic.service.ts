@@ -140,6 +140,7 @@ export class ElasticService {
       const client = await this.getClient()
       return client.get<any>({ id, index })
     } catch (e) {
+      throw e
       ElasticService.handleError(
         'Error in ElasticService.findById',
         { id, index },

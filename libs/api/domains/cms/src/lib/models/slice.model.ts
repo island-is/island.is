@@ -2,7 +2,6 @@ import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
-
 import {
   ITimeline,
   IMailingListSignup,
@@ -22,8 +21,8 @@ import {
   IContactUs,
   ILocation,
   ITellUsAStory,
+  IPageHeader,
 } from '../generated/contentfulTypes'
-
 import { Image, mapImage } from './image.model'
 import { Asset, mapAsset } from './asset.model'
 import {
@@ -68,6 +67,7 @@ type SliceTypes =
   | IContactUs
   | ILocation
   | ITellUsAStory
+  | IPageHeader
 
 export const Slice = createUnionType({
   name: 'Slice',
@@ -153,7 +153,7 @@ if we add a slice that is not in mapper mapSlices fails for that slice.
 we dont want a single slice to cause errors on a whole page so we fail them gracefully
 this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
 */
-export const safelyMapSlices = (data) => {
+export const safelyMapSlices = (data: SliceTypes): typeof Slice | null => {
   try {
     return mapSlice(data)
   } catch (error) {
@@ -166,7 +166,7 @@ export const mapDocument = (
   document: Document,
   idPrefix: string,
 ): Array<typeof Slice> => {
-  const slices: Array<typeof Slice> = []
+  const slices: Array<typeof Slice | null> = []
   const docs = document?.content ?? []
 
   docs.forEach((block, index) => {
@@ -197,5 +197,5 @@ export const mapDocument = (
     }
   })
 
-  return slices.filter(Boolean) // filter out empty slices that failed mapping
+  return slices.filter((slice): slice is typeof Slice => Boolean(slice)) // filter out empty slices that failed mapping
 }

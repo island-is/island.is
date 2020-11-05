@@ -57,13 +57,16 @@ export class CmsSyncService {
   }
 
   private async getLastFolderHash(elasticIndex: string): Promise<string> {
-    logger.info('Getting models hash from index', {
+    logger.info('Getting folder hash from index', {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
     return this.elasticService
       .findById(elasticIndex, 'cmsImportFolderHashId')
-      .then((document) => document.body._source.title)
+      .then((document) => {
+        logger.info('Resonse', { document: document.body._source })
+        return ''
+      })
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
         logger.warn('Failed to get last folder hash', {

@@ -1,6 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import {
-  IsBoolean,
   IsEnum,
   IsInt,
   IsOptional,

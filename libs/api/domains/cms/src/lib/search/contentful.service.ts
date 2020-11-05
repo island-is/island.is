@@ -90,7 +90,7 @@ export class ContentfulService {
    * This token is only used in "fromLast" type syncs
    */
   private async getNextSyncToken(elasticIndex: string): Promise<string> {
-    logger.info('Getting models hash from index', {
+    logger.info('Getting next sync token from index', {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
