@@ -43,10 +43,17 @@ export const OutlinedError: FC<OutlinedErrorProps> = ({
           </Box>
         </Stack>
         <Box display="flex" justifyContent="spaceBetween">
-          <Button variant="ghost" onClick={secondaryButton.action}>
-            {secondaryButton.text}
+          {secondaryButton && (
+            <Button variant="ghost" onClick={secondaryButton.action}>
+              {secondaryButton.text}
+            </Button>
+          )}
+          <Button
+            variant={secondaryButton ? 'primary' : 'ghost'}
+            onClick={primaryButton.action}
+          >
+            {primaryButton.text}
           </Button>
-          <Button onClick={primaryButton.action}>{primaryButton.text}</Button>
         </Box>
       </Stack>
     </Box>
