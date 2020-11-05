@@ -21,6 +21,7 @@ import {
 } from '@island.is/application/core'
 import { m } from './messages'
 import {
+  formatIsk,
   getEstimatedMonthlyPay,
   getNameAndIdOfSpouse,
 } from '../fields/parentalLeaveUtils'
@@ -318,9 +319,9 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'reviewRights',
               name: 'Estimated monthly salary for your parental leave',
               description: (application) =>
-                `${getEstimatedMonthlyPay(
-                  application,
-                )} kr. is your expected payment for each full month of leave after tax`,
+                `${formatIsk(
+                  getEstimatedMonthlyPay(application),
+                )} is your expected payment for each full month of leave after tax`,
               children: [
                 buildCustomField({
                   id: 'reviewRights',
@@ -365,36 +366,18 @@ export const ParentalLeaveForm: Form = buildForm({
                 },
               ],
             }),
-            buildRadioField({
-              id: 'firstPeriod',
+            buildCustomField({
+              id: 'firstPeriodStart',
               name: (application) =>
                 application.answers.singlePeriod === 'yes'
                   ? 'When would you like to start your leave?'
                   : 'When do you want to start this period?',
-              description:
-                'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
-              emphasize: true,
-              largeButtons: true,
-              // TODO ADD INFO tag
-              options: [
-                {
-                  label: 'I will start from the date of birth',
-                  value: 'dateOfBirth',
-                  tooltip:
-                    'If the child is born on another date than the expected date of birth, the parental leave and its duration will adjust to the real date of birth',
-                },
-                {
-                  label: 'I will start on a specific date',
-                  tooltip:
-                    'If the child is born on another date than the expected date of birth, the parental leave and its duration will !!!!NOT!!!! adjust to the real date of birth',
-                  value: 'specificDate',
-                },
-              ],
+              component: 'FirstPeriodStart',
             }),
             buildMultiField({
               id: 'startDate',
               condition: (formValue) =>
-                formValue.firstPeriod === 'specificDate',
+                formValue.firstPeriodStart === 'specificDate',
               name: 'Please pick the start date',
               description:
                 'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
@@ -604,9 +587,9 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'thankYou',
           name: 'All done, here are the next steps:',
           introduction:
-            '1. The other parent will need to approve your request to use their shared month (if you did so)' +
-            '\\n 2. Your employer will approve your parental leave dates' +
-            '\\n 3. Vinnumálastofnun will review your application',
+            'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
+            'your employer will approve your parental leave dates.' +
+            'And finally Vinnumálastofnun will review your application.',
         }),
       ],
     }),
