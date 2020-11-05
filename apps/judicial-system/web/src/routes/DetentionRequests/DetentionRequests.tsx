@@ -17,7 +17,7 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import Loading from '../../shared-components/Loading/Loading'
-import { Case, CaseState, User } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '../../utils/constants'

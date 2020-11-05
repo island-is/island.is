@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { UpdateCase } from '@island.is/judicial-system/types'
+import formatISO from 'date-fns/formatISO'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -70,7 +71,9 @@ describe('/krafa with an id', () => {
       ),
     ).not.toBeDisabled()
   })
+})
 
+describe('/krafa without ID', () => {
   test('should display an empty form if there is no id in url', async () => {
     // Arrange
 
@@ -114,10 +117,8 @@ describe('/krafa with an id', () => {
       }) as HTMLButtonElement,
     ).toBeDisabled()
   })
-})
 
-describe('/krafa without ID', () => {
-  test('should not allow users to continue unless every required field has been filled outtt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const now = new Date()
     const arrestDate = new Date(
@@ -125,11 +126,17 @@ describe('/krafa without ID', () => {
       now.getMonth(),
       now.getDate() + 1,
     )
+    arrestDate.setHours(17, 0, 0)
+    const lastDateOfTheMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+    )
+    lastDateOfTheMonth.setHours(17, 0)
 
-    let promiseResolve, promiseReject
-    const promise = new Promise(function (resolve, reject) {
+    let promiseResolve: (value?: unknown) => void
+    const promise = new Promise(function (resolve) {
       promiseResolve = resolve
-      promiseReject = reject
     })
 
     render(
@@ -153,7 +160,7 @@ describe('/krafa without ID', () => {
                 },
               },
               result: () => {
-                promiseResolve()
+                setTimeout(() => promiseResolve(), 1000)
 
                 return { data: { createCase: { id: 'testid' } } }
               },
@@ -162,10 +169,30 @@ describe('/krafa without ID', () => {
           .concat(
             mockUpdateCaseMutation([
               {
+                id: 'testid',
                 accusedName: 'Jon Harring',
               } as UpdateCase,
               {
+                id: 'testid',
                 accusedAddress: 'Harringvej 2',
+              } as UpdateCase,
+              {
+                id: 'testid',
+                arrestDate: formatISO(arrestDate, { representation: 'date' }),
+              } as UpdateCase,
+              {
+                id: 'testid',
+                arrestDate: formatISO(arrestDate),
+              } as UpdateCase,
+              {
+                id: 'testid',
+                requestedCourtDate: formatISO(lastDateOfTheMonth, {
+                  representation: 'date',
+                }),
+              } as UpdateCase,
+              {
+                id: 'testid',
+                requestedCourtDate: formatISO(lastDateOfTheMonth),
               } as UpdateCase,
             ]),
           )}
@@ -253,9 +280,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(hearingDatePicker[0])
 
-    const lastDayOfTheMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-      .getDate()
-      .toString()
+    const lastDayOfTheMonth = lastDateOfTheMonth.getDate().toString()
 
     const lastDays = hearingWrapper.getAllByText(lastDayOfTheMonth)
 
@@ -273,6 +298,8 @@ describe('/krafa without ID', () => {
 
     userEvent.type(screen.getByLabelText('Tímasetning *'), '17:00')
 
+    userEvent.tab()
+
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
@@ -281,6 +308,8 @@ describe('/krafa without ID', () => {
 
     userEvent.type(screen.getByLabelText('Ósk um tíma *'), '17:00')
 
+    userEvent.tab()
+
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
@@ -288,7 +317,7 @@ describe('/krafa without ID', () => {
     ).not.toBeDisabled()
   })
 
-  test('should save case if accused name is entered first and then police case number and accused national iddd', async () => {
+  test('should save case if accused name is entered first and then police case number and accused national id', async () => {
     // Arrange
     let createCalled = false
 

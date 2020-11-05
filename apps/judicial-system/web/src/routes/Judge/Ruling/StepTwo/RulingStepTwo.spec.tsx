@@ -149,7 +149,7 @@ test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnou
     await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
   ).toBeDisabled()
   expect(screen.getByLabelText('Yfirlýsing um kæru sækjanda')).toBeDisabled()
-})
+}, 10000)
 
 test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
   // Arrange

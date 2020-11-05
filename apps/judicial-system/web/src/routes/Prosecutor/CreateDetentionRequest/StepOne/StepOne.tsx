@@ -191,7 +191,7 @@ export const StepOne: React.FC = () => {
           },
         },
       })
-      console.log('DATAAAAA', data)
+
       const resCase: Case = data?.createCase
 
       if (resCase) {
@@ -212,7 +212,6 @@ export const StepOne: React.FC = () => {
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
   const updateCase = async (id: string, updateCase: UpdateCase) => {
-    console.log(id)
     // Only update if id has been set
     if (!id) {
       return null
@@ -310,8 +309,6 @@ export const StepOne: React.FC = () => {
     arrestTimeRef.current?.value,
     requestedCourtTimeRef.current?.value,
   ])
-
-  console.log(workingCase)
 
   return (
     <PageLayout activeSection={0} activeSubSection={0} isLoading={isLoading}>
@@ -599,7 +596,6 @@ export const StepOne: React.FC = () => {
                       validateTimeEmpty.isValid &&
                       validateTimeFormat.isValid
                     ) {
-                      console.log('@#$#$%$%^$%^#$%@#$')
                       updateCase(
                         workingCase.id,
                         parseString('arrestDate', arrestDateMinutes),

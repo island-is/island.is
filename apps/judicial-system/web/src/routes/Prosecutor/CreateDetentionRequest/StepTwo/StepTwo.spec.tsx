@@ -138,7 +138,7 @@ describe('Create detention request, step two', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
-  })
+  }, 10000)
 
   test('should display the correct requestedCustodyEndTime from api', async () => {
     // Arrange
@@ -166,5 +166,5 @@ describe('Create detention request, step two', () => {
         )
       ).value,
     ).toEqual('19:51')
-  })
+  }, 10000)
 })
