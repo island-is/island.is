@@ -23,10 +23,12 @@ describe('/domari-krafa/urskurdur', () => {
         mocks={mockCaseQueries.concat(
           mockUpdateCaseMutation([
             {
+              id: 'test_id_3',
               ruling:
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
             } as UpdateCase,
             {
+              id: 'test_id_3',
               custodyEndDate: '2020-10-24T12:31:00Z',
             } as UpdateCase,
           ]),

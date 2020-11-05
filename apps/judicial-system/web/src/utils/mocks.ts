@@ -118,12 +118,12 @@ const testCase2 = {
 }
 
 const testCase3 = {
-  id: 'test_id_2',
+  id: 'test_id_3',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   state: 'DRAFT',
-  policeCaseNumber: 'string',
-  accusedNationalId: 'string',
+  policeCaseNumber: '010-0000-0191',
+  accusedNationalId: '1111110000',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   court: 'string',

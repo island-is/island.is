@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne, { CreateCaseMutation } from './StepOne'
@@ -50,7 +50,7 @@ describe('/krafa with an id', () => {
     render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa/test_id']}>
+          <MemoryRouter initialEntries={['/krafa/test_id_3']}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
@@ -61,7 +61,6 @@ describe('/krafa with an id', () => {
 
     // Assert
 
-    // TODO FIND A WAY TO SET DATES
     expect(
       await waitFor(
         () =>
@@ -69,7 +68,7 @@ describe('/krafa with an id', () => {
             name: /Halda áfram/i,
           }) as HTMLButtonElement,
       ),
-    ).toBeDisabled()
+    ).not.toBeDisabled()
   })
 
   test('should display an empty form if there is no id in url', async () => {
@@ -118,10 +117,21 @@ describe('/krafa with an id', () => {
 })
 
 describe('/krafa without ID', () => {
-  test('should not allow users to continue unless every required field has been filled out', async () => {
+  test('should not allow users to continue unless every required field has been filled outtt', async () => {
     // Arrange
+    const now = new Date()
+    const arrestDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    )
 
-    // Act and Assert
+    let promiseResolve, promiseReject
+    const promise = new Promise(function (resolve, reject) {
+      promiseResolve = resolve
+      promiseReject = reject
+    })
+
     render(
       <MockedProvider
         mocks={[]
@@ -142,8 +152,10 @@ describe('/krafa without ID', () => {
                   },
                 },
               },
-              result: {
-                data: {},
+              result: () => {
+                promiseResolve()
+
+                return { data: { createCase: { id: 'testid' } } }
               },
             },
           ])
@@ -169,6 +181,7 @@ describe('/krafa without ID', () => {
       </MockedProvider>,
     )
 
+    // Act and Assert
     userEvent.type(
       await waitFor(
         () =>
@@ -189,7 +202,10 @@ describe('/krafa without ID', () => {
       screen.getByLabelText('Kennitala *') as HTMLInputElement,
       '1112902539',
     )
+
     userEvent.tab()
+
+    await promise
 
     expect(
       screen.getByRole('button', {
@@ -216,13 +232,60 @@ describe('/krafa without ID', () => {
     )
     userEvent.tab()
 
-    // TODO FIND A WAY TO SET DATE FIELDS
+    // Select dates
+    const datePickerWrappers = screen.getAllByTestId('datepicker')
+
+    expect(datePickerWrappers.length).toEqual(2)
+
+    const arrestedWrapper = within(datePickerWrappers[0])
+
+    const arrestedDatePicker = arrestedWrapper.getAllByText('Veldu dagsetningu')
+
+    userEvent.click(arrestedDatePicker[0])
+
+    userEvent.click(
+      arrestedWrapper.getAllByText((now.getDate() + 1).toString())[0],
+    )
+
+    const hearingWrapper = within(datePickerWrappers[1])
+
+    const hearingDatePicker = hearingWrapper.getAllByText('Veldu dagsetningu')
+
+    userEvent.click(hearingDatePicker[0])
+
+    const lastDayOfTheMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      .getDate()
+      .toString()
+
+    const lastDays = hearingWrapper.getAllByText(lastDayOfTheMonth)
+
+    expect(lastDays.length).toBeGreaterThan(0)
+
+    const lastDayOfCurrentMonth = lastDays[lastDays.length - 1]
+
+    userEvent.click(lastDayOfCurrentMonth)
 
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
     ).toBeDisabled()
+
+    userEvent.type(screen.getByLabelText('Tímasetning *'), '17:00')
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+
+    userEvent.type(screen.getByLabelText('Ósk um tíma *'), '17:00')
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).not.toBeDisabled()
   })
 
   test('should save case if accused name is entered first and then police case number and accused national iddd', async () => {
