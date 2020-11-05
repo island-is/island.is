@@ -23,8 +23,8 @@ export function formatProsecutorDemands(
     'Héraðsdóms',
   )} gert að sæta gæsluvarðhaldi til ${formatDate(
     requestedCustodyEndDate,
-    'PPPp',
-  )}${
+    'PPPPp',
+  )?.replace('dagur,', 'dagsins')}${
     isolation
       ? ' og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur'
       : ''
