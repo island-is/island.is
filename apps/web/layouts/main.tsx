@@ -202,7 +202,7 @@ const Layout: NextComponentType<
             content="https://island.is/island-fb-1200x630.png"
             key="ogImage"
           />
-          <meta property="og:image:width" content="1200" key="ogIimageWidth" />
+          <meta property="og:image:width" content="1200" key="ogImageWidth" />
           <meta property="og:image:height" content="630" key="ogImageHeight" />
 
           <meta

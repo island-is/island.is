@@ -54,7 +54,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
         <meta
           property="og:image:width"
           content={imageWidth}
-          key="ogIimageWidth"
+          key="ogImageWidth"
         />
         <meta
           property="og:image:height"

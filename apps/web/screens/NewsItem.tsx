@@ -20,6 +20,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
 } from '@island.is/web/screens/queries'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
@@ -79,9 +80,9 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
       <HeadWithSocialSharing
         title={metaTitle}
         description={newsItem.intro}
-        imageUrl={newsItem.image.url}
-        imageWidth={newsItem.image.width.toString()}
-        imageHeight={newsItem.image.height.toString()}
+        imageUrl={newsItem.image?.url}
+        imageWidth={newsItem.image?.width.toString()}
+        imageHeight={newsItem.image?.height.toString()}
       />
       <GridContainer>
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>

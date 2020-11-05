@@ -401,9 +401,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       <HeadWithSocialSharing
         title={metaTitle}
         description={article.intro}
-        imageUrl={article.featuredImage.url}
-        imageWidth={article.featuredImage.width.toString()}
-        imageHeight={article.featuredImage.height.toString()}
+        imageUrl={article.featuredImage?.url}
+        imageWidth={article.featuredImage?.width.toString()}
+        imageHeight={article.featuredImage?.height.toString()}
       />
       <ArticleLayout
         sidebar={
