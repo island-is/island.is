@@ -37,11 +37,15 @@ export class RecyclingRequestResolver {
   async createSkilavottordRecyclingRequest(
     @Args('requestType') requestType: string,
     @Args('permno') permno: string,
-    @Args('partnerId', { type: () => Int, nullable: true }) partnerId: number,
+    @Args('nameOfRequestor', { nullable: true }) name: string,
+    @Args('nationalId', { nullable: true }) nid: string,
+    @Args('partnerId', { nullable: true }) partnerId: string,
   ) {
     await this.recyclingRequestService.createRecyclingRequest(
       requestType,
       permno,
+      name,
+      nid,
       partnerId,
     )
     return true
