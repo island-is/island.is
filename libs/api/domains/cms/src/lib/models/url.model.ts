@@ -1,5 +1,4 @@
 import { Field, ObjectType, ID, createUnionType } from '@nestjs/graphql'
-
 import {
   IArticle,
   IArticleCategory,
@@ -8,52 +7,40 @@ import {
   IUrl,
 } from '../generated/contentfulTypes'
 
-import { News } from './news.model'
-import { Article } from './article.model'
-import { LifeEventPage } from './lifeEventPage.model'
-import { ArticleCategory } from './articleCategory.model'
-
 type UrlPageTypes = IArticle | IArticleCategory | INews | ILifeEventPage
 
-export const mapPage = ({ fields, sys }: UrlPageTypes) => ({
+export const mapPage = ({ fields, sys }: UrlPageTypes): UrlPage => ({
   id: sys.id,
   contentType: sys.contentType?.sys?.id ?? '',
   title: fields.title ?? '',
   slug: fields.slug ?? '',
 })
 
-export const UrlPage = createUnionType({
-  name: 'UrlPage',
-  types: () => [Article, ArticleCategory, News, LifeEventPage],
-  resolveType: (value) => {
-    switch (value.contentType) {
-      case 'lifeEventPage':
-        return LifeEventPage
-      case 'news':
-        return News
-      case 'article':
-        return Article
-      case 'articleCategory':
-        return ArticleCategory
-      default:
-        break
-    }
-  },
-})
+@ObjectType()
+export class UrlPage {
+  @Field()
+  id: string = ''
+  @Field()
+  contentType: string = ''
+  @Field()
+  title: string = ''
+  @Field()
+  slug: string = ''
+}
 
 @ObjectType()
 export class Url {
   @Field(() => ID)
-  id: string
+  id: string = ''
 
   @Field({ nullable: true })
   title?: string
 
   @Field(() => UrlPage)
-  page: typeof UrlPage
+  page?: UrlPage | null
 
   @Field(() => [String])
-  urlsList: Array<string>
+  urlsList: Array<string> = []
 }
 
 export const mapUrl = ({ fields, sys }: IUrl): Url => ({

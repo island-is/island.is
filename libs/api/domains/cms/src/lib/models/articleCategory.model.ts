@@ -4,6 +4,9 @@ import { IArticleCategory } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class ArticleCategory {
+  @Field()
+  typename: string
+
   @Field(() => ID)
   id: string
 
@@ -21,6 +24,7 @@ export const mapArticleCategory = ({
   sys,
   fields,
 }: IArticleCategory): ArticleCategory => ({
+  typename: 'ArticleCategory',
   id: sys.id,
   title: fields?.title ?? '',
   slug: fields?.slug ?? '',
