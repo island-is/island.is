@@ -106,7 +106,7 @@ export class CmsSyncService {
   }
 
   // this is triggered from ES indexer service
-  async doSync(options: SyncOptions): Promise<SyncResponse<PostSyncOptions>> {
+  async doSync(options: SyncOptions): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
     let cmsSyncOptions: SyncOptions
 
@@ -136,6 +136,7 @@ export class CmsSyncService {
       }
     } else {
       cmsSyncOptions = options
+      folderHash = ''
     }
 
     // gets all data that needs importing
@@ -170,7 +171,10 @@ export class CmsSyncService {
   // write next sync token to elastic after sync to ensure it runs again on failure
   async postSync({ folderHash, elasticIndex, token }: PostSyncOptions) {
     await this.contentfulService.updateNextSyncToken({ elasticIndex, token })
-    await this.updateLastFolderHash({ elasticIndex, folderHash })
+    // we only want to update folder hash if it is set to a non empty string
+    if (folderHash) {
+      await this.updateLastFolderHash({ elasticIndex, folderHash })
+    }
     return true
   }
 }

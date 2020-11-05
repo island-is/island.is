@@ -47,6 +47,7 @@ import { TeamList, mapTeamList } from './teamList.model'
 import { ContactUs, mapContactUs } from './contactUs.model'
 import { Location, mapLocation } from './location.model'
 import { TellUsAStory, mapTellUsAStory } from './tellUsAStory.model'
+import { mapPageHeader, PageHeader } from './pageHeader.model'
 
 type SliceTypes =
   | ITimeline
@@ -93,12 +94,14 @@ export const Slice = createUnionType({
     Html,
     Image,
     Asset,
+    PageHeader
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
-  switch (slice.sys.contentType?.sys?.id) {
+  const contentType = slice.sys.contentType?.sys?.id
+  switch (contentType) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':
@@ -135,9 +138,11 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapLocation(slice as ILocation)
     case 'tellUsAStory':
       return mapTellUsAStory(slice as ITellUsAStory)
+    case 'pageHeader':
+      return mapPageHeader(slice as IPageHeader)
     default:
       throw new ApolloError(
-        `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
+        `Can not convert to slice: ${contentType}`,
       )
   }
 }
