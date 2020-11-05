@@ -1,5 +1,4 @@
 import {
-  calculateProgress,
   convertFormToScreens,
   findCurrentScreen,
   getNavigableSectionsInForm,
@@ -13,96 +12,38 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { FormScreen, RepeaterScreen } from '../types'
+import { FormScreen, MultiFieldScreen, RepeaterScreen } from '../types'
 
 describe('reducerUtils', () => {
-  describe('calculate progress', () => {
-    const introScreen = {
-      ...buildIntroductionField({
-        id: 'intro',
-        name: 'Introduction',
-        introduction: 'welcome',
-      }),
-      isNavigable: true,
-    }
-    const textScreen = {
-      ...buildTextField({
-        id: 'familyName',
-        name: 'What is the family name?',
-      }),
-      isNavigable: true,
-    }
-    it('should return 0 when at the beginning of the application', () => {
-      const screens: FormScreen[] = [
-        introScreen,
-        textScreen,
-        textScreen,
-        textScreen,
-      ]
-      expect(calculateProgress(0, screens)).toBe(0)
-      expect(calculateProgress(-1, screens)).toBe(0)
-    })
-    it('should return 100 when at the end of the application', () => {
-      const screens: FormScreen[] = [
-        introScreen,
-        textScreen,
-        textScreen,
-        textScreen,
-      ]
-      expect(calculateProgress(screens.length - 1, screens)).toBe(100)
-      expect(calculateProgress(screens.length, screens)).toBe(100)
-    })
-    it('should return 50 when in the middle of the application', () => {
-      const screens: FormScreen[] = [
-        introScreen,
-        textScreen,
-        textScreen,
-        textScreen,
-      ]
-      expect(calculateProgress(2, screens)).toBe(50)
-    })
-    it('should not include un-navigable screens when calculating the progress', () => {
-      const screens: FormScreen[] = [
-        introScreen,
-        textScreen,
-        { ...textScreen, isNavigable: false },
-        textScreen,
-        textScreen,
-      ]
-      expect(calculateProgress(1, screens)).toBe(25)
-      expect(calculateProgress(3, screens)).toBe(50)
-    })
-    it('should not include screens that are children of a repeater', () => {
-      const screens: FormScreen[] = [
-        introScreen,
-        textScreen,
-        { ...textScreen, isPartOfRepeater: true },
-        { ...textScreen, isPartOfRepeater: true },
-        { ...textScreen, isPartOfRepeater: true },
-        { ...textScreen, isPartOfRepeater: true },
-        textScreen,
-        textScreen,
-      ]
-      expect(calculateProgress(1, screens)).toBe(25)
-      expect(calculateProgress(6, screens)).toBe(50)
-    })
-  })
-
   describe('find current screen', () => {
-    const buildIntroScreen = (id: string, isNavigable = true) => ({
+    const buildIntroScreen = (
+      id: string,
+      isNavigable = true,
+      sectionIndex = -1,
+      subSectionIndex = -1,
+    ) => ({
       ...buildIntroductionField({
         id,
         name: 'Introduction',
         introduction: 'welcome',
       }),
       isNavigable,
+      sectionIndex,
+      subSectionIndex,
     })
-    const buildTextScreen = (id: string, isNavigable = true) => ({
+    const buildTextScreen = (
+      id: string,
+      isNavigable = true,
+      sectionIndex = -1,
+      subSectionIndex = -1,
+    ) => ({
       ...buildTextField({
         id: id,
         name: 'What is the family name?',
       }),
       isNavigable,
+      sectionIndex,
+      subSectionIndex,
     })
     const screens: FormScreen[] = [
       buildIntroScreen('intro'),
@@ -132,7 +73,7 @@ describe('reducerUtils', () => {
           id: 'multifield',
           children: [buildTextScreen('a'), buildTextScreen('b')],
           name: 'This is a great screen',
-        }),
+        }) as MultiFieldScreen,
         buildTextScreen('c'),
       ]
       expect(findCurrentScreen(screens, { a: 'sick' })).toBe(1)
@@ -145,7 +86,7 @@ describe('reducerUtils', () => {
           id: 'multifield',
           children: [buildTextScreen('a'), buildTextScreen('b')],
           name: 'This is a great screen',
-        }),
+        }) as MultiFieldScreen,
         buildTextScreen('c'),
       ]
       expect(findCurrentScreen(screens, { a: 'sick', b: 'very sick' })).toBe(2)
@@ -347,7 +288,81 @@ describe('reducerUtils', () => {
         })
         const screens = convertFormToScreens(form, {})
         expect(screens.length).toBe(1)
-        expect(screens[0]).toEqual({ ...repeater, isNavigable: true })
+        expect(screens[0]).toEqual({
+          ...repeater,
+          sectionIndex: -1,
+          subSectionIndex: -1,
+          isNavigable: true,
+        })
+      })
+    })
+    describe('sections and subsections', () => {
+      it('should attach the index of the section and possibly subsections which own the screens', () => {
+        const invisibleSection = buildSection({
+          id: '1',
+          name: 'where am i',
+          condition: () => false,
+          children: [
+            buildTextField({ id: '1', name: '1' }),
+            buildSubSection({
+              id: 'sub1',
+              name: 'sub1',
+              children: [buildTextField({ id: '2', name: '2' })],
+            }),
+          ],
+        })
+        const visibleSection = buildSection({
+          id: '2',
+          name: 'visible',
+          condition: () => true,
+          children: [
+            buildSubSection({
+              id: 'sub2',
+              name: 'sub2',
+              children: [
+                buildTextField({ id: '3', name: '3' }),
+                buildTextField({ id: '4', name: '4' }),
+              ],
+            }),
+            buildSubSection({
+              id: 'sub3',
+              name: 'sub3',
+              children: [buildTextField({ id: '5', name: '5' })],
+            }),
+          ],
+        })
+        const form = buildForm({
+          id: 'ExampleForm',
+          name: 'asdf',
+          children: [
+            invisibleSection,
+            visibleSection,
+            buildTextField({
+              id: 'noSection',
+              name: 'Part of no section nor parent',
+            }),
+          ],
+        })
+        const screens = convertFormToScreens(form, {})
+        expect(screens.length).toBe(6)
+        expect(screens[0].sectionIndex).toBe(0)
+        expect(screens[0].subSectionIndex).toBe(-1)
+        expect(screens[0].id).toBe('1')
+        expect(screens[1].sectionIndex).toBe(0)
+        expect(screens[1].subSectionIndex).toBe(0)
+        expect(screens[1].id).toBe('2')
+        expect(screens[2].sectionIndex).toBe(1)
+        expect(screens[2].subSectionIndex).toBe(0)
+        expect(screens[2].id).toBe('3')
+        expect(screens[3].sectionIndex).toBe(1)
+        expect(screens[3].subSectionIndex).toBe(0)
+        expect(screens[3].id).toBe('4')
+        expect(screens[4].sectionIndex).toBe(1)
+        expect(screens[4].subSectionIndex).toBe(1)
+        expect(screens[4].id).toBe('5')
+        expect(screens[5].sectionIndex).toBe(1) // a orphaned field will inherit the last section before
+        expect(screens[5].subSectionIndex).toBe(-1)
+        expect(screens[5].id).toBe('noSection')
       })
     })
   })

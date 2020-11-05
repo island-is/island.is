@@ -29,7 +29,6 @@ import {
   Tabs,
   Hidden,
   Divider,
-  Typography,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -422,9 +421,9 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                             className={styles.tabSectionImg}
                             alt=""
                           />
-                          <Typography variant="h2" as="h2" marginBottom={3}>
+                          <Text variant="h2" as="h2" marginBottom={3}>
                             {tab.contentTitle}
-                          </Typography>
+                          </Text>
                           {tab.body && renderSlices(tab.body as SliceType)}
                         </Box>
                       </GridColumn>

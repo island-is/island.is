@@ -132,6 +132,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           <Box
             ref={forwardedRef}
             component="button"
+            type="button"
             cursor="pointer"
             className={[styles.button, useVirtualTouchable()]}
             outline="none"

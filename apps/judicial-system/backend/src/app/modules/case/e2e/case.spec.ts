@@ -9,6 +9,7 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   NotificationType,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 
 import { setup, user } from '../../../../../test/setup'
@@ -29,6 +30,7 @@ const minimalCaseData = {
 const remainingCreateCaseData = {
   accusedName: 'Accused Name',
   accusedAddress: 'Accused Address',
+  accusedGender: CaseGender.OTHER,
   court: 'Court',
   arrestDate: '2020-09-08T08:00:00.000Z',
   requestedCourtDate: '2020-09-08T11:30:00.000Z',
@@ -125,6 +127,7 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
   expect(caseOne.accusedName || null).toBe(caseTwo.accusedName || null)
   expect(caseOne.accusedAddress || null).toBe(caseTwo.accusedAddress || null)
+  expect(caseOne.accusedGender || null).toBe(caseTwo.accusedGender || null)
   expect(caseOne.court || null).toBe(caseTwo.court || null)
   expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
   expect(caseOne.requestedCourtDate || null).toBe(
