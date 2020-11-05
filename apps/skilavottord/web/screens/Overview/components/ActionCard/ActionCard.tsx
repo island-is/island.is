@@ -14,6 +14,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { Car } from '@island.is/skilavottord-web/types'
+import { formatYear } from '@island.is/skilavottord-web/utils'
 
 interface ActionCardProps {
   onContinue: () => void
@@ -39,6 +40,8 @@ export const ActionCard: FC<ActionCardProps> = ({
     </>
   )
 
+  const modelYear = formatYear(firstRegDate, 'dd.MM.yyyy')
+
   return (
     <OutlinedBox backgroundColor="white">
       <GridContainer>
@@ -49,7 +52,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 <Box paddingLeft={4} paddingY={4}>
                   <Stack space={1}>
                     <Text variant="h3">{permno}</Text>
-                    <Text>{`${type}, ${firstRegDate}`}</Text>
+                    <Text>{`${type}, ${modelYear}`}</Text>
                   </Stack>
                 </Box>
               </GridColumn>

@@ -104,7 +104,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
-  const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
+  const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
 
   const categories = [defaultCategory, ...data.categories]
   const filteredDocuments = getFilteredDocuments(data.documents, filterValue)

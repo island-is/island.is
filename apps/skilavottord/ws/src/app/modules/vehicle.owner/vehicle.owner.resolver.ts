@@ -32,4 +32,15 @@ export class VehicleOwnerResolver {
     )
     return res
   }
+
+  @Query(() => [VehicleOwnerModel])
+  async skilavottordRecyclingPartnerVehicles(
+    @Args('partnerId') partnerId: string,
+  ): Promise<VehicleOwnerModel[]> {
+    const res = await this.vehicleOwnerService.findRecyclingPartnerVehicles(
+      partnerId,
+    )
+    this.logger.debug('getTEST responce:' + JSON.stringify(res, null, 2))
+    return res
+  }
 }

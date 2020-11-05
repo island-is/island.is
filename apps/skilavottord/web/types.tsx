@@ -37,6 +37,14 @@ export interface RecyclingPartner {
 
 export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
 
+export type RecyclingRequestTypes =
+  | 'pendingRecycle'
+  | 'handedOver'
+  | 'deregistered'
+  | 'cancelled'
+  | 'paymentInitiated'
+  | 'paymentFailed'
+
 export interface User {
   name: string
   nationalId: string

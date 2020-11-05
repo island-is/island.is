@@ -1,23 +1,21 @@
 import {
   ExternalDataProvider,
   Field,
-  findSectionIndexForScreen,
-  findSubSectionIndexForScreen,
+  findSectionIndex,
+  findSubSectionIndex,
   Form,
   FormItemTypes,
   FormLeaf,
   FormNode,
   FormValue,
-  getSubSectionsInSection,
   getValueViaPath,
   isValidScreen,
-  mergeAnswers,
   MultiField,
   Repeater,
   Section,
   shouldShowFormItem,
+  SubSection,
 } from '@island.is/application/core'
-import { ApplicationUIState } from './ReducerTypes'
 import {
   ExternalDataProviderScreen,
   FieldDef,
@@ -25,33 +23,6 @@ import {
   MultiFieldScreen,
   RepeaterScreen,
 } from '../types'
-
-export function calculateProgress(
-  activeScreenIndex: number,
-  screens: FormScreen[],
-): number {
-  if (activeScreenIndex <= 0) {
-    return 0
-  } else if (activeScreenIndex >= screens.length - 1) {
-    return 100
-  }
-  let screensThatCountForProgress = 0
-  let pastScreensThatDontCountForProgress = 0
-
-  for (let i = 0; i < screens.length; i++) {
-    const screen = screens[i]
-    if (screen.isNavigable && !screen.isPartOfRepeater) {
-      screensThatCountForProgress += 1
-    } else if (i <= activeScreenIndex) {
-      pastScreensThatDontCountForProgress += 1
-    }
-  }
-  return (
-    ((activeScreenIndex - pastScreensThatDontCountForProgress) /
-      screensThatCountForProgress) *
-    100
-  )
-}
 
 export const findCurrentScreen = (
   screens: FormScreen[],
@@ -83,64 +54,42 @@ export const findCurrentScreen = (
 }
 
 export const moveToScreen = (
-  state: ApplicationUIState,
+  screens: FormScreen[],
   screenIndex: number,
   isMovingForward: boolean,
-): ApplicationUIState => {
-  const { form, sections, screens } = state
+): number => {
   if (screenIndex < 0) {
-    return {
-      ...state,
-      activeScreen: 0,
-      activeSection: 0,
-      activeSubSection: 0,
-      progress: 0,
-    }
+    return 0
   }
   if (screenIndex === screens.length) {
-    const subSections = getSubSectionsInSection(sections[sections.length - 1])
-    return {
-      ...state,
-      activeScreen: screens.length - 1,
-      activeSection: sections.length - 1,
-      activeSubSection: subSections.length ? subSections.length - 1 : -1,
-      progress: 100,
-    }
+    return screens.length - 1
   }
 
   const screen = screens[screenIndex]
   if (!screen.isNavigable) {
     if (isMovingForward) {
       // skip this screen and go to the next one
-      return moveToScreen(state, screenIndex + 1, isMovingForward)
+      return moveToScreen(screens, screenIndex + 1, isMovingForward)
     }
-    return moveToScreen(state, screenIndex - 1, isMovingForward)
+    return moveToScreen(screens, screenIndex - 1, isMovingForward)
   }
-  const sectionIndexForScreen = findSectionIndexForScreen(form, screen)
 
-  const subSectionIndexForScreen =
-    sectionIndexForScreen === -1
-      ? -1
-      : findSubSectionIndexForScreen(sections[sectionIndexForScreen], screen)
-
-  return {
-    ...state,
-    activeScreen: screenIndex,
-    activeSection: sectionIndexForScreen,
-    activeSubSection: subSectionIndexForScreen,
-    progress: calculateProgress(screenIndex, screens),
-  }
+  return screenIndex
 }
 
 function convertFieldToScreen(
   field: Field,
   answers: FormValue,
   isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number,
 ): FieldDef {
   return {
     ...field,
     isNavigable:
       isParentNavigable && shouldShowFormItem(field as Field, answers),
+    sectionIndex,
+    subSectionIndex,
   } as FieldDef
 }
 
@@ -148,11 +97,15 @@ function convertDataProviderToScreen(
   externalDataProvider: ExternalDataProvider,
   answers: FormValue,
   isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number,
 ): ExternalDataProviderScreen {
   return {
     ...externalDataProvider,
     isNavigable:
       isParentNavigable && shouldShowFormItem(externalDataProvider, answers),
+    sectionIndex,
+    subSectionIndex,
   }
 }
 
@@ -160,6 +113,8 @@ export function convertMultiFieldToScreen(
   multiField: MultiField,
   answers: FormValue,
   isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number,
 ): MultiFieldScreen {
   let isMultiFieldVisible = false
   const children: FieldDef[] = []
@@ -171,12 +126,16 @@ export function convertMultiFieldToScreen(
     children.push({
       ...field,
       isNavigable: isFieldVisible && isParentNavigable,
+      sectionIndex,
+      subSectionIndex,
     })
   })
   return {
     ...multiField,
     isNavigable: isMultiFieldVisible && isParentNavigable,
     children,
+    sectionIndex,
+    subSectionIndex,
   } as MultiFieldScreen
 }
 
@@ -184,6 +143,8 @@ function convertRepeaterToScreens(
   repeater: Repeater,
   answers: FormValue,
   isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number,
 ): FormScreen[] {
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
@@ -195,7 +156,7 @@ function convertRepeaterToScreens(
   }
   const repeatedValues = getValueViaPath(answers, id, []) as unknown[]
   for (let i = 0; i < repeatedValues.length; i++) {
-    children.forEach((field, index) => {
+    children.forEach((field) => {
       let grandChildren = field.children
       let fieldId = field.id
       if (Array.isArray(field.children)) {
@@ -216,6 +177,8 @@ function convertRepeaterToScreens(
           } as FormLeaf,
           answers,
           isParentNavigable,
+          sectionIndex,
+          subSectionIndex,
         ),
       )
     })
@@ -224,30 +187,67 @@ function convertRepeaterToScreens(
     {
       ...repeater,
       isNavigable: isParentNavigable && shouldShowFormItem(repeater, answers),
+      sectionIndex,
+      subSectionIndex,
     } as RepeaterScreen,
     ...newScreens,
   ]
 }
 
-export function convertLeafToScreens(
+function convertLeafToScreens(
   leaf: FormLeaf,
   answers: FormValue,
   isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number,
 ): FormScreen[] {
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
-    return [convertMultiFieldToScreen(leaf, answers, isParentNavigable)]
+    return [
+      convertMultiFieldToScreen(
+        leaf,
+        answers,
+        isParentNavigable,
+        sectionIndex,
+        subSectionIndex,
+      ),
+    ]
   } else if (leaf.type === FormItemTypes.REPEATER) {
-    return convertRepeaterToScreens(leaf, answers, isParentNavigable)
+    return convertRepeaterToScreens(
+      leaf,
+      answers,
+      isParentNavigable,
+      sectionIndex,
+      subSectionIndex,
+    )
   } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-    return [convertDataProviderToScreen(leaf, answers, isParentNavigable)]
+    return [
+      convertDataProviderToScreen(
+        leaf,
+        answers,
+        isParentNavigable,
+        sectionIndex,
+        subSectionIndex,
+      ),
+    ]
   }
-  return [convertFieldToScreen(leaf, answers, isParentNavigable)]
+  return [
+    convertFieldToScreen(
+      leaf,
+      answers,
+      isParentNavigable,
+      sectionIndex,
+      subSectionIndex,
+    ),
+  ]
 }
 
 function convertFormNodeToScreens(
   formNode: FormNode,
   answers: FormValue,
+  form: Form,
   isParentNavigable: boolean,
+  sectionIndex: number,
+  subSectionIndex: number,
 ): FormScreen[] {
   const { children } = formNode
   if (isValidScreen(formNode)) {
@@ -255,16 +255,32 @@ function convertFormNodeToScreens(
       formNode as FormLeaf,
       answers,
       isParentNavigable,
+      sectionIndex,
+      subSectionIndex,
     )
   }
   let screens: FormScreen[] = []
   let newScreens: FormScreen[] = []
   if (children) {
     for (let i = 0; i < children.length; i++) {
+      const child = children[i]
+      if (child.type === FormItemTypes.SECTION) {
+        subSectionIndex = -1
+        sectionIndex = findSectionIndex(form, child as Section)
+      } else if (child.type === FormItemTypes.SUB_SECTION) {
+        subSectionIndex = findSubSectionIndex(
+          form,
+          sectionIndex,
+          child as SubSection,
+        )
+      }
       newScreens = convertFormNodeToScreens(
-        children[i],
+        child,
         answers,
-        isParentNavigable && shouldShowFormItem(children[i], answers),
+        form,
+        isParentNavigable && shouldShowFormItem(child, answers),
+        sectionIndex,
+        subSectionIndex,
       )
       if (newScreens.length) {
         screens = [...screens, ...newScreens]
@@ -278,7 +294,7 @@ export function convertFormToScreens(
   form: Form,
   answers: FormValue,
 ): FormScreen[] {
-  return convertFormNodeToScreens(form, answers, true)
+  return convertFormNodeToScreens(form, answers, form, true, -1, -1)
 }
 
 export function getNavigableSectionsInForm(

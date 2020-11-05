@@ -4,8 +4,7 @@
 export default {
   production: false,
   identityServer: {
-    IDENTITY_SERVER_BASE_URL:
-      'https://siidentityserverweb20200805020732.azurewebsites.net',
+    IDENTITY_SERVER_BASE_URL: 'https://identity-server.dev01.devland.is',
   },
   sentry: {
     dsn:
