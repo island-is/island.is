@@ -12,6 +12,7 @@ export class GrantTypeService {
     private logger: Logger,
   ) {}
 
+  /** Get's all Grant Types and count */
   async findAndCountAll(
     page: number,
     count: number,
