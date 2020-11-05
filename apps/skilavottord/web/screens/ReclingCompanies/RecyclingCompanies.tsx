@@ -4,7 +4,7 @@ import { Box, GridColumn, Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { GET_ALL_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
+import { ALL_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -13,7 +13,7 @@ import { RecyclingPartner } from '@island.is/skilavottord-web/types'
 
 const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, error, loading } = useQuery(GET_ALL_RECYCLING_PARTNERS)
+  const { data, error, loading } = useQuery(ALL_RECYCLING_PARTNERS)
 
   const {
     t: { recyclingCompanies: t, recyclingFundSidenav: sidenavText, routes },
