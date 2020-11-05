@@ -395,8 +395,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   // tmp fix
   const processEntry =
     processEntries.length === 1 ? (processEntries[0] as ProcessEntry) : null
-  console.log(Boolean(article.featuredImage.url))
-  const hasFeaturedImage = Boolean(article.featuredImage.url)
 
   return (
     <>

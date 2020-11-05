@@ -18,7 +18,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
   children,
 }) => (
   <Head>
-    {Boolean(title) ? (
+    {title.length > 0 ? (
       <>
         <title>{title}</title>
         <meta name="title" content={title} key="title" />
@@ -27,7 +27,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
       </>
     ) : null}
 
-    {Boolean(description) ? (
+    {description && description.length > 0 ? (
       <>
         <meta name="description" content={description} key="description" />
         <meta
@@ -43,7 +43,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
       </>
     ) : null}
 
-    {Boolean(imageUrl) ? (
+    {imageUrl && imageUrl.length > 0 ? (
       <>
         <meta property="og:image" content={'https:' + imageUrl} key="ogImage" />
         <meta
