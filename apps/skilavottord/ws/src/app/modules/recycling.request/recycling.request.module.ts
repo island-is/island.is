@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, HttpModule } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
@@ -9,6 +9,7 @@ import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
 
 @Module({
   imports: [
+    HttpModule,
     SequelizeModule.forFeature([RecyclingRequestModel, VehicleModel]),
     FjarsyslaModule,
   ],
