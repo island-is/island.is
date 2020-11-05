@@ -9,7 +9,7 @@ import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
-import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
+import { USER } from '@island.is/skilavottord-web/graphql/queries'
 
 export const Header: FC = () => {
   const router = useRouter()
@@ -20,7 +20,7 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data } = useQuery(GET_USER)
+  const { data } = useQuery(USER)
   const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'

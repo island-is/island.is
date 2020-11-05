@@ -13,10 +13,16 @@ export const ConditionHandler: FC<{
   const data = useWatch({ defaultValue: formValue }) as FormValue
 
   useEffect(() => {
-    const newScreen = convertMultiFieldToScreen(screen, {
-      ...formValue,
-      ...data,
-    })
+    const newScreen = convertMultiFieldToScreen(
+      screen,
+      {
+        ...formValue,
+        ...data,
+      },
+      true,
+      screen.sectionIndex,
+      screen.subSectionIndex,
+    )
     let hasUpdated = false
     if (screen.isNavigable !== newScreen.isNavigable) {
       answerQuestions(data)

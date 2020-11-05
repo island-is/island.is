@@ -8,6 +8,9 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
+  IsUUID,
+  PrimaryKey,
+  Default,
 } from 'sequelize-typescript'
 import { RecyclingPartnerModel } from '../../recycling.partner/model/recycling.partner.model'
 import { VehicleModel } from '../../vehicle/model/vehicle.model'
@@ -16,12 +19,11 @@ import { VehicleModel } from '../../vehicle/model/vehicle.model'
 @Table({ tableName: 'recycling_request' })
 export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Field()
-  @Column({
-    type: DataType.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-  })
-  id!: number
+  @IsUUID(4)
+  @Default(DataType.UUIDV4)
+  @PrimaryKey
+  @Column
+  id: string
 
   @Field()
   @ForeignKey(() => VehicleModel)
@@ -33,10 +35,11 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @BelongsTo(() => VehicleModel)
   vehicle: any
 
+  @Field()
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   recyclingPartnerId!: string
 

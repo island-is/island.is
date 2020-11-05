@@ -13,6 +13,7 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { FormScreen } from '@island.is/application/ui-shell'
 
 interface FormStepperProps {
   application: Application
@@ -23,8 +24,7 @@ interface FormStepperProps {
   mode: FormModes
   showTag: boolean
   sections: Section[]
-  activeSection: number
-  activeSubSection: number
+  screen: FormScreen
 }
 
 const FormStepper: FC<FormStepperProps> = ({
@@ -33,8 +33,7 @@ const FormStepper: FC<FormStepperProps> = ({
   mode,
   showTag,
   sections,
-  activeSection,
-  activeSubSection,
+  screen,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -96,8 +95,8 @@ const FormStepper: FC<FormStepperProps> = ({
       formName={formatMessage(form.name)}
       formIcon={form.icon}
       sections={formattedSections}
-      activeSection={activeSection}
-      activeSubSection={activeSubSection}
+      activeSection={screen.sectionIndex}
+      activeSubSection={screen.subSectionIndex}
     />
   )
 }

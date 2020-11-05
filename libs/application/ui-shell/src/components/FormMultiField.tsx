@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import FormField from './FormField'
-import { MultiFieldScreen } from '../types'
+import { FieldDef, MultiFieldScreen } from '../types'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { Application, formatText, FormValue } from '@island.is/application/core'
 import ConditionHandler from './ConditionHandler'
@@ -38,7 +38,7 @@ const FormMultiField: FC<{
               <FormField
                 application={application}
                 showFieldName
-                field={field}
+                field={field as FieldDef}
                 key={field.id}
                 autoFocus={index === 0}
                 errors={errors}
