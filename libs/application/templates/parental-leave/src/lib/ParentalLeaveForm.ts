@@ -586,8 +586,10 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              name: 'Review Screen....TODO',
-              component: 'Confirmation',
+              name: 'Final review',
+              description:
+                'Please review your information before submiting the application.',
+              component: 'Review',
             }),
             buildSubmitField({
               id: 'submit',
