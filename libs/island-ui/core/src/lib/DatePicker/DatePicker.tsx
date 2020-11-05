@@ -130,6 +130,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             handleChange && handleChange(date)
           }}
           startDate={startDate}
+          required={required}
           customInput={
             <CustomInput
               name={name}
@@ -138,7 +139,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               hasError={hasError}
               errorMessage={errorMessage}
               placeholderText={placeholderText}
-              required={required}
               onInputClick={onInputClick}
             />
           }
@@ -160,17 +160,15 @@ const CustomInput = ({
 }: InputProps & {
   placeholderText?: string
   onInputClick?: ReactDatePickerProps['onInputClick']
-}) => {
-  return (
-    <Input
-      {...props}
-      icon="calendar"
-      iconType="outline"
-      fixedFocusState={fixedFocusState}
-      placeholder={placeholderText}
-    />
-  )
-}
+}) => (
+  <Input
+    {...props}
+    icon="calendar"
+    iconType="outline"
+    fixedFocusState={fixedFocusState}
+    placeholder={placeholderText}
+  />
+)
 
 const getLocale = (locale: Locale) => {
   return locale === 'is' ? is : locale === 'pl' ? pl : en

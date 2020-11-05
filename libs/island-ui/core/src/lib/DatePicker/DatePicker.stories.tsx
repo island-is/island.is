@@ -14,9 +14,10 @@ const Template = (args) => <DatePicker {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  label: 'Date',
-  placeholderText: 'Pick a date',
+  label: 'Dagsetning',
+  placeholderText: 'Veldu dagsetningu',
   locale: 'is',
+  required: true,
   handleChange: (date: Date) => console.log(date),
 }
 
