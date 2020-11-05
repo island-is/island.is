@@ -46,7 +46,7 @@ const ApplicationCard: FC<Props> = ({
             {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
-        <Text variant="default">
+        <Text>
           {`Þú hefur ${
             !isComplete ? 'ekki ' : ''
           } lokið umsóknarferli fyrir ${name}`}
