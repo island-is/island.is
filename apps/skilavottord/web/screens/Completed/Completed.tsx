@@ -7,6 +7,7 @@ import {
   Text,
   Divider,
   Button,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useRouter } from 'next/router'
@@ -18,6 +19,7 @@ import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
 import { getTime, getDate } from '@island.is/skilavottord-web/utils'
+import { OutlinedError } from '@island.is/skilavottord-web/components'
 
 const Completed = ({ apolloState }) => {
   const [isMobile, setIsMobile] = useState(false)
@@ -29,7 +31,7 @@ const Completed = ({ apolloState }) => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data } = useQuery(REQUEST_TYPES, {
+  const { data, error, loading } = useQuery(REQUEST_TYPES, {
     variables: { permno: id },
   })
 
@@ -88,6 +90,37 @@ const Completed = ({ apolloState }) => {
     }
   }
 
+  if (error || (loading && !data)) {
+    return (
+      <ProcessPageLayout
+        sectionType={'citizen'}
+        activeSection={2}
+        activeCar={id.toString()}
+      >
+        <Stack space={3}>
+          <Text variant="h1">{t.title}</Text>
+          <Stack space={4}>
+            <Stack space={2}>
+              <Text variant="h3">{t.subTitles.summary}</Text>
+            </Stack>
+            {error ? (
+              <OutlinedError
+                title={t.error.title}
+                message={t.error.message}
+                primaryButton={{
+                  text: `${t.error.primaryButton}`,
+                  action: () => router.back(),
+                }}
+              />
+            ) : (
+              <SkeletonLoader space={2} repeat={4} />
+            )}
+          </Stack>
+        </Stack>
+      </ProcessPageLayout>
+    )
+  }
+
   return (
     <>
       {car && (
@@ -103,60 +136,67 @@ const Completed = ({ apolloState }) => {
                 <Text variant="h3">{t.subTitles.summary}</Text>
                 <CarDetailsBox car={car} />
               </Stack>
-              <GridContainer>
+              {sortedRequests.length > 0 ? (
                 <Stack space={4}>
+                  <GridContainer>
+                    <Stack space={4}>
+                      <Stack space={2}>
+                        {latestUserRequest && (
+                          <GridRow>
+                            <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
+                              <Text>
+                                {`${getConfirmationText(
+                                  latestUserRequest.requestType,
+                                  latestUserRequest.nameOfRequestor,
+                                )}`}
+                              </Text>
+                            </GridColumn>
+                            <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
+                              <Text variant="h5">
+                                {`${getDate(
+                                  latestUserRequest.createdAt,
+                                )} ${getTime(latestUserRequest.createdAt)}`}
+                              </Text>
+                            </GridColumn>
+                          </GridRow>
+                        )}
+                      </Stack>
+                      <Divider />
+                      <Stack space={2}>
+                        {partnerRequests.map((request) => (
+                          <GridRow>
+                            <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
+                              <Text>
+                                {`${getConfirmationText(
+                                  request.requestType,
+                                  request.nameOfRequestor,
+                                )}`}
+                              </Text>
+                            </GridColumn>
+                            <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
+                              <Text variant="h5">
+                                {`${getDate(request.createdAt)} ${getTime(
+                                  request.createdAt,
+                                )}`}
+                              </Text>
+                            </GridColumn>
+                          </GridRow>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  </GridContainer>
                   <Stack space={2}>
-                    {latestUserRequest && (
-                      <GridRow>
-                        <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                          <Text>
-                            {`${getConfirmationText(
-                              latestUserRequest.requestType,
-                              latestUserRequest.nameOfRequestor,
-                            )}`}
-                          </Text>
-                        </GridColumn>
-                        <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                          <Text variant="h5">
-                            {`${getDate(latestUserRequest.createdAt)} ${getTime(
-                              latestUserRequest.createdAt,
-                            )}`}
-                          </Text>
-                        </GridColumn>
-                      </GridRow>
-                    )}
-                  </Stack>
-                  <Divider />
-                  <Stack space={2}>
-                    {partnerRequests.map((request) => (
-                      <GridRow>
-                        <GridColumn span={['9/9', '6/9', '6/9', '6/9']}>
-                          <Text>
-                            {`${getConfirmationText(
-                              request.requestType,
-                              request.nameOfRequestor,
-                            )}`}
-                          </Text>
-                        </GridColumn>
-                        <GridColumn span={['9/9', '3/9', '3/9', '3/9']}>
-                          <Text variant="h5">
-                            {`${getDate(request.createdAt)} ${getTime(
-                              request.createdAt,
-                            )}`}
-                          </Text>
-                        </GridColumn>
-                      </GridRow>
-                    ))}
+                    <Text variant="h3">{t.subTitles.payment}</Text>
+                    <Text>
+                      {t.info.payment}{' '}
+                      <a href="https://www.fjs.is/">{t.info.paymentLinkText}</a>
+                      .
+                    </Text>
                   </Stack>
                 </Stack>
-              </GridContainer>
-              <Stack space={2}>
-                <Text variant="h3">{t.subTitles.payment}</Text>
-                <Text>
-                  {t.info.payment}{' '}
-                  <a href="https://www.fjs.is/">{t.info.paymentLinkText}</a>.
-                </Text>
-              </Stack>
+              ) : (
+                <Text>{t.info.oldDeregistration}</Text>
+              )}
               <Button onClick={onClose} fluid={isMobile}>
                 {t.buttons.close}
               </Button>

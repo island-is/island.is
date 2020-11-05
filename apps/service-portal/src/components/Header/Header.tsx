@@ -56,7 +56,7 @@ export const Header: FC<{}> = () => {
                 </FocusableBox>
               </Link>
               <Inline space={[1, 1, 1, 2]} flexWrap="nowrap">
-                <Hidden below="md">
+                <Hidden below="lg">
                   <Button
                     variant="utility"
                     onClick={handleLangClick.bind(
