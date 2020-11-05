@@ -19,15 +19,15 @@ import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger'
 import { BetaTag } from '../Logo/BetaTag'
 
 export const Header: FC<{}> = () => {
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
   const [{ mobileMenuState }, dispatch] = useStore()
   const { changeLanguage } = useNamespaces(['service.portal', 'global'])
 
   const handleLangClick = (value: Locale) => changeLanguage(value)
-  const handleMobileMenuClose = () =>
+  const handleMobileMenuTriggerClick = () =>
     dispatch({
       type: ActionType.SetMobileMenuState,
-      payload: 'closed',
+      payload: mobileMenuState === 'open' ? 'closed' : 'open',
     })
 
   return (
@@ -55,29 +55,32 @@ export const Header: FC<{}> = () => {
                   <BetaTag />
                 </FocusableBox>
               </Link>
-              <Inline space={[1, 1, 1, 2]}>
-                <Button
-                  variant="utility"
-                  onClick={handleLangClick.bind(
-                    null,
-                    lang === 'is' ? 'en' : 'is',
-                  )}
-                >
-                  {lang === 'is' ? 'EN' : 'IS'}
-                </Button>
+              <Inline space={[1, 1, 1, 2]} flexWrap="nowrap">
+                <Hidden below="lg">
+                  <Button
+                    variant="utility"
+                    onClick={handleLangClick.bind(
+                      null,
+                      lang === 'is' ? 'en' : 'is',
+                    )}
+                  >
+                    {lang === 'is' ? 'EN' : 'IS'}
+                  </Button>
+                </Hidden>
                 <UserMenu />
                 <NotificationMenuTrigger />
-                {mobileMenuState === 'open' && (
-                  <Hidden above="md">
-                    <Box>
-                      <Button
-                        variant="utility"
-                        icon="close"
-                        onClick={handleMobileMenuClose}
-                      />
-                    </Box>
-                  </Hidden>
-                )}
+                <Hidden above="md">
+                  <Button
+                    variant="utility"
+                    icon={mobileMenuState === 'open' ? 'close' : 'menu'}
+                    onClick={handleMobileMenuTriggerClick}
+                  >
+                    {formatMessage({
+                      id: 'service.portal:menu',
+                      defaultMessage: 'Valmynd',
+                    })}
+                  </Button>
+                </Hidden>
               </Inline>
             </Box>
           </ContentBlock>

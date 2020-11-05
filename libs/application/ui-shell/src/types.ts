@@ -5,29 +5,27 @@ import {
   Repeater,
   FormNode,
   Schema,
-  FormValue,
 } from '@island.is/application/core'
 
-export type FieldDef = {
+type ScreenAttributes = {
   isNavigable?: boolean
-} & Field
+  sectionIndex: number
+  subSectionIndex: number
+}
 
-export type MultiFieldScreen = {
-  isNavigable?: boolean
-} & MultiField & {
+export type FieldDef = ScreenAttributes & Field
+
+export type MultiFieldScreen = ScreenAttributes &
+  MultiField & {
     children: FieldDef[]
   }
 
-export type RepeaterScreen = {
-  isNavigable?: boolean
-  isExpanded?: boolean
-} & Repeater & {
+export type RepeaterScreen = ScreenAttributes &
+  Repeater & {
     children: (FieldDef | MultiFieldScreen | RepeaterScreen)[]
   }
 
-export type ExternalDataProviderScreen = {
-  isNavigable?: boolean
-} & ExternalDataProvider
+export type ExternalDataProviderScreen = ScreenAttributes & ExternalDataProvider
 
 export type FormScreen =
   | FieldDef

@@ -6,7 +6,8 @@ import {
   GridColumn,
   Text,
   Box,
-  ArrowLink,
+  Link,
+  Button,
 } from '@island.is/island-ui/core'
 
 // TODO:
@@ -73,9 +74,16 @@ export const IntroductionSection: FC<Props> = ({
           </Text>
           <Text>{text}</Text>
           <Box paddingY={2}>
-            <ArrowLink href={linkUrl} color="blue400">
-              {linkText}
-            </ArrowLink>
+            <Link href={linkUrl}>
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                type="button"
+                variant="text"
+              >
+                {linkText}
+              </Button>
+            </Link>
           </Box>
         </GridColumn>
       </GridRow>

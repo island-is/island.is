@@ -11,7 +11,7 @@ import {
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { GET_RECYCLING_PARTNER_BY_ID } from '@island.is/skilavottord-web/graphql/queries'
+import { RECYCLING_PARTNER_BY_ID } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -20,7 +20,7 @@ import { MockRecyclingPartner } from '@island.is/skilavottord-web/types'
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, loading, error } = useQuery(GET_RECYCLING_PARTNER_BY_ID, {
+  const { data, loading, error } = useQuery(RECYCLING_PARTNER_BY_ID, {
     variables: { id: 1 },
   })
 
