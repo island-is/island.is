@@ -40,15 +40,21 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async findAllByApplicant(input: GetApplicationsByUserInput) {
+  async findAllByApplicant(nationalRegistryId: string, typeId?: string) {
     return await this.applicationApi
-      .applicationControllerFindApplicantApplications(input)
+      .applicationControllerFindApplicantApplications({
+        nationalRegistryId,
+        typeId,
+      })
       .catch(handleError)
   }
 
-  async findAllByAssignee(input: GetApplicationsByUserInput) {
+  async findAllByAssignee(nationalRegistryId: string, typeId?: string) {
     return await this.applicationApi
-      .applicationControllerFindAssigneeApplications(input)
+      .applicationControllerFindAssigneeApplications({
+        nationalRegistryId,
+        typeId,
+      })
       .catch(handleError)
   }
 

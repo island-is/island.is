@@ -4,10 +4,6 @@ import { ApplicationResponseDtoTypeIdEnum } from '../../../gen/fetch/models/Appl
 
 @InputType()
 export class GetApplicationsByUserInput {
-  @Field(() => String)
-  @IsString()
-  nationalRegistryId!: string
-
   @Field(() => ApplicationResponseDtoTypeIdEnum, { nullable: true })
   @IsEnum(ApplicationResponseDtoTypeIdEnum)
   @IsOptional()

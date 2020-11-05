@@ -9,6 +9,9 @@ export default {
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3333',
   },
+  applicationSystem: {
+    basePath: 'http://localhost:3333',
+  },
   identityServer: {
     baseUrl: 'https://identity-server.dev01.devland.is',
     audience: '',

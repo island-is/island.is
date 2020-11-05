@@ -1,19 +1,24 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client'
+import {
+  UserManager,
+  WebStorageStateStore,
+  UserManagerSettings,
+} from 'oidc-client'
+import { environment } from '../environments'
 
-const settings = {
-  authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
+const settings: UserManagerSettings = {
+  authority: environment.identityServer.IDENTITY_SERVER_BASE_URL,
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
-  silent_redirect_uri: `http://localhost:4200/silent/signin-oidc`,
+  silent_redirect_uri: `${window.location.origin}/silent/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
-  redirect_uri: `http://localhost:4200/signin-oidc`,
+  redirect_uri: `${window.location.origin}/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   response_type: 'code',
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
   automaticSilentRenew: true,
-  scope: 'openid profile offline_access',
+  scope: 'openid profile offline_access api_resource.scope',
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 

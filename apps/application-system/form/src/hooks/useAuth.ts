@@ -1,3 +1,4 @@
+import { setClientAuthToken } from 'libs/application/graphql/src/lib/client'
 import { useLocation } from 'react-router-dom'
 import { ActionType, useAuthState } from '../context/AuthProvider'
 import { userManager } from '../utils/userManager'
@@ -12,6 +13,7 @@ const useAuth = () => {
 
     try {
       const user = await userManager.signinSilent()
+      setClientAuthToken(user.access_token)
 
       dispatch({
         type: ActionType.SET_USER_FULFILLED,
@@ -22,10 +24,19 @@ const useAuth = () => {
     }
   }
 
+  async function signOutUser() {
+    await userManager.signoutRedirect()
+
+    dispatch({
+      type: ActionType.SET_USER_LOGGED_OUT,
+    })
+  }
+
   return {
     userInfo,
     userInfoState,
     signInUser,
+    signOutUser,
   }
 }
 

@@ -14,6 +14,12 @@ const httpLink = new HttpLink({
   fetch,
 })
 
+let token = ''
+
+export const setClientAuthToken = (value: string) => {
+  token = value
+}
+
 const retryLink = new RetryLink()
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -28,8 +34,6 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 
 const authLink = setContext(async (_, { headers }) => {
-  const token = 'mock_token'
-
   return {
     headers: {
       ...headers,

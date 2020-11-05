@@ -10,7 +10,15 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { GetApplicationsByUserInput } from './dto/getApplicationByUser.input'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User,
+} from '@island.is/auth-api-lib'
+import { UseGuards } from '@nestjs/common'
 
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
@@ -32,15 +40,23 @@ export class ApplicationResolver {
   @Query(() => [Application], { nullable: true })
   async getApplicationsByApplicant(
     @Args('input') input: GetApplicationsByUserInput,
+    @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByApplicant(input)
+    return this.applicationService.findAllByApplicant(
+      user.nationalId,
+      input.typeId,
+    )
   }
 
   @Query(() => [Application], { nullable: true })
   async getApplicationsByAssignee(
     @Args('input') input: GetApplicationsByUserInput,
+    @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByAssignee(input)
+    return this.applicationService.findAllByAssignee(
+      user.nationalId,
+      input.typeId,
+    )
   }
 
   @Mutation(() => Application, { nullable: true })
