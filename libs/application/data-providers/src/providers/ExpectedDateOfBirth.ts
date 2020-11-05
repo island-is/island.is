@@ -10,7 +10,7 @@ export class ExpectedDateOfBirth extends DataProvider {
   onProvideSuccess(_: unknown): SuccessfulDataProviderResult {
     return {
       date: new Date(),
-      data: '2020-12-24',
+      data: '2021-01-15',
       status: 'success',
     }
   }

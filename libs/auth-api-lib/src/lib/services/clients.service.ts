@@ -60,6 +60,7 @@ export class ClientsService {
         ClientGrantType,
         ClientClaim,
       ],
+      distinct: true,
     })
   }
 
