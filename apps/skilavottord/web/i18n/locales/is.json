@@ -95,6 +95,7 @@
       "payment": "Greiðsla"
     },
     "info": {
+      "oldDeregistration": "The car has been successfully recycled, there is no more action needed.",
       "payment": "Útborgun skilagjalds mun liggja fyrir tveimur virkum dögum eftir afhendingu ökutækis.",
       "paymentLinkText": "Fjármál"
     },
@@ -103,6 +104,11 @@
       "company": "Afhent til",
       "authority": "Ökutæki afskráð hjá Samgöngustofu",
       "fund": "Greiðsla skilagjalds hafin hjá Fjársýslu ríkisins"
+    },
+    "error": {
+      "title": "Problem connecting to database",
+      "message": "We ran into a problem getting information about your car. Please try again later.",
+      "primaryButton": "Back to my cars"
     },
     "buttons": {
       "close": "Loka"
@@ -282,7 +288,7 @@
   "routes": {
     "home": {
       "citizen": "/my-cars",
-      "recyclingPartner": "/deregister-vehicle",
+      "recyclingCompany": "/deregister-vehicle",
       "recyclingFund": "/recycled-vehicles"
     },
     "myCars": "/my-cars",

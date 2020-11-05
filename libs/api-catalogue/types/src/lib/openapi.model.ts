@@ -21,9 +21,9 @@ export interface OpenApi {
 }
 
 export interface ExtendedInfoObject extends InfoObject {
-  x_category: Array<DataCategory>
-  x_pricing: Array<PricingCategory>
-  x_links: LinksObject
+  'x-category': Array<DataCategory>
+  'x-pricing': Array<PricingCategory>
+  'x-links': LinksObject
 }
 
 export interface LinksObject {

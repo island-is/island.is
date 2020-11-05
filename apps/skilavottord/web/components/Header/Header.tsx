@@ -1,8 +1,7 @@
 import React, { FC, useContext, useEffect } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Header as IslandUIHeader } from '@island.is/island-ui/core'
+import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -10,27 +9,7 @@ import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
-
-const mockUser = {
-  name: 'Mock User',
-  nationalId: '2222222222',
-  mobile: 123456,
-  // role: 'citizen',
-  role: 'developer',
-  // role: 'recyclingPartner',
-  // role: 'recyclingFund',
-}
-
-export const UserQuery = gql`
-  query UserQuery {
-    user {
-      name
-      nationalId
-      mobile
-    }
-  }
-`
+import { USER } from '@island.is/skilavottord-web/graphql/queries'
 
 export const Header: FC = () => {
   const router = useRouter()
@@ -41,8 +20,8 @@ export const Header: FC = () => {
     t: { header: t, routes },
   } = useI18n()
 
-  const { data } = useQuery(UserQuery)
-  const user = data?.user || mockUser
+  const { data } = useQuery(USER)
+  const user = data?.skilavottordUser
 
   const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
 
@@ -71,11 +50,7 @@ export const Header: FC = () => {
 
   return (
     <IslandUIHeader
-      logoRender={(logo) => (
-        <Link href={homeRoute}>
-          <a>{logo}</a>
-        </Link>
-      )}
+      logoRender={(logo) => <Link href={homeRoute}>{logo}</Link>}
       logoutText={t.logoutText}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={nextLanguage.toUpperCase()}

@@ -79,6 +79,7 @@ export interface Completed {
   subTitles: CompletedSubTitles
   info: CompletedInfo
   confirmedBy: CompletedConfirmation
+  error: Errors
   buttons: CompletedButtons
 }
 
@@ -168,6 +169,7 @@ export interface CompletedSubTitles {
 }
 
 export interface CompletedInfo {
+  oldDeregistration: string
   payment: string
   paymentLinkText: string
 }
@@ -352,7 +354,7 @@ export interface Routes {
 
 export interface HomeRoutes {
   citizen: string
-  recyclingPartner: string
+  recyclingCompany: string
   recyclingFund: string
 }
 

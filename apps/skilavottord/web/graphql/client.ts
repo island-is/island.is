@@ -20,8 +20,8 @@ const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
   const cache = new InMemoryCache({
     dataIdFromObject: (object) => {
       switch (object.__typename) {
-        case 'Car':
-          return `Car:${object.permno}`
+        case 'VehicleInformation':
+          return `VehicleInformation:${object.permno}`
         default:
           return defaultDataIdFromObject(object)
       }

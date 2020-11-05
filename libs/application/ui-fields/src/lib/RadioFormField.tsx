@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   FieldBaseProps,
   formatText,
@@ -11,6 +11,7 @@ import {
   RadioController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
+import { buildOptions } from '../utils'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -31,6 +32,11 @@ const RadioFormField: FC<Props> = ({
     largeButtons,
   } = field
   const { formatMessage } = useLocale()
+
+  const finalOptions = useMemo(() => buildOptions(options, application), [
+    options,
+    application,
+  ])
 
   return (
     <div>
@@ -59,7 +65,7 @@ const RadioFormField: FC<Props> = ({
           error={error}
           name={`${id}`}
           defaultValue={getValueViaPath(application.answers, id) as string[]}
-          options={options.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage) as string,
             ...(tooltip && {

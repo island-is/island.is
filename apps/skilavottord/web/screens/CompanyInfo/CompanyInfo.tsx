@@ -11,15 +11,16 @@ import {
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { GET_RECYCLING_PARTNER } from '@island.is/skilavottord-web/graphql/queries'
+import { RECYCLING_PARTNER_BY_ID } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
+import { MockRecyclingPartner } from '@island.is/skilavottord-web/types'
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, loading, error } = useQuery(GET_RECYCLING_PARTNER, {
+  const { data, loading, error } = useQuery(RECYCLING_PARTNER_BY_ID, {
     variables: { id: 1 },
   })
 
@@ -57,7 +58,7 @@ const CompanyInfo: FC = () => {
       <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
         <Stack space={4}>
           <Breadcrumbs>
-            <Link href={routes.home['recyclingPartner']}>Ísland.is</Link>
+            <Link href={routes.home['recyclingCompany']}>Ísland.is</Link>
             <span>{t.title}</span>
           </Breadcrumbs>
           <Stack space={2}>
@@ -69,25 +70,27 @@ const CompanyInfo: FC = () => {
             <Text>{t.empty}</Text>
           ) : (
             <Box>
-              {[data?.getRecyclingPartner].map((partner, index) => (
-                <ListItem
-                  key={index}
-                  title={partner.name}
-                  content={[
-                    {
-                      text: `${partner.address}, ${partner.postNumber}`,
-                    },
-                    {
-                      text: `${partner.phone}`,
-                      isHighlighted: true,
-                    },
-                    {
-                      text: `${partner.website}`,
-                      href: partner.website,
-                    },
-                  ]}
-                />
-              ))}
+              {[data?.getRecyclingPartner].map(
+                (partner: MockRecyclingPartner, index) => (
+                  <ListItem
+                    key={index}
+                    title={partner.name}
+                    content={[
+                      {
+                        text: `${partner.address}, ${partner.postNumber}`,
+                      },
+                      {
+                        text: `${partner.phone}`,
+                        isHighlighted: true,
+                      },
+                      {
+                        text: `${partner.website}`,
+                        href: partner.website,
+                      },
+                    ]}
+                  />
+                ),
+              )}
             </Box>
           )}
         </Stack>

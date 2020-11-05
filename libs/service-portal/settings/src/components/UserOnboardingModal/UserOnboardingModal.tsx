@@ -89,7 +89,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-form' && (
         <PhoneStep
           onBack={gotoStep.bind(null, 'intro')}
-          natReg={userInfo.profile.natreg}
+          natReg={userInfo.profile.nationalId}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
         />

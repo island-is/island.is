@@ -1936,15 +1936,6 @@ export interface ITellUsAStoryFields {
   /** Third Section Title */
   thirdSectionTitle: string
 
-  /** Instructions Description */
-  instructionsDescription: Document
-
-  /** Instructions Image */
-  instructionsImage: Asset
-
-  /** Information Title */
-  informationTitle: string
-
   /** Name Label */
   nameLabel: string
 
@@ -1962,6 +1953,15 @@ export interface ITellUsAStoryFields {
 
   /** Email Input Error Message */
   emailInputErrorMessage: string
+
+  /** Instructions Title */
+  instructionsTitle: string
+
+  /** Instructions Description */
+  instructionsDescription: Document
+
+  /** Instructions Image */
+  instructionsImage: Asset
 
   /** Publication Allowed Label */
   publicationAllowedLabel: string

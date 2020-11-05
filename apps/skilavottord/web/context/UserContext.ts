@@ -1,10 +1,10 @@
 import { createContext } from 'react'
-import { MockUser } from '../types'
+import { User } from '../types'
 
 const UserContext = createContext({
   isAuthenticated: false,
-  user: null as MockUser,
-  setUser: (_: MockUser) => undefined,
+  user: null as User,
+  setUser: (_: User) => undefined,
 })
 
 export default UserContext
