@@ -13,14 +13,14 @@ import {
   laws,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isNextDisabled, updateState } from '../../../utils/stepHelper'
+import { isNextDisabled } from '../../../utils/stepHelper'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { useParams } from 'react-router-dom'
 import { validate } from '../../../utils/validate'
-import useWorkingCase from '../../../utils/hooks/useWorkingCase'
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
+  Case,
   CaseCustodyProvisions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
@@ -39,11 +39,8 @@ export const JudgeOverview: React.FC = () => {
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
-  const [workingCase, setWorkingCase] = useWorkingCase()
-
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
+  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const { data } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
@@ -51,287 +48,282 @@ export const JudgeOverview: React.FC = () => {
   })
   const resCase = data?.case
 
-  useEffect(() => {
-    let mounted = true
-
-    const getCurrentCase = async () => {
-      window.localStorage.setItem('workingCase', JSON.stringify(resCase))
-
-      if (mounted && !workingCase) {
-        setWorkingCase(resCase)
-      }
-    }
-
-    if (id) {
-      getCurrentCase()
-    }
-
-    return () => {
-      mounted = false
-    }
-  }, [id, resCase, workingCase, setWorkingCase])
-
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
   const updateCase = async (id: string, updateCase: UpdateCase) => {
     const { data } = await updateCaseMutation({
       variables: { input: { id, ...updateCase } },
     })
-
     const resCase = data?.updateCase
-
     if (resCase) {
-      // Do smoething with the result. In particular, we want the modified timestamp passed between
+      // Do something with the result. In particular, we want th modified timestamp passed between
       // the client and the backend so that we can handle multiple simultanious updates.
     }
-
     return resCase
   }
 
-  return workingCase ? (
-    <PageLayout activeSection={1} activeSubSection={0}>
-      <Box marginBottom={10}>
-        <Text as="h1" variant="h1">
-          Yfirlit kröfu
-        </Text>
-      </Box>
-      <Box component="section" marginBottom={8}>
-        <Box marginBottom={2}>
-          <Text as="h3" variant="h3">
-            Málsnúmer héraðsdóms
-          </Text>
-        </Box>
-        <Box marginBottom={1}>
-          <Input
-            data-testid="courtCaseNumber"
-            name="courtCaseNumber"
-            label="Slá inn málsnúmer"
-            placeholder="R-X/ÁÁÁÁ"
-            defaultValue={workingCase?.courtCaseNumber}
-            errorMessage={courtCaseNumberErrorMessage}
-            hasError={courtCaseNumberErrorMessage !== ''}
-            onBlur={(evt) => {
-              updateState(
-                workingCase,
-                'courtCaseNumber',
-                evt.target.value,
-                setWorkingCase,
-              )
+  useEffect(() => {
+    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
+  }, [])
 
-              const validateField = validate(evt.target.value, 'empty')
+  useEffect(() => {
+    const getCurrentCase = async () => {
+      setIsLoading(true)
+      setWorkingCase(resCase)
+      setIsLoading(false)
+    }
+    if (id && !workingCase && resCase) {
+      getCurrentCase()
+    }
+  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
-              if (validateField.isValid) {
-                updateCase(
-                  workingCase.id,
-                  parseString('courtCaseNumber', evt.target.value),
-                )
-              } else {
-                setCourtCaseNumberErrorMessage(validateField.errorMessage)
-              }
-            }}
-            onFocus={() => setCourtCaseNumberErrorMessage('')}
-            required
-          />
-        </Box>
-        <Box>
-          <Text
-            variant="small"
-            fontWeight="semiBold"
-          >{`LÖKE málsnr. ${workingCase?.policeCaseNumber}`}</Text>
-        </Box>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Kennitala
-          </Text>
-        </Box>
-        <Text variant="h3">
-          {formatNationalId(workingCase?.accusedNationalId)}
-        </Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Fullt nafn
-          </Text>
-        </Box>
-        <Text variant="h3">{workingCase?.accusedName}</Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Lögheimili/dvalarstaður
-          </Text>
-        </Box>
-        <Text variant="h3">{workingCase?.accusedAddress}</Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Dómstóll
-          </Text>
-        </Box>
-        <Text variant="h3">{workingCase?.court}</Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Tími handtöku
-          </Text>
-        </Box>
-        <Text variant="h3">
-          {workingCase?.arrestDate &&
-            `${capitalize(
-              formatDate(workingCase?.arrestDate, 'PPPP'),
-            )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
-        </Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Ósk um fyrirtökudag og tíma
-          </Text>
-        </Box>
-        <Text variant="h3">
-          {`${capitalize(
-            formatDate(workingCase?.requestedCourtDate, 'PPPP'),
-          )} kl. ${formatDate(workingCase?.requestedCourtDate, TIME_FORMAT)}`}
-        </Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Box marginBottom={1}>
-          <Text variant="eyebrow" color="blue400">
-            Ákærandi
-          </Text>
-        </Box>
-        <Text variant="h3">
-          {/* The prosecutor should have been set when the case was submitted to court */}
-          {`${workingCase?.prosecutor?.name}, ${workingCase?.prosecutor?.title}`}
-        </Text>
-      </Box>
-      <Box component="section" marginBottom={5}>
-        <Accordion singleExpand={false}>
-          <AccordionItem
-            id="id_1"
-            label="Dómkröfur"
-            startExpanded
-            labelVariant="h3"
-          >
-            <Text>
-              Gæsluvarðhald til
-              <strong>
-                {workingCase?.requestedCustodyEndDate &&
-                  ` ${formatDate(
-                    workingCase?.requestedCustodyEndDate,
-                    'PPP',
-                  )} kl. ${formatDate(
-                    workingCase.requestedCustodyEndDate,
-                    TIME_FORMAT,
-                  )}`}
-              </strong>
+  return (
+    <PageLayout activeSection={1} activeSubSection={0} isLoading={isLoading}>
+      {workingCase ? (
+        <>
+          <Box marginBottom={10}>
+            <Text as="h1" variant="h1">
+              Yfirlit kröfu
             </Text>
-          </AccordionItem>
-          <AccordionItem
-            id="id_2"
-            label="Lagaákvæði"
-            startExpanded
-            labelVariant="h3"
-          >
+          </Box>
+          <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  Lagaákvæði sem brot varða við
-                </Text>
-              </Box>
-              <Text>
-                <span className={styles.breakSpaces}>
-                  {workingCase?.lawsBroken}
-                </span>
+              <Text as="h3" variant="h3">
+                Málsnúmer héraðsdóms
               </Text>
             </Box>
-            <Box marginBottom={2}>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  Lagaákvæði sem krafan er byggð á
-                </Text>
-              </Box>
-              {workingCase?.custodyProvisions.map(
-                (custodyProvision: CaseCustodyProvisions, index) => {
-                  return (
-                    <div key={index}>
-                      <Text>{laws[custodyProvision]}</Text>
-                    </div>
-                  )
-                },
-              )}
+            <Box marginBottom={1}>
+              <Input
+                data-testid="courtCaseNumber"
+                name="courtCaseNumber"
+                label="Slá inn málsnúmer"
+                placeholder="R-X/ÁÁÁÁ"
+                defaultValue={workingCase.courtCaseNumber}
+                errorMessage={courtCaseNumberErrorMessage}
+                hasError={courtCaseNumberErrorMessage !== ''}
+                onBlur={(evt) => {
+                  setWorkingCase({
+                    ...workingCase,
+                    courtCaseNumber: evt.target.value,
+                  })
+
+                  const validateField = validate(evt.target.value, 'empty')
+
+                  if (validateField.isValid) {
+                    updateCase(
+                      workingCase.id,
+                      parseString('courtCaseNumber', evt.target.value),
+                    )
+                  } else {
+                    setCourtCaseNumberErrorMessage(validateField.errorMessage)
+                  }
+                }}
+                onFocus={() => setCourtCaseNumberErrorMessage('')}
+                required
+              />
             </Box>
-          </AccordionItem>
-          <AccordionItem
-            id="id_3"
-            label="Takmarkanir á gæslu"
-            startExpanded
-            labelVariant="h3"
-          >
-            <Text>
-              {formatCustodyRestrictions(
-                workingCase.requestedCustodyRestrictions,
-              )}
+            <Box>
+              <Text
+                variant="small"
+                fontWeight="semiBold"
+              >{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            </Box>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Kennitala
+              </Text>
+            </Box>
+            <Text variant="h3">
+              {formatNationalId(workingCase.accusedNationalId)}
             </Text>
-          </AccordionItem>
-          <AccordionItem
-            id="id_4"
-            label="Greinagerð um málsatvik og lagarök"
-            startExpanded
-            labelVariant="h3"
-          >
-            {workingCase?.caseFacts && (
-              <Box marginBottom={2}>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Fullt nafn
+              </Text>
+            </Box>
+            <Text variant="h3">{workingCase.accusedName}</Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Lögheimili/dvalarstaður
+              </Text>
+            </Box>
+            <Text variant="h3">{workingCase.accusedAddress}</Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Dómstóll
+              </Text>
+            </Box>
+            <Text variant="h3">{workingCase.court}</Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Tími handtöku
+              </Text>
+            </Box>
+            <Text variant="h3">
+              {workingCase.arrestDate &&
+                `${capitalize(
+                  formatDate(workingCase.arrestDate, 'PPPP'),
+                )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
+            </Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Ósk um fyrirtökudag og tíma
+              </Text>
+            </Box>
+            <Text variant="h3">
+              {`${capitalize(
+                formatDate(workingCase.requestedCourtDate, 'PPPP'),
+              )} kl. ${formatDate(
+                workingCase.requestedCourtDate,
+                TIME_FORMAT,
+              )}`}
+            </Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={1}>
+              <Text variant="eyebrow" color="blue400">
+                Ákærandi
+              </Text>
+            </Box>
+            <Text variant="h3">
+              {workingCase.prosecutor?.name} {workingCase.prosecutor?.title}
+            </Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Accordion singleExpand={false}>
+              <AccordionItem
+                id="id_1"
+                label="Dómkröfur"
+                startExpanded
+                labelVariant="h3"
+              >
+                <Text>
+                  Gæsluvarðhald til
+                  <strong>
+                    {workingCase.requestedCustodyEndDate &&
+                      ` ${formatDate(
+                        workingCase.requestedCustodyEndDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.requestedCustodyEndDate,
+                        TIME_FORMAT,
+                      )}`}
+                  </strong>
+                </Text>
+              </AccordionItem>
+              <AccordionItem
+                id="id_2"
+                label="Lagaákvæði"
+                startExpanded
+                labelVariant="h3"
+              >
                 <Box marginBottom={2}>
-                  <Text variant="h5">Málsatvik rakin</Text>
+                  <Box marginBottom={2}>
+                    <Text as="h4" variant="h4">
+                      Lagaákvæði sem brot varða við
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.lawsBroken}
+                    </span>
+                  </Text>
                 </Box>
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text as="h4" variant="h4">
+                      Lagaákvæði sem krafan er byggð á
+                    </Text>
+                  </Box>
+                  {workingCase.custodyProvisions?.map(
+                    (custodyProvision: CaseCustodyProvisions, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{laws[custodyProvision]}</Text>
+                        </div>
+                      )
+                    },
+                  )}
+                </Box>
+              </AccordionItem>
+              <AccordionItem
+                id="id_3"
+                label="Takmarkanir á gæslu"
+                startExpanded
+                labelVariant="h3"
+              >
+                <Text>
+                  {formatCustodyRestrictions(
+                    workingCase.requestedCustodyRestrictions,
+                  )}
+                </Text>
+              </AccordionItem>
+              <AccordionItem
+                id="id_4"
+                label="Greinagerð um málsatvik og lagarök"
+                startExpanded
+                labelVariant="h3"
+              >
+                {workingCase.caseFacts && (
+                  <Box marginBottom={2}>
+                    <Box marginBottom={2}>
+                      <Text variant="h5">Málsatvik rakin</Text>
+                    </Box>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.caseFacts}
+                      </span>
+                    </Text>
+                  </Box>
+                )}
+                {workingCase.legalArguments && (
+                  <Box marginBottom={2}>
+                    <Box marginBottom={2}>
+                      <Text variant="h5">Lagarök</Text>
+                    </Box>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.legalArguments}
+                      </span>
+                    </Text>
+                  </Box>
+                )}
+              </AccordionItem>
+              <AccordionItem
+                id="id_5"
+                label="Skilaboð til dómara"
+                startExpanded
+                labelVariant="h3"
+              >
                 <Text>
                   <span className={styles.breakSpaces}>
-                    {workingCase?.caseFacts}
+                    {workingCase.comments}
                   </span>
                 </Text>
-              </Box>
-            )}
-            {workingCase?.legalArguments && (
-              <Box marginBottom={2}>
-                <Box marginBottom={2}>
-                  <Text variant="h5">Lagarök</Text>
-                </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase?.legalArguments}
-                  </span>
-                </Text>
-              </Box>
-            )}
-          </AccordionItem>
-          <AccordionItem
-            id="id_5"
-            label="Skilaboð til dómara"
-            startExpanded
-            labelVariant="h3"
-          >
-            <Text>
-              <span className={styles.breakSpaces}>
-                {workingCase?.comments}
-              </span>
-            </Text>
-          </AccordionItem>
-        </Accordion>
-      </Box>
-      <FormFooter
-        nextUrl={Constants.COURT_DOCUMENT_ROUTE}
-        nextIsDisabled={isNextDisabled([
-          { value: workingCase.courtCaseNumber, validations: ['empty'] },
-        ])}
-      />
+              </AccordionItem>
+            </Accordion>
+          </Box>
+          <FormFooter
+            nextUrl={`${Constants.COURT_DOCUMENT_ROUTE}/${id}`}
+            nextIsDisabled={isNextDisabled([
+              { value: workingCase.courtCaseNumber, validations: ['empty'] },
+            ])}
+          />
+        </>
+      ) : null}
     </PageLayout>
-  ) : null
+  )
 }
 
 export default JudgeOverview
