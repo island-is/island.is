@@ -204,7 +204,7 @@ export class AuthController {
     } else if (RoleForUser.includes('recyclingFund')) {
       returnUrlComp = '/recycled-vehicles'
     } else if (RoleForUser.includes('developer')) {
-      returnUrlComp = '/recycled-vehicles'  
+      returnUrlComp = '/recycled-vehicles'
     } else {
       return '/error'
     }
