@@ -1,11 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Tag,
-  Stack,
-  Typography,
-  ButtonDeprecated as Button,
-} from '@island.is/island-ui/core'
+import { Box, Tag, Stack, Typography, Button } from '@island.is/island-ui/core'
 
 interface Props {
   label: string
@@ -43,7 +37,7 @@ const ExternalFormDirect: FC<Props> = ({
         background="blue100"
       >
         <a href={url} target="_blank" rel="noopener noreferrer">
-          <Button icon="external">{buttonText}</Button>
+          <Button icon="open">{buttonText}</Button>
         </a>
       </Box>
     </>

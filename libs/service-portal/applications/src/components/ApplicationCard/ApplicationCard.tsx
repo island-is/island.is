@@ -2,11 +2,9 @@ import React, { FC } from 'react'
 import {
   Box,
   Stack,
-  Inline,
-  IconDeprecated as Icon,
   Typography,
   Tag,
-  ButtonDeprecated as Button,
+  Button,
   Columns,
   Column,
 } from '@island.is/island-ui/core'
