@@ -39,40 +39,62 @@ function formatConclusion(existingCase: Case): string {
         existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         )
-          ? ' Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
+          ? ' Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.'
           : ''
       }`
 }
 
 function formatRestrictions(existingCase: Case): string {
-  const restrictions = existingCase.custodyRestrictions?.filter(
-    (custodyRestriction) =>
-      custodyRestriction !== CaseCustodyRestrictions.ISOLATION,
+  if (!(existingCase.custodyRestrictions?.length > 0)) {
+    return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
+  }
+
+  let res = 'Sækjandi tekur fram að '
+
+  if (
+    existingCase.custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION)
+  ) {
+    res += 'kærði skuli sæta einangrun meðan á gæsluvarðhaldi stendur'
+
+    if (existingCase.custodyRestrictions.length === 1) {
+      return res + '.'
+    }
+
+    res += ' og að '
+  }
+
+  const restrictions = existingCase.custodyRestrictions
+    .filter(
+      (custodyRestriction) =>
+        custodyRestriction !== CaseCustodyRestrictions.ISOLATION,
+    )
+    .sort()
+
+  const restrictionsAsString = restrictions.reduce(
+    (res, custodyRestriction, index) => {
+      const isNextLast = index === restrictions.length - 2
+      const isLast = index === restrictions.length - 1
+      const isOnly = restrictions.length === 1
+
+      return (res +=
+        custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
+          ? `bréfaskoðun og símabanni${
+              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+            }`
+          : custodyRestriction === CaseCustodyRestrictions.MEDIA
+          ? `fjölmiðlabanni${
+              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+            }`
+          : custodyRestriction === CaseCustodyRestrictions.VISITAION
+          ? `heimsóknarbanni${
+              isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
+            }`
+          : '')
+    },
+    '',
   )
 
-  return `Sækjandi tekur fram að ${
-    restrictions?.length > 0
-      ? `kærði skuli sæta ${restrictions.map((custodyRestriction, index) => {
-          const isNextLast = index === restrictions.length - 2
-          const isLast = index === restrictions.length - 1
-          const isOnly = restrictions.length === 1
-
-          return custodyRestriction === CaseCustodyRestrictions.COMMUNICATION
-            ? `bréfa, og símabanni${
-                isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
-              }`
-            : custodyRestriction === CaseCustodyRestrictions.MEDIA
-            ? `fjölmiðlabanni${
-                isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
-              }`
-            : custodyRestriction === CaseCustodyRestrictions.VISITAION
-            ? `heimsóknarbanni${
-                isLast ? ' ' : isNextLast && !isOnly ? ' og ' : ', '
-              }`
-            : ''
-        })}á meðan á gæsluvarðhaldinu stendur.`
-      : 'gæsluvarðhaldið sé án takmarkana.'
-  }`
+  return `${res}gæsluvarðhaldið verði með ${restrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
 function formatAppeal(appealDecision: CaseAppealDecision, stakeholder: string) {

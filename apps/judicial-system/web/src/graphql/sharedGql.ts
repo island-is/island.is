@@ -11,6 +11,7 @@ export const CaseQuery = gql`
       accusedNationalId
       accusedName
       accusedAddress
+      accusedGender
       court
       arrestDate
       requestedCourtDate
@@ -28,6 +29,10 @@ export const CaseQuery = gql`
         title
       }
       courtCaseNumber
+      courtDate
+      courtRoom
+      defenderName
+      defenderEmail
       courtStartTime
       courtEndTime
       courtAttendees

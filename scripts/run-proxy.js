@@ -51,6 +51,9 @@ execSync(
 )
 
 console.log(`Now running the proxy - \uD83D\uDE31`)
+console.log(
+  `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
+)
 execSync(
   `docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${args.service}`,
   { stdio: 'inherit' },
