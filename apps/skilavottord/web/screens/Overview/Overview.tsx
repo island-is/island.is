@@ -11,7 +11,7 @@ import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { ActionCardContainer, ProgressCardContainer } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useQuery } from '@apollo/client'
-import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
+import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import { useRouter } from 'next/router'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
@@ -32,7 +32,7 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const nationalId = user?.nationalId ?? ''
-  const { data, loading, error } = useQuery(GET_VEHICLES, {
+  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
   })
 

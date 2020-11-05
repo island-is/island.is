@@ -8,7 +8,6 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
-  HasMany,
 } from 'sequelize-typescript'
 import { RecyclingPartnerModel } from '../../recycling.partner/model/recycling.partner.model'
 import { VehicleModel } from '../../vehicle/model/vehicle.model'
@@ -21,6 +20,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     type: DataType.INTEGER,
     primaryKey: true,
     allowNull: false,
+    autoIncrement: true,
   })
   id!: number
 
@@ -29,10 +29,20 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @Column({
     type: DataType.STRING,
   })
-  vehicleId: string
+  vehicleId!: string
 
   @BelongsTo(() => VehicleModel)
   vehicle: any
+
+  @ForeignKey(() => RecyclingPartnerModel)
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  recyclingPartnerId!: string
+
+  @BelongsTo(() => RecyclingPartnerModel)
+  recyclingParter: any
 
   @Field()
   @Column({
@@ -57,15 +67,4 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @UpdatedAt
   @Column
   updatedAt: Date
-
-  //TODO in progress
-  @ForeignKey(() => RecyclingPartnerModel)
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  recyclingPartnerId!: string
-
-  @BelongsTo(() => RecyclingPartnerModel)
-  recyclingParter: any
 }
