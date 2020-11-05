@@ -6,13 +6,13 @@ const merge = require('deepmerge')
 import { Application, FormValue } from '../types/Application'
 import {
   Form,
-  FormNode,
-  FormLeaf,
   FormItemTypes,
-  Section,
-  SubSection,
+  FormLeaf,
+  FormNode,
   FormText,
+  Section,
   StaticText,
+  SubSection,
 } from '../types/Form'
 
 export function getValueViaPath(
@@ -38,25 +38,6 @@ export function getValueViaPath(
   }
 }
 
-export function findNode(
-  id: string,
-  type: FormItemTypes,
-  formNode: FormNode,
-): FormNode | undefined {
-  if (id === formNode.id && type === formNode.type) {
-    return formNode
-  }
-  const { children } = formNode
-  if (children) {
-    for (let i = 0; i < children.length; i++) {
-      const foundNode = findNode(id, type, children[i])
-      if (foundNode) {
-        return foundNode
-      }
-    }
-  }
-  return undefined
-}
 export const isValidScreen = (node: FormNode): boolean => {
   switch (node.type) {
     case FormItemTypes.FORM: {
@@ -113,41 +94,41 @@ export function getSubSectionsInSection(section: Section): SubSection[] {
   return subSections
 }
 
-export function findSectionIndexForScreen(
-  form: Form,
-  screen: FormLeaf,
-): number {
+export function findSectionIndex(form: Form, section: Section): number {
   const sections = getSectionsInForm(form)
   if (!sections.length) {
     return -1
   }
   for (let i = 0; i < sections.length; i++) {
-    const section = sections[i]
-    const screensInSection = getFormNodeLeaves(section)
-    if (screensInSection.find(({ id }) => id === screen.id) !== undefined) {
+    if (sections[i].id === section.id) {
       return i
     }
   }
   return -1
 }
 
-export function findSubSectionIndexForScreen(
-  section: Section,
-  screen: FormLeaf,
+export function findSubSectionIndex(
+  form: Form,
+  sectionIndex: number,
+  subSection: SubSection,
 ): number {
-  const subSections = getSubSectionsInSection(section)
-  if (!subSections.length) {
+  if (sectionIndex === -1) {
     return -1
   }
+  const sections = getSectionsInForm(form)
+  const section = sections[sectionIndex]
+  if (!section) {
+    return -1
+  }
+  const subSections = getSubSectionsInSection(section)
   for (let i = 0; i < subSections.length; i++) {
-    const subSection = subSections[i]
-    const screensInSection = getFormNodeLeaves(subSection)
-    if (screensInSection.find(({ id }) => id === screen.id) !== undefined) {
+    if (subSections[i].id === subSection.id) {
       return i
     }
   }
   return -1
 }
+
 const overwriteArrayMerge = (
   destinationArray: unknown[],
   sourceArray: unknown[],
