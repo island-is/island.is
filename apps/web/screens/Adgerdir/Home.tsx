@@ -3,7 +3,7 @@ import React from 'react'
 import {
   Box,
   ContentBlock,
-  Typography,
+  Text,
   Stack,
   Breadcrumbs,
   Hidden,
@@ -85,12 +85,12 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
               <a>Covid aðgerðir</a>
             </Link>
           </Breadcrumbs>
-          <Typography variant="h1" as="h1">
+          <Text variant="h1" as="h1">
             {frontpage.title}
-          </Typography>
-          <Typography variant="intro" as="p">
+          </Text>
+          <Text variant="intro" as="p">
             {frontpage.description}
-          </Typography>
+          </Text>
           <Content document={frontpage.content} />
         </Stack>
       </ArticleLayout>
@@ -130,19 +130,17 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                         <GroupedPages
                           topContent={
                             <Stack space={2}>
-                              <Typography
+                              <Text
                                 variant="eyebrow"
                                 as="h2"
                                 color="roseTinted400"
                               >
                                 {slice.subtitle}
-                              </Typography>
-                              <Typography variant="h2" as="h3">
+                              </Text>
+                              <Text variant="h2" as="h3">
                                 {slice.title}
-                              </Typography>
-                              <Typography variant="p" as="p">
-                                {slice.description}
-                              </Typography>
+                              </Text>
+                              <Text as="p">{slice.description}</Text>
                             </Stack>
                           }
                           bottomContent={
