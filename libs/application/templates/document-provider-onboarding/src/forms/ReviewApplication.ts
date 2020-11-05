@@ -26,7 +26,13 @@ export const ReviewApplication: Form = buildForm({
           id: 'overview',
           name: 'Umsókn um að gerast skjalaveitandi:',
           children: [
-            buildDividerField({ name: 'Upplýsingar um stofnun' }),
+            buildDividerField({ name: 'Skilmálar' }),
+            buildIntroductionField({
+              id: 'ToDO',
+              name: 'TODO',
+              introduction: 'TODO',
+            }),
+            buildDividerField({ name: 'Umsækjandi' }),
             buildTextField({
               id: 'applicant.name',
               name: m.applicantName,
@@ -36,23 +42,27 @@ export const ReviewApplication: Form = buildForm({
               id: 'applicant.email',
               name: m.applicantEmail,
               disabled: true,
+              width: 'half',
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
               name: m.applicantPhoneNumber,
               disabled: true,
+              width: 'half',
             }),
             buildTextField({
               id: 'applicant.address',
               name: m.applicantAddress,
               disabled: true,
+              width: 'half',
             }),
             buildTextField({
               id: 'applicant.zipCode',
               name: m.applicantZipCode,
               disabled: true,
+              width: 'half',
             }),
-            buildDividerField({ name: 'Upplýsingar um ábyrgðarmann' }),
+            buildDividerField({ name: 'Ábyrgðarmaður' }),
             buildTextField({
               id: 'administrativeContact.name',
               name: m.administrativeContactName,
@@ -62,11 +72,13 @@ export const ReviewApplication: Form = buildForm({
               id: 'administrativeContact.email',
               name: m.administrativeContactEmail,
               disabled: true,
+              width: 'half',
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
               name: m.administrativeContactPhoneNumber,
               disabled: true,
+              width: 'half',
             }),
             buildDividerField({ name: 'Tæknilegur tengiliður' }),
             buildTextField({
@@ -78,12 +90,33 @@ export const ReviewApplication: Form = buildForm({
               id: 'technicalContact.email',
               name: m.technicalContactEmail,
               disabled: true,
+              width: 'half',
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
               name: m.technicalContactPhoneNumber,
               disabled: true,
+              width: 'half',
             }),
+            buildDividerField({ name: 'Notendaaðstoð' }),
+            buildTextField({
+              id: 'helpDesk.email',
+              name: m.helpDeskEmail,
+              disabled: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'helpDesk.phoneNumber',
+              name: m.helpDeskPhoneNumber,
+              disabled: true,
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'helpDesk.chatbot',
+              name: m.helpDeskChatbot,
+              disabled: true,
+            }),
+            buildDividerField({ name: 'Skjöl' }),
             buildSubmitField({
               id: 'approvedByReviewer',
               name: 'Samþykkir þú þessa umsókn?',

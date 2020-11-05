@@ -1,17 +1,15 @@
+import { UserIdentitiesService, UserIdentity } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Controller,
   Get,
   NotFoundException,
   Param,
-  UseGuards,
 } from '@nestjs/common'
-import { UserIdentity, UserIdentitiesService } from '@island.is/auth-api-lib'
-import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
-import { AuthGuard } from '@nestjs/passport'
+import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('user-identities')
 @Controller('user-identities')
 export class UserIdentitiesController {

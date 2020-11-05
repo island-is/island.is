@@ -8,7 +8,7 @@ import { style } from 'treat'
 export const wrapper = style({
   top: SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex: zIndex.mobileMenu,
-  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px - 74px)`,
+  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
   overflowY: 'auto',
   '@keyframes': {
     '0%': {
@@ -21,6 +21,10 @@ export const wrapper = style({
     },
   },
   animation: '@keyframes ease-in 200ms forwards',
+})
+
+export const figureCard = style({
+  boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 })
 
 export const figure = style({

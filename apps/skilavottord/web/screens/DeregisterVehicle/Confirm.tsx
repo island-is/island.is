@@ -29,11 +29,11 @@ const Confirm: FC = () => {
   const mockCar = {
     permno: id.toString(),
     type: 'Volvo',
-    newregdate: '01-20-2004',
+    firstRegDate: '01-20-2004',
     color: 'red',
-    recyclable: true,
+    isRecyclable: true,
     status: 'pendingRecycle',
-    isCoOwned: false,
+    hasCoOwner: false,
   }
 
   const handleConfirm = () => {

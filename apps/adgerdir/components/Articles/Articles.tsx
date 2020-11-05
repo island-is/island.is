@@ -1,5 +1,5 @@
 import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
-import _ from 'lodash'
+import intersection from 'lodash/intersection'
 import AnimateHeight from 'react-animate-height'
 import cn from 'classnames'
 import {
@@ -190,7 +190,7 @@ export const Articles: FC<ArticlesProps> = ({
         indexesFilteredByString,
       ].filter((x) => x.length > 0)
 
-      return _.intersection(...indexList).includes(index)
+      return intersection(...indexList).includes(index)
     })
     .splice(0, showAll ? visibleItems.length : showCount)
 

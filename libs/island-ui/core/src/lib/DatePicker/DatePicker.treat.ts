@@ -44,7 +44,7 @@ export const inputContainerVariants = styleMap({
 })
 
 export const hasError = style({
-  border: `1px solid ${theme.color.red400}`,
+  border: `1px solid ${theme.color.red600}`,
 
   ':hover': {
     borderColor: theme.color.blue400,
@@ -68,11 +68,11 @@ export const label = style({
 })
 
 export const requiredStar = style({
-  color: theme.color.red400,
+  color: theme.color.red600,
 })
 
 export const labelError = style({
-  color: theme.color.red400,
+  color: theme.color.red600,
 })
 
 export const value = style({

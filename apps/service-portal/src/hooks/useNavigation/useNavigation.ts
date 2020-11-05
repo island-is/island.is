@@ -3,10 +3,9 @@ import {
   ServicePortalNavigationItem,
   servicePortalMasterNavigation,
   ServicePortalRoute,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import { User } from 'oidc-client'
 
 const filterNavigationTree = (

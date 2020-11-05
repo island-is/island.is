@@ -1,6 +1,8 @@
 import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { Entry } from 'contentful'
+import isCircular from 'is-circular'
 import { IPage } from '../../generated/contentfulTypes'
 import { mapAboutPage } from '../../models/aboutPage.model'
 
@@ -8,8 +10,14 @@ import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class AboutPageSyncService {
-  processSyncData(items) {
-    return items.filter((item) => item.sys.contentType.sys.id === 'page')
+  processSyncData(entries: Entry<any>[]): IPage[] {
+    // only process pages that we consider not to be empty and dont have circular structures
+    return entries.filter(
+      (entry: IPage): entry is IPage =>
+        entry.sys.contentType.sys.id === 'page' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
+    )
   }
 
   doMapping(entries: IPage[]): MappedData[] {
@@ -19,12 +27,6 @@ export class AboutPageSyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAboutPage(entry)
-
-          // we consider about page that dont have a title to be empty
-          if (!mapped.title) {
-            throw new Error('Trying to import empty about page entry')
-          }
-
           const type = 'webAboutPage'
           return {
             _id: mapped.id,
