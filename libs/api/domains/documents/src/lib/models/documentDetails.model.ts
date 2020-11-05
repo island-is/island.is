@@ -1,18 +1,18 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { DocumentDTO } from '../../../gen/fetch'
+import { ObjectType, Field } from '@nestjs/graphql'
+import { DocumentDTO } from '../client/models'
 
 @ObjectType()
 export class DocumentDetails {
-  @Field((type) => String)
+  @Field(() => String)
   fileType: string
 
-  @Field((type) => String)
+  @Field(() => String)
   content?: string
 
-  @Field((type) => String)
+  @Field(() => String)
   html: string
 
-  @Field((type) => String)
+  @Field(() => String)
   url: string
 
   static fromDocumentDTO(dto: DocumentDTO) {
