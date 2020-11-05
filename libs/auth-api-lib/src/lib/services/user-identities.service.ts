@@ -16,6 +16,17 @@ export class UserIdentitiesService {
     private logger: Logger,
   ) {}
 
+  /** Get's all user identities and total count of rows */
+  async findAndCountAll(): Promise<{
+    rows: UserIdentity[]
+    count: number
+  } | null> {
+    return this.userIdentityModel.findAndCountAll({
+      include: [Claim],
+      distinct: true,
+    })
+  }
+
   /** Creates a new User Identity */
   async create(
     userIdentity: UserIdentityDto,
