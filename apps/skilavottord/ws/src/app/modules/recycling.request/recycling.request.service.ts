@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, HttpService } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { SamgongustofaService } from '../samgongustofa/models/samgongustofa.service'
 import { FjarsyslaService } from '../fjarsysla/models/fjarsysla.service'
+import { environment } from '../../../environments'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -11,11 +11,92 @@ export class RecyclingRequestService {
     @InjectModel(RecyclingRequestModel)
     private recyclingRequestModel: typeof RecyclingRequestModel,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    //@Inject(SamgongustofaService)
-    //private samgongustofaService: SamgongustofaService,
+    private httpService: HttpService,
     @Inject(FjarsyslaService)
     private fjarsyslaService: FjarsyslaService,
   ) {}
+
+  async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
+    try {
+      this.logger.info(
+        `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
+      )
+      const {
+        restAuthUrl,
+        restDeRegUrl,
+        restUsername,
+        restPassword,
+        restReportingStation,
+      } = environment.samgongustofa
+
+      const jsonObj = {
+        username: restUsername,
+        password: restPassword,
+      }
+      const jsonAuthBody = JSON.stringify(jsonObj)
+
+      const headerAuthRequest = {
+        'Content-Type': 'application/json',
+      }
+
+      const authRes = await this.httpService
+        .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
+        .toPromise()
+
+      if (authRes.status > 299 || authRes.status < 200) {
+        this.logger.error(authRes.statusText)
+        throw new Error(authRes.statusText)
+      }
+      // DeRegisterd vehicle
+      const jToken = authRes.data['jwtToken']
+
+      this.logger.info(
+        'Finished Authentication request and starting deRegister request',
+      )
+      const dateNow = new Date()
+      const jsonDeRegBody = JSON.stringify({
+        permno: vehiclePermno,
+        deRegisterDate:
+          dateNow.toLocaleDateString() +
+          'T' +
+          dateNow.toTimeString().split(' ')[0] +
+          'Z',
+        subCode: 'U',
+        plateCount: 0,
+        destroyed: 0,
+        lost: 0,
+        reportingStation: restReportingStation,
+        reportingStationType: 'R',
+        disposalStation: disposalStation,
+        disposalStationType: 'M',
+        explanation: 'TODO, what to put here?',
+      })
+
+      const headerDeRegRequest = {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + jToken,
+      }
+
+      const deRegRes = await this.httpService
+        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
+        .toPromise()
+
+      if (deRegRes.status < 300 && deRegRes.status >= 200) {
+        this.logger.info(
+          `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
+        )
+        return true
+      } else {
+        this.logger.info(deRegRes.statusText)
+        throw new Error(deRegRes.statusText)
+      }
+    } catch (err) {
+      this.logger.error(
+        `Failed on deregistered vehicle ${vehiclePermno} with: ${err}`,
+      )
+      throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
+    }
+  }
 
   async findAll(): Promise<RecyclingRequestModel[]> {
     this.logger.info('---- Starting findAll Recycling request ----')
@@ -72,14 +153,15 @@ export class RecyclingRequestService {
           `partnerId, nationalId and nameOfRequestor could not all be at the same time.`,
         )
       }
+      // If requestType is 'deregistered'
       // partnerId and nationalId could not both be null when create requestType for recycling partner.
-      if (!nameOfRequestor) {
+      if (!nameOfRequestor && requestType == 'deregistered') {
         if (!partnerId || !nationalId) {
           this.logger.error(
-            `partnerId and nationalId could not both be null when create requestType for recylcing partner`,
+            `partnerId and nationalId could not both be null when create requestType 'deregistered' for recylcing partner`,
           )
           throw new Error(
-            `partnerId and nationalId could not both be null when create requestType for recylcing partner`,
+            `partnerId and nationalId could not both be null when create requestType 'deregistered' for recylcing partner`,
           )
         }
       }
@@ -107,8 +189,8 @@ export class RecyclingRequestService {
           await newRecyclingRequest.save()
 
           // 2. deregistered vehicle from Samgongustofa
-          this.logger.info(`deregistered vehicle ${permno}`)
-          //await this.samgongustofaService.deRegisterVehicle(permno, partnerId)
+          this.logger.info(`start deregistered vehicle ${permno}`)
+          await this.deRegisterVehicle(permno, partnerId) // TODO Check if it's partnerId or 10000
 
           // 3. Update requestType to 'deregistered'
           this.logger.info(`create requestType: deregistered for ${permno}`)
@@ -116,8 +198,7 @@ export class RecyclingRequestService {
           await newRecyclingRequest.save()
 
           // 4. Call Fjarsysla for payment
-          // ToDo
-          this.logger.info(`payment on vehicle ${permno}`)
+          this.logger.info(`start payment on vehicle ${permno}`)
           await this.fjarsyslaService.getFjarsysluRest(nationalId, permno)
 
           // 5. Update requestType to 'paymentInitiated'
@@ -127,6 +208,7 @@ export class RecyclingRequestService {
         } catch (err) {
           // If we encounter any error then update requestType to 'paymentFailed'
           newRecyclingRequest.requestType = 'paymentFailed'
+          newRecyclingRequest.recyclingPartnerId = null // If getting error on PartnerId then it's still logged
           await newRecyclingRequest.save()
           this.logger.error(
             `Getting error while trying to deregistered permno: ${permno}, nameOfRequestor: ${nameOfRequestor} with: ${err}`,
@@ -136,10 +218,10 @@ export class RecyclingRequestService {
           )
         }
       }
-      // requestType: 'pendingVehicle' or 'canceled'
+      // requestType: 'pendingVehicle' or 'cancelled'
       else {
         this.logger.info(`create requestType: ${requestType} for ${permno}`)
-        await newRecyclingRequest.save()
+        await new RecyclingRequestModel().save()
       }
       this.logger.info(
         `---- Finsihed update requestType for ${permno} to requestType: ${requestType} ----`,
