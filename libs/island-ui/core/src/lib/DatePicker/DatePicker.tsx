@@ -31,7 +31,7 @@ interface DatePickerProps {
   hasError?: boolean
   errorMessage?: string
   id?: string
-  handleChange?: (startDate: Date, endDate?: Date) => void
+  handleChange?: (startDate: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
   handleCloseCalendar?: (date: Date | null) => void
   handleOpenCalendar?: () => void
