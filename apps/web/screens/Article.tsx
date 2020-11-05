@@ -387,16 +387,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   }
 
   const metaTitle = `${article.title} | Ísland.is`
-  const metaDescription = Boolean(article.intro) ? article.intro : undefined
-  const metaImageUrl = Boolean(article.featuredImage.url)
-    ? article.featuredImage.url
-    : undefined
-  const metaImageWidth = Boolean(article.featuredImage.width)
-    ? article.featuredImage.width.toString()
-    : undefined
-  const metaImageHeight = Boolean(article.featuredImage.height)
-    ? article.featuredImage.height.toString()
-    : undefined
 
   const processEntries = article?.body?.length
     ? article.body.filter((x) => x.__typename === 'ProcessEntry')
@@ -412,10 +402,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     <>
       <HeadWithSocialSharing
         title={metaTitle}
-        description={metaDescription}
-        imageUrl={metaImageUrl}
-        imageWidth={metaImageWidth}
-        imageHeight={metaImageHeight}
+        description={article.intro}
+        imageUrl={article.featuredImage.url}
+        imageWidth={article.featuredImage.width.toString()}
+        imageHeight={article.featuredImage.height.toString()}
       />
       <ArticleLayout
         sidebar={
