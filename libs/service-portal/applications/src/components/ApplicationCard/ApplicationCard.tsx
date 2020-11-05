@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import {
   Box,
   Stack,
-  Typography,
+  Text,
   Tag,
   Button,
   Columns,
@@ -41,16 +41,16 @@ const ApplicationCard: FC<Props> = ({
           alignItems="center"
           marginBottom={1}
         >
-          <Typography variant="h3">{name}</Typography>
+          <Text variant="h3">{name}</Text>
           <Tag variant={isComplete ? 'mint' : 'purple'}>
             {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
-        <Typography variant="p">
+        <Text variant="default">
           {`Þú hefur ${
             !isComplete ? 'ekki ' : ''
           } lokið umsóknarferli fyrir ${name}`}
-        </Typography>
+        </Text>
         <Columns space={8} alignY="center" collapseBelow="md">
           <Column width="8/12">
             <ProgressBar progress={progress} />

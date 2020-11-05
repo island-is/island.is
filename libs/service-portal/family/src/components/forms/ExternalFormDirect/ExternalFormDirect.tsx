@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Tag, Stack, Typography, Button } from '@island.is/island-ui/core'
+import { Box, Tag, Stack, Text, Button } from '@island.is/island-ui/core'
 
 interface Props {
   label: string
@@ -26,8 +26,8 @@ const ExternalFormDirect: FC<Props> = ({
           <Tag variant="darkerMint">{tag}</Tag>
         </Box>
         <Stack space={3}>
-          <Typography variant="h3">{title}</Typography>
-          <Typography variant="p">{description}</Typography>
+          <Text variant="h3">{title}</Text>
+          <Text>{description}</Text>
         </Stack>
       </Box>
       <Box
