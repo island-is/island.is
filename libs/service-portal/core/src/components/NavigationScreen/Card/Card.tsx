@@ -40,7 +40,7 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
       <Box marginBottom={3}>{formatMessage(description)}</Box>
       <Inline space={1}>
         {tags.map((tag, index) => (
-          <Tag variant="purple" key={index}>
+          <Tag variant="purple" key={index} label>
             {formatMessage(tag)}
           </Tag>
         ))}
