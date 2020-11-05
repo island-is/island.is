@@ -24,7 +24,6 @@ interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
   locale?: Locale
-  value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
   selected?: ReactDatePickerProps['selected']
   disabled?: boolean
@@ -36,6 +35,7 @@ interface DatePickerProps {
   handleCloseCalendar?: (date: Date | null) => void
   handleOpenCalendar?: () => void
   required?: boolean
+  inputName?: string
 }
 
 interface CustomHeaderProps {
@@ -71,7 +71,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   label,
   placeholderText,
   locale = 'en',
-  value,
   minDate,
   selected,
   disabled = false,
@@ -82,6 +81,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   handleCloseCalendar,
   handleOpenCalendar,
   required,
+  inputName = '',
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -102,7 +102,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
-          value={value}
           locale={locale}
           minDate={minDate}
           dateFormat={getFormat(locale)}
@@ -133,7 +132,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           required={required}
           customInput={
             <CustomInput
-              name={name}
+              name={inputName}
               label={label}
               fixedFocusState={datePickerState === 'open'}
               hasError={hasError}
