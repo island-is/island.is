@@ -1,17 +1,23 @@
 import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { Entry } from 'contentful'
+import isCircular from 'is-circular'
 import { ILifeEventPage } from '../../generated/contentfulTypes'
 import { mapLifeEventPage } from '../../models/lifeEventPage.model'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService {
-  processSyncData(items) {
+  processSyncData(entries: Entry<any>[]): ILifeEventPage[] {
     logger.info('Processing sync data for life event pages')
 
-    return items.filter(
-      (item) => item.sys.contentType.sys.id === 'lifeEventPage',
+    // only process life events that we consider not to be empty and dont have circular structures
+    return entries.filter(
+      (entry: ILifeEventPage): entry is ILifeEventPage =>
+        entry.sys.contentType.sys.id === 'lifeEventPage' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
     )
   }
 
@@ -21,12 +27,6 @@ export class LifeEventsPageSyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapLifeEventPage(entry)
-
-          // we consider life events that dont have a title to be empty
-          if (!mapped.title) {
-            throw new Error('Trying to import empty life event entry')
-          }
-
           const type = 'webLifeEventPage'
           return {
             _id: mapped.id,

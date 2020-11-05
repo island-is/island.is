@@ -15,7 +15,7 @@ const maxDocuments = 2
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
+  const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
 
   return (
     <>

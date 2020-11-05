@@ -1,29 +1,29 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { DocumentInfoDTO, DocumentDTO } from '../../../gen/fetch'
+import { DocumentInfoDTO } from '../client/models'
 
 @ObjectType()
 export class Document {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
-  @Field((type) => Date)
+  @Field(() => Date)
   date: Date
 
-  @Field((type) => String)
+  @Field(() => String)
   subject: string
 
-  @Field((type) => String)
+  @Field(() => String)
   senderName?: string
 
-  @Field((type) => String)
+  @Field(() => String)
   senderNatReg: string
 
-  @Field((type) => Boolean)
+  @Field(() => Boolean)
   opened: boolean
 
   static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
     const doc = new Document()
-    doc.date = docInfo.documentDate
+    doc.date = new Date(docInfo.documentDate)
     doc.id = docInfo.id
     doc.opened = docInfo.opened
     doc.senderName = docInfo.senderName

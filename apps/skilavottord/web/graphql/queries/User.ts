@@ -1,12 +1,13 @@
 import gql from 'graphql-tag'
 
-export const GET_USER = gql`
+export const USER = gql`
   query skilavottordUser {
     skilavottordUser {
       name
       nationalId
       mobile
       role
+      partnerId
     }
   }
 `
