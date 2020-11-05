@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { ContentfulRepository } from '@island.is/api/domains/cms'
+import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
 import isEmpty from 'lodash/isEmpty'
 import mergeWith from 'lodash/mergeWith'
+
+// Declare fallbacks for locales here since they are not set in Contentful for various reasons,
+// this can be replaced by fetching contentful locales if fallback is set in the future, same format.
+const locales = [
+  { code: 'is-IS', fallbackCode: null },
+  { code: 'en', fallbackCode: 'is-IS' },
+]
 
 export interface TranslationsDict {
   [key: string]: string
@@ -24,8 +31,10 @@ export class TranslationsService {
     namespaces?: string[],
     lang?: string,
   ): Promise<TranslationsDict | null> => {
+    const locale = locales.find((l) => l.code === localeMap[lang])
+
     const result = await this.contentfulRepository
-      .getLocalizedEntries<any>(lang, {
+      .getLocalizedEntries<any>('*', {
         ['content_type']: 'namespace',
         select: 'fields.strings,fields.fallback',
         'fields.namespace[in]': namespaces.join(','),
@@ -33,8 +42,11 @@ export class TranslationsService {
       .catch(errorHandler('getNamespace'))
 
     const withFallbacks = result?.items?.map(({ fields }) =>
-      mergeWith({}, fields.fallback, fields.strings, (o, s) =>
-        isEmpty(s) ? o : s,
+      mergeWith(
+        {},
+        locale.fallbackCode ? fields.strings[locale.fallbackCode] : {},
+        fields.strings[locale.code],
+        (o, s) => (isEmpty(s) ? o : s),
       ),
     )
 

@@ -1,17 +1,23 @@
 import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { Entry } from 'contentful'
+import isCircular from 'is-circular'
 import { IArticleCategory } from '../../generated/contentfulTypes'
 import { mapArticleCategory } from '../../models/articleCategory.model'
 import { createTerms } from './utils'
 
 @Injectable()
 export class ArticleCategorySyncService {
-  processSyncData(items) {
+  processSyncData(entries: Entry<any>[]): IArticleCategory[] {
     logger.info('Processing sync data for article category')
 
-    return items.filter(
-      (item) => item.sys.contentType.sys.id === 'articleCategory',
+    // only process articles that we consider not to be empty and dont have circular structures
+    return entries.filter(
+      (entry: IArticleCategory): entry is IArticleCategory =>
+        entry.sys.contentType.sys.id === 'articleCategory' &&
+        !!entry.fields.title &&
+        !isCircular(entry),
     )
   }
 
@@ -22,12 +28,6 @@ export class ArticleCategorySyncService {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapArticleCategory(entry)
-
-          // we consider article categories that dont have a title to be empty
-          if (!mapped.title) {
-            throw new Error('Trying to import empty article category entry')
-          }
-
           const type = 'webArticleCategory'
           return {
             _id: mapped.slug,

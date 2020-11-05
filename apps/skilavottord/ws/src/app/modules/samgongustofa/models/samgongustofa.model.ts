@@ -41,13 +41,3 @@ export class VehicleInformation {
   @Field()
   status: string
 }
-
-@ObjectType()
-export class DeRegisterVehicle {
-  constructor(status: boolean) {
-    this.status = status
-  }
-
-  @Field()
-  status: boolean
-}

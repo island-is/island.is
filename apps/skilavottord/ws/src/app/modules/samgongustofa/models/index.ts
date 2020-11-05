@@ -1,1 +1,1 @@
-export { VehicleInformation, DeRegisterVehicle } from './samgongustofa.model'
+export { VehicleInformation } from './samgongustofa.model'

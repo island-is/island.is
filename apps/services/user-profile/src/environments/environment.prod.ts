@@ -16,4 +16,7 @@ export default {
       region: process.env.EMAIL_REGION,
     },
   },
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+  },
 }

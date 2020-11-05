@@ -1,8 +1,13 @@
 import { style } from 'treat'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const menu = style({
-  width: 353,
   maxWidth: '100%',
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 353,
+    },
+  }),
 })
 
 export const messages = style({
