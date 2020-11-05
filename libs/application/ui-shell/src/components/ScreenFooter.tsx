@@ -65,6 +65,7 @@ export const ScreenFooter: FC<FooterProps> = ({
         <Box
           display="flex"
           flexDirection="row"
+          alignItems="center"
           justifyContent="spaceBetween"
           paddingTop={[1, 4]}
           paddingBottom={[1, 5]}
