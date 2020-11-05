@@ -4,6 +4,7 @@ import * as styles from './Input.treat'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
+import { Icon as IconType, Type } from '../IconRC/iconMap'
 
 export type InputBackgroundColor = 'white' | 'blue'
 
@@ -27,11 +28,24 @@ interface InputComponentProps {
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
+  onClick?: (
+    event: React.MouseEvent<HTMLInputElement | HTMLTextAreaElement, MouseEvent>,
+  ) => void
+  onKeyDown?: (
+    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
   rows?: number
   type?: 'text' | 'number' | 'email' | 'tel'
+  icon?: IconType
+  iconType?: Type
+  iconClassName?: string
+  /**
+   * While true hover state will not show and focus state will be allways on
+   */
+  fixedFocusState?: boolean
 }
 
-interface InputProps extends InputComponentProps {
+export interface InputProps extends InputComponentProps {
   label?: string
   hasError?: boolean
   errorMessage?: string
@@ -94,9 +108,15 @@ export const Input = forwardRef(
       backgroundColor = 'white',
       onFocus,
       onBlur,
+      onClick,
+      onKeyDown,
       textarea,
       type,
+      icon,
+      iconType = 'filled',
+      iconClassName,
       size = 'md',
+      fixedFocusState,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -124,6 +144,7 @@ export const Input = forwardRef(
               [styles.hasError]: hasError,
               [styles.hasFocus]: hasFocus,
               [styles.containerDisabled]: disabled,
+              [styles.fixedFocusState]: fixedFocusState,
             },
           )}
           onClick={(e) => {
@@ -170,6 +191,16 @@ export const Input = forwardRef(
                   onFocus(e)
                 }
               }}
+              onClick={(e) => {
+                if (onClick) {
+                  onClick(e)
+                }
+              }}
+              onKeyDown={(e) => {
+                if (onKeyDown) {
+                  onKeyDown(e)
+                }
+              }}
               onBlur={(e) => {
                 setHasFocus(false)
                 if (onBlur) {
@@ -181,8 +212,22 @@ export const Input = forwardRef(
               {...inputProps}
             />
           </Box>
-          {hasError && (
-            <Icon icon="warning" skipPlaceholderSize className={styles.icon} />
+          {hasError && !icon && (
+            <Icon
+              icon="warning"
+              skipPlaceholderSize
+              className={cn(styles.icon, styles.iconError)}
+            />
+          )}
+          {icon && (
+            <Icon
+              icon={icon}
+              type={iconType}
+              skipPlaceholderSize
+              className={cn(styles.icon, {
+                [styles.iconError]: hasError,
+              })}
+            />
           )}
         </Box>
         {hasError && errorMessage && (

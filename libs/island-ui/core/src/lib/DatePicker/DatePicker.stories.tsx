@@ -9,17 +9,19 @@ import { DatePicker } from './DatePicker'
 export default {
   title: 'Form/DatePicker',
   component: DatePicker,
-  decorators: [withDesign],
-  parameters: withFigma({
-    desktop:
-      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=50%3A155',
-  }),
+}
+const Template = (args) => <DatePicker {...args} />
+
+export const Primary = Template.bind({})
+Primary.args = {
+  label: 'Date',
+  placeholderText: 'Pick a date',
+  locale: 'is',
+  handleChange: (date: Date) => console.log(date),
 }
 
 const Wrap: React.FC = ({ children }) => (
-  <Box padding={2}>
-    <ContentBlock width="medium">{children}</ContentBlock>
-  </Box>
+  <div style={{ height: 600 }}>{children}</div>
 )
 
 export const Basic = () => {
@@ -33,8 +35,7 @@ export const Basic = () => {
     </Wrap>
   )
 }
-
-export const Locales = () => {
+export const LocaleIS = () => {
   return (
     <>
       <Wrap>
@@ -45,29 +46,31 @@ export const Locales = () => {
           handleChange={(date: Date) => console.log(date)}
         />
       </Wrap>
-      <Wrap>
-        <DatePicker
-          label="Data"
-          placeholderText="Wybierz datę"
-          locale="pl"
-          handleChange={(date: Date) => console.log(date)}
-        />
-      </Wrap>
     </>
+  )
+}
+export const LocalePL = () => {
+  return (
+    <Wrap>
+      <DatePicker
+        label="Data"
+        placeholderText="Wybierz datę"
+        locale="pl"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </Wrap>
   )
 }
 
 export const MinimumDate = () => {
   return (
-    <Box padding={2}>
-      <ContentBlock width="medium">
-        <DatePicker
-          label="Minimum date is today"
-          placeholderText="Pick a date"
-          minDate={new Date()}
-          handleChange={(date: Date) => console.log(date)}
-        />
-      </ContentBlock>
-    </Box>
+    <div style={{ height: 600 }}>
+      <DatePicker
+        label="Minimum date is today"
+        placeholderText="Pick a date"
+        minDate={new Date()}
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </div>
   )
 }
