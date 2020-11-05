@@ -85,9 +85,11 @@ export class CmsSyncService {
     return this.elasticService.index(elasticIndex, folderHashDocument)
   }
 
-  // this will generate diffrent hash for each build
+  // this will generate diffrent hash when any file has been changed in the importer app
   private async getModelsFolderHash(): Promise<string> {
-    const hashResult = await hashElement(__dirname)
+    // node_modules is quite big, it's unlikely that changes here will effect the cms importers mappings
+    const options = { folders: { exclude: ['node_modules'] } }
+    const hashResult = await hashElement(__dirname, options)
     return hashResult.hash.toString()
   }
 
