@@ -16,12 +16,4 @@ export class SamgongustofaResolver {
   ): Promise<Array<VehicleInformation>> {
     return this.samgongustofaService.getVehicleInformation(nid)
   }
-
-  @Query(() => Boolean)
-  async skilavottordDeRegisterVehicle(
-    @Args('vehiclePermno') nid: string,
-    @Args('recyclingPartner') station: string,
-  ): Promise<boolean> {
-    return this.samgongustofaService.deRegisterVehicle(nid, station)
-  }
 }

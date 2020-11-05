@@ -61,7 +61,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   }
 
   return (
-    <Box marginTop={3} className={styles.buttonContainer}>
+    <Box marginTop={7} className={styles.buttonContainer}>
       <GridColumn
         span={['12/12', '12/12', '7/9', '7/9']}
         offset={['0', '0', '1/9']}
@@ -78,7 +78,7 @@ export const ScreenFooter: FC<FooterProps> = ({
               <Button variant="ghost" onClick={goBack}>
                 {formatMessage({
                   id: 'application.system:button.back',
-                  defaultMessage: 'Til baka',
+                  defaultMessage: 'Back',
                   description: 'Back button text',
                 })}
               </Button>
@@ -98,6 +98,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             {hasSubmitField ? (
               <Button
                 loading={loading}
+                icon="check"
                 disabled={!canProceed}
                 htmlType="submit"
               >
@@ -114,7 +115,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   >
                     {formatMessage({
                       id: 'application.system:button.next',
-                      defaultMessage: 'Halda áfram',
+                      defaultMessage: 'Continue',
                       description: 'Next button text',
                     })}
                   </Button>
