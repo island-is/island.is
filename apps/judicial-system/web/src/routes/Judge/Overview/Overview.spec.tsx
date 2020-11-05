@@ -58,7 +58,7 @@ describe('/domari-krafa with an ID', () => {
     ).not.toBeDisabled()
   })
 
-  test('should display the string lausagæsla in custody restrictions if there are no custody restrictions', async () => {
+  test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -80,7 +80,11 @@ describe('/domari-krafa with an ID', () => {
     )
 
     // Assert
-    expect(await waitFor(() => screen.getByText('Lausagæsla'))).toBeTruthy()
+    expect(
+      await waitFor(() =>
+        screen.getByText('Ekki er farið fram á takmarkanir á gæslu'),
+      ),
+    ).toBeTruthy()
   })
 
   test('should display the approprieate custody restriction if there are any', async () => {
