@@ -145,7 +145,13 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                               </Typography>
                             </Stack>
                           }
-                          bottomContent={<CardsSlider items={slice.pages} />}
+                          bottomContent={
+                            <CardsSlider
+                              items={slice.pages.filter(
+                                (x) => x.title && x.slug,
+                              )}
+                            />
+                          }
                         />
                       </ContentBlock>
                     </Box>
