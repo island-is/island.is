@@ -38,7 +38,6 @@ interface InputComponentProps {
   type?: 'text' | 'number' | 'email' | 'tel'
   icon?: IconType
   iconType?: Type
-  iconClassName?: string
   /**
    * While true hover state will not show and focus state will be allways on
    */
@@ -114,7 +113,6 @@ export const Input = forwardRef(
       type,
       icon,
       iconType = 'filled',
-      iconClassName,
       size = 'md',
       fixedFocusState,
       ...inputProps
