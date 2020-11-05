@@ -12,7 +12,7 @@ export default {
   identityServer: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '',
-    jwksUri: `${process.env.IDENTITY_SERVER_JWKS_URI}`,
+    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
