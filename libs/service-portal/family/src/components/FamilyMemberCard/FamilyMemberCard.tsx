@@ -1,7 +1,8 @@
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   getNameAbbreviation,
+  formatNationalId,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
@@ -11,13 +12,13 @@ import * as styles from './FamilyMemberCard.treat'
 interface Props {
   title: string
   nationalId?: string
-  userInfoNationalId?: string
+  familyRelation?: string
 }
 
 export const FamilyMemberCard: FC<Props> = ({
   title,
   nationalId,
-  userInfoNationalId,
+  familyRelation,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -46,21 +47,43 @@ export const FamilyMemberCard: FC<Props> = ({
           </Text>
         </Box>
         <div>
-          <Text variant="h3" color="blue400">
-            {title}
-          </Text>
+          {familyRelation && (
+            <Text variant="eyebrow" color="purple400">
+              {formatMessage(
+                familyRelation === 'child'
+                  ? {
+                      id: 'sp.family:child',
+                      defaultMessage: 'Barn',
+                    }
+                  : familyRelation === 'spouse'
+                  ? {
+                      id: 'sp.family:spouse',
+                      defaultMessage: 'Maki',
+                    }
+                  : {
+                      id: 'sp.family:family-member',
+                      defaultMessage: 'Fjölskyldumeðlimur',
+                    },
+              )}
+            </Text>
+          )}
+          <Box marginBottom={1}>
+            <Text variant="h3" color="dark400">
+              {title}
+            </Text>
+          </Box>
           {nationalId && (
-            <div>
+            <Text fontWeight="light">
               {formatMessage({
                 id: 'service.portal:natreg',
                 defaultMessage: 'Kennitala',
               })}
-              : {nationalId}
-            </div>
+              : {formatNationalId(nationalId)}
+            </Text>
           )}
         </div>
       </Box>
-      {nationalId && userInfoNationalId !== nationalId && (
+      {nationalId && (
         <Box
           display="flex"
           alignItems="flexEnd"

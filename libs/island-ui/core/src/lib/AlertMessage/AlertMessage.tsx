@@ -5,6 +5,7 @@ import { Icon as IconType } from '../IconRC/iconMap'
 import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import * as styles from './AlertMessage.treat'
+import { Stack } from '../Stack/Stack'
 
 export type AlertMessageType = 'error' | 'info' | 'success' | 'warning'
 
@@ -49,7 +50,7 @@ const variantStyles: VariantStyles = {
 export interface AlertMessageProps {
   type: AlertMessageType
   title: string
-  message: string
+  message?: string
 }
 
 export const AlertMessage: React.FC<AlertMessageProps> = ({
@@ -67,17 +68,26 @@ export const AlertMessage: React.FC<AlertMessageProps> = ({
       borderColor={variant.borderColor}
       borderWidth="standard"
     >
-      <Box display="flex" alignItems="center" marginBottom={1}>
-        <Box display="flex" alignItems="center" marginRight={2} flexShrink={0}>
-          <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
+      <Stack space={1}>
+        <Box display="flex" alignItems="center">
+          <Box
+            display="flex"
+            alignItems="center"
+            marginRight={2}
+            flexShrink={0}
+          >
+            <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
+          </Box>
+          <Text as="h5" variant="h5">
+            {title}
+          </Text>
         </Box>
-        <Text as="h5" variant="h5">
-          {title}
-        </Text>
-      </Box>
-      <Box className={styles.messageWrap}>
-        <Text variant="small">{message}</Text>
-      </Box>
+        {message && (
+          <Box className={styles.messageWrap}>
+            <Text variant="small">{message}</Text>
+          </Box>
+        )}
+      </Stack>
     </Box>
   )
 }
