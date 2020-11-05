@@ -2,7 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 const merge = require('deepmerge')
-
+import { Field } from '../types/Fields'
 import { Application, FormValue } from '../types/Application'
 import {
   Form,
@@ -178,4 +178,34 @@ export function formatText(
     return formatMessage(descriptor, values)
   }
   return formatMessage(text)
+}
+
+// periods[3].startDate -> 3
+// notPartOfRepeater -> -1
+// periods[5ab33f1].id -> -1
+export function extractRepeaterIndexFromField(field: Field): number {
+  if (!field.isPartOfRepeater) {
+    return -1
+  }
+  let repeaterIndex = ''
+  let foundBracketOpen = false
+  for (let i = 0; i < field.id.length; i++) {
+    const char = field.id.charAt(i)
+    if (char === ']') {
+      break
+    }
+    if (!foundBracketOpen && char === '[') {
+      foundBracketOpen = true
+    } else if (foundBracketOpen) {
+      const partOfIndex = parseInt(char, 10)
+      if (isNaN(partOfIndex)) {
+        return -1
+      }
+      repeaterIndex += char
+    }
+  }
+  if (repeaterIndex.length) {
+    return parseInt(repeaterIndex, 10)
+  }
+  return -1
 }

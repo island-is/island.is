@@ -31,10 +31,10 @@ import {
   UpdateCaseDto,
 } from './dto'
 import { Case, Notification, SignatureResponse } from './models'
+import { generateRequestPdf } from './pdf'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 import { transitionCase as transitionUpdate } from './case.state'
-import { generateRequestPdf } from './case.pdf'
 
 @Controller('api')
 @ApiTags('cases')

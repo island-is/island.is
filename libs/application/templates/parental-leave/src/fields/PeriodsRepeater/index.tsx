@@ -29,6 +29,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
     },
   ]
 
+  const editable = application.state === 'draft'
   return (
     <Box>
       <FieldDescription description="These are your already selected parental leave periods. If the other parent has agreed to share their period leave information, then those period leaves are visible below." />
@@ -39,14 +40,17 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
           titleSmall="Birth date"
           periods={formatPeriods(
             application.answers.periods as Period[],
-            otherParentPeriods,
+            editable ? otherParentPeriods : [],
           )}
           onDeletePeriod={removeRepeaterItem}
+          editable={editable}
         />
       </Box>
-      <Button size="small" icon="add" onClick={expandRepeater}>
-        Add another period
-      </Button>
+      {editable && (
+        <Button size="small" icon="add" onClick={expandRepeater}>
+          Add another period
+        </Button>
+      )}
     </Box>
   )
 }
