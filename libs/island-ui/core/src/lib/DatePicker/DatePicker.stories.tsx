@@ -36,6 +36,20 @@ export const Basic = () => {
     </Wrap>
   )
 }
+
+export const WithSelectedDate = () => (
+  <>
+    <Wrap>
+      <DatePicker
+        label="Date"
+        placeholderText="Pick a date"
+        selected={new Date()}
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </Wrap>
+  </>
+)
+
 export const LocaleIS = () => {
   return (
     <>
@@ -75,3 +89,18 @@ export const MinimumDate = () => {
     </div>
   )
 }
+
+export const WithErrors = () => (
+  <>
+    <Wrap>
+      <DatePicker
+        label="Date"
+        placeholderText="Pick a date"
+        selected={new Date()}
+        hasError
+        errorMessage="This date is somewhat incorrect"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </Wrap>
+  </>
+)
