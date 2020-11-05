@@ -316,10 +316,21 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .text('Úrskurðarorð', { align: 'center' })
     .font('Helvetica')
     .fontSize(12)
-    .text(formatConclusion(existingCase), {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      formatConclusion(
+        existingCase.accusedNationalId,
+        existingCase.accusedName,
+        existingCase.rejecting,
+        existingCase.custodyEndDate,
+        existingCase.custodyRestrictions.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        ),
+      ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`, {

@@ -41,18 +41,22 @@ export function formatCourtCaseNumber(
   )} ${courtCaseNumber}`
 }
 
-export function formatConclusion(existingCase: Case): string {
-  return existingCase.rejecting
+export function formatConclusion(
+  accusedNationalId: string,
+  accusedName: string,
+  rejecting: boolean,
+  custodyEndDate: Date,
+  isolation: boolean,
+): string {
+  return rejecting
     ? 'Beiðni um gæsluvarðhald hafnað.'
-    : `Kærði, ${existingCase.accusedName} kt.${
-        existingCase.accusedNationalId
-      } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
-        existingCase.custodyEndDate,
-        'PPPp',
-      )}.${
-        existingCase.custodyRestrictions?.includes(
-          CaseCustodyRestrictions.ISOLATION,
-        )
+    : `Kærði, ${accusedName} ${formatNationalId(
+        accusedNationalId,
+      )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
+        custodyEndDate,
+        'PPPPp',
+      )?.replace('dagur,', 'dagsins')}.${
+        isolation
           ? ' Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.'
           : ''
       }`
