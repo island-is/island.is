@@ -1,10 +1,8 @@
 import React from 'react'
-import fetchMock from 'fetch-mock'
-import { render, waitFor } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { DetentionRequests } from './'
 import { CaseState } from '@island.is/judicial-system/types'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
+import { MemoryRouter, Route } from 'react-router-dom'
 import { userContext } from '../../utils/userContext'
 import {
   mockJudgeUserContext,
@@ -12,6 +10,8 @@ import {
 } from '../../utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CasesQuery } from './DetentionRequests'
+import * as Constants from '../../utils/constants'
+import '@testing-library/jest-dom'
 
 const mockCasesQuery = [
   {
@@ -24,7 +24,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_1',
             created: '2020-09-16T19:50:08.033Z',
-            state: 'DRAFT',
+            state: CaseState.DRAFT,
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
             accusedName: 'Jon Harring',
@@ -33,7 +33,7 @@ const mockCasesQuery = [
           {
             id: 'test_id_2',
             created: '2020-09-16T19:50:08.033Z',
-            state: 'DRAFT',
+            state: CaseState.DRAFT,
             policeCaseNumber: 'string',
             accusedNationalId: 'string',
             accusedName: 'Jon Harring',
@@ -46,7 +46,7 @@ const mockCasesQuery = [
             policeCaseNumber: '008-2020-X',
             accusedNationalId: '012345-6789',
             accusedName: 'Erlingur L Kristinsson',
-            custodyEndDate: '2020-11-01T12:31:00.000Z',
+            custodyEndDate: '2020-11-11T12:31:00.000Z',
           },
         ],
       },
@@ -55,22 +55,26 @@ const mockCasesQuery = [
 ]
 
 describe('Detention requests route', () => {
-  test('should list all cases that are not a draft a list if you are a judge', async () => {
-    const history = createMemoryHistory()
-
-    const { getAllByTestId } = render(
+  test('should list all cases that are not a draft in a list if you are a judge', async () => {
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await waitFor(() => getAllByTestId('detention-requests-table-row'))
-
-    expect(getAllByTestId('detention-requests-table-row').length).toEqual(
+    expect(
+      await waitFor(
+        () => screen.getAllByTestId('detention-requests-table-row').length,
+      ),
+    ).toEqual(
       mockCasesQuery[0].result.data.cases.filter((dr) => {
         return dr.state !== CaseState.DRAFT
       }).length,
@@ -78,102 +82,111 @@ describe('Detention requests route', () => {
   })
 
   test('should display the judge logo if you are a judge', async () => {
-    const history = createMemoryHistory()
-
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await waitFor(() => getByTestId('judge-logo'))
-
-    expect(getByTestId('judge-logo')).toBeTruthy()
+    expect(
+      await waitFor(() => screen.getByTestId('judge-logo')),
+    ).toBeInTheDocument()
   })
 
   test('should not display a button to create a request if you are a judge', async () => {
-    const history = createMemoryHistory()
-
-    const { queryByText } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await waitFor(() => queryByText('Stofna nýja kröfu'))
-    expect(queryByText('Stofna nýja kröfu')).toBeNull()
+    expect(
+      await waitFor(() =>
+        screen.queryByRole('button', { name: /Stofna nýja kröfu/i }),
+      ),
+    ).not.toBeInTheDocument()
   })
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {
-    const history = createMemoryHistory()
-
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await waitFor(() => getByTestId('prosecutor-logo'))
-
-    expect(getByTestId('prosecutor-logo')).toBeTruthy()
+    expect(
+      await waitFor(() => screen.getByTestId('prosecutor-logo')),
+    ).toBeInTheDocument()
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {
-    const history = createMemoryHistory()
-
-    const { getAllByTestId } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await waitFor(() => getAllByTestId('detention-requests-table-row'))
-
-    expect(getAllByTestId('detention-requests-table-row').length).toEqual(
-      mockCasesQuery[0].result.data.cases.length,
-    )
+    expect(
+      await waitFor(
+        () => screen.getAllByTestId('detention-requests-table-row').length,
+      ),
+    ).toEqual(mockCasesQuery[0].result.data.cases.length)
   })
 
   test('should display custody end date if case has ACCEPTED status', async () => {
-    const history = createMemoryHistory()
-
-    const { queryByText } = render(
+    render(
       <MockedProvider mocks={mockCasesQuery} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await waitFor(() => queryByText('1. nóv. 2020'))
-
-    expect(queryByText('1. nóv. 2020')).toBeTruthy()
-
-    fetchMock.restore()
+    expect(
+      await waitFor(() => screen.getByText('11. nóv. 2020')),
+    ).toBeInTheDocument()
   })
 
   test('should display an error alert if the api call fails', async () => {
-    const history = createMemoryHistory()
-
-    const { getByTestId, queryByTestId } = render(
+    render(
       <MockedProvider
         mocks={[
           {
@@ -186,16 +199,24 @@ describe('Detention requests route', () => {
         addTypename={false}
       >
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <DetentionRequests />
-          </Router>
+          <MemoryRouter
+            initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
+          >
+            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
-    await waitFor(() => getByTestId('detention-requests-error'))
 
-    expect(queryByTestId('detention-requests-table')).toBeNull()
-    expect(getByTestId('detention-requests-error')).toBeTruthy()
-    fetchMock.restore()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(
+      await waitFor(() =>
+        screen.getByText(
+          'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
+        ),
+      ),
+    ).toBeInTheDocument()
   })
 })
