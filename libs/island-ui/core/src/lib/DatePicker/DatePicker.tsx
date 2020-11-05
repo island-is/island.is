@@ -18,12 +18,27 @@ import * as coreStyles from './react-datepicker.treat'
 import { Input, InputProps } from '../Input/Input'
 import { VisuallyHidden } from 'reakit'
 
-type Locale = 'is' | 'pl' | 'en'
+const languageConfig = {
+  is: {
+    format: 'dd.MM.yyyy',
+    locale: is,
+  },
+  en: {
+    format: 'MM/dd/yyyy',
+    locale: en,
+  },
+  pl: {
+    format: 'dd.MM.yyyy',
+    locale: pl,
+  },
+}
+
+type LocaleKeys = keyof typeof languageConfig
 
 interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
-  locale?: Locale
+  locale?: LocaleKeys
   minDate?: ReactDatePickerProps['minDate']
   selected?: ReactDatePickerProps['selected']
   disabled?: boolean
@@ -53,19 +68,6 @@ interface CustomHeaderProps {
   locale: Locale
 }
 
-const getFormat = (locale: Locale) => {
-  switch (locale) {
-    case 'is':
-      return 'dd.MM.yyyy'
-    case 'en':
-      return 'MM/dd/yyyy'
-    case 'pl':
-      return 'dd.MM.yyyy'
-    default:
-      return 'dd.MM.yyyy'
-  }
-}
-
 export const DatePicker: React.FC<DatePickerProps> = ({
   id,
   label,
@@ -87,6 +89,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
+  const currentLanguage = languageConfig[locale]
 
   useEffect(() => {
     if (locale === 'is') {
@@ -102,9 +105,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
-          locale={locale}
+          locale={currentLanguage.locale}
           minDate={minDate}
-          dateFormat={getFormat(locale)}
+          dateFormat={currentLanguage.format}
           showPopperArrow={false}
           popperPlacement="bottom-start"
           popperModifiers={{
@@ -142,7 +145,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             />
           }
           renderCustomHeader={(props) => (
-            <CustomHeader locale={locale} {...props} />
+            <CustomHeader locale={currentLanguage.locale} {...props} />
           )}
         />
       </div>
@@ -169,10 +172,6 @@ const CustomInput = ({
   />
 )
 
-const getLocale = (locale: Locale) => {
-  return locale === 'is' ? is : locale === 'pl' ? pl : en
-}
-
 const monthsIndex = [...Array(12).keys()]
 
 const CustomHeader = ({
@@ -182,14 +181,11 @@ const CustomHeader = ({
   changeMonth,
   locale,
 }: CustomHeaderProps) => {
-  const currentLocale = getLocale(locale)
   const monthRef = useRef<HTMLSpanElement>(null)
-  const month = currentLocale.localize
-    ? currentLocale.localize.month(date.getMonth())
-    : ''
+  const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
   const months = monthsIndex.map((i) => {
-    if (currentLocale.localize) {
-      return currentLocale.localize.month(i)
+    if (locale.localize) {
+      return locale.localize.month(i)
     }
     return
   })
