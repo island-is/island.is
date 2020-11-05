@@ -23,6 +23,7 @@ export const createCaseFromDraft = (caseDraft: string): Case => {
     accusedNationalId: caseDraftJSON.accusedNationalId ?? '',
     accusedName: caseDraftJSON.accusedName ?? '',
     accusedAddress: caseDraftJSON.accusedAddress ?? '',
+    accusedGender: caseDraftJSON.accusedGender ?? '',
     court: caseDraftJSON.court ?? 'Héraðsdómur Reykjavíkur',
     arrestDate: caseDraftJSON.arrestDate ?? null,
     requestedCourtDate: caseDraftJSON.requestedCourtDate ?? null,
