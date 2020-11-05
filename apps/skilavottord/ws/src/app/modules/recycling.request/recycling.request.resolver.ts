@@ -33,6 +33,14 @@ export class RecyclingRequestResolver {
     return res
   }
 
+  @Query(() => Boolean)
+  async skilavottordDeRegisterVehicle(
+    @Args('vehiclePermno') nid: string,
+    @Args('recyclingPartner') station: string,
+  ): Promise<boolean> {
+    return this.recyclingRequestService.deRegisterVehicle(nid, station)
+  }
+
   @Mutation(() => Boolean)
   async createSkilavottordRecyclingRequest(
     @Args('requestType') requestType: string,

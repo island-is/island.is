@@ -56,31 +56,28 @@ const App: React.FC = () => {
                   return <DetentionRequests />
                 }}
               />
-              <Route path={Constants.CONFIRMATION_ROUTE}>
+              <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
                 <Confirmation />
               </Route>
-              <Route path={Constants.RULING_STEP_TWO_ROUTE}>
+              <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
                 <RulingStepTwo />
               </Route>
-              <Route path={Constants.RULING_STEP_ONE_ROUTE}>
+              <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
                 <RulingStepOne />
               </Route>
-              <Route path={Constants.COURT_DOCUMENT_ROUTE}>
+              <Route path={`${Constants.COURT_DOCUMENT_ROUTE}/:id`}>
                 <CourtRecord />
               </Route>
-              <Route path={Constants.STEP_THREE_ROUTE}>
+              <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
                 <Overview />
               </Route>
-              <Route path={Constants.STEP_TWO_ROUTE}>
+              <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
                 <StepTwo />
               </Route>
               <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
                 <JudgeOverview />
               </Route>
-              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-                <StepOne />
-              </Route>
-              <Route path={Constants.STEP_ONE_ROUTE}>
+              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
                 <StepOne />
               </Route>
               <Route path={Constants.DETENTION_REQUESTS_ROUTE}>

@@ -5,6 +5,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseGender,
   CaseState,
 } from '@island.is/judicial-system/types'
 
@@ -35,6 +36,9 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly accusedAddress?: string
+
+  @Field(() => String, { nullable: true })
+  readonly accusedGender?: CaseGender
 
   @Field({ nullable: true })
   readonly court?: string
@@ -80,6 +84,18 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
+
+  @Field({ nullable: true })
+  readonly courtDate?: string
+
+  @Field({ nullable: true })
+  readonly courtRoom?: string
+
+  @Field({ nullable: true })
+  readonly defenderName?: string
+
+  @Field({ nullable: true })
+  readonly defenderEmail?: string
 
   @Field({ nullable: true })
   readonly courtStartTime?: string

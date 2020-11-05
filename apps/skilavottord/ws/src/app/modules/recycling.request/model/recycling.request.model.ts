@@ -37,7 +37,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   recyclingPartnerId!: string
 
