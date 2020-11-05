@@ -1,1 +1,1 @@
-export * from './CompanyListContainer'
+export * from './CompanyList'

@@ -1,38 +1,27 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Box, Stack, Text, Link } from '@island.is/island-ui/core'
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import * as styles from './CompanyList.treat'
 
-export const RECYCLING_PARTNERS = gql`
-  query skilavottordAllActiveRecyclingPartners {
-    skilavottordAllActiveRecyclingPartners {
-      companyId
-      companyName
-      address
-      postnumber
-      city
-      website
-      phone
-      active
-    }
-  }
-`
+interface CompanyListProps {
+  recyclingPartners: RecyclingPartner[]
+}
 
-export const CompanyList = () => {
-  const { data, error, loading } = useQuery(RECYCLING_PARTNERS)
+interface RecyclingPartner {
+  companyName: string
+  address: string
+  postnumber: string
+  city: string
+  phone: string
+  website: string
+}
 
-  if (error || (loading && !data)) {
-    return null
-  }
-
-  const recyclingPartners = data?.skilavottordAllActiveRecyclingPartners || []
+export const CompanyList: FC<CompanyListProps> = ({ recyclingPartners }) => {
   const sortedPartners = recyclingPartners.slice().sort((a, b) => {
     return a.city < b.city ? -1 : 1
   })
 
   const createLink = (link: string) => {
-    return link.indexOf('http://') === -1 ? `https://${link}` : link
+    return link.indexOf('https://') === -1 ? `https://${link}` : link
   }
 
   return (

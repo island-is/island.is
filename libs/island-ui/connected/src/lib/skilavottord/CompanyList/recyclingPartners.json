@@ -1,0 +1,18 @@
+[
+  {
+    "companyName": "Vaka",
+    "address": "Héðinsgata 2",
+    "postnumber": "105",
+    "city": "Reykjavík",
+    "website": "https://vaka.is/",
+    "phone": "+354 567 6700"
+  },
+  {
+    "companyName": "Hringrás",
+    "address": "Klettagarðar 9",
+    "postnumber": "104",
+    "city": "Reykjavík",
+    "website": "https://hringras.is/",
+    "phone": "+354 550 1900"
+  }
+]
