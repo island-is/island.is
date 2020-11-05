@@ -43,7 +43,7 @@ export interface ButtonProps {
   onFocus?: NativeButtonProps['onFocus']
   onBlur?: NativeButtonProps['onBlur']
   children?: ReactNode
-  size?: Exclude<keyof typeof styles.size, 'utility'>
+  size?: Exclude<keyof typeof styles.size, 'utility' | 'textSmall'>
   disabled?: boolean
   focusable?: boolean
   fluid?: boolean
@@ -79,9 +79,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
           styles.variants[variant],
           styles.colors[variant][colorScheme],
           {
-            [styles.size[size]]: variant !== 'utility' && !circle,
+            [styles.size[size]]:
+              variant !== 'utility' &&
+              !circle &&
+              !(variant === 'text' && size === 'small'),
             [styles.fluid]: fluid,
             [styles.size.utility]: variant === 'utility',
+            [styles.size.textSmall]: variant === 'text' && size === 'small',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:

@@ -2,6 +2,7 @@ import { CaseTransition } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'
+import setSeconds from 'date-fns/setSeconds'
 
 import { validate } from './validate'
 
@@ -60,7 +61,10 @@ export const parseTime = (date: string, time: string) => {
     validate(time, 'time-format').isValid
   ) {
     const dateMinutes = formatISO(
-      setMinutes(dateHours, parseInt(timeWithoutColon.substr(2, 4))),
+      setSeconds(
+        setMinutes(dateHours, parseInt(timeWithoutColon.substr(2, 4))),
+        0,
+      ),
     )
 
     return dateMinutes

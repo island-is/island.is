@@ -2,6 +2,7 @@ FROM alpine/k8s:1.13.12
 
 RUN addgroup runners && adduser -D runner -G runners
 USER runner
+ENV CLUSTER=dev-cluster01
 
-CMD aws eks --region eu-west-1 update-kubeconfig --name dev-cluster01 ; \
+CMD aws eks --region eu-west-1 update-kubeconfig --name $CLUSTER ; \
     kubectl port-forward -n $TARGET_NAMESPACE svc/$TARGET_SVC --address 0.0.0.0 8080:$TARGET_PORT 

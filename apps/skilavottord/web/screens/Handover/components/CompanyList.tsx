@@ -1,11 +1,11 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
-import { GET_ALL_ACTIVE_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
+import { ALL_ACTIVE_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 import { ListItem } from '@island.is/skilavottord-web/components'
 
 const CompanyList = () => {
-  const { data, error, loading } = useQuery(GET_ALL_ACTIVE_RECYCLING_PARTNERS)
+  const { data, error, loading } = useQuery(ALL_ACTIVE_RECYCLING_PARTNERS)
 
   if (error || (loading && !data)) {
     return null

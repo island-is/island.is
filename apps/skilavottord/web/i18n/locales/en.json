@@ -95,6 +95,7 @@
       "payment": "Payment"
     },
     "info": {
+      "oldDeregistration": "The car has been successfully recycled, there is no more action needed.",
       "payment": "Money will be payed by Fjársýsla ríkisins to your state collector within 2 days of the payment has been initiated. You will find your payment",
       "paymentLinkText": "your financial pages"
     },
@@ -103,6 +104,11 @@
       "company": "Handed over to",
       "authority": "Car deregistered with Samgöngustofa",
       "fund": "Car payment inititated by Fjársýsla ríkisins"
+    },
+    "error": {
+      "title": "Problem connecting to database",
+      "message": "We ran into a problem getting information about your car. Please try again later.",
+      "primaryButton": "Back to my cars"
     },
     "buttons": {
       "close": "Close"
