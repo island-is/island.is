@@ -2,9 +2,11 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 import fs from 'fs'
 
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import {
-  capitalize,
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system/types'
+import {
   formatCustodyRestrictions,
   formatDate,
   formatLawsBroken,
@@ -17,6 +19,7 @@ import {
   formatAppeal,
   formatConclusion,
   formatCourtCaseNumber,
+  formatProsecutorDemands,
   formatRestrictions,
 } from './formatters'
 
@@ -67,9 +70,15 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica')
     .fontSize(12)
     .text(
-      `Gæsluvarðhald til ${capitalize(
-        formatDate(existingCase.requestedCustodyEndDate, 'PPPp'),
-      )}.`,
+      formatProsecutorDemands(
+        existingCase.accusedNationalId,
+        existingCase.accusedName,
+        existingCase.court,
+        existingCase.requestedCustodyEndDate,
+        existingCase.requestedCustodyRestrictions?.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        ),
+      ),
     )
     .text(' ')
     .font('Helvetica-Bold')

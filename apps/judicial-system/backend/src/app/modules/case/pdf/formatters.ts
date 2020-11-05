@@ -1,10 +1,45 @@
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
+
+export function formatProsecutorDemands(
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  requestedCustodyEndDate: Date,
+  isolation: boolean,
+): string {
+  return `Þess er krafist að ${accusedName} ${formatNationalId(
+    accusedNationalId,
+  )} verði með úrskurði ${court?.replace(
+    'Héraðsdómur',
+    'Héraðsdóms',
+  )} gert að sæta gæsluvarðhaldi til ${formatDate(
+    requestedCustodyEndDate,
+    'PPPp',
+  )}${
+    isolation
+      ? ' og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur'
+      : ''
+  }.`
+}
+
+export function formatCourtCaseNumber(
+  court: string,
+  courtCaseNumber: string,
+): string {
+  return `Málsnúmer ${court?.replace(
+    'Héraðsdómur',
+    'Héraðsdóms',
+  )} ${courtCaseNumber}`
+}
 
 export function formatConclusion(existingCase: Case): string {
   return existingCase.rejecting
@@ -66,14 +101,4 @@ export function formatAppeal(
     case CaseAppealDecision.POSTPONE:
       return `  \u2022  ${stakeholder} tekur sér lögboðinn frest.`
   }
-}
-
-export function formatCourtCaseNumber(
-  court: string,
-  courtCaseNumber: string,
-): string {
-  return `Málsnúmer ${court?.replace(
-    'Héraðsdómur',
-    'Héraðsdóms',
-  )} ${courtCaseNumber}`
 }
