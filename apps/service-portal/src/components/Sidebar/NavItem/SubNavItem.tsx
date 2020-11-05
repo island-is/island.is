@@ -1,4 +1,4 @@
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -19,9 +19,9 @@ const SubNavItemContent: FC<Props> = ({ active, onClick, children }) => (
     position="relative"
     onClick={onClick}
   >
-    <Typography fontWeight={active ? 'semiBold' : 'regular'} color="blue600">
+    <Text fontWeight={active ? 'semiBold' : 'regular'} color="blue600">
       <span className={styles.subNavItem}>{children}</span>
-    </Typography>
+    </Text>
   </Box>
 )
 
