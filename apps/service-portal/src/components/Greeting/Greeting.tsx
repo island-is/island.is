@@ -1,4 +1,4 @@
-import { Box, GridColumn, GridRow, Typography } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import * as styles from './Greeting.treat'
@@ -14,7 +14,7 @@ const Greeting: FC<{}> = () => {
     <GridRow>
       <GridColumn span={['12/12', '7/12']}>
         <Box marginTop={[2, 3, 8]} marginBottom={2}>
-          <Typography variant="h1">
+          <Text variant="h1">
             {isEveningGreeting
               ? formatMessage({
                   defaultMessage: 'Góða kvöldið,',
@@ -26,10 +26,10 @@ const Greeting: FC<{}> = () => {
                   description: 'Welcome the user during the day',
                   id: 'service.portal:good-day',
                 })}
-          </Typography>
-          <Typography variant="h3" color="purple400">
+          </Text>
+          <Text variant="h3" color="purple400">
             {userInfo?.profile.name}
-          </Typography>
+          </Text>
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
