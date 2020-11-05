@@ -20,6 +20,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     type: DataType.INTEGER,
     primaryKey: true,
     allowNull: false,
+    autoIncrement: true,
   })
   id!: number
 
