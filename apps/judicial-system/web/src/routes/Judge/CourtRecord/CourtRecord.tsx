@@ -26,9 +26,12 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 
+interface CaseData {
+  case: Case
+}
+
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [
     courtDocumentStartErrorMessage,
     setCourtDocumentStartErrorMessage,
@@ -45,12 +48,12 @@ export const CourtRecord: React.FC = () => {
     setLitigationPresentationsMessage,
   ] = useState('')
   const { id } = useParams<{ id: string }>()
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  const resCase = data?.case
+  
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = async (id: string, updateCase: UpdateCase) => {
     const { data } = await updateCaseMutation({
@@ -68,19 +71,30 @@ export const CourtRecord: React.FC = () => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
+  const defaultCourtAttendees = (wc: Case) => {
+    return wc.prosecutor.name+", "+wc.prosecutor.title+"\n"+wc.accusedName+", kt. "+wc.accusedNationalId+", kærði"
+  }
+
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (data && workingCase == null) {
+      let theCase = data.case
+      
+      if(!theCase.courtAttendees) {
+        
+        theCase = {... theCase, courtAttendees: defaultCourtAttendees(theCase)}
+
+        updateCase(
+          theCase.id,
+          parseString('courtAttendees', theCase.courtAttendees),
+        )
+      }
+
+      setWorkingCase(theCase)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [setWorkingCase, data])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={1} isLoading={isLoading}>
+    <PageLayout activeSection={1} activeSubSection={1} isLoading={loading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>
