@@ -2,11 +2,11 @@
 
 ## Adding a new script for your project
 
-We are ignoring all the auto-generated files from the repository to avoid noises, to make reviews easier on PRs and don't notify teams with code reviews when not needed.
+We ignore all the auto-generated files from the repository to avoid noises, make reviews easier on PRs, and only notifies teams with code reviews when needed.
 
-We are only tracking file that are coming from an external source, e.g. contentfulTypes.d.ts that depends on contentful to be generated. The same goes for an openapi.yaml file that comes from an external service.
+We are only tracking files from an external source, e.g., contentfulTypes.d.ts, that depend on contentful to be generated. The same goes for an openapi.yaml file that comes from an external service.
 
-When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types and open api schemas. The output is cached using nx to avoid re-generating all files again when no changes have been detected. It can go down up to ~5sec to run again.
+When you do `yarn install` the scripts will generate all the schemas and types for the project. It takes around ~45sec to generate all schemas, definitions types, and open API schemas. The output is cached using nx to avoid re-generating all files again when no changes have been detected. It can go down up to ~5sec to run again.
 
 We have 4 different types of scripts that can be added inside `workspace.json` to generate schemas and types.
 
@@ -21,7 +21,7 @@ Follow the next steps to configure your project:
 
 ### Openapi (schemas/build-open-api)
 
-First we need to create an `openApi.ts` file to define the document builder. Add this file at the root of the project along the `index.ts`.
+First, we need to create an `openApi.ts` file to define the document builder. Add this file at the root of the project along the `index.ts`.
 
 ```ts
 import { DocumentBuilder } from '@nestjs/swagger'
@@ -131,7 +131,7 @@ Then you can add it to the `workspace.json`
 
 ### Client (schemas/codegen)
 
-Last kind is the client-side consuming an `api.graphql` file.
+The last kind is the client-side consuming an `api.graphql` file.
 
 Create an `codegen.yml` file in your project
 
@@ -158,7 +158,7 @@ Finally, you need to add it inside your `workspace.json`
 }
 ```
 
-> You should use one of the following name for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
+> You should use one of the following names for the generated file from the codegen.yml configuration: `schema.d.ts`, `schema.tsx`, `schema.ts`, `possibleTypes.json`, `fragmentTypes.json` to be ignored from git.
 
 ## Generating schema and client types
 
@@ -174,7 +174,7 @@ And generate the types fetch client with:
 yarn nx run <project>:schemas/openapi-generator
 ```
 
-All api calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
+All API calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
 
 ```bash
 yarn nx run <project>:schemas/build-schema
