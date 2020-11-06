@@ -1,5 +1,4 @@
 import { User } from 'oidc-client'
-import { SubjectListDto } from '../mirage-server/models/subject'
 import { ServicePortalRoute } from '@island.is/service-portal/core'
 
 export type MenuState = 'open' | 'closed'
@@ -23,7 +22,6 @@ export type Action =
   | { type: ActionType.SetUserLoggedOut }
   | { type: ActionType.SetUserFulfilled; payload: User }
   | { type: ActionType.FetchSubjectListPending }
-  | { type: ActionType.FetchSubjectListFulfilled; payload: SubjectListDto[] }
   | { type: ActionType.FetchSubjectListFailed }
   | {
       type: ActionType.SetNotificationMenuState

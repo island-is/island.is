@@ -57,7 +57,7 @@ export class CmsSyncService {
       .then((document) => document.body._source.title)
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
-        logger.warning('Failed to get last folder hash', {
+        logger.warn('Failed to get last folder hash', {
           error: error.message,
         })
         return ''

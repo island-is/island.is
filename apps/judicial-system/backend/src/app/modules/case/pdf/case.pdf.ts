@@ -9,7 +9,6 @@ import {
 import {
   formatCustodyRestrictions,
   formatDate,
-  formatLawsBroken,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
@@ -19,6 +18,7 @@ import {
   formatAppeal,
   formatConclusion,
   formatCourtCaseNumber,
+  formatCustodyProvisions,
   formatProsecutorDemands,
   formatRestrictions,
 } from './formatters'
@@ -84,16 +84,24 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Lagaákvæði')
+    .text('Lagaákvæði sem brot varða við')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      formatLawsBroken(existingCase.lawsBroken, existingCase.custodyProvisions),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text(existingCase.lawsBroken, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text('Lagaákvæði sem krafan er byggð á')
+    .font('Helvetica')
+    .fontSize(12)
+    .text(formatCustodyProvisions(existingCase.custodyProvisions), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -136,7 +144,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `Fhl. ${existingCase.prosecutor?.name}, ${existingCase.prosecutor?.title}`,
+      `Fhl. ${existingCase.prosecutor?.name} ${existingCase.prosecutor?.title}`,
     )
     .end()
 
@@ -316,13 +324,24 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .text('Úrskurðarorð', { align: 'center' })
     .font('Helvetica')
     .fontSize(12)
-    .text(formatConclusion(existingCase), {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      formatConclusion(
+        existingCase.accusedNationalId,
+        existingCase.accusedName,
+        existingCase.rejecting,
+        existingCase.custodyEndDate,
+        existingCase.custodyRestrictions.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        ),
+      ),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
-    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`, {
+    .text(`${existingCase.judge?.name} ${existingCase.judge?.title}`, {
       align: 'center',
       paragraphGap: 0,
     })

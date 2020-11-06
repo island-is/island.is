@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 export const Paragraph: FC = ({ children }) => {
   return (
     <Box marginBottom={2}>
-      <Typography variant="p">{children}</Typography>
+      <Text>{children}</Text>
     </Box>
   )
 }

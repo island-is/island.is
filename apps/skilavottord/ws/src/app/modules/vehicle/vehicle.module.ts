@@ -15,5 +15,6 @@ import { RecyclingPartnerModel } from '../recycling.partner/model/recycling.part
     ]),
   ],
   providers: [VehicleResolver, VehicleService],
+  exports: [VehicleService],
 })
 export class VehicleModule {}

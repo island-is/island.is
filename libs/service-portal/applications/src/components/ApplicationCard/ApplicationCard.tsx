@@ -44,7 +44,7 @@ const ApplicationCard: FC<Props> = ({
           marginBottom={1}
         >
           <Typography variant="h3">{name}</Typography>
-          <Tag variant={isComplete ? 'mint' : 'purple'}>
+          <Tag variant={isComplete ? 'mint' : 'purple'} label>
             {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
