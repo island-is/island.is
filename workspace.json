@@ -1330,7 +1330,8 @@
             "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/application-system/api"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "application-system-form": {
@@ -1418,7 +1419,8 @@
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "application-system-form-e2e": {
