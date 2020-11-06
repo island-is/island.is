@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
-import { Stack, Typography, TypographyProps } from '@island.is/island-ui/core'
+import { Stack, Text, TextProps } from '@island.is/island-ui/core'
 
 export interface AdgerdirHeadingProps {
   subtitle?: string
   title?: string
   intro?: string
-  as?: TypographyProps['as']
-  variant?: TypographyProps['variant']
+  as?: TextProps['as']
+  variant?: TextProps['variant']
   main?: boolean
 }
 
@@ -25,19 +25,19 @@ export const AdgerdirHeading: FC<AdgerdirHeadingProps> = ({
   return (
     <Stack space={2}>
       {subtitle ? (
-        <Typography variant="eyebrow" as="div" color="purple400">
+        <Text variant="eyebrow" as="div" color="purple400">
           {subtitle}
-        </Typography>
+        </Text>
       ) : null}
       {title ? (
-        <Typography variant={variant} as={as}>
+        <Text variant={variant} as={as}>
           {title}
-        </Typography>
+        </Text>
       ) : null}
       {intro ? (
-        <Typography variant={main ? 'intro' : 'p'} as="p">
+        <Text variant={main ? 'intro' : 'default'} as="p">
           {intro}
-        </Typography>
+        </Text>
       ) : null}
     </Stack>
   )
