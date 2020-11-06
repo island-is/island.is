@@ -41,6 +41,12 @@ export class Case implements TCase {
   readonly accusedGender?: CaseGender
 
   @Field({ nullable: true })
+  readonly requestedDefenderName?: string
+
+  @Field({ nullable: true })
+  readonly requestedDefenderEmail?: string
+
+  @Field({ nullable: true })
   readonly court?: string
 
   @Field({ nullable: true })
