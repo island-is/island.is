@@ -37,9 +37,14 @@ export const mapPageHeader = (entry: IPageHeader): PageHeader => {
     introduction: fields.introduction ?? '',
     navigationText: fields.navigationText ?? '',
     links: (fields.links ?? []).map(mapLink),
-    slices: (fields.slices ?? []).filter((entry): entry is ITimeline => entry.sys.contentType.sys.id === 'timeline').map((slice) => {
-      const test = mapTimelineSlice(slice)
-      return test
-    }),
+    slices: (fields.slices ?? [])
+      .filter(
+        (entry): entry is ITimeline =>
+          entry.sys.contentType.sys.id === 'timeline',
+      )
+      .map((slice) => {
+        const test = mapTimelineSlice(slice)
+        return test
+      }),
   }
 }

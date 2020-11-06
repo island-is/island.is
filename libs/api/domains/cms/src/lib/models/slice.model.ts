@@ -93,7 +93,7 @@ export const Slice = createUnionType({
     TellUsAStory,
     Html,
     Image,
-    Asset
+    Asset,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })

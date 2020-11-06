@@ -159,9 +159,7 @@ const getRedirectProps = async ({
     .then((r) => r)
 
   const pageType = getUrl?.page?.contentType ?? null
-  console.log('-------RAN-------', getUrl)
-  console.log('-------RAN-------', path)
-  console.log('-------RAN-------', locale)
+
   if (!pageType) {
     return null
   }
