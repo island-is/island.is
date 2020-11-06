@@ -33,8 +33,33 @@ export class VehicleService {
     })
   }
 
-  // async create(vehicle: VehicleModel): Promise<VehicleModel> {
-  //   this.logger.debug(`Creating vehicle with vehicle id - ${vehicle.vehicleId}`)
-  //   return this.vehicleModel.create(vehicle)
-  // }
+  async create(vehicle: VehicleModel): Promise<boolean> {
+    try {
+      this.logger.info(
+        `---- Starting creating vehicle with vehicle id - ${vehicle.vehicleId} ----`,
+      )
+      // Check if Vehicle is already in database
+      const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
+      if (findVehicle) {
+        this.logger.info(
+          `vehicle ${vehicle.vehicleId} is already in the database`,
+        )
+        return true
+      }
+
+      // Save vehicle to database
+      vehicle.save()
+      this.logger.info(
+        `---- Finished creating vehicle with vehicle id - ${vehicle.vehicleId} ----`,
+      )
+      return true
+    } catch (err) {
+      this.logger.error(
+        `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId} with error: ${err}`,
+      )
+      throw new Error(
+        `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId}`,
+      )
+    }
+  }
 }
