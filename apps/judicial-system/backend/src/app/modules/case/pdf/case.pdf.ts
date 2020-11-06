@@ -330,7 +330,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
         existingCase.accusedName,
         existingCase.rejecting,
         existingCase.custodyEndDate,
-        existingCase.custodyRestrictions.includes(
+        existingCase.custodyRestrictions?.includes(
           CaseCustodyRestrictions.ISOLATION,
         ),
       ),
