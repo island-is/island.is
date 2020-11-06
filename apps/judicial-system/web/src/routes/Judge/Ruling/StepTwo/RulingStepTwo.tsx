@@ -66,7 +66,7 @@ export const RulingStepTwo: React.FC = () => {
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={3} isLoading={isLoading}>
+    <PageLayout activeSection={1} activeSubSection={4} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

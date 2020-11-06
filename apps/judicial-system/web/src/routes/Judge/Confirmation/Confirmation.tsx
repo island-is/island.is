@@ -225,7 +225,7 @@ export const Confirmation: React.FC = () => {
   }
 
   return (
-    <PageLayout activeSubSection={1} activeSection={4} isLoading={isLoading}>
+    <PageLayout activeSubSection={1} activeSection={5} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={1}>

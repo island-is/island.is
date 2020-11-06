@@ -80,7 +80,7 @@ export const CourtRecord: React.FC = () => {
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={1} isLoading={isLoading}>
+    <PageLayout activeSection={1} activeSubSection={2} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>

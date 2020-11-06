@@ -315,7 +315,7 @@ export const JudgeOverview: React.FC = () => {
             </Accordion>
           </Box>
           <FormFooter
-            nextUrl={`${Constants.COURT_DOCUMENT_ROUTE}/${id}`}
+            nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               { value: workingCase.courtCaseNumber, validations: ['empty'] },
             ])}

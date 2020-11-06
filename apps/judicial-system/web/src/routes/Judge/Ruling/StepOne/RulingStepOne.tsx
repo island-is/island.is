@@ -43,7 +43,6 @@ export const RulingStepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
   const [, setRestrictionCheckboxOne] = useState<boolean>()
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
   const [, setRestrictionCheckboxThree] = useState<boolean>()
@@ -135,7 +134,7 @@ export const RulingStepOne: React.FC = () => {
   }, [workingCase, isStepIllegal])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={2} isLoading={isLoading}>
+    <PageLayout activeSection={1} activeSubSection={3} isLoading={isLoading}>
       {workingCase ? (
         <>
           <Box marginBottom={10}>
