@@ -14,7 +14,7 @@ import {
   documentByMetaDataQuery,
 } from '../queries/documentByMetaData'
 import { MappedData, SearchIndexes, TagAggregationResponse } from '../types'
-import { SearchResponse } from '@island.is/shared/types'
+import { GetByIdResponse, SearchResponse } from '@island.is/shared/types'
 import { environment } from '../environments/environment'
 import { WebSearchAutocompleteInput } from '../dto'
 import {
@@ -127,7 +127,7 @@ export class ElasticService {
         index,
       })
     } catch (e) {
-      ElasticService.handleError(
+      return ElasticService.handleError(
         'Error in ElasticService.findByQuery',
         { query, index },
         e,
@@ -138,10 +138,9 @@ export class ElasticService {
   async findById(index: string, id: string) {
     try {
       const client = await this.getClient()
-      return client.get<any>({ id, index })
+      return client.get<GetByIdResponse<MappedData>>({ id, index })
     } catch (e) {
-      throw e
-      ElasticService.handleError(
+      return ElasticService.handleError(
         'Error in ElasticService.findById',
         { id, index },
         e,
@@ -284,7 +283,7 @@ export class ElasticService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: any) {
+  static handleError(message: string, context: any, error: any): never {
     ElasticService.logError(message, context, error)
     throw new Error(message)
   }
