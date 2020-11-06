@@ -5,6 +5,7 @@ import { NextPageContext } from 'next/dist/next-server/lib/utils'
 
 export interface Car {
   permno: string
+  vinNumber: string
   type: string
   color: string
   firstRegDate: string

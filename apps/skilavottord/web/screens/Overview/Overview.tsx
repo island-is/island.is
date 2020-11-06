@@ -1,5 +1,7 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 import {
   Box,
   Stack,
@@ -7,16 +9,13 @@ import {
   Breadcrumbs,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
 import { ActionCardContainer, ProgressCardContainer } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { useQuery } from '@apollo/client'
-import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
-import { useRouter } from 'next/router'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { InlineError } from '@island.is/skilavottord-web/components'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
+import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
