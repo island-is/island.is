@@ -30,7 +30,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               defaultMessage: 'Umsóknir',
             })}
           </Text>
-          <Tag variant="mint">
+          <Tag variant="mint" label>
             {formatMessage({
               id: 'service.portal:in-progress',
               defaultMessage: 'Í vinnslu',
@@ -58,7 +58,12 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         {mockApplicationList.map((application: Application) => (
           <Box position="relative" border="standard" key={application.id}>
             <Box position="absolute" className={styles.wipTag}>
-              <Tag variant="blue">Væntanlegt</Tag>
+              <Tag variant="blue" label>
+                {formatMessage({
+                  id: 'service.portal:coming-soon',
+                  defaultMessage: 'Væntanlegt',
+                })}
+              </Tag>
             </Box>
             <div className={styles.cardBlurWrapper}>
               <ApplicationCard
