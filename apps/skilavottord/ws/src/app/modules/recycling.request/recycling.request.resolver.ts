@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Query, Resolver, Args, Mutation, Int } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
