@@ -6,6 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  formatNationalId,
   NotFound,
   ServicePortalModuleComponent,
   UserInfoLine,
@@ -62,7 +63,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
             id: 'service.portal:natreg',
             defaultMessage: 'Kennitala',
           })}
-          content={nationalId}
+          content={formatNationalId(nationalId)}
         />
         <UserInfoLine
           label={defineMessage({

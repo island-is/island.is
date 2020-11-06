@@ -15,7 +15,7 @@ import { environment } from '../../../environments'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, Notification, SignatureResponse } from './models'
-import { generateRequestPdf, generateRulingPdf, writeFile } from './case.pdf'
+import { generateRequestPdf, generateRulingPdf, writeFile } from './pdf'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()

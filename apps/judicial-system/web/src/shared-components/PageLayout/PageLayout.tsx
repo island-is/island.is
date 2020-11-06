@@ -5,26 +5,33 @@ import {
   GridRow,
   GridColumn,
   FormStepper,
+  AlertBanner,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import { userContext } from '../../utils/userContext'
 import * as styles from './PageLayout.treat'
 import { JudgeLogo, ProsecutorLogo } from '../Logos'
+import Loading from '../Loading/Loading'
+import * as Constants from '../../utils/constants'
 import { UserRole } from '@island.is/judicial-system/types'
+import { Link } from 'react-router-dom'
 
 interface PageProps {
   children: ReactNode
   activeSection: number
   activeSubSection: number
+  isLoading: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
+  isLoading,
 }) => {
-  const uContext = useContext(userContext)
+  const { user } = useContext(userContext)
 
-  return (
+  return children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
@@ -50,11 +57,11 @@ export const PageLayout: FC<PageProps> = ({
           </GridColumn>
           <GridColumn span={['0', '0', '3/12', '3/12']}>
             <Box marginLeft={2}>
-              {uContext.user?.role === UserRole.JUDGE ? (
+              {user?.role === UserRole.JUDGE ? (
                 <Box marginBottom={7}>
                   <JudgeLogo />
                 </Box>
-              ) : uContext.user?.role === UserRole.PROSECUTOR ? (
+              ) : user?.role === UserRole.PROSECUTOR ? (
                 <Box marginBottom={7}>
                   <ProsecutorLogo />
                 </Box>
@@ -89,5 +96,29 @@ export const PageLayout: FC<PageProps> = ({
         </GridRow>
       </GridContainer>
     </Box>
+  ) : isLoading ? (
+    <Box className={styles.loadingWrapper}>
+      <Loading />
+    </Box>
+  ) : (
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <Link to={href} color="blue400" className={styles.link}>
+            {children}
+          </Link>
+        ),
+      }}
+    >
+      <AlertBanner
+        title="Mál fannst ekki"
+        description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+        variant="error"
+        link={{
+          href: Constants.DETENTION_REQUESTS_ROUTE,
+          title: 'Fara á yfirlitssíðu',
+        }}
+      />
+    </LinkContext.Provider>
   )
 }

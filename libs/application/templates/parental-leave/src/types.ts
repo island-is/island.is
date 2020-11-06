@@ -3,3 +3,10 @@ export type Period = {
   endDate: string
   ratio: number
 }
+
+export interface Payment {
+  date: string
+  tax: number
+  pensionContribution: number
+  amount: number
+}

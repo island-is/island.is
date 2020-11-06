@@ -1,4 +1,4 @@
-import { Box, Icon, IconProps, Typography } from '@island.is/island-ui/core'
+import { Box, Icon, IconProps, Text } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -40,9 +40,9 @@ const MenuItem: FC<MenuItemProps> = ({ active, title, icon, onClick }) => (
         color={active ? 'blueberry400' : 'blueberry300'}
       />
     </Box>
-    <Typography variant="pSmall" fontWeight="semiBold" color="blueberry400">
+    <Text variant="small" fontWeight="semiBold" color="blueberry400">
       {title}
-    </Typography>
+    </Text>
   </Box>
 )
 

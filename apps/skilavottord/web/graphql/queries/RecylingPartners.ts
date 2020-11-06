@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const GET_RECYCLING_PARTNER_BY_ID = gql`
+export const RECYCLING_PARTNER_BY_ID = gql`
   query getRecyclingPartner($id: Float!) {
     getRecyclingPartner(id: $id) {
       id
@@ -14,7 +14,7 @@ export const GET_RECYCLING_PARTNER_BY_ID = gql`
   }
 `
 
-export const GET_ALL_RECYCLING_PARTNERS = gql`
+export const ALL_RECYCLING_PARTNERS = gql`
   query skilavottordAllRecyclingPartners {
     skilavottordAllRecyclingPartners {
       companyId
@@ -31,7 +31,7 @@ export const GET_ALL_RECYCLING_PARTNERS = gql`
   }
 `
 
-export const GET_ALL_ACTIVE_RECYCLING_PARTNERS = gql`
+export const ALL_ACTIVE_RECYCLING_PARTNERS = gql`
   query skilavottordAllActiveRecyclingPartners {
     skilavottordAllActiveRecyclingPartners {
       companyId

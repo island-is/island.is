@@ -26,12 +26,12 @@ export class VehicleService {
     })
   }
 
-  // async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
-  //   this.logger.debug(`Finding vehicle for vehicleId - "${vehicleId}"`)
-  //   return this.vehicleModel.findOne({
-  //     where: { vehicleId },
-  //   })
-  // }
+  async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
+    this.logger.info(`Finding vehicle for vehicleId - "${vehicleId}"`)
+    return this.vehicleModel.findOne({
+      where: { vehicleId },
+    })
+  }
 
   // async create(vehicle: VehicleModel): Promise<VehicleModel> {
   //   this.logger.debug(`Creating vehicle with vehicle id - ${vehicle.vehicleId}`)

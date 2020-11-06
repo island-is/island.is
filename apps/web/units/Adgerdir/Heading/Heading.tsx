@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
-import { Box, Typography, TypographyProps } from '@island.is/island-ui/core'
+import { Box, Text, TextProps } from '@island.is/island-ui/core'
 
 interface HeadingProps {
-  variant?: TypographyProps['variant']
-  as?: TypographyProps['as']
+  variant?: TextProps['variant']
+  as?: TextProps['as']
 }
 
 export const Heading: FC<HeadingProps> = ({
@@ -13,9 +13,9 @@ export const Heading: FC<HeadingProps> = ({
 }) => {
   return (
     <Box marginTop={4} marginBottom={1}>
-      <Typography variant={variant} as={as}>
+      <Text variant={variant} as={as}>
         {children}
-      </Typography>
+      </Text>
     </Box>
   )
 }

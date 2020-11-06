@@ -49,7 +49,7 @@ export const InfoScreen: FC<Props> = ({
               <Box display="flex" marginBottom={[2, 3]}>
                 <Inline space={1}>
                   <Typography variant="h1">{formatMessage(title)}</Typography>
-                  <Tag variant="mint">
+                  <Tag variant="mint" label>
                     {formatMessage({
                       id: 'service.portal:in-progress',
                       defaultMessage: 'Í vinnslu',
