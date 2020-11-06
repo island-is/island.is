@@ -9,11 +9,6 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
 
-const httpLink = new HttpLink({
-  uri: 'http://localhost:4444/api/graphql',
-  fetch,
-})
-
 const retryLink = new RetryLink()
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -38,7 +33,14 @@ const authLink = setContext(async (_, { headers }) => {
   }
 })
 
-export const client = new ApolloClient({
-  link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
-  cache: new InMemoryCache(),
-})
+export const initializeClient = (baseApiUrl: string) => {
+  const httpLink = new HttpLink({
+    uri: `${baseApiUrl}/api/graphql`,
+    fetch,
+  })
+
+  return new ApolloClient({
+    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    cache: new InMemoryCache(),
+  })
+}
