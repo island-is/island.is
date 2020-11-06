@@ -42,14 +42,14 @@ export const HearingArrangements: React.FC = () => {
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
 
   const courtTimeRef = useRef<HTMLInputElement>()
-  
+
   const { id } = useParams<{ id: string }>()
-  
+
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  
+
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
   const updateCase = async (id: string, updateCase: UpdateCase) => {
@@ -68,14 +68,12 @@ export const HearingArrangements: React.FC = () => {
     document.title = 'Fyrirtökutími - Réttarvörslugátt'
   }, [])
 
-
   useEffect(() => {
     if (data && workingCase === null) {
       let theCase = data.case
-      
-      if(!theCase.courtDate) {
-        
-        theCase = {... theCase, courtDate: theCase.requestedCourtDate}
+
+      if (!theCase.courtDate) {
+        theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
 
         updateCase(
           theCase.id,
