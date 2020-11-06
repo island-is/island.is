@@ -18,3 +18,8 @@ export const getTime = (dateTime: string) => {
   const time = new Date(dateTime)
   return format(time, 'hh:mm')
 }
+
+export const getYear = (dateTime: string) => {
+  const date = new Date(dateTime)
+  return format(date, 'yyyy')
+}
