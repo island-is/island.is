@@ -30,19 +30,26 @@ import formatISO from 'date-fns/formatISO'
 import isNull from 'lodash/isNull'
 import isValid from 'date-fns/isValid'
 
+interface CaseData {
+  case: Case
+}
+
 export const HearingArrangements: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
   const [courtTimeErrorMessage, setCourtTimeErrorMessage] = useState('')
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
+
   const courtTimeRef = useRef<HTMLInputElement>()
+  
   const { id } = useParams<{ id: string }>()
-  const { data, loading } = useQuery(CaseQuery, {
+  
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const resCase = data?.case
+  
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
   const updateCase = async (id: string, updateCase: UpdateCase) => {
@@ -61,14 +68,24 @@ export const HearingArrangements: React.FC = () => {
     document.title = 'Fyrirtökutími - Réttarvörslugátt'
   }, [])
 
+
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setWorkingCase(resCase)
+    if (data && workingCase === null) {
+      let theCase = data.case
+      
+      if(!theCase.courtDate) {
+        
+        theCase = {... theCase, courtDate: theCase.requestedCourtDate}
+
+        updateCase(
+          theCase.id,
+          parseString('courtDate', theCase.requestedCourtDate),
+        )
+      }
+
+      setWorkingCase(theCase)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, workingCase, setWorkingCase, resCase])
+  }, [setWorkingCase, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
