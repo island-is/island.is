@@ -23,14 +23,6 @@ export class VehicleService {
   }
 
   async findAllDeregistered(): Promise<VehicleModel[]> {
-    this.logger.info('finding all deregistered...')
-    const recreq = new RecyclingRequestModel()
-    logger.debug('create test recyclingRequest')
-    recreq.nameOfRequestor = 'sssssssss'
-    recreq.vehicleId = 'FZG90'
-    recreq.requestType = 'handOver'
-    recreq.save()
-
     return await VehicleModel.findAll({
       include: [
         {
