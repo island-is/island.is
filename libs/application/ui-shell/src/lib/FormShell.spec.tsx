@@ -11,7 +11,7 @@ import {
   buildIntroductionField,
   Form,
 } from '@island.is/application/core'
-import { client } from '@island.is/application/graphql'
+import { initializeClient } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
 import { LocaleProvider } from '@island.is/localization'
 
@@ -44,7 +44,7 @@ describe(' FormShell', () => {
     let baseElement
     await act(async () => {
       const wrapper = await render(
-        <ApolloProvider client={client}>
+        <ApolloProvider client={initializeClient('')}>
           <LocaleProvider locale="is" messages={{}}>
             <FormShell
               application={application}
@@ -63,7 +63,7 @@ describe(' FormShell', () => {
   it('should render the application title', async () => {
     await act(async () => {
       await render(
-        <ApolloProvider client={client}>
+        <ApolloProvider client={initializeClient('')}>
           <LocaleProvider locale="is" messages={{}}>
             <FormShell
               application={application}

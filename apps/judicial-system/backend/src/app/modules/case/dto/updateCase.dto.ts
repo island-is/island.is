@@ -38,6 +38,16 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly requestedDefenderName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly requestedDefenderEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly court?: string
 
   @IsOptional()
