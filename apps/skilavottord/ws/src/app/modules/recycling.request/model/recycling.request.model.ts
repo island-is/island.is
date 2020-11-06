@@ -42,7 +42,7 @@ export class RecyclingRequestModel extends Model<RecyclingRequestModel> {
     type: DataType.STRING,
     allowNull: true,
   })
-  recyclingPartnerId!: string
+  recyclingPartnerId: string
 
   @Field()
   @BelongsTo(() => RecyclingPartnerModel, { foreignKey: { allowNull: true } })
