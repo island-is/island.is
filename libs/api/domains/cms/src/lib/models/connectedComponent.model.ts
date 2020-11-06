@@ -31,8 +31,6 @@ const parseJson = (fields: ISliceConnectedComponentFields) => {
   switch (fields.type) {
     case 'Skilavottord/CompanyListConnected':
       if (typeof json === 'object' && Object.keys(json).length) {
-        console.log('Skilavottord/CompanyListConnected data:', json)
-
         return {
           graphqlLink: json.graphqlLink,
         }
@@ -40,8 +38,6 @@ const parseJson = (fields: ISliceConnectedComponentFields) => {
 
       break
     case 'Skilavottord/CompanyList':
-      console.log('Skilavottord/CompanyList data:', json)
-
       if (Array.isArray(json)) {
         return json.map((x) => ({
           address: x.address ?? '',
