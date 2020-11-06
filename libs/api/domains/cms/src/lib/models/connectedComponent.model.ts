@@ -49,6 +49,7 @@ const parseJson = (fields: ISliceConnectedComponentFields) => {
           city: x.city ?? '',
           phone: x.phone ?? '',
           website: x.website ?? '',
+          companyName: x.companyName ?? '',
         }))
       }
 
