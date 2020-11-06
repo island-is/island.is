@@ -144,7 +144,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `Fhl. ${existingCase.prosecutor?.name}, ${existingCase.prosecutor?.title}`,
+      `Fhl. ${existingCase.prosecutor?.name} ${existingCase.prosecutor?.title}`,
     )
     .end()
 
@@ -341,7 +341,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     )
     .text(' ')
     .font('Helvetica-Bold')
-    .text(`${existingCase.judge?.name}, ${existingCase.judge?.title}`, {
+    .text(`${existingCase.judge?.name} ${existingCase.judge?.title}`, {
       align: 'center',
       paragraphGap: 0,
     })
