@@ -52,7 +52,7 @@ export class VehicleService {
 
   async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
     this.logger.info(`Finding vehicle for vehicleId - "${vehicleId}"`)
-    return this.vehicleModel.findOne({
+    return VehicleModel.findOne({
       where: { vehicleId },
     })
   }
