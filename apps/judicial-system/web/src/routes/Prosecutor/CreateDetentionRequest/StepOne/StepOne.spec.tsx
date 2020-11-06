@@ -154,6 +154,8 @@ describe('/krafa without ID', () => {
                     court: 'Héraðsdómur Reykjavíkur',
                     accusedName: '',
                     accusedAddress: '',
+                    requestedDefenderName: '',
+                    requestedDefenderEmail: '',
                     arrestDate: null,
                     requestedCourtDate: null,
                   },

@@ -8,10 +8,11 @@ export type Validation =
   | 'email-format'
 
 export const validate = (value: string, validation: Validation) => {
-  const v = getRegexByValidation(validation)
-  if (!value) {
+  if (!value && validation === 'empty') {
     return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
   } else {
+    const v = getRegexByValidation(validation)
+
     const isValid = v.regex.test(value)
     return { isValid, errorMessage: isValid ? '' : v.errorMessage }
   }
@@ -45,7 +46,7 @@ export const getRegexByValidation = (validation: Validation) => {
       }
     case 'email-format':
       return {
-        regex: new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g),
+        regex: new RegExp(/^$|^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g),
         errorMessage: 'Netfang ekki á réttu formi',
       }
   }
