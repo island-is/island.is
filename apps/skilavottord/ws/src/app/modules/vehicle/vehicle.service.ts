@@ -1,26 +1,50 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { VehicleModel } from './model/vehicle.model'
 import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
+import { RecyclingPartnerModel } from '../recycling.partner/model/recycling.partner.model'
 
 @Injectable()
 export class VehicleService {
   constructor(
-    @InjectModel(VehicleModel)
-    private vehicleModel: typeof VehicleModel,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @InjectModel(RecyclingRequestModel)
-    private recyclingRequestModel: typeof RecyclingRequestModel,
   ) {}
 
   async findAll(): Promise<VehicleModel[]> {
     this.logger.info('Getting all vehicles...')
-    return await this.vehicleModel.findAll({
+    return await VehicleModel.findAll({
       include: [
         {
-          model: this.recyclingRequestModel,
+          model: RecyclingRequestModel,
+        },
+      ],
+    })
+  }
+
+  async findAllDeregistered(): Promise<VehicleModel[]> {
+    this.logger.info('finding all deregistered...')
+    const recreq = new RecyclingRequestModel()
+    logger.debug('create test recyclingRequest')
+    recreq.nameOfRequestor = 'sssssssss'
+    recreq.vehicleId = 'FZG90'
+    recreq.requestType = 'handOver'
+    recreq.save()
+
+    return await VehicleModel.findAll({
+      include: [
+        {
+          model: RecyclingRequestModel,
+          where: {
+            //requestType: 'test',
+            requestType: 'handOver',
+            // recyclingPartnerId: NotNull,
+          },
+          include: [
+            {
+              model: RecyclingPartnerModel,
+            },
+          ],
         },
       ],
     })
