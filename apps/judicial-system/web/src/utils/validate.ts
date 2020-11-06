@@ -5,6 +5,7 @@ export type Validation =
   | 'time-format'
   | 'police-casenumber-format'
   | 'national-id'
+  | 'email-format'
 
 export const validate = (value: string, validation: Validation) => {
   const v = getRegexByValidation(validation)
@@ -41,6 +42,11 @@ export const getRegexByValidation = (validation: Validation) => {
           /^(0[0-9]|1[0-9]|2[0-9]|3[0-1])(0[0-9]|1[0-2])(\d{2})(-?(\d{3}){1}(0|9){1})?$/g,
         ),
         errorMessage: 'Ekki á réttu formi',
+      }
+    case 'email-format':
+      return {
+        regex: new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g),
+        errorMessage: 'Netfang ekki á réttu formi',
       }
   }
 }

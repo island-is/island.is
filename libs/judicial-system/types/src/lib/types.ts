@@ -86,6 +86,8 @@ export interface Case {
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
+  requestedDefenderName?: string
+  requestedDefenderEmail?: string
   defenderName?: string
   defenderEmail?: string
   courtStartTime?: string

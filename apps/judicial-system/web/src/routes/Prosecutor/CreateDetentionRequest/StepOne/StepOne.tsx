@@ -112,6 +112,10 @@ export const StepOne: React.FC = () => {
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] = useState<
     string
   >('')
+  const [
+    requestedDefenderEmailErrorMessage,
+    setRequestedDefenderEmailErrorMessage,
+  ] = useState<string>('')
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
     '',
   )
@@ -129,6 +133,7 @@ export const StepOne: React.FC = () => {
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const accusedNationalIdRef = useRef<HTMLInputElement>()
+  const defenderEmailRef = useRef<HTMLInputElement>()
   const arrestTimeRef = useRef<HTMLInputElement>()
   const requestedCourtTimeRef = useRef<HTMLInputElement>()
   const { data } = useQuery(CaseQuery, {
@@ -193,6 +198,8 @@ export const StepOne: React.FC = () => {
             court: workingCase.court,
             accusedName: workingCase.accusedName,
             accusedAddress: workingCase.accusedAddress,
+            requestedDefenderName: workingCase.requestedDefenderName,
+            requestedDefenderEmail: workingCase.requestedDefenderEmail,
             arrestDate: workingCase.arrestDate,
             requestedCourtDate: workingCase.requestedCourtDate,
           },
@@ -296,6 +303,7 @@ export const StepOne: React.FC = () => {
       },
       { value: workingCase?.accusedName, validations: ['empty'] },
       { value: workingCase?.accusedAddress, validations: ['empty'] },
+      { value: defenderEmailRef.current?.value, validations: ['email-format'] },
       { value: workingCase?.arrestDate, validations: ['empty'] },
       {
         value: arrestTimeRef.current?.value,
@@ -492,6 +500,67 @@ export const StepOne: React.FC = () => {
                 required
               />
             </Box>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Verjandi
+              </Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Input
+                name="requestedDefenderName"
+                label="Nafn verjanda"
+                placeholder="Fullt nafn"
+                defaultValue={workingCase.requestedDefenderName}
+                onBlur={(evt) => {
+                  if (workingCase.requestedDefenderName !== evt.target.value) {
+                    setWorkingCase({
+                      ...workingCase,
+                      requestedDefenderName: evt.target.value,
+                    })
+
+                    updateCase(
+                      workingCase.id,
+                      parseString('requestedDefenderName', evt.target.value),
+                    )
+                  }
+                }}
+              />
+            </Box>
+            <Input
+              name="requestedDefenderEmail"
+              label="Netfang verjanda"
+              placeholder="Netfang"
+              defaultValue={workingCase.requestedDefenderEmail}
+              errorMessage={requestedDefenderEmailErrorMessage}
+              hasError={requestedDefenderEmailErrorMessage !== ''}
+              onBlur={(evt) => {
+                if (workingCase.requestedDefenderEmail !== evt.target.value) {
+                  const validateField = validate(
+                    evt.target.value,
+                    'email-format',
+                  )
+
+                  setWorkingCase({
+                    ...workingCase,
+                    requestedDefenderEmail: evt.target.value,
+                  })
+
+                  if (validateField.isValid) {
+                    updateCase(
+                      workingCase.id,
+                      parseString('requestedDefenderEmail', evt.target.value),
+                    )
+                  } else {
+                    setRequestedDefenderEmailErrorMessage(
+                      validateField.errorMessage,
+                    )
+                  }
+                }
+              }}
+              onFocus={() => setRequestedDefenderEmailErrorMessage('')}
+            />
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
