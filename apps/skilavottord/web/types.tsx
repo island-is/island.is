@@ -48,6 +48,7 @@ export type RecyclingRequestTypes =
 export interface User {
   name: string
   nationalId: string
+  partnerId: string
   mobile: string
   role: string
 }
