@@ -49,19 +49,6 @@ const Overview: FC = () => {
   }
 
   if (error || (loading && !data)) {
-    const content = error ? (
-      <InlineError
-        title={t.subTitles.active}
-        message={t.error.message}
-        primaryButton={{
-          text: t.error.primaryButton,
-          action: () => router.reload(),
-        }}
-      />
-    ) : (
-      <SkeletonLoader space={2} repeat={4} />
-    )
-
     return (
       <PageLayout>
         <Box paddingBottom={[3, 3, 6, 6]}>
@@ -73,7 +60,18 @@ const Overview: FC = () => {
         <Box paddingBottom={4}>
           <Text variant="h1">{t.title}</Text>
         </Box>
-        {content}
+        {error ? (
+          <InlineError
+            title={t.subTitles.active}
+            message={t.error.message}
+            primaryButton={{
+              text: t.error.primaryButton,
+              action: () => router.reload(),
+            }}
+          />
+        ) : (
+          <SkeletonLoader space={2} repeat={4} />
+        )}
       </PageLayout>
     )
   }
