@@ -28,7 +28,12 @@ import {
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { Case, UpdateCase, CaseState } from '@island.is/judicial-system/types'
+import {
+  Case,
+  UpdateCase,
+  CaseState,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -239,7 +244,12 @@ export const StepOne: React.FC = () => {
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
-      variables: { input: { caseId: id } },
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.HEADS_UP,
+        },
+      },
     })
 
     return data?.sendNotification

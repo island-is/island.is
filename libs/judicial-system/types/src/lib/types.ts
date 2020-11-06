@@ -171,6 +171,10 @@ export interface TransitionCase {
   transition: CaseTransition
 }
 
+export interface SendNotification {
+  type: NotificationType
+}
+
 export interface PendingSignature {
   controlCode: string
   documentToken: string

@@ -9,11 +9,11 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { CaseState, NotificationType } from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { User } from '../user'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { CreateCaseDto, SendNotificationDto, UpdateCaseDto } from './dto'
 import { Case, Notification, SignatureResponse } from './models'
 import { generateRequestPdf, generateRulingPdf, writeFile } from './pdf'
 import { TransitionUpdate } from './case.state'
@@ -183,17 +183,16 @@ export class CaseService {
   }
 
   async sendNotificationByCaseId(
+    notification: SendNotificationDto,
     existingCase: Case,
     user: User,
   ): Promise<Notification> {
     this.logger.debug(`Sending a notification for case ${existingCase.id}`)
 
-    // This method should only be called if the case state is DRAFT or SUBMITTED
-
     const smsText =
-      existingCase.state === CaseState.DRAFT
+      notification.type === NotificationType.HEADS_UP
         ? this.constructHeadsUpSmsText(existingCase, user)
-        : // State is CaseState.SUBMITTED
+        : // State is NotificationType.READY_FOR_COURT
           this.constructReadyForCourtpSmsText(existingCase, user)
 
     // Production or local development with judge mobile number
@@ -206,11 +205,7 @@ export class CaseService {
 
     return this.notificationModel.create({
       caseId: existingCase.id,
-      type:
-        existingCase.state === CaseState.DRAFT
-          ? NotificationType.HEADS_UP
-          : // State is CaseState.SUBMITTED
-            NotificationType.READY_FOR_COURT,
+      type: notification.type,
       message: smsText,
     })
   }

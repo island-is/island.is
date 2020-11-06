@@ -380,7 +380,7 @@ describe('Case', () => {
     await Case.create(getCaseData()).then(async (value) => {
       await request(app.getHttpServer())
         .post(`/api/case/${value.id}/notification`)
-        .send({ nationalId: user.nationalId })
+        .send({ nationalId: user.nationalId, type: NotificationType.HEADS_UP })
         .expect(201)
         .then(async (response) => {
           // Check the response

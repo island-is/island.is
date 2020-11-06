@@ -6,6 +6,7 @@ import {
   Case,
   CaseCustodyProvisions,
   CaseTransition,
+  NotificationType,
   TransitionCase,
 } from '@island.is/judicial-system/types'
 
@@ -69,7 +70,12 @@ export const Overview: React.FC = () => {
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
-      variables: { input: { caseId: id } },
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.READY_FOR_COURT,
+        },
+      },
     })
 
     return data?.sendNotification

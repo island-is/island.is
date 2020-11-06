@@ -195,18 +195,13 @@ export class CaseController {
   ): Promise<Notification> {
     const existingCase = await this.findCaseById(id)
 
-    if (
-      existingCase.state !== CaseState.DRAFT &&
-      existingCase.state !== CaseState.SUBMITTED
-    ) {
-      throw new ForbiddenException(
-        `Cannot send a notification for a case in state ${existingCase.state}`,
-      )
-    }
-
     const user = await this.findUserByNationalId(notification.nationalId)
 
-    return this.caseService.sendNotificationByCaseId(existingCase, user)
+    return this.caseService.sendNotificationByCaseId(
+      notification,
+      existingCase,
+      user,
+    )
   }
 
   @Get('case/:id/notifications')

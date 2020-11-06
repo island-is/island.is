@@ -91,9 +91,15 @@ export class CaseResolver {
     @CurrentAuthUser() authUser: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<void> {
-    this.logger.debug(`Sending notification for case ${input.caseId}`)
+    const { caseId, ...sendNotification } = input
 
-    return backendApi.sendNotification(input.caseId, authUser.nationalId)
+    this.logger.debug(`Sending notification for case ${caseId}`)
+
+    return backendApi.sendNotification(
+      caseId,
+      authUser.nationalId,
+      sendNotification,
+    )
   }
 
   @Mutation(() => PendingSignature, { nullable: true })

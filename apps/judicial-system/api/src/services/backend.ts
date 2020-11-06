@@ -6,6 +6,7 @@ import {
   Case,
   CreateCase,
   PendingSignature,
+  SendNotification,
   SignatureResponse,
   TransitionCase,
   UpdateCase,
@@ -46,8 +47,15 @@ class BackendAPI extends RESTDataSource {
     return this.put(`case/${id}/state`, { ...transitionCase, nationalId })
   }
 
-  sendNotification(id: string, nationalId: string) {
-    return this.post(`case/${id}/notification`, { nationalId })
+  sendNotification(
+    id: string,
+    nationalId: string,
+    sendNotification: SendNotification,
+  ) {
+    return this.post(`case/${id}/notification`, {
+      ...sendNotification,
+      nationalId,
+    })
   }
 
   requestSignature(id: string): Promise<PendingSignature> {
