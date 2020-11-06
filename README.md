@@ -16,7 +16,7 @@ Digital Iceland.
 
 We are working on documentation and workflows to help external developers understand and run these solutions locally.
 
-For now, we appreciate assistance with security reviews (more eyes = better), documentation and smaller fixes.
+For now, we appreciate assistance with security reviews (more eyes = better), documentation, and smaller fixes.
 
 ### Reading material
 
@@ -37,13 +37,13 @@ You can also read up on our development stack and preferred tools:
 | Tool                     | Description                                                |
 | ------------------------ | ---------------------------------------------------------- |
 | [React]                  | UI framework                                               |
-| [NextJS]                 | front-end framework with routing and server side rendering |
+| [NextJS]                 | frontend framework with routing and server-side rendering  |
 | [Treat]                  | css-in-js                                                  |
-| [Storybook]              | develop and document React components in isolation         |
+| [Storybook]              | develop, and document React components in isolation        |
 | [Apollo Client]          | graphql client                                             |
 | [GraphQL Code Generator] | generate GraphQL clients and types                         |
 | [Cypress]                | automated browser testing tool                             |
-| [MirageJS]               | API mocking for webapps                                    |
+| [MirageJS]               | API mocking for web apps                                   |
 
 #### Backend
 
@@ -65,8 +65,8 @@ You can also read up on our development stack and preferred tools:
 
 | Tool              | Description                            |
 | ----------------- | -------------------------------------- |
-| [GraphQL]         | api protocol for our frontend projects |
-| [OpenAPI]         | specification to describe rest apis    |
+| [GraphQL]         | API protocol for our frontend projects |
+| [OpenAPI]         | specification to describe rest APIs    |
 | [Open ID Connect] | authentication protocols               |
 
 #### Repositories
@@ -82,7 +82,7 @@ You can also read up on our development stack and preferred tools:
 | ------------ | -------------------------------------------------------------------- |
 | [Docker]     | virtual machine containers for continuous integration and deployment |
 | [Kubernetes] | host docker containers in production                                 |
-| [Helm]       | kubernetes deployment configuration                                  |
+| [Helm]       | Kubernetes deployment configuration                                  |
 
 [nodejs]: https://nodejs.org/en/
 [typescript]: https://www.typescriptlang.org/
@@ -114,7 +114,7 @@ You can also read up on our development stack and preferred tools:
 
 The repository is a [monorepo](https://github.com/island-is/handbook/blob/master/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on).
 
-Our system architecture generally includes frontend projects, a graphql API gateway, and service APIs. Many of these projects are in early development.
+Our system architecture generally includes frontend projects, a GraphQL API gateway, and service APIs. Many of these projects are in early development.
 
 Featured projects:
 
@@ -206,7 +206,7 @@ Run `yarn nx dep-graph` to see a diagram of the dependencies of your projects.
 ### Making dev secrets available locally
 
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
-Additionally if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
+Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 
 All secrets labeled with the `dev` label can be fetched using `yarn env-secrets`.
 
