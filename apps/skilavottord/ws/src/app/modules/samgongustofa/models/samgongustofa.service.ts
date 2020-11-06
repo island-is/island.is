@@ -98,6 +98,7 @@ export class SamgongustofaService {
                 new VehicleInformation(
                   'HX111',
                   'black',
+                  'vinNumber',
                   'Nissan',
                   '01.01.2020',
                   true,
@@ -129,6 +130,7 @@ export class SamgongustofaService {
                     car['permno'][0],
                     car['type'][0],
                     car['color'][0],
+                    car['vin'][0],
                     car['firstregdate'][0],
                     carIsRecyclable,
                     carHasCoOwner,
