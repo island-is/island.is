@@ -106,7 +106,9 @@ export class CmsSyncService {
   }
 
   // this is triggered from ES indexer service
-  async doSync(options: SyncOptions): Promise<SyncResponse<PostSyncOptions> | null> {
+  async doSync(
+    options: SyncOptions,
+  ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
     let cmsSyncOptions: SyncOptions
 

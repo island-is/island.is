@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["node", "jest", "express"],
+    "strict": false
   },
   "include": [],
   "files": [],

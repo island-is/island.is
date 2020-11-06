@@ -14,18 +14,18 @@ import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
+  // only process articles that we consider not to be empty
+  validateArticle(singleEntry: Entry<any> | IArticle): singleEntry is IArticle {
+    return (
+      singleEntry.sys.contentType.sys.id === 'article' &&
+      !!singleEntry.fields.title
+    )
+  }
+
   processSyncData(entries: processSyncDataInput<IArticle>) {
     // only process articles that we consider not to be empty and dont have circular structures
     return entries.reduce((processedEntries: IArticle[], entry: Entry<any>) => {
-      // only process articles that we consider not to be empty
-      const validateArticle = (
-        singleEntry: Entry<any> | IArticle,
-      ): singleEntry is IArticle => {
-        return (
-          entry.sys.contentType.sys.id === 'article' && !!entry.fields.title
-        )
-      }
-      if (validateArticle(entry)) {
+      if (this.validateArticle(entry)) {
         // remove nested related articles from releated articles
         const relatedArticles = (entry.fields.relatedArticles ?? []).map(
           ({

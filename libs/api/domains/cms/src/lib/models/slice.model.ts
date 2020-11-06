@@ -94,7 +94,7 @@ export const Slice = createUnionType({
     Html,
     Image,
     Asset,
-    PageHeader
+    PageHeader,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -141,9 +141,7 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
     case 'pageHeader':
       return mapPageHeader(slice as IPageHeader)
     default:
-      throw new ApolloError(
-        `Can not convert to slice: ${contentType}`,
-      )
+      throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
 }
 
