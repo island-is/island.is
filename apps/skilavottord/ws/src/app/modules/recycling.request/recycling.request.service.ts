@@ -159,10 +159,10 @@ export class RecyclingRequestService {
       // partnerId could not be null when create requestType for recycling partner.
       if (requestType == 'deregistered' && !partnerId) {
         this.logger.error(
-          `partnerId and nationalId could not both be null when create requestType 'deregistered' for recylcing partner`,
+          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
         )
         throw new Error(
-          `partnerId and nationalId could not both be null when create requestType 'deregistered' for recylcing partner`,
+          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
         )
       }
       // Initalise new RecyclingRequest
