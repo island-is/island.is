@@ -1,5 +1,8 @@
 export default {
   production: false,
+  applicationSystem: {
+    baseApiUrl: 'http://localhost:3333',
+  },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',
