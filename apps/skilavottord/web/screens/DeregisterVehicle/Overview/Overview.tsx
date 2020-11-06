@@ -25,12 +25,10 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const partnerId = user?.partnerId ?? '8888888888'
-  const { data, error, loading } = useQuery(VEHICLES_BY_PARTNER_ID, {
+  const partnerId = user?.partnerId ?? ''
+  const { data } = useQuery(VEHICLES_BY_PARTNER_ID, {
     variables: { partnerId },
   })
-
-  console.log(data)
 
   const vehicles = data?.skilavottordRecyclingPartnerVehicles
 
@@ -79,12 +77,14 @@ const Overview: FC = () => {
             <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
           </Stack>
         </GridColumn>
-        <Box marginX={1}>
-          <Stack space={4}>
-            <Text variant="h3">{t.subtitles.history}</Text>
-            {data && <CarsTable titles={t.table} data={vehicles} />}
-          </Stack>
-        </Box>
+        {vehicles?.length > 0 && (
+          <Box marginX={1}>
+            <Stack space={4}>
+              <Text variant="h3">{t.subtitles.history}</Text>
+              <CarsTable titles={t.table} data={vehicles} />
+            </Stack>
+          </Box>
+        )}
       </Stack>
     </PartnerPageLayout>
   )
