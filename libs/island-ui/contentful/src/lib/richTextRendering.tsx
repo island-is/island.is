@@ -140,6 +140,29 @@ export interface RenderConfig {
   padding: Readonly<Array<PaddingConfig>>
 }
 
+const renderConnectedComponent = (slice) => {
+  const data = slice.json
+
+  switch (slice.componentType) {
+    case 'Skilavottord/CompanyList':
+      if (Array.isArray(data)) {
+        return <CompanyList recyclingPartners={data} />
+      }
+
+      break
+    case 'Skilavottord/CompanyListConnected':
+      if (typeof data === 'object') {
+        const { graphqlLink } = data
+
+        return <CompanyListConnected graphqlLink={graphqlLink} />
+      }
+    default:
+      break
+  }
+
+  return null
+}
+
 export const defaultRenderComponent = (
   slice: Slice,
   locale: string,
@@ -153,26 +176,7 @@ export const defaultRenderComponent = (
       })
 
     case 'ConnectedComponent':
-      const data = slice.json ?? null
-
-      switch (slice.componentType) {
-        case 'Skilavottord/CompanyList':
-          if (Array.isArray(data)) {
-            return <CompanyList recyclingPartners={data} />
-          }
-
-          break
-        case 'Skilavottord/CompanyListConnected':
-          if (typeof data === 'object') {
-            const { graphqlLink } = data
-
-            return <CompanyListConnected graphqlLink={graphqlLink} />
-          }
-        default:
-          break
-      }
-
-      return null
+      return renderConnectedComponent(slice)
     case 'FaqList':
       return <FaqList {...slice} />
 
