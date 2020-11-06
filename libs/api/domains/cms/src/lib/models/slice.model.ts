@@ -20,7 +20,7 @@ import {
   ITeamList,
   IContactUs,
   ILocation,
-  ITellUsAStory
+  ITellUsAStory,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Asset, mapAsset } from './asset.model'

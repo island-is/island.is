@@ -42,9 +42,6 @@ export const mapPageHeader = (entry: IPageHeader): PageHeader => {
         (entry): entry is ITimeline =>
           entry.sys.contentType.sys.id === 'timeline',
       )
-      .map((slice) => {
-        const test = mapTimelineSlice(slice)
-        return test
-      }),
+      .map((slice) => mapTimelineSlice(slice)),
   }
 }
