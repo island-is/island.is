@@ -10,5 +10,6 @@ import { RecyclingPartnerService } from './recycling.partner.service'
     SequelizeModule.forFeature([RecyclingPartnerModel, RecyclingRequestModel]),
   ],
   providers: [RecyclingPartnerResolver, RecyclingPartnerService],
+  exports: [RecyclingPartnerService],
 })
 export class RecyclingPartnerDbModule {}
