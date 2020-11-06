@@ -4,7 +4,7 @@ import { NextPageContext } from 'next'
 import { ApolloProvider } from '@apollo/client/react'
 import { getLocaleFromPath } from '@island.is/web/i18n/withLocale'
 import initApollo from './client'
-// build
+
 export const withApollo = (Component) => {
   const NewComponent = ({ apolloState, pageProps }) => {
     const { asPath } = useRouter()
