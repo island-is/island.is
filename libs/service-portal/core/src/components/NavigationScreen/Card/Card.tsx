@@ -2,8 +2,8 @@ import { Box, Inline, Tag, Typography } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import cn from 'classnames'
 import * as styles from './Card.treat'
+import WipCard from './WipCard'
 
 interface Props {
   title: string | MessageDescriptor
@@ -15,7 +15,14 @@ interface Props {
 const Card: FC<Props> = ({ title, description, tags, disabled }) => {
   const { formatMessage } = useLocale()
 
-  return (
+  return disabled ? (
+    <WipCard
+      label={formatMessage({
+        id: 'service.portal:in-progress',
+        defaultMessage: 'Í vinnslu',
+      })}
+    />
+  ) : (
     <Box
       position="relative"
       className={styles.card}
@@ -25,30 +32,19 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
       paddingY={3}
       paddingX={4}
     >
-      {disabled && (
-        <Box position="absolute" className={styles.tag}>
-          <Tag variant="blue">Væntanlegt</Tag>
-        </Box>
-      )}
-      <div
-        className={cn({
-          [styles.disabled]: disabled,
-        })}
-      >
-        <Box marginBottom={1}>
-          <Typography variant="h3" color="blue400">
-            {formatMessage(title)}
-          </Typography>
-        </Box>
-        <Box marginBottom={3}>{formatMessage(description)}</Box>
-        <Inline space={1}>
-          {tags.map((tag, index) => (
-            <Tag variant="purple" key={index}>
-              {formatMessage(tag)}
-            </Tag>
-          ))}
-        </Inline>
-      </div>
+      <Box marginBottom={1}>
+        <Typography variant="h3" color="blue400">
+          {formatMessage(title)}
+        </Typography>
+      </Box>
+      <Box marginBottom={3}>{formatMessage(description)}</Box>
+      <Inline space={1}>
+        {tags.map((tag, index) => (
+          <Tag variant="purple" key={index} label>
+            {formatMessage(tag)}
+          </Tag>
+        ))}
+      </Inline>
     </Box>
   )
 }

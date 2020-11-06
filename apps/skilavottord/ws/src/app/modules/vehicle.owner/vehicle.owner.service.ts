@@ -1,24 +1,41 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 import { VehicleOwnerModel } from './model/vehicle.owner.model'
 import { VehicleModel } from '../vehicle/model/vehicle.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
 
 @Injectable()
 export class VehicleOwnerService {
-  constructor(
-    @InjectModel(VehicleOwnerModel)
-    private vehicleOwnerModel: typeof VehicleOwnerModel,
-    @InjectModel(VehicleModel)
-    private vehicleModel: typeof VehicleModel,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-  ) {}
+  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   async findAll(): Promise<VehicleOwnerModel[]> {
-    const res = this.vehicleOwnerModel.findAll({
+    const res = VehicleOwnerModel.findAll({
       include: [
         {
-          model: this.vehicleModel,
+          model: VehicleModel,
+        },
+      ],
+    })
+    return res
+  }
+
+  async findRecyclingPartnerVehicles(
+    partnerId: string,
+  ): Promise<VehicleOwnerModel[]> {
+    const res = VehicleOwnerModel.findAll({
+      include: [
+        {
+          model: VehicleModel,
+          right: true,
+          include: [
+            {
+              model: RecyclingRequestModel,
+              where: {
+                //requestType: 'test',
+                recyclingPartnerId: partnerId,
+              },
+            },
+          ],
         },
       ],
     })
@@ -27,11 +44,11 @@ export class VehicleOwnerService {
 
   async findByNationalId(nationalId: string): Promise<VehicleOwnerModel> {
     this.logger.info(`Finding vehicle owner by vehicleId - "${nationalId}"`)
-    return this.vehicleOwnerModel.findOne({
+    return VehicleOwnerModel.findOne({
       where: { nationalId },
       include: [
         {
-          model: this.vehicleModel,
+          model: VehicleModel,
         },
       ],
     })

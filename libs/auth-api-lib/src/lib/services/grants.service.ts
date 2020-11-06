@@ -14,6 +14,11 @@ export class GrantsService {
     private logger: Logger,
   ) {}
 
+  /** Get's all grants and count */
+  async findAndCountAll(): Promise<{ rows: Grant[]; count: number } | null> {
+    return this.grantModel.findAndCountAll()
+  }
+
   /** Gets grants by provided parameters */
   async getAllAsync(
     subjectId: string,

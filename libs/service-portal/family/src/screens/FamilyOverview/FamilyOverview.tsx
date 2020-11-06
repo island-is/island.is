@@ -1,6 +1,6 @@
 import {
+  AlertMessage,
   Box,
-  SkeletonLoader,
   Stack,
   Text,
   Typography,
@@ -19,6 +19,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     data: natRegFamilyInfo,
     loading,
     error,
+    called,
   } = useNationalRegistryFamilyInfo()
 
   return (
@@ -43,6 +44,15 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       <Stack space={2}>
+        {called && !loading && !error && natRegFamilyInfo?.length === 0 && (
+          <AlertMessage
+            type="info"
+            title={formatMessage({
+              id: 'service.portal:no-data-present',
+              defaultMessage: 'Engar upplýsingar til staðar',
+            })}
+          />
+        )}
         {loading &&
           [...Array(3)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
@@ -52,7 +62,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
             key={index}
             title={familyMember.fullName}
             nationalId={familyMember.nationalId}
-            userInfoNationalId={userInfo.profile.natreg}
+            familyRelation={familyMember.familyRelation}
           />
         ))}
       </Stack>

@@ -7,6 +7,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import {
+  formatNationalId,
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
@@ -64,7 +65,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:natreg',
             defaultMessage: 'Kennitala',
           })}
-          content={userInfo.profile.natreg}
+          content={formatNationalId(userInfo.profile.nationalId)}
         />
         <UserInfoLine
           label={defineMessage({

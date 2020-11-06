@@ -1,63 +1,68 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { Confirmation } from './Confirmation'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
-import { mockJudgeUserContext } from '@island.is/judicial-system-web/src/utils/mocks'
+import { MemoryRouter, Route } from 'react-router-dom'
+import * as Constants from '../../../utils/constants'
+import {
+  mockCaseQueries,
+  mockJudgeUserContext,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 
 describe('Confirmation route', () => {
-  test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, () => {
+  test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        id: 'test_id',
-        accusedAppealAnnouncement: 'accusedAppealAnnouncement test',
-        accusedAppealDecision: CaseAppealDecision.ACCEPT,
-        prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
-        prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-        custodyRestrictions: [],
-      })
-    })
 
     // Act
-    const { queryByText } = render(
-      <MockedProvider mocks={[]} addTypename={false}>
+    render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
-          <Confirmation />
+          <MemoryRouter
+            initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_2`]}
+          >
+            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
+              <Confirmation />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
     // Assert
-    expect(queryByText('accusedAppealAnnouncement test')).toBeNull()
-    expect(queryByText('prosecutorAppealAnnouncement test')).toBeNull()
+    expect(
+      await waitFor(() => screen.queryByText('accusedAppealAnnouncement test')),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('prosecutorAppealAnnouncement test'),
+    ).not.toBeInTheDocument()
   })
 
-  test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, () => {
+  test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        id: 'test_id',
-        accusedAppealAnnouncement: 'accusedAppealAnnouncement test',
-        accusedAppealDecision: CaseAppealDecision.APPEAL,
-        prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
-        prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-        custodyRestrictions: [],
-      })
-    })
 
     // Act
-    const { queryByText } = render(
-      <MockedProvider mocks={[]} addTypename={false}>
+    render(
+      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
-          <Confirmation />
+          <MemoryRouter
+            initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
+          >
+            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
+              <Confirmation />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
     // Assert
-    expect(queryByText('accusedAppealAnnouncement test')).toBeTruthy()
-    expect(queryByText('prosecutorAppealAnnouncement test')).toBeTruthy()
+    expect(
+      await waitFor(() => screen.getByText('accusedAppealAnnouncement test')),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('prosecutorAppealAnnouncement test'),
+    ).toBeInTheDocument()
   })
 })

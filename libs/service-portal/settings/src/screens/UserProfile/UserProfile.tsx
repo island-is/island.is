@@ -37,15 +37,15 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={userProfile?.email || ''}
           tag={
-            userProfile?.emailVerified ? (
-              <Tag variant="darkerMint">
+            userProfile?.emailVerified === true ? (
+              <Tag variant="darkerMint" label>
                 {formatMessage({
                   id: 'sp.settings:verified',
                   defaultMessage: 'Staðfest',
                 })}
               </Tag>
-            ) : (
-              <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
+            ) : userProfile?.emailVerified === false ? (
+              <Link to={ServicePortalPath.UserProfileEditEmail}>
                 <Tag variant="red">
                   {formatMessage({
                     id: 'sp.settings:not-verified',
@@ -53,6 +53,8 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   })}
                 </Tag>
               </Link>
+            ) : (
+              <div />
             )
           }
           editLink={{
@@ -66,14 +68,14 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
           content={userProfile?.mobilePhoneNumber || ''}
           tag={
-            userProfile?.mobilePhoneNumberVerified ? (
-              <Tag variant="darkerMint">
+            userProfile?.mobilePhoneNumberVerified === true ? (
+              <Tag variant="darkerMint" label>
                 {formatMessage({
                   id: 'sp.settings:verified',
                   defaultMessage: 'Staðfest',
                 })}
               </Tag>
-            ) : (
+            ) : userProfile?.emailVerified === false ? (
               <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
                 <Tag variant="red">
                   {formatMessage({
@@ -82,6 +84,8 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                   })}
                 </Tag>
               </Link>
+            ) : (
+              <div />
             )
           }
           editLink={{

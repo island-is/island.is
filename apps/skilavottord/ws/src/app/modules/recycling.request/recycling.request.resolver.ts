@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation, Int } from '@nestjs/graphql'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -14,9 +14,15 @@ export class RecyclingRequestResolver {
 
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
+    const rr = new RecyclingRequestModel()
+    rr.nameOfRequestor = 'aaaaaaax'
+    rr.recyclingPartnerId = '8888888888'
+    rr.requestType = 'pendingVehicle'
+    rr.vehicleId = 'aes-135'
+    rr.save()
     const res = await this.recyclingRequestService.findAll()
     logger.info(
-      'skilavottordAllRecyclingRequests responce:' +
+      'skilavottordAllRecyclingRequests response:' +
         JSON.stringify(res, null, 2),
     )
     return res
@@ -33,10 +39,27 @@ export class RecyclingRequestResolver {
     return res
   }
 
-  // @Query(() => Gdpr)
-  // async getVehiclesForNationalId(
-  //   @Args('nationalId') nid: string,
-  // ): Promise<Gdpr> {
-  //   return await this.gdprService.findByNationalId(nid)
-  // }
+  @Query(() => Boolean)
+  async skilavottordDeRegisterVehicle(
+    @Args('vehiclePermno') nid: string,
+    @Args('recyclingPartner') station: string,
+  ): Promise<boolean> {
+    return this.recyclingRequestService.deRegisterVehicle(nid, station)
+  }
+
+  @Mutation(() => Boolean)
+  async createSkilavottordRecyclingRequest(
+    @Args('requestType') requestType: string,
+    @Args('permno') permno: string,
+    @Args('nameOfRequestor', { nullable: true }) name: string,
+    @Args('partnerId', { nullable: true }) partnerId: string,
+  ) {
+    await this.recyclingRequestService.createRecyclingRequest(
+      requestType,
+      permno,
+      name,
+      partnerId,
+    )
+    return true
+  }
 }

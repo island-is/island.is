@@ -10,10 +10,10 @@ export default {
     userProfileServiceBasePath: 'http://localhost:3333',
   },
   identityServer: {
-    baseUrl: 'https://siidentityserverweb20200805020732.azurewebsites.net',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
     jwksUri:
-      'https://siidentityserverweb20200805020732.azurewebsites.net/.well-known/openid-configuration/jwks',
+      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   documentService: {
     basePath: 'https://test-skjalabirting-island-is.azurewebsites.net',

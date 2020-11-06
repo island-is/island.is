@@ -34,13 +34,15 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         <Text variant="eyebrow" color="purple400">
           {card.provider}
         </Text>
-        <Tag variant="blue">{card.type}</Tag>
+        <Tag variant="blue" label>
+          {card.type}
+        </Tag>
       </Box>
       <Stack space={1}>
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
           <Text variant="h4">{card.title}</Text>
           {card.wip && (
-            <Tag variant="purple">
+            <Tag variant="purple" label>
               {formatMessage({
                 id: 'service.portal:in-progress',
                 defaultMessage: 'Í vinnslu',

@@ -107,13 +107,10 @@ describe('ApplicationFormReducer', () => {
   const initialState: ApplicationUIState = {
     application,
     activeScreen: 0,
-    activeSection: 0,
-    activeSubSection: -1,
     dataSchema,
     form,
     nationalRegistryId: '1111112199',
     screens: [],
-    progress: 0,
     sections: [],
   }
   let initializedState: ApplicationUIState
@@ -128,7 +125,6 @@ describe('ApplicationFormReducer', () => {
       expect(initializedState.screens[1].isNavigable).toBe(true)
       expect(initializedState.sections.length).toBe(2)
       expect(initializedState.activeScreen).toBe(0)
-      expect(initializedState.activeSection).toBe(0)
       expect(initializedState.application).toEqual(application)
     })
     it('should apply conditions to show or hide some screens', () => {
@@ -161,7 +157,6 @@ describe('ApplicationFormReducer', () => {
       }
       const initializedState = initializeReducer(state)
       expect(initializedState.activeScreen).toBe(4)
-      expect(initializedState.activeSection).toBe(1)
     })
     it('should go to the first screen although there are answers, if and only if the current form is in review mode', () => {
       const answers = {
@@ -178,7 +173,6 @@ describe('ApplicationFormReducer', () => {
       }
       const initializedState = initializeReducer(state)
       expect(initializedState.activeScreen).toBe(0)
-      expect(initializedState.activeSection).toBe(0)
     })
   })
   describe('next screen', () => {
@@ -186,15 +180,6 @@ describe('ApplicationFormReducer', () => {
     it('should go to the next screen', () => {
       const updatedState = ApplicationReducer(initializedState, action)
       expect(updatedState.activeScreen).toBe(1)
-      expect(updatedState.activeSection).toBe(0)
-    })
-    it('should update the active section when moving to a screen in the next section', () => {
-      const updatedState = ApplicationReducer(
-        ApplicationReducer(initializedState, action),
-        action,
-      )
-      expect(updatedState.activeScreen).toBe(2)
-      expect(updatedState.activeSection).toBe(1)
     })
     it('should not be able to go to the next screen, if the current screen is the last one', () => {
       const updatedState = ApplicationReducer(
@@ -260,14 +245,6 @@ describe('ApplicationFormReducer', () => {
         action,
       )
       expect(updatedState.activeScreen).toBe(0)
-    })
-    it('should update the active section when moving to a screen in the previous section', () => {
-      const updatedState = ApplicationReducer(
-        { ...initializedState, activeScreen: 2, activeSection: 1 },
-        action,
-      )
-      expect(updatedState.activeScreen).toBe(1)
-      expect(updatedState.activeSection).toBe(0)
     })
     it('should not be able go to the previous screen, if the current screen is the first one', () => {
       const updatedState = ApplicationReducer(initializedState, action)
@@ -337,11 +314,8 @@ describe('ApplicationFormReducer', () => {
           ...application,
           answers: { historyCars: ['VW', 'Tesla'] },
         },
-        activeSection: 0,
-        activeSubSection: 0,
         activeScreen: 0,
         nationalRegistryId: '1111112199',
-        progress: 0,
         screens: [],
         sections: [],
       }

@@ -36,18 +36,13 @@ export const FormShell: FC<{
       nationalRegistryId,
       dataSchema,
       form,
-      activeSection: 0,
-      activeSubSection: 0,
       activeScreen: 0,
-      progress: 0,
       screens: [],
       sections: [],
     },
     initializeReducer,
   )
   const {
-    activeSection,
-    activeSubSection,
     activeScreen,
     application: storedApplication,
     sections,
@@ -124,8 +119,7 @@ export const FormShell: FC<{
                   showTag={showProgressTag}
                   form={form}
                   sections={sections}
-                  activeSection={activeSection}
-                  activeSubSection={activeSubSection}
+                  screen={currentScreen}
                 />
               </Sidebar>
             </GridColumn>

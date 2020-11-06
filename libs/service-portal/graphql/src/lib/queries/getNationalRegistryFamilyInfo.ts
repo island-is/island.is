@@ -8,6 +8,7 @@ export const NATIONAL_REGISTRY_FAMILY_INFO = gql`
       gender
       address
       maritalStatus
+      familyRelation
     }
   }
 `

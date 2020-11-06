@@ -90,6 +90,13 @@ Text.args = {
   variant: 'text',
 }
 
+export const TextSmall = Template.bind({})
+TextSmall.args = {
+  children: 'Text Button',
+  variant: 'text',
+  size: 'small',
+}
+
 export const TextLarge = Template.bind({})
 TextLarge.args = {
   children: 'Text Button',
