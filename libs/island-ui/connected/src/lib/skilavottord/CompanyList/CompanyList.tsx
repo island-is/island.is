@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
 import { Box, Stack, Text, Link } from '@island.is/island-ui/core'
+
 import * as styles from './CompanyList.treat'
 
 interface CompanyListProps {
   recyclingPartners: RecyclingPartner[]
 }
 
-interface RecyclingPartner {
+export interface RecyclingPartner {
   companyName: string
   address: string
   postnumber: string
