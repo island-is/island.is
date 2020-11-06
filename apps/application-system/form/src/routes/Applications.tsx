@@ -22,15 +22,13 @@ export const Applications: FC = () => {
   const { type } = useParams()
   const history = useHistory()
   const { userInfo } = useAuth()
-  const nationalRegistryId = userInfo?.profile?.natreg
+  const nationalRegistryId = userInfo?.profile?.nationalId
 
   const { data, loading, error: applicationsError } = useQuery(
     APPLICANT_APPLICATIONS,
     {
       variables: {
-        input: {
-          typeId: type,
-        },
+        typeId: type,
       },
     },
   )
