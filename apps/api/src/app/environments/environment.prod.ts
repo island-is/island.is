@@ -1,5 +1,8 @@
 export default {
   production: true,
+  applicationSystem: {
+    baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
+  },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
     user: process.env.SOFFIA_USER,
