@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { FjarsyslaService } from '../fjarsysla/models/fjarsysla.service'
+import { RecyclingPartnerService } from '../recycling.partner/recycling.partner.service'
+import { VehicleService } from '../vehicle/vehicle.service'
 import { environment } from '../../../environments'
 
 @Injectable()
@@ -14,6 +16,10 @@ export class RecyclingRequestService {
     private httpService: HttpService,
     @Inject(FjarsyslaService)
     private fjarsyslaService: FjarsyslaService,
+    @Inject(RecyclingPartnerService)
+    private recycllingPartnerService: RecyclingPartnerService,
+    @Inject(VehicleService)
+    private vehicleService: VehicleService,
   ) {}
 
   async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
@@ -112,7 +118,7 @@ export class RecyclingRequestService {
     try {
       const res = await this.recyclingRequestModel.findAll({
         where: { vehicleId: permno },
-        order: [['updatedAt', 'DESC']],
+        order: [['createdAt', 'DESC']],
       })
 
       this.logger.info(
@@ -133,88 +139,129 @@ export class RecyclingRequestService {
     requestType: string,
     permno: string,
     nameOfRequestor: string,
-    nationalId: string,
     partnerId: string,
   ): Promise<boolean> {
     try {
       this.logger.info(
         `---- Starting update requestType for ${permno} to requestType: ${requestType} ----`,
       )
-      // nameOfRequestor, nationalId and partnerId are not required
-      // But partnerId and nationalId always come together for recycling partner
-      // otherwise it's nameOfRequestor
-
-      // All 3 optional arguments could not be null at the same time
-      if (!nameOfRequestor && !nationalId && !partnerId) {
+      // nameOfRequestor and partnerId are not required arguments
+      // But partnerId and partnerId could not both be null at the same time
+      if (!nameOfRequestor && !partnerId) {
         this.logger.error(
-          `partnerId, nationalId and nameOfRequestor could not all be at the same time.`,
+          `partnerId and nameOfRequestor could not all be at the same time.`,
         )
         throw new Error(
-          `partnerId, nationalId and nameOfRequestor could not all be at the same time.`,
+          `partnerId and nameOfRequestor could not all be at the same time.`,
         )
       }
       // If requestType is 'deregistered'
-      // partnerId and nationalId could not both be null when create requestType for recycling partner.
-      if (!nameOfRequestor && requestType == 'deregistered') {
-        if (!partnerId || !nationalId) {
-          this.logger.error(
-            `partnerId and nationalId could not both be null when create requestType 'deregistered' for recylcing partner`,
-          )
-          throw new Error(
-            `partnerId and nationalId could not both be null when create requestType 'deregistered' for recylcing partner`,
-          )
-        }
+      // partnerId could not be null when create requestType for recycling partner.
+      if (requestType == 'deregistered' && !partnerId) {
+        this.logger.error(
+          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
+        )
+        throw new Error(
+          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
+        )
       }
       // Initalise new RecyclingRequest
       const newRecyclingRequest = new RecyclingRequestModel()
       newRecyclingRequest.vehicleId = permno
       newRecyclingRequest.requestType = requestType
-      newRecyclingRequest.nameOfRequestor = nameOfRequestor
+      if (nameOfRequestor) {
+        newRecyclingRequest.nameOfRequestor = nameOfRequestor
+      }
       // is partnerId null?
       if (partnerId) {
         newRecyclingRequest.recyclingPartnerId = partnerId
+        const partner = await this.recycllingPartnerService.findByPartnerId(
+          partnerId,
+        )
+        if (!partner) {
+          throw new Error(`Could not find Partner from partnerId: ${partnerId}`)
+        }
+        newRecyclingRequest.nameOfRequestor = partner['companyName']
       }
       // Here is a bit tricky
-      // 1. Update requestType to 'handOver'
-      // 2. Then deregistered the vehicle from Samgongustofa
-      // 3. Update requestType to 'deregistered'
-      // 4. Then call fjarsysla for payment
-      // 5. Update requestType to 'paymentInitiated'
+      // 1. Check if lastest vehicle's requestType is 'pendingVehicle'
+      // 2. Set requestType to 'handOver'
+      // 3. Then deregistered the vehicle from Samgongustofa
+      // 4. Set requestType to 'deregistered'
+      // 5. Then call fjarsysla for payment
+      // 6. Set requestType to 'paymentInitiated'
       // If we encounter error then update requestType to 'paymentFailed'
+      // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
         try {
-          // 1. Update requestType to 'handOver'
-          this.logger.info(`create requestType: handOver for ${permno}`)
+          // 1. Check 'pendingVehicle' requestType
+          const resRequestType = await this.findAllWithPermno(permno)
+          if (resRequestType.length > 0) {
+            if (
+              resRequestType[0]['dataValues']['requestType'] != 'pendingVehicle'
+            ) {
+              throw new Error(
+                `Lastest requestType of vehicle's number ${permno} is not 'pendingVehicle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+              )
+            }
+            throw new Error(
+              `Could not find any requestType for vehicle's number: ${permno} in database`,
+            )
+          }
+
+          // 2. Update requestType to 'handOver'
+          this.logger.info(
+            `create requestType: handOver for ${permno} for partnerId: ${partnerId}`,
+          )
           newRecyclingRequest.requestType = 'handOver'
           await newRecyclingRequest.save()
 
-          // 2. deregistered vehicle from Samgongustofa
-          this.logger.info(`start deregistered vehicle ${permno}`)
-          await this.deRegisterVehicle(permno, partnerId) // TODO Check if it's partnerId or 10000
+          // 3. deregistered vehicle from Samgongustofa
+          this.logger.info(
+            `start deregistered vehicle ${permno} for partnerId: ${partnerId}`,
+          )
+          // partnerId 000 is Rafræn afskráning in Samgongustofa's system
+          // Samgongustofa wants to use it ('000') instead of Recycling partnerId
+          await this.deRegisterVehicle(permno, '000')
 
-          // 3. Update requestType to 'deregistered'
-          this.logger.info(`create requestType: deregistered for ${permno}`)
+          // 4. Update requestType to 'deregistered'
+          this.logger.info(
+            `create requestType: deregistered for ${permno} for partnerId: ${partnerId}`,
+          )
           newRecyclingRequest.requestType = 'deregistered'
           await newRecyclingRequest.save()
 
-          // 4. Call Fjarsysla for payment
-          this.logger.info(`start payment on vehicle ${permno}`)
-          await this.fjarsyslaService.getFjarsysluRest(nationalId, permno)
+          // 5. Call Fjarsysla for payment
+          this.logger.info(
+            `start payment on vehicle ${permno} for partnerId: ${partnerId}`,
+          )
+          // Need to send vehicleOwner's nationalId on fjarsysla API
+          const vehicle = await this.vehicleService.findByVehicleId(permno)
+          if (!vehicle) {
+            throw new Error(
+              `Could not find vehicleOwner's nationalId for vehicle's number: ${permno}`,
+            )
+          }
+          await this.fjarsyslaService.getFjarsysluRest(
+            vehicle.ownerNationalId,
+            permno,
+          )
 
-          // 5. Update requestType to 'paymentInitiated'
-          this.logger.info(`create requestType: paymentInitiated for ${permno}`)
+          // 6. Update requestType to 'paymentInitiated'
+          this.logger.info(
+            `create requestType: paymentInitiated for ${permno} for partnerId: ${partnerId}`,
+          )
           newRecyclingRequest.requestType = 'paymentInitiated'
           await newRecyclingRequest.save()
         } catch (err) {
           // If we encounter any error then update requestType to 'paymentFailed'
           newRecyclingRequest.requestType = 'paymentFailed'
-          newRecyclingRequest.recyclingPartnerId = null // If getting error on PartnerId then it's still logged
           await newRecyclingRequest.save()
           this.logger.error(
-            `Getting error while trying to deregistered permno: ${permno}, nameOfRequestor: ${nameOfRequestor} with: ${err}`,
+            `Getting error while trying to deregistered permno: ${permno} for partnerId: ${partnerId} with: ${err}`,
           )
           throw new Error(
-            `Getting error while trying to deregistered permno: ${permno}`,
+            `Getting error while trying to deregistered permno: ${permno} for partnerId: ${partnerId}`,
           )
         }
       }
