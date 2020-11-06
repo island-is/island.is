@@ -16,51 +16,57 @@ import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
 import { GlobalModules } from '../components/GlobalModules/GlobalModules'
 import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
+import * as Sentry from '@sentry/react'
 
 export const App = () => {
   return (
     <div className={styles.page}>
-      <ApolloProvider client={client}>
-        <StateProvider
-          initialState={store.initialState}
-          reducer={store.reducer}
-        >
-          <LocaleProvider locale={defaultLanguage} messages={{}}>
-            <div>
-              <UserProfileLocale />
-              <Router>
-                <Switch>
-                  <Route
-                    exact
-                    path={ServicePortalPath.MinarSidurSignInOidc}
-                    component={OidcSignIn}
-                  />
-                  <Route
-                    exact
-                    path={ServicePortalPath.MinarSidurSilentSignInOidc}
-                    component={OidcSilentSignIn}
-                  />
-                  <Route>
-                    <Authenticator>
-                      <Layout>
-                        <Switch>
-                          <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                            <Dashboard />
-                          </Route>
-                          <Route>
-                            <Modules />
-                          </Route>
-                        </Switch>
-                        <GlobalModules />
-                      </Layout>
-                    </Authenticator>
-                  </Route>
-                </Switch>
-              </Router>
-            </div>
-          </LocaleProvider>
-        </StateProvider>
-      </ApolloProvider>
+      <Sentry.ErrorBoundary fallback={'An error has occured'}>
+        <ApolloProvider client={client}>
+          <StateProvider
+            initialState={store.initialState}
+            reducer={store.reducer}
+          >
+            <LocaleProvider locale={defaultLanguage} messages={{}}>
+              <div>
+                <UserProfileLocale />
+                <Router>
+                  <Switch>
+                    <Route
+                      exact
+                      path={ServicePortalPath.MinarSidurSignInOidc}
+                      component={OidcSignIn}
+                    />
+                    <Route
+                      exact
+                      path={ServicePortalPath.MinarSidurSilentSignInOidc}
+                      component={OidcSilentSignIn}
+                    />
+                    <Route>
+                      <Authenticator>
+                        <Layout>
+                          <Switch>
+                            <Route
+                              exact
+                              path={ServicePortalPath.MinarSidurRoot}
+                            >
+                              <Dashboard />
+                            </Route>
+                            <Route>
+                              <Modules />
+                            </Route>
+                          </Switch>
+                          <GlobalModules />
+                        </Layout>
+                      </Authenticator>
+                    </Route>
+                  </Switch>
+                </Router>
+              </div>
+            </LocaleProvider>
+          </StateProvider>
+        </ApolloProvider>
+      </Sentry.ErrorBoundary>
     </div>
   )
 }
