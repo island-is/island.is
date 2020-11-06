@@ -45,7 +45,7 @@ export interface TextProps {
   lineHeight?: keyof typeof lineHeightStyles
 }
 
-export const Text = forwardRef<any, TextProps>(
+export const Text = forwardRef<HTMLElement, TextProps>(
   (
     {
       id,
