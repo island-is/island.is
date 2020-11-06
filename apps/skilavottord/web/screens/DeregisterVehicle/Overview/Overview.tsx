@@ -81,7 +81,7 @@ const Overview: FC = () => {
           <Box marginX={1}>
             <Stack space={4}>
               <Text variant="h3">{t.subtitles.history}</Text>
-              <CarsTable titles={t.table} data={vehicles} />
+              <CarsTable titles={t.table} vehicleOwner={vehicles} />
             </Stack>
           </Box>
         )}

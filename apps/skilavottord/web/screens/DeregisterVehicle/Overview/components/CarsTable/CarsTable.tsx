@@ -9,13 +9,14 @@ import {
   Body,
 } from '@island.is/skilavottord-web/components'
 import { getDate, getYear } from '@island.is/skilavottord-web/utils/dateUtils'
+import { VehicleOwner } from '@island.is/skilavottord-web/types'
 
 interface TableProps {
   titles: string[]
-  data: any
+  vehicleOwner: VehicleOwner[]
 }
 
-export const CarsTable: FC<TableProps> = ({ titles, data }) => {
+export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
   return (
     <Stack space={5}>
       <Table>
@@ -29,7 +30,7 @@ export const CarsTable: FC<TableProps> = ({ titles, data }) => {
           </Row>
         </Head>
         <Body>
-          {data.map(({ vehicles }) =>
+          {vehicleOwner.map(({ vehicles }) =>
             vehicles.map(
               ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
                 recyclingRequests.map(

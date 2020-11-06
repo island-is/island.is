@@ -35,6 +35,30 @@ export interface RecyclingPartner {
   active: boolean
 }
 
+export interface VehicleOwner {
+  nationalId: string
+  personname: string
+  vehicles: Vehicle[]
+}
+
+export interface Vehicle {
+  vehicleId: string
+  vehicleType: string
+  vehicleColor: string
+  newregDate: string
+  recyclingRequests: RecyclingRequest[]
+}
+
+export interface RecyclingRequest {
+  id: string
+  vehicleId: string
+  recyclingPartnerId: string
+  requestType: string
+  nameOfRequestor: string
+  createdAt: string
+  updatedAt: string
+}
+
 export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
 
 export type RecyclingRequestTypes =
