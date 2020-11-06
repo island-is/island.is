@@ -96,9 +96,6 @@
     "api-domains-documents": {
       "tags": []
     },
-    "api-domains-driving-license": {
-      "tags": []
-    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -322,9 +319,6 @@
       "tags": []
     },
     "services-auth-api": {
-      "tags": []
-    },
-    "services-driving-license": {
       "tags": []
     },
     "services-search-indexer": {
