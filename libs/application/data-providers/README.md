@@ -1,4 +1,4 @@
-# application-data-providers
+# Data Providers
 
 This library contains prebuilt data providers used for the application system.
 

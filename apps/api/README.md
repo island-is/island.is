@@ -1,4 +1,6 @@
-# Island.is API
+# API
+
+## About
 
 This project forms the basis of a unified API for products belonging to island.is.
 
@@ -6,9 +8,15 @@ It's built as a thin GraphQL layer on top of data and services provided by gover
 
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcblx0c3ViZ3JhcGggSXNsYW5kLmlzXG5cdFx0c3ViZ3JhcGggQVBJXG5cdFx0XHRhcHBbXCJHcmFwaFFMIHNlcnZlcjxicj48YnI-L2FwcHMvYXBpPGJyPkF1dGhlbnRpY2F0aW9uPGJyPk1ldHJpY3NcIl1cblx0XHRcdGRvbWFpbltcIlJTSyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL3Jzazxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXHRcdFx0ZG9tYWluMltcIkFwcGxpY2F0aW9ucyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL2FwcGxpY2F0aW9uczxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXG5cdFx0XHRhcHAtLT58Q29tYmluZXMgR3JhcGhRTHxkb21haW4gJiBkb21haW4yXG5cdFx0XHRkb21haW4yIC0tPiB8Q2FsbHMgc2VydmljZXN8ZG9tYWluXG5cdFx0ZW5kXG5cdFx0eC1yb2FkW1wiWC1Sb2FkIFNlY3VyaXR5IFNlcnZlclwiXVxuXHRcdG1pY3Jvc2VydmljZVtcIkFwcGxpY2F0aW9ucyBNaWNyb3NlcnZpY2U8YnI-PGJyPi9hcHBzL3NlcnZpY2VzL2FwcGxpY2F0aW9uc1wiXVxuXHRcdGRhdGFiYXNlW1wiUG9zdGdyZVNRTCBEYXRhYmFzZVwiXVxuXHRcdGRvbWFpbjIgLS0-IG1pY3Jvc2VydmljZSAtLT4gZGF0YWJhc2Vcblx0ZW5kXG5cdHN1YmdyYXBoIFJTS1xuXHRcdHgtcm9hZDJbXCJYLVJvYWQgU2VjdXJpdHkgU2VydmVyXCJdXG5cdFx0cnNrLXNlcnZpY2VbXCJSU0sgV2Vic2VydmljZVwiXVxuXHRlbmRcblxuXHRkb21haW4gLS0-IHgtcm9hZFxuXHR4LXJvYWQgLS0-IHgtcm9hZDJcblx0eC1yb2FkMiAtLT4gcnNrLXNlcnZpY2VcbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcblx0c3ViZ3JhcGggSXNsYW5kLmlzXG5cdFx0c3ViZ3JhcGggQVBJXG5cdFx0XHRhcHBbXCJHcmFwaFFMIHNlcnZlcjxicj48YnI-L2FwcHMvYXBpPGJyPkF1dGhlbnRpY2F0aW9uPGJyPk1ldHJpY3NcIl1cblx0XHRcdGRvbWFpbltcIlJTSyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL3Jzazxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXHRcdFx0ZG9tYWluMltcIkFwcGxpY2F0aW9ucyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL2FwcGxpY2F0aW9uczxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXG5cdFx0XHRhcHAtLT58Q29tYmluZXMgR3JhcGhRTHxkb21haW4gJiBkb21haW4yXG5cdFx0XHRkb21haW4yIC0tPiB8Q2FsbHMgc2VydmljZXN8ZG9tYWluXG5cdFx0ZW5kXG5cdFx0eC1yb2FkW1wiWC1Sb2FkIFNlY3VyaXR5IFNlcnZlclwiXVxuXHRcdG1pY3Jvc2VydmljZVtcIkFwcGxpY2F0aW9ucyBNaWNyb3NlcnZpY2U8YnI-PGJyPi9hcHBzL3NlcnZpY2VzL2FwcGxpY2F0aW9uc1wiXVxuXHRcdGRhdGFiYXNlW1wiUG9zdGdyZVNRTCBEYXRhYmFzZVwiXVxuXHRcdGRvbWFpbjIgLS0-IG1pY3Jvc2VydmljZSAtLT4gZGF0YWJhc2Vcblx0ZW5kXG5cdHN1YmdyYXBoIFJTS1xuXHRcdHgtcm9hZDJbXCJYLVJvYWQgU2VjdXJpdHkgU2VydmVyXCJdXG5cdFx0cnNrLXNlcnZpY2VbXCJSU0sgV2Vic2VydmljZVwiXVxuXHRlbmRcblxuXHRkb21haW4gLS0-IHgtcm9hZFxuXHR4LXJvYWQgLS0-IHgtcm9hZDJcblx0eC1yb2FkMiAtLT4gcnNrLXNlcnZpY2VcbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
+## URLs
+
+- Dev: N/A
+- [Staging](https://beta.staging01.devland.is/api)
+- Production: N/A
+
 ## Project structure
 
-The code in this app package should be kept as small as possible. Most business logic should be in [domain libraries](../../libs/api/domains). Shared utilities and middlewares should be in libraries as well.
+The code in this app package should be kept as small as possible. Most business logic should be in [domain libraries](https://github.com/island-is/island.is/tree/master/libs/api/domains). Shared utilities and middlewares should be in libraries as well.
 
 ### Domains
 
@@ -34,7 +42,7 @@ Currently, there is no DI container. Everything is hooked up manually in tests a
 
 ### Type Generation
 
-We use [graphql-codegen] to generate TypeScript types for all GraphQL schemas. We also generate type definitions for all resolvers, which provides strong typing for parent, input and context arguments as well as the return payload.
+We use [graphql-codegen](https://graphql-code-generator.com/) to generate TypeScript types for all GraphQL schemas. We also generate type definitions for all resolvers, which provides strong typing for parent, input and context arguments as well as the return payload.
 
 To gain these benefits, resolvers should be defined like this:
 
@@ -63,7 +71,7 @@ For code that can be reused, consider adding it to a shared library. If it's spe
 
 Examples:
 
-```
+```text
 # Flat
 /libs/api/middlewares
 
@@ -79,7 +87,7 @@ Run `AWS_PROFILE=<profile> yarn nx env-secrets <project>`
 
 **Example**:
 
-```
+```bash
 AWS_PROFILE=islandis yarn nx env-secrets api
 ```
 
@@ -89,11 +97,11 @@ This API has minimal logic and mostly wraps external services. Until we figure o
 
 There should be good test coverage on shared code and services. The resolvers are tricky to test so they should be kept simple, with the main logic in unit tested services.
 
-## Quick start
+## Getting started
 
 To start the API, run:
 
-```
+```bash
 yarn start api
 ```
 
@@ -101,28 +109,22 @@ yarn start api
 
 If you change a GraphQL schema, you need to update the generated TypeScript types which are used by resolvers and client applications:
 
-```
-yarn affected:codegen
-```
-
-When you're actively working on schemas and resolvers, you can run the code generation in a watcher which updates the TypeScript types on-save:
-
-```
-yarn codegen api --configuration=watch
+```bash
+yarn nx run api:schemas/codegen
 ```
 
 ### Tests
 
 To run tests, you can either run all tests affected by your changes, or run tests in a specific project:
 
-```
+```bash
 yarn affected:test
 yarn test api
 ```
 
 Many jest arguments can be passed to test commands. For more details, add `--help`.
 
-```
+```bash
 yarn test api --help
 yarn test api --watch
 yarn test api --updateSnapshots
@@ -133,13 +135,17 @@ yarn test api --runInBand
 
 You can create a new domain or shared library using an NX schematic:
 
-```
+```bash
 yarn generate @nrwl/node:library api/domains/your-domain
 yarn generate @nrwl/node:library api/your-library
 ```
 
 If your domain needs to expose fields in the GraphQL schema, make sure to export `typeDefs` and `resolvers` in your domain's `index.ts`, then add your domain to the list in `/apps/spi/src/graphql/domains.ts`.
 
-Check out `/libs/api/domains/hello-world` for an example domain.
+## Code owners and maintainers
 
-[graphql-codegen]: https://graphql-code-generator.com/
+- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members): `libs/api/domains/cms`, `libs/api/domains/content-search`
+- [Aranja](https://github.com/orgs/island-is/teams/aranja/members): `libs/api/domains/cms`, `libs/api/domains/application`, `libs/api/domains/content-search`
+- [Sendiráðið](https://github.com/orgs/island-is/teams/sendiradid/members): `libs/api/domains/documents`, `libs/api/domains/national-registry`
+- [Stefna](https://github.com/orgs/island-is/teams/stefna/members): `libs/api/domains/content-search`
+- [Advania](https://github.com/orgs/island-is/teams/advania/members) `libs/api/domains/api-catalogue`

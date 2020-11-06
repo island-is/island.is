@@ -1,4 +1,4 @@
-# Schemas
+# Auto-generated schemas
 
 ## Adding a new script for your project
 

@@ -89,7 +89,7 @@ We'll probably start with dev, staging, pre-prod and prod environments, since fe
 
 ## Pros and Cons of Release Options
 
-### Continous Delivery
+### Continuous Delivery
 
 - Good, because it is simpler and leaner, allowing changes to be deployed quicker.
 - Bad, because it can easily break something in production if our CI isn't good enough.

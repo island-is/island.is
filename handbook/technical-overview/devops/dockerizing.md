@@ -30,8 +30,8 @@ To do that you need to follow this process:
 
 1. Login to our **AWS Shared account** and get command line access settings
 
-   ![Login](../.gitbook/assets/aws-login.png)
-   ![Env copy](../.gitbook/assets/aws-env-setup.png)
+   ![Login](../../../.gitbook/assets/aws-login.png)
+   ![Env copy](../../../.gitbook/assets/aws-env-setup.png)
 
 2. Open your terminal and paste the AWS creds from the clipboard
 3. Run this to authenticate to our private Docker registry

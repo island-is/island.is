@@ -47,7 +47,7 @@ Viskuausan is proving to be more complex and larger platform than just a simple 
 
 Chosen option: NextJS + NestJS
 
-NextJS is the chosen web framework for all island.is websites needing server side rendering. As Viskuausan will probably be merged with island.is main website, creating it using same frameworks makes it easy to merge later on. It is easier to reuse islandis-ui components using NextJS over Docusaurus. Docusaurus main advantage over Next is out-of-the-box markdown support but it is easy to add markdown support in NextJS using [Remark](https://github.com/remarkjs/remark) library.
+NextJS is the chosen web framework for all island.is websites needing server side rendering. As Viskuausan will probably be merged with island.is main website, creating it using same frameworks makes it easy to merge later on. It is easier to reuse Island UI components using NextJS over Docusaurus. Docusaurus main advantage over Next is out-of-the-box markdown support but it is easy to add markdown support in NextJS using [Remark](https://github.com/remarkjs/remark) library.
 
 NestJS is used to create backend services and Viskuausan needs few backend services related to the X-Road and API GW integrations. Provides functionalities like ORM, dependency injection, unit testing.
 

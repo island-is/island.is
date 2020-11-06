@@ -1,4 +1,4 @@
-# application-templates-reference-template
+# Reference Template
 
 This library is a reference how all application template libraries can be.
 

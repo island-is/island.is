@@ -1,4 +1,4 @@
-# application-ui-fields
+# UI Fields
 
 This library includes reusable react components for fields in the application system.
 

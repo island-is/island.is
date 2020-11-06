@@ -1,4 +1,4 @@
-# shared-mocking
+# Shared Mocking
 
 This library provides helpers to set up API mocking in Node.JS and browser projects.
 
@@ -114,7 +114,9 @@ Starts Mock Service Worker (MSW) with the specified MSW requestHandlers.
 
 For this to work in browsers, you need to add `mockServiceWorker.js` to your public folder by running `yarn msw init path/to/your/public/`. Automatically works in Node.JS.
 
-> Note: Should only be called in development when mocking is turned on.
+{% hint style="info" %}
+Note: Should only be called in development when mocking is turned on.
+{% endhint %}
 
 #### Arguments
 

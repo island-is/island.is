@@ -16,7 +16,7 @@ Here is a [sample chapter from the book Distributed Systems Observability by Cin
 
 ### Provide observability into the applications
 
-![Observability at SÍ](../.gitbook/assets/logging-metrics-traces.svg)
+![Observability at SÍ](../../../.gitbook/assets/logging-metrics-traces.svg)
 
 #### Logs
 

@@ -2,12 +2,6 @@
 
 Hi there, you are probably new to the project. Here you can find a quick overview of what you can expect and what is expected from you as a contributor.
 
-## General info
-
-[island.is](https://github.com/island-is/island.is) is the center of development for digital government services on `island.is`. It is managed by the [Digital Iceland](https://stafraent.island.is/) department inside the [Ministry of Finance and Economic Affairs](https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/).
-
-These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and open to contributions, but most development is performed by teams that win tenders to develop new functionality for Digital Iceland. The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services is stored in there.
-
 ## Technology
 
 ### General
@@ -68,7 +62,7 @@ We use [NestJS](https://nestjs.com) for the backend. Use the pre-packaged setup 
 
 ### Infrastructure
 
-Applications are composed of services that are [packaged in Docker containers](welcome.md#dockerizing) and then deployed in a Kubernetes cluster using Helm. You will hardly need to know about this if you follow the path everyone else in the organization is walking. All our environments are hosted in [AWS](devops/environment-setup.md).
+Applications are composed of services that are [packaged in Docker containers](README.md#dockerizing) and then deployed in a Kubernetes cluster using Helm. You will hardly need to know about this if you follow the path everyone else in the organization is walking. All our environments are hosted in [AWS](devops/environment-setup.md).
 
 | Tool                                 | Description                                                          |
 | ------------------------------------ | -------------------------------------------------------------------- |
@@ -92,7 +86,7 @@ We expect contributors to deliver the following:
 
 ## Starting a new project/application
 
-If you are adding a new application, please follow the instructions [here](../island-is-repository/generate.md).
+If you are adding a new application, please follow the instructions [here](../repository/generate.md).
 
 ## Dockerizing
 

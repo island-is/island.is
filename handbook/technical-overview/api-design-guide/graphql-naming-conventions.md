@@ -4,10 +4,10 @@ This document describes the GraphQL's Naming Conventions
 
 ## Case styles
 
-* **Field names** should use `camelCase`. Many GraphQL clients are written in JavaScript, Java, Kotlin, or Swift, all of which recommend camelCase for variable names.
-* **Type names** should use `PascalCase`. This matches how classes are defined in the languages mentioned above.
-* **Enum names** should use `PascalCase`.
-* **Enum values** should use `ALL_CAPS`, because they are similar to constants.
+- **Field names** should use `camelCase`. Many GraphQL clients are written in JavaScript, Java, Kotlin, or Swift, all of which recommend camelCase for variable names.
+- **Type names** should use `PascalCase`. This matches how classes are defined in the languages mentioned above.
+- **Enum names** should use `PascalCase`.
+- **Enum values** should use `ALL_CAPS`, because they are similar to constants.
 
 ### Examples
 
@@ -161,4 +161,3 @@ mutation {
 ## Conclusion
 
 With these design principles you should be equipped to design an effective GraphQL system for your API.
-

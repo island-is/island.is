@@ -18,7 +18,7 @@ Top three reasons:
 
 ## Process overview
 
-![cd-overview](../.gitbook/assets/cd-overview.svg)
+![cd-overview](../../../.gitbook/assets/cd-overview.svg)
 
 ## Continuous Integration(CI)
 
@@ -26,7 +26,7 @@ CI is an integral part of the CD. It ensures the quality of the code and package
 
 We trigger the CI process for all GitHub Pull Requests targeting the `master` branch without publishing assets. We trigger the CI process and publish the assets when making changes to `master` and `release/**` branches.
 
-We lint the code, check the formatting of the code, perform Node modules vulnerability scan, run the unit and integration tests, run the end-to-end tests(TODO) and finally, if successful, we package the code and assets. You can find a sample script to run the process for an app of your choosing [here](https://github.com/island-is/island.is/blob/master/scripts/ci.sh). To find out more about the thinking around the CI process, please see the [ADR](../adr/0002-continuous-integration.md).
+We lint the code, check the formatting of the code, perform Node modules vulnerability scan, run the unit and integration tests, run the end-to-end tests (TODO) and finally, if successful, we package the code and assets. You can find a sample script to run the process for an app of your choosing [here](https://github.com/island-is/island.is/blob/master/scripts/ci.sh). To find out more about the thinking around the CI process, please see the [ADR](../adr/0002-continuous-integration.md).
 
 Code and assets from [island.is](https://github.com/island-is/island.is) are packaged in Docker containers and stored in a private Docker registry hosted in AWS [ECR](https://aws.amazon.com/ecr/). The [ECR](https://aws.amazon.com/ecr/) is configured to perform [vulnerability scanning](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html) of all Docker images pushed to it.
 

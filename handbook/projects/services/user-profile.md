@@ -1,3 +1,0 @@
-# User profile
-
-TODO

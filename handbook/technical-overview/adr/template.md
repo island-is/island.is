@@ -68,5 +68,5 @@ Chosen option: "[option 1]", because [justification. e.g., only option, which me
 
 ## Links
 
-- [Link type] [Link to ADR]
+- [Link type][link to adr]
 - …

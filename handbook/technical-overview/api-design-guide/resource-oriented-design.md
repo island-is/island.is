@@ -40,7 +40,7 @@ User
 
 ```text
 my-service.island.is/v1/users/1
-\__________________/ | \___/  |
+\__________________/ | \____/ |
          |           |   |    |
          |           |   |     \
          |           |   |      Resource ID

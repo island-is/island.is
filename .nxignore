@@ -6,10 +6,8 @@ apps/gjafakort/bin
 apps/gjafakort/codegen.yml
 apps/gjafakort/docker-compose.yml
 apps/gjafakort/Makefile
-apps/gjafakort/README.md
 
 # air-discount-scheme
-apps/air-discount-scheme/README.md
 apps/air-discount-scheme/codegen.yml
 apps/air-discount-scheme/api.graphql
 apps/air-discount-scheme/Makefile
@@ -17,3 +15,11 @@ apps/air-discount-scheme/Makefile
 # judicial-system
 apps/judicial-system/codegen.yml
 apps/judicial-system/api.graphql
+
+# Readmes
+apps/gjafakort/README.md
+apps/air-discount-scheme/README.md
+apps/application-system/README.md
+apps/judicial-system/README.md
+apps/skilavottord/README.md
+libs/island-ui/README.md

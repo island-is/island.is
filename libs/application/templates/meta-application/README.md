@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # application-templates-meta-application
 
 This library was generated with [Nx](https://nx.dev).

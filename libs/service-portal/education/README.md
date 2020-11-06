@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # service-portal-education
 
 This library was generated with [Nx](https://nx.dev).

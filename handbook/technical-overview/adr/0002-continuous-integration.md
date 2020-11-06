@@ -6,7 +6,7 @@
 
 ## Context and Problem Statement
 
-We need to maintain the quality of the codebase, minimize the time between introducing quality degradation and discovering it and make sure we have deployable artefacts at all times. In the context of a [monorepo](../../monorepo.md) we need to do this efficiently in order to make this process scale for an ever-growing number of projects in the repository.
+We need to maintain the quality of the codebase, minimize the time between introducing quality degradation and discovering it and make sure we have deployable artefacts at all times. In the context of a [monorepo](../monorepo.md) we need to do this efficiently in order to make this process scale for an ever-growing number of projects in the repository.
 
 ### Terms
 

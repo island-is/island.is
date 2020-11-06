@@ -1,4 +1,4 @@
-# application-template-loader
+# Template Loader
 
 The sole purpose of this library is to lazily load application templates, forms, and fields. This ensures that bundle sizes are small, and only the currently viewed application template, form, and fields are part of the js bundle.
 

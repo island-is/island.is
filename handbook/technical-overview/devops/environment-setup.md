@@ -21,7 +21,7 @@ We provision all AWS resources in three Availability Zones so that failure in on
 
 ### Structure
 
-![Typical request handling](../.gitbook/assets/acount_structure.png)
+![Typical request handling](../../../.gitbook/assets/acount_structure.png)
 
 This structure is based on the guidance coming from a service that helps us plan and control the AWS cloud structure - [AWS Control Tower](https://aws.amazon.com/controltower/).
 
@@ -42,7 +42,7 @@ A few notes about the diagram:
 
 We use [Kubernetes](https://kubernetes.io) to schedule and run containerized applications. It is the main pillar in our operations and as such it conforms to all of [our base principles](operations-base-principles.md).
 
-![Typical request handling](../.gitbook/assets/request-routing.svg)
+![Typical request handling](../../../.gitbook/assets/request-routing.svg)
 
 A few notes here:
 

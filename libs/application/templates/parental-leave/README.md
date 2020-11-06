@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # application-templates-parental-leave
 
 This library was generated with [Nx](https://nx.dev).

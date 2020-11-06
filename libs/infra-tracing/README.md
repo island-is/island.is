@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # infra-tracing
 
 This library was generated with [Nx](https://nx.dev).

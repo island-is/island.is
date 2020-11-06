@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # air-discount-scheme-types
 
 This library was generated with [Nx](https://nx.dev).

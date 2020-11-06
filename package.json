@@ -36,7 +36,8 @@
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
     "schemas": "node ./scripts/generate-schemas.js",
-    "postinstall": "node ./scripts/postinstall.js"
+    "postinstall": "node ./scripts/postinstall.js",
+    "gitbook": "node ./scripts/gitbook.js"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",

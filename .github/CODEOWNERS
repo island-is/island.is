@@ -1,9 +1,10 @@
 # Fallback. If there is no owner, assign to core maintainers.
 # Remove fallback rule while graphql files are in the way.
-# *                               @island-is/core
+# *                                                       @island-is/core
 
 /*                                                        @island-is/core
 /.github/                                                 @island-is/core
+/handbook/                                                @island-is/core
 
 # Add new projects here.
 # Project folders are usually owned by the team assigned.
@@ -20,14 +21,15 @@
 /*/gjafakort/                                             @island-is/vice-versa
 
 /apps/application-system/                                 @island-is/aranja
+/apps/reference-next-app/                                 @island-is/aranja
 /libs/api/domains/application/                            @island-is/aranja
 /libs/application/                                        @island-is/aranja
 
 /apps/judicial-system/                                    @island-is/kolibri
 /libs/judicial-system/                                    @island-is/kolibri
 /libs/nova-sms/                                           @island-is/kolibri
-/libs/dokobit-signing                                     @island-is/kolibri
-/libs/email-service                                       @island-is/kolibri
+/libs/dokobit-signing/                                    @island-is/kolibri
+/libs/email-service/                                      @island-is/kolibri
 
 /*/service-portal*/                                       @island-is/sendiradid
 /libs/api/domains/documents/                              @island-is/sendiradid
@@ -52,7 +54,10 @@
 /libs/api-catalogue/                                      @island-is/advania
 
 /libs/application/templates/document-provider-onboarding/ @island-is/advania
-/apps/services/xroad-collector                            @island-is/advania
+/apps/services/xroad-collector/                           @island-is/advania
 
 /apps/skilavottord/                                       @island-is/deloitte
 /libs/skilavottord/                                       @island-is/deloitte
+
+/apps/services/auth-admin-api/                            @island-is/fuglar
+/apps/services/auth-api/                                  @island-is/fuglar

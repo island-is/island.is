@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # elastic-indexing
 
 This library was generated with [Nx](https://nx.dev).
