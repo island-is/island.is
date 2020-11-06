@@ -1,7 +1,11 @@
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system/types'
 import {
   formatConclusion,
   formatCourtCaseNumber,
+  formatCustodyProvisions,
   formatProsecutorDemands,
   formatRestrictions,
 } from './formatters'
@@ -50,6 +54,59 @@ describe('formatProsecutorDemands', () => {
     // Assert
     expect(res).toBe(
       'Þess er krafist að Glanni Glæpur 010101-0000 verði með úrskurði Héraðsdóms Reykjavíkur gert að sæta gæsluvarðhaldi til mánudagsins 16. nóvember 2020 kl. 19:30.',
+    )
+  })
+})
+
+describe('formatCustodyProvisions', () => {
+  test('should format custody provisions when no provisions are selected', () => {
+    // Arrange
+    const custodyProvisions = []
+
+    // Act
+    const res = formatCustodyProvisions(custodyProvisions)
+
+    // Assert
+    expect(res).toBe('')
+  })
+
+  test('should format custody provisions when some provisions are selected', () => {
+    // Arrange
+    const custodyProvisions = [
+      CaseCustodyProvisions._95_1_A,
+      CaseCustodyProvisions._95_1_B,
+      CaseCustodyProvisions._95_1_C,
+      CaseCustodyProvisions._95_1_D,
+      CaseCustodyProvisions._95_2,
+      CaseCustodyProvisions._99_1_B,
+    ]
+
+    // Act
+    const res = formatCustodyProvisions(custodyProvisions)
+
+    // Assert
+    expect(res).toBe(
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.',
+    )
+  })
+
+  test('should sort provisions when formatting custody provisions', () => {
+    // Arrange
+    const custodyProvisions = [
+      CaseCustodyProvisions._95_1_C,
+      CaseCustodyProvisions._95_1_D,
+      CaseCustodyProvisions._95_1_A,
+      CaseCustodyProvisions._95_2,
+      CaseCustodyProvisions._99_1_B,
+      CaseCustodyProvisions._95_1_B,
+    ]
+
+    // Act
+    const res = formatCustodyProvisions(custodyProvisions)
+
+    // Assert
+    expect(res).toBe(
+      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.',
     )
   })
 })

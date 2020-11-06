@@ -9,7 +9,6 @@ import {
 import {
   formatCustodyRestrictions,
   formatDate,
-  formatLawsBroken,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
@@ -19,6 +18,7 @@ import {
   formatAppeal,
   formatConclusion,
   formatCourtCaseNumber,
+  formatCustodyProvisions,
   formatProsecutorDemands,
   formatRestrictions,
 } from './formatters'
@@ -84,16 +84,24 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Lagaákvæði')
+    .text('Lagaákvæði sem brot varða við')
     .font('Helvetica')
     .fontSize(12)
-    .text(
-      formatLawsBroken(existingCase.lawsBroken, existingCase.custodyProvisions),
-      {
-        lineGap: 6,
-        paragraphGap: 0,
-      },
-    )
+    .text(existingCase.lawsBroken, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(14)
+    .lineGap(8)
+    .text('Lagaákvæði sem krafan er byggð á')
+    .font('Helvetica')
+    .fontSize(12)
+    .text(formatCustodyProvisions(existingCase.custodyProvisions), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)

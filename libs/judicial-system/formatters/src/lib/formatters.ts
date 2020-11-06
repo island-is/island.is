@@ -2,10 +2,7 @@ import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-r
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 
-import {
-  CaseCustodyProvisions,
-  CaseCustodyRestrictions,
-} from '@island.is/judicial-system/types'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -58,20 +55,8 @@ export const laws = {
   _95_1_B: 'b-lið 1. mgr. 95. gr.',
   _95_1_C: 'c-lið 1. mgr. 95. gr.',
   _95_1_D: 'd-lið 1. mgr. 95. gr.',
-  _95_2: 'd-lið 1. mgr. 95. gr.',
+  _95_2: '2. mgr. 95. gr.',
   _99_1_B: 'b-lið 1. mgr. 99. gr.',
-}
-
-export const formatLawsBroken = (
-  lawsBroken: string,
-  custodyProvisions: CaseCustodyProvisions[],
-) => {
-  const provisions = custodyProvisions?.reduce((s, l) => `${s} ${laws[l]},`, '')
-
-  return `${lawsBroken} Lagaákvæði sem krafan er byggð á: ${provisions?.slice(
-    0,
-    -1,
-  )}`
 }
 
 const getRestrictionByValue = (value: CaseCustodyRestrictions) => {

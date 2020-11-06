@@ -1,13 +1,13 @@
 import {
   formatDate,
   formatNationalId,
+  laws,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
+  CaseCustodyProvisions,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
-
-import { Case } from '../models'
 
 export function formatProsecutorDemands(
   accusedNationalId: string,
@@ -29,6 +29,15 @@ export function formatProsecutorDemands(
       ? ' og verði gert að sæta einangrun meðan á gæsluvarðhaldi stendur'
       : ''
   }.`
+}
+
+export const formatCustodyProvisions = (
+  custodyProvisions: CaseCustodyProvisions[],
+) => {
+  return custodyProvisions
+    ?.sort()
+    .reduce((s, l) => `${s}${laws[l]}\n`, '')
+    .slice(0, -1)
 }
 
 export function formatCourtCaseNumber(
