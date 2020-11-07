@@ -20,7 +20,7 @@ export const ListItem: FC<CompanyProps> = ({
   buttons,
 }: CompanyProps) => {
   const createLink = (link) => {
-    return link.indexOf('http://') === -1 ? `https://${link}` : link
+    return link.indexOf('https://') === -1 ? `https://${link}` : link
   }
 
   return (
