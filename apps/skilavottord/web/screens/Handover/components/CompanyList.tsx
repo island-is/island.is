@@ -11,7 +11,10 @@ const CompanyList = () => {
     return null
   }
 
-  const recyclingPartners = data?.skilavottordAllActiveRecyclingPartners || []
+  const activePartners = data?.skilavottordAllActiveRecyclingPartners || []
+  const recyclingPartners = activePartners.filter(
+    ({ companyId }) => companyId !== '0000000000',
+  )
   const sortedPartners = recyclingPartners.slice().sort((a, b) => {
     return a.city < b.city ? -1 : 1
   })

@@ -94,6 +94,20 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
+  requestedDefenderName: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestedDefenderEmail: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   court: string
 
   @Column({

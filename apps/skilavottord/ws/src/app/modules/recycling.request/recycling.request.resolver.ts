@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Query, Resolver, Args, Mutation, Int } from '@nestjs/graphql'
+import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -52,14 +52,12 @@ export class RecyclingRequestResolver {
     @Args('requestType') requestType: string,
     @Args('permno') permno: string,
     @Args('nameOfRequestor', { nullable: true }) name: string,
-    @Args('nationalId', { nullable: true }) nid: string,
     @Args('partnerId', { nullable: true }) partnerId: string,
   ) {
     await this.recyclingRequestService.createRecyclingRequest(
       requestType,
       permno,
       name,
-      nid,
       partnerId,
     )
     return true

@@ -34,7 +34,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         <Text variant="eyebrow" color="purple400">
           {card.provider}
         </Text>
-        <Tag variant="blue">
+        <Tag variant="blue" label>
           {lang === 'en' ? 'Notification' : 'Tilkynning'}
         </Tag>
       </Box>
@@ -42,7 +42,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
           <Text variant="h4">{formatMessage(card.title)}</Text>
           {card.wip && (
-            <Tag variant="purple">
+            <Tag variant="purple" label>
               {formatMessage({
                 id: 'service.portal:in-progress',
                 defaultMessage: 'Í vinnslu',

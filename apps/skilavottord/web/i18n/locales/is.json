@@ -141,14 +141,7 @@
       "label": "Leita af skráningarnúmeri",
       "placeholder": "Leita af skráningarnúmeri"
     },
-    "table": [
-      "Skráningar nr.",
-      "Tegund",
-      "Undirtegund",
-      "Ár",
-      "Notandi",
-      "Afskráð"
-    ]
+    "table": ["Skráningar nr.", "Undirtegund", "Ár", "Notandi", "Afskráð"]
   },
   "companyInfo": {
     "title": "Upplýsingar fyrirtækis",

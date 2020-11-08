@@ -87,7 +87,7 @@ describe('/domari-krafa with an ID', () => {
     ).toBeTruthy()
   })
 
-  test('should display the approprieate custody restriction if there are any', async () => {
+  test('should display the approprieate custody restrictions if there are any', async () => {
     // Arrange
     const history = createMemoryHistory()
 
