@@ -16,18 +16,18 @@ import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
 import { GlobalModules } from '../components/GlobalModules/GlobalModules'
 import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
-import * as Sentry from '@sentry/react'
+import ErrorBoundary from './../components/ErrorBoundary/ErrorBoundary'
 
 export const App = () => {
   return (
     <div className={styles.page}>
-      <Sentry.ErrorBoundary fallback={'An error has occured'}>
-        <ApolloProvider client={client}>
-          <StateProvider
-            initialState={store.initialState}
-            reducer={store.reducer}
-          >
-            <LocaleProvider locale={defaultLanguage} messages={{}}>
+      <ApolloProvider client={client}>
+        <StateProvider
+          initialState={store.initialState}
+          reducer={store.reducer}
+        >
+          <LocaleProvider locale={defaultLanguage} messages={{}}>
+            <ErrorBoundary>
               <div>
                 <UserProfileLocale />
                 <Router>
@@ -63,10 +63,10 @@ export const App = () => {
                   </Switch>
                 </Router>
               </div>
-            </LocaleProvider>
-          </StateProvider>
-        </ApolloProvider>
-      </Sentry.ErrorBoundary>
+            </ErrorBoundary>
+          </LocaleProvider>
+        </StateProvider>
+      </ApolloProvider>
     </div>
   )
 }
