@@ -138,7 +138,7 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+    "table": ["Reg nr", "Model", "Year", "User", "Deregistered"]
   },
   "companyInfo": {
     "title": "Company information",

@@ -1258,7 +1258,28 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": ["apps/application-system/api/src/assets"],
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/application-system/api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/application-system/api/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/application-system/api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/application-system/api",
+                "output": "./"
+              }
+            ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
             "maxWorkers": 2
           },
@@ -1330,7 +1351,8 @@
             "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/application-system/api"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "application-system-form": {
@@ -1418,7 +1440,8 @@
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "application-system-form-e2e": {

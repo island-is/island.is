@@ -28,6 +28,7 @@ const Confirm: FC = () => {
 
   const mockCar = {
     permno: id.toString(),
+    vinNumber: 'ABC123',
     type: 'Volvo',
     firstRegDate: '01-20-2004',
     color: 'red',

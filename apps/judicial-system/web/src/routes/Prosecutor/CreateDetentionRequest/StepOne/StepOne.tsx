@@ -48,6 +48,8 @@ export const CreateCaseMutation = gql`
       accusedName
       accusedAddress
       accusedGender
+      requestedDefenderName
+      requestedDefenderEmail
       court
       arrestDate
       requestedCourtDate
