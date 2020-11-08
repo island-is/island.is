@@ -1,5 +1,7 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
   Stack,
@@ -9,12 +11,12 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
-import { useRouter } from 'next/router'
+import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import { VEHICLES_BY_PARTNER_ID } from '@island.is/skilavottord-web/graphql/queries'
+import { useQuery } from '@apollo/client'
+import { CarsTable } from './components/CarsTable'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -22,6 +24,13 @@ const Overview: FC = () => {
     t: { deregisterOverview: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
+
+  const partnerId = user?.partnerId ?? ''
+  const { data } = useQuery(VEHICLES_BY_PARTNER_ID, {
+    variables: { partnerId },
+  })
+
+  const vehicles = data?.skilavottordRecyclingPartnerVehicles
 
   const handleDeregister = () => {
     router.push(routes.deregisterVehicle.select)
@@ -68,12 +77,14 @@ const Overview: FC = () => {
             <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
           </Stack>
         </GridColumn>
-        <Box marginX={1}>
-          <Stack space={4}>
-            <Text variant="h3">{t.subtitles.history}</Text>
-            <CarsTable titles={t.table} />
-          </Stack>
-        </Box>
+        {vehicles?.length > 0 && (
+          <Box marginX={1}>
+            <Stack space={4}>
+              <Text variant="h3">{t.subtitles.history}</Text>
+              <CarsTable titles={t.table} vehicleOwner={vehicles} />
+            </Stack>
+          </Box>
+        )}
       </Stack>
     </PartnerPageLayout>
   )

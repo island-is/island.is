@@ -1,5 +1,8 @@
 export default {
   production: false,
+  applicationSystem: {
+    baseApiUrl: 'http://localhost:3333',
+  },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',
@@ -10,7 +13,7 @@ export default {
     userProfileServiceBasePath: 'http://localhost:3333',
   },
   identityServer: {
-    baseUrl: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '',
     jwksUri:
       'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',

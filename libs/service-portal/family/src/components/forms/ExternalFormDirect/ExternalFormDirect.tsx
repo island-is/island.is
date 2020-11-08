@@ -23,7 +23,9 @@ const ExternalFormDirect: FC<Props> = ({
       <Box paddingTop={15} paddingX={8} paddingBottom={8}>
         <Box display="flex" justifyContent="spaceBetween" marginBottom={6}>
           <div>{label}</div>
-          <Tag variant="darkerMint">{tag}</Tag>
+          <Tag variant="darkerMint" label>
+            {tag}
+          </Tag>
         </Box>
         <Stack space={3}>
           <Text variant="h3">{title}</Text>

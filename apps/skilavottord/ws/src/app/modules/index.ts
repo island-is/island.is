@@ -1,5 +1,3 @@
 export { AuthModule } from './auth'
 export { UserModule } from './user'
-export { CarModule } from './car'
 //export { GdprModule } from './gdpr'
-export { RecyclingPartner } from './recyclingPartner'

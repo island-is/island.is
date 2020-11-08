@@ -31,7 +31,7 @@ export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
             {formatMessage(title)}
           </Text>
           {inProgress && (
-            <Tag variant="blue">
+            <Tag variant="blue" label>
               {formatMessage({
                 id: 'service.portal:in-progress',
                 defaultMessage: 'Í vinnslu',

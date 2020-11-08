@@ -1,6 +1,5 @@
-import { Query, Resolver, Args, ResolveField } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import { User } from './models'
-import { UserService } from './models/user.service'
 import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 import { Role } from '../auth/auth.types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
