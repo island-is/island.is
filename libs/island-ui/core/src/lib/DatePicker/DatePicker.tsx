@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, forwardRef } from 'react'
 import cn from 'classnames'
 import {
   default as ReactDatePicker,
@@ -154,23 +154,26 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   )
 }
 
-const CustomInput = ({
-  className,
-  placeholderText,
-  onInputClick,
-  fixedFocusState,
-  ...props
-}: InputProps & {
-  placeholderText?: string
-  onInputClick?: ReactDatePickerProps['onInputClick']
-}) => (
-  <Input
-    {...props}
-    icon="calendar"
-    iconType="outline"
-    fixedFocusState={fixedFocusState}
-    placeholder={placeholderText}
-  />
+const CustomInput = forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  InputProps & {
+    placeholderText?: string
+    onInputClick?: ReactDatePickerProps['onInputClick']
+  }
+>(
+  (
+    { className, placeholderText, onInputClick, fixedFocusState, ...props },
+    ref,
+  ) => (
+    <Input
+      {...props}
+      icon="calendar"
+      iconType="outline"
+      ref={ref}
+      fixedFocusState={fixedFocusState}
+      placeholder={placeholderText}
+    />
+  ),
 )
 
 const monthsIndex = [...Array(12).keys()]
@@ -217,7 +220,7 @@ const CustomHeader = ({
           }}
         >
           {months.map((option) => (
-            <option key={option} value={option} selected={option === month}>
+            <option key={option} value={option}>
               {option}
             </option>
           ))}
