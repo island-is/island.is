@@ -123,9 +123,10 @@ export class VerificationService {
           address: verification.email,
         },
       ],
-      subject: `Staðfestingarpóstur`,
-      html: `Opnaðu þennann hlekk til þess að staðfesta netfangið ${verification.email}
-      <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>`,
+      subject: `Staðfesting netfangs á Ísland.is`,
+      html: `Þú hefur skráð ${verification.email} á Mínum síðum á Ísland.is. Til að staðfesta skráninguna þarftu að smella á eftirfarandi hlekk: 
+      <a href="${environment.email.servicePortalBaseUrl}/stillingar/minn-adgangur/stadfesta-netfang/${verification.hash}" target="_blank">Staðfesta</a>
+      <br>Hlekkurinn gildir í tvo daga. Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.`,
     })
   }
 
