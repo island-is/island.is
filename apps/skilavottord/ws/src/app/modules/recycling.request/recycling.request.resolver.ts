@@ -54,12 +54,11 @@ export class RecyclingRequestResolver {
     @Args('nameOfRequestor', { nullable: true }) name: string,
     @Args('partnerId', { nullable: true }) partnerId: string,
   ) {
-    await this.recyclingRequestService.createRecyclingRequest(
+    return await this.recyclingRequestService.createRecyclingRequest(
       requestType,
       permno,
       name,
       partnerId,
     )
-    return true
   }
 }
