@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -8,8 +8,13 @@ import * as styles from './Handover.treat'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import CompanyList from './components/CompanyList'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
+import { useMutation } from '@apollo/client'
+import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { OutlinedError } from '@island.is/skilavottord-web/components'
 
 const Handover: FC = () => {
+  const { user } = useContext(UserContext)
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -21,6 +26,15 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
+  const [setRecyclingRequest, { error: mutationError }] = useMutation(
+    CREATE_RECYCLING_REQUEST,
+    {
+      onError() {
+        return mutationError
+      },
+    },
+  )
+
   useEffect(() => {
     if (width < theme.breakpoints.md) {
       return setIsMobile(true)
@@ -28,12 +42,48 @@ const Handover: FC = () => {
     setIsMobile(false)
   }, [width])
 
+  useEffect(() => {
+    setRecyclingRequest({
+      variables: {
+        permno: id,
+        nameOfRequestor: user?.name,
+        requestType: 'pendingRecycle',
+      },
+    })
+  }, [user, id])
+
   const onContinue = () => {
     router.replace(routes.myCars)
   }
 
   const onCancel = () => {
     setModal(true)
+  }
+
+  if (mutationError) {
+    return (
+      <ProcessPageLayout
+        sectionType={'citizen'}
+        activeSection={1}
+        activeCar={id.toString()}
+      >
+        <Stack space={4}>
+          <Text variant="h1">{t.titles.error}</Text>
+          <OutlinedError
+            title={t.error.title}
+            message={t.error.message}
+            primaryButton={{
+              text: `${t.error.primaryButton}`,
+              action: () => router.reload(),
+            }}
+            secondaryButton={{
+              text: `${t.error.secondaryButton}`,
+              action: () => router.push(routes.myCars),
+            }}
+          />
+        </Stack>
+      </ProcessPageLayout>
+    )
   }
 
   return (
@@ -44,7 +94,7 @@ const Handover: FC = () => {
     >
       <Stack space={6}>
         <Stack space={2}>
-          <Text variant="h1">{t.title}</Text>
+          <Text variant="h1">{t.titles.success}</Text>
           <Text>{t.info}</Text>
         </Stack>
         <Stack space={2}>

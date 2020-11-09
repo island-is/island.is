@@ -68,7 +68,10 @@
     }
   },
   "handover": {
-    "title": "Successfully confirmed for recycling",
+    "titles": {
+      "success": "Successfully confirmed for recycling",
+      "error": "We couldn’t mark your car for recycling"
+    },
     "info": "The car has been successfully confirmed for recycling and is now ready to be handed over to a recycling company.",
     "subTitles": {
       "nextStep": "Next step: Handover the car to recycling company",
@@ -78,6 +81,12 @@
     "buttons": {
       "cancel": "Cancel recycling",
       "close": "Close"
+    },
+    "error": {
+      "title": "Problem connecting to database",
+      "message": "We ran into a problem marking your car for recycling. Please try again.",
+      "primaryButton": "Try again",
+      "secondaryButton": "Cancel"
     },
     "cancelModal": {
       "title": "Cancel the recycling process for this car",
