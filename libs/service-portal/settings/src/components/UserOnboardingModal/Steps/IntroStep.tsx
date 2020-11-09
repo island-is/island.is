@@ -73,12 +73,8 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
             })}
           </Text>
         </GridColumn>
-        <GridColumn
-          order={[1, 1, 2]}
-          offset={['0', '0', '1/7']}
-          span={['0', '0', '2/7']}
-        >
-          <img src="assets/images/jobs.jpg" alt="Skrautmynd" />
+        <GridColumn order={[1, 1, 2]} span={['0', '0', '3/7']}>
+          <img src="assets/images/jobsGrid.jpg" alt="Skrautmynd" />
         </GridColumn>
       </GridRow>
       <Box display="flex" justifyContent="spaceBetween" marginTop={8}>
