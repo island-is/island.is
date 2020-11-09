@@ -26,7 +26,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
   const { formatMessage } = useLocale()
   return (
     <GridRow>
-      <GridColumn span={['12/12', '12/12', '6/8']} order={[2, 2, 1]}>
+      <GridColumn span={['12/12', '12/12', '5/8']} order={[2, 2, 1]}>
         <Box
           display="flex"
           flexDirection="column"
@@ -52,7 +52,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           </Box>
         </Box>
       </GridColumn>
-      <GridColumn span={['1/1', '1/1', '2/8']} order={[1, 1, 2]}>
+      <GridColumn span={['1/1', '1/1', '3/8']} order={[1, 1, 2]}>
         <Box
           display="flex"
           height="full"
