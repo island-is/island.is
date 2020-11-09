@@ -23,7 +23,7 @@ export class ModuleErrorBoundary extends React.Component<
   }
 
   public static getDerivedStateFromError(_: Error): StateTypes {
-    return { hasError: true }
+    return { hasError: true, error: undefined }
   }
 
   componentDidCatch(error: Error) {
