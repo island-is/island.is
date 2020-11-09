@@ -7,7 +7,7 @@ import {
   GridRow,
   Inline,
   Tag,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -48,7 +48,7 @@ export const InfoScreen: FC<Props> = ({
             <Box marginTop={[2, 3, 8]} marginBottom={2}>
               <Box display="flex" marginBottom={[2, 3]}>
                 <Inline space={1}>
-                  <Typography variant="h1">{formatMessage(title)}</Typography>
+                  <Text variant="h1">{formatMessage(title)}</Text>
                   <Tag variant="mint" label>
                     {formatMessage({
                       id: 'service.portal:in-progress',
@@ -58,14 +58,12 @@ export const InfoScreen: FC<Props> = ({
                 </Inline>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
-                <Typography variant="intro">{formatMessage(intro)}</Typography>
+                <Text variant="intro">{formatMessage(intro)}</Text>
               </Box>
               {list && (
                 <>
                   <Box marginBottom={[2, 3]}>
-                    <Typography variant="h2">
-                      {formatMessage(list.title)}
-                    </Typography>
+                    <Text variant="h2">{formatMessage(list.title)}</Text>
                   </Box>
                   <BulletList>
                     {list.items.map((item, index) => (

@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import * as styles from './ActionSidebar.treat'
-import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 
 interface Props {
   isActive: boolean
@@ -44,7 +44,7 @@ export const ActionSidebar: FC<Props> = ({ isActive, onClose, children }) => {
       >
         <Box position="relative" height="full" background="white">
           <Box className={styles.close}>
-            <Button variant="menu" icon="close" onClick={onClose} />
+            <Button variant="utility" icon="close" onClick={onClose} />
           </Box>
           <div className={styles.scrollWrapper}>{children}</div>
         </Box>
