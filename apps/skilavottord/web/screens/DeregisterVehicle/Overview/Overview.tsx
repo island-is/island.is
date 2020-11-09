@@ -31,7 +31,14 @@ const Overview: FC = () => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const vehicles = data?.skilavottordRecyclingPartnerVehicles
+  const vehicleOwners = data?.skilavottordRecyclingPartnerVehicles
+  const deregisteredVehicles = vehicleOwners?.filter(({ vehicles }) => {
+    for (const vehicle of vehicles) {
+      for (const request of vehicle.recyclingRequests) {
+        return request.requestType === 'deregistered'
+      }
+    }
+  })
 
   const handleDeregister = () => {
     router.push(routes.deregisterVehicle.select)
@@ -78,11 +85,11 @@ const Overview: FC = () => {
             <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
           </Stack>
         </GridColumn>
-        {vehicles?.length > 0 && (
+        {deregisteredVehicles?.length > 0 && (
           <Box marginX={1}>
             <Stack space={4}>
               <Text variant="h3">{t.subtitles.history}</Text>
-              <CarsTable titles={t.table} vehicleOwner={vehicles} />
+              <CarsTable titles={t.table} vehicleOwner={deregisteredVehicles} />
             </Stack>
           </Box>
         )}

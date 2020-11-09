@@ -70,7 +70,7 @@ const Handover: FC = () => {
     // don't call setRecyclingRequest if the car has already been set to pendingRecycle
     cars.map((car) => {
       if (car.permno === id && car.status !== 'pendingRecycle') {
-        setRequestType('pendingReycle')
+        setRequestType('pendingRecycle')
         setRecyclingRequest({
           variables: {
             permno: id,

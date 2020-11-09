@@ -241,7 +241,7 @@
         "notfound": "Car not found"
       },
       "info": {
-        "succes": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
+        "success": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
         "error": "We couldn’t find any car with that registration number",
         "notfound": "This can be because the owner has not marked it for recycling at"
       },
