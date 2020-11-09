@@ -8,7 +8,7 @@ import { DocumentClient } from './client/documentClient'
 
 @Injectable()
 export class DocumentService {
-  constructor(private documentClient: DocumentClient) { }
+  constructor(private documentClient: DocumentClient) {}
 
   async findByDocumentId(
     nationalId: string,
@@ -48,7 +48,7 @@ export class DocumentService {
           result.push(Document.fromDocumentInfo(documentMessage))
         return result
       },
-        [])
+      [])
     } catch (exception) {
       logger.error(exception)
       return []
@@ -65,7 +65,7 @@ export class DocumentService {
         if (category) result.push(DocumentCategory.fromCategoryDTO(category))
         return result
       },
-        [])
+      [])
     } catch (exception) {
       logger.error(exception)
       return []
