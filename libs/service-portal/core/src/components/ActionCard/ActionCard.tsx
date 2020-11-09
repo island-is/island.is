@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Stack, Button, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Button, Text, Link } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
 
@@ -37,7 +37,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
           justifyContent="spaceBetween"
           alignItems="center"
         >
-          <Text variant="h4">{title}</Text>
+          <Link onClick={cta.onClick} href="">
+            <Text variant="h4">{title}</Text>
+          </Link>
           <Box
             className={styles.buttonWrapper}
             marginTop={[1, 0]}
