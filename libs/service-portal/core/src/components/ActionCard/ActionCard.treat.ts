@@ -13,3 +13,7 @@ export const wrapper = style({
 export const buttonWrapper = style({
   paddingBottom: 2,
 })
+
+export const isLoadingContainer = style({
+  opacity: '.85',
+})

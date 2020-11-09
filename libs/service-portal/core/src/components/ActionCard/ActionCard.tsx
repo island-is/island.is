@@ -1,5 +1,12 @@
 import React, { FC } from 'react'
-import { Box, Stack, Button, Text, Link } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Button,
+  Text,
+  Link,
+  LoadingIcon,
+} from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
 
@@ -7,13 +14,14 @@ interface Props {
   label: string
   title: string
   date: Date
+  loading?: boolean
   cta: {
     label: string
     onClick: () => void
   }
 }
 
-export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
+export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
   return (
     <Box
       className={styles.wrapper}
@@ -22,6 +30,7 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
       paddingX={[2, 4]}
       border="standard"
       borderRadius="large"
+      position="relative"
     >
       <Stack space={1}>
         <Box display="flex" alignItems="center" justifyContent="spaceBetween">
@@ -59,6 +68,23 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta }) => {
           </Box>
         </Box>
       </Stack>
+      {loading && (
+        <Box
+          className={styles.isLoadingContainer}
+          position="absolute"
+          left={0}
+          right={0}
+          top={0}
+          bottom={0}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius="large"
+          background="blue100"
+        >
+          <LoadingIcon animate size={30} />
+        </Box>
+      )}
     </Box>
   )
 }

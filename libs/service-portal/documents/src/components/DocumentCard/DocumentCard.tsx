@@ -84,6 +84,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       date={new Date(document.date)}
       label={document.senderName}
       key={document.id}
+      loading={loading}
       cta={{
         onClick: handleOnClick,
         label: formatMessage({
