@@ -159,10 +159,10 @@ export class RecyclingRequestService {
       // partnerId could not be null when create requestType for recycling partner.
       if (requestType == 'deregistered' && !partnerId) {
         this.logger.error(
-          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
+          `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
         throw new Error(
-          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
+          `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
       }
       // Initalise new RecyclingRequest
@@ -179,6 +179,9 @@ export class RecyclingRequestService {
           partnerId,
         )
         if (!partner) {
+          this.logger.error(
+            `Could not find Partner from partnerId: ${partnerId}`,
+          )
           throw new Error(`Could not find Partner from partnerId: ${partnerId}`)
         }
         newRecyclingRequest.nameOfRequestor = partner['companyName']
@@ -195,6 +198,9 @@ export class RecyclingRequestService {
       if (requestType == 'deregistered') {
         try {
           // 1. Check 'pendingRecycle' requestType
+          this.logger.info(
+            `Check "pendingRecycle" status on vehicle: ${permno}`,
+          )
           const resRequestType = await this.findAllWithPermno(permno)
           if (resRequestType.length > 0) {
             if (
