@@ -27,6 +27,9 @@ export class ApplicationErrorBoundary extends PureComponent<
   }
 
   componentDidCatch(error: Error) {
+    if (window.location.origin === 'http://localhost:4200') {
+      return
+    }
     Sentry.captureException(error)
   }
 
