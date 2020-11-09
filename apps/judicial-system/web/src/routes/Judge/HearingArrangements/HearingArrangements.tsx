@@ -129,6 +129,7 @@ export const HearingArrangements: React.FC = () => {
               <GridRow>
                 <GridColumn span="7/12">
                   <DatePicker
+                    id="courtDate"
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
                     locale="is"

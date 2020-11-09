@@ -100,16 +100,16 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    const datePickerWrappers = await waitFor(() =>
-      screen.getByTestId('datepicker'),
-    )
-    const courtDateWrapper = within(datePickerWrappers)
-    const courtDate = courtDateWrapper.getByTestId('datepicker-value')
-
     // Act
 
     // Assert
-    expect((courtDate as HTMLSpanElement).textContent).toEqual('16.09.2020')
+    expect(
+      await waitFor(
+        () =>
+          (screen.getByLabelText('Veldu dagsetningu *') as HTMLInputElement)
+            .value,
+      ),
+    ).toEqual('16.09.2020')
 
     expect(
       (screen.getByLabelText('Tímasetning *') as HTMLInputElement).value,
