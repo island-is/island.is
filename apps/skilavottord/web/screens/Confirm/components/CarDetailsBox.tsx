@@ -16,12 +16,10 @@ export const CarDetailsBox: FC<BoxProps> = ({
   return (
     <OutlinedBox>
       <Box paddingX={4} paddingY={4}>
-        <Box>
-          <Stack space={1}>
-            <Text variant="h3">{permno}</Text>
-            <Text>{`${type}, ${modelYear}`}</Text>
-          </Stack>
-        </Box>
+        <Stack space={1}>
+          <Text variant="h3">{permno}</Text>
+          <Text>{`${type}, ${modelYear}`}</Text>
+        </Stack>
       </Box>
     </OutlinedBox>
   )

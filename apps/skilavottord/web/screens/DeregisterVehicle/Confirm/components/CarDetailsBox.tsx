@@ -23,12 +23,10 @@ export const CarDetailsBox: FC<BoxProps> = ({
         paddingX={4}
         paddingY={4}
       >
-        <Box>
-          <Stack space={1}>
-            <Text variant="h3">{vehicleId}</Text>
-            <Text>{`${vehicleType}, ${modelYear}`}</Text>
-          </Stack>
-        </Box>
+        <Stack space={1}>
+          <Text variant="h3">{vehicleId}</Text>
+          <Text>{`${vehicleType}, ${modelYear}`}</Text>
+        </Stack>
         <Text variant="h5">{vehicleOwner}</Text>
       </Box>
     </OutlinedBox>
