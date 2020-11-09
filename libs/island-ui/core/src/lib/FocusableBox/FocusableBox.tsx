@@ -52,7 +52,8 @@ export const FocusableBox = forwardRef<HTMLElement, Props>(
     ref,
   ) => {
     const { colorScheme } = useContext(ColorSchemeContext)
-    const [isFocused, toggle] = useToggle(false)
+    const [isFocused, toggleIsFocused] = useToggle(false)
+    const [isHovered, toggleIsHovered] = useToggle(false)
 
     const colorKey: NoNullColorScheme =
       colorScheme ?? (color as NoNullColorScheme)
@@ -66,12 +67,16 @@ export const FocusableBox = forwardRef<HTMLElement, Props>(
           styles.colorSchemes[colorKey],
           className,
         )}
-        onFocus={toggle}
-        onBlur={toggle}
+        onFocus={toggleIsFocused}
+        onBlur={toggleIsFocused}
+        onMouseOver={toggleIsHovered}
+        onMouseOut={toggleIsHovered}
         ref={ref}
         {...rest}
       >
-        {typeof children === 'function' ? children({ isFocused }) : children}
+        {typeof children === 'function'
+          ? children({ isFocused, isHovered })
+          : children}
       </Box>
     )
   },
