@@ -236,14 +236,7 @@
       "label": "Leita að skráningarnúmeri",
       "placeholder": "Search for reg nr"
     },
-    "table": [
-      "Skráningar nr.",
-      "Tegund",
-      "Undirtegund",
-      "Ár",
-      "Fyrirtæki",
-      "Afskráð"
-    ]
+    "table": ["Skráningar nr.", "Undirtegund", "Ár", "Fyrirtæki", "Afskráð"]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",
