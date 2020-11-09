@@ -14,7 +14,7 @@ interface Props {
 
 const NotificationMenu: FC<Props> = ({ state, onClose }) => {
   const { formatMessage } = useLocale()
-  useNamespaces('sp.settings')
+  useNamespaces(['sp.settings', 'sp.messages'])
 
   return (
     <Box position="relative">
