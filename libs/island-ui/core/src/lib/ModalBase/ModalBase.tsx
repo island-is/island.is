@@ -23,7 +23,9 @@ export const BackdropDiv = forwardRef(
       setMounted(true)
     }, [])
 
-    return mounted && <div className={styles.backdrop} {...props} ref={ref} />
+    return mounted ? (
+      <div className={styles.backdrop} {...props} ref={ref} />
+    ) : null
   },
 )
 

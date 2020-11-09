@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, ReactElement } from 'react'
 import { useRouter } from 'next/router'
 import findKey from 'lodash/findKey'
 import { useApolloClient } from '@apollo/client/react'
@@ -75,7 +75,7 @@ export const LanguageToggler: FC<{
     })
   }
 
-  const Disclosure = (
+  const Disclosure: ReactElement = (
     <Button
       colorScheme={buttonColorScheme}
       variant="utility"
