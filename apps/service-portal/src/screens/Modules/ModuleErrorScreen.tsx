@@ -2,9 +2,15 @@ import React, { FC } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import * as Sentry from '@sentry/react'
 
 interface Props {
   name: string | MessageDescriptor
+}
+
+interface StateTypes {
+  error?: Error
+  hasError?: boolean
 }
 
 export class ModuleErrorBoundary extends React.Component<
@@ -16,12 +22,12 @@ export class ModuleErrorBoundary extends React.Component<
     this.state = { hasError: false }
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true }
+  static getDerivedStateFromError(_: Error): StateTypes {
+    return { hasError: true, error: undefined }
   }
 
-  componentDidCatch() {
-    // TODO: Log error
+  componentDidCatch(error: Error) {
+    Sentry.captureException(error)
   }
 
   render() {

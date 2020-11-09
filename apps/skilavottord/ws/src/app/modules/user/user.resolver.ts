@@ -5,7 +5,6 @@ import { Role } from '../auth/auth.types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 
-console.log(' --- user.resolver starting')
 @Resolver(() => User)
 export class UserResolver {
   constructor(
