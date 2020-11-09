@@ -4,6 +4,7 @@ export type Icon =
   | 'add'
   | 'arrowForward'
   | 'arrowBack'
+  | 'arrowUp'
   | 'attach'
   | 'business'
   | 'calendar'
@@ -43,6 +44,7 @@ export default {
     add: 'Add',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
+    arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
     calendar: 'Calendar',
@@ -81,6 +83,7 @@ export default {
     add: 'AddOutline',
     arrowForward: 'ArrowForwardOutline',
     arrowBack: 'ArrowBackOutline',
+    arrowUp: 'ArrowUpOutline',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',

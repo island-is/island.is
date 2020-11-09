@@ -8,11 +8,7 @@ import React, {
 } from 'react'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
-import {
-  IconDeprecated as Icon,
-  Inline,
-  Hidden,
-} from '@island.is/island-ui/core'
+import { Icon, Inline, Hidden } from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/web/context'
 import { useI18n } from '@island.is/web/i18n'
@@ -163,7 +159,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               disabled={atStart}
               onClick={slidePrev}
             >
-              <Icon type="arrowLeft" color="white" width="18" height="18" />
+              <Icon icon="arrowBack" color="white" />
             </button>
             <button
               className={cn(styles.arrowButton, {
@@ -172,7 +168,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               disabled={atEnd}
               onClick={slideNext}
             >
-              <Icon type="arrowRight" color="white" width="18" height="18" />
+              <Icon icon="arrowForward" color="white" />
             </button>
           </Inline>
         </div>
