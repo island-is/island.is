@@ -25,6 +25,10 @@ import {
   CaseQuery,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
+import {
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 export const CourtRecord: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -80,7 +84,11 @@ export const CourtRecord: React.FC = () => {
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={2} isLoading={isLoading}>
+    <PageLayout
+      activeSection={Sections.JUDGE}
+      activeSubSection={JudgeSubsections.COURT_RECORD}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>

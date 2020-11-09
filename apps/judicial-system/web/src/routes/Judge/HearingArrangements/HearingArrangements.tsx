@@ -29,6 +29,10 @@ import parseISO from 'date-fns/parseISO'
 import formatISO from 'date-fns/formatISO'
 import isNull from 'lodash/isNull'
 import isValid from 'date-fns/isValid'
+import {
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 interface CaseData {
   case: Case
@@ -107,7 +111,11 @@ export const HearingArrangements: React.FC = () => {
   }, [workingCase, isStepIllegal])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={1} isLoading={loading}>
+    <PageLayout
+      activeSection={Sections.JUDGE}
+      activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
+      isLoading={loading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>

@@ -37,6 +37,10 @@ import {
   CaseQuery,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
+import {
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
@@ -134,7 +138,11 @@ export const RulingStepOne: React.FC = () => {
   }, [workingCase, isStepIllegal])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={3} isLoading={isLoading}>
+    <PageLayout
+      activeSection={Sections.JUDGE}
+      activeSubSection={JudgeSubsections.RULING_STEP_ONE}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
