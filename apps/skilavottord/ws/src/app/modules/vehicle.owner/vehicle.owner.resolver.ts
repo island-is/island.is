@@ -57,7 +57,6 @@ export class VehicleOwnerResolver {
       'create new createSkilavottordVehicleOwner...' +
         JSON.stringify(vm, null, 2),
     )
-    await this.vehicleOwnerService.create(vm)
-    return true
+    return await this.vehicleOwnerService.create(vm)
   }
 }

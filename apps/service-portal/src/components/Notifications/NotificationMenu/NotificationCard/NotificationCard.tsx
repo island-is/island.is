@@ -12,7 +12,7 @@ interface Props {
 }
 
 const NotificationCard: FC<Props> = ({ card, onClick }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   return (
     <Box
@@ -35,12 +35,12 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
           {card.provider}
         </Text>
         <Tag variant="blue" label>
-          {card.type}
+          {lang === 'en' ? 'Notification' : 'Tilkynning'}
         </Tag>
       </Box>
       <Stack space={1}>
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-          <Text variant="h4">{card.title}</Text>
+          <Text variant="h4">{formatMessage(card.title)}</Text>
           {card.wip && (
             <Tag variant="purple" label>
               {formatMessage({
@@ -50,7 +50,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
             </Tag>
           )}
         </Box>
-        <Text as="div">{card.text}</Text>
+        <Text as="div">{formatMessage(card.text)}</Text>
         <Box
           display="flex"
           justifyContent="flexStart"
@@ -59,7 +59,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         >
           <Link to={card.link.url} className={styles.link} onClick={onClick}>
             <Button variant="text" size="small" icon="arrowForward">
-              {card.link.title}
+              {formatMessage(card.link.title)}
             </Button>
           </Link>
         </Box>
