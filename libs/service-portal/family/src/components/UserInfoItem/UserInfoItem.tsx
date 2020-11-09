@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import {
-  Typography,
+  Text,
   Box,
   GridRow,
   GridColumn,
@@ -35,13 +35,11 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           marginTop={[3, 3, 0]}
         >
           <Box marginBottom={2}>
-            <Typography variant="h2" as="h2">
+            <Text variant="h2" as="h2">
               {formatMessage(heading)}
-            </Typography>
+            </Text>
           </Box>
-          <Typography variant="p" as="p" marginBottom={[3, 4]}>
-            {formatMessage(subtext)}
-          </Typography>
+          <Text marginBottom={[3, 4]}>{formatMessage(subtext)}</Text>
           <Box>
             <Link to={link}>
               <ArrowLink>
