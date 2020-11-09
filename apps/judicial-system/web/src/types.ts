@@ -29,3 +29,5 @@ export enum JudgeSubsections {
   RULING_STEP_TWO = 4,
   CONFIRMATION = 5,
 }
+
+export type ReactSelectOption = { label: string; value: string | number }
