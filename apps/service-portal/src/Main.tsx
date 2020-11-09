@@ -10,7 +10,7 @@ Sentry.init({
   dsn: environment.sentry.dsn,
   integrations: [new Integrations.BrowserTracing()],
   environment: 'frontend',
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.01,
 })
 
 ReactDOM.render(<App />, document.getElementById('root'))
