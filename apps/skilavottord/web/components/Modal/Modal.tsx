@@ -7,6 +7,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  LoadingIcon,
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.treat'
 import { OutlinedError } from '@island.is/skilavottord-web/components'
@@ -20,6 +21,7 @@ export interface ModalProps {
   text: string
   continueButtonText: string
   cancelButtonText: string
+  loading?: boolean
   error?: boolean
   errorText?: Errors
 }
@@ -32,7 +34,8 @@ export const Modal: FC<ModalProps> = ({
   text,
   continueButtonText,
   cancelButtonText,
-  error,
+  loading = false,
+  error = false,
   errorText,
 }: ModalProps) => {
   useEffect(() => {
@@ -77,14 +80,14 @@ export const Modal: FC<ModalProps> = ({
                       <Stack space={2}>
                         <Text variant="h1">{title}</Text>
                         <OutlinedError
-                          title={errorText.title}
-                          message={errorText.message}
+                          title={errorText?.title}
+                          message={errorText?.message}
                           primaryButton={{
-                            text: `${errorText.primaryButton}`,
+                            text: `${errorText?.primaryButton}`,
                             action: onContinue,
                           }}
                           secondaryButton={{
-                            text: `${errorText.secondaryButton}`,
+                            text: `${errorText?.secondaryButton}`,
                             action: onCancel,
                           }}
                         />
@@ -93,7 +96,13 @@ export const Modal: FC<ModalProps> = ({
                       <Stack space={[6, 4, 4, 4]}>
                         <Stack space={2}>
                           <Text variant="h1">{title}</Text>
-                          <Text variant="intro">{text}</Text>
+                          {loading ? (
+                            <Box textAlign="center">
+                              <LoadingIcon size={50} />
+                            </Box>
+                          ) : (
+                            <Text variant="intro">{text}</Text>
+                          )}
                         </Stack>
                         <Box display="flex" justifyContent="spaceBetween">
                           <Button variant="ghost" onClick={onCancel} fluid>

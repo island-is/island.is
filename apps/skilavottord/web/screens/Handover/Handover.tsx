@@ -8,7 +8,6 @@ import {
   Stack,
   Text,
   Button,
-  SkeletonLoader,
   LoadingIcon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -109,7 +108,7 @@ const Handover: FC = () => {
   if (
     (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
     error ||
-    (!data && loading)
+    (loading && !data)
   ) {
     return (
       <ProcessPageLayout
@@ -194,14 +193,13 @@ const Handover: FC = () => {
         onContinue={onConfirmCancellation}
         onCancel={onCancelCancellation}
         title={
-          mutationError || mutationLoading
-            ? t.cancelModal.titles.error
-            : t.cancelModal.titles.info
+          mutationError ? t.cancelModal.titles.error : t.cancelModal.titles.info
         }
         text={t.cancelModal.info}
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
-        error={mutationError || mutationLoading}
+        loading={mutationLoading}
+        error={mutationError}
         errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>
