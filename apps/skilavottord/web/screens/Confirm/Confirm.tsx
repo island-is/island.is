@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
+import { useMutation } from '@apollo/client'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   Box,
@@ -14,8 +15,16 @@ import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { CarDetailsBox } from './components'
 import { theme } from '@island.is/island-ui/theme'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
+import { formatDate } from '@island.is/skilavottord-web/utils'
+import { Car } from '@island.is/skilavottord-web/types'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import {
+  CREATE_VEHICLE_OWNER,
+  CREATE_VEHICLE,
+} from '@island.is/skilavottord-web/graphql/mutations'
 
 const Confirm = ({ apolloState }) => {
+  const { user } = useContext(UserContext)
   const [checkbox, setCheckbox] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -44,13 +53,30 @@ const Confirm = ({ apolloState }) => {
     setIsMobile(false)
   }, [width])
 
+  const [setVehicle] = useMutation(CREATE_VEHICLE)
+  const [setVehicleOwner] = useMutation(CREATE_VEHICLE_OWNER)
+
   const onCancel = () => {
     router.replace({
       pathname: routes.myCars,
     })
   }
 
-  const onConfirm = (id: string) => {
+  const onConfirm = (car: Car) => {
+    setVehicleOwner({
+      variables: {
+        name: user?.name,
+        nationalId: user?.nationalId,
+      },
+    }).then(() =>
+      setVehicle({
+        variables: {
+          ...car,
+          newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+          nationalId: user?.nationalId,
+        },
+      }),
+    )
     router.replace(
       `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
@@ -59,7 +85,10 @@ const Confirm = ({ apolloState }) => {
   const checkboxLabel = (
     <>
       <Text fontWeight={!checkbox ? 'light' : 'medium'}>
-        {t.checkbox.label} <a href="/">{t.checkbox.linkLabel}</a>
+        {t.checkbox.label}{' '}
+        <a href="https://island.is/skilmalar-island-is">
+          {t.checkbox.linkLabel}
+        </a>
       </Text>
     </>
   )
@@ -113,7 +142,7 @@ const Confirm = ({ apolloState }) => {
               <Button
                 disabled={!checkbox}
                 icon="arrowForward"
-                onClick={() => onConfirm(id.toString())}
+                onClick={() => onConfirm(car)}
               >
                 {t.buttons.continue}
               </Button>

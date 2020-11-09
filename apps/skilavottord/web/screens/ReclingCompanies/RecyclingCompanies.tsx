@@ -25,7 +25,10 @@ const RecyclingCompanies: FC = () => {
     return <NotFound />
   }
 
-  const recyclingPartners = data?.skilavottordAllRecyclingPartners || []
+  const partners = data?.skilavottordAllRecyclingPartners || []
+  const recyclingPartners = partners.filter(
+    ({ companyId }) => companyId !== '0000000000',
+  )
 
   return (
     <PartnerPageLayout

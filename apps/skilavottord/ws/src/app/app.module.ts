@@ -1,11 +1,8 @@
-console.log('--- app.module starting')
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { RecyclingPartnerModule } from './modules/recyclingPartner'
 import { AuthModule } from './modules/auth'
 import { UserModule } from './modules'
 import { GdprDbModule } from './modules/gdpr/gdpr.module'
-import { CarownerModule } from './modules/carowner'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { RecyclingPartnerDbModule } from './modules/recycling.partner/recycling.partner.module'
@@ -32,8 +29,6 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
     }),
     AuthModule,
     UserModule,
-    CarownerModule,
-    RecyclingPartnerModule,
     SamgongustofaModule,
     FjarsyslaModule,
     GdprDbModule,
