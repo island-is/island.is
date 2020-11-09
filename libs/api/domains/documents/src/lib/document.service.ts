@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Document } from './models/document.model'
 import { CategoryDTO, DocumentInfoDTO, DocumentDTO } from './client/models'
 import { logger } from '@island.is/logging'
@@ -18,7 +18,7 @@ export class DocumentService {
       const rawDocumentDTO = await this.documentClient.customersDocument({
         kennitala: nationalId,
         messageId: documentId,
-        authenticationType: 'LOW',
+        authenticationType: 'HIGH',
       })
 
       const documentDTO: DocumentDTO = {
@@ -32,7 +32,7 @@ export class DocumentService {
       return DocumentDetails.fromDocumentDTO(documentDTO)
     } catch (exception) {
       logger.error(exception)
-      throw new NotFoundException('Error fetching document')
+      throw new InternalServerErrorException('Error fetching document')
     }
   }
 

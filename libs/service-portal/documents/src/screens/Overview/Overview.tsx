@@ -1,17 +1,16 @@
 import React, { useState, useCallback } from 'react'
 import {
-  Typography,
+  Text,
   Box,
   Stack,
   Columns,
   Column,
-  ButtonDeprecated as Button,
+  Button,
   Select,
   Pagination,
   Option,
   DatePicker,
   Input,
-  Text,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
@@ -217,7 +216,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       })}
                       locale="is"
                       selected={filterValue.dateFrom}
-                      value={filterValue?.dateFrom?.toString() || ''}
                       handleChange={handleDateFromInput}
                     />
                   </Column>
@@ -233,7 +231,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       })}
                       locale="is"
                       selected={filterValue.dateTo}
-                      value={filterValue?.dateTo?.toString() || ''}
                       handleChange={handleDateToInput}
                       minDate={filterValue.dateFrom || undefined}
                     />
@@ -266,24 +263,24 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {loading && <ActionCardLoader repeat={3} />}
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Typography variant="h3">
+                <Text variant="h3">
                   {formatMessage({
                     id: 'sp.documents:error',
                     defaultMessage:
                       'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
                   })}
-                </Typography>
+                </Text>
               </Box>
             )}
             {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-                <Typography variant="h3">
+                <Text variant="h3">
                   {formatMessage({
                     id: 'sp.documents:not-found',
                     defaultMessage:
                       'Engin skjöl fundust fyrir gefin leitarskilyrði',
                   })}
-                </Typography>
+                </Text>
               </Box>
             )}
             {filteredDocuments

@@ -64,7 +64,7 @@ export const containerSizes = {
     }),
   },
   md: {
-    padding: '8px 8px 16px 8px',
+    padding: '8px 16px 16px 8px',
     ...themeUtils.responsiveStyle({
       md: {
         padding: '8px 24px 14px 8px',

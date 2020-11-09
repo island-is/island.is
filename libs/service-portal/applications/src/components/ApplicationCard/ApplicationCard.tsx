@@ -2,11 +2,9 @@ import React, { FC } from 'react'
 import {
   Box,
   Stack,
-  Inline,
-  IconDeprecated as Icon,
-  Typography,
+  Text,
   Tag,
-  ButtonDeprecated as Button,
+  Button,
   Columns,
   Column,
 } from '@island.is/island-ui/core'
@@ -43,16 +41,16 @@ const ApplicationCard: FC<Props> = ({
           alignItems="center"
           marginBottom={1}
         >
-          <Typography variant="h3">{name}</Typography>
+          <Text variant="h3">{name}</Text>
           <Tag variant={isComplete ? 'mint' : 'purple'} label>
             {isComplete ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
-        <Typography variant="p">
+        <Text>
           {`Þú hefur ${
             !isComplete ? 'ekki ' : ''
           } lokið umsóknarferli fyrir ${name}`}
-        </Typography>
+        </Text>
         <Columns space={8} alignY="center" collapseBelow="md">
           <Column width="8/12">
             <ProgressBar progress={progress} />
