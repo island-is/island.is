@@ -184,7 +184,7 @@ export class RecyclingRequestService {
         newRecyclingRequest.nameOfRequestor = partner['companyName']
       }
       // Here is a bit tricky
-      // 1. Check if lastest vehicle's requestType is 'pendingVehicle'
+      // 1. Check if lastest vehicle's requestType is 'pendingRecycle'
       // 2. Set requestType to 'handOver'
       // 3. Then deregistered the vehicle from Samgongustofa
       // 4. Set requestType to 'deregistered'
@@ -194,14 +194,14 @@ export class RecyclingRequestService {
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
         try {
-          // 1. Check 'pendingVehicle' requestType
+          // 1. Check 'pendingRecycle' requestType
           const resRequestType = await this.findAllWithPermno(permno)
           if (resRequestType.length > 0) {
             if (
-              resRequestType[0]['dataValues']['requestType'] != 'pendingVehicle'
+              resRequestType[0]['dataValues']['requestType'] != 'pendingRecycle'
             ) {
               throw new Error(
-                `Lastest requestType of vehicle's number ${permno} is not 'pendingVehicle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+                `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
               )
             }
             throw new Error(
@@ -265,10 +265,10 @@ export class RecyclingRequestService {
           )
         }
       }
-      // requestType: 'pendingVehicle' or 'cancelled'
+      // requestType: 'pendingRecycle' or 'cancelled'
       else {
         this.logger.info(`create requestType: ${requestType} for ${permno}`)
-        await new RecyclingRequestModel().save()
+        await newRecyclingRequest.save()
       }
       this.logger.info(
         `---- Finsihed update requestType for ${permno} to requestType: ${requestType} ----`,
