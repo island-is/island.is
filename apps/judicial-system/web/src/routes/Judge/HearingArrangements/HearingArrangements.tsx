@@ -6,7 +6,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { isNextDisabled } from '../../../utils/stepHelper'
 import { validate, Validation } from '../../../utils/validate'
@@ -56,17 +56,20 @@ export const HearingArrangements: React.FC = () => {
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   useEffect(() => {
     document.title = 'Fyrirtökutími - Réttarvörslugátt'
