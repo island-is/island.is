@@ -41,12 +41,11 @@ const DocumentCard: FC<Props> = ({ document }) => {
   const { fetchDocument, loading, data, error } = useLazyDocumentDetail(
     document.id,
   )
-
   useEffect(() => {
-    if (data) {
+    if (data || error) {
       handleOnFetch()
     }
-  }, [data])
+  }, [data, error])
 
   const handleOnFetch = () => {
     if (data?.fileType === 'pdf' && data?.content) {
