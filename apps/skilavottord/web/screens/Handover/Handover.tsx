@@ -17,7 +17,7 @@ import {
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations'
 import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'

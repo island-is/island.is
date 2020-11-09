@@ -28,6 +28,7 @@ const Overview: FC = () => {
   const partnerId = user?.partnerId ?? ''
   const { data } = useQuery(VEHICLES_BY_PARTNER_ID, {
     variables: { partnerId },
+    fetchPolicy: 'cache-and-network',
   })
 
   const vehicles = data?.skilavottordRecyclingPartnerVehicles

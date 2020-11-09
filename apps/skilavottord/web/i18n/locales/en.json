@@ -231,13 +231,23 @@
       }
     },
     "deregister": {
-      "title": "Deregister car",
+      "titles": {
+        "success": "Deregister car",
+        "error": "Car could not be added",
+        "loading": "Deregistering car"
+      },
       "info": "Confirm car for deregistration. This process cannot be undone.",
       "buttons": {
         "back": "Back",
         "confirm": "Confirm"
       },
-      "success": "Deregistration was successful."
+      "success": "Deregistration was successful.",
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem marking the car for deregistration. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
+      }
     }
   },
   "recyclingFundOverview": {

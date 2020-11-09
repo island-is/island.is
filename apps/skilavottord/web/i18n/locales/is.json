@@ -234,13 +234,23 @@
       }
     },
     "deregister": {
-      "title": "Afskrá bíl",
+      "titles": {
+        "success": "Afskrá bíl",
+        "error": "Car could not be added",
+        "loading": "Deregistering car"
+      },
       "info": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
       "buttons": {
         "back": "Til baka",
         "confirm": "Staðfesta"
       },
-      "success": "Afskráning tókst."
+      "success": "Afskráning tókst.",
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem marking the car for deregistration. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
+      }
     }
   },
   "recyclingFundOverview": {

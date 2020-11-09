@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Hidden,
+  LoadingIcon,
   Stack,
   Text,
   toast,
@@ -13,7 +14,20 @@ import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import { NotFound, OutlinedError } from '@island.is/skilavottord-web/components'
+import { useMutation } from '@apollo/client'
+import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations'
+
+const mockCar = {
+  permno: 'ABC123',
+  vinNumber: 'ABC123',
+  type: 'Volvo',
+  firstRegDate: '01-20-2004',
+  color: 'red',
+  isRecyclable: true,
+  status: 'pendingRecycle',
+  hasCoOwner: false,
+}
 
 const Confirm: FC = () => {
   const { user } = useContext(UserContext)
@@ -26,19 +40,28 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const mockCar = {
-    permno: id.toString(),
-    vinNumber: 'ABC123',
-    type: 'Volvo',
-    firstRegDate: '01-20-2004',
-    color: 'red',
-    isRecyclable: true,
-    status: 'pendingRecycle',
-    hasCoOwner: false,
-  }
+  const partnerId = user?.partnerId
+
+  const [
+    setRecyclingRequest,
+    { error: mutationError, loading: mutationLoading },
+  ] = useMutation(CREATE_RECYCLING_REQUEST, {
+    onCompleted() {
+      router.replace(routes.baseRoute).then(() => toast.success(t.success))
+    },
+    onError() {
+      return mutationError
+    },
+  })
 
   const handleConfirm = () => {
-    router.replace(routes.baseRoute).then(() => toast.success(t.success))
+    setRecyclingRequest({
+      variables: {
+        permno: id,
+        partnerId: partnerId,
+        requestType: 'deregister',
+      },
+    })
   }
 
   const handleBack = () => {
@@ -51,10 +74,41 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
+  if (mutationError || mutationLoading /* || error || loading */) {
+    return (
+      <ProcessPageLayout sectionType={'company'} activeSection={1}>
+        {mutationLoading ? (
+          <Box textAlign="center">
+            <Stack space={4}>
+              <Text variant="h1">{t.titles.loading}</Text>
+              <LoadingIcon size={50} />
+            </Stack>
+          </Box>
+        ) : (
+          <Stack space={4}>
+            <Text variant="h1">{t.titles.error}</Text>
+            <OutlinedError
+              title={t.error.title}
+              message={t.error.message}
+              primaryButton={{
+                text: `${t.error.primaryButton}`,
+                action: handleConfirm,
+              }}
+              secondaryButton={{
+                text: `${t.error.secondaryButton}`,
+                action: handleBack,
+              }}
+            />
+          </Stack>
+        )}
+      </ProcessPageLayout>
+    )
+  }
+
   return (
     <ProcessPageLayout sectionType={'company'} activeSection={1}>
       <Stack space={4}>
-        <Text variant="h1">{t.title}</Text>
+        <Text variant="h1">{t.titles.success}</Text>
         <Text variant="intro">{t.info}</Text>
         <CarDetailsBox car={mockCar} />
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
