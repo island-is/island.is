@@ -18,25 +18,21 @@ export const LanguageStep: FC<Props> = ({ onBack, onSubmit, language }) => {
 
   return (
     <>
-      <GridRow>
-        <GridColumn span={['1/1', '1/1', '4/7']}>
-          <Text variant="h1" marginBottom={3}>
-            {formatMessage({
-              id: 'service.portal:language',
-              defaultMessage: 'Tungumál',
-            })}
-          </Text>
-          <Text marginBottom={7}>
-            {formatMessage({
-              id: 'sp.settings:language-form-message',
-              defaultMessage: `
+      <Text variant="h1" marginBottom={3}>
+        {formatMessage({
+          id: 'service.portal:language',
+          defaultMessage: 'Tungumál',
+        })}
+      </Text>
+      <Text marginBottom={7}>
+        {formatMessage({
+          id: 'sp.settings:language-form-message',
+          defaultMessage: `
                 Vinsamlegast veldu tungumálið sem þú vilt
                 nota í kerfum island.is
               `,
-            })}
-          </Text>
-        </GridColumn>
-      </GridRow>
+        })}
+      </Text>
       <LanguageForm
         language={language}
         renderBackButton={() => (
