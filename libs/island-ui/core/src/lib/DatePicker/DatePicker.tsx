@@ -1,12 +1,11 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import {
   default as ReactDatePicker,
   registerLocale,
   ReactDatePickerProps,
 } from 'react-datepicker'
-import format from 'date-fns/format'
 import getYear from 'date-fns/getYear'
 import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
@@ -17,32 +16,64 @@ import { Text } from '../Text/Text'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
+import { Input, InputProps } from '../Input/Input'
+import { VisuallyHidden } from 'reakit'
 
-type Locale = 'is' | 'pl'
+const languageConfig = {
+  is: {
+    format: 'dd.MM.yyyy',
+    locale: is,
+  },
+  en: {
+    format: 'MM/dd/yyyy',
+    locale: en,
+  },
+  pl: {
+    format: 'dd.MM.yyyy',
+    locale: pl,
+  },
+}
+
+type LocaleKeys = keyof typeof languageConfig
+
 interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
-  locale?: Locale
-  value?: ReactDatePickerProps['value']
+  locale?: LocaleKeys
   minDate?: ReactDatePickerProps['minDate']
   selected?: ReactDatePickerProps['selected']
   disabled?: boolean
   hasError?: boolean
   errorMessage?: string
   id?: string
-  handleChange?: (date: Date) => void
+  handleChange?: (startDate: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
   handleCloseCalendar?: (date: Date | null) => void
   handleOpenCalendar?: () => void
   required?: boolean
+  inputName?: string
+}
+
+interface CustomHeaderProps {
+  date: Date
+  changeYear(year: number): void
+  changeMonth(month: number): void
+  decreaseMonth(): void
+  increaseMonth(): void
+  prevMonthButtonDisabled: boolean
+  nextMonthButtonDisabled: boolean
+  decreaseYear(): void
+  increaseYear(): void
+  prevYearButtonDisabled: boolean
+  nextYearButtonDisabled: boolean
+  locale: Locale
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
   id,
   label,
   placeholderText,
-  locale,
-  value,
+  locale = 'en',
   minDate,
   selected,
   disabled = false,
@@ -53,18 +84,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   handleCloseCalendar,
   handleOpenCalendar,
   required,
+  inputName = '',
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
-  const className = cn(
-    styles.inputContainer,
-    styles.inputContainerVariants[datePickerState],
-    {
-      [styles.hasError]: hasError,
-    },
-  )
+  const currentLanguage = languageConfig[locale]
 
   useEffect(() => {
     if (locale === 'is') {
@@ -73,45 +99,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       registerLocale('pl', pl)
     }
   }, [locale])
-
-  const getLocale = (locale?: Locale) => {
-    return locale === 'is' ? is : locale === 'pl' ? pl : en
-  }
-
-  const CustomInput = React.forwardRef<
-    HTMLButtonElement,
-    { value?: string; onClick?: () => void; placeholderText?: string }
-  >(({ value, onClick = () => undefined, placeholderText }, ref) => {
-    const valueAsDate = value === undefined ? new Date() : new Date(value)
-
-    return (
-      <button type="button" className={className} onClick={onClick}>
-        <div className={styles.labelAndPlaceholderContainer}>
-          <p className={cn(styles.label, { [styles.labelError]: hasError })}>
-            {label}
-            {required && <span className={styles.requiredStar}> *</span>}
-          </p>
-          <div className={styles.value}>
-            {value ? (
-              <span data-testid="datepicker-value">
-                <Text variant="h3">
-                  {format(valueAsDate, 'P', {
-                    locale: getLocale(locale),
-                  })}
-                </Text>
-              </span>
-            ) : placeholderText ? (
-              <Text as="span" color="dark300">
-                {placeholderText}
-              </Text>
-            ) : null}
-          </div>
-        </div>
-        <Icon icon="calendar" type="outline" color="blue400" size="large" />
-      </button>
-    )
-  })
-
   return (
     <div className={coreStyles.root} data-testid="datepicker">
       <div className={cn(styles.root, 'island-ui-datepicker')}>
@@ -119,8 +106,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
-          locale={locale}
+          locale={currentLanguage.locale}
           minDate={minDate}
+          dateFormat={currentLanguage.format}
           showPopperArrow={false}
           popperPlacement="bottom-start"
           popperModifiers={{
@@ -144,46 +132,107 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             setStartDate(date)
             handleChange && handleChange(date)
           }}
+          startDate={startDate}
+          required={required}
           customInput={
             <CustomInput
-              value={value}
-              onClick={onInputClick}
+              name={inputName}
+              label={label}
+              fixedFocusState={datePickerState === 'open'}
+              hasError={hasError}
+              errorMessage={errorMessage}
               placeholderText={placeholderText}
+              onInputClick={onInputClick}
             />
           }
-          renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => {
-            const month = format(date, 'MMMM', { locale: getLocale(locale) })
-            const capitalizedMonth = `${month
-              .charAt(0)
-              .toUpperCase()}${month.slice(1)}`
-
-            return (
-              <div className={styles.customHeaderContainer}>
-                <button
-                  type="button"
-                  onClick={decreaseMonth}
-                  className={styles.decreaseButton}
-                >
-                  <Icon icon="chevronBack" type="outline" color="blue400" />
-                </button>
-                <Text variant="h4">{`${capitalizedMonth} ${getYear(
-                  date,
-                )}`}</Text>
-                <button
-                  type="button"
-                  onClick={increaseMonth}
-                  className={styles.increaseButton}
-                >
-                  <Icon icon="chevronForward" type="outline" color="blue400" />
-                </button>
-              </div>
-            )
-          }}
+          renderCustomHeader={(props) => (
+            <CustomHeader locale={currentLanguage.locale} {...props} />
+          )}
         />
       </div>
-      {hasError && errorMessage && (
-        <div className={styles.errorMessage}>{errorMessage}</div>
-      )}
+    </div>
+  )
+}
+
+const CustomInput = ({
+  className,
+  placeholderText,
+  onInputClick,
+  fixedFocusState,
+  ...props
+}: InputProps & {
+  placeholderText?: string
+  onInputClick?: ReactDatePickerProps['onInputClick']
+}) => (
+  <Input
+    {...props}
+    icon="calendar"
+    iconType="outline"
+    fixedFocusState={fixedFocusState}
+    placeholder={placeholderText}
+  />
+)
+
+const monthsIndex = [...Array(12).keys()]
+
+const CustomHeader = ({
+  date,
+  decreaseMonth,
+  increaseMonth,
+  changeMonth,
+  locale,
+}: CustomHeaderProps) => {
+  const monthRef = useRef<HTMLSpanElement>(null)
+  const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
+  const months = monthsIndex.map((i) => {
+    if (locale.localize) {
+      return locale.localize.month(i)
+    }
+    return
+  })
+  return (
+    <div className={styles.customHeaderContainer}>
+      <button
+        type="button"
+        onClick={decreaseMonth}
+        className={styles.decreaseButton}
+      >
+        <Icon icon="chevronBack" type="outline" color="blue400" />
+      </button>
+      <div>
+        <VisuallyHidden>
+          <Text variant="h4" as="span" ref={monthRef}>
+            {month}
+          </Text>
+        </VisuallyHidden>
+        <select
+          className={styles.headerSelect}
+          value={month}
+          onChange={({ target: { value } }) =>
+            changeMonth(months.indexOf(value))
+          }
+          style={{
+            width: monthRef?.current?.offsetWidth ?? 'auto',
+            marginRight: 8,
+          }}
+        >
+          {months.map((option) => (
+            <option key={option} value={option} selected={option === month}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <Text variant="h4" as="span">
+          {getYear(date)}
+        </Text>
+      </div>
+      <button
+        type="button"
+        onClick={increaseMonth}
+        className={styles.increaseButton}
+      >
+        <Icon icon="chevronForward" type="outline" color="blue400" />
+      </button>
     </div>
   )
 }
