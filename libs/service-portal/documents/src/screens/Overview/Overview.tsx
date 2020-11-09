@@ -96,7 +96,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   useNamespaces('sp.documents')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   useScrollTopOnUpdate([page])
 
@@ -155,16 +155,32 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
-  const documentsFoundText =
-    filteredDocuments.length === 1
-      ? formatMessage({
-          id: 'sp.documents:found.singular',
-          defaultMessage: 'Skjal fannst',
-        })
-      : formatMessage({
-          id: 'sp.documents:found',
-          defaultMessage: 'Skjöl fundust',
-        })
+  const documentsFoundText = () => {
+    // default text format, singular & plural
+    let foundText =
+      filteredDocuments.length === 1
+        ? formatMessage({
+            id: 'sp.documents:found.singular',
+            defaultMessage: 'Skjal fannst',
+          })
+        : formatMessage({
+            id: 'sp.documents:found',
+            defaultMessage: 'Skjöl fundust',
+          })
+
+    // Handling edge case if lang is IS and documents.length is greater than 11 and ends with 1.
+    if (
+      lang === 'is' &&
+      filteredDocuments.length > 11 &&
+      filteredDocuments.length % 10 === 1
+    ) {
+      foundText = formatMessage({
+        id: 'sp.documents:found.singular',
+        defaultMessage: 'Skjal fannst',
+      })
+    }
+    return foundText
+  }
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
@@ -251,7 +267,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {hasActiveFilters() && (
                     <Columns space={3}>
                       <Column>
-                        <Text variant="h3">{`${filteredDocuments.length} ${documentsFoundText}`}</Text>
+                        <Text variant="h3">{`${
+                          filteredDocuments.length
+                        } ${documentsFoundText()}`}</Text>
                       </Column>
                       <Column width="content">
                         <Button variant="text" onClick={handleClearFilters}>
