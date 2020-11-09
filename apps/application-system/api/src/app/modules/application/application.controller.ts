@@ -12,7 +12,11 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
+  UseGuards,
+  Req,
 } from '@nestjs/common'
+import { Request } from 'express'
+
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
@@ -33,6 +37,7 @@ import {
   ApplicationTemplateHelper,
   ExternalData,
 } from '@island.is/application/core'
+import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-api-lib'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -56,6 +61,7 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
 @Controller()
 export class ApplicationController {
@@ -105,10 +111,14 @@ export class ApplicationController {
   @UseInterceptors(ApplicationSerializer)
   async findApplicantApplications(
     @Param('nationalRegistryId') nationalRegistryId: string,
+    @Req() request: Request,
     @Query('typeId') typeId?: string,
   ): Promise<ApplicationResponseDto[]> {
+    console.log('request.user', request.user)
+    const user = request.user as User
+
     const whereOptions: WhereOptions = {
-      applicant: nationalRegistryId,
+      applicant: user.nationalId,
     }
 
     if (typeId) {
