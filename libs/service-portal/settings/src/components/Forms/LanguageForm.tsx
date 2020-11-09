@@ -4,7 +4,7 @@ import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 export type LanguageFormOption = {
-  label: string
+  label: 'Íslenska' | 'English'
   value: Locale
 }
 
