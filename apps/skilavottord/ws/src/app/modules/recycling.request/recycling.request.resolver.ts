@@ -14,12 +14,6 @@ export class RecyclingRequestResolver {
 
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
-    const rr = new RecyclingRequestModel()
-    rr.nameOfRequestor = 'aaaaaaax'
-    rr.recyclingPartnerId = '8888888888'
-    rr.requestType = 'pendingVehicle'
-    rr.vehicleId = 'aes-135'
-    rr.save()
     const res = await this.recyclingRequestService.findAll()
     logger.info(
       'skilavottordAllRecyclingRequests response:' +
