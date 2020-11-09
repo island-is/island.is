@@ -148,6 +148,7 @@ globalStyle(
   {
     marginTop: '0',
     right: '0',
+    width: '100%',
     top: '65px !important',
     transform: 'none !important',
     ...themeUtils.responsiveStyle({
