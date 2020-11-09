@@ -70,7 +70,8 @@
   "handover": {
     "titles": {
       "success": "Successfully confirmed for recycling",
-      "error": "We couldn’t mark your car for recycling"
+      "error": "We couldn’t mark your car for recycling",
+      "loading": "Signing car for recycling"
     },
     "info": "The car has been successfully confirmed for recycling and is now ready to be handed over to a recycling company.",
     "subTitles": {

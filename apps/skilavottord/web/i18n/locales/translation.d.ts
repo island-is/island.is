@@ -164,6 +164,7 @@ export interface CheckBox {
 export interface HandoverTitles {
   success: string
   error: string
+  loading: string
 }
 
 export interface HandoverSubTitles {

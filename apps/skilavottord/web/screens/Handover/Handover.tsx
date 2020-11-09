@@ -3,7 +3,14 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation, useQuery } from '@apollo/client'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Text,
+  Button,
+  SkeletonLoader,
+  LoadingIcon,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   ProcessPageLayout,
@@ -18,6 +25,7 @@ import * as styles from './Handover.treat'
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
+  const [requestType, setRequestType] = useState(null)
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -30,20 +38,26 @@ const Handover: FC = () => {
   const { id } = router.query
 
   const nationalId = user?.nationalId ?? ''
-  const { data } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
   })
 
   const cars = data?.skilavottordVehicles || []
 
-  const [setRecyclingRequest, { error: mutationError }] = useMutation(
-    CREATE_RECYCLING_REQUEST,
-    {
-      onError() {
-        return mutationError
-      },
+  const [
+    setRecyclingRequest,
+    { error: mutationError, loading: mutationLoading },
+  ] = useMutation(CREATE_RECYCLING_REQUEST, {
+    onCompleted() {
+      if (requestType === 'cancelled') {
+        setModal(false)
+        router.replace(routes.myCars)
+      }
     },
-  )
+    onError() {
+      return mutationError
+    },
+  })
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -57,6 +71,7 @@ const Handover: FC = () => {
     // don't call setRecyclingRequest if the car has already been set to pendingRecycle
     cars.map((car) => {
       if (car.permno === id && car.status !== 'pendingRecycle') {
+        setRequestType('pendingReycle')
         setRecyclingRequest({
           variables: {
             permno: id,
@@ -69,7 +84,7 @@ const Handover: FC = () => {
   }, [user, id, cars])
 
   const onContinue = () => {
-    router.replace(routes.myCars)
+    router.push(routes.myCars)
   }
 
   const onCancelRecycling = () => {
@@ -77,15 +92,13 @@ const Handover: FC = () => {
   }
 
   const onConfirmCancellation = () => {
+    setRequestType('cancelled')
     setRecyclingRequest({
       variables: {
         permno: id,
         nameOfRequestor: user?.name,
         requestType: 'cancelled',
       },
-    }).then(() => {
-      setModal(false)
-      router.replace(routes.myCars)
     })
   }
 
@@ -93,28 +106,41 @@ const Handover: FC = () => {
     setModal(false)
   }
 
-  if (mutationError) {
+  if (
+    (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
+    error ||
+    (!data && loading)
+  ) {
     return (
       <ProcessPageLayout
         sectionType={'citizen'}
         activeSection={1}
         activeCar={id.toString()}
       >
-        <Stack space={4}>
-          <Text variant="h1">{t.titles.error}</Text>
-          <OutlinedError
-            title={t.error.title}
-            message={t.error.message}
-            primaryButton={{
-              text: `${t.error.primaryButton}`,
-              action: () => router.reload(),
-            }}
-            secondaryButton={{
-              text: `${t.error.secondaryButton}`,
-              action: () => router.push(routes.myCars),
-            }}
-          />
-        </Stack>
+        {mutationLoading || loading ? (
+          <Box textAlign="center">
+            <Stack space={4}>
+              <Text variant="h1">{t.titles.loading}</Text>
+              <LoadingIcon size={50} />
+            </Stack>
+          </Box>
+        ) : (
+          <Stack space={4}>
+            <Text variant="h1">{t.titles.error}</Text>
+            <OutlinedError
+              title={t.error.title}
+              message={t.error.message}
+              primaryButton={{
+                text: `${t.error.primaryButton}`,
+                action: () => router.reload(),
+              }}
+              secondaryButton={{
+                text: `${t.error.secondaryButton}`,
+                action: () => router.push(routes.myCars),
+              }}
+            />
+          </Stack>
+        )}
       </ProcessPageLayout>
     )
   }
@@ -168,12 +194,14 @@ const Handover: FC = () => {
         onContinue={onConfirmCancellation}
         onCancel={onCancelCancellation}
         title={
-          mutationError ? t.cancelModal.titles.error : t.cancelModal.titles.info
+          mutationError || mutationLoading
+            ? t.cancelModal.titles.error
+            : t.cancelModal.titles.info
         }
         text={t.cancelModal.info}
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
-        error={mutationError}
+        error={mutationError || mutationLoading}
         errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>
