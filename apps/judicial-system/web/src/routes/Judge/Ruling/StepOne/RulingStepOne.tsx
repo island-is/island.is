@@ -37,13 +37,16 @@ import {
   CaseQuery,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
+import {
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
   const [, setRestrictionCheckboxOne] = useState<boolean>()
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
   const [, setRestrictionCheckboxThree] = useState<boolean>()
@@ -135,7 +138,11 @@ export const RulingStepOne: React.FC = () => {
   }, [workingCase, isStepIllegal])
 
   return (
-    <PageLayout activeSection={1} activeSubSection={2} isLoading={isLoading}>
+    <PageLayout
+      activeSection={Sections.JUDGE}
+      activeSubSection={JudgeSubsections.RULING_STEP_ONE}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>

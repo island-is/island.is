@@ -19,6 +19,7 @@ import { client } from '../../graphql'
 import { User } from '@island.is/judicial-system/types'
 import Cookie from 'js-cookie'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import HearingArrangements from '../../routes/Judge/HearingArrangements/HearingArrangements'
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User>(null)
@@ -73,6 +74,9 @@ const App: React.FC = () => {
               </Route>
               <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
                 <StepTwo />
+              </Route>
+              <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
+                <HearingArrangements />
               </Route>
               <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
                 <JudgeOverview />

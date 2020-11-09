@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { VehicleOwnerModel } from './model/vehicle.owner.model'
 import { VehicleOwnerService } from './vehicle.owner.service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -42,5 +42,21 @@ export class VehicleOwnerResolver {
     )
     this.logger.debug('getTEST responce:' + JSON.stringify(res, null, 2))
     return res
+  }
+
+  @Mutation(() => Boolean)
+  async createSkilavottordVehicleOwner(
+    @Args('nationalId') nationalId: string,
+    @Args('name') name: string,
+  ) {
+    const vm = new VehicleOwnerModel()
+    vm.nationalId = nationalId
+    vm.personname = name
+
+    this.logger.info(
+      'create new createSkilavottordVehicleOwner...' +
+        JSON.stringify(vm, null, 2),
+    )
+    return await this.vehicleOwnerService.create(vm)
   }
 }
