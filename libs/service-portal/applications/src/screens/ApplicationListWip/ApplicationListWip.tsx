@@ -1,8 +1,5 @@
 import React from 'react'
-import format from 'date-fns/format'
-import * as styles from './ApplicationlistWip.treat'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import {
   Box,
   Stack,
@@ -12,9 +9,8 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
-import { mockApplicationList } from './mockApplicationList'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { ApplicationWIPCard } from '../../components/ApplicationCard/ApplicationWIPCard'
 
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
@@ -30,7 +26,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               defaultMessage: 'Umsóknir',
             })}
           </Text>
-          <Tag variant="mint" label>
+          <Tag variant="blue" label>
             {formatMessage({
               id: 'service.portal:in-progress',
               defaultMessage: 'Í vinnslu',
@@ -55,26 +51,8 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
       <Stack space={2}>
-        {mockApplicationList.map((application: Application) => (
-          <Box position="relative" border="standard" key={application.id}>
-            <Box position="absolute" className={styles.wipTag}>
-              <Tag variant="blue" label>
-                {formatMessage({
-                  id: 'service.portal:coming-soon',
-                  defaultMessage: 'Væntanlegt',
-                })}
-              </Tag>
-            </Box>
-            <div className={styles.cardBlurWrapper}>
-              <ApplicationCard
-                name={application.name || application.typeId}
-                date={format(new Date(application.modified), 'MMMM')}
-                isComplete={application.progress === 1}
-                url="/"
-                progress={application.progress ? application.progress * 100 : 0}
-              />
-            </div>
-          </Box>
+        {[...Array(3)].map((_key, index) => (
+          <ApplicationWIPCard key={index} />
         ))}
       </Stack>
     </>
