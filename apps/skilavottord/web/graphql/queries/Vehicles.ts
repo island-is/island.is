@@ -38,3 +38,37 @@ export const VEHICLES_BY_PARTNER_ID = gql`
     }
   }
 `
+
+export const ALL_DEREGISTERED_VEHICLES = gql`
+  query skilavottordVehicles {
+    skilavottordAllDeregisteredVehicles {
+      vehicleId
+      vehicleType
+      vehicleColor
+      newregDate
+      createdAt
+      updatedAt
+      recyclingRequests {
+        id
+        vehicleId
+        recyclingPartnerId
+        recyclingParter {
+          companyId
+          companyName
+          address
+          postnumber
+          city
+          website
+          phone
+          active
+          createdAt
+          updatedAt
+        }
+        requestType
+        nameOfRequestor
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`

@@ -41,7 +41,6 @@ export class VehicleResolver {
     newVehicle.vehicleType = type
     newVehicle.ownerNationalId = nid
     newVehicle.vehicleId = permno
-    await this.vehicleService.create(newVehicle)
-    return true
+    return await this.vehicleService.create(newVehicle)
   }
 }
