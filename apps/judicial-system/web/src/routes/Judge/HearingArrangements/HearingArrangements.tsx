@@ -77,11 +77,29 @@ export const HearingArrangements: React.FC = () => {
       let theCase = data.case
 
       if (!theCase.courtDate) {
-        theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
+        theCase = { ...theCase, courtDate: theCase.requestedCourtDate, defenderName: theCase.requestedDefenderName, defenderEmail: theCase.requestedDefenderEmail }
 
         updateCase(
           theCase.id,
           parseString('courtDate', theCase.requestedCourtDate),
+        )
+      }
+
+      if (!theCase.defenderName) {
+        theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
+
+        updateCase(
+          theCase.id,
+          parseString('defenderName', theCase.requestedDefenderName),
+        )
+      }
+
+      if (!theCase.defenderEmail) {
+        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
+
+        updateCase(
+          theCase.id,
+          parseString('defenderEmail', theCase.requestedDefenderEmail),
         )
       }
 
