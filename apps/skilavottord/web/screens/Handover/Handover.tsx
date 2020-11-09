@@ -1,17 +1,20 @@
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
+import { useMutation, useQuery } from '@apollo/client'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import * as styles from './Handover.treat'
-import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import CompanyList from './components/CompanyList'
-import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
-import { useMutation } from '@apollo/client'
-import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import {
+  ProcessPageLayout,
+  Modal,
+  OutlinedError,
+} from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { OutlinedError } from '@island.is/skilavottord-web/components'
+import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
+import CompanyList from './components/CompanyList'
+import * as styles from './Handover.treat'
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -25,6 +28,13 @@ const Handover: FC = () => {
 
   const router = useRouter()
   const { id } = router.query
+
+  const nationalId = user?.nationalId ?? ''
+  const { data } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+    variables: { nationalId },
+  })
+
+  const cars = data?.skilavottordVehicles || []
 
   const [setRecyclingRequest, { error: mutationError }] = useMutation(
     CREATE_RECYCLING_REQUEST,
@@ -43,14 +53,20 @@ const Handover: FC = () => {
   }, [width])
 
   useEffect(() => {
-    setRecyclingRequest({
-      variables: {
-        permno: id,
-        nameOfRequestor: user?.name,
-        requestType: 'pendingRecycle',
-      },
+    // because user can view this page after set pendingRecycle to check the process,
+    // don't call setRecyclingRequest if the car has already been set to pendingRecycle
+    cars.map((car) => {
+      if (car.permno === id && car.status !== 'pendingRecycle') {
+        setRecyclingRequest({
+          variables: {
+            permno: id,
+            nameOfRequestor: user?.name,
+            requestType: 'pendingRecycle',
+          },
+        })
+      }
     })
-  }, [user, id])
+  }, [user, id, cars])
 
   const onContinue = () => {
     router.replace(routes.myCars)
