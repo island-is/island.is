@@ -17,7 +17,7 @@ export class RecyclingRequestResolver {
     const rr = new RecyclingRequestModel()
     rr.nameOfRequestor = 'aaaaaaax'
     rr.recyclingPartnerId = '8888888888'
-    rr.requestType = 'pendingVehicle'
+    rr.requestType = 'pendingRecycle'
     rr.vehicleId = 'aes-135'
     rr.save()
     const res = await this.recyclingRequestService.findAll()
@@ -54,12 +54,11 @@ export class RecyclingRequestResolver {
     @Args('nameOfRequestor', { nullable: true }) name: string,
     @Args('partnerId', { nullable: true }) partnerId: string,
   ) {
-    await this.recyclingRequestService.createRecyclingRequest(
+    return await this.recyclingRequestService.createRecyclingRequest(
       requestType,
       permno,
       name,
       partnerId,
     )
-    return true
   }
 }

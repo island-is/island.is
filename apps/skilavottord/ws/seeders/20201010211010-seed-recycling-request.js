@@ -35,7 +35,7 @@ module.exports = {
         {
           id: 'a2fd62db-18a6-4741-88eb-a7b7a7e05833',
           vehicle_id: 'FZG90',
-          request_type: 'pendingVehicle',
+          request_type: 'pendingRecycle',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: '0000000000',
           created_at: '2020-09-08 04:05:06',
@@ -44,7 +44,7 @@ module.exports = {
         {
           id: 'a3fd62db-18a6-4741-88eb-a7b7a7e05833',
           vehicle_id: 'aes-135',
-          request_type: 'pendingVehicle',
+          request_type: 'pendingRecycle',
           recycling_partner_id: '0000000000',
           name_of_requestor: 'xxxxxxx',
           created_at: '2020-09-08 04:05:06',
@@ -62,7 +62,7 @@ module.exports = {
         {
           id: 'a5fd62db-18a6-4741-88eb-a7b7a7e05833',
           vehicle_id: 'ftm-522',
-          request_type: 'pendingVehicle',
+          request_type: 'pendingRecycle',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: '0000000000',
           created_at: '2020-09-08 04:05:06',
@@ -71,7 +71,7 @@ module.exports = {
         {
           id: 'a6fd62db-18a6-4741-88eb-a7b7a7e05833',
           vehicle_id: 'HRX53',
-          request_type: 'pendingVehicle',
+          request_type: 'pendingRecycle',
           name_of_requestor: 'xxxxxxx',
           recycling_partner_id: '0000000000',
           created_at: '2020-09-08 04:05:06',
