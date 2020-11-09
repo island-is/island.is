@@ -200,10 +200,17 @@ export class RecyclingRequestService {
             if (
               resRequestType[0]['dataValues']['requestType'] != 'pendingRecycle'
             ) {
+              this.logger.error(
+                `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+              )
               throw new Error(
                 `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
               )
             }
+          } else {
+            this.logger.error(
+              `Could not find any requestType for vehicle's number: ${permno} in database`,
+            )
             throw new Error(
               `Could not find any requestType for vehicle's number: ${permno} in database`,
             )

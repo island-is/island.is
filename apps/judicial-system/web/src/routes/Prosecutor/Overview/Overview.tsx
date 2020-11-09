@@ -32,6 +32,10 @@ import {
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
+import {
+  ProsecutorSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -117,7 +121,11 @@ export const Overview: React.FC = () => {
   }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
 
   return (
-    <PageLayout activeSection={0} activeSubSection={2} isLoading={isLoading}>
+    <PageLayout
+      activeSection={Sections.PROSECUTOR}
+      activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
