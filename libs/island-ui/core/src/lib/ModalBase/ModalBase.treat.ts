@@ -10,7 +10,7 @@ export const backdrop = style({
   height: '100%',
   overflowX: 'hidden',
   overflowY: 'auto',
-  backgroundColor: hexToRgba(theme.color.blue100, 0.7),
+  backgroundColor: hexToRgba(theme.color.blue100, 0.7) || undefined,
   transition: `opacity 250ms ease-in-out`,
   opacity: 0,
   zIndex: 10000,

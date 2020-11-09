@@ -13,31 +13,19 @@ const hexToRgb = (hex: string) => {
 }
 
 export const modal = style({
-  position: 'fixed',
+  position: 'relative',
   top: '50%',
-  left: '50%',
-  zIndex: zIndex.modal,
-  width: '100%',
   maxHeight: '80%',
+  margin: 'auto',
+  borderRadius: theme.border.radius.large,
   overflowY: 'auto',
-  filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
-  transform: 'translate3d(-50%, -50%, 0)',
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-  },
-  animationTimingFunction: 'ease-out',
-  animationDuration: '0.25s',
+  transform: 'translate3d(0, -50%, 0)',
   ...themeUtils.responsiveStyle({
     md: {
       width: '90%',
     },
     lg: {
-      width: 888,
+      width: 828,
     },
   }),
 })
