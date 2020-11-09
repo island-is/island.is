@@ -46,7 +46,6 @@ export class AuthService {
   }
 
   checkRole(user: AuthUser, role: Role): boolean {
-    //console.log("  - checkRole starting")
     switch (role) {
       case 'recyclingCompany':
         return RECYCLINGCOMPANY.includes(user.nationalId)
