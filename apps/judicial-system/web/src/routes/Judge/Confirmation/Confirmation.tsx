@@ -9,7 +9,7 @@ import {
 import * as Constants from '../../../utils/constants'
 import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
 import { parseTransition } from '../../../utils/formatters'
-import { AppealDecisionRole } from '../../../types'
+import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
 import AccordionListItem from '@island.is/judicial-system-web/src/shared-components/AccordionListItem/AccordionListItem'
 import {
   Case,
@@ -216,7 +216,11 @@ export const Confirmation: React.FC = () => {
   }
 
   return (
-    <PageLayout activeSubSection={1} activeSection={4} isLoading={isLoading}>
+    <PageLayout
+      activeSubSection={Sections.JUDGE}
+      activeSection={JudgeSubsections.CONFIRMATION}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={1}>

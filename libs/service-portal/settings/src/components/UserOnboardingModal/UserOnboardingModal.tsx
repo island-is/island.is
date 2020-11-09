@@ -29,7 +29,7 @@ const defaultLanguageOption: LanguageFormOption = {
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState(true)
-  const [step, setStep] = useState<OnboardingStep>('language-form')
+  const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
   const [language, setLanguage] = useState<LanguageFormOption | null>(
