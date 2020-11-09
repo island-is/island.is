@@ -3,7 +3,7 @@ export default {
   identityServer: {
     IDENTITY_SERVER_ISSUER_URL:
       window.location.origin === 'https://beta.minarsidur.island.is'
-        ? 'http://innskra.island.is'
+        ? 'https://innskra.island.is'
         : 'https://identity-server.dev01.devland.is',
   },
   sentry: {
