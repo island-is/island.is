@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
 
@@ -12,9 +12,9 @@ export const NotFound: FC<Props> = ({ title }) => {
 
   return (
     <Box display="flex" justifyContent="center" margin={12}>
-      <Typography variant="h2">
+      <Text variant="h2">
         {title ? formatMessage(title) : '404, síða fannst ekki'}
-      </Typography>
+      </Text>
     </Box>
   )
 }

@@ -3,7 +3,7 @@ import {
   ServicePortalModuleComponent,
   EventCard,
 } from '@island.is/service-portal/core'
-import { Box, Columns, Column, Typography } from '@island.is/island-ui/core'
+import { Box, Columns, Column, Text } from '@island.is/island-ui/core'
 
 const AssetsCards: ServicePortalModuleComponent = () => {
   return (
@@ -16,15 +16,15 @@ const AssetsCards: ServicePortalModuleComponent = () => {
             url="/"
             renderContent={() => (
               <Box>
-                <Typography variant="p">Kjartansgata 2</Typography>
-                <Typography variant="p">
+                <Text>Kjartansgata 2</Text>
+                <Text>
                   <strong>Sveitarfélag: </strong>
                   105 Reykjavík
-                </Typography>
-                <Typography variant="p">
+                </Text>
+                <Text>
                   <strong>Stærð: </strong>
                   151.4 fm
-                </Typography>
+                </Text>
               </Box>
             )}
           />
