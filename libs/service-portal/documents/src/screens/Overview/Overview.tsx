@@ -155,6 +155,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
+  const documentsFoundText =
+    filteredDocuments.length === 1
+      ? formatMessage({
+          id: 'sp.documents:found.singular',
+          defaultMessage: 'Skjal fannst',
+        })
+      : formatMessage({
+          id: 'sp.documents:found',
+          defaultMessage: 'Skjöl fundust',
+        })
+
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -240,12 +251,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {hasActiveFilters() && (
                     <Columns space={3}>
                       <Column>
-                        <Text variant="h3">
-                          {`${filteredDocuments.length} ${formatMessage({
-                            id: 'sp.documents:found',
-                            defaultMessage: 'skjöl fundust',
-                          })}`}
-                        </Text>
+                        <Text variant="h3">{`${filteredDocuments.length} ${documentsFoundText}`}</Text>
                       </Column>
                       <Column width="content">
                         <Button variant="text" onClick={handleClearFilters}>
