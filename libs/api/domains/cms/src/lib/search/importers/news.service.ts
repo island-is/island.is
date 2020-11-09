@@ -17,7 +17,7 @@ export class NewsSyncService {
       (entry: INews): entry is INews =>
         entry.sys.contentType.sys.id === 'news' &&
         !!entry.fields.title &&
-        isCircular(entry),
+        !isCircular(entry),
     )
   }
 
