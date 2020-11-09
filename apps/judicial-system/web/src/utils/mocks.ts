@@ -117,6 +117,8 @@ const testCase2 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   notifications: null,
+  requestedDefenderName: 'rassi',
+  requestedDefenderEmail: 'rassi@prump.is',
 }
 
 const testCase3 = {
@@ -159,6 +161,8 @@ const testCase3 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   notifications: null,
+  requestedDefenderName: 'rassi',
+  requestedDefenderEmail: 'rassi@prump.is',
 }
 
 export const mockCaseQueries = [

@@ -77,12 +77,7 @@ export const HearingArrangements: React.FC = () => {
       let theCase = data.case
 
       if (!theCase.courtDate) {
-        theCase = {
-          ...theCase,
-          courtDate: theCase.requestedCourtDate,
-          defenderName: theCase.requestedDefenderName,
-          defenderEmail: theCase.requestedDefenderEmail,
-        }
+        theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
 
         updateCase(
           theCase.id,
@@ -90,8 +85,12 @@ export const HearingArrangements: React.FC = () => {
         )
       }
 
+      console.log('bla: ', theCase.defenderName)
+
       if (!theCase.defenderName) {
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
+
+        console.log('rassi was here')
 
         updateCase(
           theCase.id,

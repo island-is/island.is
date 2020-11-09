@@ -14,7 +14,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '../../../utils/constants'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
-  test('should not allow users to continue unless every required field has been filled out', async () => {
+  test('should not allow users to continue unless every required field has been filled out rass', async () => {
     // Arrange
 
     // Act and Assert
@@ -33,6 +33,14 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             {
               id: 'test_id_2',
               courtRoom: '999',
+            } as UpdateCase,
+            {
+              id: 'test_id_2',
+              defenderName: 'rassi',
+            } as UpdateCase,
+            {
+              id: 'test_id_2',
+              defenderEmail: 'rassi@prump.is',
             } as UpdateCase,
           ]),
         )}
@@ -68,7 +76,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).not.toBeDisabled()
   })
 
-  test('should have a prefilled court date with requested court date', async () => {
+  test('should have a prefilled court date and dedender info with requested info', async () => {
     // Arrange
     render(
       <MockedProvider
@@ -81,6 +89,14 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             {
               id: 'test_id_3',
               courtDate: '2020-09-16T19:51:00.000Z',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderName: 'rassi',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderEmail: 'rassi@prump.is',
             } as UpdateCase,
           ]),
         )}
@@ -114,5 +130,19 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     expect(
       (screen.getByLabelText('Tímasetning *') as HTMLInputElement).value,
     ).toEqual('19:51')
+
+    expect(
+      await waitFor(
+        () =>
+          (screen.getByLabelText('Nafn verjanda') as HTMLInputElement).value,
+      ),
+    ).toEqual('rassi')
+
+    expect(
+      await waitFor(
+        () =>
+          (screen.getByLabelText('Netfang verjanda') as HTMLInputElement).value,
+      ),
+    ).toEqual('rassi@prump.is')
   })
 })
