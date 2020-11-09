@@ -14,7 +14,7 @@ import { User } from '../user'
 import { Notification } from '../notification/notification.model'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureResponse } from './models'
-import { generateRequestPdf, generateRulingPdf, writeFile } from './pdf'
+import { generateRulingPdf, writeFile } from './pdf'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()
@@ -37,8 +37,6 @@ export class CaseService {
     if (!environment.production) {
       writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
     }
-
-    const requestPdf = await generateRequestPdf(existingCase)
 
     await this.emailService.sendEmail({
       from: {
@@ -63,11 +61,6 @@ export class CaseService {
       text: 'Sjá viðhengi',
       html: 'Sjá viðhengi',
       attachments: [
-        {
-          filename: `${existingCase.policeCaseNumber}.pdf`,
-          content: requestPdf,
-          encoding: 'binary',
-        },
         {
           filename: `${existingCase.courtCaseNumber}.pdf`,
           content: signedRulingPdf,

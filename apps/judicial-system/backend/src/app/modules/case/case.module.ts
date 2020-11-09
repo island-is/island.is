@@ -1,10 +1,6 @@
-import { DataSourceConfig } from 'apollo-datasource'
-
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
 import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
 import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 

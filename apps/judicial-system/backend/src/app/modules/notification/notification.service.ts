@@ -11,6 +11,7 @@ import { User } from '../user'
 import { Case } from '../case/models'
 import { SendNotificationDto } from './sendNotification.dto'
 import { Notification } from './notification.model'
+import { generateRequestPdf } from '../case/pdf'
 
 @Injectable()
 export class NotificationService {
@@ -45,7 +46,7 @@ export class NotificationService {
     })
   }
 
-  private sendHeadsUpNotification(
+  private sendHeadsUpSms(
     existingCase: Case,
     user: User,
   ): Promise<Notification> {
@@ -83,10 +84,7 @@ export class NotificationService {
     return this.sendSms(existingCase.id, NotificationType.HEADS_UP, smsText)
   }
 
-  private sendReadyForCourtNotification(
-    existingCase: Case,
-    user: User,
-  ): Promise<Notification> {
+  private sendReadyForCourtSms(existingCase: Case, user: User) {
     // Prosecutor
     const prosecutorText = ` Ákærandi: ${
       existingCase.prosecutor?.name || user.name
@@ -102,6 +100,46 @@ export class NotificationService {
       NotificationType.READY_FOR_COURT,
       smsText,
     )
+  }
+
+  private async sendReadyForCourtEmail(existingCase: Case): Promise<void> {
+    const pdf = await generateRequestPdf(existingCase)
+
+    await this.emailService.sendEmail({
+      from: {
+        name: environment.email.fromName,
+        address: environment.email.fromEmail,
+      },
+      replyTo: {
+        name: environment.email.replyToName,
+        address: environment.email.replyToEmail,
+      },
+      to: [
+        {
+          name: existingCase.prosecutor?.name,
+          address: existingCase.prosecutor?.email,
+        },
+      ],
+      subject: `Krafa í máli ${existingCase.policeCaseNumber}`,
+      text: 'Sjá viðhengi',
+      html: 'Sjá viðhengi',
+      attachments: [
+        {
+          filename: `${existingCase.policeCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ],
+    })
+  }
+
+  private async sendReadyForCourtNotifications(
+    existingCase: Case,
+    user: User,
+  ): Promise<Notification> {
+    await this.sendReadyForCourtEmail(existingCase)
+
+    return await this.sendReadyForCourtSms(existingCase, user)
   }
 
   private sendCourtDateNotification(
@@ -120,7 +158,7 @@ export class NotificationService {
     })
   }
 
-  async sendCaseNotification(
+  sendCaseNotification(
     notification: SendNotificationDto,
     existingCase: Case,
     user: User,
@@ -131,9 +169,9 @@ export class NotificationService {
 
     switch (notification.type) {
       case NotificationType.HEADS_UP:
-        return this.sendHeadsUpNotification(existingCase, user)
+        return this.sendHeadsUpSms(existingCase, user)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotification(existingCase, user)
+        return this.sendReadyForCourtNotifications(existingCase, user)
       case NotificationType.COURT_DATE:
         return this.sendCourtDateNotification(existingCase, user)
     }

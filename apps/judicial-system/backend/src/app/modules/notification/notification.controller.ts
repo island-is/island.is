@@ -21,6 +21,7 @@ import { NotificationService } from './notification.service'
 @ApiTags('cases')
 export class NotificationController {
   constructor(
+    @Inject(NotificationService)
     private readonly notificationService: NotificationService,
     @Inject(UserService)
     private readonly userService: UserService,

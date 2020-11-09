@@ -14,19 +14,15 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { EmailService } from '@island.is/email-service'
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureResponse } from './models'
-import { generateRequestPdf } from './pdf'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 import { transitionCase as transitionUpdate } from './case.state'
@@ -35,13 +31,10 @@ import { transitionCase as transitionUpdate } from './case.state'
 @ApiTags('cases')
 export class CaseController {
   constructor(
+    @Inject(CaseService)
     private readonly caseService: CaseService,
     @Inject(UserService)
     private readonly userService: UserService,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   private async findCaseById(id: string) {
@@ -62,38 +55,6 @@ export class CaseController {
     }
 
     return user
-  }
-
-  private async sendRequestAsPdf(
-    existingCase: Case,
-    pdf: string,
-  ): Promise<void> {
-    await this.emailService.sendEmail({
-      from: {
-        name: environment.email.fromName,
-        address: environment.email.fromEmail,
-      },
-      replyTo: {
-        name: environment.email.replyToName,
-        address: environment.email.replyToEmail,
-      },
-      to: [
-        {
-          name: existingCase.prosecutor?.name,
-          address: existingCase.prosecutor?.email,
-        },
-      ],
-      subject: `Krafa í máli ${existingCase.policeCaseNumber}`,
-      text: 'Sjá viðhengi',
-      html: 'Sjá viðhengi',
-      attachments: [
-        {
-          filename: `${existingCase.policeCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ],
-    })
   }
 
   @Post('case')
@@ -149,15 +110,6 @@ export class CaseController {
       throw new ConflictException(
         `A more recent version exists of the case with id ${id}`,
       )
-    }
-
-    // Find a better place for this
-    if (transition.transition === CaseTransition.SUBMIT) {
-      const dbCase = await this.findCaseById(id)
-
-      const pdf = await generateRequestPdf(dbCase)
-
-      await this.sendRequestAsPdf(dbCase, pdf)
     }
 
     return updatedCase
