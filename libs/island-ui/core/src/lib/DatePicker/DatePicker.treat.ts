@@ -143,21 +143,18 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker__header`, {
   borderBottom: 'none',
 })
 
-globalStyle(
-  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^='bottom']`,
-  {
-    marginTop: '0',
-    right: '0',
-    width: '100%',
-    top: '65px !important',
-    transform: 'none !important',
-    ...themeUtils.responsiveStyle({
-      md: {
-        top: '70px !important',
-      },
-    }),
-  },
-)
+globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
+  marginTop: '0',
+  right: '0',
+  width: '100%',
+  top: '65px !important',
+  transform: 'none !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '70px !important',
+    },
+  }),
+})
 
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__month-container`, {
   float: 'none',
