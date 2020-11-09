@@ -1,4 +1,4 @@
-import React, { PureComponent, ErrorInfo, FC } from 'react'
+import React, { PureComponent, FC } from 'react'
 import * as Sentry from '@sentry/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -13,7 +13,10 @@ interface StateTypes {
   hasError?: boolean
 }
 
-export class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
+export class ApplicationErrorBoundary extends PureComponent<
+  PropTypes,
+  StateTypes
+> {
   constructor(props: PropTypes) {
     super(props)
     this.state = { error: undefined, hasError: false }
@@ -23,7 +26,7 @@ export class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
     return { hasError: true }
   }
 
-  public componentDidCatch(error: Error) {
+  componentDidCatch(error: Error) {
     Sentry.captureException(error)
   }
 
@@ -42,7 +45,7 @@ const Error: FC = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box padding={8}>
+    <Box>
       <Text variant="h2">
         {formatMessage({
           id: 'sp:error-page-heading',
@@ -53,4 +56,4 @@ const Error: FC = () => {
   )
 }
 
-export default ErrorBoundary
+export default ApplicationErrorBoundary

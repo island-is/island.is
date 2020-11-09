@@ -16,7 +16,7 @@ import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import './App.css'
 import { GlobalModules } from '../components/GlobalModules/GlobalModules'
 import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
-import ErrorBoundary from './../components/ErrorBoundary/ErrorBoundary'
+import ApplicationErrorBoundary from './../components/ApplicationErrorBoundary/ApplicationErrorBoundary'
 
 export const App = () => {
   return (
@@ -27,7 +27,7 @@ export const App = () => {
           reducer={store.reducer}
         >
           <LocaleProvider locale={defaultLanguage} messages={{}}>
-            <ErrorBoundary>
+            <ApplicationErrorBoundary>
               <div>
                 <UserProfileLocale />
                 <Router>
@@ -63,7 +63,7 @@ export const App = () => {
                   </Switch>
                 </Router>
               </div>
-            </ErrorBoundary>
+            </ApplicationErrorBoundary>
           </LocaleProvider>
         </StateProvider>
       </ApolloProvider>
