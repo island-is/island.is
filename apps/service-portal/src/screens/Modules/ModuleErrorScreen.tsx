@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
@@ -35,7 +35,7 @@ const ModuleErrorScreen: FC<Props> = ({ name }) => {
 
   return (
     <Box padding={8}>
-      <Typography variant="h2" as="h2">
+      <Text variant="h2">
         {formatMessage({
           id: 'service.portal:could-not-fetch',
           defaultMessage: 'Tókst ekki að sækja',
@@ -45,7 +45,7 @@ const ModuleErrorScreen: FC<Props> = ({ name }) => {
           id: 'service.portal:something-went-wrong',
           defaultMessage: 'eitthvað fór úrskeiðis',
         })}
-      </Typography>
+      </Text>
     </Box>
   )
 }

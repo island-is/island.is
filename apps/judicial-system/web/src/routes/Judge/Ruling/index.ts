@@ -1,2 +1,2 @@
-export { default as RulingStepOne } from './RulingStepOne'
-export { default as RulingStepTwo } from './RulingStepTwo'
+export { default as RulingStepOne } from './StepOne/RulingStepOne'
+export { default as RulingStepTwo } from './StepTwo/RulingStepTwo'

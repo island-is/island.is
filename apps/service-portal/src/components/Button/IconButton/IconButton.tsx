@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Icon, IconProps, Typography } from '@island.is/island-ui/core'
+import { Box, Icon, IconProps, Text } from '@island.is/island-ui/core'
 import * as styles from './IconButton.treat'
 import { Link } from 'react-router-dom'
 
@@ -21,9 +21,9 @@ const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
         />
       ) : null}
     </Box>
-    <Typography variant={active ? 'h5' : 'p'} as="span">
+    <Text variant={active ? 'h5' : 'default'} as="span">
       {children}
-    </Typography>
+    </Text>
   </Box>
 )
 

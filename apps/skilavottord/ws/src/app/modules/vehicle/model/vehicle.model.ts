@@ -9,6 +9,7 @@ import {
   UpdatedAt,
   BelongsTo,
   HasMany,
+  AllowNull,
 } from 'sequelize-typescript'
 import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
 import { VehicleOwnerModel } from '../../vehicle.owner/model/vehicle.owner.model'
@@ -23,10 +24,10 @@ export class VehicleModel extends Model<VehicleModel> {
   vehicleId: string
 
   //ATH
+  @AllowNull(true)
   @ForeignKey(() => VehicleOwnerModel)
   @Column({
     type: DataType.STRING,
-    allowNull: false,
   })
   ownerNationalId!: string
 

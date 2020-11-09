@@ -1,9 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  ButtonDeprecated as Button,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './Screen.treat'
 import {
@@ -61,7 +57,7 @@ export const ScreenFooter: FC<FooterProps> = ({
   }
 
   return (
-    <Box marginTop={3} className={styles.buttonContainer}>
+    <Box marginTop={7} className={styles.buttonContainer}>
       <GridColumn
         span={['12/12', '12/12', '7/9', '7/9']}
         offset={['0', '0', '1/9']}
@@ -69,6 +65,7 @@ export const ScreenFooter: FC<FooterProps> = ({
         <Box
           display="flex"
           flexDirection="row"
+          alignItems="center"
           justifyContent="spaceBetween"
           paddingTop={[1, 4]}
           paddingBottom={[1, 5]}
@@ -87,9 +84,9 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none">
             {showGoBack && (
               <Button
+                circle
                 variant="ghost"
-                rounded={true}
-                icon="arrowLeft"
+                icon="arrowBack"
                 onClick={goBack}
               />
             )}
@@ -97,10 +94,9 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box display="inlineFlex" padding={2} paddingRight="none">
             {hasSubmitField ? (
               <Button
-                loading={loading}
-                icon="check"
-                disabled={!canProceed}
-                htmlType="submit"
+                icon="checkmarkCircle"
+                disabled={!canProceed || loading}
+                type="submit"
               >
                 {formatText(getSubmitButtonText(), application, formatMessage)}
               </Button>
@@ -108,10 +104,9 @@ export const ScreenFooter: FC<FooterProps> = ({
               <>
                 <Box display={['none', 'inlineFlex']}>
                   <Button
-                    loading={loading}
-                    disabled={!canProceed}
-                    icon="arrowRight"
-                    htmlType="submit"
+                    disabled={!canProceed || loading}
+                    icon="arrowForward"
+                    type="submit"
                   >
                     {formatMessage({
                       id: 'application.system:button.next',
@@ -122,11 +117,10 @@ export const ScreenFooter: FC<FooterProps> = ({
                 </Box>
                 <Box display={['inlineFlex', 'none']}>
                   <Button
-                    loading={loading}
-                    disabled={!canProceed}
-                    icon="arrowRight"
-                    htmlType="submit"
-                    rounded
+                    disabled={!canProceed || loading}
+                    icon="arrowForward"
+                    type="submit"
+                    circle
                   />
                 </Box>
               </>

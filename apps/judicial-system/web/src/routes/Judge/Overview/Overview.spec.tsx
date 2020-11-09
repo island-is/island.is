@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { act, cleanup, render, waitFor } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { Route, Router } from 'react-router-dom'
 import * as Constants from '../../../utils/constants'
 import Overview from './Overview'
@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 
-describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
+describe('/domari-krafa with an ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const history = createMemoryHistory()
@@ -23,10 +23,8 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id_2`
     history.push(route)
 
-    Storage.prototype.setItem = jest.fn()
-
     // Act and Assert
-    const { getByTestId } = render(
+    render(
       <MockedProvider
         mocks={[].concat(mockCaseQueries).concat(
           mockUpdateCaseMutation([
@@ -46,19 +44,21 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         </userContext.Provider>
       </MockedProvider>,
     )
-    await act(async () => {
-      await userEvent.type(
-        await waitFor(() => getByTestId('courtCaseNumber') as HTMLInputElement),
-        '000-0000-000',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(false)
-    })
+    userEvent.type(
+      await waitFor(
+        () => screen.getByLabelText('Slá inn málsnúmer *') as HTMLInputElement,
+      ),
+      '000-0000-000',
+    )
+    userEvent.tab()
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).not.toBeDisabled()
   })
 
-  test('should display the string lausagæsla in custody restrictions if there are no custody restrictions', async () => {
+  test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -67,7 +67,7 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     history.push(route)
 
     // Act
-    const { getByText } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <Router history={history}>
@@ -80,12 +80,14 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => getByText('Lausagæsla'))
-    expect(getByText('Lausagæsla')).toBeTruthy()
-    cleanup()
+    expect(
+      await waitFor(() =>
+        screen.getByText('Ekki er farið fram á takmarkanir á gæslu'),
+      ),
+    ).toBeTruthy()
   })
 
-  test('should display the approprieate custody restriction if there are any', async () => {
+  test('should display the approprieate custody restrictions if there are any', async () => {
     // Arrange
     const history = createMemoryHistory()
 
@@ -94,7 +96,7 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     history.push(route)
 
     // Act
-    const { getByText } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <Router history={history}>
@@ -107,9 +109,9 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => getByText('B - Einangrun, E - Fjölmiðlabann'))
-    expect(getByText('B - Einangrun, E - Fjölmiðlabann')).toBeTruthy()
-    cleanup()
+    expect(
+      await waitFor(() => screen.getByText('B - Einangrun, E - Fjölmiðlabann')),
+    ).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
@@ -121,7 +123,7 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     history.push(route)
 
     // Act
-    const { getByText } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockJudgeUserContext}>
           <Router history={history}>
@@ -134,10 +136,9 @@ describe(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     )
 
     // Assert
-    await waitFor(() => getByText('a-lið 1. mgr. 95. gr.'))
-    expect(getByText('a-lið 1. mgr. 95. gr.')).toBeTruthy()
-    await waitFor(() => getByText('c-lið 1. mgr. 95. gr.'))
-    expect(getByText('c-lið 1. mgr. 95. gr.')).toBeTruthy()
-    cleanup()
+    expect(
+      await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.')),
+    ).toBeInTheDocument()
+    expect(screen.getByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
   })
 })

@@ -1,10 +1,4 @@
-import {
-  Box,
-  SkeletonLoader,
-  Stack,
-  Text,
-  Typography,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useNationalRegistryFamilyInfo } from '@island.is/service-portal/graphql'
@@ -19,17 +13,18 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     data: natRegFamilyInfo,
     loading,
     error,
+    called,
   } = useNationalRegistryFamilyInfo()
 
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
-        <Typography variant="h1">
+        <Text variant="h1">
           {formatMessage({
             id: 'service.portal:family',
             defaultMessage: 'Fjölskyldan',
           })}
-        </Typography>
+        </Text>
       </Box>
       {error && (
         <Box textAlign="center">
@@ -43,6 +38,15 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </Box>
       )}
       <Stack space={2}>
+        {called && !loading && !error && natRegFamilyInfo?.length === 0 && (
+          <AlertMessage
+            type="info"
+            title={formatMessage({
+              id: 'service.portal:no-data-present',
+              defaultMessage: 'Engar upplýsingar til staðar',
+            })}
+          />
+        )}
         {loading &&
           [...Array(3)].map((_key, index) => (
             <FamilyMemberCardLoader key={index} />
@@ -52,7 +56,7 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
             key={index}
             title={familyMember.fullName}
             nationalId={familyMember.nationalId}
-            userInfoNationalId={userInfo.profile.nationalId}
+            familyRelation={familyMember.familyRelation}
           />
         ))}
       </Stack>

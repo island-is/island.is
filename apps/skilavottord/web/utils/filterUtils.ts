@@ -16,7 +16,7 @@ export const filterCarsByStatus = (status: CarStatus, cars: Car[]) => {
     case 'inUse':
     default:
       return cars.filter(
-        (car: Car) => car.status === 'inUse' || car.status === undefined,
+        (car: Car) => car.status === 'inUse' || car.status === 'cancelled',
       )
   }
 }

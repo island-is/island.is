@@ -1,17 +1,22 @@
 import React, { FC, useContext } from 'react'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { Stack, Text } from '@island.is/island-ui/core'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
+import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import { useQuery } from '@apollo/client'
+import { CarsTable } from './components/CarsTable'
+import { ALL_DEREGISTERED_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },
   } = useI18n()
+
+  const { data } = useQuery(ALL_DEREGISTERED_VEHICLES)
+  const vehicles = data?.skilavottordAllDeregisteredVehicles ?? []
 
   if (!user) {
     return null
@@ -43,7 +48,11 @@ const Overview: FC = () => {
       <Stack space={4}>
         <Text variant="h1">{t.title}</Text>
         <Text variant="h3">{t.subtitles.deregistered}</Text>
-        <CarsTable titles={t.table} />
+        {vehicles.length > 0 ? (
+          <CarsTable titles={t.table} vehicles={vehicles} />
+        ) : (
+          <Text>There are no recycled cars yet</Text>
+        )}
       </Stack>
     </PartnerPageLayout>
   )
