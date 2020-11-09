@@ -1,6 +1,6 @@
 import React from 'react'
 import * as styles from './EventCard.treat'
-import { Box, Typography, FocusableBox } from '@island.is/island-ui/core'
+import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
 
 interface Props {
   title: string
@@ -46,9 +46,9 @@ export const EventCard: React.FC<Props> = ({
           className={styles.content}
           marginRight={[2, 2, 2, 2, 1]}
         >
-          <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
+          <Text variant="h3" as="h3" paddingBottom={1} color="blue400">
             {title}
-          </Typography>
+          </Text>
           {renderContent && renderContent()}
         </Box>
 
