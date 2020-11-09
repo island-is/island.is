@@ -19,7 +19,7 @@ import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound, OutlinedError } from '@island.is/skilavottord-web/components'
 import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations'
+import { CREATE_RECYCLING_REQUEST_COMPANY } from '@island.is/skilavottord-web/graphql/mutations'
 import { VEHICLE_TO_DEREGISTER } from '@island.is/skilavottord-web/graphql/queries'
 
 const Confirm: FC = () => {
@@ -42,7 +42,7 @@ const Confirm: FC = () => {
   const [
     setRecyclingRequest,
     { error: mutationError, loading: mutationLoading },
-  ] = useMutation(CREATE_RECYCLING_REQUEST, {
+  ] = useMutation(CREATE_RECYCLING_REQUEST_COMPANY, {
     onCompleted() {
       router.replace(routes.baseRoute).then(() => toast.success(t.success))
     },
