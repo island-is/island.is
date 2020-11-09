@@ -11,20 +11,11 @@ import {
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
-import formatISO from 'date-fns/formatISO'
 import * as Constants from '../../../utils/constants'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const now = new Date()
-    const tomorrow = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-      0,
-    )
-    tomorrow.setHours(13, 37)
 
     // Act and Assert
     render(
@@ -33,11 +24,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
           mockUpdateCaseMutation([
             {
               id: 'test_id_2',
-              courtDate: formatISO(tomorrow, { representation: 'date' }),
+              courtDate: '2020-09-12',
             } as UpdateCase,
             {
               id: 'test_id_2',
-              courtDate: formatISO(tomorrow),
+              courtDate: '2020-09-12T14:51:00.000Z',
             } as UpdateCase,
             {
               id: 'test_id_2',
@@ -61,36 +52,12 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    const datepicker = await waitFor(() => screen.getByTestId('datepicker'))
-    const courtDatePickerWrapper = within(datepicker)
-    const courtDatePicker = courtDatePickerWrapper.getAllByText(
-      'Veldu dagsetningu',
-    )
-    userEvent.click(courtDatePicker[0])
-    userEvent.click(
-      courtDatePickerWrapper.getAllByText((now.getDate() + 1).toString())[0],
-    )
-
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
+    // No need to enter court date and time, because that should be prefilled with requestedCourtDate
 
     userEvent.type(
-      screen.getByLabelText('Tímasetning *') as HTMLInputElement,
-      '13:37',
+      await waitFor(() => screen.getByLabelText('Dómsalur *')),
+      '999',
     )
-
-    userEvent.tab()
-
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
-
-    userEvent.type(screen.getByLabelText('Dómsalur *'), '999')
 
     userEvent.tab()
 
@@ -101,14 +68,29 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).not.toBeDisabled()
   })
 
-  // TODO: FIX THIS BROKEN TEST
   test('should have a prefilled court date with requested court date', async () => {
     // Arrange
     render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
+      <MockedProvider
+        mocks={mockCaseQueries.concat(
+          mockUpdateCaseMutation([
+            {
+              id: 'test_id_3',
+              courtDate: '2020-09-16',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              courtDate: '2020-09-16T19:51:00.000Z',
+            } as UpdateCase,
+          ]),
+        )}
+        addTypename={false}
+      >
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
-            initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id`]}
+            initialEntries={[
+              `${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`,
+            ]}
           >
             <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
               <HearingArrangements />
@@ -118,12 +100,16 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
+    const datePickerWrappers = await waitFor(() =>
+      screen.getByTestId('datepicker'),
+    )
+    const courtDateWrapper = within(datePickerWrappers)
+    const courtDate = courtDateWrapper.getByTestId('datepicker-value')
+
     // Act
 
     // Assert
-    expect(
-      await waitFor(() => screen.getByRole('button', { name: /16.09.2020/i })),
-    ).toBeInTheDocument()
+    expect((courtDate as HTMLSpanElement).textContent).toEqual('16.09.2020')
 
     expect(
       (screen.getByLabelText('Tímasetning *') as HTMLInputElement).value,

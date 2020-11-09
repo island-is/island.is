@@ -83,7 +83,7 @@ export const HearingArrangements: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [setWorkingCase, data])
+  }, [setWorkingCase, workingCase, updateCase, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
