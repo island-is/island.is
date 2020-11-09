@@ -46,9 +46,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
           justifyContent="spaceBetween"
           alignItems="center"
         >
-          <Link onClick={cta.onClick} href="">
+          <Box onClick={cta.onClick} cursor="pointer">
             <Text variant="h4">{title}</Text>
-          </Link>
+          </Box>
           <Box
             className={styles.buttonWrapper}
             marginTop={[1, 0]}
