@@ -1,18 +1,20 @@
 /* eslint-env node */
 module.exports = {
   development: {
-    username: 'postgres',
-    password: 'asdfasdf',
+    username: 'dev_db',
+    password: 'dev_db',
     database: 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
+    seederStorage: 'sequelize',
   },
   test: {
-    username: 'postgres',
-    password: 'asdfasdf',
+    username: 'test_db',
+    password: 'test_db',
     database: 'test_db',
-    host: 'localhost',
+    host: process.env.DB_HOST,
     dialect: 'postgres',
+    seederStorage: 'sequelize',
   },
   production: {
     username: process.env.DB_USER,
