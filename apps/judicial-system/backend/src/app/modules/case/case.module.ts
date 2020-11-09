@@ -10,28 +10,14 @@ import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
-import { Case, Notification } from './models'
+import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 
 @Module({
-  imports: [UserModule, SequelizeModule.forFeature([Case, Notification])],
-  controllers: [CaseController],
+  imports: [UserModule, SequelizeModule.forFeature([Case])],
   providers: [
     CaseService,
-    {
-      provide: SMS_OPTIONS,
-      useValue: environment.smsOptions,
-    },
-    {
-      provide: SmsService,
-      useFactory: (options: SmsServiceOptions, logger: Logger) => {
-        const smsService = new SmsService(options, logger)
-        smsService.initialize({} as DataSourceConfig<{}>)
-        return smsService
-      },
-      inject: [SMS_OPTIONS, LOGGER_PROVIDER],
-    },
     {
       provide: SIGNING_OPTIONS,
       useValue: environment.signingOptions,
@@ -43,5 +29,7 @@ import { CaseService } from './case.service'
     },
     EmailService,
   ],
+  controllers: [CaseController],
+  exports: [CaseService],
 })
 export class CaseModule {}

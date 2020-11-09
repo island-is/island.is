@@ -3,18 +3,20 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
+import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+
+import { environment } from '../../../environments'
 import { UserModule } from '../user'
 import { CaseModule } from '../case'
-import { Notification } from '../case/models'
+import { Notification } from './notification.model'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
-import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
-import { environment } from '../../../environments'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 
 @Module({
   imports: [UserModule, CaseModule, SequelizeModule.forFeature([Notification])],
+  controllers: [NotificationController],
   providers: [
     NotificationService,
     {
@@ -36,6 +38,5 @@ import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
     },
     EmailService,
   ],
-  controllers: [NotificationController],
 })
 export class NotificationModule {}

@@ -24,13 +24,8 @@ import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { UserService } from '../user'
-import {
-  CreateCaseDto,
-  SendNotificationDto,
-  TransitionCaseDto,
-  UpdateCaseDto,
-} from './dto'
-import { Case, Notification, SignatureResponse } from './models'
+import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
+import { Case, SignatureResponse } from './models'
 import { generateRequestPdf } from './pdf'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
@@ -182,40 +177,6 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   async getById(@Param('id') id: string): Promise<Case> {
     return this.findCaseById(id)
-  }
-
-  @Post('case/:id/notification')
-  @ApiCreatedResponse({
-    type: Notification,
-    description: 'Sends a new notification for an existing case',
-  })
-  async sendNotificationByCaseId(
-    @Param('id') id: string,
-    @Body() notification: SendNotificationDto,
-  ): Promise<Notification> {
-    const existingCase = await this.findCaseById(id)
-
-    const user = await this.findUserByNationalId(notification.nationalId)
-
-    return this.caseService.sendCaseNotification(
-      notification,
-      existingCase,
-      user,
-    )
-  }
-
-  @Get('case/:id/notifications')
-  @ApiOkResponse({
-    type: Notification,
-    isArray: true,
-    description: 'Gets all existing notifications for an existing case',
-  })
-  async getAllNotificationsById(
-    @Param('id') id: string,
-  ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id)
-
-    return this.caseService.getAllCaseNotifications(existingCase)
   }
 
   @Post('case/:id/signature')
