@@ -18,7 +18,7 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
