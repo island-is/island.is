@@ -237,9 +237,14 @@
       "titles": {
         "success": "Afskrá bíl",
         "error": "Car could not be added",
-        "loading": "Deregistering car"
+        "loading": "Deregistering car",
+        "notfound": "Car not found"
       },
-      "info": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
+      "info": {
+        "succes": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
+        "error": "We couldn’t find any car with that registration number",
+        "notfound": "This can be because the owner has not marked it for recycling at"
+      },
       "buttons": {
         "back": "Til baka",
         "confirm": "Staðfesta"

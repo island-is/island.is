@@ -72,3 +72,16 @@ export const ALL_DEREGISTERED_VEHICLES = gql`
     }
   }
 `
+
+export const VEHICLE_TO_DEREGISTER = gql`
+  query skilavottordVehicleReadyToDeregistered($permno: String!) {
+    skilavottordVehicleReadyToDeregistered(permno: $permno) {
+      vehicleId
+      vehicleType
+      newregDate
+      recyclingRequests {
+        nameOfRequestor
+      }
+    }
+  }
+`

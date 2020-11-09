@@ -2,32 +2,25 @@ import React, { FC, useContext } from 'react'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import {
   Box,
+  Bullet,
+  BulletList,
   Button,
   Hidden,
+  Inline,
   LoadingIcon,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { CarDetailsBox } from '../Confirm/components'
+import { CarDetailsBox } from './components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound, OutlinedError } from '@island.is/skilavottord-web/components'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations'
-
-const mockCar = {
-  permno: 'ABC123',
-  vinNumber: 'ABC123',
-  type: 'Volvo',
-  firstRegDate: '01-20-2004',
-  color: 'red',
-  isRecyclable: true,
-  status: 'pendingRecycle',
-  hasCoOwner: false,
-}
+import { VEHICLE_TO_DEREGISTER } from '@island.is/skilavottord-web/graphql/queries'
 
 const Confirm: FC = () => {
   const { user } = useContext(UserContext)
@@ -40,7 +33,11 @@ const Confirm: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const partnerId = user?.partnerId
+  const { data } = useQuery(VEHICLE_TO_DEREGISTER, {
+    variables: { permno: id },
+  })
+
+  const vehicle = data?.skilavottordVehicleReadyToDeregistered
 
   const [
     setRecyclingRequest,
@@ -53,6 +50,8 @@ const Confirm: FC = () => {
       return mutationError
     },
   })
+
+  const partnerId = user?.partnerId
 
   const handleConfirm = () => {
     setRecyclingRequest({
@@ -74,7 +73,7 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading /* || error || loading */) {
+  if (mutationError || mutationLoading) {
     return (
       <ProcessPageLayout sectionType={'company'} activeSection={1}>
         {mutationLoading ? (
@@ -108,9 +107,27 @@ const Confirm: FC = () => {
   return (
     <ProcessPageLayout sectionType={'company'} activeSection={1}>
       <Stack space={4}>
-        <Text variant="h1">{t.titles.success}</Text>
-        <Text variant="intro">{t.info}</Text>
-        <CarDetailsBox car={mockCar} />
+        {vehicle ? (
+          <Stack space={4}>
+            <Text variant="h1">{t.titles.success}</Text>
+            <Text variant="intro">{t.info.success}</Text>
+            <CarDetailsBox vehicle={vehicle} />
+          </Stack>
+        ) : (
+          <Stack space={4}>
+            <Text variant="h1">{t.titles.notfound}</Text>
+            <Inline space={1}>
+              <Text>{t.info.error}</Text>
+              <Text variant="h5">{id}</Text>
+            </Inline>
+            <BulletList type="ul">
+              <Bullet>
+                {t.info.notfound}
+                <Text variant="h5">skilavottord.island.is/my-cars</Text>
+              </Bullet>
+            </BulletList>
+          </Stack>
+        )}
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Hidden above="md">
             <Button variant="ghost" circle icon="arrowBack" size="large" />
@@ -120,7 +137,9 @@ const Confirm: FC = () => {
               {t.buttons.back}
             </Button>
           </Hidden>
-          <Button onClick={handleConfirm}>{t.buttons.confirm}</Button>
+          {vehicle && (
+            <Button onClick={handleConfirm}>{t.buttons.confirm}</Button>
+          )}
         </Box>
       </Stack>
     </ProcessPageLayout>

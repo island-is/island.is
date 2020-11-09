@@ -165,6 +165,7 @@ export interface ProcessTitles {
   success: string
   error: string
   loading: string
+  notfound: string
 }
 
 export interface HandoverSubTitles {
@@ -293,7 +294,7 @@ export interface DeregisterSelect {
 
 export interface Deregister {
   titles: ProcessTitles
-  info: string
+  info: ProcessTitles
   buttons: DeregisterButtons
   success: string
   error: Errors
