@@ -216,7 +216,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       })}
                       locale="is"
                       selected={filterValue.dateFrom}
-                      value={filterValue?.dateFrom?.toString() || ''}
                       handleChange={handleDateFromInput}
                     />
                   </Column>
@@ -232,7 +231,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       })}
                       locale="is"
                       selected={filterValue.dateTo}
-                      value={filterValue?.dateTo?.toString() || ''}
                       handleChange={handleDateToInput}
                       minDate={filterValue.dateFrom || undefined}
                     />
