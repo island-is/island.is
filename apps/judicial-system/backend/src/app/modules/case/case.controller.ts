@@ -197,7 +197,7 @@ export class CaseController {
 
     const user = await this.findUserByNationalId(notification.nationalId)
 
-    return this.caseService.sendNotificationByCaseId(
+    return this.caseService.sendCaseNotification(
       notification,
       existingCase,
       user,
@@ -215,7 +215,7 @@ export class CaseController {
   ): Promise<Notification[]> {
     const existingCase = await this.findCaseById(id)
 
-    return this.caseService.getAllNotificationsByCaseId(existingCase)
+    return this.caseService.getAllCaseNotifications(existingCase)
   }
 
   @Post('case/:id/signature')

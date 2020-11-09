@@ -201,26 +201,17 @@ export const Confirmation: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     try {
-      if (workingCase.state === CaseState.SUBMITTED) {
-        // Parse the transition request
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
-        )
+      // Parse the transition request
+      const transitionRequest = parseTransition(
+        workingCase.modified,
+        workingCase.rejecting ? CaseTransition.REJECT : CaseTransition.ACCEPT,
+      )
 
-        // Transition the case
-        const resCase = await transitionCase(workingCase.id, transitionRequest)
-
-        if (!resCase) {
-          // Improve error handling at some point
-          console.log('Transition failing')
-          return false
-        }
-
-        return true
-      }
+      // Transition the case
+      await transitionCase(workingCase.id, transitionRequest)
     } catch (e) {
-      return false
+      // Improve error handling at some point
+      console.log('Transition failing')
     }
   }
 

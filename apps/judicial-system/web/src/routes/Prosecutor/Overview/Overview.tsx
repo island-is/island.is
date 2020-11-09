@@ -90,21 +90,15 @@ export const Overview: React.FC = () => {
       )
 
       // Transition the case
-      const resCase = await transitionCase(workingCase.id, transitionRequest)
-
-      if (!resCase) {
-        // Improve error handling at some point
-        console.log('Transition failing')
-        return false
-      }
-
-      setIsSendingNotification(true)
-      await sendNotification(workingCase.id)
-      setIsSendingNotification(false)
-      return true
+      await transitionCase(workingCase.id, transitionRequest)
     } catch (e) {
-      return false
+      // Improve error handling at some point
+      console.log('Transition failing')
     }
+
+    setIsSendingNotification(true)
+    await sendNotification(workingCase.id)
+    setIsSendingNotification(false)
   }
 
   useEffect(() => {

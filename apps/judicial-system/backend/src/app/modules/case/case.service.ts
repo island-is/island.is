@@ -21,7 +21,9 @@ import { TransitionUpdate } from './case.state'
 @Injectable()
 export class CaseService {
   constructor(
+    @Inject(SmsService)
     private readonly smsService: SmsService,
+    @Inject(SigningService)
     private readonly signingService: SigningService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
@@ -33,48 +35,90 @@ export class CaseService {
     private readonly logger: Logger,
   ) {}
 
-  private constructHeadsUpSmsText(existingCase: Case, user: User): string {
+  private async sendSms(
+    caseId: string,
+    notificationType: NotificationType,
+    smsText: string,
+  ) {
+    // Production or local development with judge mobile number
+    if (environment.production || environment.notifications.judgeMobileNumber) {
+      await this.smsService.sendSms(
+        environment.notifications.judgeMobileNumber,
+        smsText,
+      )
+    }
+
+    return this.notificationModel.create({
+      caseId: caseId,
+      type: notificationType,
+      message: smsText,
+    })
+  }
+
+  private sendHeadsUpNotification(
+    existingCase: Case,
+    user: User,
+  ): Promise<Notification> {
     // Prosecutor
-    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+    const prosecutorText = ` Ákærandi: ${
+      existingCase.prosecutor?.name || user.name
+    }.`
 
     // Arrest date
-    const ad = existingCase.arrestDate?.toISOString()
-    const adText = ad
-      ? ` Viðkomandi handtekinn ${ad.substring(8, 10)}.${ad.substring(
-          5,
-          7,
-        )}.${ad.substring(0, 4)} kl. ${ad.substring(11, 13)}:${ad.substring(
-          14,
-          16,
-        )}.`
+    const arrestDate = existingCase.arrestDate?.toISOString()
+    const arrestDateText = arrestDate
+      ? ` Viðkomandi handtekinn ${arrestDate.substring(
+          8,
+          10,
+        )}.${arrestDate.substring(5, 7)}.${arrestDate.substring(
+          0,
+          4,
+        )} kl. ${arrestDate.substring(11, 13)}:${arrestDate.substring(14, 16)}.`
       : ''
 
     // Court date
-    const cd = existingCase.requestedCourtDate?.toISOString()
-    const cdText = cd
-      ? ` ÓE fyrirtöku ${cd.substring(8, 10)}.${cd.substring(
+    const courtDate = existingCase.requestedCourtDate?.toISOString()
+    const courtDateText = courtDate
+      ? ` ÓE fyrirtöku ${courtDate.substring(8, 10)}.${courtDate.substring(
           5,
           7,
-        )}.${cd.substring(0, 4)} eftir kl. ${cd.substring(
+        )}.${courtDate.substring(0, 4)} eftir kl. ${courtDate.substring(
           11,
           13,
-        )}:${cd.substring(14, 16)}.`
+        )}:${courtDate.substring(14, 16)}.`
       : ''
 
-    return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutor}${adText}${cdText}`
+    const smsText = `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${courtDateText}`
+
+    return this.sendSms(existingCase.id, NotificationType.HEADS_UP, smsText)
   }
 
-  private constructReadyForCourtpSmsText(
+  private sendReadyForCourtNotification(
     existingCase: Case,
     user: User,
-  ): string {
+  ): Promise<Notification> {
     // Prosecutor
-    const prosecutor = user ? ` Ákærandi: ${user.name}.` : ''
+    const prosecutorText = ` Ákærandi: ${
+      existingCase.prosecutor?.name || user.name
+    }.`
 
     // Court
-    const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
+    const courtText = ` Dómstóll: ${existingCase.court}.`
 
-    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutor}${court}`
+    const smsText = `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+
+    return this.sendSms(
+      existingCase.id,
+      NotificationType.READY_FOR_COURT,
+      smsText,
+    )
+  }
+
+  private sendCourtDateNotification(
+    existingCase: Case,
+    user: User,
+  ): Promise<Notification> {
+    return null
   }
 
   private async sendRulingAsSignedPdf(
@@ -173,7 +217,7 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  getAllNotificationsByCaseId(existingCase: Case): Promise<Notification[]> {
+  getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
     this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
 
     return this.notificationModel.findAll({
@@ -182,32 +226,23 @@ export class CaseService {
     })
   }
 
-  async sendNotificationByCaseId(
+  async sendCaseNotification(
     notification: SendNotificationDto,
     existingCase: Case,
     user: User,
   ): Promise<Notification> {
-    this.logger.debug(`Sending a notification for case ${existingCase.id}`)
+    this.logger.debug(
+      `Sending ${notification.type} notification for case ${existingCase.id}`,
+    )
 
-    const smsText =
-      notification.type === NotificationType.HEADS_UP
-        ? this.constructHeadsUpSmsText(existingCase, user)
-        : // State is NotificationType.READY_FOR_COURT
-          this.constructReadyForCourtpSmsText(existingCase, user)
-
-    // Production or local development with judge mobile number
-    if (environment.production || environment.notifications.judgeMobileNumber) {
-      await this.smsService.sendSms(
-        environment.notifications.judgeMobileNumber,
-        smsText,
-      )
+    switch (notification.type) {
+      case NotificationType.HEADS_UP:
+        return this.sendHeadsUpNotification(existingCase, user)
+      case NotificationType.READY_FOR_COURT:
+        return this.sendReadyForCourtNotification(existingCase, user)
+      case NotificationType.COURT_DATE:
+        return this.sendCourtDateNotification(existingCase, user)
     }
-
-    return this.notificationModel.create({
-      caseId: existingCase.id,
-      type: notification.type,
-      message: smsText,
-    })
   }
 
   async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
