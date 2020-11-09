@@ -89,11 +89,20 @@
       "secondaryButton": "Cancel"
     },
     "cancelModal": {
-      "title": "Hætta við úrvinnslu ökutækis",
+      "titles": {
+        "info": "Hætta við úrvinnslu ökutækis",
+        "error": "We couldn’t cancel process"
+      },
       "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða förgun ökutækis hjá móttökustöð. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
       "buttons": {
         "cancel": "Nei",
         "continue": "Já"
+      },
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem canceling your car. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
       }
     }
   },

@@ -56,8 +56,25 @@ const Handover: FC = () => {
     router.replace(routes.myCars)
   }
 
-  const onCancel = () => {
+  const onCancelRecycling = () => {
     setModal(true)
+  }
+
+  const onConfirmCancellation = () => {
+    setRecyclingRequest({
+      variables: {
+        permno: id,
+        nameOfRequestor: user?.name,
+        requestType: 'cancelled',
+      },
+    }).then(() => {
+      setModal(false)
+      router.replace(routes.myCars)
+    })
+  }
+
+  const onCancelCancellation = () => {
+    setModal(false)
   }
 
   if (mutationError) {
@@ -109,7 +126,7 @@ const Handover: FC = () => {
           {isMobile ? (
             <Box paddingBottom={4} className={styles.cancelButtonContainer}>
               <Button
-                onClick={onCancel}
+                onClick={onCancelRecycling}
                 variant="text"
                 colorScheme="destructive"
               >
@@ -118,7 +135,7 @@ const Handover: FC = () => {
             </Box>
           ) : (
             <Button
-              onClick={onCancel}
+              onClick={onCancelRecycling}
               variant="ghost"
               colorScheme="destructive"
             >
@@ -132,15 +149,16 @@ const Handover: FC = () => {
       </Stack>
       <Modal
         show={showModal}
-        onCancel={() => setModal(false)}
-        onContinue={() => {
-          router.replace(routes.myCars)
-          setModal(false)
-        }}
-        title={t.cancelModal.title}
+        onContinue={onConfirmCancellation}
+        onCancel={onCancelCancellation}
+        title={
+          mutationError ? t.cancelModal.titles.error : t.cancelModal.titles.info
+        }
         text={t.cancelModal.info}
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
+        error={mutationError}
+        errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>
   )

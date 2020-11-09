@@ -9,15 +9,19 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import * as styles from './Modal.treat'
+import { OutlinedError } from '@island.is/skilavottord-web/components'
+import { Errors } from '@island.is/skilavottord-web/i18n/locales/translation'
 
 export interface ModalProps {
-  show?: boolean
-  onCancel?: () => void
-  onContinue?: () => void
+  show: boolean
+  onCancel: () => void
+  onContinue: () => void
   title: string
   text: string
   continueButtonText: string
   cancelButtonText: string
+  error?: boolean
+  errorText?: Errors
 }
 
 export const Modal: FC<ModalProps> = ({
@@ -28,6 +32,8 @@ export const Modal: FC<ModalProps> = ({
   text,
   continueButtonText,
   cancelButtonText,
+  error,
+  errorText,
 }: ModalProps) => {
   useEffect(() => {
     document.body.style.overflowY = 'auto'
@@ -67,21 +73,39 @@ export const Modal: FC<ModalProps> = ({
                     span={['8/8', '6/8', '6/8', '6/8']}
                     offset={['0', '1/8', '1/8', '1/8']}
                   >
-                    <Stack space={[6, 4, 4, 4]}>
+                    {error ? (
                       <Stack space={2}>
                         <Text variant="h1">{title}</Text>
-                        <Text variant="intro">{text}</Text>
+                        <OutlinedError
+                          title={errorText.title}
+                          message={errorText.message}
+                          primaryButton={{
+                            text: `${errorText.primaryButton}`,
+                            action: onContinue,
+                          }}
+                          secondaryButton={{
+                            text: `${errorText.secondaryButton}`,
+                            action: onCancel,
+                          }}
+                        />
                       </Stack>
-                      <Box display="flex" justifyContent="spaceBetween">
-                        <Button variant="ghost" onClick={onCancel} fluid>
-                          {cancelButtonText}
-                        </Button>
-                        <Box paddingX={[3, 3, 3, 15]}></Box>
-                        <Button onClick={onContinue} fluid>
-                          {continueButtonText}
-                        </Button>
-                      </Box>
-                    </Stack>
+                    ) : (
+                      <Stack space={[6, 4, 4, 4]}>
+                        <Stack space={2}>
+                          <Text variant="h1">{title}</Text>
+                          <Text variant="intro">{text}</Text>
+                        </Stack>
+                        <Box display="flex" justifyContent="spaceBetween">
+                          <Button variant="ghost" onClick={onCancel} fluid>
+                            {cancelButtonText}
+                          </Button>
+                          <Box paddingX={[3, 3, 3, 15]}></Box>
+                          <Button onClick={onContinue} fluid>
+                            {continueButtonText}
+                          </Button>
+                        </Box>
+                      </Stack>
+                    )}
                   </GridColumn>
                 </Box>
               </GridColumn>

@@ -96,9 +96,15 @@ export interface ProcessSections {
 }
 
 export interface CancelModal {
-  title: string
+  titles: CancelModalTitles
   info: string
   buttons: ProcessButtons
+  error: Errors
+}
+
+export interface CancelModalTitles {
+  info: string
+  error: string
 }
 
 export interface DataSubtitles {
