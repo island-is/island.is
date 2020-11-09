@@ -107,7 +107,7 @@ export const CreateCaseMutation = gql`
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case | null>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
 
   const [
@@ -193,16 +193,16 @@ export const StepOne: React.FC = () => {
 
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
-      workingCase.id === '' &&
-      policeCaseNumberRef.current.value !== '' &&
-      accusedNationalIdRef.current.value !== ''
+      workingCase?.id === '' &&
+      policeCaseNumberRef.current?.value !== '' &&
+      accusedNationalIdRef.current?.value !== ''
 
     if (isPossibleToSave) {
       const { data } = await createCaseMutation({
         variables: {
           input: {
-            policeCaseNumber: policeCaseNumberRef.current.value,
-            accusedNationalId: accusedNationalIdRef.current.value.replace(
+            policeCaseNumber: policeCaseNumberRef.current?.value,
+            accusedNationalId: accusedNationalIdRef.current?.value.replace(
               '-',
               '',
             ),
@@ -222,15 +222,7 @@ export const StepOne: React.FC = () => {
 
       if (resCase) {
         history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${resCase.id}`)
-        setWorkingCase({
-          ...workingCase,
-          id: resCase.id,
-          accusedNationalId: accusedNationalIdRef.current.value.replace(
-            '-',
-            '',
-          ),
-          policeCaseNumber: policeCaseNumberRef.current.value,
-        })
+        setWorkingCase(resCase)
       }
     }
   }
@@ -272,11 +264,8 @@ export const StepOne: React.FC = () => {
 
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setWorkingCase(resCase)
-    }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     } else if (!id && !workingCase) {
       setWorkingCase({
         id: '',
