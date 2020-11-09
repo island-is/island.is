@@ -14,7 +14,6 @@ import AccordionListItem from '@island.is/judicial-system-web/src/shared-compone
 import {
   Case,
   CaseAppealDecision,
-  CaseState,
   CaseTransition,
   SignatureResponse,
   TransitionCase,
