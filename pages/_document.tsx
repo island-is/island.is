@@ -1,25 +1,28 @@
-import React from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
-
+import React from "react";
+import Document, { Html, Head, Main, NextScript } from "next/document";
+import Nav from "../components/Nav";
+import Header from "../components/Header";
 
 interface Props {
-  lang: string
+  lang: string;
 }
 
 class MyDocument extends Document<Props> {
   render() {
     return (
       <Html lang="en">
-        <Head>
-            <title>Þjónustusíður</title>
-        </Head>
+        <Head></Head>
         <body>
-          <Main />
-          <NextScript />
+          <div className="wrapper__container">
+            <Header />
+            <Nav />
+            <Main />
+            <NextScript />
+          </div>
         </body>
       </Html>
-    )
+    );
   }
 }
 
-export default MyDocument
+export default MyDocument;
