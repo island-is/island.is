@@ -51,7 +51,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
           <Link key={i} href={url}>
             {asPath === url ? (
               <>
-                <Bullet align="left" />
+                <Bullet align="right" />
                 <Text variant="h5" color="blue400">
                   {text}
                 </Text>
@@ -72,7 +72,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
       </Head>
       <Box overflow="hidden">
         <StandardLayout
-          sidebar={{ position: 'right', node: sidebar }}
+          sidebar={{ position: 'left', node: sidebar }}
           contentBoxProps={{
             paddingBottom: page.bottomSlices.length > 0 ? 0 : undefined,
           }}

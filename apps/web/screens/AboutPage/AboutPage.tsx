@@ -54,7 +54,9 @@ import { RenderForm } from './RenderForm'
 const mainContentSpanFull: SpanType = ['12/12', '12/12', '12/12', '9/12']
 const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
 const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
-const mainContentIndent: SpanType = ['0', '0', '0', '1/12']
+const mainContentIndent: SpanType = ['0', '0', '0', '4/12']
+const mainContentOffset: SpanType = ['0', '0', '0', '3/12']
+
 const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
 const nestedSpanWithOffset: SpanType = ['9/9', '9/9', '9/9', '7/9']
 const nestedOffset: SpanType = ['0', '0', '0', '1/9']
@@ -191,22 +193,6 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
           </Box>
         </ColorSchemeContext.Provider>
         <GridRow>
-          <GridColumn span={mainContentSpanFull}>
-            <GridRow>
-              <GridColumn offset={nestedOffset} span={nestedSpanWithOffset}>
-                <Stack space={2}>
-                  <Breadcrumbs color="blue300" separatorColor="blue300">
-                    <Link href={makePath()}>Ísland.is</Link>
-                    <span>{page.title}</span>
-                  </Breadcrumbs>
-                  <Text variant="h1" as="h1" color="white">
-                    {slice.title}
-                  </Text>
-                  <Text color="white">{slice.introduction}</Text>
-                </Stack>
-              </GridColumn>
-            </GridRow>
-          </GridColumn>
           <GridColumn span={sidebarContentSpan} position="none">
             <Sidebar
               title={page.title}
@@ -270,9 +256,29 @@ const PageHeader: FC<PageHeaderProps> = ({ page }) => {
             </Sidebar>
           </GridColumn>
           <GridColumn span={mainContentSpanFull}>
-            {(slice.slices as AvailableSlices[]).map((slice) => (
-              <Section key={slice.id} slice={slice} />
-            ))}
+            <GridRow>
+              <GridColumn span={mainContentSpanFull}>
+                <GridRow>
+                  <GridColumn offset={nestedOffset} span={nestedSpanWithOffset}>
+                    <Stack space={2}>
+                      <Breadcrumbs color="blue300" separatorColor="blue300">
+                        <Link href={makePath()}>Ísland.is</Link>
+                        <span>{page.title}</span>
+                      </Breadcrumbs>
+                      <Text variant="h1" as="h1" color="white">
+                        {slice.title}
+                      </Text>
+                      <Text color="white">{slice.introduction}</Text>
+                    </Stack>
+                  </GridColumn>
+                </GridRow>
+              </GridColumn>
+              <GridColumn>
+                {(slice.slices as AvailableSlices[]).map((slice) => (
+                  <Section key={slice.id} slice={slice} />
+                ))}
+              </GridColumn>
+            </GridRow>
           </GridColumn>
         </GridRow>
       </GridContainer>
@@ -312,7 +318,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'LinkCardSlice':
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
-          <Layout width={mainContentSpan}>
+          <Layout indent={mainContentOffset} width={mainContentSpan}>
             <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
             </Box>
@@ -338,7 +344,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'StorySlice':
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
-          <Layout width={mainContentSpan}>
+          <Layout indent={mainContentOffset} width={mainContentSpan}>
             <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
               <StoryList
                 {...slice}
@@ -354,7 +360,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'LatestNewsSlice':
       return (
         <div key={slice.id} id={slice.id}>
-          <Layout width={mainContentSpan}>
+          <Layout indent={mainContentOffset} width={mainContentSpan}>
             <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
               <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
@@ -364,7 +370,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'LogoListSlice':
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
-          <Layout width={mainContentSpan}>
+          <Layout indent={mainContentOffset} width={mainContentSpan}>
             <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
               <LogoList
                 {...slice}
@@ -377,7 +383,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'BulletListSlice':
       return (
         <div id={slice.id} key={slice.id}>
-          <Layout width={mainContentSpan}>
+          <Layout indent={mainContentOffset} width={mainContentSpan}>
             <Box paddingBottom={[8, 5, 10]}>
               <BulletList
                 bullets={slice.bullets.map((bullet) => {
@@ -403,7 +409,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'TabSection':
       return (
         <Box key={slice.id} id={slice.id} background="dotted">
-          <Layout width={mainContentSpan}>
+          <Layout indent={mainContentOffset} width={mainContentSpan}>
             <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs
                 label={slice?.title}

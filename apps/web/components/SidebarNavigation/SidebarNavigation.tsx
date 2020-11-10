@@ -13,7 +13,7 @@ export interface SidebarNavigationProps {
 export const SidebarNavigation: FC<SidebarNavigationProps> = ({
   title,
   navigation,
-  position = 'left',
+  position = 'right',
 }) => {
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)

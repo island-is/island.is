@@ -195,7 +195,7 @@ const SubArticleNavigation: FC<{
         is also one render call with bullet=null, but in that case we don't
         want to remove the bullet element because we'd lose the movement animation
       */}
-      {!isFirstMount && <Bullet align="left" top={bullet?.offsetTop ?? 0} />}
+      {!isFirstMount && <Bullet align="right" top={bullet?.offsetTop ?? 0} />}
 
       <Stack space={[1, 1, 2]}>
         <Text variant="h4" as="h4">
@@ -282,7 +282,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
 
   return (
     <SidebarBox position="relative">
-      {bullet && <Bullet align="left" top={bullet.offsetTop} />}
+      {bullet && <Bullet align="right" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
         <Text variant="h4" as="h2">

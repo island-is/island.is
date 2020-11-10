@@ -84,13 +84,18 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
+        {sidebar && (
+          <GridColumn
+            hiddenBelow="md"
+            span={['0', '0', '4/12', '4/12', '3/12']}
+          >
+            <Hidden print={true}>
+              <Sticky>{sidebar}</Sticky>
+            </Hidden>
+          </GridColumn>
+        )}
         <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
           <Box>{children}</Box>
-        </GridColumn>
-        <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
-          <Hidden print={true}>
-            <Sticky>{sidebar}</Sticky>
-          </Hidden>
         </GridColumn>
       </GridRow>
     </Box>
@@ -105,9 +110,14 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={[2, 2, 6]} paddingBottom={[5, 5, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hiddenBelow="md">
-          <Sticky>{sidebar}</Sticky>
-        </GridColumn>
+        {sidebar && (
+          <GridColumn
+            span={['12/12', '12/12', '4/12', '3/12']}
+            hiddenBelow="md"
+          >
+            <Sticky>{sidebar}</Sticky>
+          </GridColumn>
+        )}
         <GridColumn
           span={['12/12', '12/12', '8/12', '6/12']}
           offset={['0', '0', '0', '1/12']}
@@ -127,23 +137,25 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
+        {sidebar && (
+          <GridColumn
+            span={['12/12', '12/12', '4/12', '3/12']}
+            offset={['0', '0', '0', '1/12']}
+          >
+            {sidebar && (
+              <Sticky>
+                <Box background="purple100" padding={4}>
+                  {sidebar}
+                </Box>
+              </Sticky>
+            )}
+          </GridColumn>
+        )}
         <GridColumn
           span={['12/12', '12/12', '8/12', '7/12']}
           offset={['0', '0', '0', '1/12']}
         >
           {children}
-        </GridColumn>
-        <GridColumn
-          span={['12/12', '12/12', '4/12', '3/12']}
-          offset={['0', '0', '0', '1/12']}
-        >
-          {sidebar && (
-            <Sticky>
-              <Box background="purple100" padding={4}>
-                {sidebar}
-              </Box>
-            </Sticky>
-          )}
         </GridColumn>
       </GridRow>
     </Box>

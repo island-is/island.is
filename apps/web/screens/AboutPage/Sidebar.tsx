@@ -97,7 +97,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
                 {children({ bulletRef, colors })}
               </Box>
             </Box>
-            {bullet && <Bullet align="left" top={bullet.offsetTop + 'px'} />}
+            {bullet && <Bullet align="right" top={bullet.offsetTop + 'px'} />}
           </div>
         </div>
       </div>

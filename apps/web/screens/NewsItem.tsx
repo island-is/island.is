@@ -87,6 +87,34 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
       <GridContainer>
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
           <GridRow>
+            <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
+              <Sticky>
+                <SidebarBox>
+                  <Stack space={3}>
+                    {Boolean(newsItem.author) && (
+                      <Stack space={1}>
+                        <Text variant="eyebrow" as="p" color="blue400">
+                          {n('author', 'Höfundur')}
+                        </Text>
+                        <Text variant="h5" as="p">
+                          {newsItem.author.name}
+                        </Text>
+                      </Stack>
+                    )}
+                    {Boolean(newsItem.date) && (
+                      <Stack space={1}>
+                        <Text variant="eyebrow" as="p" color="blue400">
+                          {n('published', 'Birt')}
+                        </Text>
+                        <Text variant="h5" as="p">
+                          {format(new Date(newsItem.date), 'do MMMM yyyy')}
+                        </Text>
+                      </Stack>
+                    )}
+                  </Stack>
+                </SidebarBox>
+              </Sticky>
+            </GridColumn>
             <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
               <GridRow>
                 <GridColumn
@@ -140,34 +168,6 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                   config={{ defaultPadding: [2, 2, 4] }}
                 />
               </Box>
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '4/12', '4/12', '3/12']}>
-              <Sticky>
-                <SidebarBox>
-                  <Stack space={3}>
-                    {Boolean(newsItem.author) && (
-                      <Stack space={1}>
-                        <Text variant="eyebrow" as="p" color="blue400">
-                          {n('author', 'Höfundur')}
-                        </Text>
-                        <Text variant="h5" as="p">
-                          {newsItem.author.name}
-                        </Text>
-                      </Stack>
-                    )}
-                    {Boolean(newsItem.date) && (
-                      <Stack space={1}>
-                        <Text variant="eyebrow" as="p" color="blue400">
-                          {n('published', 'Birt')}
-                        </Text>
-                        <Text variant="h5" as="p">
-                          {format(new Date(newsItem.date), 'do MMMM yyyy')}
-                        </Text>
-                      </Stack>
-                    )}
-                  </Stack>
-                </SidebarBox>
-              </Sticky>
             </GridColumn>
           </GridRow>
         </Box>
