@@ -58,7 +58,7 @@ const Confirm: FC = () => {
       variables: {
         permno: id,
         partnerId: partnerId,
-        requestType: 'deregister',
+        requestType: 'deregistered',
       },
     })
   }
