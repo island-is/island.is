@@ -66,7 +66,7 @@ const App: React.FC = () => {
               <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
                 <RulingStepOne />
               </Route>
-              <Route path={`${Constants.COURT_DOCUMENT_ROUTE}/:id`}>
+              <Route path={`${Constants.COURT_RECORD_ROUTE}/:id`}>
                 <CourtRecord />
               </Route>
               <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>

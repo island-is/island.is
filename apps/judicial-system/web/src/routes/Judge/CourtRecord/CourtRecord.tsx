@@ -1,6 +1,7 @@
 import {
   Box,
   GridColumn,
+  GridContainer,
   GridRow,
   Input,
   Text,
@@ -101,109 +102,69 @@ export const CourtRecord: React.FC = () => {
             <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
           </Box>
           <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Þinghald
-              </Text>
-            </Box>
-            <Box display="flex" marginBottom={3}>
-              <Box marginRight={3}>
-                <Input
-                  data-testid="courtStartTime"
-                  name="courtStartTime"
-                  label="Þinghald hófst"
-                  placeholder="Veldu tíma"
-                  defaultValue={formatDate(
-                    workingCase.courtStartTime,
-                    TIME_FORMAT,
-                  )}
-                  onBlur={(evt) => {
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid
-                    ) {
-                      const courtStartTimeMinutes = parseTime(
-                        new Date().toString(),
-                        evt.target.value,
-                      )
-
-                      setWorkingCase({
-                        ...workingCase,
-                        courtStartTime: courtStartTimeMinutes,
-                      })
-
-                      if (
-                        courtStartTimeMinutes !== workingCase.courtStartTime
-                      ) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('courtStartTime', courtStartTimeMinutes),
+            <Box marginBottom={3}>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn span="5/12">
+                    <Input
+                      data-testid="courtStartTime"
+                      name="courtStartTime"
+                      label="Þinghald hófst"
+                      placeholder="Veldu tíma"
+                      defaultValue={formatDate(
+                        workingCase.courtStartTime,
+                        TIME_FORMAT,
+                      )}
+                      onBlur={(evt) => {
+                        const validateTimeEmpty = validate(
+                          evt.target.value,
+                          'empty',
                         )
-                      }
-                    } else {
-                      setCourtDocumentStartErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
-                      )
-                    }
-                  }}
-                  errorMessage={courtDocumentStartErrorMessage}
-                  hasError={courtDocumentStartErrorMessage !== ''}
-                  onFocus={() => setCourtDocumentStartErrorMessage('')}
-                  required
-                />
-              </Box>
-              <Input
-                data-testid="courtEndTime"
-                name="courtEndTime"
-                label="Þinghaldi lauk"
-                placeholder="Veldu tíma"
-                defaultValue={formatDate(workingCase.courtEndTime, TIME_FORMAT)}
-                onBlur={(evt) => {
-                  const validateTimeEmpty = validate(evt.target.value, 'empty')
-                  const validateTimeFormat = validate(
-                    evt.target.value,
-                    'time-format',
-                  )
+                        const validateTimeFormat = validate(
+                          evt.target.value,
+                          'time-format',
+                        )
 
-                  if (validateTimeEmpty.isValid && validateTimeFormat.isValid) {
-                    const courtEndTimeMinutes = parseTime(
-                      new Date().toString(),
-                      evt.target.value,
-                    )
+                        if (
+                          validateTimeEmpty.isValid &&
+                          validateTimeFormat.isValid
+                        ) {
+                          const courtStartTimeMinutes = parseTime(
+                            new Date().toString(),
+                            evt.target.value,
+                          )
 
-                    setWorkingCase({
-                      ...workingCase,
-                      courtEndTime: courtEndTimeMinutes,
-                    })
+                          setWorkingCase({
+                            ...workingCase,
+                            courtStartTime: courtStartTimeMinutes,
+                          })
 
-                    if (courtEndTimeMinutes !== workingCase.courtEndTime) {
-                      updateCase(
-                        workingCase.id,
-                        parseString('courtEndTime', courtEndTimeMinutes),
-                      )
-                    }
-                  } else {
-                    setCourtDocumentEndErrorMessage(
-                      validateTimeEmpty.errorMessage ||
-                        validateTimeFormat.errorMessage,
-                    )
-                  }
-                }}
-                errorMessage={courtDocumentEndErrorMessage}
-                hasError={courtDocumentEndErrorMessage !== ''}
-                onFocus={() => setCourtDocumentEndErrorMessage('')}
-                required
-              />
+                          if (
+                            courtStartTimeMinutes !== workingCase.courtStartTime
+                          ) {
+                            updateCase(
+                              workingCase.id,
+                              parseString(
+                                'courtStartTime',
+                                courtStartTimeMinutes,
+                              ),
+                            )
+                          }
+                        } else {
+                          setCourtDocumentStartErrorMessage(
+                            validateTimeEmpty.errorMessage ||
+                              validateTimeFormat.errorMessage,
+                          )
+                        }
+                      }}
+                      errorMessage={courtDocumentStartErrorMessage}
+                      hasError={courtDocumentStartErrorMessage !== ''}
+                      onFocus={() => setCourtDocumentStartErrorMessage('')}
+                      required
+                    />
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
             </Box>
             <Box marginBottom={3}>
               <Input
@@ -291,7 +252,7 @@ export const CourtRecord: React.FC = () => {
             </GridRow>
           </Box>
           <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
+            <Box marginBottom={1}>
               <Text as="h3" variant="h3">
                 Réttindi kærða
               </Text>
@@ -343,38 +304,100 @@ export const CourtRecord: React.FC = () => {
                 Málflutningur
               </Text>
             </Box>
-            <Input
-              data-testid="litigationPresentations"
-              name="litigationPresentations"
-              label="Málflutningsræður"
-              defaultValue={workingCase.litigationPresentations}
-              placeholder="Almennar málflutningsræður skráðar hér..."
-              onBlur={(evt) => {
-                const validateEmpty = validate(evt.target.value, 'empty')
-                setWorkingCase({
-                  ...workingCase,
-                  litigationPresentations: evt.target.value,
-                })
+            <Box marginBottom={3}>
+              <Input
+                data-testid="litigationPresentations"
+                name="litigationPresentations"
+                label="Málflutningsræður"
+                defaultValue={workingCase.litigationPresentations}
+                placeholder="Almennar málflutningsræður skráðar hér..."
+                onBlur={(evt) => {
+                  const validateEmpty = validate(evt.target.value, 'empty')
+                  setWorkingCase({
+                    ...workingCase,
+                    litigationPresentations: evt.target.value,
+                  })
 
-                if (
-                  validateEmpty.isValid &&
-                  workingCase.litigationPresentations !== evt.target.value
-                ) {
-                  updateCase(
-                    workingCase.id,
-                    parseString('litigationPresentations', evt.target.value),
-                  )
-                } else {
-                  setLitigationPresentationsMessage(validateEmpty.errorMessage)
-                }
-              }}
-              errorMessage={litigationPresentationsErrorMessage}
-              hasError={litigationPresentationsErrorMessage !== ''}
-              onFocus={() => setLitigationPresentationsMessage('')}
-              textarea
-              rows={7}
-              required
-            />
+                  if (
+                    validateEmpty.isValid &&
+                    workingCase.litigationPresentations !== evt.target.value
+                  ) {
+                    updateCase(
+                      workingCase.id,
+                      parseString('litigationPresentations', evt.target.value),
+                    )
+                  } else {
+                    setLitigationPresentationsMessage(
+                      validateEmpty.errorMessage,
+                    )
+                  }
+                }}
+                errorMessage={litigationPresentationsErrorMessage}
+                hasError={litigationPresentationsErrorMessage !== ''}
+                onFocus={() => setLitigationPresentationsMessage('')}
+                textarea
+                rows={7}
+                required
+              />
+            </Box>
+
+            <GridContainer>
+              <GridRow>
+                <GridColumn>
+                  <Input
+                    data-testid="courtEndTime"
+                    name="courtEndTime"
+                    label="Þinghaldi lauk"
+                    placeholder="Veldu tíma"
+                    defaultValue={formatDate(
+                      workingCase.courtEndTime,
+                      TIME_FORMAT,
+                    )}
+                    onBlur={(evt) => {
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
+                      )
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
+                      )
+
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        const courtEndTimeMinutes = parseTime(
+                          new Date().toString(),
+                          evt.target.value,
+                        )
+
+                        setWorkingCase({
+                          ...workingCase,
+                          courtEndTime: courtEndTimeMinutes,
+                        })
+
+                        if (courtEndTimeMinutes !== workingCase.courtEndTime) {
+                          updateCase(
+                            workingCase.id,
+                            parseString('courtEndTime', courtEndTimeMinutes),
+                          )
+                        }
+                      } else {
+                        setCourtDocumentEndErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
+                    }}
+                    errorMessage={courtDocumentEndErrorMessage}
+                    hasError={courtDocumentEndErrorMessage !== ''}
+                    onFocus={() => setCourtDocumentEndErrorMessage('')}
+                    required
+                  />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
           </Box>
           <FormFooter
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}

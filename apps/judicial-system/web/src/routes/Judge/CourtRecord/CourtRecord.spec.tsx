@@ -51,9 +51,9 @@ describe('/domari-krafa/thingbok', () => {
       >
         <userContext.Provider value={mockJudgeUserContext}>
           <MemoryRouter
-            initialEntries={[`${Constants.COURT_DOCUMENT_ROUTE}/test_id_2`]}
+            initialEntries={[`${Constants.COURT_RECORD_ROUTE}/test_id_2`]}
           >
-            <Route path={`${Constants.COURT_DOCUMENT_ROUTE}/:id`}>
+            <Route path={`${Constants.COURT_RECORD_ROUTE}/:id`}>
               <CourtRecord />
             </Route>
           </MemoryRouter>

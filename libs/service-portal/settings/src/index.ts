@@ -89,6 +89,12 @@ export const settingsModule: ServicePortalModule = {
       })
       // If successful, there is a user profile present and we
       // don't render the onboarding prompt
+      routes.push({
+        render: () =>
+          lazy(() =>
+            import('./components/UserOnboardingModal/UserOnboardingModal'),
+          ),
+      })
     } catch (err) {
       // If there is no user profile present, graphQL returns an error
       // In which case, we render the onboarding modal

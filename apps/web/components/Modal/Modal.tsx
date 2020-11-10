@@ -10,11 +10,12 @@ import React, {
   useState,
 } from 'react'
 import {
-  ButtonDeprecated as Button,
+  Button,
   Box,
   Stack,
   Text,
-  IconDeprecated as Icon,
+  GridRow,
+  GridColumn,
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import {
@@ -119,9 +120,16 @@ export const Modal: FC<ModalProps> = ({
                 borderRadius="large"
                 className={styles.content}
               >
-                <button onClick={onCloseEvent} className={styles.close}>
-                  <Icon type="close" color="blue400" width="18" height="18" />
-                </button>
+                <Box className={styles.close}>
+                  <Button
+                    circle
+                    colorScheme="negative"
+                    icon="close"
+                    onClick={onCloseEvent}
+                    size="large"
+                  />
+                </Box>
+
                 <Stack space={3}>
                   {!!title && (
                     <Text variant="h2" as="h3">
@@ -129,25 +137,34 @@ export const Modal: FC<ModalProps> = ({
                     </Text>
                   )}
                   {children ?? null}
-                  <Box marginTop={6} className={styles.buttons}>
-                    <Button
-                      ref={initialFocusedRef}
-                      width="fixed"
-                      variant="ghost"
-                      onClick={onCloseEvent}
+                  <GridRow>
+                    <GridColumn
+                      span={['12/12', '6/12', '6/12']}
+                      paddingBottom={[2, 0, 0]}
                     >
-                      {buttonTextCancel}
-                    </Button>
-                    <Button
-                      width="fixed"
-                      onClick={() => {
-                        onCloseEvent()
-                        onConfirm && onConfirm()
-                      }}
-                    >
-                      {buttonTextConfirm}
-                    </Button>
-                  </Box>
+                      <Button
+                        ref={initialFocusedRef}
+                        size="large"
+                        fluid
+                        variant="ghost"
+                        onClick={onCloseEvent}
+                      >
+                        {buttonTextCancel}
+                      </Button>
+                    </GridColumn>
+                    <GridColumn span={['12/12', '6/12', '6/12']}>
+                      <Button
+                        size="large"
+                        fluid
+                        onClick={() => {
+                          onCloseEvent()
+                          onConfirm && onConfirm()
+                        }}
+                      >
+                        {buttonTextConfirm}
+                      </Button>
+                    </GridColumn>
+                  </GridRow>
                 </Stack>
               </Box>
             </Dialog>

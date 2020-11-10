@@ -1,10 +1,5 @@
 import React, { FC } from 'react'
-import {
-  ButtonDeprecated as Button,
-  Text,
-  Stack,
-  Link,
-} from '@island.is/island-ui/core'
+import { Button, Text, Stack, Link } from '@island.is/island-ui/core'
 import IconBullet from '../IconBullet/IconBullet'
 import { ContentLink } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -50,7 +45,7 @@ export const StoryList: FC<StoryListProps> = ({
             as={makePath('news', `?tag=${PROJECT_STORIES_TAG_ID}`)}
             pureChildren
           >
-            <Button variant="ghost" white>
+            <Button variant="ghost" colorScheme="negative">
               {readMoreText}
             </Button>
           </Link>
@@ -84,7 +79,7 @@ const Story: FC<StoryProps> = ({
         <Text color="white">{intro}</Text>
         {!!(linkedPage || link) && (
           <ContentLink pageData={linkedPage} fallbackLink={link}>
-            <Button variant="text" size="medium" white icon="arrowRight">
+            <Button variant="text" colorScheme="negative" icon="arrowForward">
               {readMoreText}
             </Button>
           </ContentLink>
