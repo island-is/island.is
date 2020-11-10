@@ -1,8 +1,13 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, ReactElement } from 'react'
 import { useRouter } from 'next/router'
 import findKey from 'lodash/findKey'
 import { useApolloClient } from '@apollo/client/react'
-import { Button, ButtonTypes, Hidden, Text } from '@island.is/island-ui/core'
+import {
+  Button,
+  ButtonTypes,
+  Hidden,
+  DialogPrompt,
+} from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames, { PathTypes, routes } from '@island.is/web/i18n/routeNames'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
@@ -70,7 +75,7 @@ export const LanguageToggler: FC<{
     })
   }
 
-  const Disclosure = (
+  const Disclosure: ReactElement = (
     <Button
       colorScheme={buttonColorScheme}
       variant="utility"
@@ -88,18 +93,16 @@ export const LanguageToggler: FC<{
   const LanguageButton = (
     <>
       {otherLanguage === 'en' ? (
-        <Modal
+        <DialogPrompt
           baseId={LanguageButtonId}
           title={gn('switchToEnglishModalTitle')}
-          label="Confirm switching to english"
-          disclosure={Disclosure}
+          description={gn('switchToEnglishModalText')}
+          ariaLabel="Confirm switching to english"
+          disclosureElement={Disclosure}
           onConfirm={onClick}
-          lang="en"
-        >
-          <Text variant="intro" as="p">
-            {gn('switchToEnglishModalText')}
-          </Text>
-        </Modal>
+          buttonTextConfirm="Confirm"
+          buttonTextCancel="Cancel"
+        />
       ) : (
         Disclosure
       )}

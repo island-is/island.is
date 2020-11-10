@@ -12,9 +12,10 @@ import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
 import {
   Text,
-  IconDeprecated as Icon,
+  Icon,
   Hidden,
-  ButtonDeprecated as Button,
+  Link,
+  Button,
   GridContainer,
   GridRow,
   GridColumn,
@@ -165,14 +166,11 @@ export const SideMenu: FC<Props> = ({
                     paddingTop={[2, 2, 3]}
                     paddingBottom={[2, 2, 3]}
                   >
-                    <Button
-                      href="https://minarsidur.island.is/"
-                      variant="menu"
-                      leftIcon="user"
-                      width="fluid"
-                    >
-                      {t.login}
-                    </Button>
+                    <Link href="https://minarsidur.island.is/">
+                      <Button icon="person" type="menu" fluid variant="utility">
+                        {t.login}
+                      </Button>
+                    </Link>
                   </GridColumn>
                   <GridColumn
                     span="4/12"
@@ -298,7 +296,7 @@ export const SideMenu: FC<Props> = ({
             className={styles.closeButton}
           >
             <FocusableBox component="button" onClick={handleClose} padding={1}>
-              <Icon type="close" />
+              <Icon icon="close" color="blue400" />
             </FocusableBox>
           </Box>
         </Box>
