@@ -85,7 +85,6 @@ export const HearingArrangements: React.FC = () => {
         )
       }
 
-      console.log('bla: ', theCase.defenderName)
 
       if (!theCase.defenderName) {
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
