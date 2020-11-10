@@ -14,7 +14,7 @@ export const Application = () => {
     'example.application',
   ])
 
-  const nationalRegistryId = userInfo?.profile?.natreg
+  const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id) {
     return <p>Error there is no id</p>

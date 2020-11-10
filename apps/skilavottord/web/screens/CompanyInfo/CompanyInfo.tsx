@@ -8,21 +8,21 @@ import {
   Breadcrumbs,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import {
+  PartnerPageLayout,
+  ListItem,
+  NotFound,
+  Sidenav,
+} from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import Sidenav from '@island.is/skilavottord-web/components/Sidenav/Sidenav'
-import { RECYCLING_PARTNER_BY_ID } from '@island.is/skilavottord-web/graphql/queries'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { NotFound } from '@island.is/skilavottord-web/components'
-import { MockRecyclingPartner } from '@island.is/skilavottord-web/types'
+import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import { ALL_ACTIVE_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 
 const CompanyInfo: FC = () => {
   const { user } = useContext(UserContext)
-  const { data, loading, error } = useQuery(RECYCLING_PARTNER_BY_ID, {
-    variables: { id: 1 },
-  })
+  const { data } = useQuery(ALL_ACTIVE_RECYCLING_PARTNERS)
 
   const {
     t: { companyInfo: t, deregisterSidenav: sidenavText, routes },
@@ -33,6 +33,13 @@ const CompanyInfo: FC = () => {
   } else if (!hasPermission('deregisterVehicle', user?.role as Role)) {
     return <NotFound />
   }
+
+  const partnerId = user?.partnerId ?? ''
+
+  const recyclingPartners = data?.skilavottordAllActiveRecyclingPartners || []
+  const activePartner = recyclingPartners.filter(
+    (partner) => partner.companyId === partnerId,
+  )
 
   return (
     <PartnerPageLayout
@@ -66,33 +73,31 @@ const CompanyInfo: FC = () => {
             <Text variant="intro">{t.info}</Text>
           </Stack>
           <Text variant="h3">{t.subtitles.location}</Text>
-          {error || (loading && !data) ? (
-            <Text>{t.empty}</Text>
-          ) : (
-            <Box>
-              {[data?.getRecyclingPartner].map(
-                (partner: MockRecyclingPartner, index) => (
-                  <ListItem
-                    key={index}
-                    title={partner.name}
-                    content={[
-                      {
-                        text: `${partner.address}, ${partner.postNumber}`,
-                      },
-                      {
-                        text: `${partner.phone}`,
-                        isHighlighted: true,
-                      },
-                      {
-                        text: `${partner.website}`,
-                        href: partner.website,
-                      },
-                    ]}
-                  />
-                ),
-              )}
-            </Box>
-          )}
+          <Box>
+            {activePartner.length > 0 ? (
+              activePartner.map((partner: RecyclingPartner, index) => (
+                <ListItem
+                  key={index}
+                  title={partner.companyName}
+                  content={[
+                    {
+                      text: `${partner.address}, ${partner.postnumber}`,
+                    },
+                    {
+                      text: `${partner.phone}`,
+                      isHighlighted: true,
+                    },
+                    {
+                      text: `${partner.website}`,
+                      href: partner.website,
+                    },
+                  ]}
+                />
+              ))
+            ) : (
+              <Text>{t.empty}</Text>
+            )}
+          </Box>
         </Stack>
       </GridColumn>
     </PartnerPageLayout>
