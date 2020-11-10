@@ -18,8 +18,6 @@ import {
   Tag,
   Divider,
   Link,
-  IconDeprecated as Icon,
-  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import {
   DrawerMenu,

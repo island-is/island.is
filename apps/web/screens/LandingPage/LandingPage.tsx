@@ -12,7 +12,7 @@ import Head from 'next/head'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Stack,
-  ButtonDeprecated as Button,
+  Button,
   Text,
   Box,
   Breadcrumbs,
@@ -45,9 +45,9 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
     <Stack space={3}>
       {page.actionButton && (
         <Box background="purple100" padding={4} borderRadius="large">
-          <Button href={page.actionButton.url} width="fluid">
-            {page.actionButton.text}
-          </Button>
+          <Link href={page.actionButton.url}>
+            <Button fluid>{page.actionButton.text}</Button>
+          </Link>
         </Box>
       )}
       <SidebarNavigation

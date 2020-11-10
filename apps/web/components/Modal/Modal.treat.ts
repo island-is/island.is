@@ -11,6 +11,7 @@ const hexToRgb = (hex: string) => {
     : null
 }
 
+const smallSpacing = theme.spacing[1]
 const spacing = theme.spacing[3]
 
 export const backdrop = style({
@@ -54,25 +55,8 @@ export const content = style({
   filter: `drop-shadow(0 4px 70px rgba(0, 97, 255, 0.1))`,
 })
 
-export const buttons = style({
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'space-between',
-  width: '100%',
-})
-
 export const close = style({
   position: 'absolute',
-  top: spacing,
-  right: spacing,
-  lineHeight: 0,
-  outline: 0,
-  ':before': {
-    content: '""',
-    position: 'absolute',
-    top: -spacing,
-    left: -spacing,
-    right: -spacing,
-    bottom: -spacing,
-  },
+  top: smallSpacing,
+  right: smallSpacing,
 })
