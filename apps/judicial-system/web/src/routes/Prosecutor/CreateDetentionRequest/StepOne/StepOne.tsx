@@ -11,6 +11,8 @@ import {
   Select,
   Option,
   DatePicker,
+  GridContainer,
+  RadioButton,
 } from '@island.is/island-ui/core'
 import { validate, Validation } from '../../../../utils/validate'
 import { isNextDisabled } from '../../../../utils/stepHelper'
@@ -33,6 +35,7 @@ import {
   UpdateCase,
   CaseState,
   NotificationType,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
@@ -44,6 +47,7 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import * as styles from './StepOne.treat'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -202,6 +206,7 @@ export const StepOne: React.FC = () => {
             court: workingCase.court,
             accusedName: workingCase.accusedName,
             accusedAddress: workingCase.accusedAddress,
+            accusedGender: workingCase.accusedGender,
             arrestDate: workingCase.arrestDate,
             requestedCourtDate: workingCase.requestedCourtDate,
           },
@@ -284,6 +289,7 @@ export const StepOne: React.FC = () => {
         accusedNationalId: '',
         accusedName: '',
         accusedAddress: '',
+        accusedGender: null,
         court: 'Héraðsdómur Reykjavíkur',
         arrestDate: null,
         requestedCourtDate: null,
@@ -310,6 +316,7 @@ export const StepOne: React.FC = () => {
       },
       { value: workingCase?.accusedName, validations: ['empty'] },
       { value: workingCase?.accusedAddress, validations: ['empty'] },
+      { value: workingCase?.accusedGender, validations: ['empty'] },
       { value: workingCase?.arrestDate, validations: ['empty'] },
       {
         value: arrestTimeRef.current?.value,
@@ -393,7 +400,7 @@ export const StepOne: React.FC = () => {
               required
             />
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={3}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Sakborningur
@@ -510,6 +517,86 @@ export const StepOne: React.FC = () => {
                 required
               />
             </Box>
+          </Box>
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Kyn{' '}
+                <Text as="span" color="red600" fontWeight="semiBold">
+                  *
+                </Text>
+              </Text>
+            </Box>
+            <GridContainer>
+              <GridRow>
+                <GridColumn className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderMale"
+                    label="Karl"
+                    checked={workingCase.accusedGender === CaseGender.MALE}
+                    onChange={() => {
+                      setWorkingCase({
+                        ...workingCase,
+                        accusedGender: CaseGender.MALE,
+                      })
+
+                      if (workingCase.id) {
+                        updateCase(
+                          workingCase.id,
+                          parseString('accusedGender', CaseGender.MALE),
+                        )
+                      }
+                    }}
+                    large
+                  />
+                </GridColumn>
+                <GridColumn className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderFemale"
+                    label="Kona"
+                    checked={workingCase.accusedGender === CaseGender.FEMALE}
+                    onChange={() => {
+                      setWorkingCase({
+                        ...workingCase,
+                        accusedGender: CaseGender.FEMALE,
+                      })
+
+                      if (workingCase.id) {
+                        updateCase(
+                          workingCase.id,
+                          parseString('accusedGender', CaseGender.FEMALE),
+                        )
+                      }
+                    }}
+                    large
+                  />
+                </GridColumn>
+                <GridColumn className={styles.genderColumn}>
+                  <RadioButton
+                    name="accused-gender"
+                    id="genderOther"
+                    label="Annað"
+                    checked={workingCase.accusedGender === CaseGender.OTHER}
+                    onChange={() => {
+                      setWorkingCase({
+                        ...workingCase,
+                        accusedGender: CaseGender.OTHER,
+                      })
+
+                      if (workingCase.id) {
+                        updateCase(
+                          workingCase.id,
+                          parseString('accusedGender', CaseGender.OTHER),
+                        )
+                      }
+                    }}
+                    large
+                  />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
