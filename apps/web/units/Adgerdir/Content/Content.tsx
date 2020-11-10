@@ -1,7 +1,7 @@
 import React from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import {
-  Typography,
+  Text,
   BulletList,
   Bullet,
   Box,
@@ -37,7 +37,7 @@ const embeddedNodes = () => ({
 
       return (
         <Stack space={6}>
-          <Typography variant="h2" as="h2"></Typography>
+          <Text variant="h2" as="h2"></Text>
           <Accordion>
             {items.map((item, index) => {
               const { answer, question } = item

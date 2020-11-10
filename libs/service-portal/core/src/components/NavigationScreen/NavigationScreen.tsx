@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Typography, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
+import { Text, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
 import * as styles from './NavigationScreen.treat'
 import { Link } from 'react-router-dom'
 import Card from './Card/Card'
@@ -27,9 +27,9 @@ export const NavigationScreen: FC<Props> = ({ title, items, inProgress }) => {
     <>
       <Box marginBottom={4}>
         <Inline space={1}>
-          <Typography variant="h2" as="h2">
+          <Text variant="h2" as="h2">
             {formatMessage(title)}
-          </Typography>
+          </Text>
           {inProgress && (
             <Tag variant="blue" label>
               {formatMessage({

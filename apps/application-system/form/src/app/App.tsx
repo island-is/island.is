@@ -3,7 +3,7 @@ import { ApolloProvider } from '@apollo/client'
 import { BrowserRouter } from 'react-router-dom'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { Box, GridContainer } from '@island.is/island-ui/core'
-import { client } from '@island.is/application/graphql'
+import { initializeClient } from '@island.is/application/graphql'
 import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
@@ -13,6 +13,7 @@ import { fixSvgUrls } from '../utils'
 import { AuthProvider } from '../context/AuthProvider'
 import Header from '../components/Header'
 import ProtectedRoute from '../components/ProtectedRoute'
+import { environment } from '../environments'
 
 export const App = () => {
   useEffect(() => {
@@ -22,7 +23,7 @@ export const App = () => {
   }, [])
 
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
       <AuthProvider>
         <LocaleProvider locale={defaultLanguage} messages={{}}>
           <BrowserRouter>

@@ -37,7 +37,6 @@ export const DatePickerController: FC<Props> = ({
           label={label}
           placeholderText={placeholder}
           selected={value ? parseISO(value) : undefined}
-          value={value}
           handleChange={(date) => {
             clearErrors(id)
             const newVal = format(date, df)

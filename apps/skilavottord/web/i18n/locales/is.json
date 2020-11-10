@@ -68,7 +68,11 @@
     }
   },
   "handover": {
-    "title": "Úrvinnsla ökutækis samþykkt",
+    "titles": {
+      "success": "Úrvinnsla ökutækis samþykkt",
+      "error": "We couldn’t mark your car for recycling",
+      "loading": "Signing car for recycling"
+    },
     "info": "Ökutæki hefur verið samþykkt til úrvinnslu og er nú tilbúið til afhendingar á móttökustöð.",
     "subTitles": {
       "nextStep": "Næsta skref: Fara með ökutæki til afhendingar á næstu móttökustöð",
@@ -79,12 +83,27 @@
       "cancel": "Hætta við úrvinnslu ökutækis",
       "close": "Loka"
     },
+    "error": {
+      "title": "Problem connecting to database",
+      "message": "We ran into a problem marking your car for recycling. Please try again.",
+      "primaryButton": "Try again",
+      "secondaryButton": "Cancel"
+    },
     "cancelModal": {
-      "title": "Hætta við úrvinnslu ökutækis",
+      "titles": {
+        "info": "Hætta við úrvinnslu ökutækis",
+        "error": "We couldn’t cancel process"
+      },
       "info": "Þegar hætt er við úrvinnslu ökutækis verður ekki hægt að ganga frá endurnýtingu eða förgun ökutækis hjá móttökustöð. Hægt er að endurtaka ferlið síðar ef þér snýst hugur.",
       "buttons": {
         "cancel": "Nei",
         "continue": "Já"
+      },
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem canceling your car. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
       }
     }
   },
@@ -141,14 +160,7 @@
       "label": "Leita af skráningarnúmeri",
       "placeholder": "Leita af skráningarnúmeri"
     },
-    "table": [
-      "Skráningar nr.",
-      "Tegund",
-      "Undirtegund",
-      "Ár",
-      "Notandi",
-      "Afskráð"
-    ]
+    "table": ["Skráningar nr.", "Undirtegund", "Ár", "Notandi", "Afskráð"]
   },
   "companyInfo": {
     "title": "Upplýsingar fyrirtækis",
@@ -222,13 +234,28 @@
       }
     },
     "deregister": {
-      "title": "Afskrá bíl",
-      "info": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
+      "titles": {
+        "success": "Afskrá bíl",
+        "error": "Car could not be added",
+        "loading": "Deregistering car",
+        "notfound": "Car not found"
+      },
+      "info": {
+        "success": "Staðfesta afskráningu. Ekki er hægt að fara til baka eftir þetta skref.",
+        "error": "We couldn’t find any car with that registration number",
+        "notfound": "This can be because the owner has not marked it for recycling at"
+      },
       "buttons": {
         "back": "Til baka",
         "confirm": "Staðfesta"
       },
-      "success": "Afskráning tókst."
+      "success": "Afskráning tókst.",
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem marking the car for deregistration. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
+      }
     }
   },
   "recyclingFundOverview": {
@@ -243,14 +270,7 @@
       "label": "Leita að skráningarnúmeri",
       "placeholder": "Search for reg nr"
     },
-    "table": [
-      "Skráningar nr.",
-      "Tegund",
-      "Undirtegund",
-      "Ár",
-      "Fyrirtæki",
-      "Afskráð"
-    ]
+    "table": ["Skráningar nr.", "Undirtegund", "Ár", "Fyrirtæki", "Afskráð"]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",
@@ -282,7 +302,7 @@
     "title": "Villa kom upp",
     "contents": [
       "Eitthvað hefur farið úrskeiðis.",
-      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+      "Vinsamlega <a href='https://island.is/stafraent-island/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
     ]
   },
   "routes": {

@@ -1,10 +1,4 @@
-import {
-  AlertMessage,
-  Box,
-  Stack,
-  Text,
-  Typography,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useNationalRegistryFamilyInfo } from '@island.is/service-portal/graphql'
@@ -25,12 +19,12 @@ const FamilyOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
-        <Typography variant="h1">
+        <Text variant="h1">
           {formatMessage({
             id: 'service.portal:family',
             defaultMessage: 'Fjölskyldan',
           })}
-        </Typography>
+        </Text>
       </Box>
       {error && (
         <Box textAlign="center">
