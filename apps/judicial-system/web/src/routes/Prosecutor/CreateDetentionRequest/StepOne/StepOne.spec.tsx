@@ -163,6 +163,8 @@ describe('/krafa without ID', () => {
                     court: 'Héraðsdómur Reykjavíkur',
                     accusedName: '',
                     accusedAddress: '',
+                    requestedDefenderName: '',
+                    requestedDefenderEmail: '',
                     accusedGender: null,
                     arrestDate: null,
                     requestedCourtDate: null,
@@ -351,6 +353,8 @@ describe('/krafa without ID', () => {
                   court: 'Héraðsdómur Reykjavíkur',
                   accusedName: 'Gervipersona',
                   accusedAddress: 'Batcave',
+                  requestedDefenderName: 'Garfield',
+                  requestedDefenderEmail: 'gf@cartoon.io',
                   accusedGender: CaseGender.OTHER,
                   arrestDate: null,
                   requestedCourtDate: null,
@@ -391,6 +395,20 @@ describe('/krafa without ID', () => {
     await userEvent.type(
       screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
       'Batcave',
+    )
+
+    userEvent.tab()
+
+    await userEvent.type(
+      screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      'Garfield',
+    )
+
+    userEvent.tab()
+
+    await userEvent.type(
+      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+      'gf@cartoon.io',
     )
 
     userEvent.tab()

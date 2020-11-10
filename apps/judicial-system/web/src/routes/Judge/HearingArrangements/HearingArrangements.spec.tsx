@@ -16,8 +16,6 @@ import * as Constants from '../../../utils/constants'
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-
-    // Act and Assert
     render(
       <MockedProvider
         mocks={mockCaseQueries.concat(
@@ -33,6 +31,14 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             {
               id: 'test_id_2',
               courtRoom: '999',
+            } as UpdateCase,
+            {
+              id: 'test_id_2',
+              defenderName: 'Saul Goodman',
+            } as UpdateCase,
+            {
+              id: 'test_id_2',
+              defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
         )}
@@ -52,8 +58,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    // No need to enter court date and time, because that should be prefilled with requestedCourtDate
-
+    // Act
     userEvent.type(
       await waitFor(() => screen.getByLabelText('Dómsalur *')),
       '999',
@@ -61,6 +66,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     userEvent.tab()
 
+    // Assert
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
@@ -68,7 +74,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).not.toBeDisabled()
   })
 
-  test('should have a prefilled court date with requested court date', async () => {
+  test('should have a prefilled court date and dedender info with requested  date and dedender info', async () => {
     // Arrange
     render(
       <MockedProvider
@@ -81,6 +87,14 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             {
               id: 'test_id_3',
               courtDate: '2020-09-16T19:51:00.000Z',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderName: 'Saul Goodman',
+            } as UpdateCase,
+            {
+              id: 'test_id_3',
+              defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
         )}
@@ -100,8 +114,6 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    // Act
-
     // Assert
     expect(
       await waitFor(
@@ -114,5 +126,19 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     expect(
       (screen.getByLabelText('Tímasetning *') as HTMLInputElement).value,
     ).toEqual('19:51')
+
+    expect(
+      await waitFor(
+        () =>
+          (screen.getByLabelText('Nafn verjanda') as HTMLInputElement).value,
+      ),
+    ).toEqual('Saul Goodman')
+
+    expect(
+      await waitFor(
+        () =>
+          (screen.getByLabelText('Netfang verjanda') as HTMLInputElement).value,
+      ),
+    ).toEqual('saul@goodman.com')
   })
 })

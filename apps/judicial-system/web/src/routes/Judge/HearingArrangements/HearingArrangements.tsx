@@ -85,6 +85,24 @@ export const HearingArrangements: React.FC = () => {
         )
       }
 
+      if (!theCase.defenderName) {
+        theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
+
+        updateCase(
+          theCase.id,
+          parseString('defenderName', theCase.requestedDefenderName),
+        )
+      }
+
+      if (!theCase.defenderEmail) {
+        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
+
+        updateCase(
+          theCase.id,
+          parseString('defenderEmail', theCase.requestedDefenderEmail),
+        )
+      }
+
       setWorkingCase(theCase)
     }
   }, [setWorkingCase, workingCase, updateCase, data])
