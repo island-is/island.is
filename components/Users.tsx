@@ -16,14 +16,12 @@ class UsersCard extends Component {
 
     render() {
         return (
-            <Wrapper>
             <div className="users__container">
                 <label className="users__search__label">
                     Leit eftir subject Id
                 </label>
                 <input id="search" type="text" className="users__search__input" />
             </div>
-            </Wrapper>
         );
     }
 }

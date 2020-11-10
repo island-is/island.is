@@ -1,74 +1,76 @@
 import React, { SyntheticEvent } from "react";
-import ClientDTO from "../../models/dtos/client-dto";
+import ClientDTO from "../models/dtos/client-dto";
 import axios from "axios";
-import Wrapper from "./Wrapper";
 import StatusBar from "./StatusBar";
-import APIResponse from "../../models/APIResponse";
+import APIResponse from "../models/APIResponse";
+import { useRouter } from "next/router";
+
 type Props = {
-  client: ClientDTO
-}
+  client: ClientDTO;
+};
 class Client extends React.Component<{ client: ClientDTO }> {
   client: ClientDTO;
   response: APIResponse;
   state: { response: APIResponse };
 
-  constructor(props: Props){
+  constructor(props: Props) {
     super(props);
     this.state = {
-      response: { statusCode: 0, message: null, error: null }
+      response: { statusCode: 0, message: null, error: null },
     };
-    
+
     this.client = this.props.client;
-    if ( !this.client)
-    {
+    if (!this.client) {
       this.client = new ClientDTO();
     }
     this.response = { statusCode: 200, message: null, error: null };
   }
 
-  componentDidMount(){
-    this.setState({ response: { statusCode: this.response.statusCode, message: this.response.message }})  
+  componentDidMount() {
+    this.setState({
+      response: {
+        statusCode: this.response.statusCode,
+        message: this.response.message,
+      },
+    });
   }
 
   back = () => {
-    // TODO: Go back
+    const router = useRouter();
+    router.back();
   };
 
   isValid = (): boolean => {
     return true;
   };
-  
-  submit = async(e: SyntheticEvent) => {
+
+  submit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    
-    const response = await axios.post(
-        '/clients', this.client
-    ).catch( (err) =>  {
+
+    const response = await axios.post("/clients", this.client).catch((err) => {
       console.log(err);
     });
 
     console.log(response);
-    this.componentDidMount();    
-  }
+    this.componentDidMount();
+  };
 
   render() {
     return (
-      <Wrapper>
+      <div className="client">
         <StatusBar status={this.state.response}></StatusBar>
-        <div className="client">
-          <div className="client__help"> 
+        <div className="client__wrapper">
+          <div className="client__help">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
             sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
             officiis necessitatibus doloribus incidunt libero distinctio
             consequuntur voluptatibus tenetur aliquid ut inventore!
           </div>
-          <div className="client__wrapper">
-            <div className="client__container">
-              <h1>Stofna nýjann Client</h1>
-              <div className="client__container__form">
 
+          <div className="client__container">
+            <h1>Stofna nýjann Client</h1>
+            <div className="client__container__form">
               <form onSubmit={this.submit}>
-
                 <div className="client__container__fields">
                   <div className="client__container__field">
                     <label className="client__label">clientId</label>
@@ -84,7 +86,9 @@ class Client extends React.Component<{ client: ClientDTO }> {
                     <input
                       type="text"
                       defaultValue={this.client.clientName}
-                      onChange={(e) => (this.client.clientName = e.target.value)}
+                      onChange={(e) =>
+                        (this.client.clientName = e.target.value)
+                      }
                       className="client__input"
                     />
                   </div>
@@ -130,9 +134,13 @@ class Client extends React.Component<{ client: ClientDTO }> {
                     <input
                       type="text"
                       defaultValue={
-                        this.client.protocolType ? this.client.protocolType : "oidc"
+                        this.client.protocolType
+                          ? this.client.protocolType
+                          : "oidc"
                       }
-                      onChange={(e) => (this.client.protocolType = e.target.value)}
+                      onChange={(e) =>
+                        (this.client.protocolType = e.target.value)
+                      }
                       className="client__input"
                     />
                   </div>
@@ -188,7 +196,8 @@ class Client extends React.Component<{ client: ClientDTO }> {
                         type="checkbox"
                         defaultChecked={this.client.allowAccessTokenViaBrowser}
                         onChange={(e) =>
-                          (this.client.allowAccessTokenViaBrowser = e.target.checked)
+                          (this.client.allowAccessTokenViaBrowser =
+                            e.target.checked)
                         }
                         className="client__input"
                       />
@@ -238,7 +247,9 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="checkbox"
-                        defaultChecked={this.client.alwaysIncludeUserClaimsInIdToken}
+                        defaultChecked={
+                          this.client.alwaysIncludeUserClaimsInIdToken
+                        }
                         onChange={(e) =>
                           (this.client.alwaysIncludeUserClaimsInIdToken =
                             e.target.checked)
@@ -254,7 +265,8 @@ class Client extends React.Component<{ client: ClientDTO }> {
                         type="checkbox"
                         defaultChecked={this.client.alwaysSendClientClaims}
                         onChange={(e) =>
-                          (this.client.alwaysSendClientClaims = e.target.checked)
+                          (this.client.alwaysSendClientClaims =
+                            e.target.checked)
                         }
                         className="client__input"
                       />
@@ -267,7 +279,8 @@ class Client extends React.Component<{ client: ClientDTO }> {
                         type="number"
                         defaultValue={this.client.authorizationCodeLifetime}
                         onChange={(e) =>
-                          (this.client.authorizationCodeLifetime = +e.target.value)
+                          (this.client.authorizationCodeLifetime = +e.target
+                            .value)
                         }
                         className="client__input"
                       />
@@ -278,7 +291,9 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="checkbox"
-                        defaultChecked={this.client.backChannelLogoutSessionRequired}
+                        defaultChecked={
+                          this.client.backChannelLogoutSessionRequired
+                        }
                         onChange={(e) =>
                           (this.client.backChannelLogoutSessionRequired =
                             e.target.checked)
@@ -484,7 +499,9 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       </label>
                       <input
                         type="checkbox"
-                        defaultChecked={this.client.updateAccessTokenClaimsOnRefresh}
+                        defaultChecked={
+                          this.client.updateAccessTokenClaimsOnRefresh
+                        }
                         onChange={(e) =>
                           (this.client.updateAccessTokenClaimsOnRefresh =
                             e.target.checked)
@@ -498,7 +515,9 @@ class Client extends React.Component<{ client: ClientDTO }> {
                       <input
                         type="text"
                         defaultValue={this.client.userCodeType ?? ""}
-                        onChange={(e) => (this.client.userCodeType = e.target.value)}
+                        onChange={(e) =>
+                          (this.client.userCodeType = e.target.value)
+                        }
                         className="client__input"
                       />
                     </div>
@@ -518,29 +537,27 @@ class Client extends React.Component<{ client: ClientDTO }> {
                 </div>
                 <div className="client__buttons__container">
                   <div className="client__button__container">
-                    <button className="client__button__cancel" onClick={this.back}>
+                    <button
+                      className="client__button__cancel"
+                      onClick={this.back}
+                    >
                       Hætta við
                     </button>
                   </div>
                   <div className="client__button__container">
-                    <input type="submit"
+                    <input
+                      type="submit"
                       className="client__button__save"
                       disabled={!this.isValid()}
                       value="Save"
                     />
                   </div>
                 </div>
-              
-                </form>  
-              
-              </div>
-
-
-              
+              </form>
             </div>
           </div>
         </div>
-      </Wrapper>
+      </div>
     );
   }
 }
