@@ -13,24 +13,7 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
 }
 
 export function formatDate(
-  date: Date,
-  formatPattern: string,
-): string | undefined
-export function formatDate(
-  date: string,
-  formatPattern: string,
-): string | undefined
-export function formatDate(
-  date: undefined,
-  formatPattern: string,
-): string | undefined
-export function formatDate(
-  date: null,
-  formatPattern: string,
-): string | undefined
-
-export function formatDate(
-  date: Date | string | undefined | null,
+  date: Date | string | undefined,
   formatPattern: string,
 ): string | undefined {
   const theDate: Date = getAsDate(date)
