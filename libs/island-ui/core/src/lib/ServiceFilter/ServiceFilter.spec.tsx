@@ -1,9 +1,8 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import { ServiceFilter } from './ServiceFilter'
+import { ServiceFilter, ContentfulString } from './ServiceFilter'
 import { GetApiCatalogueInput } from '@island.is/api/schema'
-import { ContentfulString } from '../../services/contentful.types'
 
 describe(' ServiceFilter ', () => {
   const strings: Array<ContentfulString> = [

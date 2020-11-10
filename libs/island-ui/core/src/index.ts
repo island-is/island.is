@@ -21,6 +21,8 @@ export * from './lib/NewsletterSignup/NewsletterSignup'
 export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
+export * from './lib/InputSearch/InputSearch'
+export * from './lib/ServiceFilter/ServiceFilter'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'

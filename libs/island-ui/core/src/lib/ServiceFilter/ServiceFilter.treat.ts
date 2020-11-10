@@ -34,3 +34,7 @@ export const clear = style({
   justifyContent: 'flex-end',
   cursor: 'pointer',
 })
+
+export const categoryCheckbox = style({
+  marginTop: 5,
+})

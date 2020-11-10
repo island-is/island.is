@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import * as styles from './InputSearch.treat'
 import cn from 'classnames'
-import { Icon, LoadingIcon } from '@island.is/island-ui/core'
+import { Icon, LoadingIcon } from '../..'
 
 export interface InputSearchProps {
   name: string

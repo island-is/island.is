@@ -11,6 +11,7 @@ import {
   GridContainer,
   LoadingIcon,
   Stack,
+  ServiceFilter,
 } from '@island.is/island-ui/core'
 
 import * as styles from './ServiceList.treat'
@@ -18,7 +19,6 @@ import cn from 'classnames'
 import {
   Layout,
   ServiceCard,
-  ServiceFilter,
   ServiceCardMessage,
 } from '../../components'
 import { Page } from '../../services/contentful.types'
@@ -169,6 +169,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
       listClassNames={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
         <Box>
+          
           <Box marginBottom={2}>
             <Breadcrumbs>
               <a href="/">Viskuausan</a>
