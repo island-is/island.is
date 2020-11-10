@@ -99,6 +99,16 @@ export const size = styleMap({
       },
     }),
   },
+  textSmall: {
+    fontSize: 12,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 14,
+        lineHeight: 1.6,
+      },
+    }),
+  },
 })
 
 export const padding = styleMap({
@@ -167,6 +177,7 @@ type PrimaryColors = (
   text: string,
   hover: string,
   disabled: string,
+  textDisabled?: string,
 ) => Style
 
 type BorderedColors = (main: string, hover: string, disabled: string) => Style
@@ -179,11 +190,18 @@ type UtilityColors = (
   borderDisabled: string,
 ) => Style
 
-const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
+const primaryColors: PrimaryColors = (
+  main,
+  text,
+  hover,
+  disabled,
+  textDisabled = text,
+) => ({
   backgroundColor: main,
   color: text,
   ':disabled': {
     backgroundColor: disabled,
+    color: textDisabled,
   },
   ':hover': {
     backgroundColor: hover,
@@ -297,6 +315,13 @@ export const colors = {
       theme.color.blueberry100,
       theme.color.blue300,
     ),
+    light: primaryColors(
+      theme.color.blue100,
+      theme.color.blue400,
+      theme.color.blue200,
+      theme.color.blue100,
+      theme.color.blue300,
+    ),
   }),
   ghost: styleMap({
     default: ghostColors(
@@ -314,6 +339,11 @@ export const colors = {
       theme.color.dark100,
       theme.color.dark200,
     ),
+    light: ghostColors(
+      theme.color.blue400,
+      theme.color.blueberry400,
+      theme.color.blue300,
+    ),
   }),
   text: styleMap({
     default: textColors(
@@ -330,6 +360,11 @@ export const colors = {
       theme.color.white,
       theme.color.dark100,
       theme.color.dark200,
+    ),
+    light: textColors(
+      theme.color.blue400,
+      theme.color.blueberry400,
+      theme.color.blue300,
     ),
   }),
   utility: styleMap({
@@ -354,6 +389,14 @@ export const colors = {
       theme.color.white,
       theme.color.white,
       theme.color.white,
+      theme.color.dark200,
+      theme.color.blue100,
+    ),
+    light: utilityColors(
+      theme.color.dark400,
+      theme.color.blue200,
+      theme.color.dark400,
+      theme.color.blue400,
       theme.color.dark200,
       theme.color.blue100,
     ),

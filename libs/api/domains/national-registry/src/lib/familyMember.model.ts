@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { FamilyRelation } from './types/familyRelation.enum'
 
 @ObjectType()
 export class FamilyMember {
@@ -16,4 +17,7 @@ export class FamilyMember {
 
   @Field(() => String)
   address!: string
+
+  @Field(() => String)
+  familyRelation!: FamilyRelation
 }

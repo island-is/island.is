@@ -7,6 +7,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import {
+  formatNationalId,
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
@@ -52,8 +53,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           editLink={{
             external: true,
             title: defineMessage({
-              id: 'sp.family:change-name',
-              defaultMessage: 'Breyta nafni',
+              id: 'sp.family:change-in-national-registry',
+              defaultMessage: 'Breyta í þjóðskrá',
             }),
             url:
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
@@ -64,7 +65,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'service.portal:natreg',
             defaultMessage: 'Kennitala',
           })}
-          content={userInfo.profile.natreg}
+          content={formatNationalId(userInfo.profile.nationalId)}
         />
         <UserInfoLine
           label={defineMessage({
@@ -75,8 +76,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           editLink={{
             external: true,
             title: defineMessage({
-              id: 'sp.family:change-legal-residence',
-              defaultMessage: 'Breyta lögheimili',
+              id: 'sp.family:change-in-national-registry',
+              defaultMessage: 'Breyta í þjóðskrá',
             }),
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
@@ -120,6 +121,10 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={natRegInfo?.religion || '...'}
           editLink={{
             external: true,
+            title: defineMessage({
+              id: 'sp.family:change-in-national-registry',
+              defaultMessage: 'Breyta í þjóðskrá',
+            }),
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}

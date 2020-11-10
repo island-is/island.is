@@ -89,6 +89,9 @@ globalStyle(`${wrapper} ${valueContainer} .css-b8ldur-Input`, {
 })
 
 export const placeholder = style({
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
   selectors: {
     [`${wrapper} &`]: { ...inputMixins.placeholder },
   },

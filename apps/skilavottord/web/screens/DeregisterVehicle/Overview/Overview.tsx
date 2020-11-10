@@ -1,5 +1,10 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { useQuery } from '@apollo/client'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
 import {
   Box,
   Stack,
@@ -8,13 +13,13 @@ import {
   Button,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Sidenav, CarsTable } from '@island.is/skilavottord-web/components'
-import { useRouter } from 'next/router'
-import { UserContext } from '@island.is/skilavottord-web/context'
-import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import {
+  Sidenav,
+  NotFound,
+  PartnerPageLayout,
+} from '@island.is/skilavottord-web/components'
+import { CarsTable } from './components/CarsTable'
+import { VEHICLES_BY_PARTNER_ID } from '@island.is/skilavottord-web/graphql/queries'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -22,6 +27,21 @@ const Overview: FC = () => {
     t: { deregisterOverview: t, deregisterSidenav: sidenavText, routes },
   } = useI18n()
   const router = useRouter()
+
+  const partnerId = user?.partnerId ?? ''
+  const { data } = useQuery(VEHICLES_BY_PARTNER_ID, {
+    variables: { partnerId },
+    fetchPolicy: 'cache-and-network',
+  })
+
+  const vehicleOwners = data?.skilavottordRecyclingPartnerVehicles
+  const deregisteredVehicles = vehicleOwners?.filter(({ vehicles }) => {
+    for (const vehicle of vehicles) {
+      for (const request of vehicle.recyclingRequests) {
+        return request.requestType === 'deregistered'
+      }
+    }
+  })
 
   const handleDeregister = () => {
     router.push(routes.deregisterVehicle.select)
@@ -68,12 +88,14 @@ const Overview: FC = () => {
             <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
           </Stack>
         </GridColumn>
-        <Box marginX={1}>
-          <Stack space={4}>
-            <Text variant="h3">{t.subtitles.history}</Text>
-            <CarsTable titles={t.table} />
-          </Stack>
-        </Box>
+        {deregisteredVehicles?.length > 0 && (
+          <Box marginX={1}>
+            <Stack space={4}>
+              <Text variant="h3">{t.subtitles.history}</Text>
+              <CarsTable titles={t.table} vehicleOwner={deregisteredVehicles} />
+            </Stack>
+          </Box>
+        )}
       </Stack>
     </PartnerPageLayout>
   )

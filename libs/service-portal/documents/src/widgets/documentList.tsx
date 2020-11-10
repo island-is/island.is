@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Box, Stack, Button } from '@island.is/island-ui/core'
+import { Text, Box, Stack, Button } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   ServicePortalModuleComponent,
@@ -15,7 +15,7 @@ const maxDocuments = 2
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useListDocuments(userInfo.profile.natreg)
+  const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
 
   return (
     <>
@@ -23,24 +23,24 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         {loading && <ActionCardLoader repeat={3} />}
         {error && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-            <Typography variant="h3">
+            <Text variant="h3">
               {formatMessage({
                 id: 'sp.documents:error',
                 defaultMessage:
                   'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
               })}
-            </Typography>
+            </Text>
           </Box>
         )}
         {!loading && !error && data?.documents.length === 0 && (
           <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-            <Typography variant="h3">
+            <Text variant="h3">
               {formatMessage({
                 id: 'sp.documents:not-found',
                 defaultMessage:
                   'Engin skjöl fundust fyrir gefin leitarskilyrði',
               })}
-            </Typography>
+            </Text>
           </Box>
         )}
         {data?.documents?.slice(0, maxDocuments).map((document) => (

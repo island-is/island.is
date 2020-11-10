@@ -1,35 +1,65 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-
-import { FieldBaseProps } from '@island.is/application/core'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import addMonths from 'date-fns/addMonths'
+import formatISO from 'date-fns/formatISO'
+import parseISO from 'date-fns/parseISO'
+import {
+  extractRepeaterIndexFromField,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
-import Slider from '../components/Slider'
-
-import * as styles from './Duration.treat'
 import { theme } from '@island.is/island-ui/theme'
-
 import { FieldDescription } from '@island.is/shared/form-fields'
+import Slider from '../components/Slider'
+import * as styles from './Duration.treat'
+import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
   const { answers } = application
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  const monthsToUse = (answers.usage as number) || 1
+  const expectedDateOfBirth = getExpectedDateOfBirth(application)
+  const currentRepeaterIndex = extractRepeaterIndexFromField(field)
+  const currentStartDateAnswer = getValueViaPath(
+    answers,
+    `periods[${
+      currentRepeaterIndex === -1 ? 0 : currentRepeaterIndex
+    }].startDate`,
+    expectedDateOfBirth,
+  ) as string
+  const currentEndDateAnswer = getValueViaPath(
+    answers,
+    id,
+    formatISO(addMonths(parseISO(currentStartDateAnswer), 1)),
+  ) as string
+
+  const monthsToUse = differenceInMonths(
+    parseISO(currentEndDateAnswer),
+    parseISO(currentStartDateAnswer),
+  )
+
+  const [chosenEndDate, setChosenEndDate] = useState<string>(
+    currentEndDateAnswer,
+  )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const [percent, setPercent] = useState<number>(100)
   const minMonths = 1
+  const rightsLeft = 6 // TODO calculate from application
   const maxMonths = 18
 
   useEffect(() => {
-    const newPercent = Math.min(
-      100,
-      Math.round((monthsToUse / chosenDuration) * 100),
-    )
-    setPercent(newPercent)
+    if (chosenDuration > rightsLeft) {
+      const newPercent = Math.min(
+        100,
+        Math.round((rightsLeft / chosenDuration) * 100),
+      )
+      setPercent(newPercent)
+    } else {
+      setPercent(100)
+    }
   }, [chosenDuration, monthsToUse])
-
   return (
     <Box>
       <FieldDescription description="Some people choose to take the full leave all at once, but others like to spread it over a longer period which might in turn affect the payments. Please confirm your choice below by dragging the lever:" />
@@ -78,9 +108,9 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
         </Box>
         <Box marginTop={8}>
           <Controller
-            defaultValue={monthsToUse}
+            defaultValue={chosenEndDate}
             name={id}
-            render={({ onChange, value }) => (
+            render={({ onChange }) => (
               <Slider
                 min={minMonths}
                 max={maxMonths}
@@ -92,11 +122,16 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
                 }}
                 showMinMaxLabels
                 showToolTip
-                label={{ singular: 'mánuður', plural: 'mánuðir' }}
-                currentIndex={value}
+                label={{ singular: 'month', plural: 'months' }}
+                currentIndex={chosenDuration}
                 onChange={(selectedMonths: number) => {
                   clearErrors(id)
-                  onChange(selectedMonths)
+                  const newEndDate = addMonths(
+                    parseISO(currentStartDateAnswer),
+                    selectedMonths,
+                  )
+                  onChange(formatISO(newEndDate))
+                  setChosenEndDate(formatISO(newEndDate))
                   setChosenDuration(selectedMonths)
                 }}
               />

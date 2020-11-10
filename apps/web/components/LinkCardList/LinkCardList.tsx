@@ -1,12 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import Link from 'next/link'
-import {
-  ButtonDeprecated as Button,
-  Text,
-  Box,
-  Tiles,
-} from '@island.is/island-ui/core'
+import { Button, Text, Box, Tiles } from '@island.is/island-ui/core'
 
 export interface LinkCardProps {
   title: string
@@ -57,7 +52,7 @@ const LinkCard: FC<LinkCardProps> = ({ title, body, link, linkText }) => {
       </div>
       <div>
         <Link href={link}>
-          <Button variant="text" size="large" href={link} icon="arrowRight">
+          <Button variant="text" size="large" icon="arrowForward">
             {linkText}
           </Button>
         </Link>

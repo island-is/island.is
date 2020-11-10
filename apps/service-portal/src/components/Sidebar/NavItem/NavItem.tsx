@@ -1,7 +1,6 @@
-import { Box, IconProps, Typography, Icon } from '@island.is/island-ui/core'
+import { Box, IconProps, Text, Icon } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
-import cn from 'classnames'
 import * as styles from './NavItem.treat'
 import { Link } from 'react-router-dom'
 
@@ -33,9 +32,9 @@ const NavItemContent: FC<Props> = ({ icon, active, onClick, children }) => {
           />
         </Box>
       ) : null}
-      <Typography fontWeight={active ? 'semiBold' : 'regular'} color="blue600">
+      <Text fontWeight={active ? 'semiBold' : 'regular'} color="blue600">
         {children}
-      </Typography>
+      </Text>
     </Box>
   )
 }

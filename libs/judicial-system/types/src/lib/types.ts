@@ -34,7 +34,7 @@ export enum CaseCustodyProvisions {
   _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
-  _95_2 = '_95_2', // d-lið 1. mgr. 95. gr.
+  _95_2 = '_95_2', // 2. mgr. 95. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
 }
 
@@ -51,6 +51,12 @@ export enum CaseAppealDecision {
   POSTPONE = 'POSTPONE',
 }
 
+export enum CaseGender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  OTHER = 'OTHER',
+}
+
 export interface Case {
   id: string
   created: string
@@ -60,6 +66,9 @@ export interface Case {
   accusedNationalId: string
   accusedName?: string
   accusedAddress?: string
+  accusedGender?: CaseGender
+  requestedDefenderName?: string
+  requestedDefenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -114,11 +123,12 @@ export interface Notification {
 export interface CreateCase {
   policeCaseNumber: string
   accusedNationalId: string
-  accusedName: string
-  accusedAddress: string
-  court: string
-  arrestDate: string
-  requestedCourtDate: string
+  accusedName?: string
+  accusedAddress?: string
+  accusedGender?: CaseGender
+  court?: string
+  arrestDate?: string
+  requestedCourtDate?: string
 }
 
 export interface UpdateCase {
@@ -126,6 +136,7 @@ export interface UpdateCase {
   accusedNationalId?: string
   accusedName?: string
   accusedAddress?: string
+  accusedGender?: CaseGender
   court?: string
   arrestDate?: string
   requestedCourtDate?: string

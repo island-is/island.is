@@ -21,21 +21,21 @@ export const mockUserInfoList: UserInfoItem[] = [
         'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn. Hér fyrir neðan getur þú lesið okkar helstu.',
     }),
     link: ServicePortalPath.UserInfo,
-    image: '/assets/images/individuals.jpg',
+    image: '/assets/images/individualsGrid.jpg',
   },
-  // {
-  //   heading: defineMessage({
-  //     id: 'service.portal:my-info-family',
-  //     defaultMessage: 'Fjölskyldan',
-  //   }),
-  //   subtext: defineMessage({
-  //     id: 'service.portal:my-info-family-subtext',
-  //     defaultMessage:
-  //       'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
-  //   }),
-  //   link: '',
-  //   image: '/assets/images/baby.jpg',
-  // },
+  {
+    heading: defineMessage({
+      id: 'service.portal:my-info-family',
+      defaultMessage: 'Fjölskyldan',
+    }),
+    subtext: defineMessage({
+      id: 'service.portal:my-info-family-subtext',
+      defaultMessage:
+        'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
+    }),
+    link: ServicePortalPath.FamilyRoot,
+    image: '/assets/images/familyGrid.jpg',
+  },
   // {
   //   heading: defineMessage({
   //     id: 'service.portal:my-info-housing',

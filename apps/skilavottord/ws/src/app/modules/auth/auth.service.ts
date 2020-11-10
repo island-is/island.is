@@ -4,6 +4,10 @@ import { Role, AuthUser } from './auth.types'
 const DEVELOPERS = [
   /* Deloitte */
   '2310765229', // Vésteinn Viðarsson
+  '0602773039', // Bjarki Már Flosason
+  '1505664449', // Rúnar Sigurður Guðlaugsson
+  '0301665909', // Sigurgeir Guðmundsson
+  '2311862559', // Quan Dong
   '2811638099', // Tómas Árni Jónsson
   '0101302129', // Gervimaður Noregur
 ]
@@ -18,9 +22,9 @@ const RECYCLINGCOMPANY = [
 
 const RECYCLINGFUND = [
   /* Deloitte test */
-  '1505664449', // Rúnar Sigurður Guðlaugsson
-  '0301665909', // Sigurgeir Guðmundsson
-  '2311862559', //   Quan Dong
+  //'1505664449', // Rúnar Sigurður Guðlaugsson
+  //'0301665909', // Sigurgeir Guðmundsson
+  //'2311862559', //   Quan Dong
   // Urvinnslusjodur test
   '3005594339', // Ólafur Kjartansson
   '0202614989', // Guðlaugur Gylfi Sverrisson
@@ -42,7 +46,6 @@ export class AuthService {
   }
 
   checkRole(user: AuthUser, role: Role): boolean {
-    //console.log("  - checkRole starting")
     switch (role) {
       case 'recyclingCompany':
         return RECYCLINGCOMPANY.includes(user.nationalId)

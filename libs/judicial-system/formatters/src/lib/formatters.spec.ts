@@ -48,7 +48,7 @@ describe('renderRestrictions', () => {
     expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
   })
 
-  test('should return "Lausgæsla" if no custody restriction is supplyed', () => {
+  test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplyed', () => {
     // Arrange
     const restrictions: CaseCustodyRestrictions[] = []
 
@@ -56,7 +56,7 @@ describe('renderRestrictions', () => {
     const r = formatCustodyRestrictions(restrictions)
 
     // Assert
-    expect(r).toEqual('Lausagæsla')
+    expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu')
   })
 })
 

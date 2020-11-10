@@ -90,6 +90,9 @@
       "@island.is/application/templates/driving-lessons": [
         "libs/application/templates/driving-lessons/src/index.ts"
       ],
+      "@island.is/application/templates/driving-license": [
+        "libs/application/templates/driving-license/src/index.ts"
+      ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],

@@ -1,4 +1,8 @@
-import { formatText, getFormNodeLeaves } from './formUtils'
+import {
+  extractRepeaterIndexFromField,
+  formatText,
+  getFormNodeLeaves,
+} from './formUtils'
 import {
   Application,
   ApplicationTypes,
@@ -12,6 +16,7 @@ import {
   Comparators,
   Form,
   StaticText,
+  TextField,
 } from '@island.is/application/core'
 
 const ExampleForm: Form = buildForm({
@@ -145,5 +150,36 @@ describe('formatText', () => {
         formatMessage,
       ),
     ).toBe('Oh you are awesome too!')
+  })
+})
+
+describe('extractRepeaterIndexFromField', () => {
+  it('should return the valid repeater index from a field inside a repeater', () => {
+    const field = {
+      ...buildTextField({ id: 'periods[123].id', name: '' }),
+      isPartOfRepeater: true,
+    } as TextField
+    expect(extractRepeaterIndexFromField(field)).toBe(123)
+  })
+  it('should return the first valid repeater index from a field inside a repeater', () => {
+    const field = {
+      ...buildTextField({ id: 'periods[123].id[456].asIso[789]', name: '' }),
+      isPartOfRepeater: true,
+    } as TextField
+    expect(extractRepeaterIndexFromField(field)).toBe(123)
+  })
+  it('should return -1 if the field is not inside a repeater', () => {
+    const field = {
+      ...buildTextField({ id: 'periods[123].id', name: '' }),
+      isPartOfRepeater: false,
+    } as TextField
+    expect(extractRepeaterIndexFromField(field)).toBe(-1)
+  })
+  it('should return -1 if the field has invalid index', () => {
+    const field = {
+      ...buildTextField({ id: 'periods[1a1].id', name: '' }),
+      isPartOfRepeater: true,
+    } as TextField
+    expect(extractRepeaterIndexFromField(field)).toBe(-1)
   })
 })

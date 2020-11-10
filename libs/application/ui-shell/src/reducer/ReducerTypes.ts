@@ -3,13 +3,10 @@ import { FormScreen } from '../types'
 
 export interface ApplicationUIState {
   application: Application
-  activeSection: number
-  activeSubSection: number
   activeScreen: number
   dataSchema: Schema
   form: Form
   nationalRegistryId: string
-  progress: number
   screens: FormScreen[]
   sections: Section[]
 }

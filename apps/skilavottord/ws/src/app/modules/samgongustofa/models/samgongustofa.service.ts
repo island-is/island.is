@@ -1,4 +1,4 @@
-import { VehicleInformation, DeRegisterVehicle } from '.'
+import { VehicleInformation } from '.'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import xml2js from 'xml2js'
 import { environment } from '../../../../environments'
@@ -98,6 +98,7 @@ export class SamgongustofaService {
                 new VehicleInformation(
                   'HX111',
                   'black',
+                  'vinNumber',
                   'Nissan',
                   '01.01.2020',
                   true,
@@ -129,6 +130,7 @@ export class SamgongustofaService {
                     car['permno'][0],
                     car['type'][0],
                     car['color'][0],
+                    car['vin'][0],
                     car['firstregdate'][0],
                     carIsRecyclable,
                     carHasCoOwner,
@@ -284,88 +286,6 @@ export class SamgongustofaService {
         `Failed on getting vehicles information from Samgongustofa: ${err}`,
       )
       throw new Error('Failed on getting vehicles information...')
-    }
-  }
-
-  async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
-    try {
-      this.logger.info(
-        `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
-      )
-      const {
-        restAuthUrl,
-        restDeRegUrl,
-        restUsername,
-        restPassword,
-        restReportingStation,
-      } = environment.samgongustofa
-
-      const jsonObj = {
-        username: restUsername,
-        password: restPassword,
-      }
-      const jsonAuthBody = JSON.stringify(jsonObj)
-
-      const headerAuthRequest = {
-        'Content-Type': 'application/json',
-      }
-
-      const authRes = await this.httpService
-        .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
-        .toPromise()
-
-      if (authRes.status > 299 || authRes.status < 200) {
-        this.logger.error(authRes.statusText)
-        throw new Error(authRes.statusText)
-      }
-      // DeRegisterd vehicle
-      const jToken = authRes.data['jwtToken']
-
-      this.logger.info(
-        'Finished Authentication request and starting deRegister request',
-      )
-      const dateNow = new Date()
-      const jsonDeRegBody = JSON.stringify({
-        permno: vehiclePermno,
-        deRegisterDate:
-          dateNow.toLocaleDateString() +
-          'T' +
-          dateNow.toTimeString().split(' ')[0] +
-          'Z',
-        subCode: 'U',
-        plateCount: 0,
-        destroyed: 0,
-        lost: 0,
-        reportingStation: restReportingStation,
-        reportingStationType: 'R',
-        disposalStation: disposalStation,
-        disposalStationType: 'M',
-        explanation: 'TODO, what to put here?',
-      })
-
-      const headerDeRegRequest = {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + jToken,
-      }
-
-      const deRegRes = await this.httpService
-        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
-        .toPromise()
-
-      if (deRegRes.status < 300 && deRegRes.status >= 200) {
-        this.logger.info(
-          `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
-        )
-        return new DeRegisterVehicle(true)
-      } else {
-        this.logger.info(deRegRes.statusText)
-        throw new Error(deRegRes.statusText)
-      }
-    } catch (err) {
-      this.logger.error(
-        `Failed on deregistered vehicle ${vehiclePermno} with: ${err}`,
-      )
-      throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
     }
   }
 }

@@ -1,39 +1,11 @@
 import React, { FC } from 'react'
 import { RepeaterProps } from '@island.is/application/core'
 
-import { theme } from '@island.is/island-ui/theme'
 import { Box, Button } from '@island.is/island-ui/core'
-import Timeline, { TimelinePeriod } from '../components/Timeline'
+import Timeline from '../components/Timeline'
 import { Period } from '../../types'
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
-
-function formatPeriods(
-  periods: Period[],
-  otherParentPeriods: Period[],
-): TimelinePeriod[] {
-  const timelinePeriods: TimelinePeriod[] = []
-  periods.forEach((period, index) => {
-    if (period.startDate && period.endDate) {
-      timelinePeriods.push({
-        startDate: period.startDate,
-        endDate: period.endDate,
-        canDelete: true,
-        title: `Period ${index + 1} - ${period.ratio ?? 100}%`,
-      })
-    }
-  })
-  otherParentPeriods.forEach((period) => {
-    timelinePeriods.push({
-      startDate: period.startDate,
-      endDate: period.endDate,
-      canDelete: false,
-      color: theme.color.red200,
-      title: `Other parent ${period.ratio ?? 100}%`,
-    })
-  })
-  return timelinePeriods
-}
 
 const PeriodsRepeater: FC<RepeaterProps> = ({
   removeRepeaterItem,
@@ -57,6 +29,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
     },
   ]
 
+  const editable = application.state === 'draft'
   return (
     <Box>
       <FieldDescription description="These are your already selected parental leave periods. If the other parent has agreed to share their period leave information, then those period leaves are visible below." />
@@ -67,14 +40,17 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
           titleSmall="Birth date"
           periods={formatPeriods(
             application.answers.periods as Period[],
-            otherParentPeriods,
+            editable ? otherParentPeriods : [],
           )}
           onDeletePeriod={removeRepeaterItem}
+          editable={editable}
         />
       </Box>
-      <Button size="small" icon="add" onClick={expandRepeater}>
-        Add another period
-      </Button>
+      {editable && (
+        <Button size="small" icon="add" onClick={expandRepeater}>
+          Add another period
+        </Button>
+      )}
     </Box>
   )
 }

@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Typography,
+  Text,
   Button,
   GridRow,
   GridColumn,
@@ -35,7 +35,7 @@ export const UserInfoLine: FC<Props> = ({ label, content, tag, editLink }) => {
       <GridRow>
         <GridColumn order={1} span={['8/12', '4/12']}>
           <Box overflow="hidden">
-            <Typography variant="h5">{formatMessage(label)}</Typography>
+            <Text variant="h5">{formatMessage(label)}</Text>
           </Box>
         </GridColumn>
         <GridColumn order={[3, 2]} span={['1/1', tag ? '3/12' : '5/12']}>
@@ -56,6 +56,7 @@ export const UserInfoLine: FC<Props> = ({ label, content, tag, editLink }) => {
               display="flex"
               justifyContent={['flexStart', 'flexEnd']}
               overflow="hidden"
+              className={styles.buttonWrapper}
             >
               {editLink.external ? (
                 <a

@@ -66,11 +66,12 @@ export interface Confirm {
 }
 
 export interface Handover {
-  title: string
+  titles: ProcessTitles
   subTitles: HandoverSubTitles
   info: string
   subInfo: string
   buttons: HandoverButtons
+  error: Errors
   cancelModal: CancelModal
 }
 
@@ -79,6 +80,7 @@ export interface Completed {
   subTitles: CompletedSubTitles
   info: CompletedInfo
   confirmedBy: CompletedConfirmation
+  error: Errors
   buttons: CompletedButtons
 }
 
@@ -94,9 +96,15 @@ export interface ProcessSections {
 }
 
 export interface CancelModal {
-  title: string
+  titles: CancelModalTitles
   info: string
   buttons: ProcessButtons
+  error: Errors
+}
+
+export interface CancelModalTitles {
+  info: string
+  error: string
 }
 
 export interface DataSubtitles {
@@ -153,6 +161,13 @@ export interface CheckBox {
   linkLabel: string
 }
 
+export interface ProcessTitles {
+  success: string
+  error: string
+  loading: string
+  notfound: string
+}
+
 export interface HandoverSubTitles {
   nextStep: string
   companies: string
@@ -168,6 +183,7 @@ export interface CompletedSubTitles {
 }
 
 export interface CompletedInfo {
+  oldDeregistration: string
   payment: string
   paymentLinkText: string
 }
@@ -277,10 +293,11 @@ export interface DeregisterSelect {
 }
 
 export interface Deregister {
-  title: string
-  info: string
+  titles: ProcessTitles
+  info: ProcessTitles
   buttons: DeregisterButtons
   success: string
+  error: Errors
 }
 
 export interface DeregisterOverviewSubTitles {
