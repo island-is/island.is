@@ -3,6 +3,7 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { GdprService } from './gdpr.service'
 import { GdprModel } from './model/gdpr.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 
 @Resolver(() => GdprModel)
 export class GdprResolver {
@@ -11,6 +12,7 @@ export class GdprResolver {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
+  @Authorize({ throwOnUnAuthorized: false })
   @Mutation((returns) => Boolean)
   async createSkilavottordGdpr(
     @Args('nationalId') nationalId: string,

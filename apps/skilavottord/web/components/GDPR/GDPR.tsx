@@ -14,7 +14,7 @@ import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { SET_GDPR_INFO } from '@island.is/skilavottord-web/graphql/mutations'
+import { CREATE_GDPR_INFO } from '@island.is/skilavottord-web/graphql/mutations'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { InlineError } from '@island.is/skilavottord-web/components'
 
@@ -35,20 +35,23 @@ export const GDPR = () => {
     setIsMobile(false)
   }, [width])
 
-  const [setGDPRInfo, { error: mutationError }] = useMutation(SET_GDPR_INFO, {
-    onCompleted() {
-      router.reload()
+  const [setGDPRInfo, { error: mutationError }] = useMutation(
+    CREATE_GDPR_INFO,
+    {
+      onCompleted() {
+        router.reload()
+      },
+      onError() {
+        return mutationError
+      },
     },
-    onError() {
-      console.log(mutationError)
-    },
-  })
+  )
 
   const handleContinue = () => {
     setGDPRInfo({
       variables: {
         gdprStatus: 'true',
-        nationalId: user.nationalId,
+        nationalId: user?.nationalId,
       },
     })
   }

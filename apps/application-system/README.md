@@ -47,7 +47,7 @@ yarn start api
 When making changes to the module code, run
 
 ```bash
-yarn nx generate-schema application-system-api
+yarn nx schemas/build-openapi application-system-api
 ```
 
 to generate the code needed for openapi and swagger. Then you can visit
@@ -59,13 +59,13 @@ localhost:3333/swagger
 In order to generate a typed fetch client run
 
 ```bash
-yarn nx codegen api-domains-application
+yarn nx schemas/openapi-generator api-domains-application
 ```
 
 In order to update the graphql schema as well, run
 
 ```bash
-yarn nx codegen api
+yarn nx schemas/build-schema api
 ```
 
 ## Form

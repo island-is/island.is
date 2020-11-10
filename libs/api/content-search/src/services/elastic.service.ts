@@ -135,6 +135,19 @@ export class ElasticService {
     }
   }
 
+  async findById(index: string, id: string) {
+    try {
+      const client = await this.getClient()
+      return client.get<any>({ id, index })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error in ElasticService.findById',
+        { id, index },
+        e,
+      )
+    }
+  }
+
   async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
     const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<

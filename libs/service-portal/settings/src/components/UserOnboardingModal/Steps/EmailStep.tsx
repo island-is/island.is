@@ -14,25 +14,21 @@ export const EmailStep: FC<Props> = ({ onBack, onSubmit, email }) => {
 
   return (
     <>
-      <GridRow>
-        <GridColumn span={['1/1', '1/1', '4/7']}>
-          <Text variant="h1" marginBottom={3}>
-            {formatMessage({
-              id: 'service.portal:email',
-              defaultMessage: 'Netfang',
-            })}
-          </Text>
-          <Text marginBottom={7}>
-            {formatMessage({
-              id: 'sp.settings:email-form-message',
-              defaultMessage: `
+      <Text variant="h1" marginBottom={3}>
+        {formatMessage({
+          id: 'service.portal:email',
+          defaultMessage: 'Netfang',
+        })}
+      </Text>
+      <Text marginBottom={7}>
+        {formatMessage({
+          id: 'sp.settings:email-form-message',
+          defaultMessage: `
                 Vinsamlegt settu inn nefangið þitt.
                 Við komum til með að senda á þig staðfestingar og tilkynningar.
               `,
-            })}
-          </Text>
-        </GridColumn>
-      </GridRow>
+        })}
+      </Text>
       <EmailForm
         email={email}
         renderBackButton={() => (

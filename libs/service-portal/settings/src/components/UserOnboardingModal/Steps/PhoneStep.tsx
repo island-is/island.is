@@ -24,38 +24,34 @@ export const PhoneStep: FC<Props> = ({ onBack, onSubmit, tel, natReg }) => {
 
   return (
     <>
-      <GridRow>
-        <GridColumn span={['1/1', '1/1', '4/7']}>
-          <Text variant="h1" marginBottom={3}>
-            {step === 'form'
-              ? formatMessage({
-                  id: 'service.portal:tel-number',
-                  defaultMessage: 'Símanúmer',
-                })
-              : formatMessage({
-                  id: 'service.portal:tel-confirm-code',
-                  defaultMessage: 'Staðfestingarkóði',
-                })}
-          </Text>
-          <Text marginBottom={7}>
-            {step === 'form'
-              ? formatMessage({
-                  id: 'sp.settings:profile-info-form-message',
-                  defaultMessage: `
+      <Text variant="h1" marginBottom={3}>
+        {step === 'form'
+          ? formatMessage({
+              id: 'service.portal:tel-number',
+              defaultMessage: 'Símanúmer',
+            })
+          : formatMessage({
+              id: 'service.portal:tel-confirm-code',
+              defaultMessage: 'Staðfestingarkóði',
+            })}
+      </Text>
+      <Text marginBottom={7}>
+        {step === 'form'
+          ? formatMessage({
+              id: 'sp.settings:profile-info-form-message',
+              defaultMessage: `
                   Vinsamlegast gerðu breytingar á þessum upplýsingum
                   ef þörf krefur.
                 `,
-                })
-              : formatMessage({
-                  id: 'sp.settings:tel-confirm-form-message',
-                  defaultMessage: `
+            })
+          : formatMessage({
+              id: 'sp.settings:tel-confirm-form-message',
+              defaultMessage: `
                   Staðfestingarkóði hefur verið sendur á símanúmerið þitt.
                   Skrifaðu kóðann inn hér að neðan.
                 `,
-                })}
-          </Text>
-        </GridColumn>
-      </GridRow>
+            })}
+      </Text>
       <PhoneForm
         tel={tel}
         natReg={natReg}

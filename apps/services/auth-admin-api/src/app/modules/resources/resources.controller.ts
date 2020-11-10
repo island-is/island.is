@@ -26,13 +26,63 @@ import {
 } from '@nestjs/swagger'
 
 @ApiOAuth2(['@identityserver.api/read'])
+// TODO: Add guards when functional
 // @UseGuards(AuthGuard('jwt'))
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
+  /** Gets all Identity Resources and count of rows */
   @Get('identity-resources')
+  @ApiQuery({ name: 'page', required: true })
+  @ApiQuery({ name: 'count', required: true })
+  // TODO: Figure this out: @ApiOkResponse({  type: { rows: IdentityResource[]; count: number }, isArray: true })
+  async findAndCountAllIdentityResources(
+    @Query('page') page: number,
+    @Query('count') count: number,
+  ): Promise<{ rows: IdentityResource[]; count: number }> {
+    const identityResources = await this.resourcesService.findAndCountAllIdentityResources(
+      page,
+      count,
+    )
+    return identityResources
+  }
+
+  /** Gets all Api Scopes and count of rows */
+  @Get('api-scopes')
+  @ApiQuery({ name: 'page', required: true })
+  @ApiQuery({ name: 'count', required: true })
+  // TODO: Figure this out: @ApiOkResponse({  type: { rows: ApiScope[]; count: number }, isArray: true })
+  async findAndCountAllApiScopes(
+    @Query('page') page: number,
+    @Query('count') count: number,
+  ): Promise<{ rows: ApiScope[]; count: number }> {
+    const apiScopes = await this.resourcesService.findAndCountAllApiScopes(
+      page,
+      count,
+    )
+    return apiScopes
+  }
+
+  /** Get's all Api resources and total count of rows */
+  @Get('api-resources')
+  @ApiQuery({ name: 'page', required: true })
+  @ApiQuery({ name: 'count', required: true })
+  // TODO: Figure this out: @ApiOkResponse({  type: { rows: ApiResource[]; count: number }, isArray: true })
+  async findAndCountAllApiResources(
+    @Query('page') page: number,
+    @Query('count') count: number,
+  ): Promise<{ rows: ApiResource[]; count: number }> {
+    const apiResources = await this.resourcesService.findAndCountAllApiResources(
+      page,
+      count,
+    )
+    return apiResources
+  }
+
+  /** Gets Identity Resources by Scope Names */
+  @Get('identity-resources/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
   async FindIdentityResourcesByScopeName(
@@ -45,7 +95,8 @@ export class ResourcesController {
     return identityResources
   }
 
-  @Get('api-scopes')
+  /** Gets Api Scopes by Scope Names */
+  @Get('api-scopes/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: ApiScope, isArray: true })
   async FindApiScopesByNameAsync(
@@ -58,7 +109,8 @@ export class ResourcesController {
     return apiScopes
   }
 
-  @Get('api-resources')
+  /** Gets Api Resources by either Api Resource Names or Api Scope Names */
+  @Get('api-resources/names')
   @ApiQuery({ name: 'apiResourceNames', required: false })
   @ApiQuery({ name: 'apiScopeNames', required: false })
   @ApiOkResponse({ type: ApiResource, isArray: true })
@@ -83,6 +135,7 @@ export class ResourcesController {
     }
   }
 
+  /** Creates a new Identity Resource */
   @Post('identity-resource')
   @ApiCreatedResponse({ type: IdentityResource })
   async createIdentityResource(
@@ -91,6 +144,7 @@ export class ResourcesController {
     return await this.resourcesService.createIdentityResource(identityResource)
   }
 
+  /** Updates an existing Identity Resource by it's name */
   @Put('identity-resource/:name')
   @ApiOkResponse({ type: IdentityResource })
   async updateIdentityResource(
@@ -107,7 +161,8 @@ export class ResourcesController {
     )
   }
 
-  @Delete('identity-resource/:id')
+  /** Deletes an existing Identity Resource by it's name */
+  @Delete('identity-resource/:name')
   @ApiOkResponse()
   async deleteIdentityResource(@Param('name') name: string): Promise<number> {
     if (!name) {
@@ -117,12 +172,14 @@ export class ResourcesController {
     return await this.resourcesService.deleteIdentityResource(name)
   }
 
+  /** Creates a new Api Scope */
   @Post('api-scope')
   @ApiCreatedResponse({ type: ApiScope })
   async createApiScope(@Body() apiScope: ApiScopesDTO): Promise<ApiScope> {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
+  /** Updates an existing Api Scope */
   @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
   async updateApiScope(
@@ -136,6 +193,7 @@ export class ResourcesController {
     return await this.resourcesService.updateApiScope(apiScope, name)
   }
 
+  /** Deletes an existing Api Scope by it's name */
   @Delete('api-scope/:id')
   @ApiOkResponse()
   async deleteApiScope(@Param('name') name: string): Promise<number> {

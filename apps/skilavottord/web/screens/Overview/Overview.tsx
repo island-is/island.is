@@ -1,5 +1,7 @@
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 import {
   Box,
   Stack,
@@ -7,16 +9,13 @@ import {
   Breadcrumbs,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { PageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
 import { ActionCardContainer, ProgressCardContainer } from './components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { useQuery } from '@apollo/client'
-import { GET_VEHICLES } from '@island.is/skilavottord-web/graphql/queries'
-import { useRouter } from 'next/router'
 import { RecycleActionTypes } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { InlineError } from '@island.is/skilavottord-web/components'
 import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
+import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -32,8 +31,9 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const nationalId = user?.nationalId ?? ''
-  const { data, loading, error } = useQuery(GET_VEHICLES, {
+  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
+    fetchPolicy: 'cache-and-network',
   })
 
   const cars = data?.skilavottordVehicles || []
@@ -48,20 +48,7 @@ const Overview: FC = () => {
       .then(() => window.scrollTo(0, 0))
   }
 
-  if (error || (loading && !data)) {
-    const content = error ? (
-      <InlineError
-        title={t.subTitles.active}
-        message={t.error.message}
-        primaryButton={{
-          text: t.error.primaryButton,
-          action: () => router.reload(),
-        }}
-      />
-    ) : (
-      <SkeletonLoader space={2} repeat={4} />
-    )
-
+  if (error || loading) {
     return (
       <PageLayout>
         <Box paddingBottom={[3, 3, 6, 6]}>
@@ -73,7 +60,18 @@ const Overview: FC = () => {
         <Box paddingBottom={4}>
           <Text variant="h1">{t.title}</Text>
         </Box>
-        {content}
+        {error ? (
+          <InlineError
+            title={t.subTitles.active}
+            message={t.error.message}
+            primaryButton={{
+              text: t.error.primaryButton,
+              action: () => router.reload(),
+            }}
+          />
+        ) : (
+          <SkeletonLoader space={2} repeat={4} />
+        )}
       </PageLayout>
     )
   }

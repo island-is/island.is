@@ -1,8 +1,9 @@
-import { VehicleInformation, DeRegisterVehicle } from '.'
+import { VehicleInformation } from '.'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import xml2js from 'xml2js'
 import { environment } from '../../../../environments'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
 
 @Injectable()
 export class SamgongustofaService {
@@ -10,6 +11,8 @@ export class SamgongustofaService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private httpService: HttpService,
+    @Inject(RecyclingRequestService)
+    private recyclingRequestService: RecyclingRequestService,
   ) {}
 
   async getVehicleInformation(nationalId: string) {
@@ -95,6 +98,7 @@ export class SamgongustofaService {
                 new VehicleInformation(
                   'HX111',
                   'black',
+                  'vinNumber',
                   'Nissan',
                   '01.01.2020',
                   true,
@@ -126,6 +130,7 @@ export class SamgongustofaService {
                     car['permno'][0],
                     car['type'][0],
                     car['color'][0],
+                    car['vin'][0],
                     car['firstregdate'][0],
                     carIsRecyclable,
                     carHasCoOwner,
@@ -151,7 +156,7 @@ export class SamgongustofaService {
         })
 
       this.logger.info('Finished extracting all vehicles')
-      // TODO: connect to database and get 'pending' status
+
       const newVehicleArr = this.vehicleInformationList
 
       // ForEach vehicle in vehicleInformationList, check and update vehicle's status
@@ -161,7 +166,6 @@ export class SamgongustofaService {
           `Starting extracting details information on ${carObj['permno']}`,
         )
         if (carObj['status'] == 'inUse') {
-          // Vehicle information
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
             <soapenv:Header/>
@@ -248,6 +252,31 @@ export class SamgongustofaService {
         }
       }
 
+      for (let i = 0; i < this.vehicleInformationList.length; i++) {
+        const vehicle = this.vehicleInformationList[i]
+        try {
+          if (vehicle.isRecyclable) {
+            this.logger.info(
+              `Start getting requestType from DB for vehicle ${vehicle['permno']}`,
+            )
+            const resRequestType = await this.recyclingRequestService.findAllWithPermno(
+              vehicle['permno'],
+            )
+            if (resRequestType.length > 0) {
+              const requestType = resRequestType[0]['dataValues']['requestType']
+              this.vehicleInformationList[i]['status'] = requestType
+              this.logger.info(
+                `Got ${requestType} for vehicle ${vehicle['permno']}`,
+              )
+            }
+          }
+        } catch (err) {
+          this.logger.error(
+            `Error while checking requestType in DB for vehicle ${vehicle['permno']}`,
+          )
+        }
+      }
+
       this.logger.info(
         `---- Finished getVehicleInformation call on ${nationalId} ----`,
       )
@@ -257,88 +286,6 @@ export class SamgongustofaService {
         `Failed on getting vehicles information from Samgongustofa: ${err}`,
       )
       throw new Error('Failed on getting vehicles information...')
-    }
-  }
-
-  async deRegisterVehicle(vehiclePermno: string, disposalStation: string) {
-    try {
-      this.logger.info(
-        `---- Starting deRegisterVehicle call on ${vehiclePermno} ----`,
-      )
-      const {
-        restAuthUrl,
-        restDeRegUrl,
-        restUsername,
-        restPassword,
-        restReportingStation,
-      } = environment.samgongustofa
-
-      const jsonObj = {
-        username: restUsername,
-        password: restPassword,
-      }
-      const jsonAuthBody = JSON.stringify(jsonObj)
-
-      const headerAuthRequest = {
-        'Content-Type': 'application/json',
-      }
-
-      const authRes = await this.httpService
-        .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
-        .toPromise()
-
-      if (authRes.status > 299 || authRes.status < 200) {
-        this.logger.error(authRes.statusText)
-        throw new Error(authRes.statusText)
-      }
-      // DeRegisterd vehicle
-      const jToken = authRes.data['jwtToken']
-
-      this.logger.info(
-        'Finished Authentication request and starting deRegister request',
-      )
-      const dateNow = new Date()
-      const jsonDeRegBody = JSON.stringify({
-        permno: vehiclePermno,
-        deRegisterDate:
-          dateNow.toLocaleDateString() +
-          'T' +
-          dateNow.toTimeString().split(' ')[0] +
-          'Z',
-        subCode: 'U',
-        plateCount: 0,
-        destroyed: 0,
-        lost: 0,
-        reportingStation: restReportingStation,
-        reportingStationType: 'R',
-        disposalStation: disposalStation,
-        disposalStationType: 'M',
-        explanation: 'TODO, what to put here?',
-      })
-
-      const headerDeRegRequest = {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + jToken,
-      }
-
-      const deRegRes = await this.httpService
-        .post(restDeRegUrl, jsonDeRegBody, { headers: headerDeRegRequest })
-        .toPromise()
-
-      if (deRegRes.status < 300 && deRegRes.status >= 200) {
-        this.logger.info(
-          `---- Finished deRegisterVehicle call on ${vehiclePermno} ----`,
-        )
-        return new DeRegisterVehicle(true)
-      } else {
-        this.logger.info(deRegRes.statusText)
-        throw new Error(deRegRes.statusText)
-      }
-    } catch (err) {
-      this.logger.error(
-        `Failed on deregistered vehicle ${vehiclePermno} with: ${err}`,
-      )
-      throw new Error(`Failed on deregistered vehicle ${vehiclePermno}...`)
     }
   }
 }

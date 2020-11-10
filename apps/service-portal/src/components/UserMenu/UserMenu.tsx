@@ -1,14 +1,6 @@
 import React, { FC, useState, useRef } from 'react'
 import { useStore } from '../../store/stateProvider'
-import {
-  Box,
-  Button,
-  Hidden,
-  Icon,
-  Stack,
-  Text,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, Button, Hidden, Stack, Text } from '@island.is/island-ui/core'
 import { useClickAway } from 'react-use'
 import {
   getNameAbbreviation,
@@ -68,7 +60,7 @@ const UserMenu: FC<{}> = () => {
                   </Text>
                 </Box>
                 <Box marginRight={4}>
-                  <Typography variant="h4">{userInfo?.profile.name}</Typography>
+                  <Text variant="h4">{userInfo?.profile.name}</Text>
                 </Box>
               </Box>
               <Box padding={3} background="blue100">

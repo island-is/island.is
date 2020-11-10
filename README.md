@@ -88,6 +88,10 @@ To execute the end-to-end tests affected by a change:
 yarn affected:e2e
 ```
 
+### Schemas
+
+If your project is generating schemas files from an OpenAPI, Codegen or is an API, check out [this documentation](handbook/repository/schemas.md).
+
 ### Understand your workspace
 
 To see a diagram of the dependencies of your projects:

@@ -5,7 +5,7 @@ import cn from 'classnames'
 import {
   Box,
   Tiles,
-  ButtonDeprecated as Button,
+  Button,
   Stack,
   Text,
   Tag,
@@ -16,7 +16,6 @@ import { theme } from '@island.is/island-ui/theme'
 import { Organization, OrganizationTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { Card } from '../Card/Card'
-
 import * as styles from './FilteredCards.treat'
 
 const FILTER_TIMER = 300
@@ -284,12 +283,16 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
         </Tiles>
       </Box>
       {!showAll && showMoreButton ? (
-        <Box marginY={3} textAlign="center">
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginY={3}
+          textAlign="center"
+        >
           <Button
             onClick={() => {
               setShowCount(showCount + ITEMS_PER_SHOW)
             }}
-            width="fixed"
           >
             {n('seeMoreItems')}
             {`(${filteredItems.length - showCount})`}

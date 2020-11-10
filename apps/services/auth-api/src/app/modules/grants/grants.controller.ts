@@ -1,19 +1,26 @@
 import {
+  Grant,
+  GrantDto,
+  GrantsService,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-api-lib'
+import {
+  BadRequestException,
+  Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
-  Delete,
   Post,
-  Body,
   Query,
-  BadRequestException,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiCreatedResponse } from '@nestjs/swagger'
-import { Grant, GrantDto, GrantsService, Scopes } from '@island.is/auth-api-lib'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-// TODO: Add guards after getting communications to work properly with IDS4
-// @UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')
 @Controller('grants')
 export class GrantsController {

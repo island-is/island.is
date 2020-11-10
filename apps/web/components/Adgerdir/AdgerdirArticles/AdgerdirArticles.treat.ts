@@ -64,7 +64,8 @@ export const input = style({
 })
 
 export const inputWrapper = style({
-  width: 318,
+  maxWidth: 318,
+  width: '100%',
   position: 'relative',
 })
 

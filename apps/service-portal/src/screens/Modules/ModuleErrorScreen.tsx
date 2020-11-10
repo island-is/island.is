@@ -1,10 +1,16 @@
 import React, { FC } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import * as Sentry from '@sentry/react'
 
 interface Props {
   name: string | MessageDescriptor
+}
+
+interface StateTypes {
+  error?: Error
+  hasError?: boolean
 }
 
 export class ModuleErrorBoundary extends React.Component<
@@ -16,12 +22,15 @@ export class ModuleErrorBoundary extends React.Component<
     this.state = { hasError: false }
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true }
+  static getDerivedStateFromError(_: Error): StateTypes {
+    return { hasError: true, error: undefined }
   }
 
-  componentDidCatch() {
-    // TODO: Log error
+  componentDidCatch(error: Error) {
+    if (window.location.origin === 'http://localhost:4200') {
+      return
+    }
+    Sentry.captureException(error)
   }
 
   render() {
@@ -35,7 +44,7 @@ const ModuleErrorScreen: FC<Props> = ({ name }) => {
 
   return (
     <Box padding={8}>
-      <Typography variant="h2" as="h2">
+      <Text variant="h2">
         {formatMessage({
           id: 'service.portal:could-not-fetch',
           defaultMessage: 'Tókst ekki að sækja',
@@ -45,7 +54,7 @@ const ModuleErrorScreen: FC<Props> = ({ name }) => {
           id: 'service.portal:something-went-wrong',
           defaultMessage: 'eitthvað fór úrskeiðis',
         })}
-      </Typography>
+      </Text>
     </Box>
   )
 }

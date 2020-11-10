@@ -5,33 +5,33 @@ import {
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
-import { Typography, Box, Stack } from '@island.is/island-ui/core'
+import { Text, Box, Stack } from '@island.is/island-ui/core'
 import { useApplicantApplications } from '@island.is/service-portal/graphql'
 import { useAssigneeApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data: applications, loading, error } = useApplicantApplications(
-    userInfo.profile.natreg,
+    userInfo.profile.nationalId,
   )
 
   const {
     data: assigneeApplications,
     loading: assigneeApplicationsLoading,
     error: assigneeApplicationsError,
-  } = useAssigneeApplications(userInfo.profile.natreg)
+  } = useAssigneeApplications(userInfo.profile.nationalId)
 
   return (
     <>
       <Box marginBottom={5}>
-        <Typography variant="h1">Umsóknir</Typography>
+        <Text variant="h1">Umsóknir</Text>
       </Box>
       {loading && <ActionCardLoader repeat={3} />}
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Typography variant="h3">
+          <Text variant="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
-          </Typography>
+          </Text>
         </Box>
       )}
       <Stack space={2}>
@@ -48,14 +48,14 @@ const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
       </Stack>
 
       <Box marginTop={5} marginBottom={5}>
-        <Typography variant="h1">Umsóknir til samþykktar</Typography>
+        <Text variant="h1">Umsóknir til samþykktar</Text>
       </Box>
       {assigneeApplicationsLoading && <ActionCardLoader repeat={3} />}
       {assigneeApplicationsError && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Typography variant="h3">
+          <Text variant="h3">
             Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
-          </Typography>
+          </Text>
         </Box>
       )}
       <Stack space={2}>

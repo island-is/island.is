@@ -1,5 +1,5 @@
 import React, { FC, Suspense, useCallback, useMemo } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
 import {
   ServicePortalWidget,
@@ -11,6 +11,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import Greeting from '../../components/Greeting/Greeting'
 import { User } from 'oidc-client'
 import { useLocale } from '@island.is/localization'
+import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -25,7 +26,9 @@ const Widget: FC<{
   if (Component)
     return (
       <Suspense fallback={<WidgetLoading />}>
-        <Component userInfo={userInfo} client={client} />
+        <WidgetErrorBoundary name={widget.name}>
+          <Component userInfo={userInfo} client={client} />
+        </WidgetErrorBoundary>
       </Suspense>
     )
 
@@ -60,9 +63,9 @@ const WidgetLoader: FC<{
       {widgets.map((widget, index) => (
         <Box marginBottom={8} key={index}>
           <Box marginBottom={2}>
-            <Typography variant="h3" as="h3">
+            <Text variant="h3" as="h3">
               {formatMessage(widget.name)}
-            </Typography>
+            </Text>
           </Box>
           <Widget
             key={`widget-${index}`}

@@ -82,16 +82,25 @@ export const hasFocus = style({
     [`&${container}`]: mixins.containerFocus,
   },
 })
+export const fixedFocusState = style({
+  selectors: {
+    [`&${container}${container}`]: mixins.containerFocus,
+  },
+})
 
 export const icon = style({
   width: 24,
   height: 24,
-  color: theme.color.red600,
   marginBottom: -3,
+  color: theme.color.blue400,
   ...themeUtils.responsiveStyle({
     md: {
       width: 32,
       height: 32,
     },
   }),
+})
+
+export const iconError = style({
+  color: theme.color.red600,
 })

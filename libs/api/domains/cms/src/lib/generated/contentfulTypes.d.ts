@@ -1612,6 +1612,39 @@ export interface ISideMenu extends Entry<ISideMenuFields> {
   }
 }
 
+export interface ISliceConnectedComponentFields {
+  /** Title */
+  title: string
+
+  /** Type */
+  type?:
+    | 'None'
+    | 'Skilavottord/CompanyList'
+    | 'Skilavottord/CompanyListConnected'
+    | undefined
+
+  /** JSON */
+  json?: Record<string, any> | undefined
+}
+
+export interface ISliceConnectedComponent
+  extends Entry<ISliceConnectedComponentFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sliceConnectedComponent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IStatisticFields {
   /** Value */
   value: string
@@ -1936,15 +1969,6 @@ export interface ITellUsAStoryFields {
   /** Third Section Title */
   thirdSectionTitle: string
 
-  /** Instructions Description */
-  instructionsDescription: Document
-
-  /** Instructions Image */
-  instructionsImage: Asset
-
-  /** Information Title */
-  informationTitle: string
-
   /** Name Label */
   nameLabel: string
 
@@ -1962,6 +1986,15 @@ export interface ITellUsAStoryFields {
 
   /** Email Input Error Message */
   emailInputErrorMessage: string
+
+  /** Instructions Title */
+  instructionsTitle: string
+
+  /** Instructions Description */
+  instructionsDescription: Document
+
+  /** Instructions Image */
+  instructionsImage: Asset
 
   /** Publication Allowed Label */
   publicationAllowedLabel: string
@@ -2473,6 +2506,7 @@ export type CONTENT_TYPE =
   | 'sectionHeading'
   | 'sectionWithImage'
   | 'sideMenu'
+  | 'sliceConnectedComponent'
   | 'statistic'
   | 'statistics'
   | 'story'

@@ -42,7 +42,9 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     }),
     ContentSearchModule,
     CmsModule,
-    ApplicationModule,
+    ApplicationModule.register({
+      baseApiUrl: environment.applicationSystem.baseApiUrl,
+    }),
     FileUploadModule,
     DocumentModule.register({
       basePath: environment.documentService.basePath,
@@ -66,7 +68,7 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     ApiCatalogueModule,
     AuthModule.register({
       audience: environment.identityServer.audience,
-      issuer: environment.identityServer.baseUrl,
+      issuer: environment.identityServer.issuer,
       jwksUri: `${environment.identityServer.jwksUri}`,
     }),
   ],

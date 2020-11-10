@@ -22,12 +22,19 @@ type OnboardingStep =
   | 'language-form'
   | 'submit-form'
 
+const defaultLanguageOption: LanguageFormOption = {
+  value: 'is',
+  label: 'Íslenska',
+}
+
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [step, setStep] = useState<OnboardingStep>('intro')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
-  const [language, setLanguage] = useState<LanguageFormOption | null>(null)
+  const [language, setLanguage] = useState<LanguageFormOption | null>(
+    defaultLanguageOption,
+  )
   const { createUserProfile } = useCreateUserProfile()
 
   const handleCloseModal = () => {
@@ -89,7 +96,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       {step === 'tel-form' && (
         <PhoneStep
           onBack={gotoStep.bind(null, 'intro')}
-          natReg={userInfo.profile.natreg}
+          natReg={userInfo.profile.nationalId}
           tel={tel}
           onSubmit={handlePhoneStepSubmit}
         />

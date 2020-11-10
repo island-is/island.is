@@ -1,42 +1,28 @@
-import { DynamicModule, Module, Scope } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
+import { DynamicModule, HttpModule } from '@nestjs/common'
 import { DocumentResolver } from './document.resolver'
 import { DocumentService } from './document.service'
-import { CustomersApi, Configuration } from '../../gen/fetch'
-import { DocumentOauthConnection } from './document.connection'
-
-export interface Config {
-  basePath: string
-  clientId: string
-  clientSecret: string
-  tokenUrl: string
-}
+import {
+  DocumentClient,
+  DocumentClientConfig,
+  DOCUMENT_CLIENT_CONFIG,
+} from './client/documentClient'
 
 export class DocumentModule {
-  static register(config: Config): DynamicModule {
+  static register(config: DocumentClientConfig): DynamicModule {
     return {
       module: DocumentModule,
+      imports: [
+        HttpModule.register({
+          timeout: 10000,
+        }),
+      ],
       providers: [
         DocumentResolver,
         DocumentService,
+        DocumentClient,
         {
-          provide: CustomersApi,
-          useFactory: async () =>
-            new CustomersApi(
-              new Configuration({
-                fetchApi: fetch,
-                basePath: config.basePath,
-                headers: {
-                  Authorization: `Bearer ${await DocumentOauthConnection.fetchToken(
-                    config.clientId,
-                    config.clientSecret,
-                    config.tokenUrl,
-                    config.basePath,
-                  )}`,
-                },
-              }),
-            ),
-          scope: Scope.REQUEST,
+          provide: DOCUMENT_CLIENT_CONFIG,
+          useValue: config,
         },
       ],
     }

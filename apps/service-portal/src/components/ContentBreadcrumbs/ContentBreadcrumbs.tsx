@@ -43,25 +43,23 @@ const ContentBreadcrumbs: FC<{}> = () => {
   if (items.length < 2) return null
 
   return (
-    <Hidden below="lg">
-      <Box paddingY={2}>
-        <Breadcrumbs color="purple400" separatorColor="purple400">
-          {items.map((item, index) =>
-            item.path !== undefined ? (
-              index === items.length - 1 ? (
-                <Tag key={index} variant="purple">
-                  {formatMessage(item.name)}
-                </Tag>
-              ) : (
-                <Link key={index} to={item.path}>
-                  {formatMessage(item.name)}
-                </Link>
-              )
-            ) : null,
-          )}
-        </Breadcrumbs>
-      </Box>
-    </Hidden>
+    <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
+      <Breadcrumbs color="purple400" separatorColor="purple400">
+        {items.map((item, index) =>
+          item.path !== undefined ? (
+            index === items.length - 1 ? (
+              <Tag key={index} variant="purple" label>
+                {formatMessage(item.name)}
+              </Tag>
+            ) : (
+              <Link key={index} to={item.path}>
+                {formatMessage(item.name)}
+              </Link>
+            )
+          ) : null,
+        )}
+      </Breadcrumbs>
+    </Box>
   )
 }
 

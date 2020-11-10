@@ -4,18 +4,26 @@ module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
     'recycling_request',
     {
+      //TODO GUID vegna fjársýslu.
       id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
+        allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
       },
       vehicle_id: {
         allowNull: false,
         references: {
           key: 'vehicle_id',
           model: 'vehicle',
-          onDelete: 'CASCADE',
+        },
+        type: DataTypes.STRING,
+      },
+      recycling_partner_id: {
+        allowNull: true,
+        references: {
+          key: 'company_id',
+          model: 'recycling_partner',
         },
         type: DataTypes.STRING,
       },

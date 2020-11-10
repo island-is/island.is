@@ -261,6 +261,55 @@ export const slices = gql`
     }
   }
 
+  fragment TellUsAStoryFields on TellUsAStory {
+    __typename
+    id
+    introTitle
+    introImage {
+      title
+      url
+    }
+    introDescription {
+      ...HtmlFields
+    }
+    instructionsTitle
+    instructionsDescription {
+      ...HtmlFields
+    }
+    firstSectionTitle
+    organizationLabel
+    organizationPlaceholder
+    organizationInputErrorMessage
+    dateOfStoryLabel
+    dateOfStoryPlaceholder
+    dateOfStoryInputErrorMessage
+    secondSectionTitle
+    subjectLabel
+    subjectPlaceholder
+    subjectInputErrorMessage
+    messageLabel
+    messagePlaceholder
+    messageInputErrorMessage
+    thirdSectionTitle
+    instructionsImage {
+      title
+      url
+    }
+    nameLabel
+    namePlaceholder
+    nameInputErrorMessage
+    emailLabel
+    emailPlaceholder
+    emailInputErrorMessage
+    publicationAllowedLabel
+    submitButtonTitle
+    errorMessageTitle
+    SuccessMessageTitle
+    tellUsAStorySuccessMessage: successMessage {
+      ...HtmlFields
+    }
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -282,5 +331,6 @@ export const slices = gql`
     ...TeamListFields
     ...ContactUsFields
     ...LocationFields
+    ...TellUsAStoryFields
   }
 `
