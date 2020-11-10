@@ -16,7 +16,7 @@ export const getDate = (dateTime: string) => {
 
 export const getTime = (dateTime: string) => {
   const time = new Date(dateTime)
-  return format(time, 'hh:mm')
+  return format(time, 'HH:mm')
 }
 
 export const getYear = (dateTime: string) => {
