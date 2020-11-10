@@ -8,11 +8,11 @@ The repository is a [monorepo](../technical-overview/monorepo.md) that has multi
 
 ## Reading material
 
-For all the information regarding the project please make sure to read the [technical overview](handbook/technical-overview/README.md).
+To get more technical information about the project please make sure to read this [overview](handbook/technical-overview/README.md).
 
 ## How to contribute
 
-If you want to contribute to this repository, please make sure to follow [this guide](handbook/repository/contribute.md).
+If you want to contribute to the repository, please make sure to follow [this guide](handbook/repository/external-contribute.md).
 
 ## Prerequisites
 

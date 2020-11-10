@@ -10,20 +10,6 @@ This library is part of the Ísland.is design system and is a collection of guid
 - [Staging](https://ui.staging01.devland.is)
 - [Production](https://ui.devland.is)
 
-## Contentful
-
-This lib is a collection of components to display data coming from [Contentful](https://www.contentful.com).
-
-### Usage
-
-```tsx
-import { Paragraph } from '@island.is/island-ui/contentful'
-
-return (
-  <Paragraph>
-)
-```
-
 ## Core
 
 The lib contains all the components that are reused across most of the projects. You can see the whole list by visiting the UI library with the links above.

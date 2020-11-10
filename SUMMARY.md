@@ -68,7 +68,6 @@
 - [Reference backend](apps/reference-backend/README.md)
 - [Reference next app](apps/reference-next-app/README.md)
 - [Service portal](apps/service-portal/README.md)
-- [Mirage Server](apps/service-portal/src/mirage-server/models/readme.md)
 - [Auth Admin API](apps/services/auth-admin-api/README.md)
 - [Auth API](apps/services/auth-api/README.md)
 - [Search indexer](apps/services/search-indexer/README.md)
