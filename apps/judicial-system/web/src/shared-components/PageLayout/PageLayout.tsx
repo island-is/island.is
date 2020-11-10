@@ -80,6 +80,7 @@ export const PageLayout: FC<PageProps> = ({
                     name: 'Úrskurður Héraðsdóms',
                     children: [
                       { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+                      { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
                       { type: 'SUB_SECTION', name: 'Þingbók' },
                       { type: 'SUB_SECTION', name: 'Úrskurður' },
                       { type: 'SUB_SECTION', name: 'Úrskurðarorð' },

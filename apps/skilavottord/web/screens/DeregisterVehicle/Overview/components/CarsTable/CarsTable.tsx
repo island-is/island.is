@@ -33,23 +33,19 @@ export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
           {vehicleOwner.map(({ vehicles }) =>
             vehicles.map(
               ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
-                recyclingRequests.map(
-                  ({ requestType, nameOfRequestor, createdAt }) => {
-                    if (requestType === 'deregistered') {
-                      const modelYear = getYear(newregDate)
-                      const deregistrationDate = getDate(createdAt)
-                      return (
-                        <Row key={vehicleId}>
-                          <Data textVariant="h5">{vehicleId}</Data>
-                          <Data>{vehicleType}</Data>
-                          <Data>{modelYear}</Data>
-                          <Data>{nameOfRequestor}</Data>
-                          <Data>{deregistrationDate}</Data>
-                        </Row>
-                      )
-                    }
-                  },
-                ),
+                recyclingRequests.map(({ nameOfRequestor, createdAt }) => {
+                  const modelYear = getYear(newregDate)
+                  const deregistrationDate = getDate(createdAt)
+                  return (
+                    <Row key={vehicleId}>
+                      <Data textVariant="h5">{vehicleId}</Data>
+                      <Data>{vehicleType}</Data>
+                      <Data>{modelYear}</Data>
+                      <Data>{nameOfRequestor}</Data>
+                      <Data>{deregistrationDate}</Data>
+                    </Row>
+                  )
+                }),
             ),
           )}
         </Body>

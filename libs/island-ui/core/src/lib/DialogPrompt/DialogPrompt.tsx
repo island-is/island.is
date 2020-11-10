@@ -33,7 +33,7 @@ interface DialogPromptProps {
    * Element that opens the dialog.
    * It will be forwarded neccessery props for a11y and event handling.
    */
-  disclosureElement?: ReactElement
+  disclosureElement: ReactElement
   /**
    * User presses confirm callback
    */
@@ -72,7 +72,7 @@ export const DialogPrompt = ({
       aria-label={ariaLabel}
       className={styles.dialog}
     >
-      {({ closeModal }) => {
+      {({ closeModal }: { closeModal: () => void }) => {
         const handleClose = () => {
           onCancel && onCancel()
           closeModal()

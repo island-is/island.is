@@ -41,6 +41,10 @@ import {
   CaseQuery,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
+import {
+  ProsecutorSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
@@ -212,7 +216,11 @@ export const StepTwo: React.FC = () => {
   }
 
   return (
-    <PageLayout activeSection={0} activeSubSection={1} isLoading={isLoading}>
+    <PageLayout
+      activeSection={Sections.PROSECUTOR}
+      activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>

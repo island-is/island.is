@@ -23,6 +23,7 @@ export * from './lib/Header/Header'
 export * from './lib/Footer/Footer'
 export * from './lib/InputSearch/InputSearch'
 export * from './lib/ServiceFilter/ServiceFilter'
+export * from './lib/DialogPrompt/DialogPrompt'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
