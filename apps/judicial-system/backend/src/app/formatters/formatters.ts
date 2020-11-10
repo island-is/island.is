@@ -188,3 +188,7 @@ export function formatCourtDateEmailNotification(
     'PPPp',
   )}. Dómsalur: ${courtRoom}.`
 }
+
+export function formatCourtDateNotificationCondition(courtDate: Date) {
+  return `courtDate=${formatDate(courtDate, 'Pp')}`
+}

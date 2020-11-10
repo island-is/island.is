@@ -8,8 +8,9 @@ import { NotificationType } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
-  formatCourtDateNotification,
-  formatHeadsUpNotification,
+  formatCourtDateEmailNotification,
+  formatCourtDateNotificationCondition,
+  formatHeadsUpSmsNotification,
   formatReadyForCourtSmsNotification,
   generateRequestPdf,
 } from '../../formatters'
@@ -134,7 +135,7 @@ export class NotificationService {
     existingCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
-    const smsText = formatHeadsUpNotification(
+    const smsText = formatHeadsUpSmsNotification(
       existingCase.prosecutor?.name || user.name,
       existingCase.arrestDate,
       existingCase.requestedCourtDate,
@@ -200,8 +201,27 @@ export class NotificationService {
   private async sendCourtDateEmail(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
+    const condition = formatCourtDateNotificationCondition(
+      existingCase.courtDate,
+    )
+
+    const notifications = await this.notificationModel.findAll({
+      where: {
+        caseId: existingCase.id,
+        type: NotificationType.COURT_DATE,
+      },
+      order: [['created', 'DESC']],
+    })
+
+    if (notifications?.length > 0 && notifications[0].condition === condition) {
+      return {
+        notificationSent: false,
+        notification: notifications[0],
+      }
+    }
+
     const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
-    const text = formatCourtDateNotification(
+    const text = formatCourtDateEmailNotification(
       existingCase.court,
       existingCase.courtDate,
       existingCase.courtRoom,
@@ -218,6 +238,7 @@ export class NotificationService {
       existingCase.id,
       NotificationType.COURT_DATE,
       [recipient],
+      condition,
     )
   }
 

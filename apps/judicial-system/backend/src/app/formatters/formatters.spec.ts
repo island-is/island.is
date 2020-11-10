@@ -7,6 +7,7 @@ import {
   formatConclusion,
   formatCourtCaseNumber,
   formatCourtDateEmailNotification,
+  formatCourtDateNotificationCondition,
   formatCustodyProvisions,
   formatHeadsUpSmsNotification,
   formatProsecutorDemands,
@@ -328,5 +329,18 @@ describe('formatCourtDateNotification', () => {
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram 24. desember 2020 kl. 18:00. Dómsalur: 101.',
     )
+  })
+})
+
+describe('formatCourtDateNotificationCondition', () => {
+  test('should format court date notification condition', () => {
+    // Arrange
+    const courtDate = new Date('2020-12-20T13:32')
+
+    // Act
+    const res = formatCourtDateNotificationCondition(courtDate)
+
+    // Assert
+    expect(res).toBe('courtDate=20.12.2020 13:32')
   })
 })
