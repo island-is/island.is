@@ -149,6 +149,7 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
   width: '100%',
   top: '65px !important',
   transform: 'none !important',
+  margin: '0 !important',
   ...themeUtils.responsiveStyle({
     md: {
       top: '70px !important',
