@@ -1,0 +1,12 @@
+.statusbar {
+  background: #f2f7ff;
+  border: 1px solid #ccdfff;
+  box-sizing: border-box;
+  border-radius: 5px;
+  padding: 15px;
+
+  &.error {
+    background: #fff2f6;
+    border: 1px solid #ffccdc;
+  }
+}
