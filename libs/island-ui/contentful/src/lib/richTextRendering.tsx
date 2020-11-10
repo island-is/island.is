@@ -12,10 +12,7 @@ import {
   documentToReactComponents,
   RenderMark,
 } from '@contentful/rich-text-react-renderer'
-import {
-  CompanyList,
-  CompanyListConnected,
-} from '@island.is/island-ui/connected'
+import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'

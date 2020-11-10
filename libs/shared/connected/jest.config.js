@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'island-ui-connected',
+  name: 'shared-connected',
   preset: '../../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -8,5 +8,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/island-ui/connected',
+  coverageDirectory: '../../../coverage/libs/shared/connected',
 }

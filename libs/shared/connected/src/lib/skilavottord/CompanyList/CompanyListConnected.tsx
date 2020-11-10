@@ -30,7 +30,7 @@ export const CompanyListConnected: FC<CompanyListConnectedProps> = ({
 
   const { data, error, loading } = useQuery(RECYCLING_PARTNERS, {
     client: new ApolloClient({
-      name: 'island-ui-connected-skilavottord-client',
+      name: 'shared-connected-skilavottord-client',
       version: '0.1',
       link: new HttpLink({
         uri: graphqlLink,
