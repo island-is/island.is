@@ -37,9 +37,10 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const nationalId = user?.nationalId ?? ''
+  const nationalId = user?.nationalId
   const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
+    skip: !nationalId
   })
 
   const cars = data?.skilavottordVehicles || []

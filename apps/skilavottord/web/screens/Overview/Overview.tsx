@@ -30,10 +30,11 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const nationalId = user?.nationalId ?? ''
+  const nationalId = user?.nationalId
   const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
     fetchPolicy: 'cache-and-network',
+    skip: !nationalId
   })
 
   const cars = data?.skilavottordVehicles || []
