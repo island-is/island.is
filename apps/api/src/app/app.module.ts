@@ -42,7 +42,9 @@ const autoSchemaFile = debug ? 'apps/api/src/api.graphql' : true
     }),
     ContentSearchModule,
     CmsModule,
-    ApplicationModule,
+    ApplicationModule.register({
+      baseApiUrl: environment.applicationSystem.baseApiUrl,
+    }),
     FileUploadModule,
     DocumentModule.register({
       basePath: environment.documentService.basePath,

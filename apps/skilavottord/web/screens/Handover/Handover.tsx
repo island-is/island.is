@@ -1,15 +1,30 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
+import { useMutation, useQuery } from '@apollo/client'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Box, Stack, Text, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Text,
+  Button,
+  LoadingIcon,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import * as styles from './Handover.treat'
-import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import {
+  ProcessPageLayout,
+  Modal,
+  OutlinedError,
+} from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
-import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
+import * as styles from './Handover.treat'
 
 const Handover: FC = () => {
+  const { user } = useContext(UserContext)
+  const [requestType, setRequestType] = useState(null)
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -21,6 +36,28 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
+  const nationalId = user?.nationalId ?? ''
+  const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
+    variables: { nationalId },
+  })
+
+  const cars = data?.skilavottordVehicles || []
+
+  const [
+    setRecyclingRequest,
+    { error: mutationError, loading: mutationLoading },
+  ] = useMutation(CREATE_RECYCLING_REQUEST, {
+    onCompleted() {
+      if (requestType === 'cancelled') {
+        setModal(false)
+        router.replace(routes.myCars)
+      }
+    },
+    onError() {
+      return mutationError
+    },
+  })
+
   useEffect(() => {
     if (width < theme.breakpoints.md) {
       return setIsMobile(true)
@@ -28,12 +65,83 @@ const Handover: FC = () => {
     setIsMobile(false)
   }, [width])
 
+  useEffect(() => {
+    // because user can view this page after set pendingRecycle to check the process,
+    // don't call setRecyclingRequest if the car has already been set to pendingRecycle
+    cars.map((car) => {
+      if (car.permno === id && car.status !== 'pendingRecycle') {
+        setRequestType('pendingReycle')
+        setRecyclingRequest({
+          variables: {
+            permno: id,
+            nameOfRequestor: user?.name,
+            requestType: 'pendingRecycle',
+          },
+        })
+      }
+    })
+  }, [user, id, cars])
+
   const onContinue = () => {
-    router.replace(routes.myCars)
+    router.push(routes.myCars)
   }
 
-  const onCancel = () => {
+  const onCancelRecycling = () => {
     setModal(true)
+  }
+
+  const onConfirmCancellation = () => {
+    setRequestType('cancelled')
+    setRecyclingRequest({
+      variables: {
+        permno: id,
+        nameOfRequestor: user?.name,
+        requestType: 'cancelled',
+      },
+    })
+  }
+
+  const onCancelCancellation = () => {
+    setModal(false)
+  }
+
+  if (
+    (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
+    error ||
+    (loading && !data)
+  ) {
+    return (
+      <ProcessPageLayout
+        sectionType={'citizen'}
+        activeSection={1}
+        activeCar={id.toString()}
+      >
+        {mutationLoading || loading ? (
+          <Box textAlign="center">
+            <Stack space={4}>
+              <Text variant="h1">{t.titles.loading}</Text>
+              <LoadingIcon size={50} />
+            </Stack>
+          </Box>
+        ) : (
+          <Stack space={4}>
+            <Text variant="h1">{t.titles.error}</Text>
+            <OutlinedError
+              title={t.error.title}
+              message={t.error.message}
+              primaryButton={{
+                text: `${t.error.primaryButton}`,
+                action: () => router.reload(),
+              }}
+              secondaryButton={{
+                text: `${t.error.secondaryButton}`,
+                action: () => router.push(routes.myCars),
+              }}
+            />
+          </Stack>
+        )}
+      </ProcessPageLayout>
+    )
   }
 
   return (
@@ -44,7 +152,7 @@ const Handover: FC = () => {
     >
       <Stack space={6}>
         <Stack space={2}>
-          <Text variant="h1">{t.title}</Text>
+          <Text variant="h1">{t.titles.success}</Text>
           <Text>{t.info}</Text>
         </Stack>
         <Stack space={2}>
@@ -59,7 +167,7 @@ const Handover: FC = () => {
           {isMobile ? (
             <Box paddingBottom={4} className={styles.cancelButtonContainer}>
               <Button
-                onClick={onCancel}
+                onClick={onCancelRecycling}
                 variant="text"
                 colorScheme="destructive"
               >
@@ -68,7 +176,7 @@ const Handover: FC = () => {
             </Box>
           ) : (
             <Button
-              onClick={onCancel}
+              onClick={onCancelRecycling}
               variant="ghost"
               colorScheme="destructive"
             >
@@ -82,15 +190,17 @@ const Handover: FC = () => {
       </Stack>
       <Modal
         show={showModal}
-        onCancel={() => setModal(false)}
-        onContinue={() => {
-          router.replace(routes.myCars)
-          setModal(false)
-        }}
-        title={t.cancelModal.title}
+        onContinue={onConfirmCancellation}
+        onCancel={onCancelCancellation}
+        title={
+          mutationError ? t.cancelModal.titles.error : t.cancelModal.titles.info
+        }
         text={t.cancelModal.info}
         continueButtonText={t.cancelModal.buttons.continue}
         cancelButtonText={t.cancelModal.buttons.cancel}
+        loading={mutationLoading}
+        error={mutationError}
+        errorText={t.cancelModal.error}
       />
     </ProcessPageLayout>
   )

@@ -13,28 +13,28 @@ const Wrapper: React.FC<{ defaultValues: Record<string, any> }> = ({
 
 describe('DatePickerController', () => {
   it('should render properly', () => {
-    const { getByText } = render(
+    const { getByDisplayValue } = render(
       <Wrapper defaultValues={{ id: '2020-10-02' }}>
         <DatePickerController id="id" label="date" />
       </Wrapper>,
     )
-    expect(getByText('10/02/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('10/02/2020')).toBeInTheDocument()
   })
 
   it('should render an error message', () => {
-    const { getByText } = render(
+    const { getByText, getByDisplayValue } = render(
       <Wrapper defaultValues={{ id: '2020-10-02' }}>
         <DatePickerController id="id" label="date" error="error indeed" />
       </Wrapper>,
     )
-    expect(getByText('10/02/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('10/02/2020')).toBeInTheDocument()
 
     expect(getByText('error indeed')).toBeInTheDocument()
   })
 
   it('should render with a placeholder', () => {
-    const { getByText } = render(
-      <Wrapper defaultValues={{}}>
+    const { getByPlaceholderText } = render(
+      <Wrapper defaultValues={{ id: undefined }}>
         <DatePickerController
           id="id"
           label="date"
@@ -42,11 +42,11 @@ describe('DatePickerController', () => {
         />
       </Wrapper>,
     )
-    expect(getByText('great placeholder')).toBeInTheDocument()
+    expect(getByPlaceholderText('great placeholder')).toBeInTheDocument()
   })
 
   it('should render no placeholder if the datepicker has a selected value', () => {
-    const { getByText, queryByText } = render(
+    const { getByDisplayValue, queryByDisplayValue } = render(
       <Wrapper defaultValues={{ id: '2020-10-02' }}>
         <DatePickerController
           id="id"
@@ -55,18 +55,18 @@ describe('DatePickerController', () => {
         />
       </Wrapper>,
     )
-    expect(queryByText('great placeholder')).not.toBeInTheDocument()
-    expect(getByText('10/02/2020')).toBeInTheDocument()
+    expect(queryByDisplayValue('great placeholder')).not.toBeInTheDocument()
+    expect(getByDisplayValue('10/02/2020')).toBeInTheDocument()
   })
 
   it('should change date value on date select', () => {
-    const { getByText } = render(
+    const { getByDisplayValue, getByText } = render(
       <Wrapper defaultValues={{ id: '2020-10-02' }}>
         <DatePickerController id="id" label="date" />
       </Wrapper>,
     )
-    fireEvent.click(getByText('10/02/2020'))
+    fireEvent.click(getByDisplayValue('10/02/2020'))
     fireEvent.click(getByText('15'))
-    expect(getByText('10/15/2020')).toBeInTheDocument()
+    expect(getByDisplayValue('10/15/2020')).toBeInTheDocument()
   })
 })

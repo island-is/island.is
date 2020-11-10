@@ -1,13 +1,13 @@
 import {
   formatDate,
   formatNationalId,
+  laws,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
+  CaseCustodyProvisions,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
-
-import { Case } from '../models'
 
 export function formatProsecutorDemands(
   accusedNationalId: string,
@@ -31,6 +31,15 @@ export function formatProsecutorDemands(
   }.`
 }
 
+export const formatCustodyProvisions = (
+  custodyProvisions: CaseCustodyProvisions[],
+) => {
+  return custodyProvisions
+    ?.sort()
+    .reduce((s, l) => `${s}${laws[l]}\n`, '')
+    .slice(0, -1)
+}
+
 export function formatCourtCaseNumber(
   court: string,
   courtCaseNumber: string,
@@ -41,18 +50,22 @@ export function formatCourtCaseNumber(
   )} ${courtCaseNumber}`
 }
 
-export function formatConclusion(existingCase: Case): string {
-  return existingCase.rejecting
+export function formatConclusion(
+  accusedNationalId: string,
+  accusedName: string,
+  rejecting: boolean,
+  custodyEndDate: Date,
+  isolation: boolean,
+): string {
+  return rejecting
     ? 'Beiðni um gæsluvarðhald hafnað.'
-    : `Kærði, ${existingCase.accusedName} kt.${
-        existingCase.accusedNationalId
-      } skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
-        existingCase.custodyEndDate,
-        'PPPp',
-      )}.${
-        existingCase.custodyRestrictions?.includes(
-          CaseCustodyRestrictions.ISOLATION,
-        )
+    : `Kærði, ${accusedName} ${formatNationalId(
+        accusedNationalId,
+      )} skal sæta gæsluvarðhaldi, þó ekki lengur en til ${formatDate(
+        custodyEndDate,
+        'PPPPp',
+      )?.replace('dagur,', 'dagsins')}.${
+        isolation
           ? ' Kærði skal sæta einangrun meðan á gæsluvarðhaldi stendur.'
           : ''
       }`

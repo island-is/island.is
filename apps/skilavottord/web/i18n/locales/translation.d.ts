@@ -66,11 +66,12 @@ export interface Confirm {
 }
 
 export interface Handover {
-  title: string
+  titles: HandoverTitles
   subTitles: HandoverSubTitles
   info: string
   subInfo: string
   buttons: HandoverButtons
+  error: Errors
   cancelModal: CancelModal
 }
 
@@ -95,9 +96,15 @@ export interface ProcessSections {
 }
 
 export interface CancelModal {
-  title: string
+  titles: CancelModalTitles
   info: string
   buttons: ProcessButtons
+  error: Errors
+}
+
+export interface CancelModalTitles {
+  info: string
+  error: string
 }
 
 export interface DataSubtitles {
@@ -152,6 +159,12 @@ export interface ProcessButtons {
 export interface CheckBox {
   label: string
   linkLabel: string
+}
+
+export interface HandoverTitles {
+  success: string
+  error: string
+  loading: string
 }
 
 export interface HandoverSubTitles {
