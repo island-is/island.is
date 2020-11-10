@@ -42,7 +42,7 @@ export const GDPR = () => {
         router.reload()
       },
       onError() {
-        console.log(mutationError)
+        return mutationError
       },
     },
   )

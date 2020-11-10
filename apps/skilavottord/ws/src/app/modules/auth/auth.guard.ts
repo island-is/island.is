@@ -21,28 +21,19 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   options: AuthorizeOptions
 
   canActivate(context: ExecutionContext) {
-    // console.log("--- canActivate method starting")
     const ctx = GqlExecutionContext.create(context)
     const { req } = ctx.getContext()
     return super.canActivate(new ExecutionContextHost([req]))
   }
 
   handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
-    //console.log("--- handleRequest method starting")
     const { throwOnUnAuthorized, role } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
       throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
-    /* console.log(user)
-    let rulla: Role = "admin"
-    console.log(rulla)
-    rulla=authService.getRole(user)
-    console.log(rulla)
-    console.log("  - before checkRole")*/
     if (!authService.checkRole(user, role)) {
       throw new ForbiddenError('Forbidden')
     }
-    //console.log(role)
     return user
   }
 }

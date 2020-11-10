@@ -7,7 +7,7 @@ import {
   GridRow,
   Inline,
   Tag,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -44,12 +44,12 @@ export const InfoScreen: FC<Props> = ({
     <>
       <Box marginBottom={[4, 6, 9]}>
         <GridRow>
-          <GridColumn span={['12/12', '7/12']}>
-            <Box marginTop={[2, 3, 8]} marginBottom={2}>
+          <GridColumn span={['12/12', '7/12']} order={[2, 1]}>
+            <Box marginBottom={2}>
               <Box display="flex" marginBottom={[2, 3]}>
                 <Inline space={1}>
-                  <Typography variant="h1">{formatMessage(title)}</Typography>
-                  <Tag variant="mint" label>
+                  <Text variant="h1">{formatMessage(title)}</Text>
+                  <Tag variant="blue" label>
                     {formatMessage({
                       id: 'service.portal:in-progress',
                       defaultMessage: 'Í vinnslu',
@@ -58,14 +58,12 @@ export const InfoScreen: FC<Props> = ({
                 </Inline>
               </Box>
               <Box marginBottom={[3, 4, 6]}>
-                <Typography variant="intro">{formatMessage(intro)}</Typography>
+                <Text variant="intro">{formatMessage(intro)}</Text>
               </Box>
               {list && (
                 <>
                   <Box marginBottom={[2, 3]}>
-                    <Typography variant="h2">
-                      {formatMessage(list.title)}
-                    </Typography>
+                    <Text variant="h2">{formatMessage(list.title)}</Text>
                   </Box>
                   <BulletList>
                     {list.items.map((item, index) => (
@@ -83,8 +81,10 @@ export const InfoScreen: FC<Props> = ({
               )}
             </Box>
           </GridColumn>
-          <GridColumn span={['12/12', '5/12']}>
-            <img src={figure} alt={`skrautmynd fyrir ${title}`} />
+          <GridColumn span={['12/12', '5/12']} order={[1, 2]}>
+            <Box marginBottom={[3, 0]}>
+              <img src={figure} alt={`skrautmynd fyrir ${title}`} />
+            </Box>
           </GridColumn>
         </GridRow>
       </Box>

@@ -14,17 +14,6 @@ export interface Car {
   status: string
 }
 
-export interface MockRecyclingPartner {
-  id: number
-  name: string
-  address: string
-  postNumber: number
-  city?: string
-  website?: string
-  phone?: string
-  active?: boolean
-}
-
 export interface RecyclingPartner {
   companyId: string
   companyName: string

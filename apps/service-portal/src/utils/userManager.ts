@@ -11,14 +11,15 @@ const settings: UserManagerSettings = {
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
-  silent_redirect_uri: `${window.location.origin}/silent/signin-oidc`,
+  // TODO: Pending support for Silent signin from Identity server
+  //silent_redirect_uri: `${window.location.origin}/silent/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   redirect_uri: `${window.location.origin}/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   response_type: 'code',
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
-  automaticSilentRenew: true,
+  automaticSilentRenew: false,
   scope: 'openid profile offline_access api_resource.scope',
   userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
 }

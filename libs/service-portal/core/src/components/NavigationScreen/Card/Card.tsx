@@ -1,4 +1,4 @@
-import { Box, Inline, Tag, Typography } from '@island.is/island-ui/core'
+import { Box, Inline, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
@@ -33,9 +33,9 @@ const Card: FC<Props> = ({ title, description, tags, disabled }) => {
       paddingX={4}
     >
       <Box marginBottom={1}>
-        <Typography variant="h3" color="blue400">
+        <Text variant="h3" color="blue400">
           {formatMessage(title)}
-        </Typography>
+        </Text>
       </Box>
       <Box marginBottom={3}>{formatMessage(description)}</Box>
       <Inline space={1}>

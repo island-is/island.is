@@ -1,6 +1,7 @@
 import {
   CaseAppealDecision,
   CaseCustodyProvisions,
+  CaseGender,
   UpdateCase,
   User,
   UserRole,
@@ -42,7 +43,7 @@ const testCase1 = {
   accusedAddress: 'Harringvej 2',
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
-  requestedCourtDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-16T19:51:00.000Z',
   requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
   lawsBroken: 'string',
   custodyProvisions: [
@@ -57,6 +58,7 @@ const testCase1 = {
   comments: 'string',
   prosecutor: null,
   courtCaseNumber: null,
+  courtDate: null,
   courtStartTime: null,
   courtEndTime: null,
   courtAttendees: null,
@@ -85,9 +87,10 @@ const testCase2 = {
   accusedNationalId: 'string',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
+  accusedGender: CaseGender.MALE,
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
-  requestedCourtDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -99,6 +102,7 @@ const testCase2 = {
   comments: 'string',
   prosecutor: null,
   courtCaseNumber: null,
+  courtDate: null,
   courtStartTime: null,
   courtEndTime: null,
   courtAttendees: null,
@@ -115,6 +119,8 @@ const testCase2 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   notifications: null,
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase3 = {
@@ -126,9 +132,10 @@ const testCase3 = {
   accusedNationalId: '1111110000',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
+  accusedGender: CaseGender.MALE,
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
-  requestedCourtDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-16T19:51:00.000Z',
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
@@ -140,6 +147,7 @@ const testCase3 = {
   comments: 'string',
   prosecutor: null,
   courtCaseNumber: null,
+  courtDate: null,
   courtStartTime: null,
   courtEndTime: null,
   courtAttendees: null,
@@ -156,6 +164,8 @@ const testCase3 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   notifications: null,
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 export const mockCaseQueries = [

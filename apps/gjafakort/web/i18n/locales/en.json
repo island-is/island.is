@@ -15,7 +15,7 @@
     "title": "An error occurred",
     "contents": [
       "Something went wrong.",
-      "Please <a href='https://island.is/um-island-is/hafa-samband/'>contact</a> for further help"
+      "Please <a href='https://island.is/stafraent-island/hafa-samband/'>contact</a> for further help"
     ]
   },
   "companies": {
@@ -434,7 +434,7 @@
       },
       {
         "title": "Contact",
-        "href": "https://island.is/um-island-is/hafa-samband/"
+        "href": "https://island.is/stafraent-island/hafa-samband/"
       }
     ],
     "bottomLinks": [
@@ -463,7 +463,7 @@
         "title": "Undirskriftarlistar"
       },
       {
-        "href": "https://island.is/um-island-is/algengar-spurningar/",
+        "href": "https://island.is/stafraent-island/algengar-spurningar/",
         "title": "FAQs"
       },
       {
