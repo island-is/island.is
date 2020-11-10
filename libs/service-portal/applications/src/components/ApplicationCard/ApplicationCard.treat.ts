@@ -16,3 +16,8 @@ export const link = style({
     textDecoration: 'none',
   },
 })
+
+export const wipTag = style({
+  top: theme.spacing['1'],
+  right: theme.spacing['1'],
+})

@@ -35,6 +35,10 @@ import {
   SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
+import {
+  ProsecutorSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 
 export const CreateCaseMutation = gql`
   mutation CreateCaseMutation($input: CreateCaseInput!) {
@@ -48,6 +52,8 @@ export const CreateCaseMutation = gql`
       accusedName
       accusedAddress
       accusedGender
+      requestedDefenderName
+      requestedDefenderEmail
       court
       arrestDate
       requestedCourtDate
@@ -316,7 +322,11 @@ export const StepOne: React.FC = () => {
   ])
 
   return (
-    <PageLayout activeSection={0} activeSubSection={0} isLoading={isLoading}>
+    <PageLayout
+      activeSection={Sections.PROSECUTOR}
+      activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
+      isLoading={isLoading}
+    >
       {workingCase ? (
         <>
           <Box marginBottom={10}>

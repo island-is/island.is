@@ -75,6 +75,6 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
 
   //TODO
   @Field(() => [RecyclingRequestModel], { nullable: true })
-  @HasMany(() => RecyclingRequestModel)
-  recyclingRequests!: RecyclingRequestModel[]
+  @HasMany(() => RecyclingRequestModel, { foreignKey: { allowNull: true } })
+  recyclingRequests?: RecyclingRequestModel[]
 }

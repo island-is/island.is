@@ -19,7 +19,6 @@ import { UseGuards } from '@nestjs/common'
 @Resolver()
 export class UserProfileResolver {
   constructor(private readonly userUserProfileService: UserProfileService) {}
-  //Needs authentication
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(@CurrentUser() user: User): Promise<UserProfile | null> {
     return this.userUserProfileService.getUser(user.nationalId)

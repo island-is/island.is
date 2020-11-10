@@ -8,6 +8,8 @@ import {
 import { User } from 'oidc-client'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
+import { useNationalRegistryInfo } from '@island.is/service-portal/graphql'
+import { defineMessage } from 'react-intl'
 
 interface Props {
   userInfo: User
@@ -15,8 +17,29 @@ interface Props {
   onSubmit: () => void
 }
 
+const maleGreeting = defineMessage({
+  id: 'service.portal:welcome-male',
+  defaultMessage: 'Velkominn á mínar síður á island.is',
+})
+
+const femaleGreeting = defineMessage({
+  id: 'service.portal:welcome-female',
+  defaultMessage: 'Velkomin á mínar síður á island.is',
+})
+
+const nonBinaryGreeting = defineMessage({
+  id: 'service.portal:welcome-nonbinary',
+  defaultMessage: 'Velkomið á mínar síður á island.is',
+})
+
 export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
   const { formatMessage } = useLocale()
+  const { data: natRegInfo } = useNationalRegistryInfo()
+  const hasMaleGreeting =
+    natRegInfo?.gender === 'Karl' || natRegInfo?.gender === 'Drengur'
+  const hasFemaleGreeting =
+    natRegInfo?.gender === 'Kona' || natRegInfo?.gender === 'Stúlka'
+  const hasNonBinaryGreeting = natRegInfo?.gender === 'Kynsegin'
 
   return (
     <>
@@ -35,10 +58,9 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
             )}
           </Text>
           <Text variant="h1" marginBottom={3}>
-            {formatMessage({
-              id: 'service.portal:welcome',
-              defaultMessage: 'Velkomin á mínar síður á island.is',
-            })}
+            {hasMaleGreeting && formatMessage(maleGreeting)}
+            {hasFemaleGreeting && formatMessage(femaleGreeting)}
+            {hasNonBinaryGreeting && formatMessage(nonBinaryGreeting)}
           </Text>
           <Text>
             {formatMessage({
@@ -51,12 +73,8 @@ export const IntroStep: FC<Props> = ({ userInfo, onClose, onSubmit }) => {
             })}
           </Text>
         </GridColumn>
-        <GridColumn
-          order={[1, 1, 2]}
-          offset={['0', '0', '1/7']}
-          span={['0', '0', '2/7']}
-        >
-          <img src="assets/images/jobs.jpg" alt="Skrautmynd" />
+        <GridColumn order={[1, 1, 2]} span={['0', '0', '3/7']}>
+          <img src="assets/images/jobsGrid.jpg" alt="Skrautmynd" />
         </GridColumn>
       </GridRow>
       <Box display="flex" justifyContent="spaceBetween" marginTop={8}>

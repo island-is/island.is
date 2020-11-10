@@ -4,9 +4,9 @@ import * as styles from './FixedNav.treat'
 import {
   ContentBlock,
   Box,
-  IconDeprecated as Icon,
   ButtonDeprecated as Button,
   FocusableBox,
+  Logo,
 } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
@@ -51,7 +51,7 @@ export const FixedNav: FC = () => {
           justifyContent="spaceBetween"
         >
           <FocusableBox href={makePath()} marginRight={2}>
-            <Icon type="logo" color="white" height="40" />
+            <Logo width={40} iconOnly solid={true} />
           </FocusableBox>
           <Box
             display="flex"
