@@ -18,6 +18,7 @@
 
 /*/air-discount-scheme/                                   @island-is/vice-versa
 /*/gjafakort/                                             @island-is/vice-versa
+/libs/application/templates/driving-license/              @island-is/vice-versa
 
 /apps/application-system/                                 @island-is/aranja
 /libs/api/domains/application/                            @island-is/aranja

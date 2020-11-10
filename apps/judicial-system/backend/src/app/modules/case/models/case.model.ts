@@ -17,6 +17,7 @@ import {
   CaseCustodyProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -80,6 +81,27 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   accusedAddress: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseGender),
+  })
+  accusedGender: CaseGender
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestedDefenderName: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestedDefenderEmail: string
 
   @Column({
     type: DataType.STRING,

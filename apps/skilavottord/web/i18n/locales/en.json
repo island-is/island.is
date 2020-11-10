@@ -68,7 +68,11 @@
     }
   },
   "handover": {
-    "title": "Successfully confirmed for recycling",
+    "titles": {
+      "success": "Successfully confirmed for recycling",
+      "error": "We couldn’t mark your car for recycling",
+      "loading": "Signing car for recycling"
+    },
     "info": "The car has been successfully confirmed for recycling and is now ready to be handed over to a recycling company.",
     "subTitles": {
       "nextStep": "Next step: Handover the car to recycling company",
@@ -79,12 +83,27 @@
       "cancel": "Cancel recycling",
       "close": "Close"
     },
+    "error": {
+      "title": "Problem connecting to database",
+      "message": "We ran into a problem marking your car for recycling. Please try again.",
+      "primaryButton": "Try again",
+      "secondaryButton": "Cancel"
+    },
     "cancelModal": {
-      "title": "Cancel the recycling process for this car",
+      "titles": {
+        "info": "Cancel the recycling process for this car",
+        "error": "We couldn’t cancel process"
+      },
       "info": "When you cancel the recycling the car cannot be recycled at the recycling companies until you mark it for recycling again. You can simply redo the process if change your mind.",
       "buttons": {
         "cancel": "No",
         "continue": "Yes"
+      },
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem canceling your car. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
       }
     }
   },
@@ -95,6 +114,7 @@
       "payment": "Payment"
     },
     "info": {
+      "oldDeregistration": "The car has been successfully recycled, there is no more action needed.",
       "payment": "Money will be payed by Fjársýsla ríkisins to your state collector within 2 days of the payment has been initiated. You will find your payment",
       "paymentLinkText": "your financial pages"
     },
@@ -103,6 +123,11 @@
       "company": "Handed over to",
       "authority": "Car deregistered with Samgöngustofa",
       "fund": "Car payment inititated by Fjársýsla ríkisins"
+    },
+    "error": {
+      "title": "Problem connecting to database",
+      "message": "We ran into a problem getting information about your car. Please try again later.",
+      "primaryButton": "Back to my cars"
     },
     "buttons": {
       "close": "Close"
@@ -132,7 +157,7 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+    "table": ["Reg nr", "Model", "Year", "User", "Deregistered"]
   },
   "companyInfo": {
     "title": "Company information",
@@ -206,13 +231,28 @@
       }
     },
     "deregister": {
-      "title": "Deregister car",
-      "info": "Confirm car for deregistration. This process cannot be undone.",
+      "titles": {
+        "success": "Deregister car",
+        "error": "Car could not be added",
+        "loading": "Deregistering car",
+        "notfound": "Car not found"
+      },
+      "info": {
+        "success": "Confirm car for deregistration. This process cannot be undone.",
+        "error": "We couldn’t find any car with that registration number",
+        "notfound": "This can be because the owner has not marked it for recycling at"
+      },
       "buttons": {
         "back": "Back",
         "confirm": "Confirm"
       },
-      "success": "Deregistration was successful."
+      "success": "Deregistration was successful.",
+      "error": {
+        "title": "Problem connecting to database",
+        "message": "We ran into a problem marking the car for deregistration. Please try again.",
+        "primaryButton": "Try again",
+        "secondaryButton": "Cancel"
+      }
     }
   },
   "recyclingFundOverview": {
@@ -227,7 +267,7 @@
       "label": "Search for reg nr",
       "placeholder": "Search for reg nr"
     },
-    "table": ["Reg nr", "Brand", "Model", "Year", "Company", "Deregistered"]
+    "table": ["Reg nr", "Model", "Year", "Company", "Deregistered"]
   },
   "recyclingFundSidenav": {
     "title": "Skilavottord",

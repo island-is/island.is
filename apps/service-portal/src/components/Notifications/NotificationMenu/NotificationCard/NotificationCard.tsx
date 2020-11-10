@@ -12,7 +12,7 @@ interface Props {
 }
 
 const NotificationCard: FC<Props> = ({ card, onClick }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   return (
     <Box
@@ -34,13 +34,15 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         <Text variant="eyebrow" color="purple400">
           {card.provider}
         </Text>
-        <Tag variant="blue">{card.type}</Tag>
+        <Tag variant="blue" label>
+          {lang === 'en' ? 'Notification' : 'Tilkynning'}
+        </Tag>
       </Box>
       <Stack space={1}>
         <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-          <Text variant="h4">{card.title}</Text>
+          <Text variant="h4">{formatMessage(card.title)}</Text>
           {card.wip && (
-            <Tag variant="purple">
+            <Tag variant="purple" label>
               {formatMessage({
                 id: 'service.portal:in-progress',
                 defaultMessage: 'Í vinnslu',
@@ -48,7 +50,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
             </Tag>
           )}
         </Box>
-        <Text as="div">{card.text}</Text>
+        <Text as="div">{formatMessage(card.text)}</Text>
         <Box
           display="flex"
           justifyContent="flexStart"
@@ -57,7 +59,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
         >
           <Link to={card.link.url} className={styles.link} onClick={onClick}>
             <Button variant="text" size="small" icon="arrowForward">
-              {card.link.title}
+              {formatMessage(card.link.title)}
             </Button>
           </Link>
         </Box>

@@ -7,7 +7,7 @@ import {
 import { environment } from '../environments'
 
 const settings: UserManagerSettings = {
-  authority: environment.identityServer.IDENTITY_SERVER_BASE_URL,
+  authority: environment.identityServer.IDENTITY_SERVER_ISSUER_URL,
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase

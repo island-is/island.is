@@ -1,28 +1,28 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, act, waitFor } from '@testing-library/react'
+import { render, waitFor, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne, { CreateCaseMutation } from './StepOne'
-import { Route, Router, MemoryRouter } from 'react-router-dom'
 import * as Constants from '../../../../utils/constants'
 import { userContext } from '../../../../utils/userContext'
 import {
   mockCaseQueries,
   mockProsecutorUserContext,
+  mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import '@testing-library/jest-dom'
-import '@testing-library/jest-dom/extend-expect'
 import { MockedProvider } from '@apollo/client/testing'
+import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import formatISO from 'date-fns/formatISO'
 
-describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
+describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
     // Arrange
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa/test_id']}>
+          <MemoryRouter initialEntries={['/krafa/test_id_2']}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
@@ -34,336 +34,313 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
     // Assert
     expect(
       await waitFor(
-        () => (getByTestId('accusedName') as HTMLInputElement).value,
+        () => (screen.getByLabelText('Fullt nafn *') as HTMLInputElement).value,
       ),
     ).toEqual('Jon Harring')
 
     expect(
-      await waitFor(
-        () => (getByTestId('accusedAddress') as HTMLInputElement).value,
-      ),
+      (screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement)
+        .value,
     ).toEqual('Harringvej 2')
-  })
+  }, 10000)
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        policeCaseNumber: '010-1991-191',
-        accusedNationalId: '1111111110',
-        accusedName: 'string',
-        accusedAddress: 'string',
-        arrestDate: '2020-09-16T19:51:28.224Z',
-        requestedCourtDate: '2020-09-16T19:51:28.224Z',
-      })
-    })
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
+          <MemoryRouter initialEntries={['/krafa/test_id_3']}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
     // Assert
+
     expect(
-      getByTestId('continueButton') as HTMLButtonElement,
+      await waitFor(
+        () =>
+          screen.getByRole('button', {
+            name: /Halda áfram/i,
+          }) as HTMLButtonElement,
+      ),
     ).not.toBeDisabled()
   })
+})
 
-  test('should display an empty form if there is nothing in local storage', async () => {
+describe('/krafa without ID', () => {
+  test('should display an empty form if there is no id in url', async () => {
     // Arrange
-    const history = createMemoryHistory()
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({})
-    })
 
-    const { getByTestId, queryAllByTestId } = render(
+    render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
+          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
     // Act
     const aa = [
-      getByTestId(/policeCaseNumber/i),
-      getByTestId(/nationalId/i),
-      getByTestId(/accusedName/i),
-      getByTestId(/accusedAddress/i),
-      getByTestId(/arrestTime/i),
-      getByTestId(/requestedCourtDate/i),
+      await waitFor(() => screen.getByLabelText('Slá inn LÖKE málsnúmer *')),
+      await waitFor(() => screen.getByLabelText('Kennitala *')),
+      await waitFor(() => screen.getByLabelText('Fullt nafn *')),
+      await waitFor(() => screen.getByLabelText('Lögheimili/dvalarstaður *')),
+      await waitFor(() => screen.getByLabelText('Tímasetning *')),
+      await waitFor(() => screen.getByLabelText('Ósk um tíma *')),
     ]
 
-    const court = getByTestId(/select-court/i).getElementsByClassName(
-      'singleValue',
-    )[0].innerHTML
+    const court = screen
+      .getByTestId(/select-court/i)
+      .getElementsByClassName('singleValue')[0].innerHTML
 
-    const datepickers = queryAllByTestId(/datepicker-value/i)
+    const datepickers = await waitFor(() =>
+      screen.queryAllByTestId(/datepicker-value/i),
+    )
 
     // Assert
     expect(aa.filter((a) => a.innerHTML !== '').length).toEqual(0)
     expect(court).toEqual('Héraðsdómur Reykjavíkur')
     expect(datepickers.length).toEqual(0)
-    expect(getByTestId('continueButton') as HTMLButtonElement).toBeDisabled()
-  })
-
-  test('should persist data if data is in localstorage', async () => {
-    // Arrange
-
-    // Mock call to localstorage.getItem
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({})
-    })
-
-    // Mock reload function
-    const reloadFn = () => {
-      window.location.reload(true)
-    }
-
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: { reload: jest.fn() },
-    })
-
-    window.location.reload = jest.fn()
-
-    const history = createMemoryHistory()
-
-    const spy = jest.spyOn(window.location, 'reload')
-
-    // Act
-    const { getByTestId } = render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
-        </userContext.Provider>
-      </MockedProvider>,
-    )
-    const policeCaseNumber = getByTestId(
-      /policeCaseNumber/i,
-    ) as HTMLInputElement
-    const nationalId = getByTestId(/nationalId/i) as HTMLInputElement
-    const accusedName = getByTestId(/accusedName/i) as HTMLInputElement
-    const accusedAddress = getByTestId(/accusedAddress/i) as HTMLInputElement
-
-    act(() => {
-      userEvent.type(policeCaseNumber, 'x-007-2')
-      userEvent.tab()
-
-      userEvent.type(nationalId, '1234567890')
-      userEvent.tab()
-
-      userEvent.type(accusedName, 'Mikki Refur')
-      userEvent.tab()
-
-      userEvent.type(accusedAddress, 'Undraland 2')
-      userEvent.tab()
-    })
-
-    reloadFn()
-
-    // Assert
-    expect(policeCaseNumber.value).toEqual('x-007-2')
-    await waitFor(() => expect(nationalId.value).toEqual('1234567890'))
-    expect(accusedName.value).toEqual('Mikki Refur')
-    expect(accusedAddress.value).toEqual('Undraland 2')
-    expect(spy).toHaveBeenCalled()
-  })
-
-  test("should display the correct arrestTime and requestedCourtDate if it's in localstorage", () => {
-    // Arrange
-    const history = createMemoryHistory()
-
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        arrestDate: '2020-10-24T13:37:00Z',
-        requestedCourtDate: '2020-11-02T12:03:00Z',
-      })
-    })
-
-    // Act
-    const { getByTestId } = render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
-        </userContext.Provider>
-      </MockedProvider>,
-    )
-
-    // Assert
-    expect((getByTestId('arrestTime') as HTMLInputElement).value).toEqual(
-      '13:37',
-    )
     expect(
-      (getByTestId('requestedCourtDate') as HTMLInputElement).value,
-    ).toEqual('12:03')
-  })
-
-  test("should display nothing if arrestTime and requestedCourtDate don't have a time set in localstorage", () => {
-    // Arrange
-    const history = createMemoryHistory()
-
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        arrestDate: '2020-10-24',
-        requestedCourtDate: '2020-11-02',
-      })
-    })
-
-    // Act
-    const { getByTestId } = render(
-      <MockedProvider mocks={mockCaseQueries} addTypename={false}>
-        <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
-        </userContext.Provider>
-      </MockedProvider>,
-    )
-
-    // Assert
-    expect((getByTestId('arrestTime') as HTMLInputElement).value).toEqual('')
+      screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
+    ).not.toBeChecked()
     expect(
-      (getByTestId('requestedCourtDate') as HTMLInputElement).value,
-    ).toEqual('')
+      screen.getByRole('radio', { name: 'Kona' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('radio', { name: 'Annað' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
   })
 
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const history = createMemoryHistory()
+    const now = new Date()
+    const arrestDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    )
+    arrestDate.setHours(17, 0, 0)
+    const lastDateOfTheMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+    )
+    lastDateOfTheMonth.setHours(17, 0)
 
-    // Have arrestDate and requestedCourtDate in localstorage because it's hard to use the datepicker with useEvents
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        arrestDate: '2020-10-15',
-        requestedCourtDate: '2020-10-16',
-        accusedName: 'Jon Harring',
-      })
+    let promiseResolve: (value?: unknown) => void
+    const promise = new Promise(function (resolve) {
+      promiseResolve = resolve
     })
 
-    Storage.prototype.setItem = jest.fn()
-
-    // Act and Assert
-    const { getByTestId } = render(
+    render(
       <MockedProvider
-        mocks={[].concat(mockCaseQueries).concat([
-          {
-            request: {
-              query: CreateCaseMutation,
-              variables: {
-                input: {
-                  policeCaseNumber: '000-0000-0010',
-                  accusedNationalId: '1112902539',
-                  court: 'Héraðsdómur Reykjavíkur',
-                  accusedName: 'Jon Harring',
-                  accusedAddress: '',
-                  arrestDate: '2020-10-15',
-                  requestedCourtDate: '2020-10-16',
+        mocks={[]
+          .concat(mockCaseQueries)
+          .concat([
+            {
+              request: {
+                query: CreateCaseMutation,
+                variables: {
+                  input: {
+                    policeCaseNumber: '000-0000-0010',
+                    accusedNationalId: '1112902539',
+                    court: 'Héraðsdómur Reykjavíkur',
+                    accusedName: '',
+                    accusedAddress: '',
+                    requestedDefenderName: '',
+                    requestedDefenderEmail: '',
+                    accusedGender: null,
+                    arrestDate: null,
+                    requestedCourtDate: null,
+                  },
                 },
               },
+              result: () => {
+                setTimeout(() => promiseResolve(), 1000)
+
+                return { data: { createCase: { id: 'testid' } } }
+              },
             },
-            result: {
-              data: {},
-            },
-          },
-        ])}
+          ])
+          .concat(
+            mockUpdateCaseMutation([
+              {
+                id: 'testid',
+                accusedName: 'Jon Harring',
+              } as UpdateCase,
+              {
+                id: 'testid',
+                accusedAddress: 'Harringvej 2',
+              } as UpdateCase,
+              {
+                id: 'testid',
+                accusedGender: CaseGender.FEMALE,
+              } as UpdateCase,
+              {
+                id: 'testid',
+                arrestDate: formatISO(arrestDate, { representation: 'date' }),
+              } as UpdateCase,
+              {
+                id: 'testid',
+                arrestDate: formatISO(arrestDate),
+              } as UpdateCase,
+              {
+                id: 'testid',
+                requestedCourtDate: formatISO(lastDateOfTheMonth, {
+                  representation: 'date',
+                }),
+              } as UpdateCase,
+              {
+                id: 'testid',
+                requestedCourtDate: formatISO(lastDateOfTheMonth),
+              } as UpdateCase,
+            ]),
+          )}
         addTypename={false}
       >
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
+          <MemoryRouter initialEntries={['/krafa']}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await act(async () => {
-      await userEvent.type(
-        getByTestId('policeCaseNumber') as HTMLInputElement,
-        '000-0000-0010',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+    // Act and Assert
+    userEvent.type(
+      await waitFor(
+        () =>
+          screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
+      ),
+      '000-0000-0010',
+    )
 
-      await userEvent.type(
-        getByTestId('nationalId') as HTMLInputElement,
-        '1112902539',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+    userEvent.tab()
 
-      await userEvent.type(
-        getByTestId('accusedName') as HTMLInputElement,
-        'Jon Harring',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
 
-      await userEvent.type(
-        getByTestId('accusedAddress') as HTMLInputElement,
-        'Harringvej 2',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+    userEvent.type(
+      screen.getByLabelText('Kennitala *') as HTMLInputElement,
+      '1112902539',
+    )
 
-      await userEvent.type(
-        getByTestId('arrestTime') as HTMLInputElement,
-        '12:31',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(true)
+    userEvent.tab()
 
-      await userEvent.type(
-        getByTestId('requestedCourtDate') as HTMLInputElement,
-        '12:31',
-      )
-      userEvent.tab()
-      expect(
-        (getByTestId('continueButton') as HTMLButtonElement).disabled,
-      ).toBe(false)
-    })
+    await promise
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+
+    userEvent.type(
+      screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
+      'Jon Harring',
+    )
+
+    userEvent.tab()
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+
+    userEvent.type(
+      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
+      'Harringvej 2',
+    )
+    userEvent.tab()
+
+    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
+
+    // Select dates
+    const datePickerWrappers = screen.getAllByTestId('datepicker')
+
+    expect(datePickerWrappers.length).toEqual(2)
+
+    const arrestedWrapper = within(datePickerWrappers[0])
+
+    const arrestedDatePicker = arrestedWrapper.getAllByText('Veldu dagsetningu')
+
+    userEvent.click(arrestedDatePicker[0])
+
+    userEvent.click(
+      arrestedWrapper.getAllByText((now.getDate() + 1).toString())[0],
+    )
+
+    const hearingWrapper = within(datePickerWrappers[1])
+
+    const hearingDatePicker = hearingWrapper.getAllByText('Veldu dagsetningu')
+
+    userEvent.click(hearingDatePicker[0])
+
+    const lastDayOfTheMonth = lastDateOfTheMonth.getDate().toString()
+
+    const lastDays = hearingWrapper.getAllByText(lastDayOfTheMonth)
+
+    expect(lastDays.length).toBeGreaterThan(0)
+
+    const lastDayOfCurrentMonth = lastDays[lastDays.length - 1]
+
+    userEvent.click(lastDayOfCurrentMonth)
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+
+    userEvent.type(screen.getByLabelText('Tímasetning *'), '17:00')
+
+    userEvent.tab()
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).toBeDisabled()
+
+    userEvent.type(screen.getByLabelText('Ósk um tíma *'), '17:00')
+
+    userEvent.tab()
+
+    expect(
+      screen.getByRole('button', {
+        name: /Halda áfram/i,
+      }) as HTMLButtonElement,
+    ).not.toBeDisabled()
   })
 
   test('should save case if accused name is entered first and then police case number and accused national id', async () => {
     // Arrange
-    const history = createMemoryHistory()
-    Storage.prototype.setItem = jest.fn()
-
-    Storage.prototype.getItem = jest.fn(() => {
-      return JSON.stringify({
-        arrestDate: '2020-11-02T12:03:00Z',
-        requestedCourtDate: '2020-11-12T12:03:00Z',
-      })
-    })
-
     let createCalled = false
 
     // Act
-    const { getByTestId } = render(
+    render(
       <MockedProvider
         mocks={[].concat(mockCaseQueries).concat([
           {
@@ -376,15 +353,18 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
                   court: 'Héraðsdómur Reykjavíkur',
                   accusedName: 'Gervipersona',
                   accusedAddress: 'Batcave',
-                  arrestDate: '2020-11-02T12:03:00Z',
-                  requestedCourtDate: '2020-11-12T12:03:00Z',
+                  requestedDefenderName: 'Garfield',
+                  requestedDefenderEmail: 'gf@cartoon.io',
+                  accusedGender: CaseGender.OTHER,
+                  arrestDate: null,
+                  requestedCourtDate: null,
                 },
               },
             },
             result: () => {
               createCalled = true
               return {
-                data: {},
+                data: { createCase: { id: 'testid' } },
               }
             },
           },
@@ -392,48 +372,62 @@ describe(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`, () => {
         addTypename={false}
       >
         <userContext.Provider value={mockProsecutorUserContext}>
-          <Router history={history}>
-            <StepOne />
-          </Router>
+          <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
+              <StepOne />
+            </Route>
+          </MemoryRouter>
         </userContext.Provider>
       </MockedProvider>,
     )
 
-    await act(async () => {
-      await userEvent.type(
-        getByTestId('accusedName') as HTMLInputElement,
-        'Gervipersona',
-      )
+    userEvent.type(
+      await waitFor(
+        () => screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
+      ),
+      'Gervipersona',
+    )
 
-      userEvent.tab()
+    userEvent.tab()
 
-      await userEvent.type(
-        getByTestId('accusedAddress') as HTMLInputElement,
-        'Batcave',
-      )
+    userEvent.click(screen.getByRole('radio', { name: 'Annað' }))
 
-      userEvent.tab()
+    await userEvent.type(
+      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
+      'Batcave',
+    )
 
-      await userEvent.type(
-        getByTestId('nationalId') as HTMLInputElement,
-        '0000000000',
-      )
+    userEvent.tab()
 
-      userEvent.tab()
+    await userEvent.type(
+      screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      'Garfield',
+    )
 
-      await userEvent.type(
-        getByTestId('policeCaseNumber') as HTMLInputElement,
-        '020-0202-2929',
-      )
+    userEvent.tab()
 
-      userEvent.tab()
+    await userEvent.type(
+      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+      'gf@cartoon.io',
+    )
 
-      expect((getByTestId('nationalId') as HTMLInputElement).value).toEqual(
-        '0000000000',
-      )
-    })
+    userEvent.tab()
+
+    await userEvent.type(
+      screen.getByLabelText('Kennitala *') as HTMLInputElement,
+      '0000000000',
+    )
+
+    userEvent.tab()
+
+    await userEvent.type(
+      screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
+      '020-0202-2929',
+    )
+
+    userEvent.tab()
 
     // Assert
-    expect(createCalled).toBe(true)
+    await waitFor(() => expect(createCalled).toBe(true))
   })
 })

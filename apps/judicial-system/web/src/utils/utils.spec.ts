@@ -105,20 +105,6 @@ ipsum`
       expect(dd).toEqual('2020-10-24')
     })
   })
-
-  describe('insertAt()', () => {
-    test('should insert a string at a certain position into another string', () => {
-      // Arrange
-      const str = 'Lorem ipsum dolum kara'
-      const insertion = ' lara'
-
-      // Act
-      const result = insertAt(str, insertion, 5)
-
-      // Assert
-      expect(result).toEqual('Lorem lara ipsum dolum kara')
-    })
-  })
 })
 
 describe('Validation', () => {
@@ -199,9 +185,70 @@ describe('Validation', () => {
       expect(r.errorMessage).toEqual('Ekki á réttu formi')
     })
   })
+
+  describe('Validate email format', () => {
+    test('should not be valid if @ is missing', () => {
+      // Arrange
+      const invalidEmail = 'testATtest.is'
+
+      // Act
+      const validation = validate(invalidEmail, 'email-format')
+
+      // Assert
+      expect(validation.isValid).toEqual(false)
+      expect(validation.errorMessage).toEqual('Netfang ekki á réttu formi')
+    })
+
+    test('should not be valid if the ending is less than two characters', () => {
+      // Arrange
+      const invalidEmail = 'testATtest.i'
+
+      // Act
+      const validation = validate(invalidEmail, 'email-format')
+
+      // Assert
+      expect(validation.isValid).toEqual(false)
+      expect(validation.errorMessage).toEqual('Netfang ekki á réttu formi')
+    })
+
+    test('should be valid if email is empty', () => {
+      // Arrange
+
+      // Act
+      const validation = validate('', 'email-format')
+
+      // Assert
+      expect(validation.isValid).toEqual(true)
+    })
+
+    test('should be valid if email is valid', () => {
+      // Arrange
+      const validEmail = 'garfield@garfield.io'
+
+      // Act
+      const validation = validate(validEmail, 'email-format')
+
+      // Assert
+      expect(validation.isValid).toEqual(true)
+    })
+  })
 })
 
 describe('Step helper', () => {
+  describe('insertAt()', () => {
+    test('should insert a string at a certain position into another string', () => {
+      // Arrange
+      const str = 'Lorem ipsum dolum kara'
+      const insertion = ' lara'
+
+      // Act
+      const result = insertAt(str, insertion, 5)
+
+      // Assert
+      expect(result).toEqual('Lorem lara ipsum dolum kara')
+    })
+  })
+
   describe('constructConclution', () => {
     test('should return rejected message if the case is being rejected', () => {
       // Arrange

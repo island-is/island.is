@@ -2,7 +2,6 @@ import {
   ServicePortalModule,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
-import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 import { User } from 'oidc-client'
@@ -12,8 +11,6 @@ export interface StoreState {
   userInfoState: AsyncActionState | 'logging-out'
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
-  subjectList: SubjectListDto[]
-  subjectListState: AsyncActionState
   notificationMenuState: MenuState
   mobileMenuState: MenuState
   routes: ServicePortalRoute[]
@@ -24,8 +21,6 @@ export const initialState: StoreState = {
   userInfoState: 'passive',
   modules: modules,
   navigationState: 'passive',
-  subjectList: [],
-  subjectListState: 'passive',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
   routes: [],
@@ -43,22 +38,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         userInfo: action.payload,
         userInfoState: 'fulfilled',
-      }
-    case ActionType.FetchSubjectListPending:
-      return {
-        ...state,
-        subjectListState: 'pending',
-      }
-    case ActionType.FetchSubjectListFulfilled:
-      return {
-        ...state,
-        subjectListState: 'fulfilled',
-        subjectList: action.payload,
-      }
-    case ActionType.FetchSubjectListFailed:
-      return {
-        ...state,
-        subjectListState: 'failed',
       }
     case ActionType.SetNotificationMenuState:
       return {

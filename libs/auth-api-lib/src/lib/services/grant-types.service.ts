@@ -12,6 +12,22 @@ export class GrantTypeService {
     private logger: Logger,
   ) {}
 
+  /** Get's all Grant Types and count */
+  async findAndCountAll(
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: GrantType[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    return this.grantTypeModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+    })
+  }
+
   /** Get's a grant type by name */
   async getGrantType(name: string): Promise<GrantType | null> {
     this.logger.debug(`Finding grant type for name - "${name}"`)

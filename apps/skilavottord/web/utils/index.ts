@@ -1,2 +1,3 @@
 export { default as isBrowser } from './isBrowser'
-export * from './filterData'
+export * from './filterUtils'
+export * from './dateUtils'

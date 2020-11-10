@@ -1,10 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import cn from 'classnames'
 import {
   ContentBlock,
   Box,
-  Typography,
   Stack,
   Breadcrumbs,
   Button,
@@ -48,8 +46,6 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { ColorSchemeContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
 
-import * as cardStyles from '@island.is/web/components/Card/Card.treat'
-
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
   pages: Query['getAdgerdirPages']
@@ -69,12 +65,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
-
-  const statusNames = {
-    preparing: 'Í undirbúningi',
-    ongoing: 'Í framkvæmd',
-    completed: 'Lokið',
-  }
 
   const { estimatedCostIsk, finalCostIsk } = article
 
@@ -102,27 +92,9 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 </Link>
               ) : null}
               <Stack space={1}>
-                <Typography variant="tag" color="red600">
-                  Staða aðgerðar:
-                </Typography>
-                <Tag variant="red" label>
-                  <Box position="relative">
-                    <Inline space={1} alignY="center">
-                      <span>{statusNames[article.status]}</span>
-                      <span
-                        className={cn(
-                          cardStyles.status,
-                          cardStyles.statusType[article.status],
-                        )}
-                      ></span>
-                    </Inline>
-                  </Box>
-                </Tag>
-              </Stack>
-              <Stack space={1}>
-                <Typography variant="tag" color="red600">
+                <Text variant="tag" color="red600">
                   Málefni:
-                </Typography>
+                </Text>
                 <Inline space={2} alignY="center">
                   {article.tags.map(({ title }, index) => {
                     return (
@@ -197,10 +169,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 </Paragraph>
               </>
             ) : null}
-            <Heading variant="h3" as="h3">
-              Staða
-            </Heading>
-            <Paragraph>{n(article.status)}</Paragraph>
             {!!article.content && <Content document={article.content} />}
           </GridColumn>
         </GridRow>

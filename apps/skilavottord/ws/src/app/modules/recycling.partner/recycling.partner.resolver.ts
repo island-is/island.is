@@ -23,25 +23,6 @@ export class RecyclingPartnerResolver {
     return await this.recyclingPartnerService.findActive()
   }
 
-  //TODO in progress
-  @Query(() => String)
-  async RRTEST(@Args('partnerId') partnerId: string) {
-    const res = await this.recyclingPartnerService.findRecyclingPartnerVehicles(
-      partnerId,
-    )
-    return 'TEST'
-  }
-
-  //TODO in progress
-  @Query(() => [RecyclingPartnerModel])
-  async skilavottordRecyclingPartnerVehicles(
-    @Args('partnerId') partnerId: string,
-  ) {
-    return await this.recyclingPartnerService.findRecyclingPartnerVehicles(
-      partnerId,
-    )
-  }
-
   @Mutation((returns) => Boolean)
   async createSkilavottordRecyclingPartner(
     @Args('companyId') nationalId: string,

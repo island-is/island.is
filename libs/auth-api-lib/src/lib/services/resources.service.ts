@@ -28,6 +28,60 @@ export class ResourcesService {
     private logger: Logger,
   ) {}
 
+  /** Get's all identity resources and total count of rows */
+  async findAndCountAllIdentityResources(
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: IdentityResource[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    return this.identityResourceModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      include: [IdentityResourceUserClaim],
+      distinct: true,
+    })
+  }
+
+  /** Get's all Api resources and total count of rows */
+  async findAndCountAllApiResources(
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: ApiResource[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    return this.apiResourceModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
+      distinct: true,
+    })
+  }
+
+  /** Get's all Api scopes and total count of rows */
+  async findAndCountAllApiScopes(
+    page: number,
+    count: number,
+  ): Promise<{
+    rows: ApiScope[]
+    count: number
+  } | null> {
+    page--
+    const offset = page * count
+    return this.apiScopeModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      include: [ApiScopeUserClaim],
+      distinct: true,
+    })
+  }
+
   /** Gets Identity resource by name */
   async getIdentityResourceByName(
     name: string,

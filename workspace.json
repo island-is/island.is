@@ -112,7 +112,8 @@
             "outputPath": "dist/apps/air-discount-scheme/api",
             "main": "apps/air-discount-scheme/api/src/main.ts",
             "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
-            "assets": []
+            "assets": [],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -195,7 +196,8 @@
                 "input": "apps/air-discount-scheme/backend",
                 "output": "./"
               }
-            ]
+            ],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -451,7 +453,8 @@
             "outputPath": "dist/apps/api",
             "main": "apps/api/src/main.ts",
             "tsConfig": "apps/api/tsconfig.app.json",
-            "showCircularDependencies": false
+            "showCircularDependencies": false,
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -949,13 +952,6 @@
             "jestConfig": "libs/api/domains/documents/jest.config.js",
             "passWithNoTests": true
           }
-        },
-        "schemas/openapi-generator": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "libs/api/domains/documents/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/documents/gen/fetch -i libs/api/domains/documents/skjalabirting-test.yaml"
-          }
         }
       }
     },
@@ -1233,8 +1229,30 @@
             "outputPath": "dist/apps/application-system/api",
             "main": "apps/application-system/api/src/main.ts",
             "tsConfig": "apps/application-system/api/tsconfig.app.json",
-            "assets": ["apps/application-system/api/src/assets"],
-            "webpackConfig": "apps/application-system/api/webpack.config.js"
+            "assets": [
+              {
+                "glob": "*",
+                "input": "apps/application-system/api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": "*",
+                "input": "apps/application-system/api/seeders",
+                "output": "./seeders"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/application-system/api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/application-system/api",
+                "output": "./"
+              }
+            ],
+            "webpackConfig": "apps/application-system/api/webpack.config.js",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -1304,7 +1322,8 @@
             "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/application-system/api"
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "application-system-form": {
@@ -1327,7 +1346,8 @@
             ],
             "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
-            "webpackConfig": "apps/application-system/form/webpack.config.js"
+            "webpackConfig": "apps/application-system/form/webpack.config.js",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -1391,7 +1411,8 @@
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "application-system-form-e2e": {
@@ -1514,6 +1535,35 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-driving-license": {
+      "root": "libs/application/templates/driving-license",
+      "sourceRoot": "libs/application/templates/driving-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-license/tsconfig.lib.json",
+              "libs/application/templates/driving-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/driving-license/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -1874,7 +1924,8 @@
             "outputPath": "dist/apps/gjafakort/api",
             "main": "apps/gjafakort/api/src/main.ts",
             "tsConfig": "apps/gjafakort/api/tsconfig.app.json",
-            "assets": []
+            "assets": [],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -1947,7 +1998,8 @@
                 "input": "apps/gjafakort/application",
                 "output": "./"
               }
-            ]
+            ],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -2045,7 +2097,8 @@
           "options": {
             "outputPath": "dist/apps/gjafakort/queue-listener",
             "main": "apps/gjafakort/queue-listener/src/main.ts",
-            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json"
+            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -2492,7 +2545,8 @@
             "outputPath": "dist/apps/judicial-system/api",
             "main": "apps/judicial-system/api/src/main.ts",
             "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
-            "assets": []
+            "assets": [],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -2581,7 +2635,8 @@
                 "input": "apps/judicial-system/backend",
                 "output": "./"
               }
-            ]
+            ],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -2766,7 +2821,8 @@
             "assets": ["apps/judicial-system/web/src/favicon.ico"],
             "styles": ["apps/judicial-system/web/src/styles.css"],
             "scripts": [],
-            "webpackConfig": "apps/judicial-system/web/webpack.config.js"
+            "webpackConfig": "apps/judicial-system/web/webpack.config.js",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -2974,7 +3030,8 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": ["apps/reference-backend/src/assets"]
+            "assets": ["apps/reference-backend/src/assets"],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -3132,7 +3189,8 @@
               "apps/service-portal/src/assets"
             ],
             "scripts": [],
-            "webpackConfig": "apps/service-portal/webpack.config.js"
+            "webpackConfig": "apps/service-portal/webpack.config.js",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -3613,7 +3671,8 @@
             "outputPath": "dist/apps/services/auth-admin-api",
             "main": "apps/services/auth-admin-api/src/main.ts",
             "tsConfig": "apps/services/auth-admin-api/tsconfig.app.json",
-            "assets": ["apps/services/auth-admin-api/src/assets"]
+            "assets": ["apps/services/auth-admin-api/src/assets"],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -3694,7 +3753,8 @@
                 "input": "libs/auth-api-lib",
                 "output": "./"
               }
-            ]
+            ],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -3793,7 +3853,8 @@
                 "output": "./"
               }
             ],
-            "webpackConfig": "apps/services/search-indexer/webpack.config.js"
+            "webpackConfig": "apps/services/search-indexer/webpack.config.js",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -3883,7 +3944,8 @@
                 "input": "apps/services/user-profile",
                 "output": "./"
               }
-            ]
+            ],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -3970,7 +4032,8 @@
             "outputPath": "dist/apps/services/xroad-collector",
             "main": "apps/services/xroad-collector/src/main.ts",
             "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-            "assets": ["apps/services/xroad-collector/src/assets"]
+            "assets": ["apps/services/xroad-collector/src/assets"],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
@@ -4247,7 +4310,8 @@
                 "input": "apps/skilavottord/ws",
                 "output": "./"
               }
-            ]
+            ],
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {

@@ -1,5 +1,5 @@
 import { style, styleMap, globalStyle } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
@@ -12,7 +12,7 @@ export const inputContainer = style({
   justifyContent: 'space-between',
   borderTopRightRadius: 8,
   borderTopLeftRadius: 8,
-  padding: '7px 24px 13px 7px',
+  padding: '7px 23px 13px 7px',
   width: '100%',
   outline: 'none',
   backgroundColor: theme.color.white,
@@ -20,10 +20,10 @@ export const inputContainer = style({
   lineHeight: 'inherit',
 
   ':active': {
-    boxShadow: '0 0 0 4px transparent',
+    boxShadow: '0 0 0 3px transparent',
   },
   ':focus': {
-    boxShadow: `0 0 0 4px ${theme.color.mint400}`,
+    boxShadow: `0 0 0 3px ${theme.color.mint400}`,
   },
 })
 
@@ -31,7 +31,7 @@ export const inputContainerVariants = styleMap({
   open: {
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,
-    boxShadow: `0 0 0 4px ${theme.color.mint400}`,
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
   closed: {
     borderBottomRightRadius: 8,
@@ -44,7 +44,7 @@ export const inputContainerVariants = styleMap({
 })
 
 export const hasError = style({
-  border: `1px solid ${theme.color.red400}`,
+  border: `1px solid ${theme.color.red600}`,
 
   ':hover': {
     borderColor: theme.color.blue400,
@@ -68,11 +68,11 @@ export const label = style({
 })
 
 export const requiredStar = style({
-  color: theme.color.red400,
+  color: theme.color.red600,
 })
 
 export const labelError = style({
-  color: theme.color.red400,
+  color: theme.color.red600,
 })
 
 export const value = style({
@@ -82,9 +82,23 @@ export const value = style({
 export const customHeaderContainer = style({
   display: 'flex',
   justifyContent: 'space-between',
+  borderTop: `1px solid ${theme.color.blue200}`,
   borderBottom: `1px solid ${theme.color.blue200}`,
+  paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
   marginBottom: theme.spacing[2],
+})
+
+export const headerSelect = style({
+  border: 'none',
+  appearance: 'none',
+  fontSize: 18,
+  fontWeight: 600,
+  ...themeUtils.responsiveStyle({
+    md: {
+      fontSize: 20,
+    },
+  }),
 })
 
 export const decreaseButton = style({
@@ -93,7 +107,7 @@ export const decreaseButton = style({
   alignItems: 'center',
 
   ':focus': {
-    boxShadow: `0 0 0 4px ${theme.color.mint400}`,
+    boxShadow: `0 0 0 3px ${theme.color.mint400}`,
   },
 })
 
@@ -103,7 +117,7 @@ export const increaseButton = style({
   alignItems: 'center',
 
   ':focus': {
-    boxShadow: `0 0 0 4px ${theme.color.mint400}`,
+    boxShadow: `0 0 0 3px ${theme.color.mint400}`,
   },
 })
 
@@ -114,9 +128,10 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   borderTopLeftRadius: '0',
   borderBottomRightRadius: '8px',
   borderBottomLeftRadius: '8px',
-  boxShadow: `-4px 4px 0px ${theme.color.mint400}, 4px 4px 0px ${theme.color.mint400}`,
+  boxShadow: `inset -3px -3px 0px ${theme.color.mint400}, inset 3px -3px 0px ${theme.color.mint400}`,
   border: 'none',
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  paddingTop: 0,
 })
 
 globalStyle(`${root}.island-ui-datepicker .react-datepicker-wrapper`, {
@@ -128,15 +143,19 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker__header`, {
   borderBottom: 'none',
 })
 
-globalStyle(
-  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^='bottom']`,
-  {
-    marginTop: '0',
-    right: '0',
-    top: '68px !important',
-    transform: 'none !important',
-  },
-)
+globalStyle(`${root}.island-ui-datepicker .react-datepicker-popper`, {
+  marginTop: '0',
+  right: '0',
+  width: '100%',
+  top: '65px !important',
+  transform: 'none !important',
+  margin: '0 !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '70px !important',
+    },
+  }),
+})
 
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__month-container`, {
   float: 'none',
@@ -145,7 +164,7 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker__month`, {
   margin: `0 0 ${theme.spacing[2]}px 0`,
 })
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__day-names`, {
-  marginBottom: '4px',
+  marginBottom: '3px',
 })
 
 globalStyle(`${root} .react-datepicker__day-names, .react-datepicker__week`, {

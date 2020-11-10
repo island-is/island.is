@@ -1,5 +1,5 @@
 import React, { FC, Suspense, useCallback, useMemo } from 'react'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
 import {
   ServicePortalWidget,
@@ -63,9 +63,9 @@ const WidgetLoader: FC<{
       {widgets.map((widget, index) => (
         <Box marginBottom={8} key={index}>
           <Box marginBottom={2}>
-            <Typography variant="h3" as="h3">
+            <Text variant="h3" as="h3">
               {formatMessage(widget.name)}
-            </Typography>
+            </Text>
           </Box>
           <Widget
             key={`widget-${index}`}
