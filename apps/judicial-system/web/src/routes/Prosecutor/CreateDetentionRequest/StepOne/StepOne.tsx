@@ -9,12 +9,11 @@ import {
   Input,
   Box,
   Select,
-  Option,
   DatePicker,
   GridContainer,
   RadioButton,
 } from '@island.is/island-ui/core'
-import { validate, Validation } from '../../../../utils/validate'
+import { validate } from '../../../../utils/validate'
 import { isNextDisabled } from '../../../../utils/stepHelper'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
@@ -44,8 +43,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import {
   ProsecutorSubsections,
+  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import { ValueType } from 'react-select/src/types'
 import * as styles from './StepOne.treat'
 
 export const CreateCaseMutation = gql`
@@ -107,7 +108,7 @@ export const CreateCaseMutation = gql`
 
 export const StepOne: React.FC = () => {
   const history = useHistory()
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case | null>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
 
   const [
@@ -142,11 +143,11 @@ export const StepOne: React.FC = () => {
 
   const { id } = useParams<{ id: string }>()
 
-  const policeCaseNumberRef = useRef<HTMLInputElement>()
-  const accusedNationalIdRef = useRef<HTMLInputElement>()
-  const defenderEmailRef = useRef<HTMLInputElement>()
-  const arrestTimeRef = useRef<HTMLInputElement>()
-  const requestedCourtTimeRef = useRef<HTMLInputElement>()
+  const policeCaseNumberRef = useRef<HTMLInputElement>(null)
+  const accusedNationalIdRef = useRef<HTMLInputElement>(null)
+  const defenderEmailRef = useRef<HTMLInputElement>(null)
+  const arrestTimeRef = useRef<HTMLInputElement>(null)
+  const requestedCourtTimeRef = useRef<HTMLInputElement>(null)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -193,27 +194,27 @@ export const StepOne: React.FC = () => {
 
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
-      workingCase.id === '' &&
-      policeCaseNumberRef.current.value !== '' &&
-      accusedNationalIdRef.current.value !== ''
+      workingCase?.id === '' &&
+      policeCaseNumberRef.current?.value !== '' &&
+      accusedNationalIdRef.current?.value !== ''
 
     if (isPossibleToSave) {
       const { data } = await createCaseMutation({
         variables: {
           input: {
-            policeCaseNumber: policeCaseNumberRef.current.value,
-            accusedNationalId: accusedNationalIdRef.current.value.replace(
+            policeCaseNumber: policeCaseNumberRef.current?.value,
+            accusedNationalId: accusedNationalIdRef.current?.value.replace(
               '-',
               '',
             ),
-            court: workingCase.court,
-            accusedName: workingCase.accusedName,
-            accusedAddress: workingCase.accusedAddress,
-            requestedDefenderName: workingCase.requestedDefenderName,
-            requestedDefenderEmail: workingCase.requestedDefenderEmail,
-            accusedGender: workingCase.accusedGender,
-            arrestDate: workingCase.arrestDate,
-            requestedCourtDate: workingCase.requestedCourtDate,
+            court: workingCase?.court,
+            accusedName: workingCase?.accusedName,
+            accusedAddress: workingCase?.accusedAddress,
+            requestedDefenderName: workingCase?.requestedDefenderName,
+            requestedDefenderEmail: workingCase?.requestedDefenderEmail,
+            accusedGender: workingCase?.accusedGender,
+            arrestDate: workingCase?.arrestDate,
+            requestedCourtDate: workingCase?.requestedCourtDate,
           },
         },
       })
@@ -222,14 +223,16 @@ export const StepOne: React.FC = () => {
 
       if (resCase) {
         history.replace(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${resCase.id}`)
+
         setWorkingCase({
           ...workingCase,
           id: resCase.id,
-          accusedNationalId: accusedNationalIdRef.current.value.replace(
-            '-',
-            '',
-          ),
-          policeCaseNumber: policeCaseNumberRef.current.value,
+          accusedNationalId:
+            accusedNationalIdRef.current?.value.replace('-', '') || '',
+          policeCaseNumber: policeCaseNumberRef.current?.value || '',
+          created: resCase.created,
+          modified: resCase.modified,
+          state: resCase.state,
         })
       }
     }
@@ -272,11 +275,8 @@ export const StepOne: React.FC = () => {
 
   // Run this if id is in url, i.e. if user is opening an existing request.
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setWorkingCase(resCase)
-    }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     } else if (!id && !workingCase) {
       setWorkingCase({
         id: '',
@@ -289,10 +289,10 @@ export const StepOne: React.FC = () => {
         accusedAddress: '',
         requestedDefenderName: '',
         requestedDefenderEmail: '',
-        accusedGender: null,
+        accusedGender: undefined,
         court: 'Héraðsdómur Reykjavíkur',
-        arrestDate: null,
-        requestedCourtDate: null,
+        arrestDate: undefined,
+        requestedCourtDate: undefined,
       })
     }
   }, [id, workingCase, setWorkingCase, resCase])
@@ -303,34 +303,41 @@ export const StepOne: React.FC = () => {
    * This can't be done in the render function because the time refs will always be null
    * until the user clicks the time inputs and then the continue button becomes enabled.
    *  */
-
   useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.policeCaseNumber,
-        validations: ['empty', 'police-casenumber-format'],
-      },
-      {
-        value: workingCase?.accusedNationalId,
-        validations: ['empty', 'national-id'],
-      },
-      { value: workingCase?.accusedName, validations: ['empty'] },
-      { value: workingCase?.accusedAddress, validations: ['empty'] },
-      { value: defenderEmailRef.current?.value, validations: ['email-format'] },
-      { value: workingCase?.accusedGender, validations: ['empty'] },
-      { value: workingCase?.arrestDate, validations: ['empty'] },
-      {
-        value: arrestTimeRef.current?.value,
-        validations: ['empty', 'time-format'],
-      },
-      { value: workingCase?.requestedCourtDate, validations: ['empty'] },
-      {
-        value: requestedCourtTimeRef.current?.value,
-        validations: ['empty', 'time-format'],
-      },
-    ]
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
+      setIsStepIllegal(
+        isNextDisabled([
+          {
+            value: workingCase.policeCaseNumber,
+            validations: ['empty', 'police-casenumber-format'],
+          },
+          {
+            value: workingCase.accusedNationalId || '',
+            validations: ['empty', 'national-id'],
+          },
+          { value: workingCase.accusedName || '', validations: ['empty'] },
+          { value: workingCase.accusedAddress || '', validations: ['empty'] },
+          {
+            value: workingCase.requestedDefenderEmail || '',
+            validations: ['email-format'],
+          },
+          { value: workingCase.arrestDate || '', validations: ['empty'] },
+          {
+            value: arrestTimeRef.current?.value || '',
+            validations: ['empty', 'time-format'],
+          },
+          {
+            value: workingCase.requestedCourtDate || '',
+            validations: ['empty'],
+          },
+          {
+            value: requestedCourtTimeRef.current?.value || '',
+            validations: ['empty', 'time-format'],
+          },
+        ]),
+      )
+    } else {
+      setIsStepIllegal(true)
     }
   }, [
     workingCase,
@@ -687,9 +694,18 @@ export const StepOne: React.FC = () => {
                     : courts[0].value,
               }}
               options={courts}
-              onChange={({ label }: Option) => {
-                setWorkingCase({ ...workingCase, court: label })
-                updateCase(workingCase.id, parseString('court', label))
+              onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+                setWorkingCase({
+                  ...workingCase,
+                  court: (selectedOption as ReactSelectOption).label,
+                })
+                updateCase(
+                  workingCase.id,
+                  parseString(
+                    'court',
+                    (selectedOption as ReactSelectOption).label,
+                  ),
+                )
               }}
             />
           </Box>
@@ -715,7 +731,8 @@ export const StepOne: React.FC = () => {
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation:
-                        workingCase.arrestDate?.indexOf('T') > -1
+                        workingCase.arrestDate &&
+                        workingCase.arrestDate.indexOf('T') > -1
                           ? 'complete'
                           : 'date',
                     })
@@ -730,7 +747,7 @@ export const StepOne: React.FC = () => {
                       parseString('arrestDate', formattedDate),
                     )
                   }}
-                  handleCloseCalendar={(date: Date) => {
+                  handleCloseCalendar={(date: Date | null) => {
                     if (isNull(date) || !isValid(date)) {
                       setArrestDateErrorMessage('Reitur má ekki vera tómur')
                     }
@@ -749,44 +766,46 @@ export const StepOne: React.FC = () => {
                   errorMessage={arrestTimeErrorMessage}
                   hasError={arrestTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.arrestDate?.indexOf('T') > -1
+                    workingCase.arrestDate &&
+                    workingCase.arrestDate.indexOf('T') > -1
                       ? formatDate(workingCase.arrestDate, TIME_FORMAT)
-                      : null
+                      : undefined
                   }
                   ref={arrestTimeRef}
                   onBlur={(evt) => {
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-                    const arrestDateMinutes = parseTime(
-                      workingCase.arrestDate,
-                      evt.target.value,
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      arrestDate: arrestDateMinutes,
-                    })
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid &&
-                      workingCase.id
-                    ) {
-                      updateCase(
-                        workingCase.id,
-                        parseString('arrestDate', arrestDateMinutes),
+                    if (workingCase.arrestDate) {
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
                       )
-                    } else {
-                      setArrestTimeErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
                       )
+                      const arrestDateMinutes = parseTime(
+                        workingCase.arrestDate,
+                        evt.target.value,
+                      )
+
+                      setWorkingCase({
+                        ...workingCase,
+                        arrestDate: arrestDateMinutes,
+                      })
+
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        updateCase(
+                          workingCase.id,
+                          parseString('arrestDate', arrestDateMinutes),
+                        )
+                      } else {
+                        setArrestTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
                     }
                   }}
                   onFocus={() => setArrestTimeErrorMessage('')}
@@ -816,7 +835,8 @@ export const StepOne: React.FC = () => {
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation:
-                        workingCase.requestedCourtDate?.indexOf('T') > -1
+                        workingCase.requestedCourtDate &&
+                        workingCase.requestedCourtDate.indexOf('T') > -1
                           ? 'complete'
                           : 'date',
                     })
@@ -843,48 +863,50 @@ export const StepOne: React.FC = () => {
                   errorMessage={requestedCourtTimeErrorMessage}
                   hasError={requestedCourtTimeErrorMessage !== ''}
                   defaultValue={
-                    workingCase.requestedCourtDate?.indexOf('T') > -1
+                    workingCase.requestedCourtDate &&
+                    workingCase.requestedCourtDate.indexOf('T') > -1
                       ? formatDate(workingCase.requestedCourtDate, TIME_FORMAT)
-                      : null
+                      : undefined
                   }
                   disabled={!workingCase.requestedCourtDate}
                   ref={requestedCourtTimeRef}
                   onBlur={(evt) => {
-                    const requestedCourtDateMinutes = parseTime(
-                      workingCase.requestedCourtDate,
-                      evt.target.value,
-                    )
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      requestedCourtDate: requestedCourtDateMinutes,
-                    })
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid &&
-                      workingCase.id
-                    ) {
-                      updateCase(
-                        workingCase.id,
-                        parseString(
-                          'requestedCourtDate',
-                          requestedCourtDateMinutes,
-                        ),
+                    if (workingCase.requestedCourtDate) {
+                      const requestedCourtDateMinutes = parseTime(
+                        workingCase.requestedCourtDate,
+                        evt.target.value,
                       )
-                    } else {
-                      setRequestedCourtTimeErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
                       )
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
+                      )
+
+                      setWorkingCase({
+                        ...workingCase,
+                        requestedCourtDate: requestedCourtDateMinutes,
+                      })
+
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        updateCase(
+                          workingCase.id,
+                          parseString(
+                            'requestedCourtDate',
+                            requestedCourtDateMinutes,
+                          ),
+                        )
+                      } else {
+                        setRequestedCourtTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
                     }
                   }}
                   onFocus={() => setRequestedCourtTimeErrorMessage('')}
