@@ -47,10 +47,10 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 export const StepTwo: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>()
+  const requestedCustodyEndTimeRef = useRef<HTMLInputElement>(null)
   const { id } = useParams<{ id: string }>()
 
   const [
@@ -181,16 +181,16 @@ export const StepTwo: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.requestedCustodyEndDate,
+        value: workingCase?.requestedCustodyEndDate || '',
         validations: ['empty'],
       },
       {
-        value: requestedCustodyEndTimeRef.current?.value,
+        value: requestedCustodyEndTimeRef.current?.value || '',
         validations: ['empty', 'time-format'],
       },
-      { value: workingCase?.lawsBroken, validations: ['empty'] },
-      { value: workingCase?.caseFacts, validations: ['empty'] },
-      { value: workingCase?.legalArguments, validations: ['empty'] },
+      { value: workingCase?.lawsBroken || '', validations: ['empty'] },
+      { value: workingCase?.caseFacts || '', validations: ['empty'] },
+      { value: workingCase?.legalArguments || '', validations: ['empty'] },
     ]
 
     if (workingCase) {
@@ -253,7 +253,8 @@ export const StepTwo: React.FC = () => {
                   handleChange={(date) => {
                     const formattedDate = formatISO(date, {
                       representation:
-                        workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                        workingCase.requestedCustodyEndDate &&
+                        workingCase.requestedCustodyEndDate.indexOf('T') > -1
                           ? 'complete'
                           : 'date',
                     })
@@ -270,7 +271,7 @@ export const StepTwo: React.FC = () => {
                         }`),
                     )
                   }}
-                  handleCloseCalendar={(date: Date) => {
+                  handleCloseCalendar={(date: Date | null) => {
                     if (isNull(date) || !isValid(date)) {
                       setRequestedCustodyEndDateErrorMessage(
                         'Reitur má ekki vera tómur',
@@ -291,52 +292,55 @@ export const StepTwo: React.FC = () => {
                   placeholder="Settu inn tíma"
                   ref={requestedCustodyEndTimeRef}
                   defaultValue={
-                    workingCase.requestedCustodyEndDate?.indexOf('T') > -1
+                    workingCase.requestedCustodyEndDate &&
+                    workingCase.requestedCustodyEndDate.indexOf('T') > -1
                       ? formatDate(
                           workingCase.requestedCustodyEndDate,
                           TIME_FORMAT,
                         )
-                      : null
+                      : undefined
                   }
                   disabled={!workingCase?.requestedCustodyEndDate}
                   errorMessage={requestedCustodyEndTimeErrorMessage}
                   hasError={requestedCustodyEndTimeErrorMessage !== ''}
                   onBlur={async (evt) => {
-                    const validateTimeEmpty = validate(
-                      evt.target.value,
-                      'empty',
-                    )
-                    const validateTimeFormat = validate(
-                      evt.target.value,
-                      'time-format',
-                    )
-                    const requestedCustodyEndDateMinutes = parseTime(
-                      workingCase.requestedCustodyEndDate,
-                      evt.target.value,
-                    )
-
-                    setWorkingCase({
-                      ...workingCase,
-                      requestedCustodyEndDate: requestedCustodyEndDateMinutes,
-                      custodyEndDate: requestedCustodyEndDateMinutes,
-                    })
-
-                    if (
-                      validateTimeEmpty.isValid &&
-                      validateTimeFormat.isValid
-                    ) {
-                      await updateCase(
-                        workingCase.id,
-                        JSON.parse(`{
-                            "requestedCustodyEndDate": "${requestedCustodyEndDateMinutes}",
-                            "custodyEndDate": "${requestedCustodyEndDateMinutes}"
-                          }`),
+                    if (workingCase.requestedCustodyEndDate) {
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
                       )
-                    } else {
-                      setRequestedCustodyEndTimeErrorMessage(
-                        validateTimeEmpty.errorMessage ||
-                          validateTimeFormat.errorMessage,
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time-format',
                       )
+                      const requestedCustodyEndDateMinutes = parseTime(
+                        workingCase.requestedCustodyEndDate,
+                        evt.target.value,
+                      )
+
+                      setWorkingCase({
+                        ...workingCase,
+                        requestedCustodyEndDate: requestedCustodyEndDateMinutes,
+                        custodyEndDate: requestedCustodyEndDateMinutes,
+                      })
+
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
+                        await updateCase(
+                          workingCase.id,
+                          JSON.parse(`{
+                              "requestedCustodyEndDate": "${requestedCustodyEndDateMinutes}",
+                              "custodyEndDate": "${requestedCustodyEndDateMinutes}"
+                            }`),
+                        )
+                      } else {
+                        setRequestedCustodyEndTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
+                      }
                     }
                   }}
                   onFocus={() => setRequestedCustodyEndTimeErrorMessage('')}
@@ -398,7 +402,8 @@ export const StepTwo: React.FC = () => {
                           label={provision.brokenLaw}
                           value={provision.value}
                           checked={
-                            workingCase.custodyProvisions?.indexOf(
+                            workingCase.custodyProvisions &&
+                            workingCase.custodyProvisions.indexOf(
                               provision.value,
                             ) > -1
                           }
@@ -408,7 +413,8 @@ export const StepTwo: React.FC = () => {
                             const copyOfState = Object.assign(workingCase, {})
 
                             const provisionIsSelected =
-                              copyOfState.custodyProvisions?.indexOf(
+                              copyOfState.custodyProvisions &&
+                              copyOfState.custodyProvisions.indexOf(
                                 target.value as CaseCustodyProvisions,
                               ) > -1
 
@@ -421,33 +427,37 @@ export const StepTwo: React.FC = () => {
                                 copyOfState.custodyProvisions = []
                               }
 
-                              copyOfState.custodyProvisions.push(
-                                target.value as CaseCustodyProvisions,
-                              )
+                              copyOfState.custodyProvisions &&
+                                copyOfState.custodyProvisions.push(
+                                  target.value as CaseCustodyProvisions,
+                                )
                             }
                             // If the user is unchecking the box, remove the broken law from the state
                             else {
                               const provisions = copyOfState.custodyProvisions
-
-                              provisions.splice(
-                                provisions?.indexOf(
-                                  target.value as CaseCustodyProvisions,
-                                ),
-                                1,
-                              )
+                              if (provisions) {
+                                provisions.splice(
+                                  provisions.indexOf(
+                                    target.value as CaseCustodyProvisions,
+                                  ),
+                                  1,
+                                )
+                              }
                             }
 
                             // Set the updated state as the state
                             setWorkingCase(copyOfState)
 
-                            // Save case
-                            updateCase(
-                              workingCase.id,
-                              parseArray(
-                                'custodyProvisions',
-                                copyOfState.custodyProvisions,
-                              ),
-                            )
+                            if (copyOfState.custodyProvisions) {
+                              // Save case
+                              updateCase(
+                                workingCase.id,
+                                parseArray(
+                                  'custodyProvisions',
+                                  copyOfState.custodyProvisions,
+                                ),
+                              )
+                            }
                           }}
                           large
                         />
@@ -477,7 +487,8 @@ export const StepTwo: React.FC = () => {
                         label={restriction.restriction}
                         value={restriction.value}
                         checked={
-                          workingCase.custodyRestrictions?.indexOf(
+                          workingCase.custodyRestrictions &&
+                          workingCase.custodyRestrictions.indexOf(
                             restriction.value,
                           ) > -1
                         }
@@ -487,7 +498,8 @@ export const StepTwo: React.FC = () => {
                           const copyOfState = Object.assign(workingCase, {})
 
                           const restrictionIsSelected =
-                            copyOfState.requestedCustodyRestrictions?.indexOf(
+                            copyOfState.requestedCustodyRestrictions &&
+                            copyOfState.requestedCustodyRestrictions.indexOf(
                               target.value as CaseCustodyRestrictions,
                             ) > -1
 
@@ -505,14 +517,17 @@ export const StepTwo: React.FC = () => {
                             if (copyOfState.custodyRestrictions === null) {
                               copyOfState.custodyRestrictions = []
                             }
-                            // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
-                            copyOfState.requestedCustodyRestrictions.push(
-                              target.value as CaseCustodyRestrictions,
-                            )
 
-                            copyOfState.custodyRestrictions.push(
-                              target.value as CaseCustodyRestrictions,
-                            )
+                            // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
+                            copyOfState.requestedCustodyRestrictions &&
+                              copyOfState.requestedCustodyRestrictions.push(
+                                target.value as CaseCustodyRestrictions,
+                              )
+
+                            copyOfState.custodyRestrictions &&
+                              copyOfState.custodyRestrictions.push(
+                                target.value as CaseCustodyRestrictions,
+                              )
                           }
                           // If the user is unchecking the box, remove the restriction from the state
                           else {
@@ -522,40 +537,49 @@ export const StepTwo: React.FC = () => {
                             const cRestrictions =
                               copyOfState.custodyRestrictions
 
-                            restrictions.splice(
-                              restrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ),
-                              1,
-                            )
+                            if (restrictions) {
+                              restrictions.splice(
+                                restrictions.indexOf(
+                                  target.value as CaseCustodyRestrictions,
+                                ),
+                                1,
+                              )
 
-                            cRestrictions.splice(
-                              restrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ),
-                              1,
-                            )
+                              if (cRestrictions) {
+                                cRestrictions.splice(
+                                  restrictions.indexOf(
+                                    target.value as CaseCustodyRestrictions,
+                                  ),
+                                  1,
+                                )
+                              }
+                            }
                           }
 
                           // Set the updated state as the state
                           setWorkingCase(copyOfState)
 
                           // Save case
-                          await updateCase(
-                            workingCase.id,
-                            parseArray(
-                              'requestedCustodyRestrictions',
-                              copyOfState.requestedCustodyRestrictions,
-                            ),
-                          )
+                          if (copyOfState.requestedCustodyRestrictions) {
+                            await updateCase(
+                              workingCase.id,
+                              parseArray(
+                                'requestedCustodyRestrictions',
+                                copyOfState.requestedCustodyRestrictions,
+                              ),
+                            )
+                          }
+
                           // TODO: COMBINE IN A SINGLE API CALL
-                          await updateCase(
-                            workingCase.id,
-                            parseArray(
-                              'custodyRestrictions',
-                              copyOfState.custodyRestrictions,
-                            ),
-                          )
+                          if (copyOfState.custodyRestrictions) {
+                            await updateCase(
+                              workingCase.id,
+                              parseArray(
+                                'custodyRestrictions',
+                                copyOfState.custodyRestrictions,
+                              ),
+                            )
+                          }
 
                           setWorkingCase({
                             ...workingCase,
