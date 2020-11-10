@@ -85,10 +85,8 @@ export const HearingArrangements: React.FC = () => {
         )
       }
 
-
       if (!theCase.defenderName) {
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
-
 
         updateCase(
           theCase.id,
