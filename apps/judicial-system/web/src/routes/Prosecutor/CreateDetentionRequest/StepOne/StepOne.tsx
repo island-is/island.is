@@ -317,6 +317,10 @@ export const StepOne: React.FC = () => {
           },
           { value: workingCase.accusedName || '', validations: ['empty'] },
           { value: workingCase.accusedAddress || '', validations: ['empty'] },
+          {
+            value: workingCase.requestedDefenderEmail || '',
+            validations: ['email-format'],
+          },
           { value: workingCase.arrestDate || '', validations: ['empty'] },
           {
             value: arrestTimeRef.current?.value || '',
