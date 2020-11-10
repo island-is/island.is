@@ -42,7 +42,7 @@ export const CasesQuery = gql`
 `
 
 export const DetentionRequests: React.FC = () => {
-  const [cases, setCases] = useState<Case[] | null>(null)
+  const [cases, setCases] = useState<Case[]>()
   const { user } = useContext(userContext)
 
   const isJudge = user?.role === UserRole.JUDGE
