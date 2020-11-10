@@ -27,6 +27,7 @@ import isWithinInterval from 'date-fns/isWithinInterval'
 import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
+import { defineMessage } from 'react-intl'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
@@ -159,13 +160,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     // default text format, singular & plural
     let foundText =
       filteredDocuments.length === 1
-        ? formatMessage({
-            id: 'sp.documents:found.singular',
-            defaultMessage: 'Skjal fannst',
+        ? defineMessage({
+            id: 'sp.documents:found-singular',
+            defaultMessage: 'skjal fannst',
           })
-        : formatMessage({
+        : defineMessage({
             id: 'sp.documents:found',
-            defaultMessage: 'Skjöl fundust',
+            defaultMessage: 'skjöl fundust',
           })
 
     // Handling edge case if lang is IS and documents.length is greater than 11 and ends with 1.
@@ -174,9 +175,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       filteredDocuments.length > 11 &&
       filteredDocuments.length % 10 === 1
     ) {
-      foundText = formatMessage({
-        id: 'sp.documents:found.singular',
-        defaultMessage: 'Skjal fannst',
+      foundText = defineMessage({
+        id: 'sp.documents:found-singular',
+        defaultMessage: 'skjal fannst',
       })
     }
     return foundText
@@ -269,7 +270,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <Column>
                         <Text variant="h3">{`${
                           filteredDocuments.length
-                        } ${documentsFoundText()}`}</Text>
+                        } ${formatMessage(documentsFoundText())}`}</Text>
                       </Column>
                       <Column width="content">
                         <Button variant="text" onClick={handleClearFilters}>
