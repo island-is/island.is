@@ -40,7 +40,7 @@ const Handover: FC = () => {
   const nationalId = user?.nationalId
   const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
-    skip: !nationalId
+    skip: !nationalId,
   })
 
   const cars = data?.skilavottordVehicles || []
@@ -53,7 +53,7 @@ const Handover: FC = () => {
     onCompleted() {
       if (requestType === 'cancelled') {
         setModal(false)
-        router.replace(routes.myCars)
+        routeHome()
       }
     },
     onError() {
@@ -73,6 +73,7 @@ const Handover: FC = () => {
     // don't call setRecyclingRequest if the car has already been set to pendingRecycle
     // and set state invalidCar if activeCar does not exist
     if (activeCar) {
+      setInvalidCar(false)
       switch (activeCar.status) {
         case 'inUse':
         case 'cancelled':
@@ -84,7 +85,6 @@ const Handover: FC = () => {
               requestType: 'pendingRecycle',
             },
           })
-          setInvalidCar(false)
         default:
           break
       }
@@ -93,8 +93,8 @@ const Handover: FC = () => {
     }
   }, [user, id, activeCar])
 
-  const onContinue = () => {
-    router.push(routes.myCars)
+  const routeHome = () => {
+    router.push(routes.myCars).then(() => window.scrollTo(0, 0))
   }
 
   const onCancelRecycling = () => {
@@ -147,7 +147,7 @@ const Handover: FC = () => {
               }}
               secondaryButton={{
                 text: `${t.error.secondaryButton}`,
-                action: () => router.push(routes.myCars),
+                action: () => routeHome(),
               }}
             />
           </Stack>
@@ -195,7 +195,7 @@ const Handover: FC = () => {
               {t.buttons.cancel}
             </Button>
           )}
-          <Button onClick={onContinue} fluid={isMobile}>
+          <Button onClick={routeHome} fluid={isMobile}>
             {t.buttons.close}
           </Button>
         </Box>
