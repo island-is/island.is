@@ -1,3 +1,4 @@
+import { slices } from './fragments'
 import gql from 'graphql-tag'
 
 export const GET_ADGERDIR_PAGES_QUERY = gql`
@@ -26,17 +27,19 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       title
       description
       longDescription
-      content
-      objective
-      estimatedCostIsk
-      finalCostIsk
+      content {
+        ... on Html {
+          __typename
+          id
+          document
+        }
+      }
       tags {
         id
         title
       }
       link
       linkButtonText
-      status
     }
   }
 `
@@ -58,7 +61,13 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
       id
       title
       description
-      content
+      content {
+        ... on Html {
+          __typename
+          id
+          document
+        }
+      }
       slices {
         ... on AdgerdirGroupSlice {
           __typename
@@ -70,7 +79,13 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
             title
             slug
             description
-            content
+            content {
+              ... on Html {
+                __typename
+                id
+                document
+              }
+            }
             tags {
               id
               title
