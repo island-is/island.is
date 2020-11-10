@@ -1,24 +1,20 @@
-import React, { Component, SyntheticEvent } from "react";
+import React, { SyntheticEvent } from "react";
 import ClientDTO from "../../models/dtos/client-dto";
 import axios from "axios";
 import Wrapper from "./Wrapper";
 import StatusBar from "./StatusBar";
-import { render } from "@testing-library/react";
 import APIResponse from "../../models/APIResponse";
-import { createJSDocThisTag } from "typescript";
-
 type Props = {
   client: ClientDTO
 }
 class Client extends React.Component<{ client: ClientDTO }> {
   client: ClientDTO;
   response: APIResponse;
-  state: { count: number, response: APIResponse };
+  state: { response: APIResponse };
 
   constructor(props: Props){
     super(props);
     this.state = {
-      count: 0,
       response: { statusCode: 0, message: null, error: null }
     };
     
@@ -31,10 +27,7 @@ class Client extends React.Component<{ client: ClientDTO }> {
   }
 
   componentDidMount(){
-    this.setState({ response: { statusCode: this.response.statusCode, message: this.response.message }})
-    this.setState({ count: 3});
-    
-    // this.setState( { count: this.state.count});
+    this.setState({ response: { statusCode: this.response.statusCode, message: this.response.message }})  
   }
 
   back = () => {
@@ -48,21 +41,13 @@ class Client extends React.Component<{ client: ClientDTO }> {
   submit = async(e: SyntheticEvent) => {
     e.preventDefault();
     
-    console.log("submit: " + this.state.count);
-
-
-    
     const response = await axios.post(
         '/clients', this.client
     ).catch( (err) =>  {
       console.log(err);
     });
-   
-    // this.props.client.clientUri = "wwwwww.w.wwww.w.w.w.";
-    // console.log(this.response);
-    // this.response.statusCode = response.status;
-    // this.response.message = [response.statusText];
-    
+
+    console.log(response);
     this.componentDidMount();    
   }
 
@@ -72,7 +57,6 @@ class Client extends React.Component<{ client: ClientDTO }> {
         <StatusBar status={this.state.response}></StatusBar>
         <div className="client">
           <div className="client__help"> 
-          {this.state.count}
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
             sed alias neque ullam repudiandae, iste reiciendis suscipit rerum
             officiis necessitatibus doloribus incidunt libero distinctio

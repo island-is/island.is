@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import ClientDTO from "../../models/dtos/client-dto";
 import Wrapper from "./Wrapper";
-import { Link } from "react-router-dom";
 import Paginator from "./Paginator";
+import Link from "next/link";
 
 class Clients extends Component {
   state = {
@@ -66,7 +66,7 @@ class Clients extends Component {
           <h2>Vefir og smáforrit</h2>
           <div className="clients__container__options">
               <div className="clients__container__button">
-                  <Link to={'/app/create'} className="clients__button__new">Bæta við nýjum</Link>
+                  <Link href={'/client'}><a className="clients__button__new">Bæta við nýjum</a></Link>
               </div>
             <div className="clients__container__field">
 
