@@ -75,7 +75,7 @@ if (process.env.INIT_SCHEMA === 'true') {
 } else {
   CacheModule = NestCacheModule.register({
     store: redisStore,
-    redisInstance: createNestJSCache({...}),
+    redisInstance: createRedisCluster({...}),
   })
 }
 ```

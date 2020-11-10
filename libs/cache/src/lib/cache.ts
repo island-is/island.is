@@ -89,7 +89,7 @@ export const createApolloCache = (options: Options) => {
   return new RedisClusterCache(nodes, getRedisClusterOptions(options))
 }
 
-export const createNestJSCache = (options: Options) => {
+export const createRedisCluster = (options: Options) => {
   const nodes = parseNodes(options.nodes)
   logger.info(`Making caching connection with nodes: `, nodes)
   return new Redis.Cluster(nodes, getRedisClusterOptions(options))
