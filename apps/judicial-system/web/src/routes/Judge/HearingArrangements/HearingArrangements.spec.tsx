@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, within } from '@testing-library/react'
+import { render, waitFor, screen } from '@testing-library/react'
 import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
