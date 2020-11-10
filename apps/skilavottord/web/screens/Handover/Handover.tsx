@@ -17,7 +17,7 @@ import {
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/graphql/mutations'
 import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
@@ -46,7 +46,7 @@ const Handover: FC = () => {
   const [
     setRecyclingRequest,
     { error: mutationError, loading: mutationLoading },
-  ] = useMutation(CREATE_RECYCLING_REQUEST, {
+  ] = useMutation(CREATE_RECYCLING_REQUEST_CITIZEN, {
     onCompleted() {
       if (requestType === 'cancelled') {
         setModal(false)
@@ -70,7 +70,7 @@ const Handover: FC = () => {
     // don't call setRecyclingRequest if the car has already been set to pendingRecycle
     cars.map((car) => {
       if (car.permno === id && car.status !== 'pendingRecycle') {
-        setRequestType('pendingReycle')
+        setRequestType('pendingRecycle')
         setRecyclingRequest({
           variables: {
             permno: id,
