@@ -27,6 +27,7 @@ import isWithinInterval from 'date-fns/isWithinInterval'
 import isEqual from 'lodash/isEqual'
 import { ValueType } from 'react-select'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
+import { defineMessage } from 'react-intl'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
@@ -96,7 +97,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   useNamespaces('sp.documents')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
   useScrollTopOnUpdate([page])
 
@@ -154,6 +155,33 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   }, [])
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
+
+  const documentsFoundText = () => {
+    // default text format, singular & plural
+    let foundText =
+      filteredDocuments.length === 1
+        ? defineMessage({
+            id: 'sp.documents:found-singular',
+            defaultMessage: 'skjal fannst',
+          })
+        : defineMessage({
+            id: 'sp.documents:found',
+            defaultMessage: 'skjöl fundust',
+          })
+
+    // Handling edge case if lang is IS and documents.length is greater than 11 and ends with 1.
+    if (
+      lang === 'is' &&
+      filteredDocuments.length > 11 &&
+      filteredDocuments.length % 10 === 1
+    ) {
+      foundText = defineMessage({
+        id: 'sp.documents:found-singular',
+        defaultMessage: 'skjal fannst',
+      })
+    }
+    return foundText
+  }
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
@@ -240,12 +268,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {hasActiveFilters() && (
                     <Columns space={3}>
                       <Column>
-                        <Text variant="h3">
-                          {`${filteredDocuments.length} ${formatMessage({
-                            id: 'sp.documents:found',
-                            defaultMessage: 'skjöl fundust',
-                          })}`}
-                        </Text>
+                        <Text variant="h3">{`${
+                          filteredDocuments.length
+                        } ${formatMessage(documentsFoundText())}`}</Text>
                       </Column>
                       <Column width="content">
                         <Button variant="text" onClick={handleClearFilters}>
