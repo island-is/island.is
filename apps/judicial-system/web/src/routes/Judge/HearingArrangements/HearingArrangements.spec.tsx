@@ -16,8 +16,6 @@ import * as Constants from '../../../utils/constants'
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-
-    // Act and Assert
     render(
       <MockedProvider
         mocks={mockCaseQueries.concat(
@@ -36,11 +34,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             } as UpdateCase,
             {
               id: 'test_id_2',
-              defenderName: 'rassi',
+              defenderName: 'Saul Goodman',
             } as UpdateCase,
             {
               id: 'test_id_2',
-              defenderEmail: 'rassi@prump.is',
+              defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
         )}
@@ -60,8 +58,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    // No need to enter court date and time, because that should be prefilled with requestedCourtDate
-
+    // Act
     userEvent.type(
       await waitFor(() => screen.getByLabelText('Dómsalur *')),
       '999',
@@ -69,6 +66,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     userEvent.tab()
 
+    // Assert
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
@@ -76,7 +74,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).not.toBeDisabled()
   })
 
-  test('should have a prefilled court date and dedender info with requested info', async () => {
+  test('should have a prefilled court date and dedender info with requested  date and dedender info', async () => {
     // Arrange
     render(
       <MockedProvider
@@ -92,11 +90,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             } as UpdateCase,
             {
               id: 'test_id_3',
-              defenderName: 'rassi',
+              defenderName: 'Saul Goodman',
             } as UpdateCase,
             {
               id: 'test_id_3',
-              defenderEmail: 'rassi@prump.is',
+              defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
         )}
@@ -116,8 +114,6 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    // Act
-
     // Assert
     expect(
       await waitFor(
@@ -136,13 +132,13 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         () =>
           (screen.getByLabelText('Nafn verjanda') as HTMLInputElement).value,
       ),
-    ).toEqual('rassi')
+    ).toEqual('Saul Goodman')
 
     expect(
       await waitFor(
         () =>
           (screen.getByLabelText('Netfang verjanda') as HTMLInputElement).value,
       ),
-    ).toEqual('rassi@prump.is')
+    ).toEqual('saul@goodman.com')
   })
 })

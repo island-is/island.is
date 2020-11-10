@@ -117,8 +117,8 @@ const testCase2 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   notifications: null,
-  requestedDefenderName: 'rassi',
-  requestedDefenderEmail: 'rassi@prump.is',
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase3 = {
@@ -161,8 +161,8 @@ const testCase3 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   notifications: null,
-  requestedDefenderName: 'rassi',
-  requestedDefenderEmail: 'rassi@prump.is',
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 export const mockCaseQueries = [
