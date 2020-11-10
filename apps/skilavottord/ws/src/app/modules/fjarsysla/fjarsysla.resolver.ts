@@ -2,6 +2,7 @@ import { Query, Resolver, Args } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import { Fjarsysla } from './models'
 import { FjarsyslaService } from './models/fjarsysla.service'
+import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 
 @Resolver(() => Fjarsysla)
 export class FjarsyslaResolver {
@@ -10,6 +11,7 @@ export class FjarsyslaResolver {
     private fjarsyslaService: FjarsyslaService,
   ) {}
 
+  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => Boolean)
   async skilavottordFjarsyslaSkilagjald(
     @Args('nationalId') nid: string,
