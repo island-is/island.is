@@ -8,14 +8,12 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  NotificationType,
   CaseGender,
 } from '@island.is/judicial-system/types'
 
 import { setup, user } from '../../../../../test/setup'
-import { Notification } from '../../notification/models'
-import { Case } from '../models'
 import { User } from '../../user'
+import { Case } from '../models'
 
 let app: INestApplication
 
@@ -108,15 +106,6 @@ function dbCaseToCase(dbCase: Case) {
   } as unknown) as Case
 }
 
-function dbNotificationToNotification(dbNotification: Notification) {
-  const notification = dbNotification.toJSON() as Notification
-
-  return ({
-    ...notification,
-    created: notification.created && notification.created.toISOString(),
-  } as unknown) as Notification
-}
-
 function parseBoolean(value: string | boolean) {
   return value === 'false' ? false : value === 'true' ? true : value || false
 }
@@ -192,7 +181,6 @@ function expectCasesToMatch(caseOne: Case, caseTwo: Case) {
   )
   expect(caseOne.judgeId || null).toStrictEqual(caseTwo.judgeId || null)
   expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
-  expect(caseOne.notifications).toStrictEqual(caseTwo.notifications)
 }
 
 describe('Case', () => {
@@ -217,15 +205,11 @@ describe('Case', () => {
         await Case.findOne({
           where: { id: response.body.id },
           include: [
-            Notification,
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
           ],
         }).then((value) => {
-          expectCasesToMatch(dbCaseToCase(value), {
-            ...response.body,
-            notifications: [],
-          })
+          expectCasesToMatch(dbCaseToCase(value), response.body)
         })
       })
   })
@@ -251,15 +235,11 @@ describe('Case', () => {
         await Case.findOne({
           where: { id: response.body.id },
           include: [
-            Notification,
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
           ],
         }).then((value) => {
-          expectCasesToMatch(dbCaseToCase(value), {
-            ...response.body,
-            notifications: [],
-          })
+          expectCasesToMatch(dbCaseToCase(value), response.body)
         })
       })
   })
@@ -289,15 +269,11 @@ describe('Case', () => {
           await Case.findOne({
             where: { id: response.body.id },
             include: [
-              Notification,
               { model: User, as: 'prosecutor' },
               { model: User, as: 'judge' },
             ],
           }).then((newValue) => {
-            expectCasesToMatch(dbCaseToCase(newValue), {
-              ...response.body,
-              notifications: [],
-            })
+            expectCasesToMatch(dbCaseToCase(newValue), response.body)
           })
         })
     })
@@ -333,7 +309,6 @@ describe('Case', () => {
             await Case.findOne({
               where: { id: response.body.id },
               include: [
-                Notification,
                 { model: User, as: 'prosecutor' },
                 { model: User, as: 'judge' },
               ],
@@ -345,7 +320,6 @@ describe('Case', () => {
                   created: newValue.judge.created,
                   modified: newValue.judge.modified,
                 },
-                notifications: [],
               })
             })
           })
@@ -377,39 +351,9 @@ describe('Case', () => {
         .then((response) => {
           // Check the response
           const dbCase = dbCaseToCase(value)
-          expectCasesToMatch(response.body, {
-            ...dbCase,
-            notifications: [],
-          } as Case)
+          expectCasesToMatch(response.body, dbCase)
         })
     })
-  })
-
-  it('GET /api/case/:id should include notifications', async () => {
-    await Case.create({ ...getCaseData(), state: CaseState.REJECTED }).then(
-      async (caseValue) => {
-        await Notification.create({
-          caseId: caseValue.id,
-          type: NotificationType.HEADS_UP,
-          message: 'Test Message',
-        }).then(async (notificationValue) => {
-          await request(app.getHttpServer())
-            .get(`/api/case/${caseValue.id}`)
-            .send()
-            .expect(200)
-            .then((response) => {
-              // Check the response
-              const dbCase = dbCaseToCase(caseValue)
-              expectCasesToMatch(response.body, {
-                ...dbCase,
-                notifications: [
-                  dbNotificationToNotification(notificationValue),
-                ],
-              } as Case)
-            })
-        })
-      },
-    )
   })
 
   it('POST /api/case/:id/signature should request a signature for a case', async () => {

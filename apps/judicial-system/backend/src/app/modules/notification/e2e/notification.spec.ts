@@ -5,7 +5,7 @@ import { INestApplication } from '@nestjs/common'
 import { NotificationType } from '@island.is/judicial-system/types'
 
 import { setup, user } from '../../../../../test/setup'
-import { Case } from '../../case/models'
+import { Case } from '../../case'
 import { Notification } from '../models'
 
 let app: INestApplication
@@ -42,8 +42,9 @@ describe('Notification', () => {
           expect(response.body.notification.type).toBe(
             NotificationType.HEADS_UP,
           )
-          expect(response.body.notification.message).toBe(
-            `Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: ${user.name}.`,
+          expect(response.body.notification.condition).toBeNull()
+          expect(response.body.notification.recipients).toBe(
+            `[{"success":true}]`,
           )
 
           // Check the data in the database
@@ -55,7 +56,8 @@ describe('Notification', () => {
               response.body.notification.created,
             )
             expect(value.type).toBe(response.body.notification.type)
-            expect(value.message).toBe(response.body.notification.message)
+            expect(value.condition).toBe(response.body.notification.condition)
+            expect(value.recipients).toBe(response.body.notification.recipients)
           })
         })
     })

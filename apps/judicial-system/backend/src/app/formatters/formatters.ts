@@ -138,7 +138,7 @@ export function formatAppeal(
   }
 }
 
-export function formatHeadsUpNotification(
+export function formatHeadsUpSmsNotification(
   prosecutorName: string,
   arrestDate: Date,
   requestedCourtDate: Date,
@@ -147,8 +147,7 @@ export function formatHeadsUpNotification(
   const prosecutorText = ` Ákærandi: ${prosecutorName}.`
 
   // Arrest date
-  const arrestDateAsString = arrestDate?.toISOString()
-  const arrestDateText = arrestDateAsString
+  const arrestDateText = arrestDate
     ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp').replace(
         ' ',
         ' kl. ',
@@ -156,7 +155,6 @@ export function formatHeadsUpNotification(
     : ''
 
   // Court date
-  const requestedCourtDateAsString = requestedCourtDate?.toISOString()
   const requestedCourtDateText = requestedCourtDate
     ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
         ' ',
@@ -167,7 +165,20 @@ export function formatHeadsUpNotification(
   return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
 }
 
-export function formatCourtDateNotification(
+export function formatReadyForCourtSmsNotification(
+  prosecutorName: string,
+  court: string,
+) {
+  // Prosecutor
+  const prosecutorText = ` Ákærandi: ${prosecutorName}.`
+
+  // Court
+  const courtText = ` Dómstóll: ${court}.`
+
+  return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+}
+
+export function formatCourtDateEmailNotification(
   court: string,
   courtDate: Date,
   courtRoom: string,

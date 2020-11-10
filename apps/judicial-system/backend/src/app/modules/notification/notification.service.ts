@@ -10,13 +10,19 @@ import { environment } from '../../../environments'
 import {
   formatCourtDateNotification,
   formatHeadsUpNotification,
+  formatReadyForCourtSmsNotification,
   generateRequestPdf,
 } from '../../formatters'
-
 import { User } from '../user'
-import { Case } from '../case/models'
+import { Case } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
+
+interface Recipient {
+  address: string
+  success: boolean
+}
+
 @Injectable()
 export class NotificationService {
   constructor(
@@ -30,11 +36,7 @@ export class NotificationService {
     private readonly logger: Logger,
   ) {}
 
-  private async sendSms(
-    caseId: string,
-    notificationType: NotificationType,
-    smsText: string,
-  ): Promise<SendNotificationResponse> {
+  private async sendSms(smsText: string): Promise<Recipient> {
     // Production or local development with judge mobile number
     if (environment.production || environment.notifications.judgeMobileNumber) {
       try {
@@ -43,20 +45,24 @@ export class NotificationService {
           smsText,
         )
       } catch (error) {
-        return { notificationSent: false }
+        this.logger.error(
+          `Failed to send sms to ${environment.notifications.judgeMobileNumber}`,
+          error,
+        )
+        return {
+          address: environment.notifications.judgeMobileNumber,
+          success: false,
+        }
       }
     }
 
-    const notification = await this.notificationModel.create({
-      caseId: caseId,
-      type: notificationType,
-      message: smsText,
-    })
-
-    return { notificationSent: true, notification }
+    return {
+      address: environment.notifications.judgeMobileNumber,
+      success: true,
+    }
   }
 
-  private sendEmail(
+  private async sendEmail(
     name: string,
     email: string,
     subject: string,
@@ -66,30 +72,65 @@ export class NotificationService {
       content: string
       encoding: string
     }[] = null,
-  ): Promise<string> {
-    return this.emailService.sendEmail({
-      from: {
-        name: environment.email.fromName,
-        address: environment.email.fromEmail,
-      },
-      replyTo: {
-        name: environment.email.replyToName,
-        address: environment.email.replyToEmail,
-      },
-      to: [
-        {
-          name: name,
-          address: email,
+  ): Promise<Recipient> {
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.fromName,
+          address: environment.email.fromEmail,
         },
-      ],
-      subject: subject,
-      text: text,
-      html: text,
-      attachments: attachments,
-    })
+        replyTo: {
+          name: environment.email.replyToName,
+          address: environment.email.replyToEmail,
+        },
+        to: [
+          {
+            name: name,
+            address: email,
+          },
+        ],
+        subject: subject,
+        text: text,
+        html: text,
+        attachments: attachments,
+      })
+    } catch (error) {
+      this.logger.error(`Failed to send email to ${email}`, error)
+      return {
+        address: email,
+        success: false,
+      }
+    }
+
+    return {
+      address: email,
+      success: true,
+    }
   }
 
-  private sendHeadsUpSms(
+  private async recordNotification(
+    caseId: string,
+    type: NotificationType,
+    recipients: Recipient[],
+    condition: string = undefined,
+  ): Promise<SendNotificationResponse> {
+    const notification = await this.notificationModel.create({
+      caseId,
+      type,
+      condition,
+      recipients: JSON.stringify(recipients),
+    })
+
+    return {
+      notificationSent: recipients.reduce(
+        (sent, recipient) => sent || recipient.success,
+        false,
+      ),
+      notification,
+    }
+  }
+
+  private async sendHeadsUpSms(
     existingCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
@@ -99,31 +140,26 @@ export class NotificationService {
       existingCase.requestedCourtDate,
     )
 
-    return this.sendSms(existingCase.id, NotificationType.HEADS_UP, smsText)
+    const recipient = await this.sendSms(smsText)
+
+    return this.recordNotification(existingCase.id, NotificationType.HEADS_UP, [
+      recipient,
+    ])
   }
 
   private sendReadyForCourtSms(
     existingCase: Case,
     user: User,
-  ): Promise<SendNotificationResponse> {
-    // Prosecutor
-    const prosecutorText = ` Ákærandi: ${
-      existingCase.prosecutor?.name || user.name
-    }.`
-
-    // Court
-    const courtText = ` Dómstóll: ${existingCase.court}.`
-
-    const smsText = `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
-
-    return this.sendSms(
-      existingCase.id,
-      NotificationType.READY_FOR_COURT,
-      smsText,
+  ): Promise<Recipient> {
+    const smsText = formatReadyForCourtSmsNotification(
+      existingCase.prosecutor?.name || user.name,
+      existingCase.court,
     )
+
+    return this.sendSms(smsText)
   }
 
-  private async sendReadyForCourtEmail(existingCase: Case): Promise<void> {
+  private async sendReadyForCourtEmail(existingCase: Case): Promise<Recipient> {
     const pdf = await generateRequestPdf(existingCase)
 
     const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
@@ -136,7 +172,7 @@ export class NotificationService {
       },
     ]
 
-    await this.sendEmail(
+    return this.sendEmail(
       existingCase.prosecutor?.name,
       existingCase.prosecutor?.email,
       subject,
@@ -149,14 +185,20 @@ export class NotificationService {
     existingCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
-    await this.sendReadyForCourtEmail(existingCase)
+    const recipients = await Promise.all([
+      this.sendReadyForCourtEmail(existingCase),
+      this.sendReadyForCourtSms(existingCase, user),
+    ])
 
-    return this.sendReadyForCourtSms(existingCase, user)
+    return this.recordNotification(
+      existingCase.id,
+      NotificationType.READY_FOR_COURT,
+      recipients,
+    )
   }
 
   private async sendCourtDateEmail(
     existingCase: Case,
-    user: User,
   ): Promise<SendNotificationResponse> {
     const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
     const text = formatCourtDateNotification(
@@ -165,14 +207,18 @@ export class NotificationService {
       existingCase.courtRoom,
     )
 
-    await this.sendEmail(
+    const recipient = await this.sendEmail(
       existingCase.prosecutor?.name,
       existingCase.prosecutor?.email,
       subject,
       text,
     )
 
-    return { notificationSent: true }
+    return this.recordNotification(
+      existingCase.id,
+      NotificationType.COURT_DATE,
+      [recipient],
+    )
   }
 
   getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
@@ -199,7 +245,7 @@ export class NotificationService {
       case NotificationType.READY_FOR_COURT:
         return this.sendReadyForCourtNotifications(existingCase, user)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateEmail(existingCase, user)
+        return this.sendCourtDateEmail(existingCase)
     }
   }
 }

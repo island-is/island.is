@@ -6,10 +6,11 @@ import {
 import {
   formatConclusion,
   formatCourtCaseNumber,
-  formatCourtDateNotification,
+  formatCourtDateEmailNotification,
   formatCustodyProvisions,
-  formatHeadsUpNotification,
+  formatHeadsUpSmsNotification,
   formatProsecutorDemands,
+  formatReadyForCourtSmsNotification,
   formatRestrictions,
 } from './formatters'
 
@@ -271,7 +272,7 @@ describe('formatHeadsUpNotification', () => {
     const requestedCourtDate = new Date('2020-11-25T09:15')
 
     // Act
-    const res = formatHeadsUpNotification(
+    const res = formatHeadsUpSmsNotification(
       prosecutorName,
       arrestDate,
       requestedCourtDate,
@@ -288,11 +289,27 @@ describe('formatHeadsUpNotification', () => {
     const prosecutorName = 'Árni Ákærandi'
 
     // Act
-    const res = formatHeadsUpNotification(prosecutorName, null, null)
+    const res = formatHeadsUpSmsNotification(prosecutorName, null, null)
 
     // Assert
     expect(res).toBe(
       'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi.',
+    )
+  })
+})
+
+describe('formatReadyForCourtSmsNotification', () => {
+  test('should format ready for court SMS notification', () => {
+    // Arrange
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Reykjavíkur'
+
+    // Act
+    const res = formatReadyForCourtSmsNotification(prosecutorName, court)
+
+    // Assert
+    expect(res).toBe(
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
     )
   })
 })
@@ -305,7 +322,7 @@ describe('formatCourtDateNotification', () => {
     const courtRoom = '101'
 
     // Act
-    const res = formatCourtDateNotification(court, courtDate, courtRoom)
+    const res = formatCourtDateEmailNotification(court, courtDate, courtRoom)
 
     // Assert
     expect(res).toBe(

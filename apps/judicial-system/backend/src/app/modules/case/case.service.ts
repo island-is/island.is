@@ -12,7 +12,6 @@ import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { generateRulingPdf, writeFile } from '../../formatters'
 import { User } from '../user'
-import { Notification } from '../notification/models'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, ConfirmSignatureResponse } from './models'
 import { TransitionUpdate } from './case.state'
@@ -76,7 +75,6 @@ export class CaseService {
     return this.caseModel.findAll({
       order: [['modified', 'DESC']],
       include: [
-        Notification,
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
       ],
@@ -89,7 +87,6 @@ export class CaseService {
     return this.caseModel.findOne({
       where: { id },
       include: [
-        Notification,
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
       ],

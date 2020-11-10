@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from '../../case'
 
 @Table({
   tableName: 'notification',
@@ -52,8 +52,15 @@ export class Notification extends Model<Notification> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
-  message: string
+  condition: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  recipients: string
 }

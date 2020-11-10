@@ -9,5 +9,5 @@ export class SendNotificationResponse implements TSendNotificationResponse {
   notificationSent: boolean
 
   @ApiProperty({ type: Notification })
-  notification?: Notification
+  notification: Notification
 }

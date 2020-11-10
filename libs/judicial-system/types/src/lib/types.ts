@@ -81,7 +81,6 @@ export interface Case {
   investigationProgress?: string
   legalArguments?: string
   comments?: string
-  // prosecutorId?: string
   prosecutor?: User
   courtCaseNumber?: string
   courtDate?: string
@@ -102,9 +101,7 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
-  // judgeId?: string
   judge?: User
-  // notifications?: Notification[]
 }
 
 export enum NotificationType {

@@ -1,5 +1,6 @@
 export { writeFile, generateRequestPdf, generateRulingPdf } from './pdf'
 export {
-  formatHeadsUpNotification,
-  formatCourtDateNotification,
+  formatHeadsUpSmsNotification as formatHeadsUpNotification,
+  formatReadyForCourtSmsNotification,
+  formatCourtDateEmailNotification as formatCourtDateNotification,
 } from './formatters'
