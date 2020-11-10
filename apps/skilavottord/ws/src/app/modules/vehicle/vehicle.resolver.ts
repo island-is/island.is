@@ -27,6 +27,17 @@ export class VehicleResolver {
     return res
   }
 
+  @Query(() => VehicleModel)
+  async skilavottordVehicleById(
+    @Args('permno') permno: string,
+  ): Promise<VehicleModel> {
+    const res = await this.vehicleService.findByVehicleId(permno)
+    this.logger.info(
+      'skilavottordVehicleById response:' + JSON.stringify(res, null, 2),
+    )
+    return res
+  }
+
   @Mutation(() => Boolean)
   async createSkilavottordVehicle(
     @Args('permno') permno: string,

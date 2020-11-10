@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import useAuth from '../hooks/useAuth'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { Route, RouteProps } from 'react-router-dom'
 
 export const ProtectedRoute: FC<RouteProps> = (props) => {
@@ -18,7 +18,7 @@ export const ProtectedRoute: FC<RouteProps> = (props) => {
         <Route {...(props as RouteProps)} />
       ) : (
         <Box display="flex" justifyContent="center" margin={12}>
-          <Typography variant="h2">Augnablik</Typography>
+          <Text variant="h2">Augnablik</Text>
         </Box>
       )}
     </>
