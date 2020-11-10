@@ -11,7 +11,7 @@ import { User } from '../user'
 import { Case } from '../case/models'
 import { SendNotificationDto } from './sendNotification.dto'
 import { Notification } from './notification.model'
-import { generateRequestPdf } from '../case/pdf'
+import { generateRequestPdf } from '../../pdf'
 
 @Injectable()
 export class NotificationService {

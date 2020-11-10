@@ -14,7 +14,7 @@ import { User } from '../user'
 import { Notification } from '../notification/notification.model'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureResponse } from './models'
-import { generateRulingPdf, writeFile } from './pdf'
+import { generateRulingPdf, writeFile } from '../../pdf'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()

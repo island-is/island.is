@@ -2,6 +2,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
+
 import {
   formatConclusion,
   formatCourtCaseNumber,
