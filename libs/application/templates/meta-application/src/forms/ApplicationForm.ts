@@ -1,5 +1,6 @@
 import {
   ApplicationTypes,
+  buildCustomField,
   buildForm,
   buildIntroductionField,
   buildMultiField,
@@ -27,15 +28,10 @@ export const ApplicationForm: Form = buildForm({
           id: 'general',
           name: m.generalInfo,
           children: [
-            buildTextField({
+            buildCustomField({
               id: 'applicant.institution',
               name: m.institution,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'applicant.ministry',
-              name: m.ministry,
-              width: 'half',
+              component: 'OrganizationField',
             }),
             buildTextField({
               id: 'applicant.contact',
@@ -81,10 +77,14 @@ export const ApplicationForm: Form = buildForm({
                   width: 'half',
                   variant: 'number',
                 }),
-                buildTextField({
+                buildRadioField({
                   id: 'service.users',
                   name: m.serviceUsers,
-                  width: 'half',
+                  options: [
+                    { value: 'companies', label: m.companiesOptionLabel },
+                    { value: 'individuals', label: m.individualsOptionLabel },
+                    { value: 'both', label: m.bothOptionLabel },
+                  ],
                 }),
               ],
             }),
