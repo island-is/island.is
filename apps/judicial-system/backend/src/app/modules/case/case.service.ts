@@ -10,7 +10,7 @@ import {
 import { EmailService } from '@island.is/email-service'
 
 import { environment } from '../../../environments'
-import { generateRulingPdf, writeFile } from '../../pdf'
+import { generateRulingPdf, writeFile } from '../../formatters'
 import { User } from '../user'
 import { Notification } from '../notification/models'
 import { CreateCaseDto, UpdateCaseDto } from './dto'

@@ -7,12 +7,16 @@ import { EmailService } from '@island.is/email-service'
 import { NotificationType } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import {
+  formatCourtDateNotification,
+  formatHeadsUpNotification,
+  generateRequestPdf,
+} from '../../formatters'
+
 import { User } from '../user'
 import { Case } from '../case/models'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
-import { generateRequestPdf } from '../../pdf'
-
 @Injectable()
 export class NotificationService {
   constructor(
@@ -52,40 +56,48 @@ export class NotificationService {
     return { notificationSent: true, notification }
   }
 
+  private sendEmail(
+    name: string,
+    email: string,
+    subject: string,
+    text: string,
+    attachments: {
+      filename: string
+      content: string
+      encoding: string
+    }[] = null,
+  ): Promise<string> {
+    return this.emailService.sendEmail({
+      from: {
+        name: environment.email.fromName,
+        address: environment.email.fromEmail,
+      },
+      replyTo: {
+        name: environment.email.replyToName,
+        address: environment.email.replyToEmail,
+      },
+      to: [
+        {
+          name: name,
+          address: email,
+        },
+      ],
+      subject: subject,
+      text: text,
+      html: text,
+      attachments: attachments,
+    })
+  }
+
   private sendHeadsUpSms(
     existingCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
-    // Prosecutor
-    const prosecutorText = ` Ákærandi: ${
-      existingCase.prosecutor?.name || user.name
-    }.`
-
-    // Arrest date
-    const arrestDate = existingCase.arrestDate?.toISOString()
-    const arrestDateText = arrestDate
-      ? ` Viðkomandi handtekinn ${arrestDate.substring(
-          8,
-          10,
-        )}.${arrestDate.substring(5, 7)}.${arrestDate.substring(
-          0,
-          4,
-        )} kl. ${arrestDate.substring(11, 13)}:${arrestDate.substring(14, 16)}.`
-      : ''
-
-    // Court date
-    const courtDate = existingCase.requestedCourtDate?.toISOString()
-    const courtDateText = courtDate
-      ? ` ÓE fyrirtöku ${courtDate.substring(8, 10)}.${courtDate.substring(
-          5,
-          7,
-        )}.${courtDate.substring(0, 4)} eftir kl. ${courtDate.substring(
-          11,
-          13,
-        )}:${courtDate.substring(14, 16)}.`
-      : ''
-
-    const smsText = `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${courtDateText}`
+    const smsText = formatHeadsUpNotification(
+      existingCase.prosecutor?.name || user.name,
+      existingCase.arrestDate,
+      existingCase.requestedCourtDate,
+    )
 
     return this.sendSms(existingCase.id, NotificationType.HEADS_UP, smsText)
   }
@@ -114,32 +126,23 @@ export class NotificationService {
   private async sendReadyForCourtEmail(existingCase: Case): Promise<void> {
     const pdf = await generateRequestPdf(existingCase)
 
-    await this.emailService.sendEmail({
-      from: {
-        name: environment.email.fromName,
-        address: environment.email.fromEmail,
+    const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
+    const text = 'Sjá viðhengi'
+    const attachments = [
+      {
+        filename: `${existingCase.policeCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
       },
-      replyTo: {
-        name: environment.email.replyToName,
-        address: environment.email.replyToEmail,
-      },
-      to: [
-        {
-          name: existingCase.prosecutor?.name,
-          address: existingCase.prosecutor?.email,
-        },
-      ],
-      subject: `Krafa í máli ${existingCase.policeCaseNumber}`,
-      text: 'Sjá viðhengi',
-      html: 'Sjá viðhengi',
-      attachments: [
-        {
-          filename: `${existingCase.policeCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ],
-    })
+    ]
+
+    await this.sendEmail(
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
+      subject,
+      text,
+      attachments,
+    )
   }
 
   private async sendReadyForCourtNotifications(
@@ -151,10 +154,24 @@ export class NotificationService {
     return this.sendReadyForCourtSms(existingCase, user)
   }
 
-  private async sendCourtDateNotification(
+  private async sendCourtDateEmail(
     existingCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
+    const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
+    const text = formatCourtDateNotification(
+      existingCase.court,
+      existingCase.courtDate,
+      existingCase.courtRoom,
+    )
+
+    await this.sendEmail(
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
+      subject,
+      text,
+    )
+
     return { notificationSent: true }
   }
 
@@ -182,7 +199,7 @@ export class NotificationService {
       case NotificationType.READY_FOR_COURT:
         return this.sendReadyForCourtNotifications(existingCase, user)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotification(existingCase, user)
+        return this.sendCourtDateEmail(existingCase, user)
     }
   }
 }

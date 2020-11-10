@@ -6,7 +6,9 @@ import {
 import {
   formatConclusion,
   formatCourtCaseNumber,
+  formatCourtDateNotification,
   formatCustodyProvisions,
+  formatHeadsUpNotification,
   formatProsecutorDemands,
   formatRestrictions,
 } from './formatters'
@@ -257,6 +259,57 @@ describe('formatRestrictions', () => {
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með bréfaskoðun og símabanni, fjölmiðlabanni og heimsóknarbanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+})
+
+describe('formatHeadsUpNotification', () => {
+  test('should format heads up notification', () => {
+    // Arrange
+    const prosecutorName = 'Árni Ákærandi'
+    const arrestDate = new Date('2020-11-24T13:22')
+    const requestedCourtDate = new Date('2020-11-25T09:15')
+
+    // Act
+    const res = formatHeadsUpNotification(
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi. Viðkomandi handtekinn 24.11.2020 kl. 13:22. ÓE fyrirtöku 25.11.2020 eftir kl. 09:15.',
+    )
+  })
+
+  test('should format heads up notification with missing dates', () => {
+    // Arrange
+    const prosecutorName = 'Árni Ákærandi'
+
+    // Act
+    const res = formatHeadsUpNotification(prosecutorName, null, null)
+
+    // Assert
+    expect(res).toBe(
+      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi.',
+    )
+  })
+})
+
+describe('formatCourtDateNotification', () => {
+  test('should format court date notification', () => {
+    // Arrange
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2020-12-24T18:00')
+    const courtRoom = '101'
+
+    // Act
+    const res = formatCourtDateNotification(court, courtDate, courtRoom)
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram 24. desember 2020 kl. 18:00. Dómsalur: 101.',
     )
   })
 })

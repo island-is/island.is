@@ -31,9 +31,9 @@ export function formatProsecutorDemands(
   }.`
 }
 
-export const formatCustodyProvisions = (
+export function formatCustodyProvisions(
   custodyProvisions: CaseCustodyProvisions[],
-) => {
+): string {
   return custodyProvisions
     ?.sort()
     .reduce((s, l) => `${s}${laws[l]}\n`, '')
@@ -127,7 +127,7 @@ export function formatRestrictions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision,
   stakeholder: string,
-) {
+): string {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
       return `  \u2022  ${stakeholder} kærir úrskurðinn.`
@@ -136,4 +136,44 @@ export function formatAppeal(
     case CaseAppealDecision.POSTPONE:
       return `  \u2022  ${stakeholder} tekur sér lögboðinn frest.`
   }
+}
+
+export function formatHeadsUpNotification(
+  prosecutorName: string,
+  arrestDate: Date,
+  requestedCourtDate: Date,
+): string {
+  // Prosecutor
+  const prosecutorText = ` Ákærandi: ${prosecutorName}.`
+
+  // Arrest date
+  const arrestDateAsString = arrestDate?.toISOString()
+  const arrestDateText = arrestDateAsString
+    ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp').replace(
+        ' ',
+        ' kl. ',
+      )}.`
+    : ''
+
+  // Court date
+  const requestedCourtDateAsString = requestedCourtDate?.toISOString()
+  const requestedCourtDateText = requestedCourtDate
+    ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
+        ' ',
+        ' eftir kl. ',
+      )}.`
+    : ''
+
+  return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
+}
+
+export function formatCourtDateNotification(
+  court: string,
+  courtDate: Date,
+  courtRoom: string,
+): string {
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram ${formatDate(
+    courtDate,
+    'PPPp',
+  )}. Dómsalur: ${courtRoom}.`
 }
