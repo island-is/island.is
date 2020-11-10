@@ -3,6 +3,7 @@ import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { VehicleOwnerModel } from './model/vehicle.owner.model'
 import { VehicleOwnerService } from './vehicle.owner.service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
@@ -12,6 +13,7 @@ export class VehicleOwnerResolver {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
+  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => [VehicleOwnerModel])
   async skilavottordAllVehicleOwners(): Promise<VehicleOwnerModel[]> {
     const res = await this.vehicleOwnerService.findAll()
