@@ -1,11 +1,10 @@
 import {
-  DataProvider,
-  DataProviderTypes,
+  BasicDataProvider,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-export class ExpectedDateOfBirth extends DataProvider {
-  readonly type = DataProviderTypes.ExpectedDateOfBirth
+export class ExpectedDateOfBirth extends BasicDataProvider {
+  readonly type = 'ExpectedDateOfBirth'
 
   onProvideSuccess(_: unknown): SuccessfulDataProviderResult {
     return {

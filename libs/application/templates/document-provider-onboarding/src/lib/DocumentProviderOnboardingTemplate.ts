@@ -55,7 +55,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   name: 'Umsókn um að gerast skjalaveitandi',
-  dataProviders: [],
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',

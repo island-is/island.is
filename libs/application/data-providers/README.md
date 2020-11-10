@@ -1,6 +1,6 @@
 # application-data-providers
 
-This library contains prebuilt data providers used for the application system.
+This library contains pre-built, reusable data providers used for the application system.
 
 ## What is an external data provider?
 
@@ -8,7 +8,7 @@ Many applications need to store external data that cannot be manipulated, but sh
 
 ## How to create a new data provider
 
-Add a unique type for the data provider to `@island.is/application/core/src/types/DataProvider.ts`. Then create a new class inside `data-providers/src/providers/` which extends the abstract class `DataProvider`.
+Create a new class which extends the `DataProvider` interface, or extends the abstract class `BasicDataProvider`.
 
 ## Running unit tests
 
