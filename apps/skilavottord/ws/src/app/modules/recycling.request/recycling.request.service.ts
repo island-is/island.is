@@ -219,6 +219,23 @@ export class RecyclingRequestService {
           `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
       }
+
+      // If requestType is not 'pendingRecycle', 'cancelled' or 'deregistered'
+      if (
+        !(
+          requestType == 'pendingRecycle' ||
+          requestType == 'cancelled' ||
+          requestType == 'deregistered'
+        )
+      ) {
+        this.logger.error(
+          `requestType have to be 'pendingRecycle', 'cancelled' or 'deregistered'`,
+        )
+        throw new Error(
+          `requestType have to be 'pendingRecycle', 'cancelled' or 'deregistered'`,
+        )
+      }
+
       // Initalise new RecyclingRequest
       const newRecyclingRequest = new RecyclingRequestModel()
       newRecyclingRequest.vehicleId = permno
