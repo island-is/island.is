@@ -14,7 +14,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '../../../utils/constants'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
-  test('should not allow users to continue unless every required field has been filled out rass', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 
     // Act and Assert
