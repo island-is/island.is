@@ -22,6 +22,7 @@ const httpLink = new HttpLink({
 let token = ''
 
 export const setClientAuthToken = (value: string) => {
+  console.log('setting token ', value)
   token = value
 }
 
