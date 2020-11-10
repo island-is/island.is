@@ -1,13 +1,19 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client'
+import {
+  UserManager,
+  UserManagerSettings,
+  WebStorageStateStore,
+} from 'oidc-client'
 
-const settings = {
-  authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
+import { environment } from '../environments'
+
+const settings: UserManagerSettings = {
+  authority: environment.identityServer.authority,
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
-  silent_redirect_uri: `http://localhost:4200/silent/signin-oidc`,
+  silent_redirect_uri: `${window.location.origin}/silent/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
-  redirect_uri: `http://localhost:4200/signin-oidc`,
+  redirect_uri: `${window.location.origin}/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   response_type: 'code',
   revokeAccessTokenOnSignout: true,
