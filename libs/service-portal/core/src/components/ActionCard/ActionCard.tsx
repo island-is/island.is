@@ -6,6 +6,7 @@ import {
   Text,
   Link,
   LoadingIcon,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
@@ -46,9 +47,9 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
           justifyContent="spaceBetween"
           alignItems="center"
         >
-          <Box onClick={cta.onClick} cursor="pointer">
+          <FocusableBox component="button" onClick={cta.onClick}>
             <Text variant="h4">{title}</Text>
-          </Box>
+          </FocusableBox>
           <Box
             className={styles.buttonWrapper}
             marginTop={[1, 0]}
