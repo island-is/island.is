@@ -4,7 +4,6 @@ import cn from 'classnames'
 import { Icon, LoadingIcon } from '../..'
 
 export interface InputSearchProps {
-  name: string
   value?: string | number
   id?: string
   className?: string

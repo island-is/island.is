@@ -32,7 +32,6 @@ export interface ServiceFilterProps {
 
 export const ServiceFilter = (props: ServiceFilterProps) => {
 
-
   type CreateCheckboxParams = {
     name:string
     label:string
@@ -68,7 +67,6 @@ export const ServiceFilter = (props: ServiceFilterProps) => {
           Hreinsa
         </span>
         <InputSearch
-          name="text-search"
           value={
             props.parameters?.query === null ? '' : props.parameters?.query
           }

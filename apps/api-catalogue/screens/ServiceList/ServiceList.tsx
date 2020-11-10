@@ -12,6 +12,9 @@ import {
   LoadingIcon,
   Stack,
   ServiceFilter,
+  FilterCheckGroup,
+  FilterSearch,
+  Checkbox,
 } from '@island.is/island-ui/core'
 
 import * as styles from './ServiceList.treat'
@@ -163,13 +166,14 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
     setIsMobile(false)
   }, [width])
 
+  const [todoCheckVerd, setTodoCheckVerd] = useState<boolean>(false)
+  const [todoCheckFritt, setTodoCheckFritt] = useState<boolean>(false)
   return (
     <ServiceLayout
       className={cn(isMobile ? styles.LayoutMobile : {})}
       listClassNames={cn(isMobile ? styles.serviceLayoutMobile : {})}
       top={
         <Box>
-          
           <Box marginBottom={2}>
             <Breadcrumbs>
               <a href="/">Viskuausan</a>
@@ -270,19 +274,42 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
                 strings={filterStrings.strings}
               />
             </AccordionItem>
+            
           </div>
         ) : (
-          <ServiceFilter
-            rootClasses={cn(styles.filter, 'filter')}
-            isLoading={loading}
-            parameters={parameters}
-            onInputChange={(input) => onSearchChange(input.target.value)}
-            onClear={onClear}
-            onCheckCategoryChanged={({ target }) => {
-              updateCategoryCheckBox(target)
-            }}
-            strings={filterStrings.strings}
-          />
+            <div>
+              <FilterSearch id="filter-search-1"   label="stuff"    
+                className={cn(styles.filter, 'aaafilter')}
+                 inputValues={{
+                   placeholder:"placeholder",
+                   colored:true,
+                   onChange:(event) => onSearchChange(event.target.value)
+                 }}
+                clearValues={{
+                  text:'Þurka',
+                  onClick : onClear
+                }}
+
+                
+              >
+                <FilterCheckGroup  id="pricing_categoryX"   label="VerðX"    className={styles.serviceLayoutMobile}>
+                  <Checkbox label="FríttX"  checked={todoCheckVerd}    onChange={({ target }) => {setTodoCheckVerd(target.checked)}} />
+                  <Checkbox label="kostar"  checked={todoCheckFritt}    onChange={({ target }) => {setTodoCheckFritt(target.checked)}} />
+                </FilterCheckGroup>
+              </FilterSearch>
+
+              <ServiceFilter
+                rootClasses={cn(styles.filter, 'filter')}
+                isLoading={loading}
+                parameters={parameters}
+                onInputChange={(input) => onSearchChange(input.target.value)}
+                onClear={onClear}
+                onCheckCategoryChanged={({ target }) => {
+                  updateCategoryCheckBox(target)
+                }}
+                strings={filterStrings.strings}
+              />
+            </div>
         )
       }
     />
