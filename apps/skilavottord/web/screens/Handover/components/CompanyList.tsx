@@ -14,7 +14,7 @@ const CompanyList = () => {
 
   const activePartners = data?.skilavottordAllActiveRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(activePartners)
-  
+
   const sortedPartners = recyclingPartners.slice().sort((a, b) => {
     return a.city < b.city ? -1 : 1
   })
