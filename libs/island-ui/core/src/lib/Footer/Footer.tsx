@@ -266,7 +266,7 @@ const defaultTopLinksInfo = [
 const defaultTopLinksContact = [
   {
     title: 'Hafa samband',
-    href: '/um-island-is/hafa-samband',
+    href: '/stafraent-island/hafa-samband',
   },
   {
     title: 'Sími: 426 5500',
@@ -306,7 +306,7 @@ const defaultBottomLinks = [
   },
   {
     title: 'Algengar spurningar',
-    href: 'https://island.is/um-island-is/algengar-spurningar/',
+    href: 'https://island.is/stafraent-island/algengar-spurningar/',
   },
   {
     title: 'Opnir reikningar ríkisins',
