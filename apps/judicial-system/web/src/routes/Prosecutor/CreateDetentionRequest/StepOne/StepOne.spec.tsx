@@ -11,7 +11,7 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 
 describe('/krafa with an id', () => {
@@ -22,7 +22,7 @@ describe('/krafa with an id', () => {
     render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa/test_id']}>
+          <MemoryRouter initialEntries={['/krafa/test_id_2']}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
@@ -112,6 +112,15 @@ describe('/krafa without ID', () => {
     expect(court).toEqual('Héraðsdómur Reykjavíkur')
     expect(datepickers.length).toEqual(0)
     expect(
+      screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('radio', { name: 'Kona' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('radio', { name: 'Annað' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
@@ -156,6 +165,7 @@ describe('/krafa without ID', () => {
                     accusedAddress: '',
                     requestedDefenderName: '',
                     requestedDefenderEmail: '',
+                    accusedGender: null,
                     arrestDate: null,
                     requestedCourtDate: null,
                   },
@@ -177,6 +187,10 @@ describe('/krafa without ID', () => {
               {
                 id: 'testid',
                 accusedAddress: 'Harringvej 2',
+              } as UpdateCase,
+              {
+                id: 'testid',
+                accusedGender: CaseGender.FEMALE,
               } as UpdateCase,
               {
                 id: 'testid',
@@ -261,6 +275,8 @@ describe('/krafa without ID', () => {
     )
     userEvent.tab()
 
+    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
+
     // Select dates
     const datePickerWrappers = screen.getAllByTestId('datepicker')
 
@@ -339,6 +355,7 @@ describe('/krafa without ID', () => {
                   accusedAddress: 'Batcave',
                   requestedDefenderName: 'Garfield',
                   requestedDefenderEmail: 'gf@cartoon.io',
+                  accusedGender: CaseGender.OTHER,
                   arrestDate: null,
                   requestedCourtDate: null,
                 },
@@ -372,6 +389,8 @@ describe('/krafa without ID', () => {
     )
 
     userEvent.tab()
+
+    userEvent.click(screen.getByRole('radio', { name: 'Annað' }))
 
     await userEvent.type(
       screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,

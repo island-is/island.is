@@ -329,7 +329,7 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
-            nextUrl={`${Constants.COURT_DOCUMENT_ROUTE}/${id}`}
+            nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
           />
         </>

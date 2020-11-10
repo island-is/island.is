@@ -11,10 +11,10 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useRouter } from 'next/router'
-import { MockRecyclingPartner } from '@island.is/skilavottord-web/types'
+import { RecyclingPartner } from '@island.is/skilavottord-web/types'
 
 interface FormProps {
-  initialValues?: MockRecyclingPartner
+  initialValues?: RecyclingPartner
   type: FormType
 }
 
@@ -22,9 +22,9 @@ type FormType = 'edit' | 'add'
 
 const CompanyInfoForm: FC<FormProps> = ({
   initialValues = {
-    name: 'Company name',
+    companyName: 'Company name',
     address: '',
-    postNumber: '',
+    postnumber: '',
     city: '',
     website: '',
     phone: '',
@@ -37,7 +37,7 @@ const CompanyInfoForm: FC<FormProps> = ({
   const router = useRouter()
   const { handleSubmit, control, formState } = useForm({ mode: 'onChange' })
 
-  const onSubmit = (formData: MockRecyclingPartner) => {
+  const onSubmit = (formData: RecyclingPartner) => {
     console.log(formData)
     router.push(routes.companyInfo.baseRoute).then(() => {
       toast.success(t.success)
@@ -60,7 +60,7 @@ const CompanyInfoForm: FC<FormProps> = ({
               control={control}
               name="company"
               rules={{ required: true }}
-              defaultValue={initialValues.name}
+              defaultValue={initialValues.companyName}
               render={({ value, name }) => (
                 <Input
                   label={t.form.company.label}
@@ -92,7 +92,7 @@ const CompanyInfoForm: FC<FormProps> = ({
                 control={control}
                 name="postNumber"
                 rules={{ required: true }}
-                defaultValue={initialValues.postNumber}
+                defaultValue={initialValues.postnumber}
                 render={({ onChange, value, name }) => (
                   <Input
                     label={t.form.postNumber.label}
