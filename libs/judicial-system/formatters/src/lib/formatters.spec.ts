@@ -4,18 +4,15 @@ import * as Constants from './constants'
 import { formatDate, formatCustodyRestrictions, capitalize } from './formatters'
 
 describe('formatDate', () => {
-  test('should return null if date parameter is not provided or is invalid', () => {
+  test('should return undefined if date parameter is undefined', () => {
     // Arrange
-    const date = null
     const date2 = undefined
 
     // Act
-    const time = formatDate(date, Constants.TIME_FORMAT)
     const time2 = formatDate(date2, Constants.TIME_FORMAT)
 
     // Assert
-    expect(time).toBeNull()
-    expect(time2).toBeNull()
+    expect(time2).toBeUndefined()
   })
 
   test('should return the time with 24h format', () => {
