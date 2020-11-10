@@ -19,6 +19,9 @@ export class ConnectedComponent {
   @Field({ nullable: true })
   type?: string
 
+  // This is a temporary field while we are trying out the first connected component (which
+  // should ideally handle its own data fetching) to get data from contentful in case we can't
+  // fetch it from the API and also to quickly change the graphql endpoint for the data.
   @Field(() => graphqlTypeJson, { nullable: true })
   json?: Record<string, any>
 }
