@@ -14,8 +14,8 @@ describe('formatDate', () => {
     const time2 = formatDate(date2, Constants.TIME_FORMAT)
 
     // Assert
-    expect(time).toBeNull()
-    expect(time2).toBeNull()
+    expect(time).toBeUndefined()
+    expect(time2).toBeUndefined()
   })
 
   test('should return the time with 24h format', () => {

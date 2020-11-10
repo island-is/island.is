@@ -289,7 +289,7 @@ export const StepOne: React.FC = () => {
         accusedAddress: '',
         requestedDefenderName: '',
         requestedDefenderEmail: '',
-        accusedGender: null,
+        accusedGender: undefined,
         court: 'Héraðsdómur Reykjavíkur',
         arrestDate: undefined,
         requestedCourtDate: undefined,
@@ -303,7 +303,6 @@ export const StepOne: React.FC = () => {
    * This can't be done in the render function because the time refs will always be null
    * until the user clicks the time inputs and then the continue button becomes enabled.
    *  */
-
   useEffect(() => {
     if (workingCase) {
       setIsStepIllegal(
