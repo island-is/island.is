@@ -5,12 +5,13 @@ import { Injectable } from '@nestjs/common'
 import {
   Case,
   CreateCase,
-  PendingSignature,
+  RequestSignatureResponse,
   SendNotification,
-  SignatureResponse,
+  ConfirmSignatureResponse,
   TransitionCase,
   UpdateCase,
   User,
+  SendNotificationResponse,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'
@@ -51,21 +52,21 @@ class BackendAPI extends RESTDataSource {
     id: string,
     nationalId: string,
     sendNotification: SendNotification,
-  ) {
+  ): Promise<SendNotificationResponse> {
     return this.post(`case/${id}/notification`, {
       ...sendNotification,
       nationalId,
     })
   }
 
-  requestSignature(id: string): Promise<PendingSignature> {
+  requestSignature(id: string): Promise<RequestSignatureResponse> {
     return this.post(`case/${id}/signature`)
   }
 
   confirmSignature(
     id: string,
     documentToken: string,
-  ): Promise<SignatureResponse> {
+  ): Promise<ConfirmSignatureResponse> {
     return this.get(`case/${id}/signature?documentToken=${documentToken}`)
   }
 }

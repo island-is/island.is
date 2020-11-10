@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { setup, user } from '../../../../../test/setup'
-import { Notification } from '../../notification/notification.model'
+import { Notification } from '../../notification/models'
 import { Case } from '../models'
 import { User } from '../../user'
 

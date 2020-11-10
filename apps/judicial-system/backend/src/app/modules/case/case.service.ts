@@ -10,11 +10,11 @@ import {
 import { EmailService } from '@island.is/email-service'
 
 import { environment } from '../../../environments'
-import { User } from '../user'
-import { Notification } from '../notification/notification.model'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, SignatureResponse } from './models'
 import { generateRulingPdf, writeFile } from '../../pdf'
+import { User } from '../user'
+import { Notification } from '../notification/models'
+import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { Case, ConfirmSignatureResponse } from './models'
 import { TransitionUpdate } from './case.state'
 
 @Injectable()
@@ -150,7 +150,7 @@ export class CaseService {
   async confirmSignature(
     existingCase: Case,
     documentToken: string,
-  ): Promise<SignatureResponse> {
+  ): Promise<ConfirmSignatureResponse> {
     this.logger.debug(
       `Confirming signature of ruling for case ${existingCase.id}`,
     )

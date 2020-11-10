@@ -40,7 +40,6 @@ import {
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [, setIsSendingNotification] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { id } = useParams<{ id: string }>()
@@ -82,10 +81,10 @@ export const Overview: React.FC = () => {
       },
     })
 
-    return data?.sendNotification
+    return data?.sendNotification?.notificationSent
   }
 
-  const handleNextButtonClick = async () => {
+  const handleNextButtonClick: () => Promise<boolean> = async () => {
     try {
       // Parse the transition request
       const transitionRequest = parseTransition(
@@ -100,9 +99,7 @@ export const Overview: React.FC = () => {
       console.log('Transition failing')
     }
 
-    setIsSendingNotification(true)
-    await sendNotification(workingCase.id)
-    setIsSendingNotification(false)
+    return sendNotification(workingCase.id)
   }
 
   useEffect(() => {
@@ -316,9 +313,9 @@ export const Overview: React.FC = () => {
           </Box>
           <FormFooter
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
-            onNextButtonClick={() => {
-              const didSendNotification = handleNextButtonClick()
-              if (didSendNotification) {
+            onNextButtonClick={async () => {
+              const notificationSent = await handleNextButtonClick()
+              if (notificationSent) {
                 setModalVisible(true)
               } else {
                 // TODO: Handle error

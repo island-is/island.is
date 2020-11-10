@@ -22,10 +22,10 @@ import { CaseState } from '@island.is/judicial-system/types'
 
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
-import { Case, SignatureResponse } from './models'
+import { Case, ConfirmSignatureResponse } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
-import { transitionCase as transitionUpdate } from './case.state'
+import { transitionCase } from './case.state'
 
 @Controller('api')
 @ApiTags('cases')
@@ -99,7 +99,7 @@ export class CaseController {
 
     const user = await this.findUserByNationalId(transition.nationalId)
 
-    const update = transitionUpdate(transition, existingCase, user)
+    const update = transitionCase(transition, existingCase, user)
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -172,14 +172,14 @@ export class CaseController {
 
   @Get('case/:id/signature')
   @ApiOkResponse({
-    type: SignatureResponse,
+    type: ConfirmSignatureResponse,
     description:
       'Confirms a previously requested signature for an existing case',
   })
   async confirmSignature(
     @Param('id') id: string,
     @Query('documentToken') documentToken: string,
-  ): Promise<SignatureResponse> {
+  ): Promise<ConfirmSignatureResponse> {
     const existingCase = await this.findCaseById(id)
 
     if (

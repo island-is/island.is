@@ -13,8 +13,8 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { UserService } from '../user'
 import { CaseService } from '../case'
-import { SendNotificationDto } from './sendNotification.dto'
-import { Notification } from './notification.model'
+import { SendNotificationDto } from './dto'
+import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
 
 @Controller('api/case/:id')
@@ -53,13 +53,13 @@ export class NotificationController {
 
   @Post('notification')
   @ApiCreatedResponse({
-    type: Notification,
+    type: SendNotificationResponse,
     description: 'Sends a new notification for an existing case',
   })
   async sendNotificationByCaseId(
     @Param('id') id: string,
     @Body() notification: SendNotificationDto,
-  ): Promise<Notification> {
+  ): Promise<SendNotificationResponse> {
     const existingCase = await this.findCaseById(id)
 
     const user = await this.findUserByNationalId(notification.nationalId)

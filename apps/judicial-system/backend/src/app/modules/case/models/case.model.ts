@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
-import { Notification } from '../../notification/notification.model'
+import { Notification } from '../../notification/models/notification.model'
 
 @Table({
   tableName: 'case',

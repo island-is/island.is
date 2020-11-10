@@ -18,11 +18,16 @@ import {
   parseTime,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { useParams } from 'react-router-dom'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { useHistory, useParams } from 'react-router-dom'
+import {
+  Case,
+  NotificationType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
+  SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
@@ -34,11 +39,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+import Modal from '../../../shared-components/Modal/Modal'
+
 interface CaseData {
   case: Case
 }
 
 export const HearingArrangements: React.FC = () => {
+  const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
@@ -48,6 +56,7 @@ export const HearingArrangements: React.FC = () => {
   const courtTimeRef = useRef<HTMLInputElement>()
 
   const { id } = useParams<{ id: string }>()
+  const history = useHistory()
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -66,6 +75,21 @@ export const HearingArrangements: React.FC = () => {
       // the client and the backend so that we can handle multiple simultanious updates.
     }
     return resCase
+  }
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.COURT_DATE,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
   }
 
   useEffect(() => {
@@ -309,9 +333,27 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
-            nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
+            onNextButtonClick={async () => {
+              const notificationSent = await sendNotification(workingCase.id)
+              if (notificationSent) {
+                setModalVisible(true)
+              } else {
+                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }
+            }}
           />
+
+          {modalVisible && (
+            <Modal
+              title="Tilkynning um fyrirtökutíma hefur verið send"
+              text="Tilkynning hefur verið send á ákæranda með fyrirtökutíma."
+              handlePrimaryButtonClick={() => {
+                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              }}
+              primaryButtonText="Loka glugga"
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

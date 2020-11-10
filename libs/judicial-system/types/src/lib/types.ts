@@ -178,12 +178,16 @@ export interface SendNotification {
   type: NotificationType
 }
 
-export interface PendingSignature {
+export interface SendNotificationResponse {
+  notificationSent: boolean
+}
+
+export interface RequestSignatureResponse {
   controlCode: string
   documentToken: string
 }
 
-export interface SignatureResponse {
+export interface ConfirmSignatureResponse {
   documentSigned: boolean
   code?: number
   message?: string

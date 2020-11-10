@@ -258,7 +258,7 @@ export const StepOne: React.FC = () => {
       },
     })
 
-    return data?.sendNotification
+    return data?.sendNotification?.notificationSent
   }
 
   useEffect(() => {

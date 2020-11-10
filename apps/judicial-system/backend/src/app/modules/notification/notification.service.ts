@@ -9,8 +9,8 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { environment } from '../../../environments'
 import { User } from '../user'
 import { Case } from '../case/models'
-import { SendNotificationDto } from './sendNotification.dto'
-import { Notification } from './notification.model'
+import { SendNotificationDto } from './dto'
+import { Notification, SendNotificationResponse } from './models'
 import { generateRequestPdf } from '../../pdf'
 
 @Injectable()
@@ -30,26 +30,32 @@ export class NotificationService {
     caseId: string,
     notificationType: NotificationType,
     smsText: string,
-  ) {
+  ): Promise<SendNotificationResponse> {
     // Production or local development with judge mobile number
     if (environment.production || environment.notifications.judgeMobileNumber) {
-      await this.smsService.sendSms(
-        environment.notifications.judgeMobileNumber,
-        smsText,
-      )
+      try {
+        await this.smsService.sendSms(
+          environment.notifications.judgeMobileNumber,
+          smsText,
+        )
+      } catch (error) {
+        return { notificationSent: false }
+      }
     }
 
-    return this.notificationModel.create({
+    const notification = await this.notificationModel.create({
       caseId: caseId,
       type: notificationType,
       message: smsText,
     })
+
+    return { notificationSent: true, notification }
   }
 
   private sendHeadsUpSms(
     existingCase: Case,
     user: User,
-  ): Promise<Notification> {
+  ): Promise<SendNotificationResponse> {
     // Prosecutor
     const prosecutorText = ` Ákærandi: ${
       existingCase.prosecutor?.name || user.name
@@ -84,7 +90,10 @@ export class NotificationService {
     return this.sendSms(existingCase.id, NotificationType.HEADS_UP, smsText)
   }
 
-  private sendReadyForCourtSms(existingCase: Case, user: User) {
+  private sendReadyForCourtSms(
+    existingCase: Case,
+    user: User,
+  ): Promise<SendNotificationResponse> {
     // Prosecutor
     const prosecutorText = ` Ákærandi: ${
       existingCase.prosecutor?.name || user.name
@@ -136,17 +145,17 @@ export class NotificationService {
   private async sendReadyForCourtNotifications(
     existingCase: Case,
     user: User,
-  ): Promise<Notification> {
+  ): Promise<SendNotificationResponse> {
     await this.sendReadyForCourtEmail(existingCase)
 
-    return await this.sendReadyForCourtSms(existingCase, user)
+    return this.sendReadyForCourtSms(existingCase, user)
   }
 
-  private sendCourtDateNotification(
+  private async sendCourtDateNotification(
     existingCase: Case,
     user: User,
-  ): Promise<Notification> {
-    return null
+  ): Promise<SendNotificationResponse> {
+    return { notificationSent: true }
   }
 
   getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
@@ -162,7 +171,7 @@ export class NotificationService {
     notification: SendNotificationDto,
     existingCase: Case,
     user: User,
-  ): Promise<Notification> {
+  ): Promise<SendNotificationResponse> {
     this.logger.debug(
       `Sending ${notification.type} notification for case ${existingCase.id}`,
     )

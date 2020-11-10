@@ -6,7 +6,7 @@ import { NotificationType } from '@island.is/judicial-system/types'
 
 import { setup, user } from '../../../../../test/setup'
 import { Case } from '../../case/models'
-import { Notification } from '../notification.model'
+import { Notification } from '../models'
 
 let app: INestApplication
 
@@ -35,22 +35,27 @@ describe('Notification', () => {
         .expect(201)
         .then(async (response) => {
           // Check the response
-          expect(response.body.id).toBeTruthy()
-          expect(response.body.created).toBeTruthy()
-          expect(response.body.caseId).toBe(value.id)
-          expect(response.body.type).toBe(NotificationType.HEADS_UP)
-          expect(response.body.message).toBe(
+          expect(response.body.notificationSent).toBe(true)
+          expect(response.body.notification.id).toBeTruthy()
+          expect(response.body.notification.created).toBeTruthy()
+          expect(response.body.notification.caseId).toBe(value.id)
+          expect(response.body.notification.type).toBe(
+            NotificationType.HEADS_UP,
+          )
+          expect(response.body.notification.message).toBe(
             `Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: ${user.name}.`,
           )
 
           // Check the data in the database
           await Notification.findOne({
-            where: { id: response.body.id },
+            where: { id: response.body.notification.id },
           }).then((value) => {
-            expect(value.id).toBe(response.body.id)
-            expect(value.created.toISOString()).toBe(response.body.created)
-            expect(value.type).toBe(response.body.type)
-            expect(value.message).toBe(response.body.message)
+            expect(value.id).toBe(response.body.notification.id)
+            expect(value.created.toISOString()).toBe(
+              response.body.notification.created,
+            )
+            expect(value.type).toBe(response.body.notification.type)
+            expect(value.message).toBe(response.body.notification.message)
           })
         })
     })

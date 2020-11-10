@@ -15,7 +15,8 @@ import {
   Case,
   CaseAppealDecision,
   CaseTransition,
-  SignatureResponse,
+  RequestSignatureResponse,
+  ConfirmSignatureResponse,
   TransitionCase,
 } from '@island.is/judicial-system/types'
 import { userContext } from '@island.is/judicial-system-web/src/utils/userContext'
@@ -28,7 +29,6 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { gql, useMutation, useQuery } from '@apollo/client'
-import { PendingSignature } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const RequestSignatureMutation = gql`
   mutation RequestSignatureMutation($input: RequestSignatureInput!) {
@@ -51,7 +51,7 @@ export const SignatureConfirmationQuery = gql`
 
 interface SigningModalProps {
   caseId: string
-  pendingSignature: PendingSignature
+  requestSignatureResponse: RequestSignatureResponse
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -59,15 +59,15 @@ const SigningModal: React.FC<SigningModalProps> = (
   props: SigningModalProps,
 ) => {
   const history = useHistory()
-  const [signatureResponse, setSignatureResponse] = useState<
-    SignatureResponse
+  const [confirmSignatureResponse, setConfirmSignatureResponse] = useState<
+    ConfirmSignatureResponse
   >()
 
   const { data } = useQuery(SignatureConfirmationQuery, {
     variables: {
       input: {
         caseId: props.caseId,
-        documentToken: props.pendingSignature.documentToken,
+        documentToken: props.requestSignatureResponse.documentToken,
       },
     },
     fetchPolicy: 'no-cache',
@@ -76,16 +76,16 @@ const SigningModal: React.FC<SigningModalProps> = (
 
   useEffect(() => {
     if (resSignatureResponse) {
-      setSignatureResponse(resSignatureResponse)
+      setConfirmSignatureResponse(resSignatureResponse)
     }
-  }, [resSignatureResponse, setSignatureResponse])
+  }, [resSignatureResponse, setConfirmSignatureResponse])
 
   const renderContolCode = () => {
     return (
       <>
         <Box marginBottom={2}>
           <Text variant="h2" color="blue400">
-            {`Öryggistala: ${props.pendingSignature.controlCode}`}
+            {`Öryggistala: ${props.requestSignatureResponse.controlCode}`}
           </Text>
         </Box>
         <Text>
@@ -99,34 +99,36 @@ const SigningModal: React.FC<SigningModalProps> = (
   return (
     <Modal
       title={
-        !signatureResponse
+        !confirmSignatureResponse
           ? 'Rafræn undirritun'
-          : signatureResponse.documentSigned
+          : confirmSignatureResponse.documentSigned
           ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : signatureResponse.code === 7023 // User cancelled
+          : confirmSignatureResponse.code === 7023 // User cancelled
           ? 'Notandi hætti við undirritun'
           : 'Undirritun tókst ekki'
       }
       text={
-        !signatureResponse
+        !confirmSignatureResponse
           ? renderContolCode()
-          : signatureResponse.documentSigned
+          : confirmSignatureResponse.documentSigned
           ? 'Tilkynning hefur verið send á ákæranda og dómara sem kvað upp úrskurð.'
           : 'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
       }
       secondaryButtonText={
-        !signatureResponse
+        !confirmSignatureResponse
           ? null
-          : signatureResponse.documentSigned
+          : confirmSignatureResponse.documentSigned
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
-      primaryButtonText={!signatureResponse ? null : 'Gefa endurgjöf á gáttina'}
+      primaryButtonText={
+        !confirmSignatureResponse ? null : 'Gefa endurgjöf á gáttina'
+      }
       handlePrimaryButtonClick={() => {
         history.push(Constants.FEEDBACK_FORM_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
-        if (signatureResponse?.documentSigned === true) {
+        if (confirmSignatureResponse?.documentSigned === true) {
           history.push(Constants.DETENTION_REQUESTS_ROUTE)
         } else {
           props.setModalVisible(false)
@@ -139,7 +141,9 @@ const SigningModal: React.FC<SigningModalProps> = (
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [pendingSignature, setPendingSignature] = useState<PendingSignature>()
+  const [requestSignatureResponse, setRequestSignatureResponse] = useState<
+    RequestSignatureResponse
+  >()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { id } = useParams<{ id: string }>()
   const { user } = useContext(userContext)
@@ -167,9 +171,9 @@ export const Confirmation: React.FC = () => {
 
   useEffect(() => {
     if (!modalVisible) {
-      setPendingSignature(null)
+      setRequestSignatureResponse(null)
     }
-  }, [modalVisible, setPendingSignature])
+  }, [modalVisible, setRequestSignatureResponse])
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
@@ -403,10 +407,12 @@ export const Confirmation: React.FC = () => {
               await handleNextButtonClick()
 
               // Request signature to get control code
-              const pendingSignature = await requestSignature(workingCase.id)
+              const requestSignatureResponse = await requestSignature(
+                workingCase.id,
+              )
 
-              if (pendingSignature) {
-                setPendingSignature(pendingSignature)
+              if (requestSignatureResponse) {
+                setRequestSignatureResponse(requestSignatureResponse)
                 setModalVisible(true)
                 setIsLoading(false)
               }
@@ -416,7 +422,7 @@ export const Confirmation: React.FC = () => {
           {modalVisible && (
             <SigningModal
               caseId={workingCase?.id}
-              pendingSignature={pendingSignature}
+              requestSignatureResponse={requestSignatureResponse}
               setModalVisible={setModalVisible}
             />
           )}

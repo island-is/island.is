@@ -10,7 +10,7 @@ import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
 import { CaseModule } from '../case'
-import { Notification } from './notification.model'
+import { Notification } from './models'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
 
