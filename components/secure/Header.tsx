@@ -1,24 +1,12 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+
 
 class Header extends Component {
-  state = {
-    redirect: false,
-  };
-
   logout = () => {
-    localStorage.clear();
-    this.setState(
-      (this.state = {
-        redirect: true,
-      })
-    );
+    // TODO: Logout
   };
 
   render() {
-    if (this.state.redirect) {
-      <Redirect to={"/login"} />;
-    }
     return (
       <header className="header__container">
         <div className="header__container__logo">

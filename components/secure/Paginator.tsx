@@ -38,7 +38,7 @@ class Paginator extends Component<{lastPage: number, handlePageChange: any}> {
               className="paginator__pagination-previous"
               disabled={this.page === 1}
             >
-              Til baka
+              Back
             </button>
           </li>
           <li className="paginator__page-item">
@@ -47,7 +47,7 @@ class Paginator extends Component<{lastPage: number, handlePageChange: any}> {
               className="paginator__pagination-next"
               disabled={this.page === this.props.lastPage}
             >
-              Næsta
+              Next
             </button>
           </li>
         </nav>
