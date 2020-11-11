@@ -1,4 +1,4 @@
-export class IdentityResourcesDTO {
+export default class IdentityResourcesDTO {
   constructor() {
     this.key = "";
     this.enabled = true;

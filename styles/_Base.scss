@@ -10,6 +10,11 @@ input {
   background: #ffffff;
   border: 1px solid #ccdfff;
   border-radius: 8px;
+
+  &:focus {
+    border-color: #0061ff;
+    outline: none;
+  }
 }
 
 input[type="text"],
@@ -35,6 +40,10 @@ select {
 input[type="checkbox"] {
   width: 30px;
   height: 30px;
+}
+
+input[type="submit"] {
+  @extend button;
 }
 
 button {

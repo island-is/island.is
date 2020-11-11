@@ -73,7 +73,8 @@ class Client extends React.Component<{ client: ClientDTO }> {
               <form onSubmit={this.submit}>
                 <div className="client__container__fields">
                   <div className="client__container__field">
-                    <label className="client__label">clientId</label>
+                    <label className="client__label">
+                      Client Id</label>
                     <input
                       type="text"
                       defaultValue={this.client.clientId}
@@ -82,7 +83,7 @@ class Client extends React.Component<{ client: ClientDTO }> {
                     />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Nafn</label>
+                    <label className="client__label">Name</label>
                     <input
                       type="text"
                       defaultValue={this.client.clientName}
@@ -93,7 +94,7 @@ class Client extends React.Component<{ client: ClientDTO }> {
                     />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Slóð</label>
+                    <label className="client__label">URI</label>
                     <input
                       type="text"
                       defaultValue={this.client.clientUri ?? ""}
@@ -102,7 +103,7 @@ class Client extends React.Component<{ client: ClientDTO }> {
                     />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Lýsing</label>
+                    <label className="client__label">Description</label>
                     <input
                       type="text"
                       defaultValue={this.client.description ?? ""}
