@@ -7,6 +7,7 @@ import {
   IVidspyrnaFlokkur,
 } from '../generated/contentfulTypes'
 
+import { Slice, mapDocument } from './slice.model'
 import { AdgerdirSlice } from './adgerdirSlice.model'
 import { mapAdgerdirFeaturedNewsSlice } from './adgerdirFeaturedNewsSlice.model'
 import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
@@ -25,8 +26,8 @@ export class AdgerdirFrontpage {
   @Field({ nullable: true })
   description?: string
 
-  @Field({ nullable: true })
-  content?: string
+  @Field(() => [Slice])
+  content: Array<typeof Slice>
 
   @Field(() => [AdgerdirSlice])
   slices: Array<typeof AdgerdirSlice>
@@ -59,6 +60,6 @@ export const mapAdgerdirFrontpage = ({
   slug: fields.slug,
   title: fields.title,
   description: fields.description,
-  content: fields.content && JSON.stringify(fields.content),
+  content: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   slices: fields.slices.map(mapAdgerdirSlice),
 })

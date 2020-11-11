@@ -8,7 +8,6 @@ export class UserService {
   }
 
   getUserBynationalId(nId: string): User {
-    console.log(' --- getUserBynationalId starting')
     return this.userList.find((e) => e.nationalId === nId)
   }
 }

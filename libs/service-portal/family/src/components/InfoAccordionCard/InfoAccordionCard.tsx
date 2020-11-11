@@ -5,7 +5,7 @@ import {
   Stack,
   Columns,
   Column,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 
 interface Props {
@@ -46,7 +46,7 @@ const InfoAccordionCard: FC<Props> = ({ id, label, description, rows }) => {
                     {column.render ? (
                       column.render()
                     ) : index === 0 ? (
-                      <Typography variant="h5">{column.content}</Typography>
+                      <Text variant="h5">{column.content}</Text>
                     ) : (
                       column.content
                     )}

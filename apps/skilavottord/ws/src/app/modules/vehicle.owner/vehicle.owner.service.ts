@@ -54,11 +54,24 @@ export class VehicleOwnerService {
     })
   }
 
-  // async create(vehicleOwner: VehicleOwnerModel): Promise<VehicleOwnerModel> {
-  //   this.logger.debug(
-  //     `Creating vehicleOwner with vehicleId - ${vehicleOwner.nationalId}`,
-  //   )
-  //   this.applicationsRegistered.labels('res1').inc()
-  //   return this.vehicleOwnerModel.create(vehicleOwner)
-  // }
+  async create(vehicleOwner: VehicleOwnerModel): Promise<boolean> {
+    this.logger.info(
+      `---- Starting Creating vehicleOwner with vehicleId - ${vehicleOwner.nationalId} ----`,
+    )
+    // Check if he/she is already in the system
+    const getVehicleOwner = await this.findByNationalId(vehicleOwner.nationalId)
+    if (getVehicleOwner) {
+      this.logger.info(
+        `${vehicleOwner.personname} with nationalId ${vehicleOwner.nationalId} is already in database`,
+      )
+      return true
+    }
+
+    // save to database
+    await vehicleOwner.save()
+    this.logger.info(
+      `---- Finished Creating vehicleOwner with vehicleId - ${vehicleOwner.nationalId} ----`,
+    )
+    return true
+  }
 }

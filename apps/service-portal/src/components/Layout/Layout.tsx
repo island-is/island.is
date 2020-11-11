@@ -23,11 +23,11 @@ import { useLocale } from '@island.is/localization'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
-  const { locale } = useLocale()
+  const { locale, formatMessage } = useLocale()
   const data = useFooterContent(locale)
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
-  const footerProps = getFooterProps(data)
+  const footerProps = getFooterProps(data, formatMessage)
 
   return (
     <>

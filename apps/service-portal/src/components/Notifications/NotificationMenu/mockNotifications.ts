@@ -1,11 +1,12 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { defineMessage, MessageDescriptor } from 'react-intl'
 
 export interface NotificationCard {
   id: string
-  title: string
-  text: string
+  title: MessageDescriptor
+  text: MessageDescriptor
   link: {
-    title: string
+    title: MessageDescriptor
     url: string
   }
   isRead: boolean
@@ -21,6 +22,11 @@ export interface NotificationsContainer {
   }[]
 }
 
+const continueMessage = defineMessage({
+  id: 'service.portal:continue',
+  defaultMessage: 'Halda áfram',
+})
+
 export const notifications: NotificationsContainer = {
   sections: [
     {
@@ -28,11 +34,17 @@ export const notifications: NotificationsContainer = {
       cards: [
         {
           id: '111',
-          title: 'Tilkynning frá Stafrænt Ísland',
-          text:
-            'Hér kemur þú til með að fá skilaboð frá öllum helstu stofnunum Íslands.',
+          title: defineMessage({
+            id: 'sp.messages:mock-1-title',
+            defaultMessage: 'Tilkynning frá Stafrænt Ísland',
+          }),
+          text: defineMessage({
+            id: 'sp.messages:mock-1-text',
+            defaultMessage:
+              'Hér kemur þú til með að fá skilaboð frá öllum helstu stofnunum Íslands.',
+          }),
           link: {
-            title: 'Halda áfram',
+            title: continueMessage,
             url: ServicePortalPath.MessagesRoot,
           },
           isRead: true,
@@ -41,10 +53,16 @@ export const notifications: NotificationsContainer = {
         },
         {
           id: '222',
-          title: 'Stafrænt vegabréf',
-          text: 'Dæmi um skilaboð sem koma hér inn í framtíðinni',
+          title: defineMessage({
+            id: 'sp.messages:mock-2-title',
+            defaultMessage: 'Stafrænt vegabréf',
+          }),
+          text: defineMessage({
+            id: 'sp.messages:mock-2-text',
+            defaultMessage: 'Dæmi um skilaboð sem koma hér inn í framtíðinni',
+          }),
           link: {
-            title: 'Halda áfram',
+            title: continueMessage,
             url: ServicePortalPath.MessagesRoot,
           },
           isRead: true,

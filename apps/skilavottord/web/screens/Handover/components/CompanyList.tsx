@@ -3,6 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { ALL_ACTIVE_RECYCLING_PARTNERS } from '@island.is/skilavottord-web/graphql/queries'
 import { ListItem } from '@island.is/skilavottord-web/components'
+import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
 const CompanyList = () => {
   const { data, error, loading } = useQuery(ALL_ACTIVE_RECYCLING_PARTNERS)
@@ -11,7 +12,9 @@ const CompanyList = () => {
     return null
   }
 
-  const recyclingPartners = data?.skilavottordAllActiveRecyclingPartners || []
+  const activePartners = data?.skilavottordAllActiveRecyclingPartners || []
+  const recyclingPartners = filterInternalPartners(activePartners)
+
   const sortedPartners = recyclingPartners.slice().sort((a, b) => {
     return a.city < b.city ? -1 : 1
   })

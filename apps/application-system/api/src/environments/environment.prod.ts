@@ -5,4 +5,7 @@ export default {
     audience: '',
     jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
+  redis: {
+    urls: [process.env.REDIS_URL_NODE_01],
+  },
 }

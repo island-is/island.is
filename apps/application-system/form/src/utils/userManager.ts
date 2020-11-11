@@ -1,12 +1,13 @@
 import {
   UserManager,
-  WebStorageStateStore,
   UserManagerSettings,
+  WebStorageStateStore,
 } from 'oidc-client'
+
 import { environment } from '../environments'
 
 const settings: UserManagerSettings = {
-  authority: environment.identityServer.baseUrl,
+  authority: environment.identityServer.authority,
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
