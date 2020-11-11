@@ -4,13 +4,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
-import { NotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
-  formatCourtDateEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
   formatHeadsUpSmsNotification,
+  formatPrisonCourtDateEmailNotification,
   formatReadyForCourtSmsNotification,
   generateRequestPdf,
 } from '../../formatters'
@@ -64,8 +68,8 @@ export class NotificationService {
   }
 
   private async sendEmail(
-    name: string,
-    email: string,
+    recipientName: string,
+    recipientEmail: string,
     subject: string,
     text: string,
     attachments: {
@@ -86,25 +90,25 @@ export class NotificationService {
         },
         to: [
           {
-            name: name,
-            address: email,
+            name: recipientName,
+            address: recipientEmail,
           },
         ],
         subject: subject,
         text: text,
-        html: text,
+        html: `${text.replace(/(?:\n)/g, '<br />')}`,
         attachments: attachments,
       })
     } catch (error) {
-      this.logger.error(`Failed to send email to ${email}`, error)
+      this.logger.error(`Failed to send email to ${recipientEmail}`, error)
       return {
-        address: email,
+        address: recipientEmail,
         success: false,
       }
     }
 
     return {
-      address: email,
+      address: recipientEmail,
       success: true,
     }
   }
@@ -198,7 +202,47 @@ export class NotificationService {
     )
   }
 
-  private async sendCourtDateEmail(
+  private sendProsecutorCourtDateEmailNotification(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
+    const text = formatProsecutorCourtDateEmailNotification(
+      existingCase.court,
+      existingCase.courtDate,
+      existingCase.courtRoom,
+    )
+
+    return this.sendEmail(
+      existingCase.prosecutor?.name,
+      existingCase.prosecutor?.email,
+      subject,
+      text,
+    )
+  }
+
+  private sendPrisonCourtDateEmailNotification(
+    existingCase: Case,
+  ): Promise<Recipient> {
+    const subject = 'Krafa um gæsluvarðhald í vinnslu'
+    const text = formatPrisonCourtDateEmailNotification(
+      existingCase.court,
+      existingCase.courtDate,
+      existingCase.accusedGender,
+      existingCase.requestedCustodyEndDate,
+      existingCase.requestedCustodyRestrictions?.includes(
+        CaseCustodyRestrictions.ISOLATION,
+      ),
+    )
+
+    return this.sendEmail(
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
+      subject,
+      text,
+    )
+  }
+
+  private async sendCourtDateNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
     const condition = formatCourtDateNotificationCondition(
@@ -220,24 +264,15 @@ export class NotificationService {
       }
     }
 
-    const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
-    const text = formatCourtDateEmailNotification(
-      existingCase.court,
-      existingCase.courtDate,
-      existingCase.courtRoom,
-    )
-
-    const recipient = await this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
-      subject,
-      text,
-    )
+    const recipients = await Promise.all([
+      this.sendProsecutorCourtDateEmailNotification(existingCase),
+      this.sendPrisonCourtDateEmailNotification(existingCase),
+    ])
 
     return this.recordNotification(
       existingCase.id,
       NotificationType.COURT_DATE,
-      [recipient],
+      recipients,
       condition,
     )
   }
@@ -266,7 +301,7 @@ export class NotificationService {
       case NotificationType.READY_FOR_COURT:
         return this.sendReadyForCourtNotifications(existingCase, user)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateEmail(existingCase)
+        return this.sendCourtDateNotifications(existingCase)
     }
   }
 }

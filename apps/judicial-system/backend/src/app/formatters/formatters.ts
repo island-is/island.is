@@ -7,6 +7,7 @@ import {
   CaseAppealDecision,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 
 export function formatProsecutorDemands(
@@ -178,7 +179,7 @@ export function formatReadyForCourtSmsNotification(
   return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
-export function formatCourtDateEmailNotification(
+export function formatProsecutorCourtDateEmailNotification(
   court: string,
   courtDate: Date,
   courtRoom: string,
@@ -189,6 +190,32 @@ export function formatCourtDateEmailNotification(
   )}. Dómsalur: ${courtRoom}.`
 }
 
-export function formatCourtDateNotificationCondition(courtDate: Date) {
+export function formatPrisonCourtDateEmailNotification(
+  court: string,
+  courtDate: Date,
+  accusedGender: CaseGender,
+  requestedCustodyEndDate: Date,
+  isolation: boolean,
+): string {
+  const courtText = court.replace('dómur', 'dóms')
+  const courtDateText = formatDate(courtDate, 'PPPp')
+  const accusedGenderText =
+    accusedGender === CaseGender.OTHER
+      ? 'K'
+      : `Sakborningur er ${
+          accusedGender === CaseGender.MALE ? 'karl' : 'kona'
+        } og k`
+  const requestedCustodyEndDateText = formatDate(
+    requestedCustodyEndDate,
+    'PPPp',
+  )
+  const isolationText = isolation
+    ? 'Farið er fram á einangrun.'
+    : 'Ekki er farið fram á einangrun.'
+
+  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.\n\n${accusedGenderText}rafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.\n\n${isolationText}`
+}
+
+export function formatCourtDateNotificationCondition(courtDate: Date): string {
   return `courtDate=${formatDate(courtDate, 'Pp')}`
 }

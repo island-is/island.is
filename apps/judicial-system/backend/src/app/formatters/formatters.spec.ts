@@ -1,18 +1,20 @@
 import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseGender,
 } from '@island.is/judicial-system/types'
 
 import {
   formatConclusion,
   formatCourtCaseNumber,
-  formatCourtDateEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
   formatCustodyProvisions,
   formatHeadsUpSmsNotification,
   formatProsecutorDemands,
   formatReadyForCourtSmsNotification,
   formatRestrictions,
+  formatPrisonCourtDateEmailNotification,
 } from './formatters'
 
 describe('formatProsecutorDemands', () => {
@@ -265,7 +267,7 @@ describe('formatRestrictions', () => {
   })
 })
 
-describe('formatHeadsUpNotification', () => {
+describe('formatHeadsUpSmsNotification', () => {
   test('should format heads up notification', () => {
     // Arrange
     const prosecutorName = 'Árni Ákærandi'
@@ -315,7 +317,7 @@ describe('formatReadyForCourtSmsNotification', () => {
   })
 })
 
-describe('formatCourtDateNotification', () => {
+describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification', () => {
     // Arrange
     const court = 'Héraðsdómur Reykjavíkur'
@@ -323,11 +325,86 @@ describe('formatCourtDateNotification', () => {
     const courtRoom = '101'
 
     // Act
-    const res = formatCourtDateEmailNotification(court, courtDate, courtRoom)
+    const res = formatProsecutorCourtDateEmailNotification(
+      court,
+      courtDate,
+      courtRoom,
+    )
 
     // Assert
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram 24. desember 2020 kl. 18:00. Dómsalur: 101.',
+    )
+  })
+})
+
+describe('formatPrisonCourtDateEmailNotification', () => {
+  test('should format court date notification', () => {
+    // Arrange
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-04T02:02')
+    const accusedGender = CaseGender.FEMALE
+    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const isolation = true
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      court,
+      courtDate,
+      accusedGender,
+      requestedCustodyEndDate,
+      isolation,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.\n\nSakborningur er kona og krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.\n\nFarið er fram á einangrun.',
+    )
+  })
+
+  test('should format court date notification with unknown gender', () => {
+    // Arrange
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-04T02:02')
+    const accusedGender = CaseGender.OTHER
+    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const isolation = true
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      court,
+      courtDate,
+      accusedGender,
+      requestedCustodyEndDate,
+      isolation,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.\n\nKrafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.\n\nFarið er fram á einangrun.',
+    )
+  })
+
+  test('should format court date notification with no isolation', () => {
+    // Arrange
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-04T02:02')
+    const accusedGender = CaseGender.MALE
+    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const isolation = false
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      court,
+      courtDate,
+      accusedGender,
+      requestedCustodyEndDate,
+      isolation,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.\n\nSakborningur er karl og krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.\n\nEkki er farið fram á einangrun.',
     )
   })
 })
