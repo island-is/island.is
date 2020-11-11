@@ -269,8 +269,7 @@ export const Overview: React.FC = () => {
               >
                 <Text>
                   {formatCustodyRestrictions(
-                    workingCase.requestedCustodyRestrictions &&
-                      workingCase.requestedCustodyRestrictions,
+                    workingCase?.requestedCustodyRestrictions,
                   )}
                 </Text>
               </AccordionItem>
@@ -323,8 +322,8 @@ export const Overview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {workingCase?.prosecutor
-                ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-                : `${user?.name}, ${user?.title}`}
+                ? `${workingCase?.prosecutor.name} ${workingCase?.prosecutor.title}`
+                : `${user?.name} ${user?.title}`}
             </Text>
           </Box>
           <FormFooter

@@ -42,11 +42,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case: Case
+}
+
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
-  const [workingCase, setWorkingCase] = useState<Case>()
+  const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [, setRestrictionCheckboxOne] = useState<boolean>()
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
   const [, setRestrictionCheckboxThree] = useState<boolean>()
@@ -56,12 +59,10 @@ export const RulingStepOne: React.FC = () => {
     '',
   )
   const { id } = useParams<{ id: string }>()
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-
-  const resCase = data?.case
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = async (id: string, updateCase: UpdateCase) => {
@@ -112,15 +113,26 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (id && workingCase === null && data) {
+      let theCase = data.case
+
+      if (!theCase.custodyRestrictions) {
+        theCase = {
+          ...theCase,
+          custodyRestrictions: theCase.requestedCustodyRestrictions,
+        }
+
+        updateCase(
+          theCase.id,
+          parseArray(
+            'custodyRestrictions',
+            theCase.requestedCustodyRestrictions,
+          ),
+        )
+      }
+      setWorkingCase(theCase)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, data])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -141,7 +153,7 @@ export const RulingStepOne: React.FC = () => {
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>

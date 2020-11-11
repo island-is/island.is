@@ -487,8 +487,8 @@ export const StepTwo: React.FC = () => {
                         label={restriction.restriction}
                         value={restriction.value}
                         checked={
-                          workingCase.custodyRestrictions &&
-                          workingCase.custodyRestrictions.indexOf(
+                          workingCase.requestedCustodyRestrictions &&
+                          workingCase.requestedCustodyRestrictions.indexOf(
                             restriction.value,
                           ) > -1
                         }
@@ -506,54 +506,28 @@ export const StepTwo: React.FC = () => {
                           // Toggle the checkbox on or off
                           restriction.setCheckbox(!restrictionIsSelected)
 
+                          if (
+                            copyOfState.requestedCustodyRestrictions === null
+                          ) {
+                            copyOfState.requestedCustodyRestrictions = []
+                          }
+
                           // If the user is checking the box, add the restriction to the state
                           if (!restrictionIsSelected) {
-                            if (
-                              copyOfState.requestedCustodyRestrictions === null
-                            ) {
-                              copyOfState.requestedCustodyRestrictions = []
-                            }
-
-                            if (copyOfState.custodyRestrictions === null) {
-                              copyOfState.custodyRestrictions = []
-                            }
-
-                            // Add them both to requestedCR and CR. The judge will then deselect them later if s/he wants
                             copyOfState.requestedCustodyRestrictions &&
                               copyOfState.requestedCustodyRestrictions.push(
-                                target.value as CaseCustodyRestrictions,
-                              )
-
-                            copyOfState.custodyRestrictions &&
-                              copyOfState.custodyRestrictions.push(
                                 target.value as CaseCustodyRestrictions,
                               )
                           }
                           // If the user is unchecking the box, remove the restriction from the state
                           else {
-                            const restrictions =
-                              copyOfState.requestedCustodyRestrictions
-
-                            const cRestrictions =
-                              copyOfState.custodyRestrictions
-
-                            if (restrictions) {
-                              restrictions.splice(
-                                restrictions.indexOf(
+                            copyOfState.requestedCustodyRestrictions &&
+                              copyOfState.requestedCustodyRestrictions.splice(
+                                copyOfState.requestedCustodyRestrictions.indexOf(
                                   target.value as CaseCustodyRestrictions,
                                 ),
                                 1,
                               )
-
-                              if (cRestrictions) {
-                                cRestrictions.splice(
-                                  restrictions.indexOf(
-                                    target.value as CaseCustodyRestrictions,
-                                  ),
-                                  1,
-                                )
-                              }
-                            }
                           }
 
                           // Set the updated state as the state
@@ -570,23 +544,10 @@ export const StepTwo: React.FC = () => {
                             )
                           }
 
-                          // TODO: COMBINE IN A SINGLE API CALL
-                          if (copyOfState.custodyRestrictions) {
-                            await updateCase(
-                              workingCase.id,
-                              parseArray(
-                                'custodyRestrictions',
-                                copyOfState.custodyRestrictions,
-                              ),
-                            )
-                          }
-
                           setWorkingCase({
                             ...workingCase,
                             requestedCustodyRestrictions:
                               copyOfState.requestedCustodyRestrictions,
-                            custodyRestrictions:
-                              copyOfState.custodyRestrictions,
                           })
                         }}
                         large
