@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { IVidspyrnaPage } from '../generated/contentfulTypes'
+import { Slice, mapDocument } from './slice.model'
 
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
 
@@ -18,8 +19,8 @@ export class AdgerdirPage {
   @Field({ nullable: true })
   longDescription?: string
 
-  @Field({ nullable: true })
-  content?: string
+  @Field(() => [Slice])
+  content: Array<typeof Slice>
 
   @Field({ nullable: true })
   objective?: string
@@ -55,12 +56,10 @@ export const mapAdgerdirPage = ({
   title: fields?.title ?? '',
   description: fields?.description ?? '',
   longDescription: fields?.longDescription,
-  objective: fields?.objective ? JSON.stringify(fields.objective) : '',
+  objective: '',
   tags: (fields?.tags ?? []).map(mapAdgerdirTag),
-  status: fields?.status ?? '',
+  status: '',
   link: fields?.link ?? '',
   linkButtonText: fields?.linkButtonText ?? '',
-  estimatedCostIsk: fields?.estimatedCostIsk,
-  finalCostIsk: fields?.finalCostIsk,
-  content: fields?.content ? JSON.stringify(fields.content) : '',
+  content: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
 })

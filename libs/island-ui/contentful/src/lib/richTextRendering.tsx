@@ -126,6 +126,7 @@ export interface RenderConfig {
   htmlClassName?: string
   defaultPadding: ResponsiveSpace
   padding: Readonly<Array<PaddingConfig>>
+  skipGrid?: boolean
 }
 
 export const defaultRenderComponent = (

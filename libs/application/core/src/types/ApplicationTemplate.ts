@@ -3,7 +3,6 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTypes,
-  DataProvider,
   Schema,
 } from '@island.is/application/core'
 import { EventObject, MachineConfig } from 'xstate'
@@ -17,7 +16,6 @@ export interface ApplicationTemplate<
   readonly type: ApplicationTypes
   readonly name: string
   readonly dataSchema: Schema
-  readonly dataProviders: DataProvider[]
   readonly stateMachineConfig: MachineConfig<
     TContext,
     TStateSchema,
