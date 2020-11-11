@@ -1,6 +1,6 @@
 import { ClaimDto } from "./claim.dto";
 
-export class UserIdentityDto {
+export class UserIdentityDTO {
   constructor() {
     this.subjectId = "";
     this.name = "";
