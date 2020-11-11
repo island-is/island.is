@@ -368,7 +368,7 @@ export const HearingArrangements: React.FC = () => {
           {modalVisible && (
             <Modal
               title="Tilkynning um fyrirtökutíma hefur verið send"
-              text="Tilkynning hefur verið send á ákæranda með fyrirtökutíma."
+              text="Tilkynning hefur verið send á ákæranda með fyrirtökutíma. Fangelsi hefur líka fengið að vita af fyrirtökutímanum."
               handlePrimaryButtonClick={() => {
                 history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }}
