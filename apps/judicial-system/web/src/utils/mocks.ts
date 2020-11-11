@@ -75,7 +75,6 @@ const testCase1 = {
   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
-  notifications: null,
 }
 
 const testCase2 = {
@@ -118,7 +117,8 @@ const testCase2 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
-  notifications: null,
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase3 = {
@@ -161,7 +161,8 @@ const testCase3 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
-  notifications: null,
+  requestedDefenderName: 'Saul Goodman',
+  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 export const mockCaseQueries = [

@@ -68,7 +68,7 @@ export class VehicleOwnerService {
     }
 
     // save to database
-    vehicleOwner.save()
+    await vehicleOwner.save()
     this.logger.info(
       `---- Finished Creating vehicleOwner with vehicleId - ${vehicleOwner.nationalId} ----`,
     )

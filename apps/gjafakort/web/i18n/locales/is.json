@@ -15,7 +15,7 @@
     "title": "Villa kom upp",
     "contents": [
       "Eitthvað hefur farið úrskeiðis.",
-      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+      "Vinsamlega <a href='https://island.is/stafraent-island/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
     ]
   },
   "companies": {
@@ -434,7 +434,7 @@
       },
       {
         "title": "Hafa samband",
-        "href": "https://island.is/um-island-is/hafa-samband/"
+        "href": "https://island.is/stafraent-island/hafa-samband/"
       }
     ],
     "bottomLinks": [
@@ -463,7 +463,7 @@
         "title": "Undirskriftarlistar"
       },
       {
-        "href": "https://island.is/um-island-is/algengar-spurningar/",
+        "href": "https://island.is/stafraent-island/algengar-spurningar/",
         "title": "Algengar spurningar"
       },
       {

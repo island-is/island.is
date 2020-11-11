@@ -4,14 +4,15 @@ import {
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
 
-export enum DataProviderTypes {
-  ExpectedDateOfBirth = 'ExpectedDateOfBirth',
-  ExampleFails = 'ExampleFails',
-  ExampleSucceeds = 'ExampleSucceeds',
+export interface DataProvider {
+  readonly type: string
+  provide(application: Application): Promise<unknown>
+  onProvideError(_: unknown): FailedDataProviderResult
+  onProvideSuccess(_: unknown): SuccessfulDataProviderResult
 }
 
-export abstract class DataProvider {
-  readonly type!: DataProviderTypes
+export abstract class BasicDataProvider implements DataProvider {
+  readonly type!: string
 
   /**
    * Use this method to fetch data from external APIs

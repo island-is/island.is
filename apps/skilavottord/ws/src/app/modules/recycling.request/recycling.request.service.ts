@@ -165,7 +165,7 @@ export class RecyclingRequestService {
 
       // Get vehicle's information
       this.logger.info(`Getting vehicle's information for vehicle: ${permno}`)
-      const res = this.vehicleService.findByVehicleId(permno)
+      const res = await this.vehicleService.findByVehicleId(permno)
       if (!res) {
         this.logger.error(
           `Could not find any vehicle's information for vehicle's number: ${permno} in database`,

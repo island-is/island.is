@@ -12,8 +12,8 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../../../environments'
-import { Case } from '../models'
+import { environment } from '../../environments'
+import { Case } from '../modules/case/models'
 import {
   formatAppeal,
   formatConclusion,

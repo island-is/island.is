@@ -58,7 +58,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
           vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
         `,
       })}
-      institutionHref="https://island.is/um-island-is"
+      institutionHref="https://island.is/stafraent-island"
       institutionLinkTitle={defineMessage({
         id: 'service.portal:timeline-link-title',
         defaultMessage: 'Sjá tímalínu',

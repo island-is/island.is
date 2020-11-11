@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 
 type ValidAnswers = 'yes' | 'no' | undefined
@@ -54,9 +54,9 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       </Box>
       {error && (
         <Box color="red400" padding={2}>
-          <Typography variant="pSmall" color="red400">
+          <Text color="red400">
             You have to provide an answer to this question in order to proceed.
-          </Typography>
+          </Text>
         </Box>
       )}
       <BoxChart

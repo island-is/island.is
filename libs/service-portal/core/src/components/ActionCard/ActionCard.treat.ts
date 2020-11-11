@@ -13,3 +13,17 @@ export const wrapper = style({
 export const buttonWrapper = style({
   paddingBottom: 2,
 })
+
+export const isLoadingContainer = style({
+  opacity: '85%',
+  '@keyframes': {
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: '85%',
+    },
+  },
+  animationTimingFunction: 'ease-out',
+  animationDuration: '0.25s',
+})
