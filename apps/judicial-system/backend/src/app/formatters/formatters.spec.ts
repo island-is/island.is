@@ -15,6 +15,8 @@ import {
   formatReadyForCourtSmsNotification,
   formatRestrictions,
   formatPrisonCourtDateEmailNotification,
+  stripHtmlTags,
+  formatDefenderCourtDateEmailNotification,
 } from './formatters'
 
 describe('formatProsecutorDemands', () => {
@@ -358,7 +360,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.\n\nSakborningur er kona og krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.\n\nFarið er fram á einangrun.',
+      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.<br /><br />Sakborningur er kona og krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.<br /><br />Farið er fram á einangrun.',
     )
   })
 
@@ -381,7 +383,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.\n\nKrafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.\n\nFarið er fram á einangrun.',
+      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.<br /><br />Krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.<br /><br />Farið er fram á einangrun.',
     )
   })
 
@@ -404,7 +406,32 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.\n\nSakborningur er karl og krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.\n\nEkki er farið fram á einangrun.',
+      'Krafa um gæsluvarðhald hefur verið send til Héraðsdóms Austurlands og verður málið tekið fyrir 4. febrúar 2021 kl. 02:02.<br /><br />Sakborningur er karl og krafist er gæsluvarðhalds til 12. ágúst 2030 kl. 08:25.<br /><br />Ekki er farið fram á einangrun.',
+    )
+  })
+})
+
+describe('formatDefenderCourtDateEmailNotification', () => {
+  test('should format court date notification', () => {
+    // Arrange
+    const accusedNationalId = '1212129999'
+    const accusedName = 'Robbi Ræningi'
+    const court = 'Héraðsdómur Norðurlands'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = '101'
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      accusedNationalId,
+      accusedName,
+      court,
+      courtDate,
+      courtRoom,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram 19. desember 2020 kl. 10:19. Dómsalur: 101. Sakborningur: Robbi Ræningi 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
     )
   })
 })
@@ -413,11 +440,27 @@ describe('formatCourtDateNotificationCondition', () => {
   test('should format court date notification condition', () => {
     // Arrange
     const courtDate = new Date('2020-12-20T13:32')
+    const defenderEmail = 'defender@defenders.is'
 
     // Act
-    const res = formatCourtDateNotificationCondition(courtDate)
+    const res = formatCourtDateNotificationCondition(courtDate, defenderEmail)
 
     // Assert
-    expect(res).toBe('courtDate=20.12.2020 13:32')
+    expect(res).toBe(
+      'courtDate=20.12.2020 13:32,defenderEmail=defender@defenders.is',
+    )
+  })
+})
+
+describe('stripHtmlTags', () => {
+  test('should format court date notification condition', () => {
+    // Arrange
+    const html = 'blablabla<br /><br />blabla'
+
+    // Act
+    const res = stripHtmlTags(html)
+
+    // Assert
+    expect(res).toBe('blablabla\n\nblabla')
   })
 })

@@ -4,5 +4,6 @@ export {
   formatReadyForCourtSmsNotification,
   formatProsecutorCourtDateEmailNotification,
   formatPrisonCourtDateEmailNotification,
+  formatDefenderCourtDateEmailNotification,
   formatCourtDateNotificationCondition,
 } from './formatters'

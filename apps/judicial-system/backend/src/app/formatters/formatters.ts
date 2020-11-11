@@ -213,9 +213,34 @@ export function formatPrisonCourtDateEmailNotification(
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
 
-  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.\n\n${requestText}\n\n${isolationText}`
+  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}`
 }
 
-export function formatCourtDateNotificationCondition(courtDate: Date): string {
-  return `courtDate=${formatDate(courtDate, 'Pp')}`
+export function formatDefenderCourtDateEmailNotification(
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  courtDate: Date,
+  courtRoom: string,
+): string {
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram ${formatDate(
+    courtDate,
+    'PPPp',
+  )}. Dómsalur: ${courtRoom}. Sakborningur: ${accusedName} ${formatNationalId(
+    accusedNationalId,
+  )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
+}
+
+export function formatCourtDateNotificationCondition(
+  courtDate: Date,
+  defenderEmail: string,
+): string {
+  return `courtDate=${formatDate(
+    courtDate,
+    'Pp',
+  )},defenderEmail=${defenderEmail}`
+}
+
+export function stripHtmlTags(html: string): string {
+  return html.replace(/(?:<br \/>)/g, '\n')
 }
