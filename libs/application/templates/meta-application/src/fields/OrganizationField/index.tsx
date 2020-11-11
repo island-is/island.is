@@ -64,8 +64,6 @@ const OrganizationField: FC<Props> = ({ error, field, application }) => {
   const [organizations, setOrganizations] = useState<OrganizationOption[]>([])
   const [ministries, setMinistries] = useState<Option[]>([])
 
-  console.log('rest', props)
-
   const { data: organizationData, refetch: refetchOrganizations } = useQuery(
     GET_ORGANIZATIONS_QUERY,
     {
