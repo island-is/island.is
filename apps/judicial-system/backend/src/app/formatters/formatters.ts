@@ -31,9 +31,9 @@ export function formatProsecutorDemands(
   }.`
 }
 
-export const formatCustodyProvisions = (
+export function formatCustodyProvisions(
   custodyProvisions: CaseCustodyProvisions[],
-) => {
+): string {
   return custodyProvisions
     ?.sort()
     .reduce((s, l) => `${s}${laws[l]}\n`, '')
@@ -127,7 +127,7 @@ export function formatRestrictions(
 export function formatAppeal(
   appealDecision: CaseAppealDecision,
   stakeholder: string,
-) {
+): string {
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
       return `  \u2022  ${stakeholder} kærir úrskurðinn.`
@@ -136,4 +136,59 @@ export function formatAppeal(
     case CaseAppealDecision.POSTPONE:
       return `  \u2022  ${stakeholder} tekur sér lögboðinn frest.`
   }
+}
+
+export function formatHeadsUpSmsNotification(
+  prosecutorName: string,
+  arrestDate: Date,
+  requestedCourtDate: Date,
+): string {
+  // Prosecutor
+  const prosecutorText = ` Ákærandi: ${prosecutorName}.`
+
+  // Arrest date
+  const arrestDateText = arrestDate
+    ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp').replace(
+        ' ',
+        ' kl. ',
+      )}.`
+    : ''
+
+  // Court date
+  const requestedCourtDateText = requestedCourtDate
+    ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
+        ' ',
+        ' eftir kl. ',
+      )}.`
+    : ''
+
+  return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
+}
+
+export function formatReadyForCourtSmsNotification(
+  prosecutorName: string,
+  court: string,
+) {
+  // Prosecutor
+  const prosecutorText = ` Ákærandi: ${prosecutorName}.`
+
+  // Court
+  const courtText = ` Dómstóll: ${court}.`
+
+  return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+}
+
+export function formatCourtDateEmailNotification(
+  court: string,
+  courtDate: Date,
+  courtRoom: string,
+): string {
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram ${formatDate(
+    courtDate,
+    'PPPp',
+  )}. Dómsalur: ${courtRoom}.`
+}
+
+export function formatCourtDateNotificationCondition(courtDate: Date) {
+  return `courtDate=${formatDate(courtDate, 'Pp')}`
 }

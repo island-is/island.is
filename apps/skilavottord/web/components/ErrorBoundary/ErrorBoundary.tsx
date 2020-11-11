@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import HtmlParser from 'react-html-parser'
 import * as Sentry from '@sentry/node'
 
-import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
+import { Box, ContentBlock, Text } from '@island.is/island-ui/core'
 
 import { withI18n } from '../../i18n'
 import { Translation } from '../../i18n/locales'
@@ -47,15 +47,15 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
         <Box marginTop={12}>
           <ContentBlock width="large">
             <Box marginBottom={3}>
-              <Typography variant="h1" as="h1">
+              <Text variant="h1" as="h1">
                 {t.title}
-              </Typography>
+              </Text>
             </Box>
             <Box marginBottom={9}>
               {t.contents.map((content, index) => (
-                <Typography variant="intro" key={index}>
+                <Text variant="intro" key={index}>
                   {HtmlParser(content)}
-                </Typography>
+                </Text>
               ))}
             </Box>
           </ContentBlock>

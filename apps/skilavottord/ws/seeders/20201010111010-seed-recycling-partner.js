@@ -29,18 +29,6 @@ module.exports = {
           created_at: '2020-09-08 04:05:06',
           updated_at: '2020-09-08 04:05:06',
         },
-        {
-          company_id: '0000000000',
-          company_name: 'unknown',
-          address: '',
-          postnumber: '',
-          city: '',
-          website: '',
-          phone: '',
-          active: true,
-          created_at: '2020-09-08 04:05:06',
-          updated_at: '2020-09-08 04:05:06',
-        },
       ],
       {},
     )

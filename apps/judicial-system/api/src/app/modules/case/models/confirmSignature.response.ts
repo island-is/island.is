@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { SignatureResponse as TSignatureResponse } from '@island.is/judicial-system/types'
+import { ConfirmSignatureResponse as TConfirmSignatureResponse } from '@island.is/judicial-system/types'
 
 @ObjectType()
-export class SignatureResponse implements TSignatureResponse {
+export class ConfirmSignatureResponse implements TConfirmSignatureResponse {
   @Field()
   documentSigned: boolean
 

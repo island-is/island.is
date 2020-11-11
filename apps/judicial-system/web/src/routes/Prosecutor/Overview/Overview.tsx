@@ -6,6 +6,7 @@ import {
   Case,
   CaseCustodyProvisions,
   CaseTransition,
+  NotificationType,
   TransitionCase,
 } from '@island.is/judicial-system/types'
 
@@ -39,7 +40,6 @@ import {
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [, setIsSendingNotification] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { id } = useParams<{ id: string }>()
@@ -73,13 +73,18 @@ export const Overview: React.FC = () => {
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
-      variables: { input: { caseId: id } },
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.READY_FOR_COURT,
+        },
+      },
     })
 
-    return data?.sendNotification
+    return data?.sendNotification?.notificationSent
   }
 
-  const handleNextButtonClick = async () => {
+  const handleNextButtonClick: () => Promise<boolean> = async () => {
     try {
       // Parse the transition request
       const transitionRequest = parseTransition(
@@ -88,21 +93,13 @@ export const Overview: React.FC = () => {
       )
 
       // Transition the case
-      const resCase = await transitionCase(workingCase.id, transitionRequest)
-
-      if (!resCase) {
-        // Improve error handling at some point
-        console.log('Transition failing')
-        return false
-      }
-
-      setIsSendingNotification(true)
-      await sendNotification(workingCase.id)
-      setIsSendingNotification(false)
-      return true
+      await transitionCase(workingCase.id, transitionRequest)
     } catch (e) {
-      return false
+      // Improve error handling at some point
+      console.log('Transition failing')
     }
+
+    return sendNotification(workingCase.id)
   }
 
   useEffect(() => {
@@ -197,7 +194,7 @@ export const Overview: React.FC = () => {
               <Text variant="h3">
                 {`${capitalize(
                   formatDate(workingCase.requestedCourtDate, 'PPPP'),
-                )} kl. ${formatDate(
+                )} eftir kl. ${formatDate(
                   workingCase?.requestedCourtDate,
                   TIME_FORMAT,
                 )}`}
@@ -316,9 +313,9 @@ export const Overview: React.FC = () => {
           </Box>
           <FormFooter
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
-            onNextButtonClick={() => {
-              const didSendNotification = handleNextButtonClick()
-              if (didSendNotification) {
+            onNextButtonClick={async () => {
+              const notificationSent = await handleNextButtonClick()
+              if (notificationSent) {
                 setModalVisible(true)
               } else {
                 // TODO: Handle error

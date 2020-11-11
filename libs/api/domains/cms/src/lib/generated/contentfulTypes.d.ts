@@ -1283,7 +1283,6 @@ export interface IPageFields {
     | ILatestNewsSlice
     | ICardSection
     | ILogoListSlice
-    | IPageHeader
     | IStorySection
     | ITabSection
     | ITimeline
@@ -1453,6 +1452,34 @@ export interface IPageRoot extends Entry<IPageRootFields> {
     contentType: {
       sys: {
         id: 'pageRoot'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IParentPluginTestFields {
+  /** Parent test */
+  parentTest?: Record<string, any> | undefined
+
+  /** test reference */
+  testReference?: IArticle | undefined
+
+  /** aasdasdasdsa */
+  aasdasdasdsa?: string | undefined
+}
+
+export interface IParentPluginTest extends Entry<IParentPluginTestFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'parentPluginTest'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1765,6 +1792,60 @@ export interface IStorySection extends Entry<IStorySectionFields> {
     contentType: {
       sys: {
         id: 'storySection'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStringFields {
+  /** Id */
+  id: string
+
+  /** Text */
+  text: string
+}
+
+/** An identifiable string of up to 50k characters. */
+
+export interface IString extends Entry<IStringFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'string'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IStringListFields {
+  /** List Id */
+  listId: string
+
+  /** List Strings */
+  listStrings: IString[]
+}
+
+/** An identifiable list of Strings. */
+
+export interface IStringList extends Entry<IStringListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'stringList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2379,20 +2460,17 @@ export interface IVidspyrnaPageFields {
   /** Title */
   title: string
 
+  /** Slug */
+  slug: string
+
   /** Short description */
   description: string
 
   /** Long description */
   longDescription?: string | undefined
 
-  /** Objective */
-  objective?: Document | undefined
-
-  /** Slug */
-  slug: string
-
-  /** Tags */
-  tags: IVidspyrnaTag[]
+  /** Content */
+  content?: Document | undefined
 
   /** Link */
   link?: string | undefined
@@ -2400,17 +2478,8 @@ export interface IVidspyrnaPageFields {
   /** Link button text */
   linkButtonText?: string | undefined
 
-  /** Status */
-  status: 'preparing' | 'ongoing' | 'completed'
-
-  /** Estimated cost (ISK) */
-  estimatedCostIsk?: number | undefined
-
-  /** Final cost (ISK) */
-  finalCostIsk?: number | undefined
-
-  /** Content */
-  content?: Document | undefined
+  /** Tags */
+  tags: IVidspyrnaTag[]
 }
 
 /** Page for the adgerdir.island.is website. */
@@ -2501,6 +2570,7 @@ export type CONTENT_TYPE =
   | 'pageLevel2'
   | 'pageLevel3'
   | 'pageRoot'
+  | 'parentPluginTest'
   | 'processEntry'
   | 'questionAndAnswer'
   | 'sectionHeading'
@@ -2511,6 +2581,8 @@ export type CONTENT_TYPE =
   | 'statistics'
   | 'story'
   | 'storySection'
+  | 'string'
+  | 'stringList'
   | 'subArticle'
   | 'tabContent'
   | 'tabSection'

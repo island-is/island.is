@@ -11,13 +11,14 @@ import {
   Sleeve,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Content } from '@island.is/web/units/Adgerdir'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   AdgerdirArticles,
   GroupedPages,
   CardsSlider,
   FeaturedNews,
   FrontpageSvg,
+  RichText,
   HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -38,6 +39,7 @@ import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { ColorSchemeContext } from '@island.is/web/context'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -48,6 +50,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
+  const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
 
   if (typeof document === 'object') {
@@ -82,7 +85,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
               <a>Ísland.is</a>
             </Link>
             <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
-              <a>Covid aðgerðir</a>
+              <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
             </Link>
           </Breadcrumbs>
           <Text variant="h1" as="h1">
@@ -91,7 +94,11 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           <Text variant="intro" as="p">
             {frontpage.description}
           </Text>
-          <Content document={frontpage.content} />
+          <RichText
+            body={frontpage.content as SliceType[]}
+            config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
+            locale={activeLocale}
+          />
         </Stack>
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
