@@ -1,7 +1,6 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { DataProviderTypes } from '@island.is/application/core'
 
 let app: INestApplication
 
@@ -200,9 +199,7 @@ describe('Application system API', () => {
     const failedResponse = await server
       .put(`/applications/${response.body.id}/externalData`)
       .send({
-        dataProviders: [
-          { id: 'test', type: DataProviderTypes.ExampleSucceeds },
-        ],
+        dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
       })
       .expect(400)
 

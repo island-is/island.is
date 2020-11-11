@@ -1,8 +1,6 @@
 import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
-import { ApplicationTypes } from './ApplicationTypes'
-import { DataProviderTypes } from './DataProvider'
 import { MessageDescriptor } from 'react-intl'
 import { Application } from './Application'
 
@@ -86,7 +84,7 @@ export interface ExternalDataProvider extends FormItem {
 
 export interface DataProviderItem {
   readonly id: string
-  readonly type: DataProviderTypes
+  readonly type: string
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string

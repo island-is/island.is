@@ -14,12 +14,11 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  DataProviderTypes,
   Form,
   FormModes,
   Option,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from '../lib/messages'
 import {
   formatIsk,
   getEstimatedMonthlyPay,
@@ -44,26 +43,11 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'approveExternalData',
               dataProviders: [
                 buildDataProviderItem({
-                  id: 'salary',
-                  type: DataProviderTypes.ExampleSucceeds,
-                  source: 'RSK',
-                  title: m.salaryTitle,
-                  subTitle: m.salarySubtitle,
-                }),
-                buildDataProviderItem({
                   id: 'expectedDateOfBirth',
-                  type: DataProviderTypes.ExpectedDateOfBirth,
+                  type: 'ExpectedDateOfBirth',
                   source: 'Landlækni',
                   title: m.expectedDateOfBirthTitle,
                   subTitle: m.expectedDateOfBirthSubtitle,
-                }),
-                buildDataProviderItem({
-                  id: 'shareInformation',
-                  type: DataProviderTypes.ExampleSucceeds,
-                  source: undefined,
-                  subTitle:
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                  title: 'Miðlun upplýsinga',
                 }),
               ],
             }),

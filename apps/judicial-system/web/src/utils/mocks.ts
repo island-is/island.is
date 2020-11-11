@@ -75,7 +75,6 @@ const testCase1 = {
   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
-  notifications: null,
 }
 
 const testCase2 = {
@@ -121,9 +120,8 @@ const testCase2 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
-  notifications: null,
   defenderName: 'Saul Goodman',
-  defenderEmail: 'saul@goodman.com',
+  defenderEmail: 'saul@goodman.com',  
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
@@ -168,7 +166,6 @@ const testCase3 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   judge: null,
-  notifications: null,
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }

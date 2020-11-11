@@ -87,7 +87,7 @@ export const TransitionCaseMutation = gql`
 export const SendNotificationMutation = gql`
   mutation SendNotificationMutation($input: SendNotificationInput!) {
     sendNotification(input: $input) {
-      id
+      notificationSent
     }
   }
 `

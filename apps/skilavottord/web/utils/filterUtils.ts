@@ -1,4 +1,4 @@
-import { Car } from '@island.is/skilavottord-web/types'
+import { Car, RecyclingPartner } from '@island.is/skilavottord-web/types'
 
 type CarStatus = 'inUse' | 'pendingRecycle' | 'deregistered'
 
@@ -19,4 +19,8 @@ export const filterCarsByStatus = (status: CarStatus, cars: Car[]) => {
         (car: Car) => car.status === 'inUse' || car.status === 'cancelled',
       )
   }
+}
+
+export const filterInternalPartners = (partnerList: RecyclingPartner[]) => {
+  return partnerList.filter(({ companyId }) => companyId !== '000')
 }
