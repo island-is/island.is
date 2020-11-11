@@ -194,7 +194,7 @@ export const Overview: React.FC = () => {
               <Text variant="h3">
                 {`${capitalize(
                   formatDate(workingCase.requestedCourtDate, 'PPPP'),
-                )} kl. ${formatDate(
+                )} eftir kl. ${formatDate(
                   workingCase?.requestedCourtDate,
                   TIME_FORMAT,
                 )}`}

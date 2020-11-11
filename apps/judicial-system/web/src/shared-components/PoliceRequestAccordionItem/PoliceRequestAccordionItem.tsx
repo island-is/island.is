@@ -45,7 +45,10 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Ósk um fyrirtökudag og tíma">
         {`${capitalize(
           formatDate(workingCase.requestedCourtDate, 'PPPP'),
-        )} kl. ${formatDate(workingCase.requestedCourtDate, TIME_FORMAT)}`}
+        )} eftir kl. ${formatDate(
+          workingCase.requestedCourtDate,
+          TIME_FORMAT,
+        )}`}
       </AccordionListItem>
       <AccordionListItem title="Dómkröfur">
         {`Gæsluvarðhald til ${capitalize(
