@@ -26,7 +26,6 @@ const drivingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
   name: 'Umsókn um ökuskilríki',
-  dataProviders: [],
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',
