@@ -121,7 +121,7 @@ const testCase2 = {
   prosecutorAppealAnnouncement: null,
   judge: null,
   defenderName: 'Saul Goodman',
-  defenderEmail: 'saul@goodman.com',  
+  defenderEmail: 'saul@goodman.com',
   requestedDefenderName: 'Saul Goodman',
   requestedDefenderEmail: 'saul@goodman.com',
 }
