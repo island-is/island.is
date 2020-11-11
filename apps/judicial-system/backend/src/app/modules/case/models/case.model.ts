@@ -4,7 +4,6 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -21,7 +20,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
-import { Notification } from './notification.model'
 
 @Table({
   tableName: 'case',
@@ -352,8 +350,4 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
-
-  @HasMany(() => Notification)
-  @ApiProperty({ type: Notification, isArray: true })
-  notifications: Notification[]
 }

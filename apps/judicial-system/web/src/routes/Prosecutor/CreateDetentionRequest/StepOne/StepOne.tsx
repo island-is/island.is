@@ -33,6 +33,7 @@ import {
   Case,
   UpdateCase,
   CaseState,
+  NotificationType,
   CaseGender,
 } from '@island.is/judicial-system/types'
 import { gql, useMutation, useQuery } from '@apollo/client'
@@ -263,10 +264,15 @@ export const StepOne: React.FC = () => {
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
-      variables: { input: { caseId: id } },
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.HEADS_UP,
+        },
+      },
     })
 
-    return data?.sendNotification
+    return data?.sendNotification?.notificationSent
   }
 
   useEffect(() => {

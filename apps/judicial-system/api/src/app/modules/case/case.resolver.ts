@@ -11,14 +11,14 @@ import {
   SendNotificationInput,
   RequestSignatureInput,
   SignatureConfirmationQueryInput,
+  CaseQueryInput,
 } from './dto'
 import {
   Case,
-  Notification,
-  PendingSignature,
-  SignatureResponse,
+  RequestSignatureResponse,
+  ConfirmSignatureResponse,
+  SendNotificationResponse,
 } from './models'
-import { CaseQueryInput } from './dto/case.input'
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Case)
@@ -84,35 +84,41 @@ export class CaseResolver {
     return backendApi.transitionCase(id, authUser.nationalId, transitionCase)
   }
 
-  @Mutation(() => Notification, { nullable: true })
+  @Mutation(() => SendNotificationResponse, { nullable: true })
   sendNotification(
     @Args('input', { type: () => SendNotificationInput })
     input: SendNotificationInput,
     @CurrentAuthUser() authUser: AuthUser,
     @Context('dataSources') { backendApi },
-  ): Promise<void> {
-    this.logger.debug(`Sending notification for case ${input.caseId}`)
+  ): Promise<SendNotificationResponse> {
+    const { caseId, ...sendNotification } = input
 
-    return backendApi.sendNotification(input.caseId, authUser.nationalId)
+    this.logger.debug(`Sending notification for case ${caseId}`)
+
+    return backendApi.sendNotification(
+      caseId,
+      authUser.nationalId,
+      sendNotification,
+    )
   }
 
-  @Mutation(() => PendingSignature, { nullable: true })
+  @Mutation(() => RequestSignatureResponse, { nullable: true })
   requestSignature(
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
     @Context('dataSources') { backendApi },
-  ): Promise<PendingSignature> {
+  ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
     return backendApi.requestSignature(input.caseId)
   }
 
-  @Query(() => SignatureResponse, { nullable: true })
+  @Query(() => ConfirmSignatureResponse, { nullable: true })
   confirmSignature(
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @Context('dataSources') { backendApi },
-  ): Promise<SignatureResponse> {
+  ): Promise<ConfirmSignatureResponse> {
     const { caseId, documentToken } = input
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)

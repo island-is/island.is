@@ -64,7 +64,7 @@ export class VehicleService {
       }
 
       // Save vehicle to database
-      vehicle.save()
+      await vehicle.save()
       this.logger.info(
         `---- Finished creating vehicle with vehicle id - ${vehicle.vehicleId} ----`,
       )
