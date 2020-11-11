@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../../Box/Box'
-import { Icon } from '../../Icon/Icon'
+import { Icon } from '../../IconRC/Icon'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as types from '../types'
 import * as styles from './SectionNumber.treat'
@@ -57,7 +57,7 @@ export const SectionNumber: FC<SectionNumberProps> = ({
         style={{ height: `${lineHeight}px` }}
       />
       {(currentState === 'next' && (
-        <Icon type="bullet" color={currentBulletColor} width="16" height="16" />
+        <Icon color={currentBulletColor} size="small" icon="ellipse" />
       )) || (
         <Box
           position="absolute"
@@ -70,7 +70,7 @@ export const SectionNumber: FC<SectionNumberProps> = ({
           className={styles.number}
         >
           {(currentState === 'previous' && (
-            <Icon type="check" color="white" width="16" height="16" />
+            <Icon color="white" size="small" icon="checkmark" />
           )) ||
             number}
         </Box>

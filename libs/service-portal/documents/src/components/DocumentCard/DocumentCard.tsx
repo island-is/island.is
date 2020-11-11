@@ -41,12 +41,11 @@ const DocumentCard: FC<Props> = ({ document }) => {
   const { fetchDocument, loading, data, error } = useLazyDocumentDetail(
     document.id,
   )
-
   useEffect(() => {
-    if (data) {
+    if (data || error) {
       handleOnFetch()
     }
-  }, [data])
+  }, [data, error])
 
   const handleOnFetch = () => {
     if (data?.fileType === 'pdf' && data?.content) {
@@ -84,6 +83,7 @@ const DocumentCard: FC<Props> = ({ document }) => {
       date={new Date(document.date)}
       label={document.senderName}
       key={document.id}
+      loading={loading}
       cta={{
         onClick: handleOnClick,
         label: formatMessage({

@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/graphql'
 import useAuth from '../hooks/useAuth'
 import {
-  Typography,
+  Text,
   Box,
   Stack,
   ActionCard,
@@ -22,7 +22,7 @@ export const Applications: FC = () => {
   const { type } = useParams()
   const history = useHistory()
   const { userInfo } = useAuth()
-  const nationalRegistryId = userInfo?.profile?.natreg
+  const nationalRegistryId = userInfo?.profile?.nationalId
 
   const { data, loading, error: applicationsError } = useQuery(
     APPLICANT_APPLICATIONS,
@@ -74,13 +74,13 @@ export const Applications: FC = () => {
       {!loading && !isEmpty(data?.getApplicationsByApplicant) && (
         <Box padding="containerGutter">
           <Box marginTop={5} marginBottom={5}>
-            <Typography variant="h1">Þínar umsóknir</Typography>
+            <Text variant="h1">Þínar umsóknir</Text>
           </Box>
           {applicationsError && (
             <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-              <Typography variant="h3">
+              <Text variant="h3">
                 Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
-              </Typography>
+              </Text>
             </Box>
           )}
           <Stack space={2}>

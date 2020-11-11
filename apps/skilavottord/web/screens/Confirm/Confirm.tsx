@@ -3,14 +3,7 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation } from '@apollo/client'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import {
-  Box,
-  Stack,
-  Typography,
-  Button,
-  Checkbox,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { CarDetailsBox } from './components'
 import { theme } from '@island.is/island-ui/theme'
@@ -102,10 +95,10 @@ const Confirm = ({ apolloState }) => {
           activeCar={id.toString()}
         >
           <Stack space={4}>
-            <Typography variant="h1">{t.title}</Typography>
+            <Text variant="h1">{t.title}</Text>
             <Stack space={2}>
-              <Typography variant="h3">{t.subTitles.confirm}</Typography>
-              <Typography variant="p">{t.info}</Typography>
+              <Text variant="h3">{t.subTitles.confirm}</Text>
+              <Text>{t.info}</Text>
             </Stack>
             <Stack space={2}>
               <CarDetailsBox car={car} />

@@ -44,7 +44,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
           {parentPage.title}
         </Text>
         <Divider weight="alternate" />
-        <Link href="/um-island-is">
+        <Link href="/stafraent-island">
           <Text>{parentPage.pageHeader.navigationText}</Text>
         </Link>
         {parentPage.pageHeader.links.map(({ text, url }, i) => (
@@ -85,7 +85,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
               <Box paddingBottom={1}>
                 <Breadcrumbs>
                   <Link href="/">Ísland.is</Link>
-                  <Link href="/um-island-is">{parentPage.title}</Link>
+                  <Link href="/stafraent-island">{parentPage.title}</Link>
                 </Breadcrumbs>
               </Box>
               <Stack space={2}>

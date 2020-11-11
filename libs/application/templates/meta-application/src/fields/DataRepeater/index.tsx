@@ -1,21 +1,12 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 import { formatText, RepeaterProps } from '@island.is/application/core'
-import {
-  Box,
-  ButtonDeprecated as Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../forms/messages'
 import DataTable from '../DataTable'
 
-const DataRepeater: FC<RepeaterProps> = ({
-  error,
-  expandRepeater,
-  repeater,
-  application,
-}) => {
+const DataRepeater: FC<RepeaterProps> = ({ expandRepeater, application }) => {
   const { formatMessage } = useLocale()
 
   return (

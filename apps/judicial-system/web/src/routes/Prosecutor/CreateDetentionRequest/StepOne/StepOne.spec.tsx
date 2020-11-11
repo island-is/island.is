@@ -11,7 +11,7 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 
 describe('/krafa with an id', () => {
@@ -22,7 +22,7 @@ describe('/krafa with an id', () => {
     render(
       <MockedProvider mocks={mockCaseQueries} addTypename={false}>
         <userContext.Provider value={mockProsecutorUserContext}>
-          <MemoryRouter initialEntries={['/krafa/test_id']}>
+          <MemoryRouter initialEntries={['/krafa/test_id_2']}>
             <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
               <StepOne />
             </Route>
@@ -112,6 +112,15 @@ describe('/krafa without ID', () => {
     expect(court).toEqual('Héraðsdómur Reykjavíkur')
     expect(datepickers.length).toEqual(0)
     expect(
+      screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('radio', { name: 'Kona' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('radio', { name: 'Annað' }) as HTMLInputElement,
+    ).not.toBeChecked()
+    expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,
       }) as HTMLButtonElement,
@@ -141,61 +150,65 @@ describe('/krafa without ID', () => {
 
     render(
       <MockedProvider
-        mocks={[]
-          .concat(mockCaseQueries)
-          .concat([
-            {
-              request: {
-                query: CreateCaseMutation,
-                variables: {
-                  input: {
-                    policeCaseNumber: '000-0000-0010',
-                    accusedNationalId: '1112902539',
-                    court: 'Héraðsdómur Reykjavíkur',
-                    accusedName: '',
-                    accusedAddress: '',
-                    arrestDate: null,
-                    requestedCourtDate: null,
-                  },
+        mocks={[
+          ...mockCaseQueries,
+          {
+            request: {
+              query: CreateCaseMutation,
+              variables: {
+                input: {
+                  policeCaseNumber: '000-0000-0010',
+                  accusedNationalId: '1112902539',
+                  court: 'Héraðsdómur Reykjavíkur',
+                  accusedName: '',
+                  accusedAddress: '',
+                  requestedDefenderName: '',
+                  requestedDefenderEmail: '',
+                  accusedGender: undefined,
+                  arrestDate: undefined,
+                  requestedCourtDate: undefined,
                 },
               },
-              result: () => {
-                setTimeout(() => promiseResolve(), 1000)
-
-                return { data: { createCase: { id: 'testid' } } }
-              },
             },
-          ])
-          .concat(
-            mockUpdateCaseMutation([
-              {
-                id: 'testid',
-                accusedName: 'Jon Harring',
-              } as UpdateCase,
-              {
-                id: 'testid',
-                accusedAddress: 'Harringvej 2',
-              } as UpdateCase,
-              {
-                id: 'testid',
-                arrestDate: formatISO(arrestDate, { representation: 'date' }),
-              } as UpdateCase,
-              {
-                id: 'testid',
-                arrestDate: formatISO(arrestDate),
-              } as UpdateCase,
-              {
-                id: 'testid',
-                requestedCourtDate: formatISO(lastDateOfTheMonth, {
-                  representation: 'date',
-                }),
-              } as UpdateCase,
-              {
-                id: 'testid',
-                requestedCourtDate: formatISO(lastDateOfTheMonth),
-              } as UpdateCase,
-            ]),
-          )}
+            result: () => {
+              setTimeout(() => promiseResolve(), 1000)
+
+              return { data: { createCase: { id: 'testid' } } }
+            },
+          },
+          ...mockUpdateCaseMutation([
+            {
+              id: 'testid',
+              accusedName: 'Jon Harring',
+            } as UpdateCase,
+            {
+              id: 'testid',
+              accusedAddress: 'Harringvej 2',
+            } as UpdateCase,
+            {
+              id: 'testid',
+              accusedGender: CaseGender.FEMALE,
+            } as UpdateCase,
+            {
+              id: 'testid',
+              arrestDate: formatISO(arrestDate, { representation: 'date' }),
+            } as UpdateCase,
+            {
+              id: 'testid',
+              arrestDate: formatISO(arrestDate),
+            } as UpdateCase,
+            {
+              id: 'testid',
+              requestedCourtDate: formatISO(lastDateOfTheMonth, {
+                representation: 'date',
+              }),
+            } as UpdateCase,
+            {
+              id: 'testid',
+              requestedCourtDate: formatISO(lastDateOfTheMonth),
+            } as UpdateCase,
+          ]),
+        ]}
         addTypename={false}
       >
         <userContext.Provider value={mockProsecutorUserContext}>
@@ -258,6 +271,8 @@ describe('/krafa without ID', () => {
       'Harringvej 2',
     )
     userEvent.tab()
+
+    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
 
     // Select dates
     const datePickerWrappers = screen.getAllByTestId('datepicker')
@@ -324,7 +339,8 @@ describe('/krafa without ID', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[].concat(mockCaseQueries).concat([
+        mocks={[
+          ...mockCaseQueries,
           {
             request: {
               query: CreateCaseMutation,
@@ -335,8 +351,11 @@ describe('/krafa without ID', () => {
                   court: 'Héraðsdómur Reykjavíkur',
                   accusedName: 'Gervipersona',
                   accusedAddress: 'Batcave',
-                  arrestDate: null,
-                  requestedCourtDate: null,
+                  requestedDefenderName: 'Garfield',
+                  requestedDefenderEmail: 'gf@cartoon.io',
+                  accusedGender: CaseGender.OTHER,
+                  arrestDate: undefined,
+                  requestedCourtDate: undefined,
                 },
               },
             },
@@ -347,7 +366,7 @@ describe('/krafa without ID', () => {
               }
             },
           },
-        ])}
+        ]}
         addTypename={false}
       >
         <userContext.Provider value={mockProsecutorUserContext}>
@@ -369,9 +388,25 @@ describe('/krafa without ID', () => {
 
     userEvent.tab()
 
+    userEvent.click(screen.getByRole('radio', { name: 'Annað' }))
+
     await userEvent.type(
       screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
       'Batcave',
+    )
+
+    userEvent.tab()
+
+    await userEvent.type(
+      screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
+      'Garfield',
+    )
+
+    userEvent.tab()
+
+    await userEvent.type(
+      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
+      'gf@cartoon.io',
     )
 
     userEvent.tab()
