@@ -265,6 +265,18 @@ export class RecyclingRequestService {
         }
         newRecyclingRequest.nameOfRequestor = partner['companyName']
       }
+
+      // Checking if 'permno' is already in the database
+      const resRequestType = await this.findAllWithPermno(permno)
+      if (!requestType || resRequestType.length == 0) {
+        this.logger.error(
+          `Could not find any requestType for vehicle's number: ${permno} in database`,
+        )
+        errors.operation = 'Checking vehicle'
+        errors.message = `Citizen has not accepted to recycle the vehicle.`
+        return errors
+      }
+
       // Here is a bit tricky
       // 1. Check if lastest vehicle's requestType is 'pendingRecycle'
       // 2. Set requestType to 'handOver'
@@ -277,25 +289,15 @@ export class RecyclingRequestService {
       if (requestType == 'deregistered') {
         // 1. Check 'pendingRecycle' requestType
         this.logger.info(`Check "pendingRecycle" status on vehicle: ${permno}`)
-        const resRequestType = await this.findAllWithPermno(permno)
-        if (resRequestType.length > 0) {
-          if (
-            !['pendingRecycle', 'handOver'].includes(
-              resRequestType[0]['dataValues']['requestType'],
-            )
-          ) {
-            this.logger.error(
-              `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
-            )
-            errors.operation = 'Checking status'
-            errors.message = `Citizen has not accepted to recycle the vehicle.`
-            return errors
-          }
-        } else {
-          this.logger.error(
-            `Could not find any requestType for vehicle's number: ${permno} in database`,
+        if (
+          !['pendingRecycle', 'handOver'].includes(
+            resRequestType[0]['dataValues']['requestType'],
           )
-          errors.operation = 'Checking status'
+        ) {
+          this.logger.error(
+            `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+          )
+          errors.operation = 'Checking vehicle status'
           errors.message = `Citizen has not accepted to recycle the vehicle.`
           return errors
         }
