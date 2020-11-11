@@ -1,4 +1,10 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  NotFoundException,
+  Param,
+} from '@nestjs/common'
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
 import { User } from './user.model'
@@ -7,7 +13,10 @@ import { UserService } from './user.service'
 @Controller('api')
 @ApiTags('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(UserService)
+    private readonly userService: UserService,
+  ) {}
 
   @Get('user/:nationalId')
   @ApiOkResponse({ type: User })

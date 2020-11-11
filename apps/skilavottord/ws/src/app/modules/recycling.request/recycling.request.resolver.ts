@@ -3,6 +3,8 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { VehicleModel } from '../vehicle/model/vehicle.model'
+import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {
@@ -12,6 +14,7 @@ export class RecyclingRequestResolver {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
+  @Authorize({ throwOnUnAuthorized: false })
   @Query(() => [RecyclingRequestModel])
   async skilavottordAllRecyclingRequests(): Promise<RecyclingRequestModel[]> {
     const res = await this.recyclingRequestService.findAll()
@@ -39,6 +42,13 @@ export class RecyclingRequestResolver {
     @Args('recyclingPartner') station: string,
   ): Promise<boolean> {
     return this.recyclingRequestService.deRegisterVehicle(nid, station)
+  }
+
+  @Query(() => VehicleModel)
+  async skilavottordVehicleReadyToDeregistered(
+    @Args('permno') permno: string,
+  ): Promise<VehicleModel> {
+    return this.recyclingRequestService.getVehicleInfoToDeregistered(permno)
   }
 
   @Mutation(() => Boolean)

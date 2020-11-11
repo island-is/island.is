@@ -10,6 +10,7 @@ import { ListItem } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { RecyclingPartner } from '@island.is/skilavottord-web/types'
+import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
 const RecyclingCompanies: FC = () => {
   const { user } = useContext(UserContext)
@@ -26,9 +27,7 @@ const RecyclingCompanies: FC = () => {
   }
 
   const partners = data?.skilavottordAllRecyclingPartners || []
-  const recyclingPartners = partners.filter(
-    ({ companyId }) => companyId !== '0000000000',
-  )
+  const recyclingPartners = filterInternalPartners(partners)
 
   return (
     <PartnerPageLayout

@@ -4,11 +4,13 @@ export type Icon =
   | 'add'
   | 'arrowForward'
   | 'arrowBack'
+  | 'arrowUp'
   | 'attach'
   | 'business'
   | 'calendar'
   | 'car'
   | 'cellular'
+  | 'checkmark'
   | 'checkmarkCircle'
   | 'chevronBack'
   | 'chevronDown'
@@ -17,6 +19,7 @@ export type Icon =
   | 'close'
   | 'documents'
   | 'download'
+  | 'ellipse'
   | 'fileTrayFull'
   | 'heart'
   | 'home'
@@ -43,11 +46,13 @@ export default {
     add: 'Add',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
+    arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
     calendar: 'Calendar',
     car: 'Car',
     cellular: 'Cellular',
+    checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircle',
     chevronBack: 'ChevronBack',
     chevronDown: 'ChevronDown',
@@ -56,6 +61,7 @@ export default {
     close: 'Close',
     documents: 'Documents',
     download: 'Download',
+    ellipse: 'Ellipse',
     fileTrayFull: 'FileTrayFull',
     heart: 'Heart',
     home: 'Home',
@@ -81,11 +87,13 @@ export default {
     add: 'AddOutline',
     arrowForward: 'ArrowForwardOutline',
     arrowBack: 'ArrowBackOutline',
+    arrowUp: 'ArrowUpOutline',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
     car: 'CarOutline',
     cellular: 'CellularOutline',
+    checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
     chevronBack: 'ChevronBackOutline',
     chevronDown: 'ChevronDownOutline',
@@ -94,6 +102,7 @@ export default {
     close: 'CloseOutline',
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
+    ellipse: 'EllipseOutline',
     fileTrayFull: 'FileTrayFullOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',

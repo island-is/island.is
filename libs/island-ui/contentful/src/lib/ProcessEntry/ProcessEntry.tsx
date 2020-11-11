@@ -17,7 +17,6 @@ import * as styles from './ProcessEntry.treat'
 export const Titles: {
   [Digital: string]: { is: string; en: string }
 } = {
-  // TODO: translating these requires some effort
   Digital: { is: 'Stafræn umsókn', en: 'Digital application' },
   'Digital w/login': {
     is: 'Aðgangsstýrð stafræn umsókn',
@@ -75,7 +74,9 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   buttonText,
   locale = 'is',
 }) => {
-  const translatedLabel = Titles[type][locale]
+  const titleType = type && type.length > 0 ? type : 'No type'
+  const localeType = locale && locale.length > 0 ? locale : 'is'
+  const translatedLabel = Titles[titleType][localeType]
   return (
     <>
       <Box width="full" background="blue100" borderRadius="large">

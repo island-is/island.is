@@ -10,8 +10,7 @@ import {
   Tag,
   Inline,
   TagProps,
-  IconTypesDeprecated as IconTypes,
-  IconDeprecated as Icon,
+  Icon,
   FocusableBox,
   TagVariant,
 } from '@island.is/island-ui/core'
@@ -34,7 +33,6 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 
 interface CardProps {
   title: string
-  icon?: IconTypes
   image?: Image
   description: string
   tags?: Array<CardTagsProps>
@@ -46,7 +44,6 @@ interface CardProps {
 
 export const Card: FC<CardProps> = ({
   title,
-  icon,
   image,
   description,
   tags = [],
@@ -98,11 +95,6 @@ export const Card: FC<CardProps> = ({
             <Box display="inlineFlex" flexGrow={1}>
               {title}
             </Box>
-            {icon && (
-              <Box marginLeft={1} display="inlineFlex">
-                <Icon type={icon} />
-              </Box>
-            )}
           </Box>
         </Text>
         {description && <Text>{description}</Text>}

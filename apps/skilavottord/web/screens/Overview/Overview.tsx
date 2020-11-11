@@ -30,9 +30,11 @@ const Overview: FC = () => {
   } = useI18n()
   const router = useRouter()
 
-  const nationalId = user?.nationalId ?? ''
+  const nationalId = user?.nationalId
   const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
+    fetchPolicy: 'cache-and-network',
+    skip: !nationalId,
   })
 
   const cars = data?.skilavottordVehicles || []
@@ -47,7 +49,7 @@ const Overview: FC = () => {
       .then(() => window.scrollTo(0, 0))
   }
 
-  if (error || (loading && !data)) {
+  if (error || loading) {
     return (
       <PageLayout>
         <Box paddingBottom={[3, 3, 6, 6]}>

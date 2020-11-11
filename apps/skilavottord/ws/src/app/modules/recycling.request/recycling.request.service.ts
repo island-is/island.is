@@ -6,6 +6,7 @@ import { FjarsyslaService } from '../fjarsysla/models/fjarsysla.service'
 import { RecyclingPartnerService } from '../recycling.partner/recycling.partner.service'
 import { VehicleService } from '../vehicle/vehicle.service'
 import { environment } from '../../../environments'
+import { VehicleModel } from '../vehicle/model/vehicle.model'
 
 @Injectable()
 export class RecyclingRequestService {
@@ -44,7 +45,7 @@ export class RecyclingRequestService {
       const headerAuthRequest = {
         'Content-Type': 'application/json',
       }
-
+      // TODO: saved jToken and use it in next 7 days ( until it expires )
       const authRes = await this.httpService
         .post(restAuthUrl, jsonAuthBody, { headers: headerAuthRequest })
         .toPromise()
@@ -133,6 +134,59 @@ export class RecyclingRequestService {
     }
   }
 
+  // Find all a vehicle's requests
+  async getVehicleInfoToDeregistered(permno: string): Promise<VehicleModel> {
+    this.logger.info(
+      `---- Starting getVehicleInfoToDeregistered request for ${permno} ----`,
+    )
+    try {
+      // Check 'pendingRecycle' status
+      this.logger.info(`Getting lastest requestType on vehicle: ${permno}`)
+      const resRequestType = await this.findAllWithPermno(permno)
+      if (resRequestType.length > 0) {
+        if (
+          resRequestType[0]['dataValues']['requestType'] != 'pendingRecycle'
+        ) {
+          this.logger.error(
+            `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+          )
+          throw new Error(
+            `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+          )
+        }
+      } else {
+        this.logger.error(
+          `Could not find any requestType for vehicle's number: ${permno} in database`,
+        )
+        throw new Error(
+          `Could not find any requestType for vehicle's number: ${permno} in database`,
+        )
+      }
+
+      // Get vehicle's information
+      this.logger.info(`Getting vehicle's information for vehicle: ${permno}`)
+      const res = await this.vehicleService.findByVehicleId(permno)
+      if (!res) {
+        this.logger.error(
+          `Could not find any vehicle's information for vehicle's number: ${permno} in database`,
+        )
+        throw new Error(
+          `Could not find any vehicle's information for vehicle's number: ${permno} in database`,
+        )
+      }
+
+      this.logger.info(
+        `---- Finished getVehicleInfoToDeregistered request for ${permno} ----`,
+      )
+      return res
+    } catch (err) {
+      this.logger.error(
+        `Getting error when trying to getVehicleInfoToDeregistered: ${permno}`,
+      )
+      throw new Error(err)
+    }
+  }
+
   // Create new RecyclingRequest for citizen and recycling partner.
   // partnerId could be null, when it's the request is for citizen
   async createRecyclingRequest(
@@ -159,12 +213,29 @@ export class RecyclingRequestService {
       // partnerId could not be null when create requestType for recycling partner.
       if (requestType == 'deregistered' && !partnerId) {
         this.logger.error(
-          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
+          `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
         throw new Error(
-          `partnerId could not both be null when create requestType 'deregistered' for recylcing partner`,
+          `partnerId could not be null when create requestType 'deregistered' for recylcing partner`,
         )
       }
+
+      // If requestType is not 'pendingRecycle', 'cancelled' or 'deregistered'
+      if (
+        !(
+          requestType == 'pendingRecycle' ||
+          requestType == 'cancelled' ||
+          requestType == 'deregistered'
+        )
+      ) {
+        this.logger.error(
+          `requestType have to be 'pendingRecycle', 'cancelled' or 'deregistered'`,
+        )
+        throw new Error(
+          `requestType have to be 'pendingRecycle', 'cancelled' or 'deregistered'`,
+        )
+      }
+
       // Initalise new RecyclingRequest
       const newRecyclingRequest = new RecyclingRequestModel()
       newRecyclingRequest.vehicleId = permno
@@ -179,6 +250,9 @@ export class RecyclingRequestService {
           partnerId,
         )
         if (!partner) {
+          this.logger.error(
+            `Could not find Partner from partnerId: ${partnerId}`,
+          )
           throw new Error(`Could not find Partner from partnerId: ${partnerId}`)
         }
         newRecyclingRequest.nameOfRequestor = partner['companyName']
@@ -195,6 +269,9 @@ export class RecyclingRequestService {
       if (requestType == 'deregistered') {
         try {
           // 1. Check 'pendingRecycle' requestType
+          this.logger.info(
+            `Check "pendingRecycle" status on vehicle: ${permno}`,
+          )
           const resRequestType = await this.findAllWithPermno(permno)
           if (resRequestType.length > 0) {
             if (
