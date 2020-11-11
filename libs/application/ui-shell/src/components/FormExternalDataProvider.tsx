@@ -3,9 +3,9 @@ import { ExternalDataProviderScreen } from '../types'
 import {
   Box,
   Checkbox,
-  IconDeprecated as Icon,
+  Icon,
   InputError,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   DataProviderItem,
@@ -27,12 +27,10 @@ const ProviderItem: FC<{
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={3}>
-      <Typography variant="h4" color="blue400">
+      <Text variant="h4" color="blue400">
         {formatMessage(title)}
-      </Typography>
-      {subTitle && (
-        <Typography variant="p">{formatMessage(subTitle)}</Typography>
-      )}
+      </Text>
+      {subTitle && <Text>{formatMessage(subTitle)}</Text>}
       {dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
@@ -75,11 +73,11 @@ const FormExternalDataProvider: FC<{
         justifyContent="flexStart"
       >
         <Box marginRight={1}>
-          <Icon type="download" width={24} height={24} />
+          <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
-        <Typography variant="h4">
+        <Text variant="h4">
           Eftirfarandi gögn verða sótt rafrænt með þínu samþykki
-        </Typography>
+        </Text>
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (

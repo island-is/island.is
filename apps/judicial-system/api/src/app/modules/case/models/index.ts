@@ -1,4 +1,4 @@
 export { Case } from './case.model'
-export { Notification } from './notification.model'
-export { PendingSignature } from './pendingSignature.model'
-export { SignatureResponse } from './signatureResponse.model'
+export { SendNotificationResponse } from './notificationSent.response'
+export { RequestSignatureResponse } from './requestSignature.response'
+export { ConfirmSignatureResponse } from './confirmSignature.response'

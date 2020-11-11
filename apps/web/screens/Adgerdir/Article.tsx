@@ -13,6 +13,7 @@ import {
   Text,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -25,6 +26,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   AdgerdirArticles,
   HeadWithSocialSharing,
+  RichText,
 } from '@island.is/web/components'
 import {
   GET_ADGERDIR_PAGE_QUERY,
@@ -34,12 +36,7 @@ import {
 } from '../queries'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { Screen } from '@island.is/web/types'
-import {
-  Content,
-  Paragraph,
-  Intro,
-  Heading,
-} from '@island.is/web/units/Adgerdir'
+import { Intro } from '@island.is/web/units/Adgerdir'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -66,12 +63,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
-  const { estimatedCostIsk, finalCostIsk } = article
-
-  const estimatedCostFormatted =
-    estimatedCostIsk && formatNumberToKr(estimatedCostIsk)
-  const finalCostFormatted = finalCostIsk && formatNumberToKr(finalCostIsk)
-
   const description = article.longDescription || article.description
 
   return (
@@ -93,7 +84,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
               ) : null}
               <Stack space={1}>
                 <Text variant="tag" color="red600">
-                  Málefni:
+                  {n('malefni', 'Málefni')}:
                 </Text>
                 <Inline space={2} alignY="center">
                   {article.tags.map(({ title }, index) => {
@@ -120,9 +111,9 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                 <a>Ísland.is</a>
               </Link>
               <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
-                <a>Covid aðgerðir</a>
+                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
               </Link>
-              <Tag>Aðgerðir</Tag>
+              <Tag>{n('adgerdir', 'Aðgerðir')}</Tag>
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
@@ -137,39 +128,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
               </Text>
               {description ? <Intro>{description}</Intro> : null}
             </Stack>
-            {article.objective ? (
-              <>
-                <Heading variant="h3" as="h3">
-                  Markmið
-                </Heading>
-                <Content document={article.objective} />
-              </>
-            ) : null}
-            {estimatedCostFormatted || finalCostFormatted ? (
-              <>
-                <Heading variant="h3" as="h3">
-                  Kostnaður ríkissjóðs
-                </Heading>
-                <Paragraph>
-                  {estimatedCostFormatted ? (
-                    <>
-                      <span>
-                        Áætlaður kostnaður:{' '}
-                        <strong>{estimatedCostFormatted}</strong>
-                      </span>
-                      <br />
-                    </>
-                  ) : null}
-                  {finalCostFormatted ? (
-                    <span>
-                      Endanlegur kostnaður:{' '}
-                      <strong>{finalCostFormatted}</strong>
-                    </span>
-                  ) : null}
-                </Paragraph>
-              </>
-            ) : null}
-            {!!article.content && <Content document={article.content} />}
+            <RichText
+              body={article.content as SliceType[]}
+              config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
+              locale={activeLocale}
+            />
           </GridColumn>
         </GridRow>
       </ArticleLayout>
@@ -254,15 +217,5 @@ AdgerdirArticle.getInitialProps = async ({ apolloClient, query, locale }) => {
     namespace,
   }
 }
-
-const formatNumberToKr = (number: number) =>
-  number
-    .toLocaleString('is-IS', {
-      style: 'currency',
-      currency: 'ISK',
-    })
-    .replace('ISK', '')
-    .split(',')
-    .join('.') + ',- kr.'
 
 export default withMainLayout(AdgerdirArticle)

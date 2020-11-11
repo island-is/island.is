@@ -82,9 +82,6 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly comments?: string
 
-  // @Field({ nullable: true })
-  // readonly prosecutorId?: string
-
   @Field(() => User, { nullable: true })
   readonly prosecutor?: User
 
@@ -145,12 +142,6 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly prosecutorAppealAnnouncement?: string
 
-  // @Field({ nullable: true })
-  // readonly judgeId?: string
-
   @Field(() => User, { nullable: true })
   readonly judge?: User
-
-  // @Field(() => Notification[], { nullable: true })
-  // readonly notifications?: Notification[]
 }
