@@ -1,3 +1,4 @@
+export { CaseQueryInput } from './case.input'
 export { CreateCaseInput } from './createCase.input'
 export { UpdateCaseInput } from './updateCase.input'
 export { TransitionCaseInput } from './transitionCase.input'

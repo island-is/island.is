@@ -9,7 +9,7 @@ export const number = style({
   fontSize: 18,
   lineHeight: 0,
   borderRadius: '50%',
-  top: -1,
+  top: 0,
   left: 0,
 })
 
