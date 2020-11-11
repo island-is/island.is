@@ -37,7 +37,7 @@ emailOptions: {
   },
 ```
 
-Finally, to enamble prison email notifications provide a prison email address:
+Finally, to enable prison email notifications provide a prison email address:
 `PRISON_EMAIL=<prison email>`
 
 ## Graphql
