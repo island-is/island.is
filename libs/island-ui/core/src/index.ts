@@ -24,7 +24,7 @@ export * from './lib/Footer/Footer'
 export * from './lib/InputSearch/InputSearch'
 export * from './lib/ServiceFilter/ServiceFilter'
 export * from './lib/DialogPrompt/DialogPrompt'
-export * from './lib/FilterCheckGroup/FilterCheckGroup'
+export * from './lib/FilterSearchGroup/FilterSearchGroup'
 export * from './lib/FilterSearch/FilterSearch'
 
 // Cards

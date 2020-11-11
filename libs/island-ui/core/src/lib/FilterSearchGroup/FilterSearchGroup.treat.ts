@@ -21,6 +21,7 @@ export const filterItem = style({
     marginTop: 0,
 })
 
-export const categoryCheckbox = style({
-  marginTop: 5,
+export const filterGroupItem = style({
+  marginTop:-10,
+  marginBottom: 15,
 })

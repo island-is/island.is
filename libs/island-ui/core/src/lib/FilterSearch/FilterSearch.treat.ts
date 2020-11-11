@@ -31,6 +31,7 @@ export const inputSearch = style({
 
 export const clear = style({
   textDecorationLine: 'underline',
+  marginTop: 5,
   marginBottom: 5,
   color: theme.color.blue400,
   fontSize: 13,

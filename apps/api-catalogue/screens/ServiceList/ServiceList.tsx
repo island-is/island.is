@@ -12,7 +12,7 @@ import {
   LoadingIcon,
   Stack,
   ServiceFilter,
-  FilterCheckGroup,
+  FilterSearchGroup,
   FilterSearch,
   Checkbox,
 } from '@island.is/island-ui/core'
@@ -33,6 +33,12 @@ import {
   Query,
   QueryGetApiCatalogueArgs,
 } from '@island.is/api/schema'
+import {
+  PricingCategory,
+  DataCategory,
+  TypeCategory,
+  AccessCategory
+} from '@island.is/api-catalogue/consts'
 
 interface PropTypes {
   top?: ReactNode
@@ -156,7 +162,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
   }
 
   const onSearchChange = function (inputValue: string) {
-    setParameters({ ...parameters, query: inputValue })
+      setParameters({ ...parameters, query: inputValue })
   }
 
   useIsomorphicLayoutEffect(() => {
@@ -166,8 +172,6 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
     setIsMobile(false)
   }, [width])
 
-  const [todoCheckVerd, setTodoCheckVerd] = useState<boolean>(false)
-  const [todoCheckFritt, setTodoCheckFritt] = useState<boolean>(false)
   return (
     <ServiceLayout
       className={cn(isMobile ? styles.LayoutMobile : {})}
@@ -278,27 +282,116 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
           </div>
         ) : (
             <div>
-              <FilterSearch id="filter-search-1"   label="stuff"    
-                className={cn(styles.filter, 'aaafilter')}
+              <FilterSearch
+                 className={cn(styles.filter)}
                  inputValues={{
-                   placeholder:"placeholder",
-                   colored:true,
+                   value : parameters?.query === null ? '' : parameters?.query,
+                   placeholder:filterStrings.strings.find((s) => s.id === 'catalog-filter-search').text,
+                   colored:parameters.query.length < 1,
+                   isLoading:loading,
                    onChange:(event) => onSearchChange(event.target.value)
                  }}
                 clearValues={{
-                  text:'Þurka',
+                  text:'Hreinsa',
                   onClick : onClear
                 }}
-
-                
               >
-                <FilterCheckGroup  id="pricing_categoryX"   label="VerðX"    className={styles.serviceLayoutMobile}>
-                  <Checkbox label="FríttX"  checked={todoCheckVerd}    onChange={({ target }) => {setTodoCheckVerd(target.checked)}} />
-                  <Checkbox label="kostar"  checked={todoCheckFritt}    onChange={({ target }) => {setTodoCheckFritt(target.checked)}} />
-                </FilterCheckGroup>
+                <FilterSearchGroup  
+                  id="pricing_category"   
+                  label={filterStrings.strings.find((s) => s.id === 'catalog-filter-pricing').text}
+                >
+                  <Checkbox 
+                    name="pricing"
+                    value={PricingCategory.FREE}
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-pricing-free').text} 
+                    checked={parameters.pricing.includes(PricingCategory.FREE)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="pricing"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-pricing-paid').text} 
+                    value={PricingCategory.PAID}
+                    checked={parameters.pricing.includes(PricingCategory.PAID)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+
+                </FilterSearchGroup>
+                <FilterSearchGroup  
+                  id="data_category"   
+                  label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data').text}
+                  >
+                  <Checkbox 
+                    name="data"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-public').text}
+                    value={DataCategory.PUBLIC}
+                    checked={parameters.data.includes(DataCategory.PUBLIC)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="data"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-official').text}
+                    value={DataCategory.OFFICIAL}
+                    checked={parameters.data.includes(DataCategory.OFFICIAL)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="data"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-personal').text}
+                    value={DataCategory.PERSONAL}
+                    checked={parameters.data.includes(DataCategory.PERSONAL)}     
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="data"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-health').text}
+                    value={DataCategory.HEALTH}
+                    checked={parameters.data.includes(DataCategory.HEALTH)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="data"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-data-financial').text}
+                    value={DataCategory.FINANCIAL}
+                    checked={parameters.data.includes(DataCategory.FINANCIAL)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                </FilterSearchGroup>
+                <FilterSearchGroup  
+                  id="type_category"   
+                  label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type').text}
+                >
+                  <Checkbox 
+                    name="type"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type-rest').text}
+                    value={TypeCategory.REST}
+                    checked={parameters.type.includes(TypeCategory.REST)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="type"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type-soap').text}
+                    value={TypeCategory.SOAP}
+                    checked={parameters.type.includes(TypeCategory.SOAP)}    
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                    name="type"
+                    label={filterStrings.strings.find((s) => s.id === 'catalog-filter-type-graphql').text}
+                    value={TypeCategory.GRAPHQL}
+                    checked={parameters.type.includes(TypeCategory.GRAPHQL)}
+                    onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                </FilterSearchGroup>
+                <FilterSearchGroup  
+                  id="access_category"   
+                  label={filterStrings.strings.find((s) => s.id === 'catalog-filter-access').text}
+                >
+                  <Checkbox 
+                  name="access"
+                  label={filterStrings.strings.find((s) => s.id === 'catalog-filter-access-xroad').text}
+                  value={AccessCategory.XROAD}
+                  checked={parameters.access.includes(AccessCategory.XROAD)}
+                  onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                  <Checkbox 
+                  name="access" 
+                  label={filterStrings.strings.find((s) => s.id === 'catalog-filter-access-apigw').text}
+                  value={AccessCategory.APIGW}
+                  checked={parameters.access.includes(AccessCategory.APIGW)}
+                  onChange={({ target }) => {updateCategoryCheckBox(target)}} />
+                </FilterSearchGroup>
               </FilterSearch>
 
-              <ServiceFilter
+              {/* <ServiceFilter
                 rootClasses={cn(styles.filter, 'filter')}
                 isLoading={loading}
                 parameters={parameters}
@@ -308,7 +401,7 @@ export function ServiceList({ pageContent, filterStrings }: ServiceListProps) {
                   updateCategoryCheckBox(target)
                 }}
                 strings={filterStrings.strings}
-              />
+              /> */}
             </div>
         )
       }

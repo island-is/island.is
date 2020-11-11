@@ -9,7 +9,10 @@ type IconVariantTypes = 'default' | 'sidebar'
 
 export type InputValues = {
   placeholder:string,
+  isLoading:boolean,
   colored:boolean,
+  value?:string,
+  valueDoUpdate?:string,
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
@@ -19,12 +22,11 @@ export type ClearValues = {
   onClick?: (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void
   
 }
+
+//todo: Þarf að bjóða upp á að nota default Classes í grunn og bæta custom classes ofaná
+//todo: þarf að bjóða upp á að nota EKKI default classes í grunn, heldur bara þá sem eru
+
 export interface FilterSearchProps  {
-  id:string
-  label:string,
-  labelVariant?:TextVariants,
-  iconVariant?:IconVariantTypes,
-  isLoading?:boolean,
   inputValues?:InputValues,
   clearValues?:ClearValues,
   className?: string
@@ -34,11 +36,6 @@ export interface FilterSearchProps  {
 
 
 export const FilterSearch: React.FC<FilterSearchProps> = ({
-  id,
-  label,
-  labelVariant="h5",
-  iconVariant="default",
-  isLoading,
   inputValues,
   clearValues,
   className,
@@ -51,12 +48,13 @@ export const FilterSearch: React.FC<FilterSearchProps> = ({
       (<Box className={cn(styles.inputSearch)}>
           
           <InputSearch
-            loading={isLoading}
             placeholder={inputValues.placeholder}
+            value={inputValues?.value}
+            loading={inputValues.isLoading}
             colored={inputValues.colored}
             onChange={inputValues?.onChange}
           />
-        </Box>):"XXXX"
+        </Box>):""
       }
 
     <div className={cn(styles.filterItem)}>
