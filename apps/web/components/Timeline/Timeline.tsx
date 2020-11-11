@@ -16,8 +16,8 @@ import * as eventStyles from './Event.treat'
 import ReactDOM from 'react-dom'
 import {
   Box,
-  IconDeprecated as Icon,
-  ButtonDeprecated as Button,
+  Icon,
+  Button,
   Stack,
   Tag,
   Text,
@@ -335,7 +335,7 @@ const EventBar = forwardRef(
           display="flex"
         >
           <Box className={eventStyles.eventBarIcon}>
-            <Icon type="user" color="purple400" width="24" height="24" />
+            <Icon type="filled" icon="person" color="purple400" size="medium" />
           </Box>
           <Box paddingLeft={2} paddingRight={3}>
             <Text variant="h5" color="purple400">
@@ -391,7 +391,7 @@ const EventModal = forwardRef(
           display="inlineFlex"
         >
           <Box className={eventStyles.eventBarIcon}>
-            <Icon type="user" color="purple400" width="24" height="24" />
+            <Icon type="filled" icon="person" color="purple400" size="medium" />
           </Box>
           {!!event.value && (
             <Box
@@ -428,9 +428,14 @@ const EventModal = forwardRef(
           )}
         </Box>
         <Box padding={6}>
-          <button onClick={onClose} className={eventStyles.eventModalClose}>
-            <Icon type="close" />
-          </button>
+          <Box className={eventStyles.eventModalClose}>
+            <Button
+              circle
+              colorScheme="negative"
+              icon="close"
+              onClick={onClose}
+            />
+          </Box>
           <Stack space={2}>
             <Text variant="h2" as="h3" color="purple400">
               {event.title}
@@ -447,7 +452,7 @@ const EventModal = forwardRef(
             {Boolean(event.data?.text) && event.data.text}
             {event.data?.link && (
               <Link href={event.data.link}>
-                <Button variant="text" icon="arrowRight">
+                <Button variant="text" icon="arrowForward">
                   Lesa meira
                 </Button>
               </Link>
@@ -490,16 +495,19 @@ const ArrowButton = ({
   disabled,
 }: ArrowButtonProps) => {
   return (
-    <button
-      disabled={disabled}
-      onClick={onClick}
+    <Box
       className={cn(
         timelineStyles.arrowButton,
         timelineStyles.arrowButtonTypes[type],
       )}
     >
-      <Icon type="arrowLeft" color="blue400" width="15" />
-    </button>
+      <Button
+        colorScheme="negative"
+        circle
+        icon="arrowBack"
+        onClick={onClick}
+      />
+    </Box>
   )
 }
 

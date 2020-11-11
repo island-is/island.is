@@ -17,7 +17,7 @@ import {
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { CREATE_RECYCLING_REQUEST } from '@island.is/skilavottord-web/graphql/mutations/RecyclingRequest'
+import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/graphql/mutations'
 import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
@@ -25,6 +25,7 @@ import * as styles from './Handover.treat'
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
   const [requestType, setRequestType] = useState(null)
+  const [isInvalidCar, setInvalidCar] = useState(false)
   const [showModal, setModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -36,21 +37,23 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const nationalId = user?.nationalId ?? ''
+  const nationalId = user?.nationalId
   const { data, loading, error } = useQuery(VEHICLES_BY_NATIONAL_ID, {
     variables: { nationalId },
+    skip: !nationalId,
   })
 
   const cars = data?.skilavottordVehicles || []
+  const activeCar = cars.filter((car) => car.permno === id)[0]
 
   const [
     setRecyclingRequest,
     { error: mutationError, loading: mutationLoading },
-  ] = useMutation(CREATE_RECYCLING_REQUEST, {
+  ] = useMutation(CREATE_RECYCLING_REQUEST_CITIZEN, {
     onCompleted() {
       if (requestType === 'cancelled') {
         setModal(false)
-        router.replace(routes.myCars)
+        routeHome()
       }
     },
     onError() {
@@ -68,22 +71,30 @@ const Handover: FC = () => {
   useEffect(() => {
     // because user can view this page after set pendingRecycle to check the process,
     // don't call setRecyclingRequest if the car has already been set to pendingRecycle
-    cars.map((car) => {
-      if (car.permno === id && car.status !== 'pendingRecycle') {
-        setRequestType('pendingReycle')
-        setRecyclingRequest({
-          variables: {
-            permno: id,
-            nameOfRequestor: user?.name,
-            requestType: 'pendingRecycle',
-          },
-        })
+    // and set state invalidCar if activeCar does not exist
+    if (activeCar) {
+      setInvalidCar(false)
+      switch (activeCar.status) {
+        case 'inUse':
+        case 'cancelled':
+          setRequestType('pendingRecycle')
+          setRecyclingRequest({
+            variables: {
+              permno: id,
+              nameOfRequestor: user?.name,
+              requestType: 'pendingRecycle',
+            },
+          })
+        default:
+          break
       }
-    })
-  }, [user, id, cars])
+    } else {
+      setInvalidCar(true)
+    }
+  }, [user, id, activeCar])
 
-  const onContinue = () => {
-    router.push(routes.myCars)
+  const routeHome = () => {
+    router.push(routes.myCars).then(() => window.scrollTo(0, 0))
   }
 
   const onCancelRecycling = () => {
@@ -108,6 +119,7 @@ const Handover: FC = () => {
   if (
     (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
     error ||
+    isInvalidCar ||
     (loading && !data)
   ) {
     return (
@@ -135,7 +147,7 @@ const Handover: FC = () => {
               }}
               secondaryButton={{
                 text: `${t.error.secondaryButton}`,
-                action: () => router.push(routes.myCars),
+                action: () => routeHome(),
               }}
             />
           </Stack>
@@ -183,7 +195,7 @@ const Handover: FC = () => {
               {t.buttons.cancel}
             </Button>
           )}
-          <Button onClick={onContinue} fluid={isMobile}>
+          <Button onClick={routeHome} fluid={isMobile}>
             {t.buttons.close}
           </Button>
         </Box>

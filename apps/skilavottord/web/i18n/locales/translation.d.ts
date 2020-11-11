@@ -66,7 +66,7 @@ export interface Confirm {
 }
 
 export interface Handover {
-  titles: HandoverTitles
+  titles: ProcessTitles
   subTitles: HandoverSubTitles
   info: string
   subInfo: string
@@ -161,10 +161,11 @@ export interface CheckBox {
   linkLabel: string
 }
 
-export interface HandoverTitles {
+export interface ProcessTitles {
   success: string
   error: string
   loading: string
+  notfound: string
 }
 
 export interface HandoverSubTitles {
@@ -292,10 +293,11 @@ export interface DeregisterSelect {
 }
 
 export interface Deregister {
-  title: string
-  info: string
+  titles: ProcessTitles
+  info: ProcessTitles
   buttons: DeregisterButtons
   success: string
+  error: Errors
 }
 
 export interface DeregisterOverviewSubTitles {

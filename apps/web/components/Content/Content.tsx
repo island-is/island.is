@@ -6,7 +6,7 @@ import {
   Stack,
   Accordion,
   AccordionItem,
-  ButtonDeprecated as Button,
+  Button,
   Link,
   Divider,
 } from '@island.is/island-ui/core'
@@ -75,7 +75,7 @@ const embeddedNodes = () => ({
             <Text variant="h4">{title}</Text>
           </Box>
           <Link href={link}>
-            <Button width="fluid">{linkText}</Button>
+            <Button fluid>{linkText}</Button>
           </Link>
         </Box>
       )
@@ -112,7 +112,7 @@ const embeddedNodes = () => ({
       const { text, url } = node.data?.target?.fields
       return (
         <Link href={url}>
-          <Button variant="text" icon="arrowRight">
+          <Button variant="text" icon="arrowForward">
             {text}
           </Button>
         </Link>

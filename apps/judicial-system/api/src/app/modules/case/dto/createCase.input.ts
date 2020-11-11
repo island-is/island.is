@@ -28,6 +28,14 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly requestedDefenderName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestedDefenderEmail?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly court?: string
 
   @Allow()

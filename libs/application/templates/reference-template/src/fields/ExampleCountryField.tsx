@@ -5,9 +5,9 @@ import {
   AsyncSearch,
   AsyncSearchOption,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   Input,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 
 interface Props extends FieldBaseProps {
@@ -54,11 +54,11 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
 
   return (
     <>
-      <Typography as={'p'}>
+      <Text>
         We can easily implement custom fields that might only be used in a
         single application. You could render anything you like in these kinds of
         fields.
-      </Typography>
+      </Text>
       <Box paddingTop={2}>
         <Controller
           name={`${id}`}
@@ -90,43 +90,38 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
       </Box>
       {error && (
         <Box color="red400" padding={2}>
-          <Typography variant="pSmall" color="red400">
-            {error}
-          </Typography>
+          <Text color="red400">{error}</Text>
         </Box>
       )}
       {selectedCountry && (
         <Box color="blue200" padding={4}>
-          <Typography variant="p">
+          <Text>
             {selectedCountry?.name} is in {selectedCountry.region}
-          </Typography>{' '}
+          </Text>{' '}
         </Box>
       )}
-      <Typography variant="p">
-        {' '}
-        You can even access the answers to past questions:{' '}
-      </Typography>
+      <Text> You can even access the answers to past questions: </Text>
       {Object.keys(formValue).map((k) => (
-        <Typography key={k} variant="p">
+        <Text key={k}>
           <strong>{k}:</strong> {formValue[k].toString()}
-        </Typography>
+        </Text>
       ))}
-      <Typography variant="p">
+      <Text>
         {' '}
         And you can also manipulate other schema entries, this one is the first
         question you already answered:
-      </Typography>
+      </Text>
       <Input
         id={'person.name'}
         name={'person.name'}
         label={'Name again'}
         ref={register}
       />
-      <Typography variant="p">
+      <Text>
         {' '}
         Finally, use hidden inputs to update form values with atypical UI
         elements
-      </Typography>
+      </Text>
       <Button onClick={() => setAge(age + 1)}>+++Increment age+++ {age}</Button>
       <input type="hidden" value={age} ref={register} name={'person.age'} />
     </>
