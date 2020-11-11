@@ -4,7 +4,7 @@ import { RecyclingRequestModel } from './model/recycling.request.model'
 import { RecyclingRequestService } from './recycling.request.service'
 import { logger, Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { VehicleModel } from '../vehicle/model/vehicle.model'
-import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
+import { Authorize } from '../auth'
 
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestResolver {

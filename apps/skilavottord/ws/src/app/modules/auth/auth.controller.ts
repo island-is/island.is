@@ -116,7 +116,6 @@ export class AuthController {
     this.logger.info(
       `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
     )
-    this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - returnUrl = ${returnUrl}`)
