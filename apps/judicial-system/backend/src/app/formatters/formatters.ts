@@ -199,21 +199,21 @@ export function formatPrisonCourtDateEmailNotification(
 ): string {
   const courtText = court.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPp')
-  const accusedGenderText =
-    accusedGender === CaseGender.OTHER
-      ? 'K'
-      : `Sakborningur er ${
-          accusedGender === CaseGender.MALE ? 'karl' : 'kona'
-        } og k`
   const requestedCustodyEndDateText = formatDate(
     requestedCustodyEndDate,
     'PPPp',
   )
+  const requestText =
+    accusedGender === CaseGender.OTHER
+      ? `Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
+      : `Sakborningur er ${
+          accusedGender === CaseGender.MALE ? 'karl' : 'kona'
+        } og krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
 
-  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.\n\n${accusedGenderText}rafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.\n\n${isolationText}`
+  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.\n\n${requestText}\n\n${isolationText}`
 }
 
 export function formatCourtDateNotificationCondition(courtDate: Date): string {
