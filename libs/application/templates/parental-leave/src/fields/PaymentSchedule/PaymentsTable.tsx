@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 
-import Table from '../components/Table'
+import { Table } from '@island.is/shared/table'
 import { formatIsk } from '../parentalLeaveUtils'
 import { Payment } from '../../types'
 
