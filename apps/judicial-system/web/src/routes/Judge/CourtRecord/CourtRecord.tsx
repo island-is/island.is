@@ -6,7 +6,7 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import CourtDocument from '../../../shared-components/CourtDocument/CourtDocument'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import { isNextDisabled } from '../../../utils/stepHelper'
@@ -58,7 +58,6 @@ export const CourtRecord: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = async (id: string, updateCase: UpdateCase) => {
     const { data } = await updateCaseMutation({
@@ -77,16 +76,15 @@ export const CourtRecord: React.FC = () => {
   }, [])
 
   const defaultCourtAttendees = (wc: Case) => {
-    return wc.prosecutor.name+", "+wc.prosecutor.title+"\n"+wc.accusedName+", kt. "+wc.accusedNationalId+", kærði"
+    return `${wc.prosecutor.name}, ${wc.prosecutor.title}\n${wc.accusedName}, kærði\n${wc.defenderName}, verjandi kærða`
   }
 
   useEffect(() => {
     if (data && workingCase == null) {
       let theCase = data.case
-      
-      if(!theCase.courtAttendees) {
-        
-        theCase = {... theCase, courtAttendees: defaultCourtAttendees(theCase)}
+
+      if (!theCase.courtAttendees) {
+        theCase = { ...theCase, courtAttendees: defaultCourtAttendees(theCase) }
 
         updateCase(
           theCase.id,
