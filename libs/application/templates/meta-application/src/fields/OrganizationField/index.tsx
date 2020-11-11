@@ -150,34 +150,27 @@ const OrganizationField: FC<Props> = ({ error, field, application }) => {
             <Controller
               name="applicant.ministry"
               defaultValue=""
-              render={({ value, onChange }) => {
-                console.log(
-                  'MINISTRY VAL',
-                  value,
-                  ministries.find((option) => option.value === value.id),
-                )
-                return (
-                  <Select
-                    name="ministries"
-                    options={ministries}
-                    placeholder={formatText(
-                      m.ministry,
-                      application,
-                      formatMessage,
-                    )}
-                    disabled={(props as OrganizationFieldProps).disabled}
-                    value={
-                      ministries.find((option) => option.value === value.id) ||
-                      null
-                    }
-                    onChange={({ value, label }: any) => {
-                      clearErrors('applicant.ministry')
-                      onChange({ id: value, title: label })
-                      setValue('applicant.institution', null)
-                    }}
-                  />
-                )
-              }}
+              render={({ value, onChange }) => (
+                <Select
+                  name="ministries"
+                  options={ministries}
+                  placeholder={formatText(
+                    m.ministry,
+                    application,
+                    formatMessage,
+                  )}
+                  disabled={(props as OrganizationFieldProps).disabled}
+                  value={
+                    ministries.find((option) => option.value === value.id) ||
+                    null
+                  }
+                  onChange={({ value, label }: any) => {
+                    clearErrors('applicant.ministry')
+                    onChange({ id: value, title: label })
+                    setValue('applicant.institution', null)
+                  }}
+                />
+              )}
             />
           </GridColumn>
         </GridRow>
