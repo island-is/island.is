@@ -39,7 +39,7 @@ rl.on('close', async function () {
   const result = await findLastGoodBuild(
     shas,
     process.env.BRANCH,
-    process.env.BASE_BRANCH || 'master',
+    process.env.BASE_BRANCH || 'main',
     new GitHubWorkflowQueries(),
   )
   console.log(JSON.stringify(result))
