@@ -3,7 +3,7 @@ import {
   Box,
   FormStepperSection,
   IconDeprecated as Icon,
-  Typography,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './FormStepperMobile.treat'
 
@@ -40,9 +40,9 @@ const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => (
               {isCompleted ? (
                 <Icon type="check" color="white" width="16px" />
               ) : (
-                <Typography variant="h5" color="white">
+                <Text variant="h5" color="white">
                   {activeSection + 1}
-                </Typography>
+                </Text>
               )}
             </IconBackground>
           ) : (
@@ -54,9 +54,7 @@ const FormStepperMobile = ({ sections, activeSection }: ProcessProps) => (
               marginRight={1}
             ></Box>
           )}
-          <Typography variant={isActive ? 'h5' : 'p'}>
-            {section.name}
-          </Typography>
+          <Text variant={isActive ? 'h5' : 'default'}>{section.name}</Text>
         </Box>
       )
     })}
