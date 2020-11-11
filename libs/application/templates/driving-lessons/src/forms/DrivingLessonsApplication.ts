@@ -11,7 +11,6 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  DataProviderTypes,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -210,7 +209,7 @@ export const DrivingLessonsApplication: Form = buildForm({
               id: 'healthInfo',
               title: m.healthInfoTitle,
               subTitle: m.healthInfoSubtitle,
-              type: DataProviderTypes.ExampleSucceeds,
+              type: 'ExampleSucceeds',
             }),
           ],
         }),

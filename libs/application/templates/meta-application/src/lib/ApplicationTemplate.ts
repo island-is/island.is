@@ -60,7 +60,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.META_APPLICATION,
   name: 'Application application',
-  dataProviders: [],
   dataSchema: Schema,
   stateMachineConfig: {
     initial: 'draft',
