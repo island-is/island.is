@@ -183,11 +183,14 @@ export function formatProsecutorCourtDateEmailNotification(
   court: string,
   courtDate: Date,
   courtRoom: string,
+  defenderName: string,
 ): string {
-  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram ${formatDate(
-    courtDate,
-    'PPPp',
-  )}. Dómsalur: ${courtRoom}.`
+  const courtDateText = formatDate(courtDate, 'PPPp')
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
+
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
 }
 
 export function formatPrisonCourtDateEmailNotification(
@@ -196,6 +199,7 @@ export function formatPrisonCourtDateEmailNotification(
   accusedGender: CaseGender,
   requestedCustodyEndDate: Date,
   isolation: boolean,
+  defenderName: string,
 ): string {
   const courtText = court.replace('dómur', 'dóms')
   const courtDateText = formatDate(courtDate, 'PPPp')
@@ -212,8 +216,11 @@ export function formatPrisonCourtDateEmailNotification(
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
 
-  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}`
+  return `Krafa um gæsluvarðhald hefur verið send til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
 }
 
 export function formatDefenderCourtDateEmailNotification(
@@ -223,10 +230,10 @@ export function formatDefenderCourtDateEmailNotification(
   courtDate: Date,
   courtRoom: string,
 ): string {
-  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu. Fyrirtaka mun fara fram ${formatDate(
+  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPp',
-  )}. Dómsalur: ${courtRoom}. Sakborningur: ${accusedName} ${formatNationalId(
+  )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName} ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }

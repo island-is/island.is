@@ -214,6 +214,7 @@ export class NotificationService {
       existingCase.court,
       existingCase.courtDate,
       existingCase.courtRoom,
+      existingCase.defenderName,
     )
 
     return this.sendEmail(
@@ -236,6 +237,7 @@ export class NotificationService {
       existingCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
       ),
+      existingCase.defenderName,
     )
 
     return this.sendEmail(
