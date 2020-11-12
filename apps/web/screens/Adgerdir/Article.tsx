@@ -72,11 +72,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           {article.linkButtonText ?? n('seeMoreDetails')}
         </Button>
       </Link>
-    ) : (
+    ) : article.linkButtonText && article.linkButtonText.trim().length > 0 ? (
       <Button iconType="outline" icon="open" disabled fluid>
         {article.linkButtonText ?? n('seeMoreDetails')}
       </Button>
-    )
+    ) : null
 
   return (
     <>
@@ -141,7 +141,10 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
               locale={activeLocale}
             />
             <GridRow>
-              <GridColumn span={['12/12', '6/12', '6/12', '5/12', '4/12']}>
+              <GridColumn
+                paddingTop={4}
+                span={['12/12', '6/12', '6/12', '5/12', '4/12']}
+              >
                 {renderButton}
               </GridColumn>
             </GridRow>
