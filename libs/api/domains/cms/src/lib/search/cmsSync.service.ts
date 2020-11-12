@@ -5,6 +5,7 @@ import { hashElement } from 'folder-hash'
 import {
   ElasticService,
   SearchIndexes,
+  MappedData,
   SyncOptions,
   SyncResponse,
 } from '@island.is/api/content-search'
@@ -14,6 +15,7 @@ import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
+import { Entry } from 'contentful'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -26,9 +28,16 @@ interface UpdateLastHashOptions {
   folderHash: PostSyncOptions['folderHash']
 }
 
+export type processSyncDataInput<T> = (Entry<any> | T)[]
+export type doMappingInput<T> = T[]
+export interface CmsSyncProvider<T> {
+  processSyncData: (entries: processSyncDataInput<T>) => T[]
+  doMapping: (entries: doMappingInput<T>) => MappedData[]
+}
+
 @Injectable()
 export class CmsSyncService {
-  private contentSyncProviders
+  private contentSyncProviders: CmsSyncProvider<any>[]
   constructor(
     private readonly aboutPageSyncService: AboutPageSyncService,
     private readonly newsSyncService: NewsSyncService,
@@ -48,13 +57,16 @@ export class CmsSyncService {
   }
 
   private async getLastFolderHash(elasticIndex: string): Promise<string> {
-    logger.info('Getting models hash from index', {
+    logger.info('Getting folder hash from index', {
       index: elasticIndex,
     })
     // return last folder hash found in elasticsearch else return empty string
     return this.elasticService
       .findById(elasticIndex, 'cmsImportFolderHashId')
-      .then((document) => document.body._source.title)
+      .then((document) => {
+        logger.info('Resonse', { document: document.body._source })
+        return ''
+      })
       .catch((error) => {
         // we expect this to throw when this does not exist, this might happen if we reindex a fresh elasticsearch index
         logger.warn('Failed to get last folder hash', {
@@ -94,7 +106,9 @@ export class CmsSyncService {
   }
 
   // this is triggered from ES indexer service
-  async doSync(options: SyncOptions): Promise<SyncResponse<PostSyncOptions>> {
+  async doSync(
+    options: SyncOptions,
+  ): Promise<SyncResponse<PostSyncOptions> | null> {
     logger.info('Doing cms sync', options)
     let cmsSyncOptions: SyncOptions
 
@@ -124,6 +138,7 @@ export class CmsSyncService {
       }
     } else {
       cmsSyncOptions = options
+      folderHash = ''
     }
 
     // gets all data that needs importing
@@ -158,7 +173,10 @@ export class CmsSyncService {
   // write next sync token to elastic after sync to ensure it runs again on failure
   async postSync({ folderHash, elasticIndex, token }: PostSyncOptions) {
     await this.contentfulService.updateNextSyncToken({ elasticIndex, token })
-    await this.updateLastFolderHash({ elasticIndex, folderHash })
+    // we only want to update folder hash if it is set to a non empty string
+    if (folderHash) {
+      await this.updateLastFolderHash({ elasticIndex, folderHash })
+    }
     return true
   }
 }

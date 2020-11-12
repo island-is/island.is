@@ -39,3 +39,14 @@ export interface SearchResponse<ResponseSource, ResponseAggregation = any> {
   }
   aggregations?: ResponseAggregation
 }
+
+export interface GetByIdResponse<ResponseSource = any> {
+  _index: SearchIndex
+  _type: string
+  _id: string
+  _version: number
+  _seq_no: number
+  _primary_term: number
+  found: boolean
+  _source: ResponseSource
+}
