@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "projects": {
+    "auth-admin-web": {
+      "root": "apps/auth-admin-web",
+      "sourceRoot": "apps/auth-admin-web",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/auth-admin-web",
+            "outputPath": "dist/apps/auth-admin-web"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "auth-admin-web:build",
+            "dev": true,
+            "proxyConfig": "apps/auth-admin-web/proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "auth-admin-web:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "auth-admin-web:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/auth-admin-web/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "auth-admin-web-e2e": {
+      "root": "apps/auth-admin-web-e2e",
+      "sourceRoot": "apps/auth-admin-web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/auth-admin-web-e2e/cypress.json",
+            "tsConfig": "apps/auth-admin-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "auth-admin-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "auth-admin-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/auth-admin-web-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/next"
+  },
+  "schematics": {
+    "@nrwl/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "scss",
+        "linter": "eslint"
+      }
+    }
+  },
+  "defaultProject": "auth-admin-web"
+}
