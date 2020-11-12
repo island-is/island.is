@@ -40,7 +40,6 @@ import {
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [, setIsSendingNotification] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { id } = useParams<{ id: string }>()
@@ -86,8 +85,8 @@ export const Overview: React.FC = () => {
   }
 
   const handleNextButtonClick: () => Promise<boolean> = async () => {
-    try {
-      if (workingCase) {
+    if (workingCase) {
+      try {
         // Parse the transition request
         const transitionRequest = parseTransition(
           workingCase.modified,
@@ -102,18 +101,13 @@ export const Overview: React.FC = () => {
           console.log('Transition failing')
           return false
         }
-
-        setIsSendingNotification(true)
-        await sendNotification(workingCase.id)
-        setIsSendingNotification(false)
-        return true
+      } catch (e) {
+        // Improve error handling at some point
+        console.log('Transition failing')
       }
-    } catch (e) {
-      // Improve error handling at some point
-      console.log('Transition failing')
-    }
 
-    return sendNotification(workingCase.id)
+      return sendNotification(workingCase.id)
+    }
   }
 
   useEffect(() => {
