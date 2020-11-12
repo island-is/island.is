@@ -43,7 +43,7 @@ const Confirm = ({ apolloState }) => {
   }, [car])
 
   useEffect(() => {
-    if (width < theme.breakpoints.md) {
+    if (width < theme.breakpoints.lg) {
       return setIsMobile(true)
     }
     setIsMobile(false)
