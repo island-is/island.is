@@ -1,4 +1,5 @@
-import React, { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
+import * as React from 'react'
+import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
 import { Button as ReaButton } from 'reakit/Button'
 import cn from 'classnames'
 
@@ -51,6 +52,7 @@ export interface ButtonProps {
   iconType?: Type
   type?: NativeButtonProps['type']
   lang?: string
+  loading?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -65,40 +67,62 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       circle,
       type = 'button',
       fluid,
+      disabled,
+      loading,
       ...buttonProps
     },
     ref,
   ) => {
+    const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (
+      key: U,
+    ) => obj[key]
+    let color = getKeyValue(styles.colors[variant])(
+      colorScheme as ButtonTypes['colorScheme'] | any,
+    )
     return (
       <Box
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
         type={type}
-        className={cn(
-          styles.variants[variant],
-          styles.colors[variant][colorScheme],
-          {
-            [styles.size[size]]:
-              variant !== 'utility' &&
-              !circle &&
-              !(variant === 'text' && size === 'small'),
-            [styles.fluid]: fluid,
-            [styles.size.utility]: variant === 'utility',
-            [styles.size.textSmall]: variant === 'text' && size === 'small',
-            [styles.circleSizes[size]]: circle,
-            [styles.circle]: circle,
-            [styles.padding[size]]:
-              variant !== 'utility' && variant !== 'text' && !circle,
-            [styles.padding.text]: variant === 'text',
-            [styles.padding.utility]: variant === 'utility',
-            [styles.isEmpty]: !children,
-          },
-        )}
+        className={cn(styles.variants[variant], color, {
+          [styles.size[size]]:
+            variant !== 'utility' &&
+            !circle &&
+            !(variant === 'text' && size === 'small'),
+          [styles.fluid]: fluid,
+          [styles.size.utility]: variant === 'utility',
+          [styles.size.textSmall]: variant === 'text' && size === 'small',
+          [styles.circleSizes[size]]: circle,
+          [styles.circle]: circle,
+          [styles.padding[size]]:
+            variant !== 'utility' && variant !== 'text' && !circle,
+          [styles.padding.text]: variant === 'text',
+          [styles.padding.utility]: variant === 'utility',
+          [styles.isEmpty]: !children,
+          [styles.loading]: loading,
+        })}
+        disabled={disabled || loading}
         {...buttonProps}
       >
-        {children}
-        {icon && <ButtonIcon icon={icon} type={iconType} />}
+        {loading && variant !== 'text' ? (
+          <>
+            <span className={styles.hideContent}>{children}</span>
+            {icon && <ButtonIcon icon={icon} type={iconType} transparent />}
+            <div
+              className={cn(styles.loader, { [styles.loadingCircle]: circle })}
+            >
+              <div className={styles.loadingDot} />
+              <div className={styles.loadingDot} />
+              <div className={styles.loadingDot} />
+            </div>
+          </>
+        ) : (
+          <>
+            {children}
+            {icon && <ButtonIcon icon={icon} type={iconType} />}
+          </>
+        )}
       </Box>
     )
   },
@@ -107,13 +131,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
 type ButtonIconProps = {
   icon: ButtonProps['icon']
   type: ButtonProps['iconType']
+  transparent?: boolean
 }
 
-const ButtonIcon = ({ icon, type }: ButtonIconProps) => (
+const ButtonIcon = ({ icon, type, transparent }: ButtonIconProps) => (
   <Icon
     icon={icon!}
     type={type!}
-    color="currentColor"
+    color={transparent ? 'transparent' : 'currentColor'}
     className={styles.icon}
     skipPlaceholderSize
   />
