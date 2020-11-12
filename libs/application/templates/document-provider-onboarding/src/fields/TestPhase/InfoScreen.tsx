@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Link } from '@island.is/island-ui/core'
 import { m } from '../../forms/messages'
-import { useLocale } from '@island.is/localization'
 
 const InfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
   return (
@@ -16,7 +15,6 @@ const InfoScreen: FC<FieldBaseProps> = ({ field, application }) => {
           color="blue400"
           underline="small"
           underlineVisibility="always"
-          shallow={true}
         >
           Tæknilýsing vegna samskipta skjalaveitu við Pósthólf (aðeins á ensku)
         </Link>
