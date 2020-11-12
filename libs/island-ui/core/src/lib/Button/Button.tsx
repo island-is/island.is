@@ -79,23 +79,27 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
         type={type}
-        className={cn(styles.variants[variant], styles.colors[variant], {
-          [styles.size[size]]:
-            variant !== 'utility' &&
-            !circle &&
-            !(variant === 'text' && size === 'small'),
-          [styles.fluid]: fluid,
-          [styles.size.utility]: variant === 'utility',
-          [styles.size.textSmall]: variant === 'text' && size === 'small',
-          [styles.circleSizes[size]]: circle,
-          [styles.circle]: circle,
-          [styles.padding[size]]:
-            variant !== 'utility' && variant !== 'text' && !circle,
-          [styles.padding.text]: variant === 'text',
-          [styles.padding.utility]: variant === 'utility',
-          [styles.isEmpty]: !children,
-          [styles.loading]: loading,
-        })}
+        className={cn(
+          styles.variants[variant],
+          styles.colors[variant][colorScheme],
+          {
+            [styles.size[size]]:
+              variant !== 'utility' &&
+              !circle &&
+              !(variant === 'text' && size === 'small'),
+            [styles.fluid]: fluid,
+            [styles.size.utility]: variant === 'utility',
+            [styles.size.textSmall]: variant === 'text' && size === 'small',
+            [styles.circleSizes[size]]: circle,
+            [styles.circle]: circle,
+            [styles.padding[size]]:
+              variant !== 'utility' && variant !== 'text' && !circle,
+            [styles.padding.text]: variant === 'text',
+            [styles.padding.utility]: variant === 'utility',
+            [styles.isEmpty]: !children,
+            [styles.loading]: loading,
+          },
+        )}
         disabled={disabled || loading}
         {...buttonProps}
       >
