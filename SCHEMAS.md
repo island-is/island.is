@@ -115,6 +115,8 @@ buildSchema({
 })
 ```
 
+> IMPORTANT! When adding new resolvers to your modules don't forget to update this array as well.
+
 Then you can add it to the `workspace.json`
 
 ```json
