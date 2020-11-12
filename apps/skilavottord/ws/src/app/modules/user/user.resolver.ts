@@ -39,7 +39,7 @@ export class UserResolver {
     RoleForUser = authService.getRole(RoleUser)
 
     currUser.role = RoleForUser
-    if (currUser.role === 'recyclingCompany') {
+    if (currUser.role === 'recyclingCompany' || currUser.role === 'developer') {
       currUser.partnerId = '110' // This is parter Id for Vaka, to be fixed later
     } else {
       currUser.partnerId = null // This is parter Id for Vaka, to be fixed later
