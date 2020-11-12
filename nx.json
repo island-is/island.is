@@ -330,6 +330,9 @@
     "services-xroad-collector": {
       "tags": ["api-catalogue-services"]
     },
+    "shared-connected": {
+      "tags": []
+    },
     "shared-form-fields": {
       "tags": []
     },

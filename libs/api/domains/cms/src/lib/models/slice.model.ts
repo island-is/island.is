@@ -14,6 +14,7 @@ import {
   IStatistics,
   IProcessEntry,
   IFaqList,
+  ISliceConnectedComponent,
   IEmbeddedVideo,
   ISectionWithImage,
   ITabSection,
@@ -39,6 +40,10 @@ import { Statistics, mapStatistics } from './statistics.model'
 import { Html, mapHtml } from './html.model'
 import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
+import {
+  ConnectedComponent,
+  mapConnectedComponent,
+} from './connectedComponent.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { SectionWithImage, mapSectionWithImage } from './sectionWithImage.model'
 import { TabSection, mapTabSection } from './tabSection.model'
@@ -59,6 +64,7 @@ type SliceTypes =
   | IStatistics
   | IProcessEntry
   | IFaqList
+  | ISliceConnectedComponent
   | IEmbeddedVideo
   | ISectionWithImage
   | ITabSection
@@ -81,6 +87,7 @@ export const Slice = createUnionType({
     Statistics,
     ProcessEntry,
     FaqList,
+    ConnectedComponent,
     EmbeddedVideo,
     SectionWithImage,
     TabSection,
@@ -120,6 +127,8 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapProcessEntry(slice as IProcessEntry)
     case 'faqList':
       return mapFaqList(slice as IFaqList)
+    case 'sliceConnectedComponent':
+      return mapConnectedComponent(slice as ISliceConnectedComponent)
     case 'embeddedVideo':
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
     case 'sectionWithImage':
