@@ -2,7 +2,7 @@ import { IsArray, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
-console.log('-trigger schemas');
+console.log('-trigger schemas')
 
 class DataProviderDto {
   @IsString()
