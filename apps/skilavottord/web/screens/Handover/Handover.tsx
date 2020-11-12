@@ -21,6 +21,7 @@ import { CREATE_RECYCLING_REQUEST_CITIZEN } from '@island.is/skilavottord-web/gr
 import { VEHICLES_BY_NATIONAL_ID } from '@island.is/skilavottord-web/graphql/queries'
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.treat'
+import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
 const Handover: FC = () => {
   const { user } = useContext(UserContext)
@@ -77,14 +78,19 @@ const Handover: FC = () => {
       switch (activeCar.status) {
         case 'inUse':
         case 'cancelled':
-          setRequestType('pendingRecycle')
-          setRecyclingRequest({
-            variables: {
-              permno: id,
-              nameOfRequestor: user?.name,
-              requestType: 'pendingRecycle',
-            },
-          })
+          if (localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION)) {
+            setRequestType('pendingRecycle')
+            setRecyclingRequest({
+              variables: {
+                permno: id,
+                nameOfRequestor: user?.name,
+                requestType: 'pendingRecycle',
+              },
+            })
+            localStorage.clear()
+          } else {
+            setInvalidCar(true)
+          }
         default:
           break
       }
