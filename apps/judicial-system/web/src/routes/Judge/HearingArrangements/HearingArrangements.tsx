@@ -49,6 +49,9 @@ export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>(null)
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
+  const [isSendingNotification, setIsSendingNotification] = useState<boolean>(
+    false,
+  )
   const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
   const [courtTimeErrorMessage, setCourtTimeErrorMessage] = useState('')
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
@@ -355,8 +358,11 @@ export const HearingArrangements: React.FC = () => {
           </Box>
           <FormFooter
             nextIsDisabled={isStepIllegal}
+            nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
+              setIsSendingNotification(true)
               const notificationSent = await sendNotification(workingCase.id)
+              setIsSendingNotification(false)
               if (notificationSent) {
                 setModalVisible(true)
               } else {

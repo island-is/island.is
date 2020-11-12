@@ -42,6 +42,9 @@ export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isSendingNotification, setIsSendingNotification] = useState<boolean>(
+    false,
+  )
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
   const { user } = useContext(userContext)
@@ -322,8 +325,12 @@ export const Overview: React.FC = () => {
           </Box>
           <FormFooter
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
+            nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
+              setIsSendingNotification(true)
               const notificationSent = await handleNextButtonClick()
+              setIsSendingNotification(false)
+
               if (notificationSent) {
                 setModalVisible(true)
               } else {
