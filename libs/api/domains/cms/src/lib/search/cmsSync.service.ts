@@ -2,13 +2,7 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import flatten from 'lodash/flatten'
 import { hashElement } from 'folder-hash'
-import {
-  ElasticService,
-  SearchIndexes,
-  MappedData,
-  SyncOptions,
-  SyncResponse,
-} from '@island.is/api/content-search'
+import { MappedData, SyncOptions, SyncResponse } from '@island.is/elastic-indexing'
 import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
@@ -16,6 +10,7 @@ import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AboutPageSyncService } from './importers/aboutPage.service'
 import { Entry } from 'contentful'
+import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
 
 export interface PostSyncOptions {
   folderHash: string

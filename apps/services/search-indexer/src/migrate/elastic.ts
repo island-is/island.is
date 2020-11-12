@@ -1,8 +1,12 @@
 import fs from 'fs'
 import { logger } from '@island.is/logging'
-import { ElasticService, SyncOptions } from '@island.is/api/content-search'
+import { ElasticService } from '@island.is/api/content-search'
 import { AwsEsPackage } from './aws'
-import { IndexingModule, IndexingService } from '@island.is/elastic-indexing'
+import {
+  IndexingModule,
+  IndexingService,
+  SyncOptions,
+} from '@island.is/elastic-indexing'
 import { NestFactory } from '@nestjs/core'
 
 const esService = new ElasticService()

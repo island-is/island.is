@@ -19,36 +19,6 @@ export type elasticTagField = {
   value?: string
 }
 
-export interface SyncOptions {
-  locale: keyof typeof SearchIndexes
-  syncType: 'full' | 'fromLast' | 'initialize'
-  elasticIndex?: string
-}
-
-export interface SyncResponse<PostSyncOptionsType = any> {
-  add: MappedData[]
-  remove: string[]
-  postSyncOptions: PostSyncOptionsType
-}
-
-type tag = {
-  key: string
-  value?: string
-  type: string
-}
-export interface MappedData {
-  _id?: string
-  title: string
-  content?: string
-  type: string
-  termPool?: string[]
-  response?: string
-  tags?: tag[]
-  dateUpdated: string
-  dateCreated: string
-  nextSyncToken?: string
-}
-
 export type dateResolution = 'year' | 'month' | 'week' | 'day'
 
 export interface TagAggregationResponse {
