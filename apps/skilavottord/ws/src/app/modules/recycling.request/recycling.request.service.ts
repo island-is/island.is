@@ -267,11 +267,9 @@ export class RecyclingRequestService {
       }
 
       // Checking if 'permno' is already in the database
-      const resRequestType = await this.findAllWithPermno(permno)
-      if (!requestType || resRequestType.length == 0) {
-        this.logger.error(
-          `Could not find any requestType for vehicle's number: ${permno} in database`,
-        )
+      const isVehicle = await this.vehicleService.findByVehicleId(permno)
+      if (!isVehicle) {
+        this.logger.error(`Vehicle ${permno} has not been saved in database`)
         errors.operation = 'Checking vehicle'
         errors.message = `Citizen has not accepted to recycle the vehicle.`
         return errors
@@ -289,17 +287,27 @@ export class RecyclingRequestService {
       if (requestType == 'deregistered') {
         // 1. Check 'pendingRecycle' requestType
         this.logger.info(`Check "pendingRecycle" status on vehicle: ${permno}`)
-        if (
-          !['pendingRecycle', 'handOver'].includes(
-            resRequestType[0]['dataValues']['requestType'],
-          )
-        ) {
+        const resRequestType = await this.findAllWithPermno(permno)
+        if (!requestType || resRequestType.length == 0) {
           this.logger.error(
-            `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+            `Could not find any requestType for vehicle's number: ${permno} in database`,
           )
           errors.operation = 'Checking vehicle status'
           errors.message = `Citizen has not accepted to recycle the vehicle.`
           return errors
+        } else {
+          if (
+            !['pendingRecycle', 'handOver'].includes(
+              resRequestType[0]['dataValues']['requestType'],
+            )
+          ) {
+            this.logger.error(
+              `Lastest requestType of vehicle's number ${permno} is not 'pendingRecycle' but is: ${resRequestType[0]['dataValues']['requestType']}`,
+            )
+            errors.operation = 'Checking vehicle status'
+            errors.message = `Citizen has not accepted to recycle the vehicle.`
+            return errors
+          }
         }
 
         // 2. Update requestType to 'handOver'
