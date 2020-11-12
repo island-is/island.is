@@ -234,4 +234,9 @@ export const m = defineMessages({
     defaultMessage: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
     description: '',
   },
+  testPhaseInfoScreenMessage: {
+    id: 'dpo.application:testPhase.message',
+    defaultMessage: 'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hér að neðan finnur þú upplýsingar um tæknilegar útfærslur á þessum skilum.Í þessu ferli færð þú aðgang að prófunarumhverfi til að útfæra þjónustuna.Þegar þjónustan og prófanir eru búnar, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
+    description: '',
+  }
 })
