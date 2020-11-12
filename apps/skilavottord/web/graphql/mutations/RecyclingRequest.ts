@@ -10,7 +10,15 @@ export const CREATE_RECYCLING_REQUEST_CITIZEN = gql`
       nameOfRequestor: $nameOfRequestor
       permno: $permno
       requestType: $requestType
-    )
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
   }
 `
 
@@ -24,6 +32,14 @@ export const CREATE_RECYCLING_REQUEST_COMPANY = gql`
       partnerId: $partnerId
       permno: $permno
       requestType: $requestType
-    )
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
   }
 `
