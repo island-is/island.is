@@ -112,29 +112,19 @@ export const ScreenFooter: FC<FooterProps> = ({
             {hasSubmitField ? (
               renderSubmitButtons()
             ) : (
-              <>
-                <Box display={['none', 'inlineFlex']}>
-                  <Button
-                    disabled={!canProceed || loading}
-                    icon="arrowForward"
-                    type="submit"
-                  >
-                    {formatMessage({
-                      id: 'application.system:button.next',
-                      defaultMessage: 'Continue',
-                      description: 'Next button text',
-                    })}
-                  </Button>
-                </Box>
-                <Box display={['inlineFlex', 'none']}>
-                  <Button
-                    disabled={!canProceed || loading}
-                    icon="arrowForward"
-                    type="submit"
-                    circle
-                  />
-                </Box>
-              </>
+              <Box display="inlineFlex">
+                <Button
+                  disabled={!canProceed || loading}
+                  icon="arrowForward"
+                  type="submit"
+                >
+                  {formatMessage({
+                    id: 'application.system:button.next',
+                    defaultMessage: 'Continue',
+                    description: 'Next button text',
+                  })}
+                </Button>
+              </Box>
             )}
           </Box>
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
