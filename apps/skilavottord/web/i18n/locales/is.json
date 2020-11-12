@@ -263,6 +263,7 @@
     "subtitles": {
       "deregistered": "Afskráðir bílar"
     },
+    "info": "There are no recycled cars yet",
     "buttons": {
       "export": "Export"
     },
@@ -273,7 +274,7 @@
     "table": ["Skráningar nr.", "Undirtegund", "Ár", "Fyrirtæki", "Afskráð"]
   },
   "recyclingFundSidenav": {
-    "title": "Skilavottord",
+    "title": "Úrvinnslusjóður",
     "recycled": "Endurunnir bílar",
     "companies": "Endurvinnslu fyrirtæki"
   },

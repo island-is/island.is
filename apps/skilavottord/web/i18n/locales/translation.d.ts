@@ -255,6 +255,7 @@ export interface DeregisterVehicle {
 export interface RecyclingFundOverview {
   title: string
   subtitles: ReyclingFundOverviewSubTitles
+  info: string
   buttons: ReyclingFundOverviewButtons
   search: InputField
   table: string[]
