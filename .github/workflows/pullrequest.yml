@@ -28,7 +28,7 @@ jobs:
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          echo "BASE=$(git merge-base origin/master $GITHUB_SHA)" >> $GITHUB_ENV
+          echo "BASE=$(git merge-base origin/main $GITHUB_SHA)" >> $GITHUB_ENV
         name: Preparing HEAD and BASE tags
 
       - name: Calculate cache key for node_modules
