@@ -28,7 +28,7 @@ const FormStepper = ({
   } = useI18n()
 
   return (
-    <Box padding={4}>
+    <Box padding={[0, 0, 0, 3, 4]}>
       <Stack space={4}>
         <Box>
           <Text variant="h3">{title}</Text>
