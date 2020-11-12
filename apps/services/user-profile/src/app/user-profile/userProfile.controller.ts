@@ -74,15 +74,10 @@ export class UserProfileController {
       const phoneVerified = await this.verificationService.isPhoneNumberVerified(
         userProfileDto,
       )
-      if (!phoneVerified)
-        throw new BadRequestException(
-          `Phone number: ${userProfileDto.mobilePhoneNumber} is not verified`,
-        )
-      else
-        userProfileDto = {
-          ...userProfileDto,
-          mobilePhoneNumberVerified: phoneVerified,
-        }
+      userProfileDto = {
+        ...userProfileDto,
+        mobilePhoneNumberVerified: phoneVerified,
+      }
     }
     const profile = await this.userProfileService.create(userProfileDto)
     await this.verificationService.removeSmsVerification(
