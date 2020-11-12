@@ -12,8 +12,8 @@
 /.next/
 /out/
 
-/dist/
-.vscode
+/dist
+/.vscode
 
 # production
 /build
