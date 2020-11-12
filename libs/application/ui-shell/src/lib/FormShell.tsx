@@ -13,7 +13,6 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 
-import { Sidebar } from '../components/Sidebar'
 import Screen from '../components/Screen'
 import FormStepper from '../components/FormStepper'
 import {
@@ -118,9 +117,14 @@ export const FormShell: FC<{
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '3/12', '3/12']}
-              className={styles.largeSidebarContainer}
+              className={styles.sidebarContainer}
             >
-              <Sidebar>
+              <Box
+                height="full"
+                paddingTop={[2, 2, 8]}
+                paddingLeft={[0, 0, 0, 4]}
+                className={styles.sidebarInner}
+              >
                 <FormStepper
                   application={storedApplication}
                   mode={mode}
@@ -129,7 +133,7 @@ export const FormShell: FC<{
                   sections={sections}
                   screen={currentScreen}
                 />
-              </Sidebar>
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

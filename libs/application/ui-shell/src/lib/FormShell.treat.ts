@@ -66,18 +66,20 @@ export const shellContainer = style({
   },
 })
 
-export const largeSidebarContainer = style({
+export const sidebarContainer = style({
   order: 1,
 
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      ...escapeGrid(),
-
-      maxWidth: `calc(100% + ${theme.grid.gutter.mobile * 4}px)`,
-    },
-
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       order: 2,
+    },
+  },
+})
+
+export const sidebarInner = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      ...escapeGrid(),
     },
   },
 })
