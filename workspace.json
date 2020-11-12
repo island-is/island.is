@@ -511,10 +511,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
-            "commands": [
-              "yarn nx run api:contentful-types",
-              "graphql-codegen --config apps/api/codegen.yml"
-            ]
+            "command": "graphql-codegen --config apps/api/codegen.yml"
           }
         },
         "contentful-types": {
