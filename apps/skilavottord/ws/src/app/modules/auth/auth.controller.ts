@@ -88,7 +88,7 @@ export class AuthController {
     }
 
     if (!kennitala.isPerson(user.kennitala)) {
-      this.logger.warn('User used company kennitala to log in')
+      this.logger.warn('User used company kennitala to log in ')
       return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
     }
 
