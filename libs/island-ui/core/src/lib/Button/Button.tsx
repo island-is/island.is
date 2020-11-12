@@ -73,19 +73,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
     },
     ref,
   ) => {
-    const getKeyValue = <T extends object, U extends keyof T>(obj: T) => (
-      key: U,
-    ) => obj[key]
-    let color = getKeyValue(styles.colors[variant])(
-      colorScheme as ButtonTypes['colorScheme'] | any,
-    )
     return (
       <Box
         component={ReaButton}
         as={variant === 'text' ? 'span' : 'button'}
         ref={ref}
         type={type}
-        className={cn(styles.variants[variant], color, {
+        className={cn(styles.variants[variant], styles.colors[variant], {
           [styles.size[size]]:
             variant !== 'utility' &&
             !circle &&
