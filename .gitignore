@@ -1,5 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# compiled output
+/dist
+/tmp
+/out-tsc
+
 # dependencies
 /node_modules
 /.pnp
@@ -11,9 +16,6 @@
 # next.js
 /.next/
 /out/
-
-/dist
-/.vscode
 
 # production
 /build
@@ -33,5 +35,39 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
 # vercel
 .vercel
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+TODO
+*.todo
+.env
+
+# System Files
+.DS_Store
+Thumbs.db
+.cache
