@@ -82,7 +82,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                   </Button>
                 </Link>
               ) : (
-                <Button iconType="outline" icon="open" disabled={true} fluid>
+                <Button iconType="outline" icon="open" disabled fluid>
                   {article.linkButtonText ?? n('seeMoreDetails')}
                 </Button>
               )}
