@@ -3,7 +3,7 @@ name: Monorepo pipeline - push
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
       - 'release/**'
       - 'hotfix/**'
     paths-ignore:
@@ -84,8 +84,8 @@ jobs:
            # a PR
            GIT_BASE_BRANCH=$GITHUB_BASE_REF
           else
-           # on master
-           GIT_BASE_BRANCH=master
+           # on main
+           GIT_BASE_BRANCH=main
           fi
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
           echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
