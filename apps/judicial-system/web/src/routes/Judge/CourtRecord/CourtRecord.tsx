@@ -79,10 +79,10 @@ export const CourtRecord: React.FC = () => {
   }, [])
 
   const defaultCourtAttendees = (wc: Case) => {
-    let attendees = `${wc.prosecutor.name}, ${wc.prosecutor.title}\n${wc.accusedName}, kærði`
+    let attendees = `${wc.prosecutor.name} ${wc.prosecutor.title}\n${wc.accusedName} kærði`
 
     if (wc.defenderName) {
-      attendees += `\n${wc.defenderName}, verjandi kærða`
+      attendees += `\n${wc.defenderName} verjandi kærða`
     }
 
     return attendees
