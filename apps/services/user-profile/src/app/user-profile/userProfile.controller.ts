@@ -64,6 +64,12 @@ export class UserProfileController {
         `A profile with nationalId - "${userProfileDto.nationalId}" already exists`,
       )
     }
+
+    await this.verificationService.createEmailVerification(
+      userProfileDto.nationalId,
+      userProfileDto.email,
+    )
+
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.isPhoneNumberVerified(
         userProfileDto,
@@ -81,10 +87,6 @@ export class UserProfileController {
     const profile = await this.userProfileService.create(userProfileDto)
     await this.verificationService.removeSmsVerification(
       userProfileDto.nationalId,
-    )
-    await this.verificationService.createEmailVerification(
-      profile.nationalId,
-      profile.email,
     )
 
     return profile
