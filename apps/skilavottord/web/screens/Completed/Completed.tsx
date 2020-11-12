@@ -69,7 +69,7 @@ const Completed = ({ apolloState }) => {
 
   const partnerRequests = sortedRequests.filter(
     (request) =>
-      request.requestType === 'handedOver' ||
+      request.requestType === 'handOver' ||
       request.requestType === 'deregistered' ||
       request.requestType === 'paymentInitiated' ||
       request.requestType === 'paymentFailed',
@@ -82,7 +82,7 @@ const Completed = ({ apolloState }) => {
     switch (requestType) {
       case 'pendingRecycle':
         return `${t.confirmedBy.user} ${requestor}`
-      case 'handedOver':
+      case 'handOver':
         return `${t.confirmedBy.company} ${requestor}`
       case 'deregistered':
         return t.confirmedBy.authority
