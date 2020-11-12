@@ -49,7 +49,7 @@ const Handover: FC = () => {
 
   const [
     setRecyclingRequest,
-    { error: mutationError, loading: mutationLoading },
+    { data: mutationData, error: mutationError, loading: mutationLoading },
   ] = useMutation(CREATE_RECYCLING_REQUEST_CITIZEN, {
     onCompleted() {
       if (requestType === 'cancelled') {
@@ -61,6 +61,8 @@ const Handover: FC = () => {
       return mutationError
     },
   })
+
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -126,6 +128,7 @@ const Handover: FC = () => {
     (requestType !== 'cancelled' && (mutationError || mutationLoading)) ||
     error ||
     isInvalidCar ||
+    mutationResponse?.message ||
     (loading && !data)
   ) {
     return (
