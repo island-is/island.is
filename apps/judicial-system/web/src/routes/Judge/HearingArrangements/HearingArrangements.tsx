@@ -47,13 +47,13 @@ interface CaseData {
 
 export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
   const [courtTimeErrorMessage, setCourtTimeErrorMessage] = useState('')
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
 
-  const courtTimeRef = useRef<HTMLInputElement>()
+  const courtTimeRef = useRef<HTMLInputElement>(null)
 
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
@@ -103,34 +103,40 @@ export const HearingArrangements: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (data && workingCase === null) {
+    if (data && !workingCase) {
       let theCase = data.case
 
       if (!theCase.courtDate) {
         theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
 
-        updateCase(
-          theCase.id,
-          parseString('courtDate', theCase.requestedCourtDate),
-        )
+        if (theCase.requestedCourtDate) {
+          updateCase(
+            theCase.id,
+            parseString('courtDate', theCase.requestedCourtDate),
+          )
+        }
       }
 
       if (!theCase.defenderName) {
         theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
 
-        updateCase(
-          theCase.id,
-          parseString('defenderName', theCase.requestedDefenderName),
-        )
+        if (theCase.requestedDefenderName) {
+          updateCase(
+            theCase.id,
+            parseString('defenderName', theCase.requestedDefenderName),
+          )
+        }
       }
 
       if (!theCase.defenderEmail) {
         theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
 
-        updateCase(
-          theCase.id,
-          parseString('defenderEmail', theCase.requestedDefenderEmail),
-        )
+        if (theCase.requestedDefenderEmail) {
+          updateCase(
+            theCase.id,
+            parseString('defenderEmail', theCase.requestedDefenderEmail),
+          )
+        }
       }
 
       setWorkingCase(theCase)
@@ -140,15 +146,15 @@ export const HearingArrangements: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.courtDate,
+        value: workingCase?.courtDate || '',
         validations: ['empty'],
       },
       {
-        value: courtTimeRef.current?.value,
+        value: courtTimeRef.current?.value || '',
         validations: ['empty', 'time-format'],
       },
       {
-        value: workingCase?.courtRoom,
+        value: workingCase?.courtRoom || '',
         validations: ['empty'],
       },
     ]
@@ -200,7 +206,8 @@ export const HearingArrangements: React.FC = () => {
                     handleChange={(date) => {
                       const formattedDate = formatISO(date, {
                         representation:
-                          workingCase.courtDate?.indexOf('T') > -1
+                          workingCase.courtDate &&
+                          workingCase.courtDate.indexOf('T') > -1
                             ? 'complete'
                             : 'date',
                       })
@@ -215,7 +222,7 @@ export const HearingArrangements: React.FC = () => {
                         parseString('courtDate', formattedDate),
                       )
                     }}
-                    handleCloseCalendar={(date: Date) => {
+                    handleCloseCalendar={(date: Date | null) => {
                       if (isNull(date) || !isValid(date)) {
                         setCourtDateErrorMessage('Reitur má ekki vera tómur')
                       }
@@ -232,44 +239,47 @@ export const HearingArrangements: React.FC = () => {
                     errorMessage={courtTimeErrorMessage}
                     hasError={courtTimeErrorMessage !== ''}
                     defaultValue={
-                      workingCase.courtDate?.indexOf('T') > -1
+                      workingCase.courtDate &&
+                      workingCase.courtDate.indexOf('T') > -1
                         ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                        : null
+                        : undefined
                     }
                     disabled={!workingCase.courtDate}
                     ref={courtTimeRef}
                     onBlur={(evt) => {
-                      const courtDateMinutes = parseTime(
-                        workingCase.courtDate,
-                        evt.target.value,
-                      )
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
-
-                      setWorkingCase({
-                        ...workingCase,
-                        courtDate: courtDateMinutes,
-                      })
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        updateCase(
-                          workingCase.id,
-                          parseString('courtDate', courtDateMinutes),
+                      if (workingCase.courtDate) {
+                        const courtDateMinutes = parseTime(
+                          workingCase.courtDate,
+                          evt.target.value,
                         )
-                      } else {
-                        setCourtTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
+                        const validateTimeEmpty = validate(
+                          evt.target.value,
+                          'empty',
                         )
+                        const validateTimeFormat = validate(
+                          evt.target.value,
+                          'time-format',
+                        )
+
+                        setWorkingCase({
+                          ...workingCase,
+                          courtDate: courtDateMinutes,
+                        })
+
+                        if (
+                          validateTimeEmpty.isValid &&
+                          validateTimeFormat.isValid
+                        ) {
+                          updateCase(
+                            workingCase.id,
+                            parseString('courtDate', courtDateMinutes),
+                          )
+                        } else {
+                          setCourtTimeErrorMessage(
+                            validateTimeEmpty.errorMessage ||
+                              validateTimeFormat.errorMessage,
+                          )
+                        }
                       }
                     }}
                     onFocus={() => setCourtTimeErrorMessage('')}
