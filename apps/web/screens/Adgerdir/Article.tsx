@@ -75,13 +75,17 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         sidebar={
           <Box marginBottom={10}>
             <Stack space={3}>
-              {article.link ? (
+              {article.link && article.link.trim().length > 0 ? (
                 <Link href={article.link}>
                   <Button iconType="outline" icon="open" fluid>
                     {article.linkButtonText ?? n('seeMoreDetails')}
                   </Button>
                 </Link>
-              ) : null}
+              ) : (
+                <Button iconType="outline" icon="open" disabled fluid>
+                  {article.linkButtonText ?? n('seeMoreDetails')}
+                </Button>
+              )}
               <Stack space={1}>
                 <Text variant="tag" color="red600">
                   {n('malefni', 'Málefni')}:
