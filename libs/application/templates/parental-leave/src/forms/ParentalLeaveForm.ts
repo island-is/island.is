@@ -87,11 +87,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   name: 'Netfang',
                   id: 'applicant.email',
+                  variant: 'email',
                 }),
                 buildTextField({
                   width: 'half',
                   name: 'Símanúmer',
                   id: 'applicant.phoneNumber',
+                  variant: 'tel',
                 }),
               ],
             }),
