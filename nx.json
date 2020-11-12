@@ -27,13 +27,6 @@
     }
   },
   "projects": {
-    "adgerdir": {
-      "tags": []
-    },
-    "adgerdir-e2e": {
-      "tags": [],
-      "implicitDependencies": ["adgerdir"]
-    },
     "air-discount-scheme-api": {
       "tags": []
     },
