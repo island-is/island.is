@@ -1,19 +1,20 @@
 import React, { FC } from 'react'
 import { Box, Text, Stack } from '@island.is/island-ui/core'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
-import { Vehicle } from '@island.is/skilavottord-web/types'
-import { getYear } from '@island.is/skilavottord-web/utils'
 
 interface BoxProps {
-  vehicle: Vehicle
+  vehicleId: string
+  vehicleType: string
+  modelYear: string
+  vehicleOwner?: string
 }
 
 export const CarDetailsBox: FC<BoxProps> = ({
-  vehicle: { vehicleId, vehicleType, newregDate, recyclingRequests },
-}: BoxProps) => {
-  const modelYear = getYear(newregDate)
-  const vehicleOwner = recyclingRequests && recyclingRequests[0].nameOfRequestor
-
+  vehicleId,
+  vehicleType,
+  modelYear,
+  vehicleOwner,
+}) => {
   return (
     <OutlinedBox>
       <Box
