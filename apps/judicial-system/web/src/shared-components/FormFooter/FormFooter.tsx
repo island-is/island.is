@@ -34,9 +34,11 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           disabled={props.nextIsDisabled}
           loading={props.nextIsLoading}
           onClick={() => {
-            props.onNextButtonClick
-              ? props.onNextButtonClick()
-              : history.push(props.nextUrl)
+            if (props.onNextButtonClick) {
+              props.onNextButtonClick()
+            } else if (props.nextUrl) {
+              history.push(props.nextUrl)
+            }
           }}
         >
           {props.nextButtonText ?? 'Halda áfram'}

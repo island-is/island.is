@@ -2,7 +2,7 @@ import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 
 export const formatYear = (dateTime: string, dateFormat: string) => {
-  return parse(dateTime, dateFormat, new Date()).getFullYear()
+  return parse(dateTime, dateFormat, new Date()).getFullYear().toString()
 }
 
 export const formatDate = (dateTime: string, dateFormat: string) => {

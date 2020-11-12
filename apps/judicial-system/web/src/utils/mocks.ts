@@ -1,6 +1,7 @@
 import {
   CaseAppealDecision,
   CaseCustodyProvisions,
+  CaseCustodyRestrictions,
   CaseGender,
   UpdateCase,
   User,
@@ -142,7 +143,7 @@ const testCase3 = {
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
-  requestedCustodyRestrictions: [],
+  requestedCustodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   caseFacts: null,
   witnessAccounts: 'string',
   investigationProgress: 'string',
