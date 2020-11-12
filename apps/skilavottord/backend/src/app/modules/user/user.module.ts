@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common'
 
-
-@Module({
-})
+@Module({})
 export class UserModule {}
