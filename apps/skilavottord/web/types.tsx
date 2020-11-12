@@ -53,7 +53,7 @@ export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
 
 export type RecyclingRequestTypes =
   | 'pendingRecycle'
-  | 'handedOver'
+  | 'handOver'
   | 'deregistered'
   | 'cancelled'
   | 'paymentInitiated'

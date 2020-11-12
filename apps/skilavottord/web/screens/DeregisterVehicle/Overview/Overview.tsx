@@ -19,7 +19,11 @@ import {
   PartnerPageLayout,
 } from '@island.is/skilavottord-web/components'
 import { CarsTable } from './components/CarsTable'
-import { VEHICLES_BY_PARTNER_ID } from '@island.is/skilavottord-web/graphql/queries'
+import {
+  ALL_RECYCLING_PARTNERS,
+  VEHICLES_BY_PARTNER_ID,
+} from '@island.is/skilavottord-web/graphql/queries'
+import { RecyclingPartner } from '@island.is/skilavottord-web/types'
 
 const Overview: FC = () => {
   const { user } = useContext(UserContext)
@@ -29,19 +33,21 @@ const Overview: FC = () => {
   const router = useRouter()
 
   const partnerId = user?.partnerId ?? ''
-  const { data } = useQuery(VEHICLES_BY_PARTNER_ID, {
+  const { data: vehicleData } = useQuery(VEHICLES_BY_PARTNER_ID, {
     variables: { partnerId },
     fetchPolicy: 'cache-and-network',
   })
 
-  const vehicleOwners = data?.skilavottordRecyclingPartnerVehicles
-  const deregisteredVehicles = vehicleOwners?.filter(({ vehicles }) => {
-    for (const vehicle of vehicles) {
-      for (const request of vehicle.recyclingRequests) {
-        return request.requestType === 'deregistered'
-      }
-    }
+  const { data: partnerData } = useQuery(ALL_RECYCLING_PARTNERS, {
+    variables: { partnerId },
   })
+
+  const vehicleOwners = vehicleData?.skilavottordRecyclingPartnerVehicles
+  const recyclingPartners = partnerData?.skilavottordAllRecyclingPartners
+
+  const activePartner = recyclingPartners?.filter(
+    (partner: RecyclingPartner) => partner.companyId === partnerId,
+  )[0]
 
   const handleDeregister = () => {
     router.push(routes.deregisterVehicle.select)
@@ -57,7 +63,7 @@ const Overview: FC = () => {
     <PartnerPageLayout
       side={
         <Sidenav
-          title={user.name}
+          title={activePartner?.companyName ?? user.name}
           sections={[
             {
               icon: 'car',
@@ -88,11 +94,11 @@ const Overview: FC = () => {
             <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
           </Stack>
         </GridColumn>
-        {deregisteredVehicles?.length > 0 && (
+        {vehicleOwners?.length > 0 && (
           <Box marginX={1}>
             <Stack space={4}>
               <Text variant="h3">{t.subtitles.history}</Text>
-              <CarsTable titles={t.table} vehicleOwner={deregisteredVehicles} />
+              <CarsTable titles={t.table} vehicleOwners={vehicleOwners} />
             </Stack>
           </Box>
         )}

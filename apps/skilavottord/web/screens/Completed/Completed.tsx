@@ -9,17 +9,19 @@ import {
   Button,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import {
+  ProcessPageLayout,
+  CarDetailsBox,
+  OutlinedError,
+} from '@island.is/skilavottord-web/components'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { CarDetailsBox } from '../Confirm/components'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { REQUEST_TYPES } from '@island.is/skilavottord-web/graphql/queries'
 import { useQuery } from '@apollo/client'
 import { RecyclingRequestTypes } from '@island.is/skilavottord-web/types'
-import { getTime, getDate } from '@island.is/skilavottord-web/utils'
-import { OutlinedError } from '@island.is/skilavottord-web/components'
+import { getTime, getDate, formatYear } from '@island.is/skilavottord-web/utils'
 
 const Completed = ({ apolloState }) => {
   const [isMobile, setIsMobile] = useState(false)
@@ -67,7 +69,7 @@ const Completed = ({ apolloState }) => {
 
   const partnerRequests = sortedRequests.filter(
     (request) =>
-      request.requestType === 'handedOver' ||
+      request.requestType === 'handOver' ||
       request.requestType === 'deregistered' ||
       request.requestType === 'paymentInitiated' ||
       request.requestType === 'paymentFailed',
@@ -80,7 +82,7 @@ const Completed = ({ apolloState }) => {
     switch (requestType) {
       case 'pendingRecycle':
         return `${t.confirmedBy.user} ${requestor}`
-      case 'handedOver':
+      case 'handOver':
         return `${t.confirmedBy.company} ${requestor}`
       case 'deregistered':
         return t.confirmedBy.authority
@@ -134,7 +136,11 @@ const Completed = ({ apolloState }) => {
             <Stack space={4}>
               <Stack space={2}>
                 <Text variant="h3">{t.subTitles.summary}</Text>
-                <CarDetailsBox car={car} />
+                <CarDetailsBox
+                  vehicleId={car.permno}
+                  vehicleType={car.type}
+                  modelYear={formatYear(car.firstRegDate, 'dd.MM.yyyy')}
+                />
               </Stack>
               {sortedRequests.length > 0 ? (
                 <Stack space={4}>
