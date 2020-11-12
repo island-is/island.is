@@ -6,11 +6,12 @@ import {
   Text,
   Stack,
   Breadcrumbs,
-  Hidden,
   Link,
-  Sleeve,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   AdgerdirArticles,
@@ -40,6 +41,7 @@ import { Screen } from '../../types'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { ColorSchemeContext } from '@island.is/web/context'
 import { useNamespace } from '@island.is/web/hooks'
+import { theme } from '@island.is/island-ui/theme'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -52,6 +54,15 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const { makePath } = routeNames(activeLocale)
+  const { width } = useWindowSize()
+  const [isDesktop, setIsMobile] = React.useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width >= theme.breakpoints.lg) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -67,7 +78,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       <HeadWithSocialSharing title={`Viðspyrna fyrir Ísland`} />
       <ArticleLayout
         sidebar={
-          <Hidden below="lg">
+          isDesktop ? (
             <Box
               height="full"
               width="full"
@@ -76,44 +87,57 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
             >
               <FrontpageSvg />
             </Box>
-          </Hidden>
+          ) : null
         }
       >
-        <Stack space={2}>
-          <Breadcrumbs color="blue400">
-            <Link href={makePath()} as={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
-            <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
-              <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-            </Link>
-          </Breadcrumbs>
-          <Text variant="h1" as="h1">
-            {frontpage.title}
-          </Text>
-          <Text variant="intro" as="p">
-            {frontpage.description}
-          </Text>
-          <RichText
-            body={frontpage.content as SliceType[]}
-            config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
-            locale={activeLocale}
-          />
-        </Stack>
+        <GridRow>
+          <GridColumn
+            offset={['0', '0', '0', '1/8']}
+            span={['0', '0', '8/8', '7/8']}
+            paddingBottom={2}
+          >
+            <Breadcrumbs color="blue400">
+              <Link href={makePath()} as={makePath()}>
+                <a>Ísland.is</a>
+              </Link>
+              <Link href={makePath('adgerdir')} as={makePath('adgerdir')}>
+                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
+              </Link>
+            </Breadcrumbs>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn
+            offset={['0', '0', '0', '1/8']}
+            span={['8/8', '8/8', '8/8', '7/8']}
+          >
+            <Stack space={2}>
+              <Text variant="h1" as="h1">
+                {frontpage.title}
+              </Text>
+              <Text variant="intro" as="p">
+                {frontpage.description}
+              </Text>
+              <RichText
+                body={frontpage.content as SliceType[]}
+                config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
+                locale={activeLocale}
+              />
+            </Stack>
+          </GridColumn>
+        </GridRow>
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
-          <Sleeve minHeight={400} background="red100">
-            <Box background="red100">
-              <ContentBlock width="large">
-                <AdgerdirArticles
-                  tags={tagsItems}
-                  items={pagesItems}
-                  namespace={namespace}
-                />
-              </ContentBlock>
-            </Box>
-          </Sleeve>
+          <Box background="red100">
+            <ContentBlock width="large">
+              <AdgerdirArticles
+                tags={tagsItems}
+                items={pagesItems}
+                namespace={namespace}
+              />
+            </ContentBlock>
+          </Box>
         </Box>
       </ColorSchemeContext.Provider>
       <Box marginBottom={[6, 6, 15]}>

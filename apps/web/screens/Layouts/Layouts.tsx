@@ -84,14 +84,25 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '8/12', '8/12', '9/12']}>
+        <GridColumn
+          span={
+            sidebar
+              ? ['12/12', '12/12', '8/12', '8/12', '9/12']
+              : ['12/12', '12/12', '11/12', '10/12', '9/12']
+          }
+        >
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn hiddenBelow="md" span={['0', '0', '4/12', '4/12', '3/12']}>
-          <Hidden print={true}>
-            <Sticky>{sidebar}</Sticky>
-          </Hidden>
-        </GridColumn>
+        {sidebar && (
+          <GridColumn
+            hiddenBelow="md"
+            span={['0', '0', '4/12', '4/12', '3/12']}
+          >
+            <Hidden print={true}>
+              <Sticky>{sidebar}</Sticky>
+            </Hidden>
+          </GridColumn>
+        )}
       </GridRow>
     </Box>
   </GridContainer>
