@@ -6,6 +6,7 @@ on:
       - 'master'
       - 'release/**'
       - 'hotfix/**'
+      - 'hash'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -131,6 +132,11 @@ jobs:
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
+
+      - name: Debug hashkey
+        run: |
+          shopt -s globstar
+          ls scripts/schemas.js libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts apps/**/codegen.yml apps/**/modules/** apps/**/models/**.ts libs/**/models/**.ts apps/**/dto/**.ts libs/**/dto/**.ts libs/**/enums/** apps/**/queries/**.ts libs/**/queries/**.ts apps/**/*.model.ts libs/**/*.model.ts apps/**/*.resolver.ts libs/**/*.resolver.ts apps/**/*.service.ts libs/**/*.service.ts apps/air-discount-scheme/web/screens/**/*.tsx apps/air-discount-scheme/web/i18n/withLocale.tsx apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx apps/air-discount-scheme/web/components/Header/Header.tsx apps/gjafakort/api/src/**/typeDefs.ts
 
       - name: Set up Docker Buildx
         id: buildx
