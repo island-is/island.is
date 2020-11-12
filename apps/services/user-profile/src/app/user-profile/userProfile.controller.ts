@@ -112,10 +112,7 @@ export class UserProfileController {
       const phoneVerified = await this.verificationService.isPhoneNumberVerified(
         { nationalId, mobilePhoneNumber },
       )
-      if (!phoneVerified)
-        throw new BadRequestException(
-          `Phone number: ${mobilePhoneNumber} is not verified`,
-        )
+
       userProfileToUpdate = {
         ...userProfileToUpdate,
         mobilePhoneNumberVerified: phoneVerified,

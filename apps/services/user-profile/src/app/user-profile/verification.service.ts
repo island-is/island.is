@@ -194,7 +194,6 @@ export class VerificationService {
       return response
     } catch (exception) {
       this.logger.error(exception)
-      throw new BadRequestException('SMS could not be sent')
     }
   }
 
