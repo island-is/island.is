@@ -31,7 +31,7 @@ import { defineMessage } from 'react-intl'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }
 const pageSize = 6
-const defaultStartDate = subYears(new Date(), 20)
+const defaultStartDate = new Date('01.01.2000')
 const defaultEndDate = startOfTomorrow()
 
 // type FuseItem = {
@@ -65,8 +65,8 @@ const getFilteredDocuments = (
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
   let filteredDocuments = documents.filter((document) =>
     isWithinInterval(new Date(document.date), {
-      start: dateFrom,
-      end: dateTo,
+      start: dateFrom || defaultStartDate,
+      end: dateTo || defaultEndDate,
     }),
   )
 

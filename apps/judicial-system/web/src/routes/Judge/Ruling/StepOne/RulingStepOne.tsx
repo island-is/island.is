@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { FormFooter } from '../../../../shared-components/FormFooter'
 import {
   Case,
@@ -42,11 +42,14 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 
+interface CaseData {
+  case: Case
+}
+
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [, setRestrictionCheckboxOne] = useState<boolean>()
   const [, setRestrictionCheckboxTwo] = useState<boolean>()
   const [, setRestrictionCheckboxThree] = useState<boolean>()
@@ -56,25 +59,26 @@ export const RulingStepOne: React.FC = () => {
     '',
   )
   const { id } = useParams<{ id: string }>()
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
 
-  const resCase = data?.case
-
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   const restrictions = [
     {
@@ -112,15 +116,26 @@ export const RulingStepOne: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
+    if (!workingCase && data) {
+      let theCase = data.case
+
+      if (!theCase.custodyRestrictions) {
+        theCase = {
+          ...theCase,
+          custodyRestrictions: theCase.requestedCustodyRestrictions,
+        }
+
+        updateCase(
+          theCase.id,
+          parseArray(
+            'custodyRestrictions',
+            theCase.requestedCustodyRestrictions,
+          ),
+        )
+      }
+      setWorkingCase(theCase)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, data, updateCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -141,7 +156,7 @@ export const RulingStepOne: React.FC = () => {
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>

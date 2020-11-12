@@ -156,7 +156,7 @@ export const DetentionRequests: React.FC = () => {
                         ? `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                         : `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`
                     }
-                    style={{ textDecoration: 'none' }}
+                    style={{ textDecoration: 'none', whiteSpace: 'nowrap' }}
                   >
                     <Button icon="arrowRight" variant="text">
                       Opna kröfu
