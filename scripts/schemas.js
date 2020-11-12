@@ -36,17 +36,13 @@ const main = async () => {
     console.log(`--> Running command for ${target}\n`)
 
     try {
-      const { stdout, stderr } = await promisify(exec)(
+      await promisify(exec)(
         `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 ${
           skipCache ? '--skip-nx-cache' : ''
         }`,
       )
-
-      console.log(stdout)
-
-      if (stderr) {
-        console.error(`Error while running generate-schemas: ${stderr}`)
-      }
+        .then((res) => console.log(res.stdout))
+        .catch((err) => console.error(err.stdout))
     } catch (err) {
       console.error(`Error while running generate-schemas: ${err}`)
       process.exit(err.code)
