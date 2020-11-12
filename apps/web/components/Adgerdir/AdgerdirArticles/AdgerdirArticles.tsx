@@ -58,21 +58,21 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { isOpen: sleeveIsOpen, setIsOpen } = useContext(SleeveContext)
   const { makePath } = routeNames(activeLocale)
   const [filterString, setFilterString] = useState<string>('')
   const [startingItems, setstartingItems] = useState<Array<AdgerdirPage>>(
     items.filter((x) => startingIds.includes(x.id)),
   )
   const [tagIds, setTagIds] = useState<Array<string>>([])
+  const [itemsFilteredByTag, setItemsFilteredByTag] = useState<
+    Array<AdgerdirPage>
+  >(items)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number | null>(ITEMS_PER_SHOW)
-  const [indexesFilteredByString, setIndexesFilteredByString] = useState<
-    Array<number>
+  const [itemsFilteredByString, setItemsFilteredByString] = useState<
+    Array<AdgerdirPage>
   >([])
-  const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
-    Array<number>
-  >([])
+
   const timerRef = useRef(null)
 
   const visibleItems = startingItems.length ? startingItems : items
@@ -83,32 +83,60 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }
 
   const onFilterStringChange = useCallback(() => {
-    const arr = []
+    const arr: Array<AdgerdirPage> = []
 
-    visibleItems.forEach(({ title, description }, index) => {
-      const str = `${title} ${description}`
+    visibleItems.forEach((tag) => {
+      const str = `${tag.title} ${tag.description}`
 
       if (str.match(new RegExp(filterString.trim(), 'gi'))) {
-        arr.push(index)
+        arr.push(tag)
       }
     })
 
-    setIndexesFilteredByString(arr)
+    setItemsFilteredByString(arr)
   }, [visibleItems, filterString])
+
+  const arrayEquals = (a: Array<string>, b: Array<string>) => {
+    return (
+      Array.isArray(a) &&
+      Array.isArray(b) &&
+      a.length === b.length &&
+      a.every((val, index) => val === b[index])
+    )
+  }
 
   const onFilterTagChange = useCallback(() => {
     const arr = []
 
-    visibleItems.forEach(({ tags }, index) => {
-      if (tags.some(({ id }) => tagIds.includes(id as string))) {
-        arr.push(index)
-      }
-    })
+    const filteredItems = visibleItems.filter((x) =>
+      arrayEquals(
+        x.tags.map((x) => x.id),
+        tagIds,
+      ),
+    )
 
-    setIndexesFilteredByTag(arr)
+    console.log('all results: ', visibleItems)
+    console.log('selected tags: ', tagIds)
+    console.log('bla: ', filteredItems)
+    console.log(
+      'bla2: ',
+      visibleItems.filter((x) => x.tags.find((y) => tagIds.includes(y.id))),
+    )
 
-    if (!sleeveIsOpen && arr.length) {
-      setIsOpen(true)
+    if (tagIds && tagIds.length < 1) {
+      setItemsFilteredByTag(visibleItems)
+    }
+
+    if (tagIds.length === 1) {
+      console.log('er inní einum')
+      setItemsFilteredByTag(
+        visibleItems.filter((x) => x.tags.find((y) => tagIds.includes(y.id))),
+      )
+    }
+
+    if (tagIds.length > 1) {
+      console.log('er inní tveimur')
+      setItemsFilteredByTag(filteredItems)
     }
   }, [visibleItems, tagIds])
 
@@ -149,12 +177,12 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
     return () => clearTimeout(timerRef.current)
   }, [onUpdateFilters])
 
-  const filteredItems = visibleItems.filter((_, index) => {
-    const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
+  const filteredItems = visibleItems.filter((tag, index) => {
+    const indexList = [itemsFilteredByTag, itemsFilteredByString].filter(
       (x) => x.length > 0,
     )
 
-    return intersection(...indexList).includes(index)
+    return intersection(...indexList).includes(tag)
   })
 
   const batches = [...filteredItems].splice(
@@ -262,7 +290,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
               <span>Ekkert fannst með{` `}</span>
               {filterString
                 ? `leitarorðinu „${filterString}“${
-                    indexesFilteredByTag.length
+                    itemsFilteredByTag.length
                       ? ' og völdum málefnum hér fyrir ofan'
                       : ''
                   }`
