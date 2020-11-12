@@ -134,6 +134,8 @@
     }
   },
   "processes": {
+    "step": "Skref",
+    "outOf": "af",
     "citizen": {
       "title": "Endurvinna ökutæki",
       "sections": [

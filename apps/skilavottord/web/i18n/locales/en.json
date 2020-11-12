@@ -134,6 +134,8 @@
     }
   },
   "processes": {
+    "step": "Step",
+    "outOf": "out of",
     "citizen": {
       "title": "Recycle car",
       "sections": ["Confirm car for recycling", "Handover car to recycle"],
