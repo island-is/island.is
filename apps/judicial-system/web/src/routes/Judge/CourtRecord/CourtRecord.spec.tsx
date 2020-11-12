@@ -30,7 +30,7 @@ describe('/domari-krafa/thingbok', () => {
             } as UpdateCase,
             {
               courtAttendees:
-                'Ruth Bader Ginsburg, saksóknari\nJon Harring, kærði\nSaul Goodman, verjandi kærða',
+                'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
             } as UpdateCase,
             {
               policeDemands:
@@ -82,7 +82,7 @@ describe('/domari-krafa/thingbok', () => {
         'Viðstaddir og hlutverk þeirra *',
       ) as HTMLInputElement).value,
     ).toEqual(
-      'Ruth Bader Ginsburg, saksóknari\nJon Harring, kærði\nSaul Goodman, verjandi kærða',
+      'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman verjandi kærða',
     )
 
     expect(
