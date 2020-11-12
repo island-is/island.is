@@ -24,7 +24,7 @@ export const PageLayout: FC<PageProps> = ({ children }) => (
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '7/12', '7/12']}
+            span={['12/12', '12/12', '8/12', '7/12']}
             offset={['0', '0', '1/12', '1/12']}
           >
             <Box paddingBottom={10}>{children}</Box>
@@ -79,15 +79,15 @@ export const ProcessPageLayout: FC<ProcessPageProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
-              paddingY={[3, 3, 3, 6]}
+              paddingY={[3, 3, 6, 6]}
               background="white"
               borderColor="white"
               borderRadius="large"
               className={styles.processContent}
             >
               <GridColumn
-                span={['9/9', '9/9', '7/9', '7/9']}
-                offset={['0', '0', '1/9', '1/9']}
+                span={['9/9', '9/9', '10/12', '7/9']}
+                offset={['0', '0', '1/12', '1/9']}
               >
                 {children}
               </GridColumn>
