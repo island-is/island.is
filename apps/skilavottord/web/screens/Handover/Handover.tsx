@@ -80,7 +80,9 @@ const Handover: FC = () => {
       switch (activeCar.status) {
         case 'inUse':
         case 'cancelled':
-          if (localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION)) {
+          if (
+            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) === id.toString()
+          ) {
             setRequestType('pendingRecycle')
             setRecyclingRequest({
               variables: {
@@ -89,7 +91,6 @@ const Handover: FC = () => {
                 requestType: 'pendingRecycle',
               },
             })
-            localStorage.clear()
           } else {
             setInvalidCar(true)
           }
@@ -102,6 +103,7 @@ const Handover: FC = () => {
   }, [user, id, activeCar])
 
   const routeHome = () => {
+    localStorage.clear()
     router.push(routes.myCars).then(() => window.scrollTo(0, 0))
   }
 

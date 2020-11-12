@@ -73,7 +73,7 @@ const Confirm = ({ apolloState }) => {
         },
       }),
     )
-    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, 'true')
+    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, id.toString())
     router.replace(
       `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
