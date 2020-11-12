@@ -26,13 +26,14 @@ describe('/domari-krafa with an ID', () => {
     // Act and Assert
     render(
       <MockedProvider
-        mocks={[].concat(mockCaseQueries).concat(
-          mockUpdateCaseMutation([
+        mocks={[
+          ...mockCaseQueries,
+          ...mockUpdateCaseMutation([
             {
               courtCaseNumber: '000-0000-000',
             } as UpdateCase,
           ]),
-        )}
+        ]}
         addTypename={false}
       >
         <userContext.Provider value={mockJudgeUserContext}>

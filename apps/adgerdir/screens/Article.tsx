@@ -169,7 +169,8 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
           Staða
         </Heading>
         <Paragraph>{n(article.status)}</Paragraph>
-        {article.content ? <Content document={article.content} /> : null}
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        {article.content ? <Content document={article.content as any} /> : null}
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box background="red100">

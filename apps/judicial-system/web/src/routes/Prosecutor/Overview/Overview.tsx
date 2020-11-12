@@ -40,7 +40,7 @@ import {
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [workingCase, setWorkingCase] = useState<Case>(null)
+  const [workingCase, setWorkingCase] = useState<Case>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
@@ -85,21 +85,29 @@ export const Overview: React.FC = () => {
   }
 
   const handleNextButtonClick: () => Promise<boolean> = async () => {
-    try {
-      // Parse the transition request
-      const transitionRequest = parseTransition(
-        workingCase.modified,
-        CaseTransition.SUBMIT,
-      )
+    if (workingCase) {
+      try {
+        // Parse the transition request
+        const transitionRequest = parseTransition(
+          workingCase.modified,
+          CaseTransition.SUBMIT,
+        )
 
-      // Transition the case
-      await transitionCase(workingCase.id, transitionRequest)
-    } catch (e) {
-      // Improve error handling at some point
-      console.log('Transition failing')
+        // Transition the case
+        const resCase = await transitionCase(workingCase.id, transitionRequest)
+
+        if (!resCase) {
+          // Improve error handling at some point
+          console.log('Transition failing')
+          return false
+        }
+      } catch (e) {
+        // Improve error handling at some point
+        console.log('Transition failing')
+      }
+
+      return sendNotification(workingCase.id)
     }
-
-    return sendNotification(workingCase.id)
   }
 
   useEffect(() => {
@@ -180,8 +188,8 @@ export const Overview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {`${capitalize(
-                formatDate(workingCase.arrestDate, 'PPPP'),
-              )} kl. ${formatDate(workingCase?.arrestDate, TIME_FORMAT)}`}
+                formatDate(workingCase.arrestDate, 'PPPP') || '',
+              )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
             </Text>
           </Box>
           {workingCase.requestedCourtDate && (
@@ -193,7 +201,7 @@ export const Overview: React.FC = () => {
               </Box>
               <Text variant="h3">
                 {`${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                  formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
                 )} eftir kl. ${formatDate(
                   workingCase?.requestedCourtDate,
                   TIME_FORMAT,
@@ -236,15 +244,16 @@ export const Overview: React.FC = () => {
                       Lagaákvæði sem krafan er byggð á
                     </Text>
                   </Box>
-                  {workingCase?.custodyProvisions.map(
-                    (custodyProvision: CaseCustodyProvisions, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{laws[custodyProvision]}</Text>
-                        </div>
-                      )
-                    },
-                  )}
+                  {workingCase.custodyProvisions &&
+                    workingCase.custodyProvisions.map(
+                      (custodyProvision: CaseCustodyProvisions, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{laws[custodyProvision]}</Text>
+                          </div>
+                        )
+                      },
+                    )}
                 </Box>
               </AccordionItem>
               <AccordionItem
@@ -307,8 +316,8 @@ export const Overview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {workingCase?.prosecutor
-                ? `${workingCase?.prosecutor.name}, ${workingCase?.prosecutor.title}`
-                : `${user?.name}, ${user?.title}`}
+                ? `${workingCase?.prosecutor.name} ${workingCase?.prosecutor.title}`
+                : `${user?.name} ${user?.title}`}
             </Text>
           </Box>
           <FormFooter
