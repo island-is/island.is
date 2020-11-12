@@ -2,6 +2,8 @@ const { stat, writeFile } = require('fs')
 const { exec } = require('child_process')
 const { promisify } = require('util')
 
+console.log('-trigger')
+
 /**
  * Because get-files-touched-by.sh cannot get files from nx cache
  * we skip the cache on PR and Push pipelines
