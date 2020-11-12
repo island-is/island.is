@@ -19,15 +19,14 @@ describe('Judicial system web api endpoints', () => {
       api.logOut()
 
       // Assert
-      expect(cookies.getCookie('judicial-system.csrf')).toEqual(null)
+      expect(cookies.getCookie('judicial-system.csrf')).toEqual(undefined)
     })
 
     it('should redirect the user to the login screen', async () => {
       // Arrange
-      delete window.location
       window.location = {
         href: '',
-        ancestorOrigins: null,
+        ancestorOrigins: [] as any,
         hash: '',
         host: '',
         hostname: '',

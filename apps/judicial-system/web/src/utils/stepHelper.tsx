@@ -66,10 +66,14 @@ export const constructConclusion = (workingCase: Case) => {
               {workingCase.custodyRestrictions?.map(
                 (custodyRestriction, index) => {
                   const isNextLast =
+                    workingCase.custodyRestrictions &&
                     index === workingCase.custodyRestrictions.length - 2
                   const isLast =
+                    workingCase.custodyRestrictions &&
                     index === workingCase.custodyRestrictions.length - 1
-                  const isOnly = workingCase.custodyRestrictions.length === 1
+                  const isOnly =
+                    workingCase.custodyRestrictions &&
+                    workingCase.custodyRestrictions.length === 1
 
                   return custodyRestriction ===
                     CaseCustodyRestrictions.ISOLATION ? (
