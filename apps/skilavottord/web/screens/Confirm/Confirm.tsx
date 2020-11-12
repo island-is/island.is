@@ -15,6 +15,7 @@ import {
   CREATE_VEHICLE_OWNER,
   CREATE_VEHICLE,
 } from '@island.is/skilavottord-web/graphql/mutations'
+import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 
 const Confirm = ({ apolloState }) => {
   const { user } = useContext(UserContext)
@@ -70,6 +71,7 @@ const Confirm = ({ apolloState }) => {
         },
       }),
     )
+    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, 'true')
     router.replace(
       `${AUTH_URL['citizen']}/login?returnUrl=${routes.recycleVehicle.baseRoute}/${id}/handover`,
     )
