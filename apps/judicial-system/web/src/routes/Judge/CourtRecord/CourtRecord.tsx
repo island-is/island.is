@@ -59,24 +59,33 @@ export const CourtRecord: React.FC = () => {
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-    const resCase = data?.updateCase
-    if (resCase) {
-      // Do something with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-    return resCase
-  }
+  const updateCase = useCallback(
+    async (id: string, updateCase: UpdateCase) => {
+      const { data } = await updateCaseMutation({
+        variables: { input: { id, ...updateCase } },
+      })
+      const resCase = data?.updateCase
+      if (resCase) {
+        // Do something with the result. In particular, we want th modified timestamp passed between
+        // the client and the backend so that we can handle multiple simultanious updates.
+      }
+      return resCase
+    },
+    [updateCaseMutation],
+  )
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
   const defaultCourtAttendees = (wc: Case) => {
-    return `${wc.prosecutor.name}, ${wc.prosecutor.title}\n${wc.accusedName}, kærði\n${wc.defenderName}, verjandi kærða`
+    let attendees = `${wc.prosecutor.name}, ${wc.prosecutor.title}\n${wc.accusedName}, kærði`
+
+    if (wc.defenderName) {
+      attendees += `\n${wc.defenderName}, verjandi kærða`
+    }
+
+    return attendees
   }
 
   useEffect(() => {
@@ -94,7 +103,7 @@ export const CourtRecord: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [setWorkingCase, data])
+  }, [workingCase, updateCase, setWorkingCase, data])
 
   return (
     <PageLayout
