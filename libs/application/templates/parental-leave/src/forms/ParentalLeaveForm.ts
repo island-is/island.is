@@ -43,11 +43,17 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'approveExternalData',
               dataProviders: [
                 buildDataProviderItem({
-                  id: 'expectedDateOfBirth',
-                  type: 'ExpectedDateOfBirth',
-                  source: 'Landlækni',
+                  id: 'pregnancyStatus',
+                  type: 'PregnancyStatus',
                   title: m.expectedDateOfBirthTitle,
                   subTitle: m.expectedDateOfBirthSubtitle,
+                }),
+                buildDataProviderItem({
+                  id: 'parentalLeaves',
+                  type: 'ParentalLeaves',
+                  title: 'Existing parental leave applications',
+                  subTitle:
+                    'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
                 }),
               ],
             }),
