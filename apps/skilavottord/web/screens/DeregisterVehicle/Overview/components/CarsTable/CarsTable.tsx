@@ -13,10 +13,10 @@ import { VehicleOwner } from '@island.is/skilavottord-web/types'
 
 interface TableProps {
   titles: string[]
-  vehicleOwner: VehicleOwner[]
+  vehicleOwners: VehicleOwner[]
 }
 
-export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
+export const CarsTable: FC<TableProps> = ({ titles, vehicleOwners }) => {
   return (
     <Stack space={5}>
       <Table>
@@ -30,7 +30,7 @@ export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
           </Row>
         </Head>
         <Body>
-          {vehicleOwner.map(({ vehicles }) =>
+          {vehicleOwners.map(({ vehicles }) =>
             vehicles.map(
               ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
                 recyclingRequests.map(
