@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { AuthModule } from './modules/auth'
 import { UserModule } from './modules'
 import { GdprDbModule } from './modules/gdpr/gdpr.module'
 import { SequelizeModule } from '@nestjs/sequelize'
@@ -27,7 +26,6 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    AuthModule,
     UserModule,
     SamgongustofaModule,
     FjarsyslaModule,

@@ -3,8 +3,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { RecyclingRequestModel } from '../recycling.request/model/recycling.request.model'
 import { VehicleModel } from '../vehicle/model/vehicle.model'
 import { VehicleOwnerModel } from './model/vehicle.owner.model'
-//import { VehicleModel, VehicleOwnerModel } from '../models'
-import { VehicleOwnerResolver } from './vehicle.owner.resolver'
 import { VehicleOwnerService } from './vehicle.owner.service'
 
 @Module({
@@ -15,6 +13,6 @@ import { VehicleOwnerService } from './vehicle.owner.service'
       RecyclingRequestModel,
     ]),
   ],
-  providers: [VehicleOwnerResolver, VehicleOwnerService],
+  providers: [VehicleOwnerService],
 })
 export class VehicleOwnerModule {}
