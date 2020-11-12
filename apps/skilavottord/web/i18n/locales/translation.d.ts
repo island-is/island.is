@@ -85,6 +85,8 @@ export interface Completed {
 }
 
 export interface Processes {
+  step: string
+  outOf: string
   citizen: ProcessSections
   company: ProcessSections
 }
