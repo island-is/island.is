@@ -18,7 +18,7 @@ interface TableProps<T extends object> {
   showLessLabel?: string
 }
 
-const Table = <T extends object>(
+export const Table = <T extends object>(
   props: PropsWithChildren<TableProps<T>>,
 ): ReactElement => {
   const {
@@ -131,5 +131,3 @@ const Table = <T extends object>(
     </table>
   )
 }
-
-export default Table
