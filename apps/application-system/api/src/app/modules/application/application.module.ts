@@ -16,17 +16,16 @@ if (process.env.INIT_SCHEMA === 'true') {
   BullModule = NestBullModule.registerQueueAsync()
 } else {
   const bullModuleName = 'application_system_api_bull_module'
+  const redisClient = createRedisCluster({
+    name: bullModuleName,
+    ssl: environment.production,
+    nodes: environment.redis.urls,
+  })
   BullModule = NestBullModule.registerQueueAsync({
     name: 'upload',
     useFactory: () => ({
       prefix: `{${bullModuleName}}`,
-      createClient: () => {
-        return createRedisCluster({
-          name: bullModuleName,
-          ssl: environment.production,
-          nodes: environment.redis.urls,
-        })
-      },
+      createClient: () => redisClient,
     }),
   })
 }
