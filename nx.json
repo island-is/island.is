@@ -351,9 +351,6 @@
     "skilavottord-ws": {
       "tags": []
     },
-    "skilavottord-backend": {
-      "tags": []
-    },
     "skilavottord/web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
