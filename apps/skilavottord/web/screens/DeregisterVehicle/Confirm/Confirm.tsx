@@ -1,5 +1,6 @@
 import React, { FC, useContext } from 'react'
-import { ProcessPageLayout } from '@island.is/skilavottord-web/components/Layouts'
+import { useMutation, useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 import {
   Box,
   Bullet,
@@ -12,13 +13,16 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { CarDetailsBox } from './components'
-import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { hasPermission, Role } from '@island.is/skilavottord-web/auth/utils'
+import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { NotFound, OutlinedError } from '@island.is/skilavottord-web/components'
-import { useMutation, useQuery } from '@apollo/client'
+import {
+  ProcessPageLayout,
+  NotFound,
+  OutlinedError,
+  CarDetailsBox,
+} from '@island.is/skilavottord-web/components'
 import { CREATE_RECYCLING_REQUEST_COMPANY } from '@island.is/skilavottord-web/graphql/mutations'
 import { VEHICLE_TO_DEREGISTER } from '@island.is/skilavottord-web/graphql/queries'
 
@@ -111,7 +115,15 @@ const Confirm: FC = () => {
           <Stack space={4}>
             <Text variant="h1">{t.titles.success}</Text>
             <Text variant="intro">{t.info.success}</Text>
-            <CarDetailsBox vehicle={vehicle} />
+            <CarDetailsBox
+              vehicleId={vehicle.vehicleId}
+              vehicleType={vehicle.vehicleType}
+              modelYear={getYear(vehicle.newregDate)}
+              vehicleOwner={
+                vehicle.recyclingRequests &&
+                vehicle.recyclingRequests[0].nameOfRequestor
+              }
+            />
           </Stack>
         ) : (
           <Stack space={4}>

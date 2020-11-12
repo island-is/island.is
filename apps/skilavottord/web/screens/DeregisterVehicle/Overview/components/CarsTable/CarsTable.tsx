@@ -13,10 +13,10 @@ import { VehicleOwner } from '@island.is/skilavottord-web/types'
 
 interface TableProps {
   titles: string[]
-  vehicleOwner: VehicleOwner[]
+  vehicleOwners: VehicleOwner[]
 }
 
-export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
+export const CarsTable: FC<TableProps> = ({ titles, vehicleOwners }) => {
   return (
     <Stack space={5}>
       <Table>
@@ -30,22 +30,26 @@ export const CarsTable: FC<TableProps> = ({ titles, vehicleOwner }) => {
           </Row>
         </Head>
         <Body>
-          {vehicleOwner.map(({ vehicles }) =>
+          {vehicleOwners.map(({ vehicles }) =>
             vehicles.map(
               ({ vehicleId, vehicleType, newregDate, recyclingRequests }) =>
-                recyclingRequests.map(({ nameOfRequestor, createdAt }) => {
-                  const modelYear = getYear(newregDate)
-                  const deregistrationDate = getDate(createdAt)
-                  return (
-                    <Row key={vehicleId}>
-                      <Data textVariant="h5">{vehicleId}</Data>
-                      <Data>{vehicleType}</Data>
-                      <Data>{modelYear}</Data>
-                      <Data>{nameOfRequestor}</Data>
-                      <Data>{deregistrationDate}</Data>
-                    </Row>
-                  )
-                }),
+                recyclingRequests.map(
+                  ({ requestType, nameOfRequestor, createdAt }) => {
+                    const modelYear = getYear(newregDate)
+                    const deregistrationDate = getDate(createdAt)
+                    if (requestType === 'deregistered') {
+                      return (
+                        <Row key={vehicleId}>
+                          <Data textVariant="h5">{vehicleId}</Data>
+                          <Data>{vehicleType}</Data>
+                          <Data>{modelYear}</Data>
+                          <Data>{nameOfRequestor}</Data>
+                          <Data>{deregistrationDate}</Data>
+                        </Row>
+                      )
+                    }
+                  },
+                ),
             ),
           )}
         </Body>

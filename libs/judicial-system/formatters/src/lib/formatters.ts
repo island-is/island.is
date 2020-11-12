@@ -65,7 +65,7 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
 }
 
 export const formatCustodyRestrictions = (
-  restrictions: CaseCustodyRestrictions[],
+  restrictions?: CaseCustodyRestrictions[],
 ) => {
   return restrictions && restrictions.length > 0
     ? restrictions
