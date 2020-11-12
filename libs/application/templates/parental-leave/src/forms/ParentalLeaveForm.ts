@@ -144,6 +144,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) => answers.otherParent === 'manual',
                   name: 'National ID of other parent',
                   width: 'half',
+                  variant: 'number',
                 }),
               ],
             }),
@@ -161,6 +162,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   name: 'Bank',
                   id: 'payments.bank',
                   width: 'half',
+                  variant: 'number',
                 }),
                 buildSelectField({
                   name: 'Personal discount',
