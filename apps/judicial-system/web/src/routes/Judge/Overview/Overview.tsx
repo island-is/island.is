@@ -43,10 +43,9 @@ export const JudgeOverview: React.FC = () => {
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
   ] = useState('')
-  const [workingCase, setWorkingCase] = useState<Case>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { data } = useQuery(CaseQuery, {
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -70,21 +69,16 @@ export const JudgeOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
+    if (!workingCase && resCase) {
       setWorkingCase(resCase)
-      setIsLoading(false)
     }
-    if (id && !workingCase && resCase) {
-      getCurrentCase()
-    }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [workingCase, setWorkingCase, resCase])
 
   return (
     <PageLayout
       activeSection={Sections.JUDGE}
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       {workingCase ? (
         <>
@@ -179,7 +173,7 @@ export const JudgeOverview: React.FC = () => {
             <Text variant="h3">
               {workingCase.arrestDate &&
                 `${capitalize(
-                  formatDate(workingCase.arrestDate, 'PPPP'),
+                  formatDate(workingCase.arrestDate, 'PPPP') || '',
                 )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
             </Text>
           </Box>
@@ -191,7 +185,7 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <Text variant="h3">
               {`${capitalize(
-                formatDate(workingCase.requestedCourtDate, 'PPPP'),
+                formatDate(workingCase.requestedCourtDate, 'PPPP') || '',
               )} eftir kl. ${formatDate(
                 workingCase.requestedCourtDate,
                 TIME_FORMAT,
@@ -325,7 +319,10 @@ export const JudgeOverview: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
-              { value: workingCase.courtCaseNumber, validations: ['empty'] },
+              {
+                value: workingCase.courtCaseNumber || '',
+                validations: ['empty'],
+              },
             ])}
           />
         </>
