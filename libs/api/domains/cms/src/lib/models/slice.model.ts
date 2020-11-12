@@ -2,7 +2,6 @@ import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
 import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 import { logger } from '@island.is/logging'
-
 import {
   ITimeline,
   IMailingListSignup,
@@ -23,7 +22,6 @@ import {
   ILocation,
   ITellUsAStory,
 } from '../generated/contentfulTypes'
-
 import { Image, mapImage } from './image.model'
 import { Asset, mapAsset } from './asset.model'
 import {
@@ -98,7 +96,8 @@ export const Slice = createUnionType({
 })
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
-  switch (slice.sys.contentType?.sys?.id) {
+  const contentType = slice.sys.contentType?.sys?.id
+  switch (contentType) {
     case 'timeline':
       return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':
@@ -136,9 +135,7 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
     case 'tellUsAStory':
       return mapTellUsAStory(slice as ITellUsAStory)
     default:
-      throw new ApolloError(
-        `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
-      )
+      throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
 }
 
@@ -153,7 +150,7 @@ if we add a slice that is not in mapper mapSlices fails for that slice.
 we dont want a single slice to cause errors on a whole page so we fail them gracefully
 this can e.g. happen when a developer is creating a new slice type and an editor publishes it by accident on a page
 */
-export const safelyMapSlices = (data) => {
+export const safelyMapSlices = (data: SliceTypes): typeof Slice | null => {
   try {
     return mapSlice(data)
   } catch (error) {
@@ -166,7 +163,7 @@ export const mapDocument = (
   document: Document,
   idPrefix: string,
 ): Array<typeof Slice> => {
-  const slices: Array<typeof Slice> = []
+  const slices: Array<typeof Slice | null> = []
   const docs = document?.content ?? []
 
   docs.forEach((block, index) => {
@@ -197,5 +194,5 @@ export const mapDocument = (
     }
   })
 
-  return slices.filter(Boolean) // filter out empty slices that failed mapping
+  return slices.filter((slice): slice is typeof Slice => Boolean(slice)) // filter out empty slices that failed mapping
 }
