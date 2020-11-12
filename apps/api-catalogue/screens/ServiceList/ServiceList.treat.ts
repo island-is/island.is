@@ -1,6 +1,46 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
+
+const bottomRootBase = {
+  background:theme.color.blue100,
+  paddingTop:33,
+  paddingLeft:48,
+  paddingRight:24,
+}
+
+export const bottomRoot = style({
+  ...bottomRootBase,
+  paddingLeft:48,
+})
+
+export const bottomRootMobile = style({
+  ...bottomRootBase,
+  paddingLeft:24,
+})
+
+export const bottomHeading = style({
+  fontWeight:600,
+  color:theme.color.blue600,
+  fontStyle:'normal',
+  fontSize:20,
+  lineHeight:'30px',
+  paddingLeft:24
+})
+
+const leftAndRightBase = {
+}
+
+
+export const leftAndRight = style({
+    ...leftAndRightBase,
+    display:'flex',
+})
+
+
+export const leftAndRightMobile = style({
+  ...leftAndRightBase,
+})
 export const serviceList = style({
   display: 'flex',
   flexWrap: 'wrap',
@@ -24,16 +64,6 @@ const filterOrg = {
   padding: 24,
   minWidth: 220,
 }
-
-export const filter = style({
-  background: filterOrg.background,
-  fontFamily: filterOrg.fontFamily,
-  borderRadius: filterOrg.borderRadius,
-  marginTop: filterOrg.marginTop,
-  padding: filterOrg.padding,
-  minWidth: filterOrg.minWidth,
-  marginBottom: 30,
-})
 
 export const filterMobile = style({
   background: filterOrg.background,
@@ -120,14 +150,6 @@ export const radioButton = style({
   marginTop: 5,
 })
 
-export const LayoutMobile = style({
-  paddingLeft: 0,
-  paddingRight: 0,
-})
-
-export const serviceLayoutMobile = style({
-  flexDirection: 'column-reverse',
-})
 
 const spinOrg = {
   lineHeight: 0,

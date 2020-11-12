@@ -4,6 +4,8 @@ import cn from 'classnames'
 
 import { AccordionItem, Box, Checkbox, InputSearch, Stack } from '@island.is/island-ui/core'
 import { TextVariants } from '../Text/Text.treat'
+import { useIsomorphicLayoutEffect, useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'sidebar'
 
@@ -19,14 +21,25 @@ export interface FilterSearchGroupProps  {
 export const FilterSearchGroup: React.FC<FilterSearchGroupProps> = ({
   id,
   label,
-  labelVariant="h5",
-  iconVariant="sidebar",
+  labelVariant="h3",
+  iconVariant="default",
   className,
   children,
 }) => {
+
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   return (
     <Box className={className? className : ""}>
-    <div className={cn(styles.filterItem)}>
+    <div className={cn(isMobile? styles.groupItemMobile : styles.groupItem)}>
     <AccordionItem
           id={id}
           label={label}
@@ -36,7 +49,7 @@ export const FilterSearchGroup: React.FC<FilterSearchGroupProps> = ({
           {
             React.Children.map(children, (child) => {
               return (
-                  <div className={cn(styles.filterGroupItem, 'category-checkbox')}>
+                  <div className={cn(styles.filterGroupItem)}>
                     {child}
                   </div>
               )
