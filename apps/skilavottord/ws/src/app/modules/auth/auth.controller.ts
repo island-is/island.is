@@ -83,7 +83,7 @@ export class AuthController {
     const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
     if (!user) {
-      this.logger.error('Could not verify user authenticity')
+      this.logger.error('Could not verify user authenticity ')
       return res.redirect('/error')
     }
 
