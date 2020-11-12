@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, ButtonDeprecated as Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 
 import * as styles from './FormFooter.treat'
@@ -30,7 +30,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       <div className={styles.nextButtonContainer}>
         <Button
           data-testid="continueButton"
-          icon="arrowRight"
+          icon="arrowForward"
           disabled={props.nextIsDisabled}
           loading={props.nextIsLoading}
           onClick={() => {
