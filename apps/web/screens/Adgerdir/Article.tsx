@@ -65,6 +65,19 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
   const description = article.longDescription || article.description
 
+  const renderButton =
+    article.link && article.link.trim().length > 0 ? (
+      <Link href={article.link}>
+        <Button iconType="outline" icon="open" fluid>
+          {article.linkButtonText ?? n('seeMoreDetails')}
+        </Button>
+      </Link>
+    ) : (
+      <Button iconType="outline" icon="open" disabled fluid>
+        {article.linkButtonText ?? n('seeMoreDetails')}
+      </Button>
+    )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -75,17 +88,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         sidebar={
           <Box marginBottom={10}>
             <Stack space={3}>
-              {article.link && article.link.trim().length > 0 ? (
-                <Link href={article.link}>
-                  <Button iconType="outline" icon="open" fluid>
-                    {article.linkButtonText ?? n('seeMoreDetails')}
-                  </Button>
-                </Link>
-              ) : (
-                <Button iconType="outline" icon="open" disabled fluid>
-                  {article.linkButtonText ?? n('seeMoreDetails')}
-                </Button>
-              )}
+              {renderButton}
               <Stack space={1}>
                 <Text variant="tag" color="red600">
                   {n('malefni', 'Málefni')}:
@@ -137,6 +140,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
               config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
               locale={activeLocale}
             />
+            <GridRow>
+              <GridColumn span={['12/12', '6/12', '6/12', '5/12', '4/12']}>
+                {renderButton}
+              </GridColumn>
+            </GridRow>
           </GridColumn>
         </GridRow>
       </ArticleLayout>
