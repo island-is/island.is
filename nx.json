@@ -18,7 +18,7 @@
           "lint",
           "test",
           "e2e",
-          "schemas/build-open-api",
+          "schemas/build-openapi",
           "schemas/openapi-generator",
           "schemas/build-schema",
           "schemas/codegen"
