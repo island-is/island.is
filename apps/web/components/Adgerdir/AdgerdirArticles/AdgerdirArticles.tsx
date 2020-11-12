@@ -33,7 +33,7 @@ import {
 import * as styles from './AdgerdirArticles.treat'
 
 const FILTER_TIMER = 300
-const ITEMS_PER_SHOW = 12
+const ITEMS_PER_SHOW = 9
 
 const DIVIDER_FILTERS = [ADGERDIR_INDIVIDUALS_TAG_ID, ADGERDIR_COMPANIES_TAG_ID]
 
