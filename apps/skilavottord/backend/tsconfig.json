@@ -8,6 +8,7 @@
     "strict": false
   },
   "include": [],
+  "allowJs": true,
   "files": [],
   "references": [
     {

@@ -17,12 +17,6 @@ const autoSchemaFile = debug ? 'apps/skilavottord/ws/src/app/api.graphql' : true
 
 @Module({
   imports: [
-    GraphQLModule.forRoot({
-      debug,
-      playground,
-      autoSchemaFile,
-      path: '/api/graphql',
-    }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
