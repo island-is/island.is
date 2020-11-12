@@ -11,7 +11,7 @@ import { validate } from './validate'
 
 export const getAppealDecitionText = (
   role: AppealDecisionRole,
-  appealDecition: CaseAppealDecision,
+  appealDecition?: CaseAppealDecision,
 ) => {
   switch (appealDecition) {
     case CaseAppealDecision.APPEAL: {
@@ -28,6 +28,9 @@ export const getAppealDecitionText = (
       return `${
         role === AppealDecisionRole.ACCUSED ? 'Kærði' : 'Sækjandi'
       } tekur sér lögboðinn frest`
+    }
+    default: {
+      return ''
     }
   }
 }
